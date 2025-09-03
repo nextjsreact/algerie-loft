@@ -1,185 +1,187 @@
-# 🏢 Loft Algeria - Système de Gestion Immobilière
+# 🏠 Algerie Loft Management System
 
-Un système complet de gestion immobilière développé avec Next.js, TypeScript, et Supabase.
+A comprehensive property management system built with Next.js, designed specifically for managing loft properties in Algeria.
 
-## 🌟 Fonctionnalités
+## 🚀 Live Demo
 
-### 🏠 Gestion des Lofts
-- Création, modification et suppression de propriétés
-- Gestion des photos et descriptions
-- Système de traduction multilingue (FR, EN, AR)
-- Filtrage avancé par statut, propriétaire, zone
+Visit the live application: [https://algerie-loft.vercel.app](https://algerie-loft.vercel.app)
 
-### 📊 Tableau de Bord
-- Vue d'ensemble des revenus et statistiques
-- Graphiques interactifs
-- Alertes et notifications
+## 📋 Features
 
-### 💰 Gestion Financière
-- Suivi des transactions
-- Gestion des factures et échéances
-- Rapports PDF automatisés
-- Multi-devises
+### 🌐 Multi-language Support
+- **French** (Primary)
+- **Arabic** (RTL Support)
+- **English**
 
-### 👥 Gestion des Utilisateurs
-- Système de rôles (Admin, Manager, Member, Executive)
-- Équipes et assignation de tâches
-- Conversations et messagerie
+### 🏢 Property Management
+- Complete loft inventory management
+- Owner relationship tracking
+- Property photos and documentation
+- Availability calendar
+- Booking management
 
-### 📅 Réservations
-- Calendrier de disponibilité
-- Gestion des réservations
-- Intégration Airbnb
+### 💰 Financial Management
+- Transaction tracking
+- Revenue analytics
+- Bill management and alerts
+- Payment method integration
+- Multi-currency support (DZD, EUR, USD)
 
-## 🛠️ Technologies
+### 📊 Analytics & Reporting
+- Real-time dashboard
+- Revenue charts and statistics
+- Occupancy rate tracking
+- Executive reports
+- PDF report generation
 
-- **Frontend:** Next.js 15, React, TypeScript
-- **Backend:** Supabase (PostgreSQL)
-- **Styling:** Tailwind CSS
-- **Authentification:** Supabase Auth
-- **Internationalisation:** i18next
-- **Charts:** Recharts
-- **PDF:** jsPDF
-- **UI Components:** Radix UI
+### 🔐 Authentication & Security
+- Supabase authentication
+- Role-based access control
+- Secure data handling
+- Row Level Security (RLS)
 
-## 🚀 Installation
+### 📱 Modern UI/UX
+- Responsive design
+- Dark/Light theme support
+- Mobile-first approach
+- Tailwind CSS styling
+- Smooth animations
 
-### Prérequis
-- Node.js 18+
-- npm ou yarn
-- Compte Supabase
+## 🛠️ Tech Stack
 
-### Configuration
+- **Framework**: Next.js 15
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth
+- **Styling**: Tailwind CSS
+- **Internationalization**: next-intl
+- **Testing**: Playwright, Jest
+- **Deployment**: Vercel
 
-1. **Cloner le repository**
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Supabase account
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/nextjsreact/algerie-loft.git
+   cd algerie-loft
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup**
+   ```bash
+   cp .env.example .env.local
+   ```
+   
+   Fill in your Supabase credentials:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+   ```
+
+4. **Database Setup**
+   Run the SQL scripts in the `scripts/` directory to set up your database schema.
+
+5. **Start Development Server**
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 📁 Project Structure
+
+```
+algerie-loft/
+├── app/                    # Next.js App Router
+├── components/             # Reusable UI components
+├── lib/                   # Utility functions
+├── messages/              # Translation files
+├── scripts/               # Database scripts
+├── styles/                # Global styles
+├── utils/                 # Helper utilities
+└── tests/                 # Test files
+```
+
+## 🌍 Internationalization
+
+The application supports three languages with complete translations:
+- All UI elements are translated
+- RTL support for Arabic
+- Dynamic language switching
+- Localized date/number formatting
+
+## 🧪 Testing
+
 ```bash
-git clone https://github.com/votre-username/loft-algeria.git
-cd loft-algeria
+# Run unit tests
+npm run test
+
+# Run E2E tests
+npm run test:e2e
+
+# Run all tests
+npm run test:all
 ```
 
-2. **Installer les dépendances**
+## 📦 Deployment
+
+The application is optimized for Vercel deployment:
+
 ```bash
-npm install
+npm run build
+npm run start
 ```
 
-3. **Configuration des variables d'environnement**
-```bash
-cp .env.example .env.local
-```
+## 🤝 Contributing
 
-Remplir les variables dans `.env.local` :
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-```
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if needed
+5. Submit a pull request
 
-4. **Lancer l'application**
-```bash
-npm run dev
-```
+## 📄 License
 
-L'application sera disponible sur `http://localhost:3000`
-
-## 📁 Structure du Projet
-
-```
-loft-algeria/
-├── app/                    # Pages et routes Next.js
-│   ├── actions/           # Server actions
-│   ├── api/               # API routes
-│   ├── lofts/             # Pages des lofts
-│   ├── dashboard/         # Tableau de bord
-│   └── ...
-├── components/            # Composants React réutilisables
-│   ├── ui/               # Composants UI de base
-│   ├── forms/            # Formulaires
-│   └── lofts/            # Composants spécifiques aux lofts
-├── lib/                  # Utilitaires et configurations
-│   ├── i18n/             # Configuration i18next
-│   └── types.ts          # Types TypeScript
-├── public/               # Assets statiques
-│   └── locales/          # Fichiers de traduction
-├── utils/                # Utilitaires Supabase
-└── scripts/              # Scripts de maintenance
-```
-
-## 🌍 Internationalisation
-
-Le projet supporte 3 langues :
-- 🇫🇷 Français (par défaut)
-- 🇬🇧 English
-- 🇸🇦 العربية (Arabic)
-
-### Ajouter une traduction
-1. Ajouter la clé dans `public/locales/{lang}/{namespace}.json`
-2. Utiliser dans le composant : `t('key', { ns: 'namespace' })`
-
-## 🔧 Outils de Développement
-
-### Scripts de Diagnostic
-```bash
-# Vérifier les traductions des lofts
-node verify-lofts-component.cjs
-
-# Tester toutes les traductions
-node test-lofts-translations-fix.cjs
-
-# Créer une sauvegarde des traductions
-node backup-working-translations.cjs backup
-```
-
-### Scripts Disponibles
-```bash
-npm run dev          # Développement
-npm run build        # Build de production
-npm run start        # Serveur de production
-npm run lint         # Linting
-npm run type-check   # Vérification TypeScript
-```
-
-## 🐛 Résolution des Problèmes
-
-### Problèmes de Traduction
-Si vous rencontrez des erreurs de traduction :
-1. Consultez `GUIDE_RAPIDE_TRADUCTIONS.md`
-2. Lancez `node verify-lofts-component.cjs`
-3. Suivez la méthodologie documentée
-
-### Problèmes de Base de Données
-- Vérifiez la connexion Supabase
-- Consultez les logs dans le dashboard Supabase
-- Vérifiez les politiques RLS
-
-## 📚 Documentation
-
-- [Guide de Résolution des Traductions](./GUIDE_RAPIDE_TRADUCTIONS.md)
-- [Commandes Rapides](./COMMANDES_RAPIDES_KIRO.md)
-- [Résolution Complète des Lofts](./RESOLUTION_COMPLETE_LOFTS.md)
-
-## 🤝 Contribution
-
-1. Fork le projet
-2. Créer une branche feature (`git checkout -b feature/AmazingFeature`)
-3. Commit les changements (`git commit -m 'Add some AmazingFeature'`)
-4. Push vers la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrir une Pull Request
-
-## 📄 Licence
-
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
-
-## 👨‍💻 Auteur
-
-Développé avec ❤️ pour la gestion immobilière moderne.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🆘 Support
 
-Pour toute question ou problème :
-1. Consultez la documentation
-2. Ouvrez une issue sur GitHub
-3. Utilisez les outils de diagnostic fournis
+For support and questions:
+- Create an issue on GitHub
+- Check the documentation in `/docs`
+- Review the troubleshooting guides
 
----
+## 🙏 Acknowledgments
 
-**Note :** Ce projet inclut des outils de diagnostic et de sauvegarde pour maintenir la stabilité des traductions et éviter les régressions.
+- Built with Next.js and Supabase
+- UI components inspired by shadcn/ui
+- Icons from Lucide React
+- Translations by native speakers
+
+## 🔧 Recent Updates
+
+### i18n Translation Consistency Fix
+- Fixed missing translation keys across all locales
+- Resolved namespace structure issues
+- Improved timezone configuration
+- Enhanced translation validation system
+
+### Key Fixes Applied:
+- ✅ Fixed `availability.algerCenterRegion` missing translations
+- ✅ Fixed `availability.testOwner` missing translations  
+- ✅ Resolved i18n configuration flattening issues
+- ✅ Added proper timezone environment variables
+- ✅ Preserved nested translation structure for namespace support
+
+The application now properly supports both flat translation keys and namespace-based translations without any `MISSING_MESSAGE` errors.

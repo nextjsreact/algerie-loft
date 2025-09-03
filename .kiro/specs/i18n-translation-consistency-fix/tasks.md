@@ -2,6 +2,7 @@
 
 - [x] 1. Fix immediate missing translation keys
 
+
   - Move reportsLabel to proper reservations namespace in French translation file
   - Verify calendar translations structure in reservations.calendar section
   - Test that all calendar controls display proper French text

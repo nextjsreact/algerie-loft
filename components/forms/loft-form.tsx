@@ -136,6 +136,11 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
   const safeInternetConnectionTypes = Array.isArray(internetConnectionTypes) ? internetConnectionTypes : []
 
   console.log("LoftForm component is rendering"); // Basic log to confirm client-side rendering
+  console.log("Loft data received:", loft);
+  console.log("Form data state:", formData);
+  console.log("Owners:", owners);
+  console.log("Zone areas:", zoneAreas);
+  console.log("Internet types:", internetConnectionTypes);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -170,6 +175,14 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
 
   return (
     <div className="bg-gray-50 p-4 sm:p-6 md:p-8">
+      {/* Debug info */}
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <strong>Debug Info:</strong>
+        <p>Loft ID: {loft?.id || 'No ID'}</p>
+        <p>Loft Name: {loft?.name || 'No name'}</p>
+        <p>Form Name Value: {formData.name || 'Empty'}</p>
+        <p>Is Edit Mode: {loft?.id ? 'Yes' : 'No'}</p>
+      </div>
       <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto">
         <div className="space-y-12">
           {/* Loft Information Section */}

@@ -1433,7 +1433,9 @@
       "income": "Revenu",
       "expense": "Dépense",
       "totalCategories": "Total : {count} catégories",
-      "updateCategoryInfo": "Mettre à jour les informations de la catégorie"
+      "updateCategoryInfo": "Mettre à jour les informations de la catégorie",
+      "incomeCount": "{count} revenus",
+      "expenseCount": "{count} dépenses"
     },
     "currencies": {
       "addFirstCurrency": "Ajoutez votre première devise pour commencer",

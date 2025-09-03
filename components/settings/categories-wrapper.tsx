@@ -42,11 +42,15 @@ export function CategoriesWrapper({ categories }: CategoriesWrapperProps) {
             <div className="flex items-center gap-4 pt-2">
               <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
                 <TrendingUp className="h-4 w-4" />
-                <span className="text-sm font-medium">{incomeCategories.length} revenus</span>
+                <span className="text-sm font-medium">
+                  {t('categories.incomeCount', { count: incomeCategories.length })}
+                </span>
               </div>
               <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400">
                 <TrendingDown className="h-4 w-4" />
-                <span className="text-sm font-medium">{expenseCategories.length} dépenses</span>
+                <span className="text-sm font-medium">
+                  {t('categories.expenseCount', { count: expenseCategories.length })}
+                </span>
               </div>
             </div>
           </div>

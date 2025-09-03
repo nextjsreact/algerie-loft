@@ -1436,7 +1436,9 @@
       "income": "دخل",
       "expense": "مصروف",
       "totalCategories": "المجموع: {count} فئة",
-      "updateCategoryInfo": "تحديث معلومات الفئة"
+      "updateCategoryInfo": "تحديث معلومات الفئة",
+      "incomeCount": "{count} دخل",
+      "expenseCount": "{count} مصروف"
     },
     "currencies": {
       "addFirstCurrency": "أضف عملتك الأولى للبدء",

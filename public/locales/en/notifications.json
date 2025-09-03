@@ -1,0 +1,6 @@
+{
+  "notifications": {
+    "newMessageFrom": "New message from {{sender}}",
+    "view": "View"
+  }
+}

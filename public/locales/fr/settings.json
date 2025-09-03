@@ -1,0 +1,28 @@
+{
+  "categories": {
+    "subtitle": "Gérez vos catégories de revenus et dépenses",
+    "addNew": "Ajouter une nouvelle catégorie",
+    "incomeCategories": "Catégories de revenus",
+    "manageCategoriesIncome": "Gérer les catégories de revenus",
+    "expenseCategories": "Catégories de dépenses",
+    "manageCategoriesExpense": "Gérer les catégories de dépenses",
+    "allCategories": "Toutes les catégories",
+    "totalCategories": "{{count}} catégorie",
+    "totalCategories_plural": "{{count}} catégories",
+    "description": "Description",
+    "noIncomeCategories": "Aucune catégorie de revenus pour le moment",
+    "noExpenseCategories": "Aucune catégorie de dépenses pour le moment",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette catégorie ?"
+  },
+  "currencies": {
+    "subtitle": "Gérez vos devises et taux de change",
+    "addNew": "Ajouter une nouvelle devise",
+    "defaultCurrency": "Devise par défaut",
+    "defaultCurrencyDesc": "La devise principale utilisée pour les calculs",
+    "default": "Par défaut",
+    "allCurrencies": "Toutes les devises",
+    "totalCurrencies": "{{count}} devise",
+    "totalCurrencies_plural": "{{count}} devises"
+  },
+  "type": "Type"
+}

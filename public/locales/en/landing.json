@@ -1,0 +1,69 @@
+{
+  "title": "Loft Algeria",
+  "description": "Complete real estate management system with professional PDF report generation to optimize your operations.",
+  "subtitle": "Optimize your real estate management.",
+  "getStarted": "Get Started",
+  "signIn": "Sign In",
+  "viewButton": "View →",
+  "features": {
+    "title": "Key Features",
+    "property": {
+      "title": "Intuitive Property Management",
+      "description": "Easily manage multiple properties, from details to documents."
+    },
+    "financial": {
+      "title": "Complete Financial Management",
+      "description": "Track revenue, expenses and generate detailed financial reports."
+    },
+    "tasks": {
+      "title": "Efficient Task Management",
+      "description": "Organize maintenance tasks and team assignments with ease."
+    },
+    "notifications": {
+      "title": "Real-Time Notifications",
+      "description": "Receive real-time alerts for tasks, bills and important events."
+    }
+  },
+  "sections": {
+    "reservations": {
+      "title": "Reservations",
+      "description": "Manage your reservations and availability"
+    },
+    "availability": {
+      "title": "Availability",
+      "description": "View and manage availability"
+    },
+    "tasks": {
+      "title": "Tasks",
+      "description": "Organize maintenance tasks"
+    },
+    "teams": {
+      "title": "Teams",
+      "description": "Manage your teams and collaborators"
+    },
+    "owners": {
+      "title": "Owners",
+      "description": "Manage your owner relationships"
+    },
+    "transactions": {
+      "title": "Transactions",
+      "description": "Track revenue and expenses"
+    },
+    "reports": {
+      "title": "Reports",
+      "description": "Generate professional reports"
+    }
+  },
+  "quickAccess": {
+    "title": "Quick Access",
+    "description": "Access the most used features directly",
+    "dashboard": "Dashboard",
+    "conversations": "Conversations",
+    "notifications": "Notifications",
+    "pdfReports": "PDF Reports"
+  },
+  "systemStatus": {
+    "title": "System Operational",
+    "description": "All services are running normally. PDF report generation available."
+  }
+}

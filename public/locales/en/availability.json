@@ -1,0 +1,78 @@
+{
+  "title": "Availability Check",
+  "subtitle": "Check real-time availability and book instantly",
+  "featuresText": "Real-time search • Advanced filters • Direct booking",
+  
+  "filters": "Filters",
+  "filtersDescription": "Refine your search with our advanced filters",
+  "resetFilters": "Reset filters",
+  "activeFilters": "{{count}} active filter(s)",
+  
+  "dateRange": "Date Range",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "region": "Region",
+  "owner": "Owner",
+  "owners": "Owners",
+  "selectOwners": "Select owners",
+  "ownersSelected": "{{count}} owner(s) selected",
+  "clearAll": "Clear all",
+  "selectAll": "Select all",
+  "loadingOwners": "Loading owners...",
+  "errorLoadingOwners": "Error loading owners",
+  "noOwnersFound": "No owners found",
+  "guests": "Guests",
+  "priceRange": "Price Range",
+  "minPrice": "Minimum Price",
+  "maxPrice": "Maximum Price",
+  
+  "allRegions": "All Regions",
+  "allOwners": "All Owners",
+  "allLofts": "All Lofts",
+  
+  "availabilityOverview": "Availability Overview",
+  "availabilityDescription": "View your lofts' availability in real-time",
+  "calendarView": "Calendar View",
+  "gridView": "Grid View",
+  
+  "totalLofts": "Total Lofts",
+  "availableLofts": "Available Lofts",
+  "occupiedLofts": "Occupied Lofts",
+  "maintenanceLofts": "Under Maintenance",
+  "averagePrice": "Average Price",
+  "occupancyRate": "Occupancy Rate",
+  
+  "high": "High",
+  "medium": "Medium",
+  "low": "Low",
+  
+  "available": "Available",
+  "occupied": "Occupied",
+  "maintenance": "Maintenance",
+  "unknown": "Unknown",
+  
+  "today": "Today",
+  "viewDetails": "View Details",
+  "bookNow": "Book Now",
+  "book": "Book",
+  "contact": "Contact",
+  "checkAvailability": "Check Availability",
+  
+  "parking": "Parking",
+  "kitchen": "Kitchen",
+  "airConditioning": "Air Conditioning",
+  "balcony": "Balcony",
+  "amenities": "Amenities",
+  
+  "basicInfo": "Basic Information",
+  "capacity": "Capacity",
+  "pricePerNight": "Price per Night",
+  "loftDetailsDescription": "Detailed information and booking options",
+  
+  "showingResults": "Showing {{count}} result(s) out of {{total}}",
+  "noLoftsFound": "No lofts found",
+  "noLoftsFoundDescription": "No lofts match your search criteria. Try modifying your filters.",
+  
+  "testOwner": "Test Owner",
+  "algerCenterRegion": "Algiers Center"
+}

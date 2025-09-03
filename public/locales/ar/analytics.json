@@ -1,0 +1,21 @@
+{
+  "analytics": {
+    "title": "التقارير والتحليلات",
+    "subtitle": "تصور الأداء المالي واتجاهات شققك",
+    "detailedFinancialPerformance": "الأداء المالي المفصل",
+    "expenses": "المصروفات",
+    "financial": "المالية",
+    "maintenance": "الصيانة",
+    "monthlyFinancialTrend": "الاتجاه المالي الشهري",
+    "monthlyOccupancyRates": "معدلات الإشغال الشهرية",
+    "mostValuableAssets": "الأصول الأكثر قيمة",
+    "occupancy": "الإشغال",
+    "occupancyRateTrends": "اتجاهات معدل الإشغال",
+    "overview": "نظرة عامة",
+    "revenue": "الإيرادات",
+    "revenueExpensesByLoft": "الإيرادات والمصروفات حسب الشقة",
+    "top5ProfitableLofts": "أفضل 5 شقق ربحية",
+    "trackRevenueExpenses": "تتبع الإيرادات والمصروفات بمرور الوقت.",
+  "realTimeDataBadge": "بيانات في الوقت الفعلي"
+  }
+}

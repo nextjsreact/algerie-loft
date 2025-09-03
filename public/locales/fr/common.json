@@ -1,0 +1,88 @@
+{
+  "currencies": {
+    "da": "DA"
+  },
+  "owners": {
+    "ownershipType": "Type de propriété"
+  },
+  "selectOption": "Sélectionner une option",
+  "saving": "Enregistrement...",
+  "error": "Erreur",
+  "systemError": "Erreur système",
+  "view": "Voir",
+  "edit": "Modifier",
+  "cancel": "Annuler",
+  "viewReports": "Voir Rapports",
+  "common": {
+    "name": "Nom",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "actions": "Actions",
+    "code": "Code",
+    "symbol": "Symbole",
+    "ratio": "Taux",
+    "yes": "Oui",
+    "no": "Non",
+    "loading": "Chargement...",
+    "copyId": "Copier l'ID",
+    "success": "Succès",
+    "error": "Erreur"
+  },
+  "nav": {
+    "currencies": "Devises",
+    "categories": "Catégories",
+    "zoneAreas": "Zones Géographiques"
+  },
+  "settings": {
+    "categories": {
+      "subtitle": "Gérez vos catégories de revenus et dépenses",
+      "addNew": "Ajouter une nouvelle catégorie",
+      "incomeCategories": "Catégories de revenus",
+      "manageCategoriesIncome": "Gérer les catégories de revenus",
+      "expenseCategories": "Catégories de dépenses",
+      "manageCategoriesExpense": "Gérer les catégories de dépenses",
+      "allCategories": "Toutes les catégories",
+      "totalCategories": "{{count}} catégorie",
+      "totalCategories_plural": "{{count}} catégories",
+      "description": "Description",
+      "noIncomeCategories": "Aucune catégorie de revenus pour le moment",
+      "noExpenseCategories": "Aucune catégorie de dépenses pour le moment",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette catégorie ?"
+    },
+    "currencies": {
+      "subtitle": "Gérez vos devises et taux de change",
+      "addNew": "Ajouter une nouvelle devise",
+      "defaultCurrency": "Devise par défaut",
+      "defaultCurrencyDesc": "La devise principale utilisée pour les calculs",
+      "default": "Par défaut",
+      "allCurrencies": "Toutes les devises",
+      "totalCurrencies": "{{count}} devise",
+      "totalCurrencies_plural": "{{count}} devises",
+      "setAsDefault": "Définir par défaut"
+    },
+    "zoneAreas": {
+      "subtitle": "Gérez les zones géographiques de vos propriétés",
+      "existingZoneAreas": "Zones Géographiques Existantes",
+      "totalZoneAreas": "{{count}} zone géographique",
+      "totalZoneAreas_plural": "{{count}} zones géographiques",
+      "addNew": "Ajouter une Nouvelle Zone",
+      "updateZoneAreaInfo": "Mettre à jour les informations de la zone",
+      "createNewZoneArea": "Créer une nouvelle zone géographique",
+      "noZoneAreasFound": "Aucune zone géographique trouvée",
+      "addFirstZoneArea": "Ajoutez votre première zone géographique",
+      "refreshError": "Erreur lors du rafraîchissement des zones"
+    }
+  },
+
+  "transactions": {
+    "income": "Revenu",
+    "expense": "Dépense"
+  },
+  "zoneAreas": {
+    "subtitle": "Gérez les zones géographiques de vos propriétés",
+    "updateZoneArea": "Modifier la Zone",
+    "createZoneArea": "Créer une Zone",
+    "updateSuccess": "Zone mise à jour avec succès",
+    "createSuccess": "Zone créée avec succès"
+  }
+}

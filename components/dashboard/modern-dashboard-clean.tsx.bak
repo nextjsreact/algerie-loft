@@ -1,0 +1,141 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { 
+  AlertTriangle, 
+  Calendar, 
+  Clock, 
+  CheckCircle, 
+  TrendingUp, 
+  Users, 
+  Building2, 
+  DollarSign,
+  Zap,
+  Droplets,
+  Phone,
+  Wifi,
+  Flame,
+  Tv,
+  ArrowUpRight,
+  ClipboardList,
+  RefreshCw,
+  BarChart3
+} from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
+import { toast } from "sonner";
+import { BillPaymentModal } from "@/components/modals/bill-payment-modal";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { format } from "date-fns";
+import { useTranslation } from "@/lib/i18n/context";
+
+type UtilityType = "eau" | "energie" | "telephone" | "internet" | "tv" | "gas";
+
+interface BillAlert {
+  loft_id: string;
+  loft_name: string;
+  utility_type: UtilityType;
+  due_date: string;
+  frequency: string;
+  days_until_due?: number;
+  days_overdue?: number;
+}
+
+interface DashboardStats {
+  totalLofts: number;
+  occupiedLofts: number;
+  monthlyRevenue: number;
+  activeTasks: number;
+  totalTeams: number;
+  upcomingBills: number;
+  overdueBills: number;
+  dueToday: number;
+  totalLoftsWithBills: number;
+}
+
+interface BillMonitoringStats {
+  upcomingBills: number;
+  overdueBills: number;
+  dueToday: number;
+  totalLoftsWithBills: number;
+}
+
+interface MonthlyRevenueData {
+  month: string;
+  revenue: number;
+  expenses: number;
+}
+
+interface RecentTask {
+  id: string;
+  title: string;
+  status: string;
+  due_date?: string;
+  assigned_user?: { full_name: string } | null;
+  loft?: { name: string } | null;
+}
+
+const UTILITY_CONFIG = {
+  eau: { 
+    icon: <Droplets className="h-4 w-4" />, 
+    color: "bg-blue-500",
+    lightColor: "bg-blue-50 text-blue-700 border-blue-200"
+  },
+  energie: { 
+    icon: <Zap className="h-4 w-4" />, 
+    color: "bg-yellow-500",
+    lightColor: "bg-yellow-50 text-yellow-700 border-yellow-200"
+  },
+  telephone: { 
+    icon: <Phone className="h-4 w-4" />, 
+    color: "bg-green-500",
+    lightColor: "bg-green-50 text-green-700 border-green-200"
+  },
+  internet: { 
+    icon: <Wifi className="h-4 w-4" />, 
+    color: "bg-purple-500",
+    lightColor: "bg-purple-50 text-purple-700 border-purple-200"
+  },
+  tv: { 
+    icon: <Tv className="h-4 w-4" />, 
+    color: "bg-red-500",
+    lightColor: "bg-red-50 text-red-700 border-red-200"
+  },
+  gas: { 
+    icon: <Flame className="h-4 w-4" />, 
+    color: "bg-orange-500",
+    lightColor: "bg-orange-50 text-orange-700 border-orange-200"
+  }
+};
+
+export function ModernDashboard() {
+  const { t } = useTranslation("dashboard");
+  const [upcomingBills, setUpcomingBills] = useState<BillAlert[]>([]);
+  const [overdueBills, setOverdueBills] = useState<BillAlert[]>([]);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalLofts: 0,
+    occupiedLofts: 0,
+    monthlyRevenue: 0,
+    activeTasks: 0,
+    totalTeams: 0,
+    upcomingBills: 0,
+    overdueBills: 0,
+    dueToday: 0,
+    totalLoftsWithBills: 0
+  });
+  const [billMonitoringStats, setBillMonitoringStats] = useState<BillMonitoringStats>({
+    upcomingBills: 0,
+    overdueBills: 0,
+    dueToday: 0,
+    totalLoftsWithBills: 0
+  });
+  const [monthlyRevenue, setMonthlyRevenue] = useState<MonthlyRevenueData[]>([]);
+  const [recentTasks, setRecentTasks] = useState<RecentTask[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [selectedBill, setSelectedBill] = useState<BillAlert | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const supabase = createClient();

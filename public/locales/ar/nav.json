@@ -1,0 +1,23 @@
+{
+  "dashboard": "لوحة التحكم",
+  "conversations": "المحادثات",
+  "lofts": "الشقق",
+  "reservations": "الحجوزات",
+  "availability": "التوفر",
+  "tasks": "المهام",
+  "transactions": "المعاملات",
+  "teams": "الفرق",
+  "owners": "الملاك",
+  "reports": "التقارير",
+  "notifications": "الإشعارات",
+  "settings": "الإعدادات",
+  "categories": "الفئات",
+  "currencies": "العملات",
+  "zoneAreas": "المناطق الجغرافية",
+  "paymentMethods": "طرق الدفع",
+  "internetConnections": "اتصالات الإنترنت",
+  "application": "التطبيق",
+  "paymentMethodsNav": "طرق الدفع",
+  "executive": "تنفيذي",
+  "loftManager": "مدير الشقق"
+}

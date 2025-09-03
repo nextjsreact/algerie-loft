@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Correction Immédiate - Français</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            padding: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        h1 { font-size: 2em; margin-bottom: 20px; }
+        .status { font-size: 1.2em; margin: 20px 0; }
+        .countdown { font-size: 3em; font-weight: bold; color: #ffeb3b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🇫🇷 Correction de la Langue</h1>
+        <div class="status" id="status">Nettoyage des cookies et définition du français...</div>
+        <div class="countdown" id="countdown">3</div>
+        <p>Redirection automatique vers l'application</p>
+    </div>
+
+    <script>
+        let count = 3;
+        const countdownEl = document.getElementById('countdown');
+        const statusEl = document.getElementById('status');
+
+        // Fonction de nettoyage et configuration
+        function fixLanguage() {
+            // 1. Nettoyer tous les cookies de langue
+            const cookiesToClear = ['language', 'i18nextLng', 'locale'];
+            cookiesToClear.forEach(name => {
+                document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+                document.cookie = `${name}=; path=/; domain=${window.location.hostname}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+                document.cookie = `${name}=; path=/; domain=.${window.location.hostname}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+            });
+
+            // 2. Nettoyer le localStorage
+            try {
+                localStorage.removeItem('i18nextLng');
+                localStorage.removeItem('language');
+                localStorage.removeItem('locale');
+            } catch(e) {}
+
+            // 3. Nettoyer le sessionStorage
+            try {
+                sessionStorage.removeItem('i18nextLng');
+                sessionStorage.removeItem('language');
+                sessionStorage.removeItem('locale');
+            } catch(e) {}
+
+            // 4. Définir le français avec tous les formats possibles
+            const frenchCookies = [
+                'language=fr; path=/; max-age=31536000; SameSite=Lax',
+                'i18nextLng=fr; path=/; max-age=31536000; SameSite=Lax',
+                'locale=fr; path=/; max-age=31536000; SameSite=Lax'
+            ];
+            
+            frenchCookies.forEach(cookie => {
+                document.cookie = cookie;
+            });
+
+            // 5. Définir dans le localStorage
+            try {
+                localStorage.setItem('i18nextLng', 'fr');
+                localStorage.setItem('language', 'fr');
+            } catch(e) {}
+
+            statusEl.textContent = '✅ Configuration française appliquée !';
+        }
+
+        // Appliquer la correction immédiatement
+        fixLanguage();
+
+        // Compte à rebours
+        const timer = setInterval(() => {
+            count--;
+            countdownEl.textContent = count;
+            
+            if (count <= 0) {
+                clearInterval(timer);
+                statusEl.textContent = '🚀 Redirection vers l\'application...';
+                countdownEl.textContent = '🇫🇷';
+                
+                // Redirection avec nettoyage du cache
+                setTimeout(() => {
+                    // Essayer plusieurs méthodes de redirection
+                    try {
+                        window.location.replace('/dashboard');
+                    } catch(e) {
+                        try {
+                            window.location.href = '/dashboard';
+                        } catch(e2) {
+                            window.location = '/dashboard';
+                        }
+                    }
+                }, 500);
+            }
+        }, 1000);
+
+        // Appliquer la correction toutes les 500ms pendant le compte à rebours
+        const fixInterval = setInterval(() => {
+            fixLanguage();
+        }, 500);
+
+        setTimeout(() => {
+            clearInterval(fixInterval);
+        }, 3000);
+    </script>
+</body>
+</html>

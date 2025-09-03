@@ -1,0 +1,7 @@
+{
+  "alerts": {
+    "resolve": "حل",
+    "resolved": "تم حل التنبيه بنجاح",
+    "resolveError": "خطأ في حل التنبيه"
+  }
+}

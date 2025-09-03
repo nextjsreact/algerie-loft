@@ -1,0 +1,3 @@
+DATABASE_URL="postgresql://loftAlger_owner:npg_gFj6SGBnufv8@ep-raspy-band-a8woowuc-pooler.eastus2.azure.neon.tech/loftAlger?sslmode=require"
+# uncomment next line if you use Prisma <5.10
+# DATABASE_URL_UNPOOLED="postgresql://loftAlger_owner:npg_gFj6SGBnufv8@ep-raspy-band-a8woowuc.eastus2.azure.neon.tech/loftAlger?sslmode=require"

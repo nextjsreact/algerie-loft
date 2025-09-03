@@ -1,0 +1,292 @@
+/* Styles WhatsApp pour les conversations */
+
+/* Couleurs WhatsApp */
+:root {
+  --whatsapp-green: #00a884;
+  --whatsapp-green-dark: #005c4b;
+  --whatsapp-light-green: #d9fdd3;
+  --whatsapp-blue: #53bdeb;
+  --whatsapp-gray: #667781;
+  --whatsapp-light-gray: #f0f2f5;
+  --whatsapp-dark-gray: #111b21;
+  --whatsapp-chat-bg: #efeae2;
+  --whatsapp-dark-bg: #0b141a;
+}
+
+/* Clip path pour les queues de messages */
+.clip-path-tail {
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+/* Animation pour les messages WhatsApp */
+@keyframes whatsappSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.whatsapp-message {
+  animation: whatsappSlideIn 0.3s ease-out;
+}
+
+/* Effet de hover pour les conversations */
+.whatsapp-conversation-item {
+  transition: all 0.2s ease-in-out;
+}
+
+.whatsapp-conversation-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark .whatsapp-conversation-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Scrollbar personnalisée style WhatsApp */
+.whatsapp-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.whatsapp-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.whatsapp-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.whatsapp-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.dark .whatsapp-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dark .whatsapp-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Indicateur de frappe WhatsApp */
+@keyframes whatsappTyping {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
+
+.whatsapp-typing-dot {
+  animation: whatsappTyping 1.4s infinite ease-in-out;
+}
+
+.whatsapp-typing-dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.whatsapp-typing-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+/* Badge de notification WhatsApp */
+.whatsapp-badge {
+  background: var(--whatsapp-green);
+  animation: whatsappPulse 2s infinite;
+}
+
+@keyframes whatsappPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* Effet de focus pour l'input WhatsApp */
+.whatsapp-input:focus {
+  border-color: var(--whatsapp-green);
+  box-shadow: 0 0 0 2px rgba(0, 168, 132, 0.2);
+}
+
+/* Boutons d'action WhatsApp */
+.whatsapp-action-btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.whatsapp-action-btn:hover {
+  transform: scale(1.1);
+  background-color: rgba(0, 168, 132, 0.1);
+}
+
+/* Message bubble avec queue */
+.whatsapp-bubble-own {
+  position: relative;
+}
+
+.whatsapp-bubble-own::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: -8px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid var(--whatsapp-light-green);
+  border-bottom: 8px solid transparent;
+}
+
+.dark .whatsapp-bubble-own::after {
+  border-left-color: var(--whatsapp-green-dark);
+}
+
+.whatsapp-bubble-other {
+  position: relative;
+}
+
+.whatsapp-bubble-other::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -8px;
+  width: 0;
+  height: 0;
+  border-right: 8px solid white;
+  border-bottom: 8px solid transparent;
+}
+
+.dark .whatsapp-bubble-other::after {
+  border-right-color: #202c33;
+}
+
+/* Responsive design pour mobile */
+@media (max-width: 768px) {
+  .whatsapp-sidebar {
+    border-right: none;
+  }
+  
+  .whatsapp-message {
+    max-width: 85%;
+  }
+  
+  .whatsapp-input {
+    font-size: 16px; /* Évite le zoom sur iOS */
+  }
+}
+
+/* Animation pour l'ouverture/fermeture de la sidebar */
+.whatsapp-sidebar-enter {
+  transform: translateX(-100%);
+}
+
+.whatsapp-sidebar-enter-active {
+  transform: translateX(0);
+  transition: transform 300ms ease-in-out;
+}
+
+.whatsapp-sidebar-exit {
+  transform: translateX(0);
+}
+
+.whatsapp-sidebar-exit-active {
+  transform: translateX(-100%);
+  transition: transform 300ms ease-in-out;
+}
+
+/* Effet de sélection pour les conversations */
+.whatsapp-conversation-selected {
+  background-color: #f5f6f6;
+  border-left: 4px solid var(--whatsapp-green);
+}
+
+.dark .whatsapp-conversation-selected {
+  background-color: #2a3942;
+}
+
+/* Statut en ligne */
+.whatsapp-online-indicator {
+  background: var(--whatsapp-green);
+  border: 2px solid white;
+  animation: whatsappOnlinePulse 2s infinite;
+}
+
+.dark .whatsapp-online-indicator {
+  border-color: #202c33;
+}
+
+@keyframes whatsappOnlinePulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Menu contextuel WhatsApp */
+.whatsapp-context-menu {
+  background: white;
+  border: 1px solid #e9edef;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dark .whatsapp-context-menu {
+  background: #2a3942;
+  border-color: #313d45;
+}
+
+/* Transition pour les messages */
+.whatsapp-message-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.whatsapp-message-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Effet de hover pour les actions de message */
+.whatsapp-message-actions {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.2s ease-in-out;
+}
+
+.whatsapp-message:hover .whatsapp-message-actions {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Style pour le resize handle */
+.whatsapp-resize-handle {
+  cursor: col-resize;
+  background: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.whatsapp-resize-handle:hover {
+  background: rgba(0, 168, 132, 0.2);
+}
+
+/* Amélioration des performances */
+.whatsapp-message-list {
+  contain: layout style paint;
+  will-change: scroll-position;
+}
+
+.whatsapp-message {
+  contain: layout style paint;
+}

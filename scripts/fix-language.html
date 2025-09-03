@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌐 Correction de la Langue - Loft Algérie</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .emoji {
+            font-size: 4em;
+            margin: 20px 0;
+        }
+        button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        .info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .success {
+            background: rgba(46, 204, 113, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+        .current-lang {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="emoji">🌐</div>
+        <h1>Correction de la Langue</h1>
+        <p>Correction du problème de mélange de langues dans l'application Loft Algérie.</p>
+        
+        <div class="current-lang" id="currentLang">
+            <strong>Langue actuelle :</strong> <span id="langDisplay">Détection...</span>
+        </div>
+
+        <div class="info">
+            <strong>🔍 Problème détecté :</strong><br>
+            • Mélange de langues (arabe + français + anglais)<br>
+            • Traductions non résolues<br>
+            • Cache de langue corrompu<br>
+            • Cookies de langue incorrects
+        </div>
+
+        <button onclick="setFrench()">🇫🇷 Forcer le Français</button>
+        <button onclick="setEnglish()">🇬🇧 Forcer l'Anglais</button>
+        <button onclick="setArabic()">🇸🇦 Forcer l'Arabe</button>
+        <button onclick="clearLanguageCache()">🧹 Nettoyer le Cache</button>
+
+        <div class="success" id="successMessage">
+            <strong>✅ Correction Appliquée !</strong><br>
+            La langue a été corrigée. L'application va se recharger automatiquement.
+        </div>
+
+        <div class="info">
+            <strong>📋 Ce que fait cette correction :</strong><br>
+            1. Supprime tous les cookies de langue<br>
+            2. Définit la nouvelle langue<br>
+            3. Nettoie le cache du navigateur<br>
+            4. Recharge l'application<br>
+            5. Force la langue sélectionnée
+        </div>
+    </div>
+
+    <script>
+        // Détecter la langue actuelle
+        function detectCurrentLanguage() {
+            const langCookie = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('language='))
+                ?.split('=')[1];
+            
+            const langDisplay = document.getElementById('langDisplay');
+            if (langCookie) {
+                const langNames = {
+                    'fr': '🇫🇷 Français',
+                    'en': '🇬🇧 Anglais', 
+                    'ar': '🇸🇦 Arabe'
+                };
+                langDisplay.textContent = langNames[langCookie] || `Inconnue (${langCookie})`;
+            } else {
+                langDisplay.textContent = 'Aucune langue définie';
+            }
+        }
+
+        function setLanguage(lang) {
+            // Supprimer tous les cookies de langue
+            document.cookie = 'language=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            document.cookie = 'language=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=localhost;';
+            document.cookie = 'language=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.localhost;';
+            
+            // Définir la nouvelle langue
+            document.cookie = `language=${lang}; path=/; max-age=${60 * 60 * 24 * 365}`;
+            
+            // Nettoyer le localStorage
+            localStorage.removeItem('language');
+            localStorage.removeItem('i18n-language');
+            
+            // Nettoyer le sessionStorage
+            sessionStorage.clear();
+            
+            showSuccess();
+            
+            // Recharger après 2 secondes
+            setTimeout(() => {
+                window.location.href = 'http://localhost:3000';
+            }, 2000);
+        }
+
+        function setFrench() {
+            setLanguage('fr');
+        }
+
+        function setEnglish() {
+            setLanguage('en');
+        }
+
+        function setArabic() {
+            setLanguage('ar');
+        }
+
+        function clearLanguageCache() {
+            // Supprimer tous les cookies
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+            });
+            
+            // Nettoyer tous les storages
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Nettoyer le cache du navigateur
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => {
+                        caches.delete(name);
+                    });
+                });
+            }
+            
+            showSuccess();
+            
+            setTimeout(() => {
+                window.location.href = 'http://localhost:3000';
+            }, 2000);
+        }
+
+        function showSuccess() {
+            document.getElementById('successMessage').style.display = 'block';
+        }
+
+        // Détecter la langue au chargement
+        detectCurrentLanguage();
+        
+        // Afficher les cookies actuels pour debug
+        console.log('Cookies actuels:', document.cookie);
+    </script>
+</body>
+</html>

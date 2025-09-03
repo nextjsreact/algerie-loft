@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test des Traductions - Toutes Langues</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .language-section {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.2s;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .button:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+        .status {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .current-lang {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        .test-results {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 Test des Traductions - Toutes Langues</h1>
+        
+        <div class="status">
+            <strong>Langue actuelle détectée :</strong>
+            <div class="current-lang" id="currentLang">Détection en cours...</div>
+        </div>
+
+        <div class="language-section">
+            <h2>🇫🇷 Français</h2>
+            <button class="button" onclick="setLanguageAndTest('fr')">
+                Tester en Français
+            </button>
+            <div class="test-results" id="fr-results" style="display: none;"></div>
+        </div>
+
+        <div class="language-section">
+            <h2>🇬🇧 English</h2>
+            <button class="button" onclick="setLanguageAndTest('en')">
+                Test in English
+            </button>
+            <div class="test-results" id="en-results" style="display: none;"></div>
+        </div>
+
+        <div class="language-section">
+            <h2>🇩🇿 العربية</h2>
+            <button class="button" onclick="setLanguageAndTest('ar')">
+                اختبار باللغة العربية
+            </button>
+            <div class="test-results" id="ar-results" style="display: none;"></div>
+        </div>
+
+        <div class="status">
+            <h3>🔧 Actions Rapides</h3>
+            <button class="button" onclick="clearCacheAndReload()">
+                🧹 Vider Cache + Recharger
+            </button>
+            <a href="/conversations" class="button">
+                💬 Aller aux Conversations
+            </a>
+        </div>
+
+        <div class="status" id="globalStatus">
+            Cliquez sur "Tester" pour une langue pour vérifier les traductions
+        </div>
+    </div>
+
+    <script>
+        // Détecter la langue actuelle
+        function detectCurrentLanguage() {
+            const cookies = document.cookie.split(';');
+            let language = 'Non définie';
+            
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'language') {
+                    language = value;
+                    break;
+                }
+            }
+            
+            const langNames = {
+                'fr': '🇫🇷 Français',
+                'en': '🇬🇧 English', 
+                'ar': '🇩🇿 العربية'
+            };
+            
+            document.getElementById('currentLang').textContent = langNames[language] || `${language} (Inconnue)`;
+            return language;
+        }
+
+        // Définir une langue et tester
+        function setLanguageAndTest(lang) {
+            const langNames = {
+                'fr': '🇫🇷 Français',
+                'en': '🇬🇧 English', 
+                'ar': '🇩🇿 العربية'
+            };
+            
+            // Définir la langue
+            document.cookie = `language=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+            document.cookie = `i18nextLng=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+            
+            try {
+                localStorage.setItem('i18nextLng', lang);
+            } catch(e) {}
+
+            // Afficher les résultats de test
+            const resultsDiv = document.getElementById(`${lang}-results`);
+            resultsDiv.style.display = 'block';
+            
+            const expectedTexts = {
+                'fr': {
+                    'title': 'Conversations',
+                    'searchPlaceholder': 'Rechercher ou commencer une nouvelle conversation',
+                    'all': 'Toutes',
+                    'unread': 'Non lues',
+                    'groups': 'Groupes',
+                    'noMessage': 'Aucun message'
+                },
+                'en': {
+                    'title': 'Conversations',
+                    'searchPlaceholder': 'Search or start a new conversation',
+                    'all': 'All',
+                    'unread': 'Unread',
+                    'groups': 'Groups',
+                    'noMessage': 'No message'
+                },
+                'ar': {
+                    'title': 'المحادثات',
+                    'searchPlaceholder': 'ابحث أو ابدأ محادثة جديدة',
+                    'all': 'الكل',
+                    'unread': 'غير مقروء',
+                    'groups': 'مجموعات',
+                    'noMessage': 'لا توجد رسائل'
+                }
+            };
+
+            const expected = expectedTexts[lang];
+            let results = `✅ Langue définie sur ${langNames[lang]}\n\n`;
+            results += `📋 Traductions attendues :\n`;
+            
+            Object.entries(expected).forEach(([key, value]) => {
+                results += `  • ${key}: "${value}"\n`;
+            });
+            
+            results += `\n🔄 Rechargez la page des conversations pour voir les changements.`;
+            
+            resultsDiv.textContent = results;
+            
+            // Mettre à jour le statut global
+            document.getElementById('globalStatus').textContent = 
+                `✅ Langue définie sur ${langNames[lang]}. Allez aux conversations pour tester !`;
+            
+            // Mettre à jour la langue détectée
+            setTimeout(detectCurrentLanguage, 500);
+        }
+
+        // Vider le cache et recharger
+        function clearCacheAndReload() {
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => {
+                            caches.delete(name);
+                        });
+                    });
+                }
+            } catch(e) {}
+
+            document.getElementById('globalStatus').textContent = '🧹 Cache vidé ! Rechargement...';
+            
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        }
+
+        // Détecter la langue au chargement
+        detectCurrentLanguage();
+        
+        // Mettre à jour toutes les 2 secondes
+        setInterval(detectCurrentLanguage, 2000);
+    </script>
+</body>
+</html>

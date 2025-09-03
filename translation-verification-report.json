@@ -1,0 +1,420 @@
+{
+  "timestamp": "2025-08-08T21:47:38.570Z",
+  "statistics": {
+    "totalNamespaces": 25,
+    "totalIssues": 263
+  },
+  "issues": {
+    "missingKeys": {
+      "analytics": {},
+      "auth": {
+        "fr": [
+          "rememberMe",
+          "hasAccount",
+          "createAccount",
+          "signInToAccount"
+        ]
+      },
+      "bills": {
+        "fr": [
+          "title",
+          "subtitle",
+          "add_bill",
+          "edit_bill",
+          "delete_bill",
+          "bill_details",
+          "table.id",
+          "table.name",
+          "table.amount",
+          "table.due_date",
+          "table.status",
+          "table.actions",
+          "form.name",
+          "form.name_placeholder",
+          "form.amount",
+          "form.amount_placeholder",
+          "form.due_date",
+          "form.status",
+          "form.paid",
+          "form.unpaid",
+          "form.pending",
+          "messages.created_success",
+          "messages.updated_success",
+          "messages.deleted_success",
+          "messages.delete_confirm"
+        ]
+      },
+      "common": {
+        "en": [
+          "settings.categories.saveError",
+          "dashboard.dueTomorrow",
+          "internetConnections.totalConnections_zero",
+          "internetConnections.totalConnections_two",
+          "internetConnections.totalConnections_few",
+          "owners.propertiesCount_zero",
+          "owners.propertiesCount_two",
+          "owners.propertiesCount_few",
+          "settings.categories.totalCategories_zero",
+          "settings.categories.totalCategories_two",
+          "settings.categories.totalCategories_few",
+          "settings.currencies.totalCurrencies_zero",
+          "settings.currencies.totalCurrencies_two",
+          "settings.currencies.totalCurrencies_few",
+          "settings.paymentMethods.totalMethods_zero",
+          "settings.paymentMethods.totalMethods_two",
+          "settings.paymentMethods.totalMethods_few"
+        ],
+        "fr": [
+          "settings.paymentMethods",
+          "dashboard.dueTomorrow",
+          "internetConnections.totalConnections_zero",
+          "internetConnections.totalConnections_two",
+          "internetConnections.totalConnections_few",
+          "owners.propertiesCount_zero",
+          "owners.propertiesCount_two",
+          "owners.propertiesCount_few",
+          "settings.categories.totalCategories_zero",
+          "settings.categories.totalCategories_two",
+          "settings.categories.totalCategories_few",
+          "settings.currencies.totalCurrencies_zero",
+          "settings.currencies.totalCurrencies_two",
+          "settings.currencies.totalCurrencies_few",
+          "settings.paymentMethods.totalMethods_zero",
+          "settings.paymentMethods.totalMethods_two",
+          "settings.paymentMethods.totalMethods_few"
+        ],
+        "ar": [
+          "settings.categories.2",
+          "settings.paymentMethods"
+        ]
+      },
+      "conversations": {},
+      "dashboard": {
+        "fr": [
+          "welcome",
+          "stats.total_lofts",
+          "stats.total_reservations",
+          "stats.total_income",
+          "stats.occupancy_rate",
+          "charts.reservations_by_month",
+          "charts.income_by_month",
+          "recent_activity.title",
+          "recent_activity.no_activity"
+        ]
+      },
+      "executive": {
+        "fr": [
+          "kpis.total_revenue",
+          "kpis.total_bookings",
+          "kpis.avg_booking_value",
+          "kpis.occupancy_rate",
+          "charts.revenue_by_property",
+          "charts.bookings_by_channel",
+          "filters.date_range",
+          "filters.property",
+          "filters.channel"
+        ]
+      },
+      "internetConnections": {
+        "en": [
+          "totalConnections_zero",
+          "totalConnections_one",
+          "totalConnections_two",
+          "totalConnections_few",
+          "totalConnections_many",
+          "totalConnections_other"
+        ],
+        "fr": [
+          "totalConnections"
+        ],
+        "ar": [
+          "totalConnections_zero",
+          "totalConnections_one",
+          "totalConnections_two",
+          "totalConnections_few",
+          "totalConnections_many",
+          "totalConnections_other"
+        ]
+      },
+      "landing": {},
+      "lofts": {},
+      "nav": {},
+      "notifications": {
+        "fr": [
+          "title",
+          "mark_all_as_read",
+          "no_notifications",
+          "new_reservation",
+          "reservation_cancelled",
+          "payment_received",
+          "task_assigned"
+        ]
+      },
+      "owners": {},
+      "paymentMethods": {
+        "fr": [
+          "title",
+          "subtitle",
+          "add_method",
+          "edit_method",
+          "delete_method",
+          "method_details",
+          "table.id",
+          "table.name",
+          "table.type",
+          "table.details",
+          "table.actions",
+          "form.name",
+          "form.name_placeholder",
+          "form.type",
+          "form.credit_card",
+          "form.bank_transfer",
+          "form.paypal",
+          "form.details",
+          "form.details_placeholder",
+          "messages.created_success",
+          "messages.updated_success",
+          "messages.deleted_success",
+          "messages.delete_confirm"
+        ]
+      },
+      "reports": {
+        "fr": [
+          "title",
+          "subtitle",
+          "generate_report",
+          "report_details",
+          "table.id",
+          "table.name",
+          "table.type",
+          "table.date_created",
+          "table.actions",
+          "form.report_name",
+          "form.report_name_placeholder",
+          "form.report_type",
+          "form.sales_report",
+          "form.occupancy_report",
+          "form.financial_report",
+          "form.start_date",
+          "form.end_date",
+          "messages.generated_success",
+          "messages.deleted_success",
+          "messages.delete_confirm"
+        ]
+      },
+      "reservations": {
+        "fr": [
+          "subtitle",
+          "add_reservation",
+          "edit_reservation",
+          "delete_reservation",
+          "reservation_details",
+          "table.id",
+          "table.guest_name",
+          "table.check_in",
+          "table.check_out",
+          "table.status",
+          "table.actions",
+          "messages.created_success",
+          "messages.updated_success",
+          "messages.deleted_success",
+          "messages.delete_confirm"
+        ]
+      },
+      "settings": {
+        "fr": [
+          "settings.zoneAreas.existingZoneAreas",
+          "settings.zoneAreas.totalZoneAreas",
+          "settings.zoneAreas.noZoneAreasFound",
+          "settings.zoneAreas.addFirstZoneArea",
+          "settings.zoneAreas.addNew",
+          "settings.zoneAreas.updateZoneAreaInfo",
+          "settings.zoneAreas.createNewZoneArea"
+        ]
+      },
+      "tasks": {
+        "fr": [
+          "add_task",
+          "edit_task",
+          "delete_task",
+          "task_details",
+          "table.id",
+          "table.name",
+          "table.due_date",
+          "table.assigned_to",
+          "table.status",
+          "table.actions",
+          "messages.created_success",
+          "messages.updated_success",
+          "messages.deleted_success",
+          "messages.delete_confirm"
+        ]
+      },
+      "teams": {
+        "fr": [
+          "add_team",
+          "edit_team",
+          "delete_team",
+          "team_details",
+          "table.id",
+          "table.name",
+          "table.members",
+          "table.actions",
+          "form.name",
+          "form.name_placeholder",
+          "form.members",
+          "form.add_member",
+          "messages.created_success",
+          "messages.updated_success",
+          "messages.deleted_success",
+          "messages.delete_confirm"
+        ]
+      },
+      "testSound": {},
+      "testTranslations": {},
+      "theme": {},
+      "transactions": {},
+      "unauthorized": {
+        "fr": [
+          "title",
+          "message",
+          "go_home"
+        ]
+      },
+      "zoneAreas": {}
+    },
+    "emptyTranslations": {
+      "analytics": {},
+      "auth": {},
+      "bills": {},
+      "common": {
+        "en": [
+          "settings.paymentMethods.addFirstMethod",
+          "settings.paymentMethods.additionalDetails",
+          "settings.paymentMethods.addPaymentMethod",
+          "settings.paymentMethods.createdOn",
+          "settings.paymentMethods.existingMethods",
+          "settings.paymentMethods.noMethodsFound",
+          "settings.paymentMethods.subtitle",
+          "settings.paymentMethods.totalMethods_one",
+          "settings.paymentMethods.totalMethods_many",
+          "settings.paymentMethods.totalMethods_other"
+        ],
+        "fr": [
+          "selectOption"
+        ]
+      },
+      "conversations": {},
+      "dashboard": {},
+      "executive": {},
+      "internetConnections": {},
+      "landing": {
+        "en": [
+          "features.financial.description",
+          "features.financial.title",
+          "features.notifications.description",
+          "features.notifications.title",
+          "features.property.description",
+          "features.property.title",
+          "features.tasks.description",
+          "features.tasks.title",
+          "features.title"
+        ],
+        "ar": [
+          "features.financial.description",
+          "features.financial.title",
+          "features.notifications.description",
+          "features.notifications.title",
+          "features.property.description",
+          "features.property.title",
+          "features.tasks.description",
+          "features.tasks.title",
+          "features.title"
+        ]
+      },
+      "lofts": {},
+      "nav": {},
+      "notifications": {},
+      "owners": {},
+      "paymentMethods": {},
+      "reports": {},
+      "reservations": {},
+      "settings": {
+        "en": [
+          "categories.saveError",
+          "paymentMethods.addFirstMethod",
+          "paymentMethods.addPaymentMethod",
+          "paymentMethods.additionalDetails",
+          "paymentMethods.createdOn",
+          "paymentMethods.existingMethods",
+          "paymentMethods.noMethodsFound",
+          "paymentMethods.subtitle",
+          "paymentMethods.totalMethods_one",
+          "paymentMethods.totalMethods_many",
+          "paymentMethods.totalMethods_other"
+        ],
+        "fr": [
+          "categories.saveError",
+          "paymentMethods.addFirstMethod",
+          "paymentMethods.addPaymentMethod",
+          "paymentMethods.additionalDetails",
+          "paymentMethods.createdOn",
+          "paymentMethods.existingMethods",
+          "paymentMethods.noMethodsFound",
+          "paymentMethods.subtitle",
+          "paymentMethods.totalMethods_one",
+          "paymentMethods.totalMethods_many",
+          "paymentMethods.totalMethods_other"
+        ],
+        "ar": [
+          "categories.saveError",
+          "paymentMethods.addFirstMethod",
+          "paymentMethods.addPaymentMethod",
+          "paymentMethods.additionalDetails",
+          "paymentMethods.createdOn",
+          "paymentMethods.existingMethods",
+          "paymentMethods.noMethodsFound",
+          "paymentMethods.subtitle",
+          "paymentMethods.totalMethods_one",
+          "paymentMethods.totalMethods_many",
+          "paymentMethods.totalMethods_other"
+        ]
+      },
+      "tasks": {},
+      "teams": {},
+      "testSound": {},
+      "testTranslations": {},
+      "theme": {},
+      "transactions": {},
+      "unauthorized": {},
+      "zoneAreas": {}
+    },
+    "inconsistentKeys": {
+      "analytics": {},
+      "auth": {},
+      "bills": {},
+      "common": {},
+      "conversations": {},
+      "dashboard": {},
+      "executive": {},
+      "internetConnections": {},
+      "landing": {},
+      "lofts": {},
+      "nav": {},
+      "notifications": {},
+      "owners": {},
+      "paymentMethods": {},
+      "reports": {},
+      "reservations": {},
+      "settings": {},
+      "tasks": {},
+      "teams": {},
+      "testSound": {},
+      "testTranslations": {},
+      "theme": {},
+      "transactions": {},
+      "unauthorized": {},
+      "zoneAreas": {}
+    }
+  }
+}

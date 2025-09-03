@@ -1,0 +1,16 @@
+@echo off
+echo Nettoyage du cache Next.js...
+if exist .next (
+    echo Tentative de suppression du dossier .next...
+    rmdir /s /q .next 2>nul
+    if exist .next (
+        echo Le dossier .next existe encore, tentative de renommage...
+        ren .next .next-old-%RANDOM% 2>nul
+    )
+)
+
+echo Creation d'un nouveau dossier .next...
+mkdir .next 2>nul
+
+echo Demarrage du serveur de developpement...
+npm run dev

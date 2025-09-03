@@ -1,0 +1,30 @@
+{
+  "locales": [
+    "fr",
+    "en",
+    "ar"
+  ],
+  "namespaces": [
+    "common",
+    "auth",
+    "dashboard",
+    "lofts",
+    "transactions",
+    "navigation",
+    "forms"
+  ],
+  "stats": {
+    "beforeOptimization": {
+      "fr": 66179,
+      "en": 59685,
+      "ar": 73660
+    },
+    "afterOptimization": {
+      "fr": 64743,
+      "en": 59671,
+      "ar": 71990
+    },
+    "totalSavings": 3120
+  },
+  "lastOptimized": "2025-08-31T22:51:36.568Z"
+}

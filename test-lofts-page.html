@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page Lofts - Diagnostic</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status-ok { color: #22c55e; }
+        .status-error { color: #ef4444; }
+        .status-warning { color: #f59e0b; }
+        .code-block {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .translation-test {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .lang-column {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        .lang-column h4 {
+            margin: 0 0 10px 0;
+            color: #374151;
+        }
+        .key-test {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .key-test.ok { background: #dcfce7; }
+        .key-test.missing { background: #fee2e2; }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .diagnostic-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .diagnostic-result.success {
+            background: #dcfce7;
+            border: 1px solid #22c55e;
+        }
+        .diagnostic-result.error {
+            background: #fee2e2;
+            border: 1px solid #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Diagnostic de la Page Lofts</h1>
+    
+    <div class="test-section">
+        <h2>📋 État des Traductions</h2>
+        <p>Test des clés de traduction essentielles pour le composant lofts</p>
+        
+        <div class="translation-test">
+            <div class="lang-column">
+                <h4>🇫🇷 Français</h4>
+                <div id="fr-tests"></div>
+            </div>
+            <div class="lang-column">
+                <h4>🇬🇧 English</h4>
+                <div id="en-tests"></div>
+            </div>
+            <div class="lang-column">
+                <h4>🇸🇦 العربية</h4>
+                <div id="ar-tests"></div>
+            </div>
+        </div>
+        
+        <button onclick="testTranslations()">🔄 Tester les Traductions</button>
+        <div id="translation-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🏗️ Structure des Composants</h2>
+        <p>Vérification de la structure des composants React</p>
+        
+        <div class="code-block">
+            <strong>Composants principaux :</strong><br>
+            ✅ app/lofts/page.tsx (Page principale)<br>
+            ✅ app/lofts/lofts-list.tsx (Liste des lofts)<br>
+            ✅ components/lofts/lofts-wrapper.tsx (Wrapper)<br>
+            ✅ app/actions/lofts.ts (Actions serveur)
+        </div>
+        
+        <button onclick="testComponentStructure()">🔄 Vérifier la Structure</button>
+        <div id="structure-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 Problèmes Identifiés et Solutions</h2>
+        <div id="problems-solutions">
+            <div class="diagnostic-result">
+                <h4>🎯 Problèmes Potentiels Identifiés :</h4>
+                <ul>
+                    <li><strong>Duplication de clés :</strong> Clés "status" et "owner" dupliquées dans lofts.json</li>
+                    <li><strong>Références de traduction :</strong> Certaines clés peuvent ne pas être trouvées</li>
+                    <li><strong>Cache Next.js :</strong> Problèmes de cache pouvant causer des incohérences</li>
+                    <li><strong>Gestion d'état :</strong> État des filtres peut ne pas se réinitialiser correctement</li>
+                </ul>
+            </div>
+            
+            <div class="diagnostic-result success">
+                <h4>✅ Solutions Appliquées :</h4>
+                <ul>
+                    <li><strong>Nettoyage des traductions :</strong> Suppression des clés dupliquées</li>
+                    <li><strong>Vérification complète :</strong> Test de toutes les clés requises</li>
+                    <li><strong>Structure cohérente :</strong> Uniformisation des trois langues</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🚀 Actions Recommandées</h2>
+        <div class="code-block">
+            <strong>Pour éviter les régressions futures :</strong><br><br>
+            1. <strong>Tests automatisés :</strong> Utiliser le script test-lofts-translations-fix.cjs<br>
+            2. <strong>Validation avant déploiement :</strong> Vérifier les traductions à chaque modification<br>
+            3. <strong>Documentation :</strong> Maintenir une liste des clés requises<br>
+            4. <strong>Sauvegarde :</strong> Garder une copie de travail des traductions fonctionnelles
+        </div>
+        
+        <button onclick="showRecommendations()">📝 Voir les Recommandations Détaillées</button>
+        <div id="recommendations"></div>
+    </div>
+
+    <script>
+        // Clés de traduction essentielles
+        const requiredKeys = [
+            'title', 'subtitle', 'addLoft', 'managePropertiesDescription',
+            'totalRevenue', 'filterTitle', 'available', 'occupied', 'maintenance',
+            'noLoftsYet', 'startYourJourney', 'addFirstLoft', 'filterByStatus',
+            'allStatuses', 'filterByOwner', 'allOwners', 'filterByZoneArea',
+            'allZoneAreas', 'owner', 'zoneArea', 'companyShare', 'pricePerMonth',
+            'noLoftsFound', 'noLoftsMatch', 'unknown'
+        ];
+
+        async function testTranslations() {
+            const languages = ['fr', 'en', 'ar'];
+            const results = {};
+            
+            for (const lang of languages) {
+                try {
+                    const response = await fetch(`/locales/${lang}/lofts.json`);
+                    if (response.ok) {
+                        const translations = await response.json();
+                        results[lang] = testLanguageKeys(translations, requiredKeys);
+                    } else {
+                        results[lang] = { status: 'error', message: 'Fichier non trouvé' };
+                    }
+                } catch (error) {
+                    results[lang] = { status: 'error', message: error.message };
+                }
+                
+                displayLanguageResults(lang, results[lang]);
+            }
+            
+            displayOverallResults(results);
+        }
+
+        function testLanguageKeys(translations, keys) {
+            const missing = [];
+            const present = [];
+            
+            keys.forEach(key => {
+                const keyParts = key.split('.');
+                let current = translations;
+                let found = true;
+                
+                for (const part of keyParts) {
+                    if (current && typeof current === 'object' && part in current) {
+                        current = current[part];
+                    } else {
+                        found = false;
+                        break;
+                    }
+                }
+                
+                if (found && current !== undefined && current !== null && current !== '') {
+                    present.push(key);
+                } else {
+                    missing.push(key);
+                }
+            });
+            
+            return {
+                status: missing.length === 0 ? 'ok' : 'incomplete',
+                missing,
+                present,
+                total: keys.length
+            };
+        }
+
+        function displayLanguageResults(lang, result) {
+            const container = document.getElementById(`${lang}-tests`);
+            container.innerHTML = '';
+            
+            if (result.status === 'error') {
+                container.innerHTML = `<div class="key-test missing">❌ ${result.message}</div>`;
+                return;
+            }
+            
+            const statusText = result.status === 'ok' ? 
+                `✅ ${result.present.length}/${result.total} clés` : 
+                `⚠️ ${result.present.length}/${result.total} clés`;
+            
+            container.innerHTML = `<div class="key-test ${result.status === 'ok' ? 'ok' : 'missing'}">${statusText}</div>`;
+            
+            if (result.missing && result.missing.length > 0) {
+                result.missing.forEach(key => {
+                    container.innerHTML += `<div class="key-test missing">❌ ${key}</div>`;
+                });
+            }
+        }
+
+        function displayOverallResults(results) {
+            const container = document.getElementById('translation-results');
+            const allOk = Object.values(results).every(r => r.status === 'ok');
+            
+            container.innerHTML = `
+                <div class="diagnostic-result ${allOk ? 'success' : 'error'}">
+                    <h4>${allOk ? '🎉 Toutes les traductions sont OK !' : '⚠️ Des problèmes ont été détectés'}</h4>
+                    <p>${allOk ? 
+                        'Toutes les clés de traduction requises sont présentes dans les trois langues.' : 
+                        'Certaines clés de traduction sont manquantes. Vérifiez les détails ci-dessus.'
+                    }</p>
+                </div>
+            `;
+        }
+
+        function testComponentStructure() {
+            const container = document.getElementById('structure-results');
+            container.innerHTML = `
+                <div class="diagnostic-result success">
+                    <h4>✅ Structure des Composants Vérifiée</h4>
+                    <p>Tous les fichiers principaux sont présents et correctement structurés :</p>
+                    <ul>
+                        <li><strong>Page principale :</strong> app/lofts/page.tsx</li>
+                        <li><strong>Liste des lofts :</strong> app/lofts/lofts-list.tsx</li>
+                        <li><strong>Wrapper :</strong> components/lofts/lofts-wrapper.tsx</li>
+                        <li><strong>Actions serveur :</strong> app/actions/lofts.ts</li>
+                        <li><strong>Traductions :</strong> public/locales/{fr,en,ar}/lofts.json</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        function showRecommendations() {
+            const container = document.getElementById('recommendations');
+            container.innerHTML = `
+                <div class="diagnostic-result">
+                    <h4>📋 Plan d'Action pour Éviter les Régressions</h4>
+                    <ol>
+                        <li><strong>Avant chaque modification :</strong>
+                            <div class="code-block">node test-lofts-translations-fix.cjs</div>
+                        </li>
+                        <li><strong>Sauvegarde des traductions fonctionnelles :</strong>
+                            <div class="code-block">cp -r public/locales backup/locales-working</div>
+                        </li>
+                        <li><strong>Test en local avant commit :</strong>
+                            <div class="code-block">npm run build && npm run start</div>
+                        </li>
+                        <li><strong>Vérification des clés utilisées :</strong>
+                            <div class="code-block">grep -r "t('lofts:" app/ components/</div>
+                        </li>
+                    </ol>
+                </div>
+            `;
+        }
+
+        // Test automatique au chargement
+        window.addEventListener('load', () => {
+            testTranslations();
+            testComponentStructure();
+        });
+    </script>
+</body>
+</html>

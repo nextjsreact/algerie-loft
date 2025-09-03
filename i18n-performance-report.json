@@ -1,0 +1,51 @@
+{
+  "timestamp": "2025-08-31T22:51:43.617Z",
+  "loadResults": [
+    {
+      "locale": "fr",
+      "loadTime": 3.076500000000003,
+      "keyCount": 1280,
+      "fileSizeKB": 63.2255859375,
+      "keysPerMs": 416.05720786608117
+    },
+    {
+      "locale": "en",
+      "loadTime": 0.9641999999999982,
+      "keyCount": 1326,
+      "fileSizeKB": 58.2724609375,
+      "keysPerMs": 1375.2333540759205
+    },
+    {
+      "locale": "ar",
+      "loadTime": 1.308400000000006,
+      "keyCount": 1278,
+      "fileSizeKB": 70.302734375,
+      "keysPerMs": 976.7655151329824
+    }
+  ],
+  "averages": {
+    "fileSize": 63.93359375,
+    "loadTime": 1.7830333333333357
+  },
+  "recommendations": [
+    "🔧 Utiliser le lazy loading pour les namespaces non critiques",
+    "🗜️ Activer la compression gzip pour les fichiers de traduction",
+    "📱 Implémenter le préchargement intelligent basé sur la navigation"
+  ],
+  "testConfiguration": {
+    "locales": [
+      "fr",
+      "en",
+      "ar"
+    ],
+    "testKeys": [
+      "common.save",
+      "common.cancel",
+      "auth.login",
+      "dashboard.title",
+      "lofts.add",
+      "transactions.list",
+      "navigation.dashboard"
+    ]
+  }
+}

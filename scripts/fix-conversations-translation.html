@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correction Traductions Conversations</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #00a884 0%, #128c7e 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.2s;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+        .button:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+        .status {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .countdown {
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .problem {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Correction des Traductions</h1>
+        
+        <div class="problem">
+            <h3>🔍 Problème Identifié :</h3>
+            <p>Mélange français/anglais dans la sidebar :</p>
+            <ul>
+                <li>❌ "Search or start a new conversation" (anglais)</li>
+                <li>❌ "All", "Unread", "Groups" (anglais)</li>
+                <li>✅ "Conversations", "Aucun message" (français)</li>
+            </ul>
+        </div>
+
+        <div class="status" id="status">
+            Cliquez sur "Corriger Maintenant" pour résoudre le problème
+        </div>
+
+        <button class="button" onclick="fixTranslations()">
+            🇫🇷 Corriger Maintenant
+        </button>
+
+        <button class="button" onclick="clearCacheAndReload()">
+            🧹 Vider Cache + Recharger
+        </button>
+
+        <button class="button" onclick="goToConversations()">
+            💬 Aller aux Conversations
+        </button>
+
+        <div class="countdown" id="countdown" style="display: none;"></div>
+    </div>
+
+    <script>
+        function fixTranslations() {
+            const statusEl = document.getElementById('status');
+            statusEl.innerHTML = '🔧 Correction des traductions en cours...';
+
+            // 1. Forcer le français
+            document.cookie = 'language=fr; path=/; max-age=31536000; SameSite=Lax';
+            document.cookie = 'i18nextLng=fr; path=/; max-age=31536000; SameSite=Lax';
+            
+            // 2. Nettoyer le cache des traductions
+            try {
+                localStorage.removeItem('i18next');
+                localStorage.removeItem('i18nextLng');
+                localStorage.setItem('i18nextLng', 'fr');
+                
+                // Nettoyer le cache des composants
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => {
+                            caches.delete(name);
+                        });
+                    });
+                }
+            } catch(e) {}
+
+            // 3. Forcer le rechargement des traductions
+            statusEl.innerHTML = '✅ Traductions corrigées ! Redirection...';
+            
+            setTimeout(() => {
+                // Redirection avec paramètre pour forcer le rechargement
+                window.location.href = '/conversations?refresh=' + Date.now();
+            }, 2000);
+        }
+
+        function clearCacheAndReload() {
+            const statusEl = document.getElementById('status');
+            statusEl.innerHTML = '🧹 Nettoyage du cache...';
+
+            // Nettoyer tout le cache
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => {
+                            caches.delete(name);
+                        });
+                    });
+                }
+            } catch(e) {}
+
+            // Nettoyer les cookies
+            const cookies = document.cookie.split(';');
+            cookies.forEach(cookie => {
+                const eqPos = cookie.indexOf('=');
+                const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                if (name !== 'sb-access-token' && name !== 'sb-refresh-token') {
+                    document.cookie = name + '=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                }
+            });
+
+            // Redéfinir le français
+            document.cookie = 'language=fr; path=/; max-age=31536000; SameSite=Lax';
+            
+            statusEl.innerHTML = '🔄 Rechargement forcé...';
+            
+            setTimeout(() => {
+                location.reload(true);
+            }, 1500);
+        }
+
+        function goToConversations() {
+            const statusEl = document.getElementById('status');
+            statusEl.innerHTML = '💬 Redirection vers les conversations...';
+            
+            setTimeout(() => {
+                window.location.href = '/conversations';
+            }, 1000);
+        }
+
+        // Vérifier la langue actuelle
+        function checkCurrentLanguage() {
+            const cookies = document.cookie.split(';');
+            let language = 'Non définie';
+            
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'language') {
+                    language = value;
+                    break;
+                }
+            }
+            
+            const statusEl = document.getElementById('status');
+            if (language === 'fr') {
+                statusEl.innerHTML = '✅ Langue française détectée. Cliquez sur "Corriger Maintenant" si le problème persiste.';
+            } else {
+                statusEl.innerHTML = `⚠️ Langue détectée: ${language}. Cliquez sur "Corriger Maintenant" pour passer en français.`;
+            }
+        }
+
+        // Vérifier au chargement
+        checkCurrentLanguage();
+    </script>
+</body>
+</html>

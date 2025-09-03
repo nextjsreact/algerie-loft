@@ -1,0 +1,14 @@
+{
+  "cancel": "إلغاء",
+  "currencies": {
+    "da": "دج"
+  },
+  "edit": "تعديل",
+  "error": "خطأ",
+  "owners": {
+    "ownershipType": "نوع الملكية"
+  },
+  "selectOption": "اختر خياراً",
+  "systemError": "خطأ في النظام",
+  "view": "عرض"
+}

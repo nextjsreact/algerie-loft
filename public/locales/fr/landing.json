@@ -1,0 +1,69 @@
+{
+  "title": "Loft Algérie",
+  "description": "Système de gestion immobilière complet avec génération de rapports PDF professionnels pour optimiser vos opérations.",
+  "subtitle": "Optimisez votre gestion immobilière.",
+  "getStarted": "Commencer",
+  "signIn": "Se Connecter",
+  "viewButton": "Voir →",
+  "features": {
+    "title": "Fonctionnalités Clés",
+    "property": {
+      "title": "Gestion Intuitive des Propriétés",
+      "description": "Gérez facilement plusieurs propriétés, des détails aux documents."
+    },
+    "financial": {
+      "title": "Gestion Financière Complète",
+      "description": "Suivez les revenus, les dépenses et générez des rapports financiers détaillés."
+    },
+    "tasks": {
+      "title": "Gestion Efficace des Tâches",
+      "description": "Organisez les tâches de maintenance et les affectations d'équipe en toute simplicité."
+    },
+    "notifications": {
+      "title": "Notifications en Temps Réel",
+      "description": "Recevez des alertes en temps réel pour les tâches, les factures et les événements importants."
+    }
+  },
+  "sections": {
+    "reservations": {
+      "title": "Réservations",
+      "description": "Gérez vos réservations et disponibilités"
+    },
+    "availability": {
+      "title": "Disponibilités",
+      "description": "Consultez et gérez les disponibilités"
+    },
+    "tasks": {
+      "title": "Tâches",
+      "description": "Organisez les tâches de maintenance"
+    },
+    "teams": {
+      "title": "Équipes",
+      "description": "Gérez vos équipes et collaborateurs"
+    },
+    "owners": {
+      "title": "Propriétaires",
+      "description": "Gérez vos relations propriétaires"
+    },
+    "transactions": {
+      "title": "Transactions",
+      "description": "Suivez revenus et dépenses"
+    },
+    "reports": {
+      "title": "Rapports",
+      "description": "Générez des rapports professionnels"
+    }
+  },
+  "quickAccess": {
+    "title": "Accès Rapide",
+    "description": "Accédez directement aux fonctionnalités les plus utilisées",
+    "dashboard": "Dashboard",
+    "conversations": "Conversations",
+    "notifications": "Notifications",
+    "pdfReports": "Rapports PDF"
+  },
+  "systemStatus": {
+    "title": "Système Opérationnel",
+    "description": "Tous les services fonctionnent normalement. Génération de rapports PDF disponible."
+  }
+}

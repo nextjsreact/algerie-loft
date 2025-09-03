@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧹 Nettoyage des Cookies - Loft Algérie</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .emoji {
+            font-size: 4em;
+            margin: 20px 0;
+        }
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        .info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .success {
+            background: rgba(46, 204, 113, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+        .warning {
+            background: rgba(241, 196, 15, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="emoji">🧹</div>
+        <h1>Nettoyage des Cookies</h1>
+        <p>Votre application Loft Algérie a détecté une taille importante de cookies (4169 bytes).</p>
+        
+        <div class="warning">
+            <strong>⚠️ Pourquoi nettoyer ?</strong><br>
+            • Améliore les performances<br>
+            • Résout les erreurs d'authentification<br>
+            • Évite les problèmes de session<br>
+            • Optimise la vitesse de chargement
+        </div>
+
+        <button onclick="clearAllCookies()">🗑️ Nettoyer Tous les Cookies</button>
+        <button onclick="clearSupabaseCookies()">🔐 Nettoyer Cookies Supabase</button>
+        <button onclick="location.reload()">🔄 Actualiser la Page</button>
+
+        <div class="success" id="successMessage">
+            <strong>✅ Nettoyage Terminé !</strong><br>
+            Les cookies ont été supprimés avec succès. Vous pouvez maintenant retourner à l'application.
+        </div>
+
+        <div class="info">
+            <strong>📋 Instructions :</strong><br>
+            1. Cliquez sur "Nettoyer Tous les Cookies"<br>
+            2. Actualisez cette page<br>
+            3. Retournez à votre application : <a href="http://localhost:3002" style="color: #74b9ff;">http://localhost:3002</a><br>
+            4. Reconnectez-vous si nécessaire
+        </div>
+
+        <div class="info">
+            <strong>🔧 Alternative :</strong><br>
+            Utilisez la navigation privée (Ctrl+Shift+N) pour éviter les problèmes de cookies.
+        </div>
+    </div>
+
+    <script>
+        function clearAllCookies() {
+            // Supprimer tous les cookies du domaine
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+            });
+            
+            // Supprimer les cookies pour localhost
+            const cookies = ['sb-access-token', 'sb-refresh-token', 'sb-mhngbluefyucoesgcjoy-auth-token', 'language', '__next_hmr_refresh_hash__'];
+            cookies.forEach(cookie => {
+                document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=localhost;`;
+                document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.localhost;`;
+            });
+            
+            showSuccess();
+        }
+
+        function clearSupabaseCookies() {
+            // Supprimer uniquement les cookies Supabase
+            const supabaseCookies = ['sb-access-token', 'sb-refresh-token', 'sb-mhngbluefyucoesgcjoy-auth-token'];
+            supabaseCookies.forEach(cookie => {
+                document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=localhost;`;
+                document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.localhost;`;
+            });
+            
+            showSuccess();
+        }
+
+        function showSuccess() {
+            document.getElementById('successMessage').style.display = 'block';
+            setTimeout(() => {
+                window.location.href = 'http://localhost:3002';
+            }, 3000);
+        }
+
+        // Afficher les cookies actuels pour debug
+        console.log('Cookies actuels:', document.cookie);
+    </script>
+</body>
+</html>

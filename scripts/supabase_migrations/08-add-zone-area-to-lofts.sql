@@ -1,0 +1,7 @@
+ALTER TABLE lofts
+ADD COLUMN IF NOT EXISTS zone_area_id UUID;
+
+ALTER TABLE lofts
+DROP CONSTRAINT IF EXISTS fk_zone_area,
+ADD CONSTRAINT fk_zone_area
+FOREIGN KEY (zone_area_id) REFERENCES zone_areas(id) ON DELETE CASCADE;

@@ -1,0 +1,28 @@
+{
+  "categories": {
+    "subtitle": "إدارة فئات الإيرادات والمصروفات",
+    "addNew": "إضافة فئة جديدة",
+    "incomeCategories": "فئات الإيرادات",
+    "manageCategoriesIncome": "إدارة فئات الإيرادات",
+    "expenseCategories": "فئات المصروفات",
+    "manageCategoriesExpense": "إدارة فئات المصروفات",
+    "allCategories": "جميع الفئات",
+    "totalCategories": "{{count}} فئة",
+    "totalCategories_plural": "{{count}} فئة",
+    "description": "الوصف",
+    "noIncomeCategories": "لا توجد فئات إيرادات حتى الآن",
+    "noExpenseCategories": "لا توجد فئات مصروفات حتى الآن",
+    "deleteConfirm": "هل أنت متأكد من حذف هذه الفئة؟"
+  },
+  "currencies": {
+    "subtitle": "إدارة العملات وأسعار الصرف",
+    "addNew": "إضافة عملة جديدة",
+    "defaultCurrency": "العملة الافتراضية",
+    "defaultCurrencyDesc": "العملة الرئيسية المستخدمة في العمليات الحسابية",
+    "default": "افتراضي",
+    "allCurrencies": "جميع العملات",
+    "totalCurrencies": "{{count}} عملة",
+    "totalCurrencies_plural": "{{count}} عملة"
+  },
+  "type": "النوع"
+}

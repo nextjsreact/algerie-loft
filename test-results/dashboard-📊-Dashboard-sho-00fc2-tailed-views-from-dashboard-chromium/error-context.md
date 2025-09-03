@@ -1,0 +1,49 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - img [ref=e8]
+        - heading "🔐 Bon retour" [level=2] [ref=e12]
+        - paragraph [ref=e13]: Connectez-vous à votre compte
+      - button [ref=e15] [cursor=pointer]:
+        - img
+        - img
+      - generic [ref=e16]:
+        - generic [ref=e18]: Se connecter
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - generic [ref=e22]: Email
+            - textbox "Email" [ref=e23]
+          - generic [ref=e24]:
+            - generic [ref=e25]: Mot de passe
+            - generic [ref=e26]:
+              - textbox "Mot de passe" [ref=e27]
+              - button [ref=e28] [cursor=pointer]:
+                - img
+          - link "Mot de passe oublié ?" [ref=e30] [cursor=pointer]:
+            - /url: /forgot-password
+          - button "Se connecter" [ref=e31] [cursor=pointer]
+      - generic [ref=e34]:
+        - paragraph [ref=e35]:
+          - text: Vous n'avez pas de compte ?
+          - link "S'inscrire" [ref=e36] [cursor=pointer]:
+            - /url: /register
+        - generic [ref=e37]:
+          - paragraph [ref=e38]: Comptes de démonstration
+          - generic [ref=e39]:
+            - paragraph [ref=e40]:
+              - strong [ref=e41]: "Admin:"
+              - text: admin@loftmanager.com / password123
+            - paragraph [ref=e42]:
+              - strong [ref=e43]: "Manager:"
+              - text: manager@loftmanager.com / password123
+            - paragraph [ref=e44]:
+              - strong [ref=e45]: "Membre:"
+              - text: member@loftmanager.com / password123
+  - button "Open Next.js Dev Tools" [ref=e51] [cursor=pointer]:
+    - img [ref=e52] [cursor=pointer]
+  - alert [ref=e55]
+```

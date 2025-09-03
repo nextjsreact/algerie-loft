@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Définir le Français par Défaut - Loft Algérie</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+        .button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: background 0.2s;
+        }
+        .button:hover {
+            background: #2563eb;
+        }
+        .button.success {
+            background: #10b981;
+        }
+        .button.success:hover {
+            background: #059669;
+        }
+        .info {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #f0fdf4;
+            border: 1px solid #10b981;
+            color: #065f46;
+        }
+        .current-lang {
+            font-weight: bold;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .lang-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 Sélection de la Langue</h1>
+        
+        <div class="info">
+            <strong>Langue actuelle détectée :</strong>
+            <div class="current-lang" id="currentLang">Détection en cours...</div>
+        </div>
+
+        <h2>Choisir une Langue</h2>
+        
+        <div class="lang-option">
+            <button class="button success" onclick="setLanguage('fr')">
+                🇫🇷 Français
+            </button>
+            <span>Langue recommandée pour cette interface</span>
+        </div>
+        
+        <div class="lang-option">
+            <button class="button" onclick="setLanguage('ar')">
+                🇩🇿 العربية
+            </button>
+            <span>اللغة العربية متاحة</span>
+        </div>
+        
+        <div class="lang-option">
+            <button class="button" onclick="setLanguage('en')">
+                🇬🇧 English
+            </button>
+            <span>English is available</span>
+        </div>
+
+        <div id="status" class="info" style="display: none;"></div>
+
+        <h2>Informations</h2>
+        <div class="info">
+            <p><strong>🇫🇷 Français :</strong> Interface complètement traduite et optimisée</p>
+            <p><strong>🇩🇿 العربية :</strong> الواجهة متاحة باللغة العربية</p>
+            <p><strong>🇬🇧 English :</strong> Full English interface available</p>
+        </div>
+
+        <p><small>
+            <strong>Note :</strong> Vous pouvez changer de langue à tout moment via le sélecteur de langue dans l'interface.
+        </small></p>
+    </div>
+
+    <script>
+        // Détecter la langue actuelle
+        function detectCurrentLanguage() {
+            const cookies = document.cookie.split(';');
+            let language = 'Non définie';
+            
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'language') {
+                    language = value;
+                    break;
+                }
+            }
+            
+            const langNames = {
+                'fr': '🇫🇷 Français',
+                'en': '🇬🇧 English', 
+                'ar': '🇩🇿 العربية'
+            };
+            
+            document.getElementById('currentLang').textContent = langNames[language] || `${language} (Inconnue)`;
+        }
+
+        // Définir une langue
+        function setLanguage(lang) {
+            const langNames = {
+                'fr': '🇫🇷 Français',
+                'en': '🇬🇧 English', 
+                'ar': '🇩🇿 العربية'
+            };
+            
+            document.cookie = `language=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+            showStatus(`✅ Langue définie sur ${langNames[lang]} ! Redirection...`, 'success');
+            
+            setTimeout(() => {
+                window.location.href = '/dashboard';
+            }, 1500);
+        }
+
+        // Afficher un message de statut
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `info ${type}`;
+            statusDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Détecter la langue au chargement
+        detectCurrentLanguage();
+        
+        // Mettre à jour toutes les 2 secondes
+        setInterval(detectCurrentLanguage, 2000);
+    </script>
+</body>
+</html>

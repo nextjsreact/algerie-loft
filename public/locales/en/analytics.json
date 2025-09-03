@@ -1,0 +1,21 @@
+{
+  "analytics": {
+    "title": "Reports and Analytics",
+    "subtitle": "Visualize financial performance and trends of your lofts",
+    "detailedFinancialPerformance": "Detailed Financial Performance",
+    "expenses": "Expenses",
+    "financial": "Financial",
+    "maintenance": "Maintenance",
+    "monthlyFinancialTrend": "Monthly Financial Trend",
+    "monthlyOccupancyRates": "Monthly Occupancy Rates",
+    "mostValuableAssets": "Most Valuable Assets",
+    "occupancy": "Occupancy",
+    "occupancyRateTrends": "Occupancy Rate Trends",
+    "overview": "Overview",
+    "revenue": "Revenue",
+    "revenueExpensesByLoft": "Revenue and Expenses by Loft",
+    "top5ProfitableLofts": "Top 5 Most Profitable Lofts",
+    "trackRevenueExpenses": "Track revenue and expenses over time.",
+  "realTimeDataBadge": "Real-time Data"
+  }
+}

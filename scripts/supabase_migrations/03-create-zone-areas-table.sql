@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS zone_areas (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+    name TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL
+);

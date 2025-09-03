@@ -1,0 +1,28 @@
+{
+  "categories": {
+    "subtitle": "Manage your income and expense categories",
+    "addNew": "Add new category",
+    "incomeCategories": "Income Categories",
+    "manageCategoriesIncome": "Manage income categories",
+    "expenseCategories": "Expense Categories",
+    "manageCategoriesExpense": "Manage expense categories",
+    "allCategories": "All Categories",
+    "totalCategories": "{{count}} category",
+    "totalCategories_plural": "{{count}} categories",
+    "description": "Description",
+    "noIncomeCategories": "No income categories yet",
+    "noExpenseCategories": "No expense categories yet",
+    "deleteConfirm": "Are you sure you want to delete this category?"
+  },
+  "currencies": {
+    "subtitle": "Manage your currencies and exchange rates",
+    "addNew": "Add new currency",
+    "defaultCurrency": "Default Currency",
+    "defaultCurrencyDesc": "The main currency used for calculations",
+    "default": "Default",
+    "allCurrencies": "All Currencies",
+    "totalCurrencies": "{{count}} currency",
+    "totalCurrencies_plural": "{{count}} currencies"
+  },
+  "type": "Type"
+}

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Corrections Traductions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .status {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #00ff00;
+        }
+        .issue {
+            background: rgba(255, 165, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #ffa500;
+        }
+        .fixed {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #00ff00;
+        }
+        .button {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            margin: 10px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        code {
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Corrections des Traductions - Méthodes de Paiement</h1>
+        
+        <div class="status">
+            <h3>✅ Problèmes Identifiés et Corrigés :</h3>
+            <ul>
+                <li><strong>Chaînes codées en dur</strong> : Remplacées par des clés de traduction</li>
+                <li><strong>Types de méthodes de paiement</strong> : Ajout des traductions manquantes</li>
+                <li><strong>Textes d'interface</strong> : Uniformisation des traductions</li>
+                <li><strong>Fonction de traduction</strong> : Ajout d'une fonction pour traduire les types</li>
+            </ul>
+        </div>
+
+        <div class="fixed">
+            <h3>🔧 Corrections Appliquées :</h3>
+            
+            <h4>1. Ajout des clés de traduction manquantes :</h4>
+            <ul>
+                <li><code>bankTransfer</code> → "Virement Bancaire" / "Bank Transfer" / "تحويل بنكي"</li>
+                <li><code>creditCard</code> → "Carte de Crédit" / "Credit Card" / "بطاقة ائتمان"</li>
+                <li><code>cash</code> → "Espèces" / "Cash" / "نقد"</li>
+                <li><code>additionalInfoAvailable</code> → "Informations supplémentaires disponibles"</li>
+                <li><code>noAdditionalDetails</code> → "Aucun détail supplémentaire"</li>
+                <li><code>active</code> → "Actif" / "Active" / "نشط"</li>
+                <li><code>modify</code> → "Modifier" / "Modify" / "تعديل"</li>
+            </ul>
+
+            <h4>2. Remplacement des chaînes codées en dur :</h4>
+            <ul>
+                <li>❌ <code>"Informations supplémentaires disponibles"</code></li>
+                <li>✅ <code>{t('additionalInfoAvailable')}</code></li>
+                <li>❌ <code>"Aucun détail supplémentaire"</code></li>
+                <li>✅ <code>{t('noAdditionalDetails')}</code></li>
+                <li>❌ <code>"Actif"</code></li>
+                <li>✅ <code>{t('active')}</code></li>
+                <li>❌ <code>"Modifier"</code></li>
+                <li>✅ <code>{t('modify')}</code></li>
+            </ul>
+
+            <h4>3. Fonction de traduction des types :</h4>
+            <pre style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; overflow-x: auto;">
+const getPaymentMethodTypeTranslation = (type: string, t: any) => {
+  switch (type?.toLowerCase()) {
+    case 'card':
+    case 'credit_card':
+    case 'debit_card':
+      return t('creditCard')
+    case 'cash':
+    case 'especes':
+      return t('cash')
+    case 'bank':
+    case 'bank_transfer':
+      return t('bankTransfer')
+    case 'paypal':
+      return t('paypal')
+    default:
+      return type
+  }
+}</pre>
+        </div>
+
+        <div class="issue">
+            <h3>🎯 Problèmes Résolus :</h3>
+            <ul>
+                <li><strong>Mélange de langues</strong> : Plus de texte en anglais dans l'interface française</li>
+                <li><strong>Types de paiement</strong> : "Bank Transfer", "Credit Card", "Cash" maintenant traduits</li>
+                <li><strong>Boutons d'action</strong> : "Modifier" et "Actif" utilisent les traductions</li>
+                <li><strong>Messages d'information</strong> : Tous les textes utilisent les clés de traduction</li>
+            </ul>
+        </div>
+
+        <h3>🔗 Liens de Test :</h3>
+        <a href="http://localhost:3000/settings/payment-methods" class="button">
+            💳 Tester les Méthodes de Paiement
+        </a>
+        <a href="http://localhost:3000/settings/payment-methods/new" class="button">
+            ➕ Créer une Nouvelle Méthode
+        </a>
+        <a href="http://localhost:3000/dashboard" class="button">
+            🏠 Retour au Dashboard
+        </a>
+
+        <div style="margin-top: 30px; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 10px;">
+            <h4>📋 Fichiers Modifiés :</h4>
+            <ul>
+                <li><code>public/locales/fr/paymentMethods.json</code> - Ajout des traductions françaises</li>
+                <li><code>public/locales/en/paymentMethods.json</code> - Ajout des traductions anglaises</li>
+                <li><code>public/locales/ar/paymentMethods.json</code> - Ajout des traductions arabes</li>
+                <li><code>app/settings/payment-methods/page.tsx</code> - Remplacement des chaînes codées</li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: rgba(0, 255, 0, 0.1); border-radius: 10px;">
+            <h4>✨ Résultat Attendu :</h4>
+            <p>Maintenant, tous les textes de la page des méthodes de paiement devraient être correctement traduits selon la langue sélectionnée, sans mélange de langues.</p>
+        </div>
+    </div>
+
+    <script>
+        console.log('🔧 Corrections des traductions appliquées !');
+        console.log('📝 Fichiers modifiés : 4');
+        console.log('🌐 Langues supportées : FR, EN, AR');
+        console.log('✅ Chaînes codées remplacées par des clés de traduction');
+    </script>
+</body>
+</html>

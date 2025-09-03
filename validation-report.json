@@ -1,0 +1,87 @@
+{
+  "timestamp": "2025-08-31T22:50:41.404Z",
+  "status": "❌ MIGRATION INCOMPLÈTE",
+  "summary": {
+    "passed": 13,
+    "failed": 2,
+    "warnings": 0,
+    "total": 15
+  },
+  "tests": [
+    {
+      "name": "react-i18next-removal",
+      "status": "FAIL",
+      "message": "19 références à react-i18next encore présentes"
+    },
+    {
+      "name": "useTranslations-usage",
+      "status": "PASS",
+      "message": "232 utilisations de useTranslations trouvées"
+    },
+    {
+      "name": "config-i18n.ts",
+      "status": "PASS",
+      "message": "Configuration i18n présent"
+    },
+    {
+      "name": "config-middleware.ts",
+      "status": "PASS",
+      "message": "Middleware de routage présent"
+    },
+    {
+      "name": "config-next.config.mjs",
+      "status": "PASS",
+      "message": "Configuration Next.js présent"
+    },
+    {
+      "name": "translations-fr",
+      "status": "PASS",
+      "message": "1333 clés de traduction"
+    },
+    {
+      "name": "translations-en",
+      "status": "PASS",
+      "message": "1326 clés de traduction"
+    },
+    {
+      "name": "translations-ar",
+      "status": "PASS",
+      "message": "1340 clés de traduction"
+    },
+    {
+      "name": "localized-routes",
+      "status": "PASS",
+      "message": "Structure de routes localisées présente"
+    },
+    {
+      "name": "route-dashboard",
+      "status": "PASS",
+      "message": "Route /dashboard localisée"
+    },
+    {
+      "name": "route-login",
+      "status": "PASS",
+      "message": "Route /login localisée"
+    },
+    {
+      "name": "route-lofts",
+      "status": "PASS",
+      "message": "Route /lofts localisée"
+    },
+    {
+      "name": "next-intl-dependency",
+      "status": "PASS",
+      "message": "next-intl installé"
+    },
+    {
+      "name": "old-dependencies-removed",
+      "status": "PASS",
+      "message": "Anciennes dépendances supprimées"
+    },
+    {
+      "name": "build-success",
+      "status": "FAIL",
+      "message": "Échec de la construction"
+    }
+  ]
+}

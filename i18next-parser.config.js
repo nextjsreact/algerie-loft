@@ -1,0 +1,20 @@
+export default {
+  contextSeparator: '_',
+  createOldCatalogs: false,
+  defaultNamespace: 'common',
+  defaultValue: (lng, ns, key) => (lng === 'en' ? key : ''),
+  indentation: 2,
+  keepRemoved: false,
+  keySeparator: '.',
+  locales: ['en', 'fr', 'ar'],
+  namespaceSeparator: ':',
+  output: 'public/locales/$LOCALE/$NAMESPACE.json',
+  input: ['app/**/*.{js,jsx,ts,tsx}', 'components/**/*.{js,jsx,ts,tsx}'],
+  sort: true,
+  verbose: true,
+  failOnWarnings: false,
+  failOnUpdate: false,
+  customValueTemplate: null,
+  resetDefaultValueLocale: null,
+  i18nextOptions: null
+};

@@ -1,0 +1,45 @@
+{
+  "timestamp": "2025-08-31T22:45:39.471Z",
+  "status": "EN_COURS",
+  "summary": {
+    "componentsWithReactI18next": 56,
+    "componentsWithNextIntl": 88,
+    "migrationProgress": "61%"
+  },
+  "details": {
+    "translations": {
+      "fr": {
+        "keyCount": 1333,
+        "fileSizeKB": 64.63,
+        "status": "OK"
+      },
+      "en": {
+        "keyCount": 1326,
+        "fileSizeKB": 58.29,
+        "status": "OK"
+      },
+      "ar": {
+        "keyCount": 1340,
+        "fileSizeKB": 71.93,
+        "status": "OK"
+      }
+    },
+    "configuration": {
+      "i18nConfig": true,
+      "middleware": true,
+      "nextConfig": true,
+      "localizedRoutes": true
+    },
+    "dependencies": {
+      "oldDependenciesRemoved": true,
+      "newDependenciesInstalled": true
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "type": "MIGRATION",
+      "message": "56 composants utilisent encore react-i18next et doivent être migrés"
+    }
+  ]
+}

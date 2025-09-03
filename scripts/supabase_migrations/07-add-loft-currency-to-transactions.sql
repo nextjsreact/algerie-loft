@@ -1,0 +1,13 @@
+ALTER TABLE transactions
+ADD COLUMN IF NOT EXISTS loft_id UUID,
+ADD COLUMN IF NOT EXISTS currency_id UUID;
+
+ALTER TABLE transactions
+DROP CONSTRAINT IF EXISTS fk_loft,
+ADD CONSTRAINT fk_loft
+FOREIGN KEY (loft_id) REFERENCES lofts(id) ON DELETE CASCADE;
+
+ALTER TABLE transactions
+DROP CONSTRAINT IF EXISTS fk_currency,
+ADD CONSTRAINT fk_currency
+FOREIGN KEY (currency_id) REFERENCES currencies(id) ON DELETE CASCADE;

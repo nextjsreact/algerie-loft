@@ -4,8 +4,12 @@
  * Validates translation consistency across all language files
  */
 
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const LANGUAGES = ['en', 'fr', 'ar']
 const MESSAGES_DIR = path.join(__dirname, '..', 'messages')
@@ -336,9 +340,9 @@ class TranslationValidator {
 }
 
 // Run validation
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   const validator = new TranslationValidator()
   validator.validate().catch(console.error)
 }
 
-module.exports = TranslationValidator
+export default TranslationValidator

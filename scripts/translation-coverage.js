@@ -4,8 +4,12 @@
  * Generates a coverage report for translations used in the codebase
  */
 
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 class TranslationCoverage {
   constructor() {
@@ -339,9 +343,9 @@ class TranslationCoverage {
 }
 
 // Run coverage analysis
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   const coverage = new TranslationCoverage()
   coverage.generateReport().catch(console.error)
 }
 
-module.exports = TranslationCoverage
+export default TranslationCoverage

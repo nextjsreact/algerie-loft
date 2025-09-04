@@ -69,7 +69,7 @@ export function NewCurrencyForm() {
       <Card>
         <CardHeader>
           <CardTitle>{t("addNew")}</CardTitle>
-          <CardDescription>Enter the currency details below</CardDescription>
+          <CardDescription>{t("enterCurrencyDetails")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -97,7 +97,7 @@ export function NewCurrencyForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="symbol">Symbol</Label>
+              <Label htmlFor="symbol">{t("symbol")}</Label>
               <Input
                 id="symbol"
                 value={formData.symbol}

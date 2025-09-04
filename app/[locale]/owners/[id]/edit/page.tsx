@@ -57,17 +57,28 @@ export default async function EditOwnerPage({ params }: { params: Promise<{ id: 
       )
     }
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('editOwner')}</h1>
-        <p className="text-muted-foreground">{t('updateOwnerInfo')}</p>
-      </div>
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{t('editOwner')}</h1>
+          <p className="text-muted-foreground">{t('updateOwnerInfo')}</p>
+        </div>
 
-      <OwnerForm 
-        owner={owner}
-        action={updateOwner.bind(null, id)}
-      />
-    </div>
-  )
+        <OwnerForm 
+          owner={owner}
+          action={updateOwner.bind(null, id)}
+        />
+      </div>
+    )
+  } catch (error) {
+    console.error('Page error:', error)
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Error</h1>
+          <p className="text-muted-foreground">An error occurred while loading this page.</p>
+        </div>
+      </div>
+    )
+  }
 }

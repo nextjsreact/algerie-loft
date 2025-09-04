@@ -2,13 +2,12 @@
 
 - [x] 1. Fix immediate missing translation keys
 
-
   - Move reportsLabel to proper reservations namespace in French translation file
   - Verify calendar translations structure in reservations.calendar section
   - Test that all calendar controls display proper French text
   - _Requirements: 1.1, 1.2_
 
-- [ ] 2. Standardize ReservationCalendar component translation usage
+- [x] 2. Standardize ReservationCalendar component translation usage
 
   - Update component to use consistent translation namespace pattern
   - Ensure all calendar-related translations use reservations.calendar prefix
@@ -54,7 +53,31 @@
   - Test Arabic locale displays properly without raw translation keys
   - _Requirements: 1.1, 2.2_
 
-- [ ] 8. Create translation development guidelines
+- [x] 8. Fix currency form mixed language issue
+
+  - Replace hardcoded English text "Enter the currency details below" with translation key
+  - Replace hardcoded "Symbol" label with translation key
+  - Add missing translation keys to all language files (ar.json, fr.json, en.json)
+  - Test that currency form displays consistently in Arabic without mixed languages
+  - _Requirements: 1.1, 1.2_
+
+- [x] 9. Fix missing payment methods new route (404 error)
+
+  - Create missing app/[locale]/settings/payment-methods/new/page.tsx file
+  - Import and use existing PaymentMethodForm component with createPaymentMethod action
+  - Ensure route structure matches other settings pages (currencies, categories, etc.)
+  - Fix missing common.name translation key in all language files (ar.json, fr.json, en.json)
+  - _Requirements: 1.1, 2.1_
+
+- [x] 10. Fix missing common translation keys
+
+
+  - Add missing common.name key to all language files
+  - Ensure all common translation keys are consistent across languages
+  - Verify no more MISSING_MESSAGE errors for common namespace
+  - _Requirements: 1.1, 1.2_
+
+- [ ] 11. Create translation development guidelines
   - Document standardized namespace conventions for future development
   - Create checklist for adding new translation keys
   - Add pre-commit hooks to validate translation consistency

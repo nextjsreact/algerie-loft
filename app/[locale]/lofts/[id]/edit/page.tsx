@@ -20,11 +20,6 @@ export default async function EditLoftPage({ params }: { params: Promise<{ id: s
     notFound()
   }
 
-  console.log('Fetched loft data:', loft)
-  console.log('Owners data:', owners)
-  console.log('Zone areas data:', zoneAreas)
-  console.log('Internet types data:', internetConnectionTypes)
-
   const owners = await getOwners()
   const zoneAreas = await getZoneAreas()
   const { data: internetConnectionTypesData, error: internetConnectionTypesError } = await getInternetConnectionTypes()

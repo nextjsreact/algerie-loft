@@ -24,37 +24,41 @@ interface LoftFormProps {
 export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit, loft }: LoftFormProps) {
   const t = useTranslations("lofts");
   const router = useRouter()
-  const [formData, setFormData] = useState({
-    name: "",
-    address: "",
-    price_per_month: "",
-    owner_id: "",
-    zone_area_id: "",
-    internet_connection_type_id: "",
-    description: "",
-    water_customer_code: "",
-    water_contract_code: "",
-    water_meter_number: "",
-    electricity_pdl_ref: "",
-    electricity_customer_number: "",
-    electricity_meter_number: "",
-    gas_pdl_ref: "",
-    gas_customer_number: "",
-    gas_meter_number: "",
-    phone_number: "",
-    company_percentage: "",
-    owner_percentage: "",
-    frequence_paiement_eau: "",
-    prochaine_echeance_eau: "",
-    frequence_paiement_energie: "",
-    prochaine_echeance_energie: "",
-    frequence_paiement_telephone: "",
-    prochaine_echeance_telephone: "",
-    frequence_paiement_internet: "",
-    prochaine_echeance_internet: "",
-    frequence_paiement_tv: "",
-    prochaine_echeance_tv: "",
-  })
+  
+  // Initialize form data with loft data if available, otherwise use empty strings
+  const getInitialFormData = useCallback(() => ({
+    name: loft?.name || "",
+    address: loft?.address || "",
+    price_per_month: loft?.price_per_month?.toString() || "",
+    owner_id: loft?.owner_id || "",
+    zone_area_id: loft?.zone_area_id || "",
+    internet_connection_type_id: loft?.internet_connection_type_id || "",
+    description: loft?.description || "",
+    water_customer_code: loft?.water_customer_code || "",
+    water_contract_code: loft?.water_contract_code || "",
+    water_meter_number: loft?.water_meter_number || "",
+    electricity_pdl_ref: loft?.electricity_pdl_ref || "",
+    electricity_customer_number: loft?.electricity_customer_number || "",
+    electricity_meter_number: loft?.electricity_meter_number || "",
+    gas_pdl_ref: loft?.gas_pdl_ref || "",
+    gas_customer_number: loft?.gas_customer_number || "",
+    gas_meter_number: loft?.gas_meter_number || "",
+    phone_number: loft?.phone_number || "",
+    company_percentage: loft?.company_percentage?.toString() || "",
+    owner_percentage: loft?.owner_percentage?.toString() || "",
+    frequence_paiement_eau: loft?.frequence_paiement_eau || "",
+    prochaine_echeance_eau: loft?.prochaine_echeance_eau || "",
+    frequence_paiement_energie: loft?.frequence_paiement_energie || "",
+    prochaine_echeance_energie: loft?.prochaine_echeance_energie || "",
+    frequence_paiement_telephone: loft?.frequence_paiement_telephone || "",
+    prochaine_echeance_telephone: loft?.prochaine_echeance_telephone || "",
+    frequence_paiement_internet: loft?.frequence_paiement_internet || "",
+    prochaine_echeance_internet: loft?.prochaine_echeance_internet || "",
+    frequence_paiement_tv: loft?.frequence_paiement_tv || "",
+    prochaine_echeance_tv: loft?.prochaine_echeance_tv || "",
+  }), [loft])
+
+  const [formData, setFormData] = useState(() => getInitialFormData())
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [existingPhotos, setExistingPhotos] = useState<any[]>([])
   const [currentPhotos, setCurrentPhotos] = useState<any[]>([])
@@ -81,66 +85,18 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
       } catch (error) {
         // Silently handle error
       }
-    } else {
-      console.log('⚠️ No loft ID available for fetching photos')
     }
   }, [loft?.id])
 
-  // Function to populate form data (extracted so we can reuse it)
-  const populateFormData = useCallback(() => {
-    if (loft && loft.id) {
-      const formDataToSet = {
-        name: loft.name || "",
-        address: loft.address || "",
-        price_per_month: loft.price_per_month?.toString() || "",
-        owner_id: loft.owner_id || "",
-        zone_area_id: loft.zone_area_id || "",
-        internet_connection_type_id: loft.internet_connection_type_id || "",
-        description: loft.description || "",
-        water_customer_code: loft.water_customer_code || "",
-        water_contract_code: loft.water_contract_code || "",
-        water_meter_number: loft.water_meter_number || "",
-        electricity_pdl_ref: loft.electricity_pdl_ref || "",
-        electricity_customer_number: loft.electricity_customer_number || "",
-        electricity_meter_number: loft.electricity_meter_number || "",
-        gas_pdl_ref: loft.gas_pdl_ref || "",
-        gas_customer_number: loft.gas_customer_number || "",
-        gas_meter_number: loft.gas_meter_number || "",
-        phone_number: loft.phone_number || "",
-        company_percentage: loft.company_percentage?.toString() || "",
-        owner_percentage: loft.owner_percentage?.toString() || "",
-        frequence_paiement_eau: loft.frequence_paiement_eau || "",
-        prochaine_echeance_eau: loft.prochaine_echeance_eau || "",
-        frequence_paiement_energie: loft.frequence_paiement_energie || "",
-        prochaine_echeance_energie: loft.prochaine_echeance_energie || "",
-        frequence_paiement_telephone: loft.frequence_paiement_telephone || "",
-        prochaine_echeance_telephone: loft.prochaine_echeance_telephone || "",
-        frequence_paiement_internet: loft.frequence_paiement_internet || "",
-        prochaine_echeance_internet: loft.prochaine_echeance_internet || "",
-        frequence_paiement_tv: loft.frequence_paiement_tv || "",
-        prochaine_echeance_tv: loft.prochaine_echeance_tv || "",
-      }
-      
-      setFormData(formDataToSet)
-    }
-  }, [loft])
-
-  // Single useEffect to handle loft data loading
+  // Update form data when loft prop changes
   useEffect(() => {
     if (loft?.id) {
-      populateFormData()
+      setFormData(getInitialFormData())
       fetchExistingPhotos()
     }
-  }, [loft?.id, populateFormData, fetchExistingPhotos])
+  }, [loft?.id, getInitialFormData, fetchExistingPhotos])
 
   const safeInternetConnectionTypes = Array.isArray(internetConnectionTypes) ? internetConnectionTypes : []
-
-  console.log("LoftForm component is rendering"); // Basic log to confirm client-side rendering
-  console.log("Loft data received:", loft);
-  console.log("Form data state:", formData);
-  console.log("Owners:", owners);
-  console.log("Zone areas:", zoneAreas);
-  console.log("Internet types:", internetConnectionTypes);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -175,14 +131,6 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
 
   return (
     <div className="bg-gray-50 p-4 sm:p-6 md:p-8">
-      {/* Debug info */}
-      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-        <strong>Debug Info:</strong>
-        <p>Loft ID: {loft?.id || 'No ID'}</p>
-        <p>Loft Name: {loft?.name || 'No name'}</p>
-        <p>Form Name Value: {formData.name || 'Empty'}</p>
-        <p>Is Edit Mode: {loft?.id ? 'Yes' : 'No'}</p>
-      </div>
       <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto">
         <div className="space-y-12">
           {/* Loft Information Section */}

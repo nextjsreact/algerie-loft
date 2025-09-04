@@ -471,6 +471,7 @@
     "edit": "تعديل",
     "error": "خطأ",
     "loading": "جاري التحميل...",
+    "name": "الاسم",
     "next": "التالي",
     "of": "من",
     "owners": {
@@ -1448,6 +1449,7 @@
       "default": "افتراضي",
       "defaultCurrency": "العملة الافتراضية",
       "defaultCurrencyDesc": "هذه العملة تُستخدم كافتراضية لجميع المعاملات",
+      "enterCurrencyDetails": "أدخل تفاصيل العملة أدناه",
       "name": "الاسم",
       "noCurrenciesFound": "لا توجد عملات",
       "secondary": "ثانوي",

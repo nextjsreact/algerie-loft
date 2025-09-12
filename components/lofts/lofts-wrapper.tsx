@@ -36,7 +36,7 @@ export function LoftsWrapper({
   const availableLofts = lofts.filter(loft => loft.status === 'available').length
   const occupiedLofts = lofts.filter(loft => loft.status === 'occupied').length
   const maintenanceLofts = lofts.filter(loft => loft.status === 'maintenance').length
-  const totalRevenue = lofts.reduce((sum, loft) => sum + (loft.price_per_month || 0), 0)
+  const totalRevenue = lofts.reduce((sum, loft) => sum + (loft.price_per_night || 0), 0)
 
   return (
     <div className="space-y-8">

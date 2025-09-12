@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,12 +10,16 @@ import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Calendar, MapPin, User, Users, DollarSign, Filter, RotateCcw, ChevronDown, X } from 'lucide-react'
-import { format } from 'date-fns'
+import { Calendar as CalendarIcon, MapPin, User, Users, DollarSign, Filter, RotateCcw, ChevronDown, X } from 'lucide-react'
+import { format, addDays } from 'date-fns'
+import { DateRange } from 'react-day-picker'
+import { Calendar } from '@/components/ui/calendar'
 
 interface FilterPanelProps {
   filters: any
   onFiltersChange: (filters: any) => void
+  dateRange: DateRange | undefined
+  onDateRangeChange: (range: DateRange | undefined) => void
   isLoading: boolean
   filterOptions: {
     regions: Array<{ value: string; label: string }>
@@ -26,10 +29,9 @@ interface FilterPanelProps {
   }
 }
 
-export function FilterPanel({ filters, onFiltersChange, isLoading, filterOptions }: FilterPanelProps) {
+export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeChange, isLoading, filterOptions }: FilterPanelProps) {
   const t = useTranslations('availability')
 
-  // Use real data from database and translate labels
   const regions = filterOptions.regions.length > 0 ? filterOptions.regions.map(region => ({
     ...region,
     label: region.label.startsWith('availability:') ? t(region.label.replace('availability:', '')) : region.label
@@ -37,7 +39,7 @@ export function FilterPanel({ filters, onFiltersChange, isLoading, filterOptions
     { value: 'all', label: t('allRegions') }
   ]
 
-  const owners = filterOptions.owners.length > 0 ? filterOptions.owners.slice(1) : [] // Remove 'all' option for multi-select
+  const owners = filterOptions.owners.length > 0 ? filterOptions.owners.slice(1) : []
 
   const handleFilterChange = (key: string, value: any) => {
     onFiltersChange({
@@ -48,27 +50,27 @@ export function FilterPanel({ filters, onFiltersChange, isLoading, filterOptions
 
   const resetFilters = () => {
     onFiltersChange({
-      startDate: new Date(),
-      endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       region: 'all',
-      owners: [], // Array of owner IDs
-      loft: 'all',
+      owners: [],
       guests: 2,
       minPrice: 0,
-      maxPrice: 50000
+      maxPrice: 1000000
+    })
+    onDateRangeChange({
+      from: new Date(),
+      to: addDays(new Date(), 29),
     })
   }
 
   const activeFiltersCount = Object.entries(filters).filter(([key, value]) => {
-    if (key === 'region' || key === 'loft') return value !== 'all'
+    if (key === 'region') return value !== 'all'
     if (key === 'owners') return Array.isArray(value) && value.length > 0
     if (key === 'guests') return value !== 2
     if (key === 'minPrice') return value !== 0
-    if (key === 'maxPrice') return value !== 50000
+    if (key === 'maxPrice') return value !== 1000000
     return false
-  }).length
+  }).length + (dateRange?.from || dateRange?.to ? 1 : 0)
 
-  // Gestion du filtre multi-sélection des propriétaires
   const handleOwnerToggle = (ownerValue: string) => {
     const currentOwners = filters.owners || []
     const updatedOwners = currentOwners.includes(ownerValue)
@@ -123,37 +125,41 @@ export function FilterPanel({ filters, onFiltersChange, isLoading, filterOptions
         {/* Date Range */}
         <div className="space-y-3">
           <Label className="text-sm font-medium flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-green-600" />
+            <CalendarIcon className="h-4 w-4 text-green-600" />
             {t('dateRange')}
           </Label>
-          <div className="space-y-2">
-            <div>
-              <Label htmlFor="startDate" className="text-xs text-muted-foreground">
-                {t('startDate')}
-              </Label>
-              <Input
-                id="startDate"
-                type="date"
-                value={format(filters.startDate, 'yyyy-MM-dd')}
-                onChange={(e) => handleFilterChange('startDate', new Date(e.target.value))}
-                placeholder="jj/mm/aaaa"
-                className="mt-1"
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                id="date"
+                variant={"outline"}
+                className="w-full justify-center text-center font-normal text-sm"
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dateRange?.from ? (
+                  dateRange.to ? (
+                    <>
+                      {format(dateRange.from, "dd/MM/yy")} - {format(dateRange.to, "dd/MM/yy")}
+                    </>
+                  ) : (
+                    format(dateRange.from, "LLL dd, y")
+                  )
+                ) : (
+                  <span>{t('pickDate')}</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                initialFocus
+                mode="range"
+                defaultMonth={dateRange?.from}
+                selected={dateRange}
+                onSelect={onDateRangeChange}
+                numberOfMonths={2}
               />
-            </div>
-            <div>
-              <Label htmlFor="endDate" className="text-xs text-muted-foreground">
-                {t('endDate')}
-              </Label>
-              <Input
-                id="endDate"
-                type="date"
-                value={format(filters.endDate, 'yyyy-MM-dd')}
-                onChange={(e) => handleFilterChange('endDate', new Date(e.target.value))}
-                placeholder="jj/mm/aaaa"
-                className="mt-1"
-              />
-            </div>
-          </div>
+            </PopoverContent>
+          </Popover>
         </div>
 
         <Separator />
@@ -326,7 +332,7 @@ export function FilterPanel({ filters, onFiltersChange, isLoading, filterOptions
                 min="0"
                 step="1000"
                 value={filters.minPrice}
-                onChange={(e) => handleFilterChange('minPrice', parseInt(e.target.value))}
+                onChange={(e) => handleFilterChange('minPrice', e.target.value === '' ? '' : parseInt(e.target.value))}
                 className="mt-1"
               />
             </div>
@@ -340,7 +346,7 @@ export function FilterPanel({ filters, onFiltersChange, isLoading, filterOptions
                 min="0"
                 step="1000"
                 value={filters.maxPrice}
-                onChange={(e) => handleFilterChange('maxPrice', parseInt(e.target.value))}
+                onChange={(e) => handleFilterChange('maxPrice', e.target.value === '' ? '' : parseInt(e.target.value))}
                 className="mt-1"
               />
             </div>

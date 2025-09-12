@@ -1,3 +1,4 @@
+
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
@@ -13,6 +14,7 @@ interface ActionResult<T = any> {
   details?: any;
 }
 
+import { PostgrestError } from '@supabase/supabase-js'; // Import PostgrestError
 const createReservationSchema = z.object({
   loft_id: z.string().uuid(),
   guest_name: z.string().min(1).max(255),
@@ -23,6 +25,12 @@ const createReservationSchema = z.object({
   check_in_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   check_out_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   special_requests: z.string().optional(),
+  customer_id: z.string().uuid().optional(), // New optional customer_id
+  base_price: z.coerce.number().optional(),
+  cleaning_fee: z.coerce.number().optional(),
+  service_fee: z.coerce.number().optional(),
+  taxes: z.coerce.number().optional(),
+  total_amount: z.coerce.number().optional(),
 });
 
 export async function createReservation(prevState: any, formData: FormData): Promise<ActionResult> {
@@ -40,6 +48,12 @@ export async function createReservation(prevState: any, formData: FormData): Pro
       check_in_date: formData.get('check_in_date'),
       check_out_date: formData.get('check_out_date'),
       special_requests: formData.get('special_requests') || '',
+      customer_id: formData.get('customer_id') || undefined, // Get customer_id from form
+      base_price: formData.get('base_price'),
+      cleaning_fee: formData.get('cleaning_fee'),
+      service_fee: formData.get('service_fee'),
+      taxes: formData.get('taxes'),
+      total_amount: formData.get('total_amount'),
     });
 
     // Check if dates are valid
@@ -50,7 +64,10 @@ export async function createReservation(prevState: any, formData: FormData): Pro
       return { error: 'Check-out date must be after check-in date' };
     }
     
-    if (checkIn < new Date()) {
+    // Compare check-in date with the start of today to allow same-day check-ins
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to the very beginning of today
+    if (checkIn < today) {
       return { error: 'Check-in date cannot be in the past' };
     }
 
@@ -71,32 +88,127 @@ export async function createReservation(prevState: any, formData: FormData): Pro
       return { error: 'Selected dates are not available' };
     }
 
-    // Calculate pricing
-    const { data: pricing, error: pricingError } = await supabase
-      .rpc('calculate_reservation_price', {
-        p_loft_id: validatedData.loft_id,
-        p_check_in: validatedData.check_in_date,
-        p_check_out: validatedData.check_out_date,
-        p_guest_count: validatedData.guest_count,
-      });
+    let priceData = {
+      base_price: validatedData.base_price,
+      cleaning_fee: validatedData.cleaning_fee,
+      service_fee: validatedData.service_fee,
+      taxes: validatedData.taxes,
+      total_amount: validatedData.total_amount,
+    };
 
-    if (pricingError || !pricing || pricing.length === 0) {
-      console.error('Error calculating pricing:', pricingError);
-      return { error: 'Failed to calculate pricing' };
+    // If pricing data is not provided from the form (e.g., direct API call or initial form load), calculate it
+    if (priceData.base_price === undefined || priceData.cleaning_fee === undefined || priceData.service_fee === undefined || priceData.taxes === undefined || priceData.total_amount === undefined) {
+      const { data: rpcPricing, error: pricingError } = await supabase
+        .rpc('calculate_reservation_price', {
+          p_loft_id: validatedData.loft_id,
+          p_check_in: validatedData.check_in_date,
+          p_check_out: validatedData.check_out_date,
+          p_guest_count: validatedData.guest_count,
+        });
+
+      if (pricingError) {
+        console.error('Error calculating pricing:', pricingError);
+        return { error: 'Failed to calculate pricing: Database error' };
+      }
+      
+      if (!rpcPricing || rpcPricing.length === 0 || !rpcPricing[0]) {
+        console.error('Pricing data is empty or malformed:', rpcPricing);
+        return { error: 'Failed to calculate pricing: No data returned' };
+      }
+      priceData = rpcPricing[0];
     }
 
-    const priceData = pricing[0];
+    let customerId = validatedData.customer_id;
+
+    // If no customer_id is provided (new guest), create or find customer
+    if (!customerId) {
+      // Try to find an existing customer by email or phone
+      let existingCustomer: { id: string; first_name: string; last_name: string; email: string; phone: string; nationality: string; } | null = null;
+      if (validatedData.guest_email) {
+        const { data, error } = await supabase
+          .from('customers')
+          .select('id, first_name, last_name, email, phone, nationality')
+          .eq('email', validatedData.guest_email)
+          .single();
+        if (data) existingCustomer = data;
+      }
+      if (!existingCustomer && validatedData.guest_phone) {
+        const { data, error } = await supabase
+          .from('customers')
+          .select('id, first_name, last_name, email, phone, nationality')
+          .eq('phone', validatedData.guest_phone)
+          .single();
+        if (data) existingCustomer = data;
+      }
+
+      if (existingCustomer) {
+        customerId = existingCustomer.id;
+        
+        const updatedCustomerData: { [key: string]: any } = {};
+        const newFirstName = validatedData.guest_name.split(' ')[0] || '';
+        const newLastName = validatedData.guest_name.split(' ').slice(1).join(' ') || '';
+
+        if (existingCustomer.first_name !== newFirstName) updatedCustomerData.first_name = newFirstName;
+        if (existingCustomer.last_name !== newLastName) updatedCustomerData.last_name = newLastName;
+        if (existingCustomer.email !== validatedData.guest_email) updatedCustomerData.email = validatedData.guest_email;
+        if (existingCustomer.phone !== validatedData.guest_phone) updatedCustomerData.phone = validatedData.guest_phone;
+        if (existingCustomer.nationality !== validatedData.guest_nationality) updatedCustomerData.nationality = validatedData.guest_nationality;
+
+        if (Object.keys(updatedCustomerData).length > 0) {
+          const { error: updateCustomerError } = await supabase
+            .from('customers')
+            .update(updatedCustomerData)
+            .eq('id', customerId);
+
+          if (updateCustomerError) {
+            console.error('Error updating existing customer:', updateCustomerError);
+            return { error: 'Failed to update existing customer' };
+          }
+        }
+
+      } else {
+        // Create new customer
+        const { data: newCustomer, error: createCustomerError } = await supabase
+          .from('customers')
+          .insert({
+            first_name: validatedData.guest_name.split(' ')[0] || '',
+            last_name: validatedData.guest_name.split(' ').slice(1).join(' ') || '',
+            email: validatedData.guest_email,
+            phone: validatedData.guest_phone,
+            status: 'active', // Default status for new customers
+            notes: `Created from reservation for loft ${validatedData.loft_id}`,
+            nationality: validatedData.guest_nationality,
+          })
+          .select('id')
+          .single();
+
+        if (createCustomerError) {
+          console.error('Error creating new customer:', createCustomerError);
+          return { error: 'Failed to create new customer' };
+        }
+        customerId = newCustomer.id;
+      }
+    }
 
     // Create reservation
     const { data: reservation, error: reservationError } = await supabase
       .from('reservations')
       .insert({
-        ...validatedData,
-        base_price: priceData.base_price,
-        cleaning_fee: priceData.cleaning_fee,
-        service_fee: priceData.service_fee,
-        taxes: priceData.taxes,
-        total_amount: priceData.total_amount,
+        loft_id: validatedData.loft_id,
+        guest_id: customerId, // Link reservation to customer
+        guest_name: validatedData.guest_name, // Keep for display/denormalization if needed
+        guest_email: validatedData.guest_email,
+        guest_phone: validatedData.guest_phone,
+        guest_nationality: validatedData.guest_nationality,
+        guest_count: validatedData.guest_count,
+        check_in_date: validatedData.check_in_date,
+        check_out_date: validatedData.check_out_date,
+        special_requests: validatedData.special_requests,
+        base_price: priceData.base_price || 0,
+        cleaning_fee: priceData.cleaning_fee || 0,
+        service_fee: priceData.service_fee || 0,
+        taxes: priceData.taxes || 0,
+        total_amount: priceData.total_amount || 0,
         status: 'pending',
         payment_status: 'pending',
       })
@@ -179,22 +291,6 @@ export async function updateReservationStatus(
     return { success: true, data: reservation };
   } catch (error) {
     console.error('Error in updateReservationStatus:', error);
-    return { error: 'Internal server error' };
-  }
-}
-
-export async function cancelReservation(prevState: any, formData: FormData): Promise<ActionResult> {
-  try {
-    const reservationId = formData.get('reservation_id') as string;
-    const cancellationReason = formData.get('cancellation_reason') as string;
-    
-    if (!reservationId) {
-      return { error: 'Reservation ID is required' };
-    }
-
-    return await updateReservationStatus(reservationId, 'cancelled', cancellationReason);
-  } catch (error) {
-    console.error('Error in cancelReservation:', error);
     return { error: 'Internal server error' };
   }
 }
@@ -286,6 +382,18 @@ export async function blockDates(prevState: any, formData: FormData): Promise<Ac
       minimum_stay: formData.get('minimum_stay'),
     });
 
+    // Debug logging
+    console.log('🔧 Server Action - blockDates called with:', {
+      loft_id: validatedData.loft_id,
+      start_date: validatedData.start_date,
+      end_date: validatedData.end_date,
+      blocked_reason: validatedData.blocked_reason,
+      blocked_reason_type: typeof validatedData.blocked_reason,
+      raw_form_data: {
+        blocked_reason: formData.get('blocked_reason')
+      }
+    });
+
     // Validate dates
     const startDateObj = new Date(validatedData.start_date);
     const endDateObj = new Date(validatedData.end_date);
@@ -294,8 +402,32 @@ export async function blockDates(prevState: any, formData: FormData): Promise<Ac
       return { error: 'End date must be after start date' };
     }
 
+    // Check if the loft is available for the selected date range
+    const { data: isAvailable, error: availabilityError } = await supabase
+      .rpc('check_loft_availability', {
+        p_loft_id: validatedData.loft_id,
+        p_check_in: validatedData.start_date,
+        p_check_out: validatedData.end_date,
+      });
+
+    if (availabilityError) {
+      console.error('Error checking availability:', availabilityError);
+      return { error: 'Erreur lors de la vérification de la disponibilité' };
+    }
+
+    if (!isAvailable) {
+      return { error: 'Le loft n\'est pas disponible pour cette période. Il y a déjà des réservations ou des blocages.' };
+    }
+
     // Generate array of dates to block
-    const datesToBlock = [];
+    const datesToBlock: Array<{
+      loft_id: string;
+      date: string;
+      is_available: boolean;
+      blocked_reason: string;
+      price_override?: number;
+      minimum_stay: number;
+    }> = [];
     const currentDate = new Date(validatedData.start_date);
     
     while (currentDate < endDateObj) {
@@ -324,6 +456,12 @@ export async function blockDates(prevState: any, formData: FormData): Promise<Ac
       return { error: 'Failed to block dates' };
     }
 
+    console.log('✅ Server Action - blockDates success:', {
+      blocked_reason: validatedData.blocked_reason,
+      blocked_dates_count: data?.length || 0,
+      sample_record: data?.[0]
+    });
+
     revalidatePath('/reservations');
     revalidatePath('/availability');
     
@@ -331,6 +469,7 @@ export async function blockDates(prevState: any, formData: FormData): Promise<Ac
       success: true, 
       data: {
         blocked_dates: data?.length || 0,
+        blocked_reason: validatedData.blocked_reason, // Include for debugging
         start_date: validatedData.start_date,
         end_date: validatedData.end_date
       }

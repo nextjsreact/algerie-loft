@@ -65,7 +65,7 @@ export async function POST() {
         name: 'Loft Artistique Hydra',
         address: '15 Rue Didouche Mourad, Hydra, Alger',
         description: 'Profitez avec toute la famille dans cet appartement confortable, calme, avec une magnifique vue panoramique',
-        price_per_month: 45000,
+        price_per_night: 1500, // Assuming 30 days in a month for conversion (45000 / 30)
         status: 'available',
         owner_id: owners?.[0]?.id,
         zone_area_id: zoneAreas?.find(z => z.name === 'Hydra')?.id,
@@ -76,7 +76,7 @@ export async function POST() {
         name: 'Loft Moderne Centre-Ville',
         address: '8 Boulevard Zighout Youcef, Centre-Ville, Alger',
         description: 'Loft moderne avec vue sur la baie d\'Alger',
-        price_per_month: 55000,
+        price_per_night: 1833, // Assuming 30 days in a month for conversion (55000 / 30)
         status: 'available',
         owner_id: owners?.[1]?.id,
         zone_area_id: zoneAreas?.find(z => z.name === 'Centre-Ville')?.id,
@@ -87,7 +87,7 @@ export async function POST() {
         name: 'Studio Haut de Gamme Hydra',
         address: '22 Chemin Mackley, Hydra, Alger',
         description: 'Studio haut de gamme dans le quartier d\'Hydra',
-        price_per_month: 38000,
+        price_per_night: 1267, // Assuming 30 days in a month for conversion (38000 / 30)
         status: 'occupied',
         owner_id: owners?.[0]?.id,
         zone_area_id: zoneAreas?.find(z => z.name === 'Hydra')?.id,
@@ -98,7 +98,7 @@ export async function POST() {
         name: 'Loft Étudiant Bab Ezzouar',
         address: '5 Cité AADL, Bab Ezzouar, Alger',
         description: 'Loft adapté aux étudiants, proche de l\'université',
-        price_per_month: 28000,
+        price_per_night: 933, // Assuming 30 days in a month for conversion (28000 / 30)
         status: 'available',
         owner_id: owners?.[2]?.id,
         zone_area_id: zoneAreas?.find(z => z.name === 'Bab Ezzouar')?.id,
@@ -109,7 +109,7 @@ export async function POST() {
         name: 'Penthouse Vue Mer Oran',
         address: '12 Front de Mer, Oran',
         description: 'Penthouse avec vue panoramique sur la mer',
-        price_per_month: 75000,
+        price_per_night: 2500, // Assuming 30 days in a month for conversion (75000 / 30)
         status: 'available',
         owner_id: owners?.[3]?.id,
         zone_area_id: zoneAreas?.find(z => z.name === 'Oran')?.id,
@@ -120,7 +120,7 @@ export async function POST() {
         name: 'Loft Familial Constantine',
         address: '18 Rue Larbi Ben M\'hidi, Constantine',
         description: 'Loft spacieux pour famille, quartier calme',
-        price_per_month: 42000,
+        price_per_night: 1400, // Assuming 30 days in a month for conversion (42000 / 30)
         status: 'maintenance',
         owner_id: owners?.[2]?.id,
         zone_area_id: zoneAreas?.find(z => z.name === 'Constantine')?.id,

@@ -2,7 +2,7 @@
 
 import { 
   Building2, Calendar, DollarSign, Home, LogOut, Settings, Users, 
-  ClipboardList, UserCheck, ChevronDown, ChevronRight, LayoutDashboard, CreditCard, MessageSquare, Bell, Search
+  ClipboardList, UserCheck, ChevronDown, ChevronRight, LayoutDashboard, CreditCard, MessageSquare, Bell, CalendarCheck
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -10,12 +10,14 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { User } from "@/lib/types"
 import { logout } from "@/lib/auth"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { LanguageSelector } from "@/components/ui/language-selector"
 import { NotificationBadge } from "@/components/ui/notification-badge"
 import { useEnhancedRealtime } from "@/components/providers/enhanced-realtime-provider"
-import { useTranslations } from "next-intl"
+import { useNotifications } from "@/components/providers/notification-context"
+import { useTranslations, useLocale } from "next-intl"
 
 interface EnhancedSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   user: User;
@@ -25,71 +27,67 @@ interface EnhancedSidebarProps extends React.HTMLAttributes<HTMLDivElement> {
 export function EnhancedSidebar({ user, unreadCount, className }: EnhancedSidebarProps) {
   const pathname = usePathname()
   const [isSettingsOpen, setIsSettingsOpen] = useState(pathname?.startsWith('/settings') || false)
-  const { unreadMessagesCount, unreadNotificationsCount, playSound } = useEnhancedRealtime()
+  const { unreadMessagesCount } = useEnhancedRealtime()
+  const { unreadCount: realtimeUnreadCount } = useNotifications()
+  const locale = useLocale()
   const t = useTranslations('nav')
   const tRoles = useTranslations('roles')
   const tAuth = useTranslations('auth')
-  const tConversations = useTranslations('conversations')
-
-  useEffect(() => {
-    const handleNotificationReceived = (event: CustomEvent) => {
-      playSound(event.detail.type)
-    }
-
-    window.addEventListener('notification-received', handleNotificationReceived as EventListener)
-    
-    return () => {
-      window.removeEventListener('notification-received', handleNotificationReceived as EventListener)
-    }
-  }, [playSound])
 
   const navigation = [
-    { name: t('dashboard'), href: "/dashboard", icon: LayoutDashboard, roles: ["admin", "manager", "member"] },
-    { name: t('conversations'), href: "/conversations", icon: MessageSquare, roles: ["admin", "manager", "member", "executive"] },
-    { name: t('notifications'), href: "/notifications", icon: Bell, roles: ["admin", "manager", "member"] },
-    { name: t('lofts'), href: "/lofts", icon: Building2, roles: ["admin", "manager"] },
-    { name: t('tasks'), href: "/tasks", icon: ClipboardList, roles: ["admin", "manager", "member"] },
-    { name: t('teams'), href: "/teams", icon: Users, roles: ["admin", "manager"] },
-    { name: t('owners'), href: "/owners", icon: UserCheck, roles: ["admin"] },
-    { name: t('transactions'), href: "/transactions", icon: DollarSign, roles: ["admin", "manager"] },
-    { name: t('reports'), href: "/reports", icon: Calendar, roles: ["admin", "manager"] },
-    { name: t('availability'), href: "/availability", icon: Search, roles: ["admin", "manager", "member"] },
+    { name: t('executive'), href: `/${locale}/executive`, icon: LayoutDashboard, roles: ["executive"], className: "bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold" },
+    { name: t('dashboard'), href: `/${locale}/dashboard`, icon: LayoutDashboard, roles: ["admin", "manager", "member"] },
+    { name: 'Login', href: `/${locale}/login`, icon: LogOut, roles: ['guest'] },
+    { name: 'Register', href: `/${locale}/register`, icon: UserCheck, roles: ['guest'] },
+    { name: t('conversations'), href: `/${locale}/conversations`, icon: MessageSquare, roles: ["admin", "manager", "member", "executive"] },
+    { name: t('notifications'), href: `/${locale}/notifications`, icon: Bell, roles: ["admin", "manager", "member"] },
+    { name: t('lofts'), href: `/${locale}/lofts`, icon: Building2, roles: ["admin", "manager"] },
+    { name: t('reservations'), href: `/${locale}/reservations`, icon: Calendar, roles: ["admin", "manager"] },
+    { name: t('availability'), href: `/${locale}/availability`, icon: CalendarCheck, roles: ["admin", "manager"] },
+    { name: t('tasks'), href: `/${locale}/tasks`, icon: ClipboardList, roles: ["admin", "manager", "member"] },
+    { name: t('teams'), href: `/${locale}/teams`, icon: Users, roles: ["admin", "manager"] },
+    { name: t('owners'), href: `/${locale}/owners`, icon: UserCheck, roles: ["admin"] },
+    { name: t('transactions'), href: `/${locale}/transactions`, icon: DollarSign, roles: ["admin", "manager"] },
+    { name: t('reports'), href: `/${locale}/reports`, icon: Calendar, roles: ["admin", "manager"] },
     { 
       name: t('settings'), 
-      href: "/settings", 
+      href: `/${locale}/settings`, 
       icon: Settings, 
-      roles: ["admin", "manager", "member"],
+      roles: ["admin", "manager"],
       subItems: [
-        { name: t('categories'), href: "/settings/categories", icon: ClipboardList, roles: ["admin"] },
-        { name: t('currencies'), href: "/settings/currencies", icon: DollarSign, roles: ["admin"] },
-        { name: t('zoneAreas'), href: "/settings/zone-areas", icon: Home, roles: ["admin"] },
-        { name: t('paymentMethods'), href: "/settings/payment-methods", icon: CreditCard, roles: ["admin"] },
-        { name: t('internetConnections'), href: "/settings/internet-connections", icon: Building2, roles: ["admin"] },
-        { name: t('application'), href: "/settings/application", icon: Settings, roles: ["admin"] }
+        { name: t('categories'), href: `/${locale}/settings/categories`, icon: ClipboardList, roles: ["admin"] },
+        { name: t('currencies'), href: `/${locale}/settings/currencies`, icon: DollarSign, roles: ["admin"] },
+        { name: t('zoneAreas'), href: `/${locale}/settings/zone-areas`, icon: Home, roles: ["admin"] },
+        { name: t('paymentMethods'), href: `/${locale}/settings/payment-methods`, icon: CreditCard, roles: ["admin"] },
+        { name: t('internetConnections'), href: `/${locale}/settings/internet-connections`, icon: Building2, roles: ["admin"] },
+        { name: t('application'), href: `/${locale}/settings/application`, icon: Settings, roles: ["admin"] }
       ]
     },
   ]
 
-  const filteredNavigation = navigation.filter((item) => item.roles.includes(user.role))
+  const filteredNavigation = user.role === 'guest' 
+    ? navigation.filter(item => item.roles.includes('guest'))
+    : navigation.filter((item) => item.roles.includes(user.role))
 
   return (
-    <div className={cn("flex h-full w-64 flex-col bg-gray-900", className)}>
-      <div className="flex h-16 shrink-0 items-center justify-between px-4 border-b border-gray-700">
-        <Link href="/dashboard" className="flex items-center group">
-          <div className="relative">
-            <Building2 className="h-8 w-8 text-white transition-transform group-hover:scale-110" />
-            <div className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2 border-gray-900 bg-blue-500"></div>
+    <div className={cn("flex h-full w-72 flex-col bg-gray-900 dark:bg-gray-900", className)}>
+      <div className="flex h-16 shrink-0 items-center justify-between px-3 border-b border-gray-700 dark:border-gray-700">
+        <Link href={`/${locale}/dashboard`} className="flex items-center group min-w-0 flex-1">
+          <div className="relative flex-shrink-0">
+            <Building2 className="h-7 w-7 text-white transition-transform group-hover:scale-110" />
+            <div className="absolute -bottom-1 -right-1 h-2.5 w-2.5 rounded-full border-2 border-gray-900 bg-blue-500"></div>
           </div>
-          <span className="ml-3 text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
-            {tConversations('loftManager')}
+          <span className="ml-2 text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 truncate">
+            {t('loftManager')}
           </span>
         </Link>
-        <div className="hover:bg-gray-800/50 transition-colors rounded-md">
-          <ThemeToggle />
+        <div className="flex items-center bg-gray-700/50 dark:bg-gray-800 rounded-md p-0.5 gap-0.5 flex-shrink-0">
+          <LanguageSelector />
+          <ThemeToggle variant="ghost" size="sm" className="text-white hover:text-white h-8 w-8" />
         </div>
       </div>
 
-      <nav className="flex-1 space-y-1 px-2 py-4">
+      <nav className="flex-1 space-y-1 px-2 py-4 overflow-y-auto">
         {filteredNavigation.map((item) => {
           const isActive = pathname === item.href || 
                          (item.subItems && item.subItems.some(sub => pathname === sub.href))
@@ -142,6 +140,7 @@ export function EnhancedSidebar({ user, unreadCount, className }: EnhancedSideba
               className={cn(
                 "group flex items-center justify-between px-2 py-2 text-sm font-medium rounded-md",
                 isActive ? "bg-gray-800 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                item.className
               )}
             >
               <div className="flex items-center">
@@ -149,17 +148,11 @@ export function EnhancedSidebar({ user, unreadCount, className }: EnhancedSideba
                 {item.name}
               </div>
               
-              {item.name === t('conversations') && unreadMessagesCount > 0 && (
-                <NotificationBadge 
-                  count={unreadMessagesCount} 
-                  className="ml-2 animate-pulse" 
-                />
+              {item.href === `/${locale}/conversations` && unreadMessagesCount > 0 && (
+                <NotificationBadge count={unreadMessagesCount} className="ml-2" />
               )}
-              {item.name === t('notifications') && unreadNotificationsCount > 0 && (
-                <NotificationBadge 
-                  count={unreadNotificationsCount} 
-                  className="ml-2 animate-pulse" 
-                />
+              {item.href === `/${locale}/notifications` && realtimeUnreadCount > 0 && (
+                <NotificationBadge count={realtimeUnreadCount} className="ml-2 animate-pulse" />
               )}
             </Link>
           )

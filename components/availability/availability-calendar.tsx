@@ -1,50 +1,52 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ChevronLeft, ChevronRight, Calendar, Eye, BookOpen, Phone } from 'lucide-react'
-import { format, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay } from 'date-fns'
+import { format, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isWithinInterval } from 'date-fns'
 import { fr, ar } from 'date-fns/locale'
+import { DateRange } from 'react-day-picker'
 
 interface AvailabilityCalendarProps {
   data: any[]
-  filters: any
+  dateRange: DateRange | undefined
   isLoading: boolean
+  onBookNow: (loftId: string) => void;
+  rawAvailabilityData: any[];
 }
 
-export function AvailabilityCalendar({ data, filters, isLoading }: AvailabilityCalendarProps) {
+export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, rawAvailabilityData }: AvailabilityCalendarProps) {
   const t = useTranslations('availability')
   const locale = useLocale()
+  const router = useRouter()
   
-  // Get the appropriate locale for date formatting
   const getDateLocale = () => {
     switch (locale) {
-      case 'ar':
-        return ar
-      case 'fr':
-        return fr
-      default:
-        return fr
+      case 'ar': return ar
+      case 'fr': return fr
+      default: return fr
     }
   }
 
-  // Get weekday names based on current language
   const getWeekdayNames = () => {
     const locale = getDateLocale()
-    const baseDate = new Date(2024, 0, 1) // Monday, January 1, 2024
-    const weekdays = []
-    for (let i = 0; i < 7; i++) {
-      const date = addDays(baseDate, i)
-      weekdays.push(format(date, 'EEE', { locale }))
-    }
-    return weekdays
+    const baseDate = new Date(2024, 0, 1) // Monday
+    return Array.from({ length: 7 }, (_, i) => format(addDays(baseDate, i), 'EEE', { locale }))
   }
-  const [currentMonth, setCurrentMonth] = useState(new Date())
-  const [selectedLoft, setSelectedLoft] = useState<string | null>(null)
+
+  const [currentMonth, setCurrentMonth] = useState(dateRange?.from || new Date())
+  const [selectedLoft, setSelectedLoft] = useState<any>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  useEffect(() => {
+    setCurrentMonth(dateRange?.from || new Date())
+  }, [dateRange])
 
   const monthStart = startOfMonth(currentMonth)
   const monthEnd = endOfMonth(currentMonth)
@@ -52,47 +54,30 @@ export function AvailabilityCalendar({ data, filters, isLoading }: AvailabilityC
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'available':
-        return 'bg-green-500'
-      case 'occupied':
-        return 'bg-red-500'
-      case 'maintenance':
-        return 'bg-orange-500'
-      default:
-        return 'bg-gray-300'
+      case 'available': return 'bg-green-500'
+      case 'occupied': return 'bg-red-500'
+      case 'maintenance': return 'bg-orange-500'
+      case 'personal_use': return 'bg-purple-500'
+      default: return 'bg-gray-300'
     }
   }
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'available':
-        return t('available')
-      case 'occupied':
-        return t('occupied')
-      case 'maintenance':
-        return t('maintenance')
-      default:
-        return t('unknown')
+      case 'available': return t('available')
+      case 'occupied': return t('occupied')
+      case 'maintenance': return t('maintenance')
+      case 'personal_use': return t('personalUse')
+      default: return t('unknown')
     }
   }
 
-  const filteredData = data.filter(loft => {
-    if (filters.region !== 'all' && loft.region.toLowerCase() !== filters.region) return false
-    
-    // Nouveau filtre multi-sélection pour les propriétaires
-    if (filters.owners && filters.owners.length > 0) {
-      const loftOwnerKey = loft.owner.toLowerCase().replace(' ', '-')
-      if (!filters.owners.includes(loftOwnerKey)) return false
-    }
-    
-    if (loft.capacity < filters.guests) return false
-    if (loft.pricePerNight < filters.minPrice || loft.pricePerNight > filters.maxPrice) return false
-    return true
-  })
+  const handleViewDetails = (loft: any) => {
+    setSelectedLoft(loft)
+    setIsDialogOpen(true)
+  }
 
-  const displayData = selectedLoft 
-    ? filteredData.filter(loft => loft.id === selectedLoft)
-    : filteredData
+  const displayData = selectedLoft ? data.filter(loft => loft.id === selectedLoft) : data
 
   if (isLoading) {
     return (
@@ -118,25 +103,13 @@ export function AvailabilityCalendar({ data, filters, isLoading }: AvailabilityC
             {format(currentMonth, 'MMMM yyyy', { locale: getDateLocale() })}
           </h3>
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentMonth(addDays(currentMonth, -30))}
-            >
+            <Button variant="outline" size="sm" onClick={() => setCurrentMonth(addDays(currentMonth, -30))}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentMonth(new Date())}
-            >
+            <Button variant="outline" size="sm" onClick={() => setCurrentMonth(new Date())}>
               {t('today')}
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentMonth(addDays(currentMonth, 30))}
-            >
+            <Button variant="outline" size="sm" onClick={() => setCurrentMonth(addDays(currentMonth, 30))}>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -145,12 +118,20 @@ export function AvailabilityCalendar({ data, filters, isLoading }: AvailabilityC
         {/* Loft Selector */}
         <div className="flex items-center gap-2">
           <select
-            value={selectedLoft || 'all'}
-            onChange={(e) => setSelectedLoft(e.target.value === 'all' ? null : e.target.value)}
+            value={selectedLoft?.id || 'all'}
+            onChange={(e) => {
+              const loftId = e.target.value;
+              if (loftId === 'all') {
+                setSelectedLoft(null);
+              } else {
+                const loft = data.find(l => l.id === loftId);
+                setSelectedLoft(loft);
+              }
+            }}
             className="flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <option value="all">{t('allLofts')}</option>
-            {filteredData.map((loft) => (
+            {data.map((loft) => (
               <option key={loft.id} value={loft.id}>
                 {loft.name}
               </option>
@@ -173,6 +154,10 @@ export function AvailabilityCalendar({ data, filters, isLoading }: AvailabilityC
           <div className="w-4 h-4 bg-orange-500 rounded"></div>
           <span className="text-sm">{t('maintenance')}</span>
         </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-purple-500 rounded"></div>
+          <span className="text-sm">{t('personalUse')}</span>
+        </div>
       </div>
 
       {/* Calendar Grid */}
@@ -184,9 +169,9 @@ export function AvailabilityCalendar({ data, filters, isLoading }: AvailabilityC
                 <div>
                   <CardTitle className="text-lg">{loft.name}</CardTitle>
                   <CardDescription className="flex items-center gap-4 mt-1">
-                    <span>{loft.region === 'availability:unknown' ? (locale === 'ar' ? 'غير معروف' : locale === 'en' ? 'Unknown' : 'Inconnu') : loft.region}</span>
+                    <span>{loft.region}</span>
                     <span>•</span>
-                    <span>{loft.owner === 'availability:unknown' ? (locale === 'ar' ? 'غير معروف' : locale === 'en' ? 'Unknown' : 'Inconnu') : loft.owner}</span>
+                    <span>{loft.owner}</span>
                     <span>•</span>
                     <span>{loft.pricePerNight.toLocaleString()} DA/nuit</span>
                   </CardDescription>
@@ -195,7 +180,7 @@ export function AvailabilityCalendar({ data, filters, isLoading }: AvailabilityC
                   <Badge variant={loft.status === 'available' ? 'default' : 'secondary'}>
                     {getStatusText(loft.status)}
                   </Badge>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => handleViewDetails(loft)}>
                     <Eye className="h-4 w-4 mr-1" />
                     {t('viewDetails')}
                   </Button>
@@ -204,19 +189,17 @@ export function AvailabilityCalendar({ data, filters, isLoading }: AvailabilityC
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-7 gap-1">
-                {/* Day headers */}
                 {getWeekdayNames().map((day) => (
                   <div key={day} className="p-2 text-center text-sm font-medium text-muted-foreground">
                     {day}
                   </div>
                 ))}
                 
-                {/* Calendar days */}
                 {days.map((day) => {
                   const dayKey = format(day, 'yyyy-MM-dd')
                   const dayStatus = loft.availability?.[dayKey] || 'available'
                   const isToday = isSameDay(day, new Date())
-                  const isInRange = day >= filters.startDate && day <= filters.endDate
+                  const isInRange = dateRange?.from && dateRange?.to && isWithinInterval(day, { start: dateRange.from, end: dateRange.to })
                   
                   return (
                     <TooltipProvider key={dayKey}>
@@ -257,6 +240,70 @@ export function AvailabilityCalendar({ data, filters, isLoading }: AvailabilityC
           </Card>
         ))}
       </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{selectedLoft?.name}</DialogTitle>
+            <DialogDescription>
+              {t('loftDetailsDescription')}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedLoft && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-medium">{t('basicInfo')}</h4>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span>{t('region')}:</span>
+                      <span>{selectedLoft.region}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>{t('owner')}:</span>
+                      <span>{selectedLoft.owner}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>{t('capacity')}:</span>
+                      <span>{selectedLoft.capacity} {t('guests')}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>{t('pricePerNight')}:</span>
+                      <span className="font-medium">{selectedLoft.pricePerNight.toLocaleString()} DA</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <h4 className="font-medium">{t('amenities')}</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedLoft.amenities?.map((amenity: string) => (
+                      <div 
+                        key={amenity}
+                        className="flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-xs"
+                      >
+                        <span>{amenity}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Button className="flex-1" onClick={() => onBookNow(selectedLoft.id)}>
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  {t('bookNow')}
+                </Button>
+                <Button variant="outline">
+                  <Phone className="h-4 w-4 mr-2" />
+                  {t('contact')}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {displayData.length === 0 && (
         <Card className="p-8 text-center">

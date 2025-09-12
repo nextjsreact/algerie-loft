@@ -1,0 +1,26 @@
+{
+  "description": "Template configuration for this project. See https://www.codebuff.com/config for all options.",
+  "startupProcesses": [
+    {
+      "name": "dev-server",
+      "command": "npm run dev",
+      "enabled": true,
+      "stdoutFile": "logs/dev-server.log"
+    }
+  ],
+  "fileChangeHooks": [
+    {
+      "name": "typecheck",
+      "command": "npx tsc --noEmit",
+      "filePattern": "**/*.{ts,tsx}",
+      "enabled": true
+    },
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "filePattern": "**/*.{js,jsx,ts,tsx}",
+      "enabled": true
+    }
+  ],
+  "maxAgentSteps": 25
+}

@@ -14,7 +14,7 @@ export default async function OwnersPage() {
       *,
       lofts (
         id,
-        price_per_month
+        price_per_night
       )
     `
     )
@@ -25,10 +25,10 @@ export default async function OwnersPage() {
   }
 
   const owners = ownersData.map((owner) => {
-    const lofts = owner.lofts as unknown as { price_per_month: number }[]
+    const lofts = owner.lofts as unknown as { price_per_night: number }[]
     const loft_count = lofts.length
     const total_monthly_value = lofts.reduce(
-      (acc, loft) => acc + loft.price_per_month,
+      (acc, loft) => acc + loft.price_per_night,
       0
     )
     return {

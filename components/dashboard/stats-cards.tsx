@@ -11,10 +11,11 @@ interface StatsCardsProps {
     activeTasks: number
     monthlyRevenue: number
     totalTeams: number
-  }
+  },
+  defaultCurrencySymbol: string // New prop
 }
 
-export function StatsCards({ stats }: StatsCardsProps) {
+export function StatsCards({ stats, defaultCurrencySymbol }: StatsCardsProps) { // Destructure new prop
   const t = useTranslations('dashboard');
   
   const cards = [
@@ -32,7 +33,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
     },
     {
       title: t('monthlyRevenue'),
-      value: `$${stats.monthlyRevenue.toLocaleString()}`,
+      value: `${defaultCurrencySymbol}${stats.monthlyRevenue.toLocaleString()}`, // Use new prop
       icon: DollarSign,
       description: t('thisMonth'),
     },

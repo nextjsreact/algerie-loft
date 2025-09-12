@@ -26,7 +26,7 @@ export default function ClientProviders({ children, session, unreadCount, locale
     <ErrorBoundary>
       {!session ? (
         // For pages without session (like homepage), use minimal providers
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos">
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -40,7 +40,7 @@ export default function ClientProviders({ children, session, unreadCount, locale
         </NextIntlClientProvider>
       ) : (
         // For authenticated pages, use full provider stack
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos">
           <SupabaseProvider>
             <ThemeProvider
               attribute="class"

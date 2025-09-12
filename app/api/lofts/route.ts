@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     // Récupérer tous les lofts
     const { data: lofts, error: fetchError } = await supabase
       .from("lofts")
-      .select("*")
+      .select("id, name, description, address, price_per_night")
       .order("created_at", { ascending: false });
 
     if (fetchError) {

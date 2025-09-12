@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Currency } from "../../types/currency";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -145,6 +146,7 @@ export function ModernDashboard() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [selectedBill, setSelectedBill] = useState<BillAlert | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [defaultCurrencySymbol, setDefaultCurrencySymbol] = useState<string>('$'); // New state for currency symbol
   const supabase = createClient();
 
   useEffect(() => {
@@ -163,6 +165,21 @@ export function ModernDashboard() {
 
       if (!upcomingRes.error) setUpcomingBills(upcomingRes.data || []);
       if (!overdueRes.error) setOverdueBills(overdueRes.data || []);
+
+      // Fetch default currency symbol
+      const { data: defaultCurrencyData, error: currencyError } = await supabase
+        .from('currencies')
+        .select('symbol')
+        .eq('is_default', true)
+        .single();
+
+      if (!currencyError && defaultCurrencyData) {
+        setDefaultCurrencySymbol(defaultCurrencyData.symbol);
+      } else {
+        console.error('Error fetching default currency:', currencyError);
+        // Fallback to '$' if fetching fails
+        setDefaultCurrencySymbol('$');
+      }
 
       // Fetch bill monitoring stats (only if user is authenticated)
       try {
@@ -374,7 +391,7 @@ export function ModernDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-green-100 text-sm font-medium">{t("monthlyRevenue")}</p>
-                <p className="text-3xl font-bold">${stats.monthlyRevenue.toLocaleString()}</p>
+                <p className="text-3xl font-bold">{defaultCurrencySymbol}{stats.monthlyRevenue.toLocaleString()}</p>
                 <div className="flex items-center text-green-100 text-xs mt-1">
                   <ArrowUpRight className="h-3 w-3 mr-1" />
                   +12% {t("thisMonth")}

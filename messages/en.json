@@ -1,100 +1,39 @@
 {
-  "reservations": {
-    "title": "Reservations",
-    "description": "Manage your reservations, availability, and analytics.",
-    "create": "Create Reservation",
-    "actions": "Quick Actions",
-    "new": "New",
-    "guests": "Guests",
-    "reportsLabel": "Reports",
-    "activity": "Recent Activity",
-    "live": "Live",
-    "vsLastMonth": "vs last month",
-    "pro": "Pro",
-    "comingSoon": "Coming Soon",
-    "proTag": "Pro",
-    "aiTag": "AI",
-    "enterpriseTag": "Enterprise",
-    "nights": "nights",
-    "tabs": {
-      "analytics": "Analytics",
-      "calendar": "Calendar",
-      "list": "List"
+  "customers": {
+    "title": "Customers",
+    "description": "Manage your customer base.",
+    "newCustomer": "New Customer",
+    "searchCustomers": "Search customers...",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "status": "Status",
+    "notes": "Notes",
+    "actions": "Actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete {name}?",
+    "deleteSuccess": "Customer {name} deleted successfully.",
+    "deleteError": "Error deleting customer: {error}",
+    "noCustomersFound": "No customers found.",
+    "loadingCustomers": "Loading customers...",
+    "createSuccess": "Customer created successfully!",
+    "createError": "Error creating customer: {error}",
+    "updateSuccess": "Customer updated successfully!",
+    "updateError": "Error updating customer: {error}",
+    "unknownError": "An unknown error occurred.",
+    "selectStatus": "Select status",
+    "submitting": "Submitting...",
+    "createCustomer": "Create Customer",
+    "updateCustomer": "Update Customer",
+    "editCustomer": "Edit Customer",
+    "statusOptions": {
+      "prospect": "Prospect",
+      "active": "Active",
+      "former": "Former"
     },
-    "status": {
-      "pending": "Pending",
-      "confirmed": "Confirmed",
-      "cancelled": "Cancelled",
-      "completed": "Completed"
-    },
-    "upcoming": {
-      "title": "Upcoming Reservations",
-      "empty": "No upcoming reservations"
-    },
-    "calendar": {
-      "title": "Reservation Calendar",
-      "month": "Month",
-      "week": "Week",
-      "day": "Day",
-      "agenda": "Agenda",
-      "event": "Event",
-      "noEventsInRange": "No events in this range",
-      "allDay": "All Day",
-      "work_week": "Work Week",
-      "yesterday": "Yesterday",
-      "tomorrow": "Tomorrow",
-      "showMore": "Show more ({count})"
-    },
-    "list": {
-      "title": "Reservation List",
-      "advancedTitle": "Advanced List View",
-      "advancedDescription": "Complete reservation management with advanced filtering, sorting and bulk operations.",
-      "advancedFilters": "Advanced Filters",
-      "bulkActions": "Bulk Actions",
-      "exportOptions": "Export Options"
-    },
-    "form": {
-      "title": "New Reservation",
-      "badge": "Live",
-      "loft": "Loft",
-      "guestCount": "Guest Count",
-      "checkIn": "Check-in",
-      "checkOut": "Check-out",
-      "checkingAvailability": "Checking availability...",
-      "notAvailable": "Not available for selected dates",
-      "available": "Available",
-      "guestName": "Guest Name",
-      "guestEmail": "Guest Email",
-      "specialRequests": "Special Requests",
-      "createReservation": "Create Reservation"
-    },
-    "details": {
-      "title": "Reservation Details",
-      "guest": "Guest",
-      "dates": "Dates",
-      "loft": "Loft",
-      "total": "Total",
-      "specialRequests": "Special Requests"
-    },
-    "activities": {
-      "newReservation": "New Reservation",
-      "checkinCompleted": "Check-in Completed",
-      "bookingCancelled": "Booking Cancelled",
-      "minAgo": "a minute ago",
-      "hourAgo": "an hour ago",
-      "hoursAgo": "a few hours ago"
-    },
-    "actions": {
-      "confirm": "Confirm Reservation",
-      "cancel": "Cancel Reservation",
-      "cancelTitle": "Cancel Reservation",
-      "cancelDescription": "Please provide a reason for cancelling this reservation.",
-      "cancellationReason": "Cancellation Reason",
-      "cancellationPlaceholder": "Please explain why this reservation is being cancelled...",
-      "confirmCancel": "Cancel Reservation",
-      "markCompleted": "Mark as Completed",
-      "cancelSuccess": "Reservation cancelled successfully."
-    }
+    "currentLoft": "Current Loft"
   },
   "landing": {
     "title": "Loft Algeria",
@@ -343,7 +282,7 @@
     "chooseLoft": "Choose a loft",
     "reasonForBlocking": "Reason for blocking",
     "selectReason": "Select reason",
-    "personalUse": "Personal Use",
+    "personal_use": "Personal Use",
     "renovation": "Renovation",
     "other": "Other",
     "minimumStay": "Minimum Stay",
@@ -355,9 +294,11 @@
     "noOwnersFound": "No owners found",
     "occupancyRate": "Occupancy Rate",
     "occupied": "Occupied",
+    "personalUse": "Personal Use",
     "occupiedLofts": "Occupied Lofts",
     "owner": "Owner",
     "owners": "Owners",
+    "customers": "Customers",
     "ownersSelected": "{count} owner(s) selected",
     "parking": "Parking",
     "pricePerNight": "Price per Night",
@@ -374,7 +315,8 @@
     "today": "Today",
     "totalLofts": "Total Lofts",
     "unknown": "Unknown",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "blocked": "Blocked"
   },
   "bills": {
     "amount": "Amount",
@@ -547,12 +489,12 @@
     "attentionNeeded": "Attention Needed",
     "billAlerts": "Bill Alerts",
     "billMonitoring": "Bill Monitoring",
+    "billsNeedAttention": "Bills Need Attention",
     "bills": {
       "due": "Due",
       "title": "Bills"
     },
     "billsDueNow": "Bills Due Now",
-    "billsNeedAttention": "bills need immediate attention",
     "billsPastDue": "Bills Past Due",
     "dayOverdue": "1 day overdue",
     "days": "days",
@@ -860,6 +802,7 @@
     },
     "pricePerDay": "Price per Day (DA)",
     "pricePerMonth": "Price per month",
+    "pricePerNight": "Price per Night",
     "quarterly": "Quarterly",
     "selectFrequency": "Select Frequency",
     "shouldEqual100": "Total percentage must equal 100%",
@@ -930,8 +873,9 @@
     "internetConnections": "Internet Connections",
     "loftManager": "Loft Manager",
     "lofts": "Lofts",
-    "notifications": "Notifications",
     "owners": "Owners",
+    "customers": "Customers",
+    "notifications": "Notifications",
     "paymentMethods": "Payment Methods",
     "paymentMethodsNav": "Payment Methods",
     "reports": "Reports",
@@ -1017,7 +961,6 @@
     "basicSettingsForAllMethods": "Basic settings for all payment methods",
     "cancel": "Cancel",
     "cards": "Cards",
-    "cash": "Cash",
     "check": "Check",
     "configureGlobalSettings": "Configure global settings for your payment methods",
     "configureNewMethod": "Configure a new payment method",
@@ -1079,7 +1022,8 @@
     "type": "Type",
     "updatePaymentMethod": "Update Payment Method",
     "updatePaymentMethodInfo": "Update payment method information",
-    "usDollar": "US Dollar (USD)"
+    "usDollar": "US Dollar (USD)",
+    "cash": "Cash"
   },
   "photos": {
     "addedBy": "Added by {name}",
@@ -1234,11 +1178,11 @@
       "hourAgo": "an hour ago",
       "hoursAgo": "a few hours ago",
       "minAgo": "a minute ago",
-      "newReservation": "New Reservation"
+      "newReservation": "New Reservation",
+      "noRecentActivity": "No recent activity"
     },
     "activity": "Recent Activity",
     "aiTag": "AI",
-
     "availability": {
       "blockDates": "Block Dates",
       "chooseLoft": "Choose a loft",
@@ -1345,6 +1289,7 @@
     "pro": "Pro",
     "proTag": "Pro",
     "reportsLabel": "Reports",
+    "selectLoft": "Select Loft",
     "status": {
       "cancelled": "Cancelled",
       "completed": "Completed",
@@ -1376,14 +1321,13 @@
       "empty": "No upcoming reservations.",
       "title": "Upcoming Reservations"
     },
-    "vsLastMonth": "vs last month"
+    "vsLastMonth": "vs last month",
+    "allLofts": "All Lofts"
   },
   "roles": {
     "admin": "Administrator",
     "executive": "Executive",
     "guest": "Guest",
-    "manager": "Manager",
-    "member": "Member",
     "manager": "Manager",
     "member": "Member",
     "owner": "Owner",
@@ -1642,6 +1586,7 @@
     "conversations": "Conversations",
     "notifications": "Notifications",
     "lofts": "Lofts",
+    "customers": "Customers",
     "reservations": "Reservations",
     "availability": "Availability",
     "tasks": "Tasks",
@@ -1689,12 +1634,7 @@
   "theme": {
     "dark": "Dark",
     "light": "Light",
-    "system": "System",
-    "theme": {
-      "dark": "Dark",
-      "light": "Light",
-      "system": "System"
-    }
+    "system": "System"
   },
   "transactions": {
     "addNewTransaction": "Add New Transaction",
@@ -1705,6 +1645,7 @@
     "allStatuses": "All Statuses",
     "allTypes": "All Types",
     "amount": "Amount",
+    "amountPlaceholder": "Enter amount",
     "amountAndDate": "Amount and Date",
     "categoriesAndProperties": "Categories and Properties",
     "category": "Category",

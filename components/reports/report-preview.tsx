@@ -183,8 +183,8 @@ export function ReportPreview({ type, filters, selectedId, onGeneratePDF }: Repo
                 <p className="font-medium">{data.loft.address}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">{t('monthlyRent')}</p>
-                <p className="font-medium">{data.loft.price_per_month.toLocaleString()} DA</p>
+                <p className="text-sm text-muted-foreground">{t('pricePerNight')}</p>
+                <p className="font-medium">{data.loft.price_per_night.toLocaleString()} DA</p>
               </div>
             </div>
           </CardContent>
@@ -274,7 +274,7 @@ export function ReportPreview({ type, filters, selectedId, onGeneratePDF }: Repo
                   <TableHead>{t('name')}</TableHead>
                   <TableHead>{t('owner')}</TableHead>
                   <TableHead>{t('address')}</TableHead>
-                  <TableHead className="text-right">{t('monthlyRent')}</TableHead>
+                  <TableHead className="text-right">{t('pricePerNight')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -284,7 +284,7 @@ export function ReportPreview({ type, filters, selectedId, onGeneratePDF }: Repo
                     <TableCell>{loft.owner_name}</TableCell>
                     <TableCell>{loft.address}</TableCell>
                     <TableCell className="text-right">
-                      {loft.price_per_month.toLocaleString()} DA
+                      {loft.price_per_night.toLocaleString()} DA
                     </TableCell>
                   </TableRow>
                 ))}

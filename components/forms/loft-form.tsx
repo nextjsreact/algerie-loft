@@ -29,7 +29,7 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
   const getInitialFormData = useCallback(() => ({
     name: loft?.name || "",
     address: loft?.address || "",
-    price_per_month: loft?.price_per_month?.toString() || "",
+    price_per_night: loft?.price_per_night?.toString() || "",
     owner_id: loft?.owner_id || "",
     zone_area_id: loft?.zone_area_id || "",
     internet_connection_type_id: loft?.internet_connection_type_id || "",
@@ -106,7 +106,7 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
       // Convert empty strings to null to prevent database errors
       const processedData = {
         ...formData,
-        price_per_month: Number(formData.price_per_month),
+        price_per_night: Number(formData.price_per_night),
         company_percentage: Number(formData.company_percentage),
         owner_percentage: Number(formData.owner_percentage),
         // Convert empty UUID strings to null
@@ -167,8 +167,8 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="price">{t('pricePerDay')} *</Label>
-                <Input id="price" type="number" value={formData.price_per_month} onChange={(e) => setFormData({...formData, price_per_month: e.target.value})} required />
+                <Label htmlFor="price">{t('pricePerNight')} *</Label>
+                <Input id="price" type="number" value={formData.price_per_night} onChange={(e) => setFormData({...formData, price_per_night: e.target.value})} required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="owner">{t('owner')}</Label>

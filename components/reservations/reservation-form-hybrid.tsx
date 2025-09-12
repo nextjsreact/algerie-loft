@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useTransition, useActionState } from 'react';
+import { useState, useEffect, useTransition, useActionState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,11 +8,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTranslations } from 'next-intl';
-import { Loader2, Calendar, Users, CreditCard, CheckCircle, AlertCircle, Star, Building2 } from 'lucide-react';
+import { Loader2, Calendar, Users, CreditCard, CheckCircle, AlertCircle, Star, Building2, Search } from 'lucide-react';
 import { format, addDays } from 'date-fns';
 import { createReservation } from '@/lib/actions/reservations';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Customer } from '@/types/customer';
 
 interface Loft {
   id: string;
@@ -40,19 +41,21 @@ interface AvailabilityData {
 }
 
 interface ReservationFormHybridProps {
-  loftId?: string;
+  initialLoftId?: string;
   initialCheckIn?: string;
   initialCheckOut?: string;
   onSuccess?: (reservation: any) => void;
   onCancel?: () => void;
+  defaultCurrencySymbol?: string;
 }
 
 export default function ReservationFormHybrid({
-  loftId,
+  initialLoftId,
   initialCheckIn,
   initialCheckOut,
   onSuccess,
   onCancel,
+  defaultCurrencySymbol,
 }: ReservationFormHybridProps) {
   const t = useTranslations('reservations');
   const [lofts, setLofts] = useState<Loft[]>([]);
@@ -61,13 +64,30 @@ export default function ReservationFormHybrid({
   const [isPending, startTransition] = useTransition();
   
   // Form state management
-  const [selectedLoft, setSelectedLoft] = useState(loftId || '');
+  const [selectedLoft, setSelectedLoft] = useState(initialLoftId || '');
   const [checkInDate, setCheckInDate] = useState(initialCheckIn || '');
   const [checkOutDate, setCheckOutDate] = useState(initialCheckOut || '');
   const [guestCount, setGuestCount] = useState(1);
+  const [guestEmail, setGuestEmail] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
+  const [guestName, setGuestName] = useState('');
+  const [guestNationality, setGuestNationality] = useState('');
+  const [foundCustomer, setFoundCustomer] = useState<Customer | null>(null);
+  const [isSearchingCustomer, setIsSearchingCustomer] = useState(false);
+  const [searchAttempted, setSearchAttempted] = useState(false);
+
+  // Pricing state
+  const [basePriceInput, setBasePriceInput] = useState<number | ''>('');
+  const [cleaningFeeInput, setCleaningFeeInput] = useState<number | ''>('');
+  const [serviceFeeInput, setServiceFeeInput] = useState<number | ''>('');
+  const [taxesInput, setTaxesInput] = useState<number | ''>('');
+  const [totalAmountInput, setTotalAmountInput] = useState<number | ''>('');
 
   // Server action state
   const [state, formAction] = useActionState(createReservation, null);
+
+  const selectedLoftData = lofts.find(l => l.id === selectedLoft);
+  const nights = availabilityData?.nights || 0;
 
   useEffect(() => {
     fetchLofts();
@@ -78,6 +98,42 @@ export default function ReservationFormHybrid({
       checkAvailabilityAndPricing();
     }
   }, [selectedLoft, checkInDate, checkOutDate, guestCount]);
+
+  useEffect(() => {
+    if (availabilityData?.pricing) {
+      setBasePriceInput(availabilityData.pricing.base_price);
+      setCleaningFeeInput(availabilityData.pricing.cleaning_fee);
+      setServiceFeeInput(availabilityData.pricing.service_fee);
+      setTaxesInput(availabilityData.pricing.taxes);
+      setTotalAmountInput(availabilityData.pricing.total_amount); // This will be overwritten by the calculation effect
+    } else {
+      let currentBasePrice = 0;
+      if (selectedLoftData) {
+        currentBasePrice = selectedLoftData.price_per_night || 0;
+        const calculatedNights = (checkInDate && checkOutDate) ?
+          Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+        
+        if (calculatedNights > 0) {
+          currentBasePrice *= calculatedNights;
+        }
+      }
+
+      setBasePriceInput(currentBasePrice);
+      setCleaningFeeInput(0);
+      setServiceFeeInput(0);
+      setTaxesInput(0);
+      setTotalAmountInput(0); // Initialize to 0, will be updated by calculation effect
+    }
+  }, [availabilityData, selectedLoftData, checkInDate, checkOutDate]);
+
+  // Calculate total amount whenever its components change
+  useEffect(() => {
+    const total = (parseFloat(String(basePriceInput)) || 0) +
+                  (parseFloat(String(cleaningFeeInput)) || 0) +
+                  (parseFloat(String(serviceFeeInput)) || 0) +
+                  (parseFloat(String(taxesInput)) || 0);
+    setTotalAmountInput(total);
+  }, [basePriceInput, cleaningFeeInput, serviceFeeInput, taxesInput]);
 
   // Handle successful reservation creation
   useEffect(() => {
@@ -122,6 +178,69 @@ export default function ReservationFormHybrid({
     }
   };
 
+  const fetchCustomer = useCallback(async (query: string, type: 'email' | 'phone') => {
+    setIsSearchingCustomer(true);
+    setSearchAttempted(true);
+    
+    try {
+      const params = new URLSearchParams({ [type]: query });
+      const response = await fetch(`/api/customers/search?${params}`);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('API Error fetching customer:', errorData.error);
+        setFoundCustomer(null);
+        // Clear fields if no customer found
+        if (type === 'email') {
+          setGuestPhone('');
+          setGuestName('');
+          setGuestNationality('');
+        } else if (type === 'phone') {
+          setGuestEmail('');
+          setGuestName('');
+          setGuestNationality('');
+        }
+      } else {
+        const data = await response.json();
+        const customer = data.customer;
+        setFoundCustomer(customer);
+        if (customer) {
+          setGuestName(`${customer.first_name || ''} ${customer.last_name || ''}`);
+          setGuestEmail(customer.email || '');
+          setGuestPhone(customer.phone || '');
+          setGuestNationality(customer.nationality || '');
+        } else {
+          // Only clear fields if no customer was found after a search (and not just initially empty)
+          // Also, only clear the field that was NOT used for the search
+          if (type === 'email') {
+            setGuestPhone(''); // Clear phone if email not found
+            setGuestName('');
+            setGuestNationality('');
+          } else if (type === 'phone') {
+            setGuestEmail(''); // Clear email if phone not found
+            setGuestName('');
+            setGuestNationality('');
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching customer:', error);
+      setFoundCustomer(null);
+      // Clear fields on error
+      if (type === 'email') {
+        setGuestPhone('');
+        setGuestName('');
+        setGuestNationality('');
+      } else if (type === 'phone') {
+        setGuestEmail('');
+        setGuestName('');
+        setGuestNationality('');
+      }
+    } finally {
+      setIsSearchingCustomer(false);
+    }
+  }, []);
+
   const handleSubmit = (formData: FormData) => {
     // Validate required fields before submission
     if (!selectedLoft || !checkInDate || !checkOutDate || checkInDate === '' || checkOutDate === '') {
@@ -137,9 +256,6 @@ export default function ReservationFormHybrid({
       formAction(formData);
     });
   };
-
-  const selectedLoftData = lofts.find(l => l.id === selectedLoft);
-  const nights = availabilityData?.nights || 0;
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
@@ -162,6 +278,15 @@ export default function ReservationFormHybrid({
             <input type="hidden" name="guest_count" value={guestCount} />
             <input type="hidden" name="check_in_date" value={checkInDate} />
             <input type="hidden" name="check_out_date" value={checkOutDate} />
+            <input type="hidden" name="guest_email" value={guestEmail} />
+            <input type="hidden" name="guest_phone" value={guestPhone} />
+            <input type="hidden" name="guest_name" value={guestName} />
+            <input type="hidden" name="guest_nationality" value={guestNationality} />
+            <input type="hidden" name="base_price" value={String(basePriceInput)} />
+            <input type="hidden" name="cleaning_fee" value={String(cleaningFeeInput)} />
+            <input type="hidden" name="service_fee" value={String(serviceFeeInput)} />
+            <input type="hidden" name="taxes" value={String(taxesInput)} />
+            <input type="hidden" name="total_amount" value={String(totalAmountInput)} />
 
             {/* Display server action errors */}
             {state?.error && (
@@ -213,7 +338,7 @@ export default function ReservationFormHybrid({
                   <Select
                     value={selectedLoft}
                     onValueChange={setSelectedLoft}
-                    disabled={!!loftId}
+                    disabled={!!initialLoftId}
                   >
                     <SelectTrigger className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500">
                       <SelectValue placeholder={t('form.selectLoft')} />
@@ -224,7 +349,7 @@ export default function ReservationFormHybrid({
                           <div className="flex items-center justify-between w-full">
                             <span className="font-medium">{loft.name}</span>
                             <Badge variant="outline" className="ml-2">
-                              {loft.price_per_night} DZD/night
+                              {loft.price_per_night} {defaultCurrencySymbol || 'DZD'}/night
                             </Badge>
                           </div>
                         </SelectItem>
@@ -301,7 +426,6 @@ export default function ReservationFormHybrid({
                 </div>
               </div>
             </div>
-
             {/* Real-time Availability Status (API-powered) */}
             {checkingAvailability && (
               <Alert>
@@ -311,7 +435,6 @@ export default function ReservationFormHybrid({
                 </AlertDescription>
               </Alert>
             )}
-
             {availabilityData && !availabilityData.available && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
@@ -320,7 +443,6 @@ export default function ReservationFormHybrid({
                 </AlertDescription>
               </Alert>
             )}
-
             {availabilityData?.available && availabilityData.pricing && (
               <Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 shadow-lg">
                 <CardContent className="p-6">
@@ -339,25 +461,60 @@ export default function ReservationFormHybrid({
                       <h5 className="font-medium text-gray-900 mb-3">Pricing Breakdown</h5>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between items-center py-1">
-                          <span className="text-gray-600">{t('form.basePrice')} ({nights} nights)</span>
-                          <span className="font-medium">{availabilityData.pricing.base_price} DZD</span>
+                          <Label htmlFor="base_price" className="text-gray-600">{t('form.basePrice')} ({nights} nights)</Label>
+                          <Input
+                            type="number"
+                            name="base_price_input"
+                            value={String(basePriceInput)}
+                            onChange={(e) => setBasePriceInput(parseFloat(e.target.value))}
+                            className="w-32 text-right"
+                            disabled={!availabilityData?.available}
+                          />
                         </div>
                         <div className="flex justify-between items-center py-1">
-                          <span className="text-gray-600">{t('form.cleaningFee')}</span>
-                          <span className="font-medium">{availabilityData.pricing.cleaning_fee} DZD</span>
+                          <Label htmlFor="cleaning_fee" className="text-gray-600">{t('form.cleaningFee')}</Label>
+                          <Input
+                            type="number"
+                            name="cleaning_fee_input"
+                            value={String(cleaningFeeInput)}
+                            onChange={(e) => setCleaningFeeInput(parseFloat(e.target.value))}
+                            className="w-32 text-right"
+                            disabled={!availabilityData?.available}
+                          />
                         </div>
                         <div className="flex justify-between items-center py-1">
-                          <span className="text-gray-600">{t('form.serviceFee')}</span>
-                          <span className="font-medium">{availabilityData.pricing.service_fee} DZD</span>
+                          <Label htmlFor="service_fee" className="text-gray-600">{t('form.serviceFee')}</Label>
+                          <Input
+                            type="number"
+                            name="service_fee_input"
+                            value={String(serviceFeeInput)}
+                            onChange={(e) => setServiceFeeInput(parseFloat(e.target.value))}
+                            className="w-32 text-right"
+                            disabled={!availabilityData?.available}
+                          />
                         </div>
                         <div className="flex justify-between items-center py-1">
-                          <span className="text-gray-600">{t('form.taxes')}</span>
-                          <span className="font-medium">{availabilityData.pricing.taxes} DZD</span>
+                          <Label htmlFor="taxes" className="text-gray-600">{t('form.taxes')}</Label>
+                          <Input
+                            type="number"
+                            name="taxes_input"
+                            value={String(taxesInput)}
+                            onChange={(e) => setTaxesInput(parseFloat(e.target.value))}
+                            className="w-32 text-right"
+                            disabled={!availabilityData?.available}
+                          />
                         </div>
                         <hr className="my-3" />
                         <div className="flex justify-between items-center py-2 bg-green-100 rounded-lg px-3">
-                          <span className="font-semibold text-green-800">{t('form.total')}</span>
-                          <span className="text-xl font-bold text-green-800">{availabilityData.pricing.total_amount} DZD</span>
+                          <Label htmlFor="total_amount" className="font-semibold text-green-800">{t('form.total')}</Label>
+                          <Input
+                            type="number"
+                            name="total_amount_input"
+                            value={String(totalAmountInput)}
+                            className="w-32 text-right text-xl font-bold text-green-800"
+                            disabled={!availabilityData?.available}
+                            readOnly // Make it read-only
+                          />
                         </div>
                       </div>
                     </div>
@@ -377,30 +534,37 @@ export default function ReservationFormHybrid({
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <Label htmlFor="guest_name" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                    <Users className="h-4 w-4 text-blue-600" />
-                    {t('form.guestName')}
-                  </Label>
-                  <Input 
-                    name="guest_name" 
-                    required 
-                    className="h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                    placeholder={t('form.fullNamePlaceholder')}
-                  />
-                </div>
-
-                <div className="space-y-3">
                   <Label htmlFor="guest_email" className="text-sm font-medium text-gray-700 flex items-center gap-2">
                     <Users className="h-4 w-4 text-indigo-600" />
                     {t('form.guestEmail')}
                   </Label>
-                  <Input 
-                    type="email" 
-                    name="guest_email" 
-                    required 
-                    className="h-12 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                    placeholder={t('form.emailPlaceholder')}
-                  />
+                  <div className="relative">
+                    <Input
+                      type="email"
+                      name="guest_email"
+                      value={guestEmail}
+                      onChange={(e) => {
+                        setGuestEmail(e.target.value);
+                        setFoundCustomer(null);
+                        setSearchAttempted(false);
+                      }}
+                      onBlur={() => {
+                        if (guestEmail && !foundCustomer) {
+                          fetchCustomer(guestEmail, 'email');
+                        }
+                      }}
+                      required
+                      disabled={isSearchingCustomer || !!(foundCustomer && foundCustomer.email === guestEmail)}
+                      className="h-12 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 pr-10"
+                      placeholder={t('form.emailPlaceholder')}
+                    />
+                    {isSearchingCustomer && (
+                      <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 animate-spin" />
+                    )}
+                    {searchAttempted && !foundCustomer && guestEmail && !isSearchingCustomer && (
+                      <Badge variant="destructive" className="absolute right-3 top-1/2 -translate-y-1/2">Not Found</Badge>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-3">
@@ -408,11 +572,45 @@ export default function ReservationFormHybrid({
                     <Users className="h-4 w-4 text-green-600" />
                     {t('form.guestPhone')}
                   </Label>
-                  <Input 
-                    name="guest_phone" 
-                    required 
-                    className="h-12 border-gray-300 focus:border-green-500 focus:ring-green-500"
-                    placeholder={t('form.phonePlaceholder')}
+                  <div className="relative">
+                    <Input
+                      name="guest_phone"
+                      value={guestPhone}
+                      onChange={(e) => {
+                        setGuestPhone(e.target.value);
+                        if (!foundCustomer) setSearchAttempted(false);
+                      }}
+                      onBlur={() => {
+                        if (guestPhone && !foundCustomer) {
+                          fetchCustomer(guestPhone, 'phone');
+                        }
+                      }}
+                      required
+                      disabled={isSearchingCustomer || !!(foundCustomer && foundCustomer.phone === guestPhone)}
+                      className="h-12 border-gray-300 focus:border-green-500 focus:ring-green-500 pr-10"
+                      placeholder={t('form.phonePlaceholder')}
+                    />
+                    {isSearchingCustomer && (
+                      <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 animate-spin" />
+                    )}
+                    {searchAttempted && !foundCustomer && guestPhone && !isSearchingCustomer && (
+                      <Badge variant="destructive" className="absolute right-3 top-1/2 -translate-y-1/2">Not Found</Badge>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label htmlFor="guest_name" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                    <Users className="h-4 w-4 text-blue-600" />
+                    {t('form.guestName')}
+                  </Label>
+                  <Input
+                    name="guest_name"
+                    value={guestName}
+                    onChange={(e) => setGuestName(e.target.value)}
+                    required
+                    className="h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    placeholder={t('form.fullNamePlaceholder')}
                   />
                 </div>
 
@@ -421,14 +619,26 @@ export default function ReservationFormHybrid({
                     <Users className="h-4 w-4 text-purple-600" />
                     {t('form.guestNationality')}
                   </Label>
-                  <Input 
-                    name="guest_nationality" 
-                    required 
+                  <Input
+                    name="guest_nationality"
+                    value={guestNationality}
+                    onChange={(e) => setGuestNationality(e.target.value)}
+                    required
                     className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                     placeholder={t('form.nationalityPlaceholder')}
                   />
                 </div>
               </div>
+
+              {foundCustomer && (
+                <Alert className="border-blue-200 bg-blue-50/80 backdrop-blur-sm">
+                  <CheckCircle className="h-5 w-5 text-blue-600" />
+                  <AlertDescription className="text-blue-800">
+                    <div className="font-medium">Customer Found!</div>
+                    <div className="text-sm mt-1">Pre-filled details for {foundCustomer.first_name} {foundCustomer.last_name}.</div>
+                  </AlertDescription>
+                </Alert>
+              )}
 
               <div className="space-y-3">
                 <Label htmlFor="special_requests" className="text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -440,6 +650,7 @@ export default function ReservationFormHybrid({
                   placeholder={t('form.specialRequestsPlaceholder')}
                   rows={4}
                   className="border-gray-300 focus:border-yellow-500 focus:ring-yellow-500 resize-none"
+                  style={{ color: 'black', backgroundColor: 'white' }}
                 />
               </div>
             </div>

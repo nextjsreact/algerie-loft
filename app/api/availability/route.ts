@@ -2,6 +2,30 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { z } from 'zod';
 
+interface LoftName {
+  name: string;
+}
+
+interface LoftAvailabilityRecord {
+  date: string;
+  is_available: boolean;
+  blocked_reason: string;
+  price_override: number | null;
+  minimum_stay: number;
+  loft_id: string;
+  lofts: LoftName[];
+}
+
+interface ReservationRecord {
+  check_in_date: string;
+  check_out_date: string;
+  status: string;
+  guest_name: string;
+  lofts: LoftName[];
+}
+
+export const dynamic = 'force-dynamic'; // Prevent caching
+
 const checkAvailabilitySchema = z.object({
   loft_id: z.string().uuid(),
   check_in_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -17,7 +41,7 @@ const getAvailabilityCalendarSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient(true);
     const { searchParams } = new URL(request.url);
     
     const queryParams = Object.fromEntries(searchParams.entries());
@@ -30,11 +54,23 @@ export async function GET(request: NextRequest) {
       // Get availability data for the date range
       const { data: availability, error: availabilityError } = await supabase
         .from('loft_availability')
-        .select('date, is_available, blocked_reason, price_override, minimum_stay')
+        .select(`
+          date,
+          is_available,
+          blocked_reason,
+          price_override,
+          minimum_stay,
+          loft_id,
+          lofts!inner (
+            name
+          )
+        `)
         .eq('loft_id', loft_id)
         .gte('date', start_date)
         .lte('date', end_date)
         .order('date');
+
+      console.log('Availability data from DB:', availability);
 
       if (availabilityError) {
         console.error('Error fetching availability calendar:', availabilityError);
@@ -47,7 +83,15 @@ export async function GET(request: NextRequest) {
       // Get existing reservations for the date range
       const { data: reservations, error: reservationsError } = await supabase
         .from('reservations')
-        .select('check_in_date, check_out_date, status, guest_name')
+        .select(`
+          check_in_date,
+          check_out_date,
+          status,
+          guest_name,
+          lofts!inner (
+            name
+          )
+        `)
         .eq('loft_id', loft_id)
         .or(`and(check_in_date.lte.${end_date},check_out_date.gt.${start_date})`)
         .in('status', ['confirmed', 'pending']);
@@ -61,7 +105,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Generate complete calendar with all dates
-      const calendar = [];
+      const calendar: any[] = [];
       const currentDate = new Date(start_date);
       const endDateObj = new Date(end_date);
 
@@ -69,24 +113,51 @@ export async function GET(request: NextRequest) {
         const dateStr = currentDate.toISOString().split('T')[0];
         
         // Find availability record for this date
-        const availabilityRecord = availability?.find(a => a.date === dateStr);
+        const availabilityRecord = availability?.find((a: LoftAvailabilityRecord) => a.date === dateStr);
         
         // Check if date is booked by a reservation
-        const reservation = reservations?.find(r => 
+        const reservation = reservations?.find((r: ReservationRecord) =>
           dateStr >= r.check_in_date && dateStr < r.check_out_date
         );
 
-        calendar.push({
+        // Debug logging and validation
+        if (availabilityRecord && !availabilityRecord.is_available) {
+          const extractedLoftName = (availabilityRecord?.lofts as any)?.name;
+          
+          console.log('Processing blocked date:', {
+            date: dateStr,
+            loft_id: availabilityRecord.loft_id,
+            blocked_reason: availabilityRecord.blocked_reason,
+            loft_name_extracted: extractedLoftName,
+            raw_lofts_data: availabilityRecord.lofts
+          });
+          
+          // Warn about missing loft names
+          if (!extractedLoftName) {
+            console.warn('⚠️ Missing loft name for blocked date:', {
+              date: dateStr,
+              loft_id: availabilityRecord.loft_id,
+              blocked_reason: availabilityRecord.blocked_reason
+            });
+          }
+        }
+
+        const calendarEntry = {
           date: dateStr,
           is_available: reservation ? false : (availabilityRecord?.is_available ?? true),
-          blocked_reason: reservation ? 'booked' : availabilityRecord?.blocked_reason,
+          blocked_reason: reservation ? `Booked by ${reservation.guest_name}` : availabilityRecord?.blocked_reason,
+          loft_name: reservation ? reservation.lofts[0]?.name : (availabilityRecord?.lofts as any)?.name,
           price_override: availabilityRecord?.price_override,
           minimum_stay: availabilityRecord?.minimum_stay || 1,
           reservation: reservation ? {
             status: reservation.status,
-            guest_name: reservation.guest_name
+            guest_name: reservation.guest_name,
+            loft_name: reservation.lofts[0]?.name
           } : null
-        });
+        };
+
+        console.log('Calendar entry for', dateStr, ':', calendarEntry);
+        calendar.push(calendarEntry);
 
         currentDate.setDate(currentDate.getDate() + 1);
       }
@@ -186,6 +257,17 @@ export async function POST(request: NextRequest) {
     const { loft_id, start_date, end_date, blocked_reason, price_override, minimum_stay } = 
       blockDatesSchema.parse(body);
 
+    // Debug logging for blocked reason
+    console.log('🔧 Creating blocked availability:', {
+      loft_id,
+      start_date,
+      end_date,
+      blocked_reason,
+      blocked_reason_type: typeof blocked_reason,
+      price_override,
+      minimum_stay
+    });
+
     // Validate dates
     const startDateObj = new Date(start_date);
     const endDateObj = new Date(end_date);
@@ -198,7 +280,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate array of dates to block
-    const datesToBlock = [];
+    const datesToBlock: any[] = [];
     const currentDate = new Date(start_date);
     
     while (currentDate < endDateObj) {
@@ -230,9 +312,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log('✅ Blocked availability created successfully:', {
+      blocked_reason,
+      dates_count: data?.length || 0,
+      sample_record: data?.[0]
+    });
+
     return NextResponse.json({
       message: 'Dates blocked successfully',
       blocked_dates: data?.length || 0,
+      blocked_reason: blocked_reason, // Include this for debugging
       start_date,
       end_date
     });

@@ -40,6 +40,7 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
     { name: t('conversations'), href: `/${locale}/conversations`, icon: MessageSquare, roles: ["admin", "manager", "member", "executive"] },
     { name: t('notifications'), href: `/${locale}/notifications`, icon: Bell, roles: ["admin", "manager", "member"] },
     { name: t('lofts'), href: `/${locale}/lofts`, icon: Building2, roles: ["admin", "manager"] },
+    { name: t('customers'), href: `/${locale}/customers`, icon: Users, roles: ["admin", "manager"] },
     { name: t('reservations'), href: `/${locale}/reservations`, icon: Calendar, roles: ["admin", "manager"] },
     { name: t('availability'), href: `/${locale}/availability`, icon: CalendarCheck, roles: ["admin", "manager"] },
     { name: t('tasks'), href: `/${locale}/tasks`, icon: ClipboardList, roles: ["admin", "manager", "member"] },
@@ -81,7 +82,7 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
           <LanguageSelector />
           <ThemeToggle variant="ghost" size="sm" className="text-white hover:text-white h-8 w-8" />
         </div>
-      </div>
+      </div> {/* This closes the div started on line 70 */}
 
       <nav className="flex-1 space-y-1 px-2 py-4 overflow-y-auto">
         {filteredNavigation.map((item) => {
@@ -144,10 +145,10 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
                 {item.name}
               </div>
               
-              {item.href === "/conversations" && unreadMessagesCount > 0 && (
+              {item.href === `/${locale}/conversations` && unreadMessagesCount > 0 && (
                 <NotificationBadge count={unreadMessagesCount} className="ml-2" />
               )}
-              {item.href === "/notifications" && realtimeUnreadCount > 0 && (
+              {item.href === `/${locale}/notifications` && realtimeUnreadCount > 0 && (
                 <NotificationBadge count={realtimeUnreadCount} className="ml-2 animate-pulse" />
               )}
             </Link>

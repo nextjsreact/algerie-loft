@@ -248,13 +248,7 @@ textarea:placeholder-shown::placeholder {
   color: #6b7280 !important;
   opacity: 1 !important;
 }
-/* FORCE PLACEHOLDER VISIBILITY - ULTIMATE RULES */
-input[placeholder]:not([value]),
-input[placeholder][value=""],
-textarea[placeholder]:not([value]),
-textarea[placeholder][value=""] {
-  color: transparent !important;
-}
+
 
 input[placeholder]:not([value])::placeholder,
 input[placeholder][value=""]::placeholder,

@@ -36,7 +36,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
     locale,
     messages,
     // Configuration timezone pour éviter ENVIRONMENT_FALLBACK
-    timeZone: process.env.NEXT_PUBLIC_TIMEZONE || 'Europe/Paris',
+    timeZone: 'Europe/Paris',
+    getTimeZone: () => 'Europe/Paris',
     now: new Date(),
     // Configuration des formats par défaut optimisée
     formats: {

@@ -192,32 +192,37 @@ CREATE OR REPLACE FUNCTION check_loft_availability(
     p_loft_id UUID,
     p_check_in DATE,
     p_check_out DATE
-) RETURNS BOOLEAN AS $$
+) RETURNS BOOLEAN AS $
 DECLARE
-    unavailable_count INTEGER;
+    manual_block_count INTEGER;
+    reservation_count INTEGER;
 BEGIN
-    -- Check if any dates in the range are unavailable
+    -- First, check for manually blocked dates in loft_availability
     SELECT COUNT(*)
-    INTO unavailable_count
+    INTO manual_block_count
     FROM loft_availability
     WHERE loft_id = p_loft_id
-    AND date >= p_check_in
-    AND date < p_check_out
-    AND is_available = false;
-    
-    -- Also check for existing confirmed reservations
-    SELECT COUNT(*) + unavailable_count
-    INTO unavailable_count
+      AND date >= p_check_in
+      AND date < p_check_out
+      AND is_available = false;
+
+    IF manual_block_count > 0 THEN
+        RETURN FALSE;
+    END IF;
+
+    -- Second, check for overlapping reservations
+    SELECT COUNT(*)
+    INTO reservation_count
     FROM reservations
     WHERE loft_id = p_loft_id
-    AND status IN ('confirmed', 'pending')
-    AND (
-        (check_in_date <= p_check_in AND check_out_date > p_check_in) OR
-        (check_in_date < p_check_out AND check_out_date >= p_check_out) OR
-        (check_in_date >= p_check_in AND check_out_date <= p_check_out)
-    );
-    
-    RETURN unavailable_count = 0;
+      AND status IN ('confirmed', 'pending')
+      -- An existing reservation overlaps if its start date is before the new end date,
+      -- AND its end date is after the new start date.
+      AND check_in_date < p_check_out
+      AND check_out_date > p_check_in;
+
+    -- The loft is available only if there are no manual blocks AND no overlapping reservations.
+    RETURN reservation_count = 0;
 END;
 $$ LANGUAGE plpgsql;
 

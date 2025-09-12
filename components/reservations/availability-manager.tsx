@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition, useActionState } from 'react';
+import { useState, useTransition, useActionState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,6 +31,7 @@ export default function AvailabilityManager({
 }: AvailabilityManagerProps) {
   const t = useTranslations('reservations');
   const tAvailability = useTranslations('availability');
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [mode, setMode] = useState<'block' | 'unblock'>('block');
   
@@ -49,6 +50,39 @@ export default function AvailabilityManager({
       unblockAction(formData);
     });
   };
+
+  // Handle success/error states with simple alerts that auto-dismiss
+  useEffect(() => {
+    if (blockState?.success) {
+      setSuccessMessage(`✅ Blocage créé avec succès ! Raison: ${blockState.data?.blocked_reason} • ${blockState.data?.blocked_dates} dates bloquées`);
+      
+      // Auto-dismiss after 4 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 4000);
+      
+      // Refresh calendar immediately
+      if (onUpdate) {
+        onUpdate();
+      }
+    }
+  }, [blockState, onUpdate]);
+
+  useEffect(() => {
+    if (unblockState?.success) {
+      setSuccessMessage('✅ Déblocage effectué avec succès ! Les dates ont été débloquées');
+      
+      // Auto-dismiss after 4 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 4000);
+      
+      // Refresh calendar
+      if (onUpdate) {
+        onUpdate();
+      }
+    }
+  }, [unblockState, onUpdate]);
 
   return (
     <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
@@ -79,18 +113,28 @@ export default function AvailabilityManager({
             </Button>
           </div>
 
-          {/* Display server action errors */}
+          {/* Success message with auto-dismiss */}
+          {successMessage && (
+            <Alert className="border-green-200 bg-green-50 text-green-800">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <AlertDescription>
+                {successMessage}
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Error messages */}
           {blockState?.error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{blockState.error}</AlertDescription>
+              <AlertDescription>❌ Erreur lors du blocage: {blockState.error}</AlertDescription>
             </Alert>
           )}
 
           {unblockState?.error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{unblockState.error}</AlertDescription>
+              <AlertDescription>❌ Erreur lors du déblocage: {unblockState.error}</AlertDescription>
             </Alert>
           )}
 

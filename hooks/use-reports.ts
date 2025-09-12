@@ -32,7 +32,7 @@ export function useReports() {
         id,
         name,
         address,
-        price_per_month,
+        price_per_night,
         loft_owners (
           name
         )
@@ -45,7 +45,7 @@ export function useReports() {
       id: loft.id,
       name: loft.name,
       address: loft.address,
-      price_per_month: loft.price_per_month,
+      price_per_month: loft.price_per_night,
       owner_name: loft.loft_owners?.name || 'Propriétaire inconnu'
     }))
   }, [supabase])

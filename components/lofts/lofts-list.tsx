@@ -252,7 +252,7 @@ export function LoftsList({
                   <TableCell>
                     <div className="flex items-center gap-2 text-gray-600">
                       <DollarSign className="h-4 w-4" />
-                      {formatPrice(loft.price_per_month)}
+                      {formatPrice(loft.price_per_night)}
                     </div>
                   </TableCell>
                   <TableCell>

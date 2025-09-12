@@ -26,7 +26,7 @@ export function DebugLoftForm({
   const [formData, setFormData] = useState({
     name: "",
     address: "",
-    price_per_month: ""
+    price_per_night: ""
   })
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export function DebugLoftForm({
       setFormData({
         name: loft.name || "",
         address: loft.address || "",
-        price_per_month: loft.price_per_month?.toString() || ""
+        price_per_night: loft.price_per_night?.toString() || ""
       })
     }
   }, [loft, owners, zoneAreas, internetConnectionTypes])
@@ -94,12 +94,12 @@ export function DebugLoftForm({
           </div>
 
           <div>
-            <Label htmlFor="price">Prix par mois</Label>
+            <Label htmlFor="price">Prix par nuit</Label>
             <Input
               id="price"
               type="number"
-              value={formData.price_per_month}
-              onChange={(e) => setFormData({...formData, price_per_month: e.target.value})}
+              value={formData.price_per_night}
+              onChange={(e) => setFormData({...formData, price_per_night: e.target.value})}
               placeholder={t('pricePlaceholder')}
             />
           </div>

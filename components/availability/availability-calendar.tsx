@@ -19,9 +19,10 @@ interface AvailabilityCalendarProps {
   isLoading: boolean
   onBookNow: (loftId: string) => void;
   rawAvailabilityData: any[];
+  statuses: string[];
 }
 
-export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, rawAvailabilityData }: AvailabilityCalendarProps) {
+export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, rawAvailabilityData, statuses }: AvailabilityCalendarProps) {
   const t = useTranslations('availability')
   const locale = useLocale()
   const router = useRouter()
@@ -201,6 +202,14 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
                   const isToday = isSameDay(day, new Date())
                   const isInRange = dateRange?.from && dateRange?.to && isWithinInterval(day, { start: dateRange.from, end: dateRange.to })
                   
+                  if (statuses && statuses.length > 0 && !statuses.includes(dayStatus)) {
+                    return (
+                      <div key={dayKey} className="p-2 text-center text-sm text-muted-foreground opacity-20">
+                        {format(day, 'd')}
+                      </div>
+                    )
+                  }
+
                   return (
                     <TooltipProvider key={dayKey}>
                       <Tooltip>

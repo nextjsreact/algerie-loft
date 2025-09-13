@@ -18,6 +18,7 @@ interface AvailabilityFilters {
   guests: number
   minPrice: number
   maxPrice: number
+  statuses: string[]
 }
 
 export default function AvailabilityPage() {
@@ -28,7 +29,8 @@ export default function AvailabilityPage() {
     owners: [],
     guests: 2,
     minPrice: 0,
-    maxPrice: 1000000
+    maxPrice: 1000000,
+    statuses: []
   })
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(),
@@ -161,6 +163,7 @@ export default function AvailabilityPage() {
                         dateRange={dateRange}
                         isLoading={isLoading}
                         rawAvailabilityData={rawAvailabilityData}
+                        statuses={filters.statuses}
                         onBookNow={(loftId) => {
                           const params = new URLSearchParams();
                           params.set('loftId', loftId);

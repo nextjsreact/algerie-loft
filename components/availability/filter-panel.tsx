@@ -29,6 +29,13 @@ interface FilterPanelProps {
   }
 }
 
+const ALL_STATUSES = [
+  { value: 'available', label: 'available' },
+  { value: 'occupied', label: 'occupied' },
+  { value: 'maintenance', label: 'maintenance' },
+  { value: 'personal_use', label: 'personal_use' },
+];
+
 export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeChange, isLoading, filterOptions }: FilterPanelProps) {
   const t = useTranslations('availability')
 
@@ -54,7 +61,8 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
       owners: [],
       guests: 2,
       minPrice: 0,
-      maxPrice: 1000000
+      maxPrice: 1000000,
+      statuses: []
     })
     onDateRangeChange({
       from: new Date(),
@@ -65,6 +73,7 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
   const activeFiltersCount = Object.entries(filters).filter(([key, value]) => {
     if (key === 'region') return value !== 'all'
     if (key === 'owners') return Array.isArray(value) && value.length > 0
+    if (key === 'statuses') return Array.isArray(value) && value.length > 0
     if (key === 'guests') return value !== 2
     if (key === 'minPrice') return value !== 0
     if (key === 'maxPrice') return value !== 1000000
@@ -98,6 +107,35 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
       return owner?.label || selectedOwners[0]
     }
     return t('ownersSelected', { count: selectedOwners.length })
+  }
+
+  const handleStatusToggle = (statusValue: string) => {
+    const currentStatuses = filters.statuses || []
+    const updatedStatuses = currentStatuses.includes(statusValue)
+      ? currentStatuses.filter((status: string) => status !== statusValue)
+      : [...currentStatuses, statusValue]
+    
+    handleFilterChange('statuses', updatedStatuses)
+  }
+
+  const clearAllStatuses = () => {
+    handleFilterChange('statuses', [])
+  }
+
+  const selectAllStatuses = () => {
+    handleFilterChange('statuses', ALL_STATUSES.map(status => status.value))
+  }
+
+  const getSelectedStatusesText = () => {
+    const selectedStatuses = filters.statuses || []
+    if (selectedStatuses.length === 0) {
+      return t('allStatuses')
+    }
+    if (selectedStatuses.length === 1) {
+      const status = ALL_STATUSES.find(s => s.value === selectedStatuses[0])
+      return t(status?.label || selectedStatuses[0])
+    }
+    return t('statusesSelected', { count: selectedStatuses.length })
   }
 
   return (
@@ -158,6 +196,79 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
                 onSelect={onDateRangeChange}
                 numberOfMonths={2}
               />
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        <Separator />
+
+        {/* Status Filter */}
+        <div className="space-y-3">
+          <Label className="text-sm font-medium flex items-center gap-2">
+            <Filter className="h-4 w-4 text-yellow-600" />
+            {t('status')}
+          </Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full justify-between text-left font-normal"
+              >
+                <span className="truncate">{getSelectedStatusesText()}</span>
+                <div className="flex items-center gap-1">
+                  {filters.statuses && filters.statuses.length > 0 && (
+                    <Badge variant="secondary" className="ml-2">
+                      {filters.statuses.length}
+                    </Badge>
+                  )}
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </div>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0" align="start">
+              <div className="p-3 border-b">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-sm">{t('selectStatuses')}</h4>
+                  {filters.statuses && filters.statuses.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearAllStatuses}
+                      className="h-6 px-2 text-xs"
+                    >
+                      <X className="h-3 w-3 mr-1" />
+                      {t('clearAll')}
+                    </Button>
+                  )}
+                </div>
+              </div>
+              <div className="p-2">
+                <div className="space-y-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={selectAllStatuses}
+                    className="w-full justify-start text-xs h-8"
+                  >
+                    {t('selectAll')}
+                  </Button>
+                  {ALL_STATUSES.map((status) => (
+                    <div key={status.value} className="flex items-center space-x-2 p-2 hover:bg-accent rounded-sm">
+                      <Checkbox
+                        id={`status-${status.value}`}
+                        checked={filters.statuses?.includes(status.value) || false}
+                        onCheckedChange={() => handleStatusToggle(status.value)}
+                      />
+                      <Label
+                        htmlFor={`status-${status.value}`}
+                        className="text-sm font-normal cursor-pointer flex-1"
+                      >
+                        {t(status.label)}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </PopoverContent>
           </Popover>
         </div>

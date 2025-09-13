@@ -314,7 +314,13 @@
     "today": "Today",
     "totalLofts": "Total Lofts",
     "unknown": "Unknown",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "blocked": "Blocked",
+    "status": "الحالة",
+    "selectStatuses": "تحديد الحالات",
+    "allStatuses": "كل الحالات",
+    "statusesSelected": "{count} حالات محددة",
+    "personal_use": "استخدام شخصي"
   },
   "bills": {
     "amount": "Amount",

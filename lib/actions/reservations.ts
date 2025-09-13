@@ -579,3 +579,130 @@ export async function sendGuestMessage(prevState: any, formData: FormData): Prom
     return { error: 'Internal server error' };
   }
 }
+
+export async function getRecentReservations(): Promise<ActionResult<any[]>> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('reservations')
+    .select(`
+      id,
+      guest_name,
+      check_in_date,
+      check_out_date,
+      status,
+      created_at,
+      lofts (
+        name
+      )
+    `)
+    .order('created_at', { ascending: false })
+    .limit(5);
+
+  if (error) {
+    console.error('Error fetching recent reservations:', error);
+    return { error: 'Failed to fetch recent reservations' };
+  }
+
+  return { success: true, data: data };
+}
+
+export async function getReservationStats(): Promise<ActionResult<{
+  totalReservations: number;
+  monthlyRevenue: number;
+  occupancyRate: number;
+  guestSatisfaction: number;
+  totalReservationsLastMonth: number;
+  monthlyRevenueLastMonth: number;
+  occupancyRateLastMonth: number;
+}>> {
+  const supabase = await createClient();
+  const today = new Date();
+  const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1).toISOString();
+  const currentMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString();
+  const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1).toISOString();
+  const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0).toISOString();
+
+  // Fetch reservations for current month
+  const { data: currentMonthReservations, error: currentMonthError } = await supabase
+    .from('reservations')
+    .select('check_in_date, check_out_date, total_amount')
+    .gte('check_in_date', currentMonthStart)
+    .lte('check_in_date', currentMonthEnd);
+
+  if (currentMonthError) {
+    console.error('Error fetching current month reservations:', currentMonthError);
+    return { error: 'Failed to fetch current month reservations' };
+  }
+
+  // Fetch reservations for last month
+  const { data: lastMonthReservations, error: lastMonthError } = await supabase
+    .from('reservations')
+    .select('check_in_date, check_out_date, total_amount')
+    .gte('check_in_date', lastMonthStart)
+    .lte('check_in_date', lastMonthEnd);
+
+  if (lastMonthError) {
+    console.error('Error fetching last month reservations:', lastMonthError);
+    return { error: 'Failed to fetch last month reservations' };
+  }
+
+  // Calculate Total Reservations and Monthly Revenue
+  const totalReservations = currentMonthReservations.length;
+  const monthlyRevenue = currentMonthReservations.reduce((sum, r) => sum + (r.total_amount || 0), 0);
+
+  const totalReservationsLastMonth = lastMonthReservations.length;
+  const monthlyRevenueLastMonth = lastMonthReservations.reduce((sum, r) => sum + (r.total_amount || 0), 0);
+
+  // Calculate Occupancy Rate
+  // This is a simplified calculation. A more accurate one would involve loft availability.
+  const { data: lofts, error: loftsError } = await supabase
+    .from('lofts')
+    .select('id');
+
+  if (loftsError) {
+    console.error('Error fetching lofts:', loftsError);
+    return { error: 'Failed to fetch lofts' };
+  }
+
+  const numberOfLofts = lofts.length;
+  let totalNightsBooked = 0;
+  currentMonthReservations.forEach(reservation => {
+    const checkIn = new Date(reservation.check_in_date);
+    const checkOut = new Date(reservation.check_out_date);
+    const nights = Math.round((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
+    totalNightsBooked += nights;
+  });
+
+  const daysInCurrentMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+  const totalAvailableNights = numberOfLofts * daysInCurrentMonth;
+  const occupancyRate = totalAvailableNights > 0 ? (totalNightsBooked / totalAvailableNights) * 100 : 0;
+
+  // Occupancy rate last month
+  let totalNightsBookedLastMonth = 0;
+  lastMonthReservations.forEach(reservation => {
+    const checkIn = new Date(reservation.check_in_date);
+    const checkOut = new Date(reservation.check_out_date);
+    const nights = Math.round((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
+    totalNightsBookedLastMonth += nights;
+  });
+  const daysInLastMonth = new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+  const totalAvailableNightsLastMonth = numberOfLofts * daysInLastMonth;
+  const occupancyRateLastMonth = totalAvailableNightsLastMonth > 0 ? (totalNightsBookedLastMonth / totalAvailableNightsLastMonth) * 100 : 0;
+
+  // Guest Satisfaction (placeholder for now, as there's no rating system implemented)
+  const guestSatisfaction = 0.0;
+
+  return {
+    success: true,
+    data: {
+      totalReservations,
+      monthlyRevenue,
+      occupancyRate,
+      guestSatisfaction,
+      totalReservationsLastMonth,
+      monthlyRevenueLastMonth,
+      occupancyRateLastMonth,
+    }
+  };
+}

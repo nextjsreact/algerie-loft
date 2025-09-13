@@ -316,7 +316,12 @@
     "totalLofts": "Total Lofts",
     "unknown": "Unknown",
     "viewDetails": "View Details",
-    "blocked": "Blocked"
+    "blocked": "Blocked",
+    "status": "Status",
+    "selectStatuses": "Select Statuses",
+    "allStatuses": "All Statuses",
+    "statusesSelected": "{count} statuses selected",
+    "personal_use": "Personal Use"
   },
   "bills": {
     "amount": "Amount",

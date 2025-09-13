@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -19,7 +20,8 @@ import {
   AlertCircle,
   Star,
   MapPin,
-  Sparkles
+  Sparkles,
+  Loader2
 } from 'lucide-react';
 import ReservationCalendar from '@/components/reservations/reservation-calendar';
 import ReservationFormHybrid from '@/components/reservations/reservation-form-hybrid';
@@ -27,7 +29,8 @@ import AvailabilityManager from '@/components/reservations/availability-manager'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/utils/supabase/client';
-import { updateReservationStatus } from '@/lib/actions/reservations';
+import { getRecentReservations, getReservationStats, updateReservationStatus } from '@/lib/actions/reservations';
+import { format } from 'date-fns';
 
 function ReservationsPageContent() {
   const t = useTranslations('reservations');
@@ -42,6 +45,9 @@ function ReservationsPageContent() {
   const [lofts, setLofts] = useState<any[]>([]);
   const [selectedLoftId, setSelectedLoftId] = useState<string | undefined>(undefined);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [recentActivities, setRecentActivities] = useState<any[]>([]);
+  const [reservationStats, setReservationStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   const searchParams = useSearchParams();
   
@@ -62,6 +68,7 @@ function ReservationsPageContent() {
     
     async function fetchData() {
       try {
+        setLoading(true);
         const supabase = createClient();
         
         // Fetch currency
@@ -82,12 +89,26 @@ function ReservationsPageContent() {
         
         if (isMounted && loftsData) {
           setLofts(loftsData);
-          if (loftsData.length > 0) {
-            setSelectedLoftId(loftsData[0].id);
-          }
         }
+
+        // Fetch recent activities
+        const recentReservationsResult = await getRecentReservations();
+        if (isMounted && recentReservationsResult.success) {
+          setRecentActivities(recentReservationsResult.data || []);
+        }
+
+        // Fetch reservation stats
+        const statsResult = await getReservationStats();
+        if (isMounted && statsResult.success) {
+          setReservationStats(statsResult.data);
+        }
+
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
     
@@ -133,41 +154,40 @@ function ReservationsPageContent() {
     setRefreshKey(prev => prev + 1);
   }, []);
 
-  // Placeholder data - to be replaced with real analytics from backend
-  const stats = [
+  const stats = reservationStats ? [
     {
       title: tAnalytics('totalReservations'),
-      value: '0',
-      change: '0%',
-      trend: 'up',
+      value: reservationStats.totalReservations,
+      change: `${Math.round(((reservationStats.totalReservations - reservationStats.totalReservationsLastMonth) / (reservationStats.totalReservationsLastMonth || 1)) * 100)}%`,
+      trend: reservationStats.totalReservations >= reservationStats.totalReservationsLastMonth ? 'up' : 'down',
       icon: Calendar,
       color: 'bg-blue-500'
     },
     {
       title: tAnalytics('monthlyRevenue'),
-      value: `${defaultCurrencySymbol}0`,
-      change: '0%',
-      trend: 'up',
+      value: `${defaultCurrencySymbol}${reservationStats.monthlyRevenue.toLocaleString()}`,
+      change: `${Math.round(((reservationStats.monthlyRevenue - reservationStats.monthlyRevenueLastMonth) / (reservationStats.monthlyRevenueLastMonth || 1)) * 100)}%`,
+      trend: reservationStats.monthlyRevenue >= reservationStats.monthlyRevenueLastMonth ? 'up' : 'down',
       icon: TrendingUp,
       color: 'bg-green-500'
     },
     {
       title: tAnalytics('occupancyRate'),
-      value: '0%',
-      change: '0%',
-      trend: 'up',
+      value: `${Math.round(reservationStats.occupancyRate)}%`,
+      change: `${Math.round(reservationStats.occupancyRate - reservationStats.occupancyRateLastMonth)}%`,
+      trend: reservationStats.occupancyRate >= reservationStats.occupancyRateLastMonth ? 'up' : 'down',
       icon: Building2,
       color: 'bg-purple-500'
     },
     {
       title: tAnalytics('guestSatisfaction'),
-      value: '0.0',
-      change: '0',
-      trend: 'up',
+      value: reservationStats.guestSatisfaction.toFixed(1),
+      change: '0', // Placeholder
+      trend: 'up', // Placeholder
       icon: Star,
       color: 'bg-yellow-500'
     }
-  ];
+  ] : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -204,30 +224,38 @@ function ReservationsPageContent() {
 
       <div className="container mx-auto px-6 py-8 space-y-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
-            <Card key={index} className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                    <div className="flex items-center gap-1">
-                      <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
-                        {stat.change}
-                      </Badge>
-                      <span className="text-xs text-gray-500">{t('vsLastMonth')}</span>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <Card key={i} className="relative overflow-hidden border-0 shadow-lg bg-white/80 backdrop-blur-sm h-32 animate-pulse"></Card>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {stats.map((stat, index) => (
+              <Card key={index} className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/80 backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                      <div className="flex items-center gap-1">
+                        <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+                          {stat.change}
+                        </Badge>
+                        <span className="text-xs text-gray-500">{t('vsLastMonth')}</span>
+                      </div>
+                    </div>
+                    <div className={`p-3 rounded-xl ${stat.color} shadow-lg`}>
+                      <stat.icon className="h-6 w-6 text-white" />
                     </div>
                   </div>
-                  <div className={`p-3 rounded-xl ${stat.color} shadow-lg`}>
-                    <stat.icon className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent to-blue-50/20 pointer-events-none" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-blue-50/20 pointer-events-none" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="calendar" className="space-y-8">
@@ -325,13 +353,17 @@ function ReservationsPageContent() {
                       <Plus className="h-4 w-4 mr-2" />
                       {t('new')}
                     </Button>
-                    <Button variant="outline" className="w-full border-blue-200 hover:bg-blue-50">
-                      <Users className="h-4 w-4 mr-2" />
-                      {t('guests')}
+                    <Button asChild variant="outline" className="w-full border-blue-200 hover:bg-blue-50">
+                      <Link href={`/${locale}/customers`}>
+                        <Users className="h-4 w-4 mr-2" />
+                        {t('guests')}
+                      </Link>
                     </Button>
-                    <Button variant="outline" className="w-full border-purple-200 hover:bg-purple-50">
-                      <BarChart3 className="h-4 w-4 mr-2" />
-                      {t('reportsLabel')}
+                    <Button asChild variant="outline" className="w-full border-purple-200 hover:bg-purple-50">
+                      <Link href={`/${locale}/reports`}>
+                        <BarChart3 className="h-4 w-4 mr-2" />
+                        {t('reportsLabel')}
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>
@@ -345,10 +377,34 @@ function ReservationsPageContent() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {/* Placeholder for future recent activities */}
-                    <div className="text-center text-gray-500">
-                      {t('activities.noRecentActivity')}
-                    </div>
+                    {loading ? (
+                      <div className="flex justify-center items-center h-24">
+                        <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
+                      </div>
+                    ) : recentActivities.length > 0 ? (
+                      recentActivities.map((activity) => (
+                        <div key={activity.id} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50/80 hover:bg-gray-100/80 transition-colors">
+                          <div className={`p-1.5 rounded-full ${
+                            activity.status === 'confirmed' ? 'bg-green-100' :
+                            activity.status === 'completed' ? 'bg-blue-100' : 
+                            activity.status === 'pending' ? 'bg-yellow-100' : 'bg-red-100'
+                          }`}>
+                            {activity.status === 'confirmed' ? <CheckCircle className="h-3 w-3 text-green-600" /> :
+                             activity.status === 'completed' ? <Calendar className="h-3 w-3 text-blue-600" /> :
+                             activity.status === 'pending' ? <Clock className="h-3 w-3 text-yellow-600" /> :
+                             <AlertCircle className="h-3 w-3 text-red-600" />}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">{activity.lofts.name}</p>
+                            <p className="text-xs text-gray-500">{activity.guest_name} • {format(new Date(activity.created_at), 'PP')}</p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center text-gray-500">
+                        {t('activities.noRecentActivity')}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>

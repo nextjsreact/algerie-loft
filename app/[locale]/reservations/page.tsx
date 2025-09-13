@@ -31,6 +31,7 @@ import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/utils/supabase/client';
 import { getRecentReservations, getReservationStats, updateReservationStatus } from '@/lib/actions/reservations';
 import { format } from 'date-fns';
+import { enUS, fr, ar } from 'date-fns/locale';
 
 function ReservationsPageContent() {
   const t = useTranslations('reservations');
@@ -50,6 +51,17 @@ function ReservationsPageContent() {
   const [loading, setLoading] = useState(true);
 
   const searchParams = useSearchParams();
+
+  const locales = {
+    'en': enUS,
+    'fr': fr,
+    'ar': ar,
+  };
+
+  const getDateFnsLocale = () => {
+    const lang = locale as keyof typeof locales;
+    return locales[lang] || enUS;
+  };
   
   // Handle URL parameters - only run once
   useEffect(() => {
@@ -396,7 +408,7 @@ function ReservationsPageContent() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-gray-900 truncate">{activity.lofts.name}</p>
-                            <p className="text-xs text-gray-500">{activity.guest_name} • {format(new Date(activity.created_at), 'PP')}</p>
+                            <p className="text-xs text-gray-500">{activity.guest_name === 'next react' ? t('form.guest') : activity.guest_name} • {format(new Date(activity.created_at), 'PP', { locale: getDateFnsLocale() })}</p>
                           </div>
                         </div>
                       ))

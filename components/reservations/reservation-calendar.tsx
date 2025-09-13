@@ -642,15 +642,15 @@ export default function ReservationCalendar({
             </div>
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-orange-500 rounded"></div>
-              <span className="text-sm">Maintenance</span>
+              <span className="text-sm">{tAvailability('maintenance')}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-blue-500 rounded"></div>
-              <span className="text-sm">Rénovation</span>
+              <span className="text-sm">{tAvailability('renovation')}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-purple-500 rounded"></div>
-              <span className="text-sm">Usage personnel</span>
+              <span className="text-sm">{tAvailability('personalUse')}</span>
             </div>
           </div>
           

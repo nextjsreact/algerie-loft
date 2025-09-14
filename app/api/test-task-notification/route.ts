@@ -1,41 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSession } from '@/lib/auth'
+import { requireAuth } from '@/lib/auth'
 import { createNotification } from '@/app/actions/notifications'
+import { createClient } from '@/utils/supabase/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession()
-    
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const session = await requireAuth()
+    const body = await request.json()
+    const { assignedToUserId } = body
+
+    if (!assignedToUserId) {
+      return NextResponse.json(
+        { error: 'Missing assignedToUserId' },
+        { status: 400 }
+      )
     }
 
-    const body = await request.json()
-    const { targetUserId, type = 'info' } = body
-    
-    // Use the provided targetUserId or default to current user for testing
-    const userId = targetUserId || session.user.id
-    
-    // Create a test task notification
-    const notification = await createNotification(
-      userId,
-      'Test Task Assignment',
-      `This is a test task notification sent at ${new Date().toLocaleTimeString()}. You have been assigned a new task.`,
-      type,
-      '/tasks/test-task-id'
+    // Simulate task assignment notification
+    const taskTitle = `Test Task - ${new Date().toLocaleTimeString()}`
+    const dueDate = new Date()
+    dueDate.setDate(dueDate.getDate() + 7) // Due in 7 days
+
+    console.log('Creating task assignment notification:', {
+      assignedTo: assignedToUserId,
+      taskTitle,
+      createdBy: session.user.id,
+      dueDate: dueDate.toLocaleDateString()
+    })
+
+    const result = await createNotification(
+      assignedToUserId,
+      "New Task Assigned",
+      `You have been assigned a new task: "${taskTitle}" (Due: ${dueDate.toLocaleDateString()})`,
+      'info',
+      `/tasks/test-task-id`,
+      session.user.id
     )
 
-    console.log('✅ Test task notification created:', notification)
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Test task notification sent successfully',
-      notification: notification?.[0] || notification
+    console.log('Task assignment notification created successfully:', result)
+
+    return NextResponse.json({
+      success: true,
+      notification: result,
+      message: 'Task assignment notification created successfully'
     })
   } catch (error) {
-    console.error('❌ Error creating test task notification:', error)
+    console.error('Error creating task assignment notification:', error)
     return NextResponse.json(
-      { error: 'Failed to create test notification', details: error instanceof Error ? error.message : 'Unknown error' }, 
+      { error: 'Failed to create task assignment notification', details: error },
       { status: 500 }
     )
   }

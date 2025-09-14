@@ -1,0 +1,119 @@
+{
+  "title": "Gestion Clients",
+  "subtitle": "Plateforme intelligente de gestion de la relation client",
+  "loadingCustomers": "Chargement des clients...",
+  "searchCustomers": "Rechercher un client...",
+  "newCustomer": "Nouveau Client",
+  "noCustomersFound": "Aucun client trouvé",
+  "noCustomersMessage": "Aucun client ne correspond à vos critères de recherche.",
+  "addFirstCustomer": "Commencez par ajouter votre premier client.",
+  "addCustomer": "Ajouter un client",
+  
+  "firstName": "Prénom",
+  "lastName": "Nom",
+  "email": "Email",
+  "phone": "Téléphone",
+  "status": "Statut",
+  "notes": "Notes",
+  "actions": "Actions",
+  "createdAt": "Créé le",
+  "updatedAt": "Modifié le",
+  
+  "statusOptions": {
+    "active": "Actif",
+    "prospect": "Prospect",
+    "former": "Ancien"
+  },
+  
+  "filters": {
+    "all": "Tous les statuts",
+    "active": "Actifs",
+    "prospect": "Prospects",
+    "former": "Anciens"
+  },
+  
+  "viewModes": {
+    "grid": "Vue grille",
+    "list": "Vue liste"
+  },
+  
+  "stats": {
+    "totalClients": "Total Clients",
+    "activeClients": "Clients Actifs",
+    "prospects": "Prospects",
+    "formerClients": "Anciens",
+    "clientBase": "Base clients",
+    "loyal": "Fidèles",
+    "potential": "Potentiels",
+    "history": "Historique"
+  },
+  
+  "actions": {
+    "view": "Voir",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "contact": "Contacter",
+    "call": "Appeler",
+    "email": "Envoyer un email",
+    "schedule": "Planifier RDV",
+    "addNote": "Ajouter note",
+    "backToCustomers": "Retour aux clients"
+  },
+  
+  "detail": {
+    "profileTitle": "Profil Client",
+    "contactInfo": "Informations de Contact",
+    "contactDescription": "Coordonnées et détails personnels",
+    "interactionHistory": "Historique des Interactions",
+    "interactionDescription": "Chronologie des échanges",
+    "statistics": "Statistiques",
+    "quickActions": "Actions Rapides",
+    "satisfaction": "Satisfaction",
+    "interactions": "Interactions",
+    "reservations": "Réservations",
+    "clientSince": "Client depuis",
+    "lastUpdate": "Dernière mise à jour",
+    "noInteractions": "Aucune interaction enregistrée",
+    "futureInteractions": "Les futures interactions apparaîtront ici",
+    "clientCreated": "Client créé",
+    "profileCreated": "Le profil client a été créé dans le système",
+    "customerNotFound": "Client introuvable",
+    "customerNotFoundMessage": "Le client demandé n'existe pas ou a été supprimé.",
+    "loadingProfile": "Chargement du profil client..."
+  },
+  
+  "messages": {
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer {name} ?",
+    "deleteSuccess": "{name} a été supprimé avec succès",
+    "deleteError": "Erreur lors de la suppression : {error}",
+    "createSuccess": "Client créé avec succès",
+    "createError": "Erreur lors de la création du client",
+    "updateSuccess": "Client mis à jour avec succès",
+    "updateError": "Erreur lors de la mise à jour du client"
+  },
+  
+  "form": {
+    "createTitle": "Nouveau Client",
+    "editTitle": "Modifier le Client",
+    "firstNamePlaceholder": "Entrez le prénom",
+    "lastNamePlaceholder": "Entrez le nom",
+    "emailPlaceholder": "exemple@email.com",
+    "phonePlaceholder": "+213 XX XX XX XX",
+    "notesPlaceholder": "Notes sur le client...",
+    "selectStatus": "Sélectionner un statut",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "required": "Ce champ est requis",
+    "invalidEmail": "Email invalide",
+    "invalidPhone": "Numéro de téléphone invalide"
+  },
+  
+  "hub": {
+    "title": "Customer Relationship Hub",
+    "intelligentPlatform": "Plateforme intelligente de gestion de la relation client",
+    "analysisInProgress": "Analyse IA en cours...",
+    "automaticOptimization": "Optimisation automatique activée",
+    "diversifiedPortfolio": "Portfolio diversifié",
+    "excellentPerformance": "Performance excellente"
+  }
+}

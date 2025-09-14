@@ -1,6 +1,7 @@
 {
   "customers": {
     "title": "العملاء",
+    "subtitle": "إدارة عملائك ومعلوماتهم.",
     "description": "إدارة قاعدة عملائك.",
     "newCustomer": "عميل جديد",
     "firstName": "الاسم الأول",
@@ -33,7 +34,57 @@
       "former": "سابق"
     },
     "currentLoft": "الشقة الحالية",
-    "searchCustomers": "البحث عن العملاء..."
+    "searchCustomers": "البحث عن العملاء...",
+    "hub": {
+      "intelligentPlatform": "منصة ذكية",
+      "title": "مركز العملاء"
+    },
+    "stats": {
+      "totalClients": "إجمالي العملاء",
+      "clientBase": "قاعدة العملاء",
+      "activeClients": "العملاء النشطون",
+      "loyal": "الأوفياء",
+      "prospects": "العملاء المحتملون",
+      "potential": "المحتملون",
+      "formerClients": "العملاء السابقون",
+      "history": "التاريخ"
+    },
+    "filters": {
+      "all": "الكل",
+      "active": "نشط",
+      "prospect": "عميل محتمل",
+      "former": "سابق"
+    },
+    "viewModes": {
+      "grid": "شبكة"
+    },
+    "detail": {
+      "loadingProfile": "جارٍ تحميل الملف الشخصي...",
+      "contactInfo": "معلومات الاتصال",
+      "contactDescription": "معلومات الاتصال بالعميل.",
+      "clientSince": "عميل منذ",
+      "lastUpdate": "آخر تحديث",
+      "interactionHistory": "سجل التفاعلات",
+      "interactionDescription": "سجل التفاعلات مع العميل.",
+      "clientCreated": "تم إنشاء العميل",
+      "profileCreated": "تم إنشاء الملف الشخصي",
+      "noInteractions": "لا توجد تفاعلات بعد.",
+      "futureInteractions": "التفاعلات المستقبلية",
+      "statistics": "الإحصائيات",
+      "satisfaction": "الرضا",
+      "interactions": "التفاعلات",
+      "reservations": "الحجوزات",
+      "quickActions": "إجراءات سريعة"
+    },
+    "actions": {
+      "backToCustomers": "العودة إلى العملاء",
+      "contact": "اتصال",
+      "edit": "تعديل",
+      "email": "البريد الإلكتروني",
+      "call": "اتصال",
+      "schedule": "جدولة",
+      "addNote": "إضافة ملاحظة"
+    }
   },
   "landing": {
     "title": "لوفت الجزائر",
@@ -533,7 +584,9 @@
         "completed": "مكتمل",
         "inProgress": "قيد التنفيذ",
         "todo": "للقيام به"
-      }
+      },
+      "confidential": "سري",
+      "executiveOnly": "للتنفيذيين فقط"
     },
     "teams": "الفرق",
     "thisMonth": "هذا الشهر",
@@ -554,7 +607,11 @@
       "resolve": "حل",
       "resolveError": "خطأ في حل التنبيه",
       "resolved": "تم حل التنبيه بنجاح"
-    }
+    },
+    "title": "المدير التنفيذي",
+    "subtitle": "لوحة القيادة التنفيذية",
+    "confidential": "سري",
+    "executiveOnly": "للتنفيذيين فقط"
   },
   "internetConnections": {
     "active": "نشط",
@@ -893,10 +950,12 @@
     "zoneAreas": "المناطق الجغرافية"
   },
   "notifications": {
+    "title": "الإشعارات",
     "notifications": {
       "newMessageFrom": "رسالة جديدة من {sender}",
       "view": "عرض"
-    }
+    },
+    "noNotifications": "لم يتم العثور على إشعارات."
   },
   "owners": {
     "addFirstOwner": "أضف مالكك الأول",

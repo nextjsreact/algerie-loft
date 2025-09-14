@@ -13,7 +13,15 @@ export async function createNotification(
   sender_id?: string,
   supabaseClient?: SupabaseClient<Database>
 ) {
+  // Always use service role for creating notifications to bypass RLS
   const supabase = supabaseClient || await createClient(true);
+  
+  console.log('Creating notification with service role:', {
+    userId,
+    title,
+    type,
+    sender_id
+  });
   
   // Check if the notifications table has the 'type' column
   // If not, use basic structure for backward compatibility
@@ -33,8 +41,11 @@ export async function createNotification(
       .select();
 
     if (error) {
+      console.error('Error creating notification:', error);
       throw error;
     }
+    
+    console.log('Notification created successfully:', data);
     return data;
   } catch (error: any) {
     // If the 'type' column doesn't exist, fall back to basic structure

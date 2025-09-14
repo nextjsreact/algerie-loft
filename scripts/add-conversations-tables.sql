@@ -3,10 +3,15 @@
 -- =====================================================
 -- Ce script ajoute les tables nécessaires pour le système de conversations
 
+-- Drop dependent tables first to avoid foreign key constraints issues
+DROP TABLE IF EXISTS messages CASCADE;
+DROP TABLE IF EXISTS conversation_participants CASCADE;
+DROP TABLE IF EXISTS conversations CASCADE;
+
 -- Table des conversations
 CREATE TABLE IF NOT EXISTS conversations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    title VARCHAR(255),
+    name VARCHAR(255),
     type VARCHAR(50) DEFAULT 'direct' CHECK (type IN ('direct', 'group')),
     created_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -21,6 +26,7 @@ CREATE TABLE IF NOT EXISTS conversation_participants (
     joined_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     last_read_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     is_active BOOLEAN DEFAULT TRUE,
+    role VARCHAR(50) DEFAULT 'member',
     UNIQUE(conversation_id, user_id)
 );
 
@@ -58,7 +64,7 @@ FOR SELECT USING (
 );
 
 CREATE POLICY "Users can create conversations" ON conversations
-FOR INSERT WITH CHECK (created_by = auth.uid());
+FOR INSERT WITH CHECK (true);
 
 CREATE POLICY "Users can view their own participations" ON conversation_participants
 FOR SELECT USING (user_id = auth.uid());

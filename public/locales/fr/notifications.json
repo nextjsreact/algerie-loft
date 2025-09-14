@@ -1,5 +1,17 @@
 {
+  "title": "Notifications",
   "notifications": "Notifications",
+  "noNotifications": "Aucune notification",
   "newMessageFrom": "Nouveau message de {{sender}}",
-  "view": "Voir"
+  "view": "Voir",
+  "markAllAsRead": "Tout marquer comme lu",
+  "markAsRead": "Marquer comme lu",
+  "new": "Nouveau",
+  "unread": "Non lu",
+  "read": "Lu",
+  "taskAssigned": "Tâche assignée",
+  "taskCompleted": "Tâche terminée",
+  "taskOverdue": "Tâche en retard",
+  "messageReceived": "Message reçu",
+  "systemNotification": "Notification système"
 }

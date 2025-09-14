@@ -55,7 +55,7 @@ export async function getSimpleUserConversations(userId: string): Promise<Simple
     }
     
     if (testError) {
-      console.error('Table test error:', testError)
+      console.error('Table test error:', JSON.stringify(testError, null, 2))
       console.error('Error details:', {
         message: (testError as any)?.message,
         code: (testError as any)?.code,
@@ -263,7 +263,7 @@ export async function createSimpleConversation(
       .single()
 
     if (convError) {
-      console.error('Error creating conversation:', convError)
+      console.error('Error creating conversation:', JSON.stringify(convError, null, 2))
       return null
     }
 
@@ -288,7 +288,7 @@ export async function createSimpleConversation(
       .insert(participants)
 
     if (participantsError) {
-      console.error('Error adding participants:', participantsError)
+      console.error('Error adding participants:', JSON.stringify(participantsError, null, 2))
       return null
     }
 
@@ -301,7 +301,7 @@ export async function createSimpleConversation(
       participant_count: participants.length
     }
   } catch (error) {
-    console.error('Failed to create conversation:', error)
+    console.error('Failed to create conversation:', JSON.stringify(error, null, 2))
     return null
   }
 }

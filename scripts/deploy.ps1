@@ -42,16 +42,16 @@ Write-Host "Timestamp: $timestamp"
 Write-Host ""
 
 # Validation de l'environnement
-switch ($Environment.ToLower()) {
-    { $_ -in @("development", "dev") } {
+switch -Wildcard ($Environment.ToLower()) {
+    'dev*' {
         $Environment = "development"
         $vercelEnv = "preview"
     }
-    { $_ -in @("staging", "test") } {
+    'stag*' {
         $Environment = "staging"
         $vercelEnv = "preview"
     }
-    { $_ -in @("production", "prod") } {
+    'prod*' {
         $Environment = "production"
         $vercelEnv = "production"
     }

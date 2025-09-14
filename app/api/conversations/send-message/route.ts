@@ -1,32 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSession } from '@/lib/auth'
-import { sendMessage } from '@/lib/services/conversations'
+import { requireAuth } from '@/lib/auth'
+import { sendSimpleMessage } from '@/lib/services/conversations-simple'
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession()
-    
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
+    const session = await requireAuth()
     const body = await request.json()
-    const { conversation_id, content, message_type = 'text' } = body
+    const { conversationId, content } = body
 
-    if (!conversation_id || !content) {
+    if (!conversationId || !content) {
       return NextResponse.json(
         { error: 'Missing required fields' }, 
         { status: 400 }
       )
     }
 
-    const message = await sendMessage(session.user.id, {
-      conversation_id,
-      content,
-      message_type
-    })
+    const message = await sendSimpleMessage(
+      session.user.id,
+      conversationId,
+      content
+    )
 
-    return NextResponse.json(message)
+    if (!message) {
+      return NextResponse.json(
+        { error: 'Failed to send message' }, 
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({
+      success: true,
+      message
+    })
   } catch (error) {
     console.error('API Error sending message:', error)
     return NextResponse.json(

@@ -16,14 +16,30 @@ export default function TestPhotosPage() {
   const [lofts, setLofts] = useState<Loft[]>([]);
   const [selectedLoft, setSelectedLoft] = useState<string>("");
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const [hasSupabaseConfig, setHasSupabaseConfig] = useState(false);
 
   useEffect(() => {
-    loadLofts();
+    // Check if Supabase is configured
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const isConfigured = !!(supabaseUrl && supabaseAnonKey);
+    setHasSupabaseConfig(isConfigured);
+    
+    if (isConfigured) {
+      loadLofts();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   const loadLofts = async () => {
+    if (!hasSupabaseConfig) {
+      setLoading(false);
+      return;
+    }
+    
     try {
+      const supabase = createClient();
       const { data, error } = await supabase
         .from("lofts")
         .select("id, name, address")
@@ -65,7 +81,15 @@ export default function TestPhotosPage() {
         </p>
       </div>
 
-      {lofts.length === 0 ? (
+      {!hasSupabaseConfig ? (
+        <Card>
+          <CardContent className="py-8">
+            <p className="text-center text-muted-foreground">
+              Mode démo - Configuration Supabase requise pour les données en temps réel
+            </p>
+          </CardContent>
+        </Card>
+      ) : lofts.length === 0 ? (
         <Card>
           <CardContent className="py-8">
             <p className="text-center text-muted-foreground">
@@ -99,4 +123,4 @@ export default function TestPhotosPage() {
       )}
     </div>
   );
-}
+}

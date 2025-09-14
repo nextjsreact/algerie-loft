@@ -55,15 +55,32 @@ export function BillAlertsNew() {
   const [loading, setLoading] = useState(true);
   const [selectedBill, setSelectedBill] = useState<BillAlert | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const supabase = createClient();
+  const [hasSupabaseConfig, setHasSupabaseConfig] = useState(false);
+  
+  // Check if Supabase is configured
+  useEffect(() => {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    setHasSupabaseConfig(!!(supabaseUrl && supabaseAnonKey))
+  }, [])
 
   useEffect(() => {
-    fetchBillAlerts();
-  }, []);
+    if (hasSupabaseConfig) {
+      fetchBillAlerts();
+    } else {
+      setLoading(false);
+    }
+  }, [hasSupabaseConfig]);
 
   const fetchBillAlerts = async () => {
+    if (!hasSupabaseConfig) {
+      setLoading(false)
+      return
+    }
+    
     try {
       setLoading(true);
+      const supabase = createClient();
 
       // Fetch all lofts with their billing information
       const { data: lofts, error } = await supabase
@@ -181,6 +198,43 @@ export function BillAlertsNew() {
     if (isOverdue) return `${days} days overdue`;
     return `${days} days`;
   };
+
+  if (!hasSupabaseConfig) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-xl font-bold">
+              <Clock className="h-5 w-5" />
+              Demo: Upcoming Bills
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8 text-gray-500">
+              <AlertTriangle className="h-12 w-12 mx-auto mb-3 text-yellow-500" />
+              <p className="font-medium mb-2">Demo Mode</p>
+              <p className="text-sm">Supabase configuration required for live data</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-xl font-bold">
+              <AlertTriangle className="h-5 w-5 text-red-500" />
+              Demo: Overdue Bills
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8 text-gray-500">
+              <AlertTriangle className="h-12 w-12 mx-auto mb-3 text-yellow-500" />
+              <p className="font-medium mb-2">Demo Mode</p>
+              <p className="text-sm">Supabase configuration required for live data</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

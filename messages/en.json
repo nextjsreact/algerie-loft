@@ -1,6 +1,7 @@
 {
   "customers": {
     "title": "Customers",
+    "subtitle": "Manage your customers and their information.",
     "description": "Manage your customer base.",
     "newCustomer": "New Customer",
     "searchCustomers": "Search customers...",
@@ -33,7 +34,57 @@
       "active": "Active",
       "former": "Former"
     },
-    "currentLoft": "Current Loft"
+    "currentLoft": "Current Loft",
+    "hub": {
+      "intelligentPlatform": "Intelligent Platform",
+      "title": "Customer Hub"
+    },
+    "stats": {
+      "totalClients": "Total Clients",
+      "clientBase": "Client Base",
+      "activeClients": "Active Clients",
+      "loyal": "Loyal",
+      "prospects": "Prospects",
+      "potential": "Potential",
+      "formerClients": "Former Clients",
+      "history": "History"
+    },
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "prospect": "Prospect",
+      "former": "Former"
+    },
+    "viewModes": {
+      "grid": "Grid"
+    },
+    "detail": {
+      "loadingProfile": "Loading profile...",
+      "contactInfo": "Contact Info",
+      "contactDescription": "Contact information for the client.",
+      "clientSince": "Client Since",
+      "lastUpdate": "Last Update",
+      "interactionHistory": "Interaction History",
+      "interactionDescription": "History of interactions with the client.",
+      "clientCreated": "Client Created",
+      "profileCreated": "Profile Created",
+      "noInteractions": "No interactions yet.",
+      "futureInteractions": "Future Interactions",
+      "statistics": "Statistics",
+      "satisfaction": "Satisfaction",
+      "interactions": "Interactions",
+      "reservations": "Reservations",
+      "quickActions": "Quick Actions"
+    },
+    "actions": {
+      "backToCustomers": "Back to Customers",
+      "contact": "Contact",
+      "edit": "Edit",
+      "email": "Email",
+      "call": "Call",
+      "schedule": "Schedule",
+      "addNote": "Add Note"
+    }
   },
   "landing": {
     "title": "Loft Algeria",
@@ -555,7 +606,11 @@
       "resolve": "Resolve",
       "resolveError": "Error resolving alert",
       "resolved": "Alert resolved successfully"
-    }
+    },
+    "title": "Executive",
+    "subtitle": "Executive Dashboard",
+    "confidential": "Confidential",
+    "executiveOnly": "Executive Only"
   },
   "internetConnections": {
     "active": "Active",
@@ -897,7 +952,8 @@
     "notifications": {
       "newMessageFrom": "New message from {sender}",
       "view": "View"
-    }
+    },
+    "noNotifications": "No notifications found."
   },
   "owners": {
     "addFirstOwner": "Add Owner",

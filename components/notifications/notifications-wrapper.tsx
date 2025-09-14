@@ -1,18 +1,56 @@
 "use client"
 
 import { useTranslations } from "next-intl"
+import { useNotifications } from "@/components/providers/notification-context"
 import NotificationsList from '@/components/notifications/notifications-list'
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Bell, CheckCheck } from "lucide-react"
 
 interface NotificationsWrapperProps {
   notifications: any[]
 }
 
 export function NotificationsWrapper({ notifications }: NotificationsWrapperProps) {
-  const t = useTranslations("notifications");
+  const t = useTranslations("notifications")
+  const { unreadCount, markAllAsRead } = useNotifications()
+
+  const unreadNotifications = notifications.filter(n => !n.is_read)
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <h1 className="text-2xl font-bold">{t('title')}</h1>
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-blue-100 rounded-full">
+            <Bell className="h-6 w-6 text-blue-600" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+            <p className="text-gray-600 mt-1">
+              Gérez vos notifications et restez informé des dernières activités
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          {unreadCount > 0 && (
+            <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+              {unreadCount} non lue{unreadCount > 1 ? 's' : ''}
+            </Badge>
+          )}
+          {unreadNotifications.length > 0 && (
+            <Button 
+              onClick={markAllAsRead}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <CheckCheck className="h-4 w-4" />
+              Tout marquer comme lu
+            </Button>
+          )}
+        </div>
+      </div>
+      
       <NotificationsList notifications={notifications} />
     </div>
   )

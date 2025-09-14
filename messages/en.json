@@ -432,6 +432,7 @@
     "date": "Date",
     "edit": "Edit",
     "error": "Error",
+    "success": "Success",
     "loading": "Loading...",
     "name": "Name",
     "next": "Next",
@@ -949,11 +950,25 @@
     "zoneAreas": "Geographic Zones"
   },
   "notifications": {
-    "notifications": {
-      "newMessageFrom": "New message from {sender}",
-      "view": "View"
-    },
-    "noNotifications": "No notifications found."
+    "title": "Notifications",
+    "description": "Manage your notifications and stay informed of the latest activities.",
+    "unreadCount": "{count} unread",
+    "markAllAsRead": "Mark all as read",
+    "newTaskAssigned": "New Task Assigned",
+    "Task Assigned to You": "Task Assigned to You",
+    "Task Reassigned": "Task Reassigned",
+    "Task Status Updated": "Task Status Updated",
+    "Your Task Status Updated": "Your Task Status Updated",
+    "Task Due Date Updated": "Task Due Date Updated",
+    "Task Deleted": "Task Deleted",
+    "Task Overdue": "Task Overdue",
+    "newTaskAssignedMessage": "You have been assigned a new task: \"{taskTitle}\" (Due: {dueDate})",
+    "viewDetails": "View details",
+    "noNotificationsMessage": "You will receive important notifications about your tasks and activities here.",
+    "new": "New",
+    "newMessageFrom": "New message from {sender}",
+    "noNotifications": "No notifications found.",
+    "view": "View"
   },
   "owners": {
     "addFirstOwner": "Add Owner",
@@ -1350,12 +1365,19 @@
     "pro": "Pro",
     "proTag": "Pro",
     "reportsLabel": "Reports",
-    "selectLoft": "Select Loft",
     "status": {
       "cancelled": "Cancelled",
       "completed": "Completed",
       "confirmed": "Confirmed",
-      "pending": "Pending"
+      "pending": "En attente",
+      "confirmed": "Confirmée",
+      "cancelled": "Annulée",
+      "completed": "Terminée"
+    },
+    "statusActions": {
+      "confirm": "Confirmer",
+      "cancel": "Annuler",
+      "complete": "Marquer comme terminée"
     },
     "subtitle": "subtitle",
     "tabs": {
@@ -1484,7 +1506,7 @@
     "createTask": "Create Task",
     "dateRange": "Due Date",
     "delete_task": "Delete Task",
-    "dueDateFormat": "Due Date (MM/DD/YYYY)",
+    "dueDateFormat": "Due Date: {date}",
     "editTask": "Edit Task",
     "edit_task": "Edit Task",
     "fillTaskInformation": "Fill task information",

@@ -431,6 +431,7 @@
     "date": "Date",
     "edit": "Modifier",
     "error": "Erreur",
+    "success": "Succès",
     "loading": "Chargement...",
     "name": "Nom",
     "next": "Suivant",
@@ -955,12 +956,24 @@
   },
   "notifications": {
     "title": "Notifications",
-    "notifications": {
-      "newMessageFrom": "Nouveau message de {sender}",
-      "view": "Voir"
-    },
-    "noNotifications": "Aucune notification trouvée."
-  },
+    "description": "Gérez vos notifications et restez informé des dernières activités.",
+    "unreadCount": "{count} non lue(s)",
+    "markAllAsRead": "Tout marquer comme lu",
+    "newTaskAssigned": "Nouvelle tâche assignée",
+    "Task Assigned to You": "Tâche assignée à vous",
+    "Task Reassigned": "Tâche réassignée",
+    "Task Status Updated": "Statut de la tâche mis à jour",
+    "Your Task Status Updated": "Statut de votre tâche mis à jour",
+    "Task Due Date Updated": "Date d'échéance de la tâche mise à jour",
+    "Task Deleted": "Tâche supprimée",
+    "Task Overdue": "Tâche en retard",
+    "newTaskAssignedMessage": "Une nouvelle tâche vous a été assignée : \"{taskTitle}\" (Échéance : {dueDate})",
+    "viewDetails": "Voir les détails",
+    "noNotificationsMessage": "Vous recevrez ici les notifications importantes concernant vos tâches et activités.",
+    "new": "Nouveau",
+    "newMessageFrom": "Nouveau message de {sender}",
+    "view": "Voir",
+    "noNotifications": "Aucune notification trouvée.",
   "owners": {
     "addFirstOwner": "Ajouter un propriétaire",
     "addOwner": "Ajouter un propriétaire",
@@ -1396,20 +1409,16 @@
       "title": "Upcoming Reservations"
     },
     "vsLastMonth": "vs last month",
-    "newReservation": "Nouvelle réservation",
-    "loft": "Loft",
-    "selectLoft": "Sélectionner un loft",
-    "allLofts": "Tous les lofts",
-    "noRecentActivity": "Aucune activité récente"
+    "allLofts": "All Lofts"
   },
   "roles": {
-    "admin": "Administrateur",
-    "executive": "Exécutif",
-    "guest": "Invité",
+    "admin": "Administrator",
+    "executive": "Executive",
+    "guest": "Guest",
     "manager": "Manager",
-    "member": "Membre",
-    "owner": "Propriétaire",
-    "user": "Utilisateur"
+    "member": "Member",
+    "owner": "Owner",
+    "user": "User"
   },
   "settings": {
     "categories": {
@@ -1501,7 +1510,7 @@
     "createTask": "Créer une Tâche",
     "dateRange": "Date d'Échéance",
     "delete_task": "Supprimer la Tâche",
-    "dueDateFormat": "Date d'échéance (JJ/MM/AAAA)",
+    "dueDateFormat": "Date d'échéance: {date}",
     "editTask": "Modifier la Tâche",
     "edit_task": "Modifier la Tâche",
     "fillTaskInformation": "Remplir les informations de la tâche",

@@ -431,6 +431,7 @@
     "date": "التاريخ",
     "edit": "تعديل",
     "error": "خطأ",
+    "success": "نجاح",
     "loading": "جاري التحميل...",
     "name": "الاسم",
     "next": "التالي",
@@ -951,12 +952,26 @@
   },
   "notifications": {
     "title": "الإشعارات",
-    "notifications": {
-      "newMessageFrom": "رسالة جديدة من {sender}",
-      "view": "عرض"
-    },
-    "noNotifications": "لم يتم العثور على إشعارات."
-  },
+    "description": "إدارة الإشعارات الخاصة بك والبقاء على اطلاع على أحدث الأنشطة.",
+    "unreadCount": "{count} غير مقروءة",
+    "markAllAsRead": "وضع علامة على الكل كمقروء",
+    "newTaskAssigned": "مهمة جديدة معينة",
+    "Task Assigned to You": "تم تعيين مهمة لك",
+    "newTaskAssignedMessage": "تم تعيين مهمة جديدة لك: \"{taskTitle}\" (تاريخ الاستحقاق: {dueDate})",
+    "Task Reassigned": "تم إعادة تعيين المهمة",
+    "Task Status Updated": "تم تحديث حالة المهمة",
+    "Your Task Status Updated": "تم تحديث حالة مهمتك",
+    "Task Due Date Updated": "تم تحديث تاريخ استحقاق المهمة",
+    "Task Deleted": "تم حذف المهمة",
+    "Task Overdue": "المهمة متأخرة",
+    "newTaskAssignedMessage": "تم تعيين مهمة جديدة لك: \"{taskTitle}\" (تاريخ الاستحقاق: {dueDate})",
+    "viewDetails": "عرض التفاصيل",
+    "newMessageFrom": "رسالة جديدة من {sender}",
+    "noNotificationsMessage": "ستتلقى هنا إشعارات مهمة حول مهامك وأنشطتك.",
+    "new": "جديد",
+    "noNotifications": "لم يتم العثور على إشعارات.",
+    "view": "عرض"
+  }
   "owners": {
     "addFirstOwner": "أضف مالكك الأول",
     "addOwner": "أضف مالكًا",
@@ -1485,7 +1500,7 @@
     "createTask": "إنشاء مهمة",
     "dateRange": "تاريخ الاستحقاق",
     "delete_task": "حذف المهمة",
-    "dueDateFormat": "تاريخ الاستحقاق (MM/DD/YYYY)",
+    "dueDateFormat": "تاريخ الاستحقاق: {date}",
     "editTask": "تعديل المهمة",
     "edit_task": "تعديل المهمة",
     "fillTaskInformation": "املأ معلومات المهمة",

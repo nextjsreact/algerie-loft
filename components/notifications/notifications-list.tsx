@@ -1,6 +1,6 @@
 "use client"
 
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { useEffect } from "react"
 import { markNotificationAsRead } from "@/app/actions/notifications"
 import { useNotifications } from "@/components/providers/notification-context"
@@ -14,6 +14,7 @@ interface NotificationsListProps {
 
 export default function NotificationsList({ notifications }: NotificationsListProps) {
   const t = useTranslations("notifications")
+  const locale = useLocale()
   const { refreshNotifications } = useNotifications()
 
   // Mark all unread notifications as read when the component mounts
@@ -74,7 +75,7 @@ export default function NotificationsList({ notifications }: NotificationsListPr
           {t('noNotifications')}
         </h3>
         <p className="text-gray-500 text-center max-w-sm">
-          Vous recevrez ici les notifications importantes concernant vos tâches et activités.
+          {t('noNotificationsMessage')}
         </p>
       </div>
     )
@@ -95,16 +96,16 @@ export default function NotificationsList({ notifications }: NotificationsListPr
                 {getNotificationIcon(notification.type || 'info')}
                 <div>
                   <CardTitle className="text-base font-semibold">
-                    {notification.title}
+                    {t(notification.title_key || '', notification.title_payload)}
                   </CardTitle>
                   <CardDescription className="flex items-center gap-2 mt-1">
                     <Clock className="h-3 w-3" />
-                    {new Date(notification.created_at).toLocaleString('fr-FR', {
+                    {new Date(notification.created_at).toLocaleString(locale, {
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
+                      hour: 'numeric',
+                      minute: 'numeric',
                     })}
                   </CardDescription>
                 </div>
@@ -112,7 +113,7 @@ export default function NotificationsList({ notifications }: NotificationsListPr
               <div className="flex items-center gap-2">
                 {!notification.is_read && (
                   <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                    Nouveau
+                    {t('new')}
                   </Badge>
                 )}
                 <Badge variant="outline" className="capitalize">
@@ -123,7 +124,7 @@ export default function NotificationsList({ notifications }: NotificationsListPr
           </CardHeader>
           <CardContent className="pt-0">
             <p className="text-gray-700 leading-relaxed">
-              {notification.message}
+              {t(notification.message_key || '', notification.message_payload)}
             </p>
             {notification.link && (
               <div className="mt-3">
@@ -131,7 +132,7 @@ export default function NotificationsList({ notifications }: NotificationsListPr
                   href={notification.link}
                   className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
                 >
-                  Voir les détails →
+                  {t('viewDetails')} →
                 </a>
               </div>
             )}

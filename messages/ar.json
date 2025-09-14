@@ -586,8 +586,7 @@
         "inProgress": "قيد التنفيذ",
         "todo": "للقيام به"
       },
-      "confidential": "سري",
-      "executiveOnly": "للتنفيذيين فقط"
+      
     },
     "teams": "الفرق",
     "thisMonth": "هذا الشهر",
@@ -1256,7 +1255,8 @@
       "hourAgo": "منذ ساعة",
       "hoursAgo": "منذ بضع ساعات",
       "minAgo": "منذ دقيقة",
-      "newReservation": "حجز جديد"
+      "newReservation": "حجز جديد",
+      "noRecentActivity": "لا توجد أنشطة حديثة"
     },
     "activity": "نشاط حديث",
     "aiTag": "ذكاء اصطناعي",
@@ -1300,7 +1300,6 @@
     },
     "create": "إنشاء حجز",
     "description": "إدارة حجوزاتك وتوفرها وتحليلاتها.",
-    "selectLoft": "اختر شقة",
     "allLofts": "جميع الشقق",
     "details": {
       "dates": "التواريخ",
@@ -1373,6 +1372,11 @@
       "completed": "مكتملة",
       "confirmed": "مؤكدة",
       "pending": "معلقة"
+    },
+    "statusActions": {
+      "confirm": "تأكيد",
+      "cancel": "إلغاء",
+      "complete": "إكمال"
     },
     "subtitle": "عنوان فرعي",
     "tabs": {

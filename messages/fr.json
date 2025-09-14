@@ -973,7 +973,8 @@
     "new": "Nouveau",
     "newMessageFrom": "Nouveau message de {sender}",
     "view": "Voir",
-    "noNotifications": "Aucune notification trouvée.",
+    "noNotifications": "Aucune notification trouvée."
+  },
   "owners": {
     "addFirstOwner": "Ajouter un propriétaire",
     "addOwner": "Ajouter un propriétaire",

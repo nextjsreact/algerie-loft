@@ -1,7 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { logger, measurePerformance } from '@/lib/logger'
 import { createNotification } from '@/app/actions/notifications'
-
 export interface TaskNotificationData {
   taskId: string
   taskTitle: string
@@ -122,12 +121,13 @@ export async function notifyTaskStatusChange(
         
         await createNotification(
           taskData.createdBy,
-          "notifications.Task Status Updated",
-          `Task "${taskData.taskTitle}" status changed from "${oldStatus}" to "${newStatus}" by ${updatedByName}.`,
+          "Task Status Updated", // Literal title for the notification
+          "taskStatusUpdatedMessage", // message_key for translation
           notificationType,
           `/tasks/${taskData.taskId}`,
-          updatedByUserId
-        )
+          updatedByUserId,
+          { taskTitle: taskData.taskTitle, oldStatus: oldStatus, newStatus: newStatus } // message_payload with raw status keys
+        );
       }
 
       // Notify the assigned user if they're not the one making the change
@@ -136,12 +136,13 @@ export async function notifyTaskStatusChange(
         
         await createNotification(
           taskData.assignedTo,
-          "Your Task Status Updated",
-          `Status of your assigned task "${taskData.taskTitle}" has been updated to "${newStatus}".`,
+          "Your Task Status Updated", // Literal title for the notification
+          "taskStatusUpdatedMessage", // message_key for translation
           notificationType,
           `/tasks/${taskData.taskId}`,
-          updatedByUserId
-        )
+          updatedByUserId,
+          { taskTitle: taskData.taskTitle, newStatus: newStatus } // message_payload with raw status key
+        );
       }
 
       logger.info('Task status change notifications created successfully')
@@ -179,12 +180,13 @@ export async function notifyTaskDueDateChange(
 
         await createNotification(
           taskData.assignedTo,
-          "Task Due Date Updated",
-          `Due date for task "${taskData.taskTitle}" has been updated. ${dueDateText}`,
+          "Task Due Date Updated", // Literal title
+          "taskDueDateUpdatedMessage", // message_key
           'info',
           `/tasks/${taskData.taskId}`,
-          updatedByUserId
-        )
+          updatedByUserId,
+          { taskTitle: taskData.taskTitle, newDueDate: (newDueDate ? new Date(newDueDate).toLocaleDateString() : '') } // message_payload
+        );
       }
 
       logger.info('Task due date change notification created successfully')

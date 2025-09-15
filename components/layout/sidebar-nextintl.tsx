@@ -17,7 +17,7 @@ import { LanguageSelector } from "@/components/ui/language-selector"
 import { NotificationBadge } from "@/components/ui/notification-badge"
 import { useEnhancedRealtime } from "@/components/providers/enhanced-realtime-provider"
 import { useNotifications } from "@/components/providers/notification-context"
-import { useTranslations, useLocale } from "next-intl"
+import { useTranslations, useLocale, useMessages } from "next-intl"
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   user: User;
@@ -33,6 +33,7 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
   const t = useTranslations('nav')
   const tRoles = useTranslations('roles')
   const tAuth = useTranslations('auth')
+
 
   const navigation = [
     { name: t('executive'), href: `/${locale}/executive`, icon: LayoutDashboard, roles: ["executive"], className: "bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold" },

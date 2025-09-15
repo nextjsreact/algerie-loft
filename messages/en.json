@@ -964,6 +964,7 @@
     "Task Overdue": "Task Overdue",
     "newTaskAssignedMessage": "You have been assigned a new task: \"{taskTitle}\" (Due: {dueDate})",
     "taskDueDateUpdatedMessage": "Due date for task \"{taskTitle}\" has been updated. Due date updated to: {dueDate}",
+    "taskStatusUpdatedMessage": "The status of task \"{taskTitle}\" has been updated to {newStatus}.",
     "viewDetails": "View details",
     "noNotificationsMessage": "You will receive important notifications about your tasks and activities here.",
     "new": "New",

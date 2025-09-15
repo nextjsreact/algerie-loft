@@ -14,6 +14,7 @@ interface NotificationsListProps {
 
 export default function NotificationsList({ notifications }: NotificationsListProps) {
   const t = useTranslations("notifications")
+  const tTasks = useTranslations("tasks") // Add this line
   const locale = useLocale()
   const { refreshNotifications } = useNotifications()
 
@@ -24,8 +25,8 @@ export default function NotificationsList({ notifications }: NotificationsListPr
     let match = messageKey.match(dueDatePattern);
     if (match) {
       const taskTitle = match[1];
-      const dueDate = match[2];
-      return t('taskDueDateUpdatedMessage', { taskTitle, dueDate }); // Removed 'notifications.' prefix
+      const newDueDate = match[2];
+      return t('taskDueDateUpdatedMessage', { taskTitle, newDueDate }); // Removed 'notifications.' prefix
     }
 
     // Pattern for "Status of your assigned task..."
@@ -34,8 +35,8 @@ export default function NotificationsList({ notifications }: NotificationsListPr
     if (match) {
       const taskTitle = match[1];
       const status = match[2];
-      // Use the existing static key 'Your Task Status Updated' for consistency with how it was added
-      return t('Your Task Status Updated', { taskTitle, status });
+      // Use the existing static key 'taskStatusUpdatedMessage'
+      return t('taskStatusUpdatedMessage', { taskTitle, newStatus: tTasks(`statusOptions.${status}`) });
     }
 
     // If no pattern matches, return the original message key

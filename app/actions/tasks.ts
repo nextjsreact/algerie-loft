@@ -210,16 +210,18 @@ export async function updateTask(id: string, data: unknown) {
       if (newDueDate !== originalDueDate) {
         const currentAssignee = validatedData.assigned_to || originalAssignedTo;
         if (currentAssignee && currentAssignee !== session.user.id) {
-          const dueDateText = newDueDate 
+          const dueDateText = newDueDate
             ? `Due date updated to: ${new Date(newDueDate).toLocaleDateString()}`
             : 'Due date removed';
           
           await createNotification(
             currentAssignee,
-            "notifications.taskDueDateUpdated",
-            { taskTitle: originalTitle, dueDate: dueDateText },
+            "Task Due Date Updated",
+            "taskDueDateUpdatedMessage",
             'info',
-            `/tasks/${id}`
+            `/tasks/${id}`,
+            session.user.id, // Add sender_id
+            { taskTitle: originalTitle, newDueDate: (newDueDate ? new Date(newDueDate).toLocaleDateString() : '') } // Handle null for newDueDate
           );
         }
       }

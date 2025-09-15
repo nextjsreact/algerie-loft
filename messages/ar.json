@@ -1873,6 +1873,7 @@
     "view": "عرض",
     "newTaskAssigned": "مهمة جديدة معينة",
     "newTaskAssignedMessage": "تم تعيين مهمة جديدة لك: \"{taskTitle}\" (تاريخ الاستحقاق: {dueDate})",
+    "taskDueDateUpdatedMessage": "تم تحديث تاريخ استحقاق المهمة \"{taskTitle}\". تاريخ الاستحقاق الجديد: {dueDate}",
     "Task Assigned to You": "تم تعيين مهمة لك",
     "Task Reassigned": "تم إعادة تعيين المهمة",
     "Task Status Updated": "تم تحديث حالة المهمة",

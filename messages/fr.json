@@ -968,11 +968,13 @@
     "Task Deleted": "Tâche supprimée",
     "Task Overdue": "Tâche en retard",
     "newTaskAssignedMessage": "Une nouvelle tâche vous a été assignée : \"{taskTitle}\" (Échéance : {dueDate})",
+    "taskDueDateUpdatedMessage": "La date d'échéance de la tâche \"{taskTitle}\" a été mise à jour. Nouvelle date d'échéance : {dueDate}",
     "viewDetails": "Voir les détails",
     "noNotificationsMessage": "Vous recevrez ici les notifications importantes concernant vos tâches et activités.",
     "new": "Nouveau",
     "newMessageFrom": "Nouveau message de {sender}",
-    "noNotifications": "Aucune notification trouvée."
+    "noNotifications": "Aucune notification trouvée.",
+    "view": "Voir"
   },
   "owners": {
     "addFirstOwner": "Ajouter un propriétaire",

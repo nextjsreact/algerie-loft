@@ -216,8 +216,8 @@ export async function updateTask(id: string, data: unknown) {
           
           await createNotification(
             currentAssignee,
-            "Task Due Date Updated",
-            `Due date for task "${originalTitle}" has been updated. ${dueDateText}`,
+            "notifications.taskDueDateUpdated",
+            { taskTitle: originalTitle, dueDate: dueDateText },
             'info',
             `/tasks/${id}`
           );

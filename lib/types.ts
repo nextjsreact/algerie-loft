@@ -123,8 +123,9 @@ export type Task = {
 
 export type Notification = {
   id: string;
-  title_key: string;
-  message_key: string;
+  title_key?: string;
+  message_key?: string;
+  message?: string;
   title_payload?: Record<string, any>;
   message_payload?: Record<string, any>;
   is_read: boolean;

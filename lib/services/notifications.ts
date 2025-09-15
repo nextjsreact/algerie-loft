@@ -33,6 +33,40 @@ export interface NotificationQueue {
   error_message?: string
 }
 
+// Define createNotification helper function
+async function createNotification(
+  userId: string,
+  title: string,
+  message_key: string,
+  type: 'info' | 'warning' | 'error' | 'success' = 'info',
+  link?: string,
+  message_payload?: Record<string, any>
+): Promise<void> {
+  const supabase = await createClient();
+
+  try {
+    const { error } = await supabase.from('notifications').insert({
+      user_id: userId,
+      title,
+      message_key, // Use the new message_key field
+      message_payload, // Use the new message_payload field
+      type,
+      link,
+      is_read: false,
+      created_at: new Date().toISOString(),
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    logger.info('Notification created', { userId, title, message_key });
+  } catch (error) {
+    logger.error('Failed to create notification', error, { userId, title, message_key });
+    throw error;
+  }
+}
+
 
 export async function sendBulkNotifications(
   userIds: string[],
@@ -108,9 +142,10 @@ export async function checkPaymentOverdueNotifications(): Promise<void> {
           await createNotification(
             payment.loft[0].owner_id,
             title,
-            message,
+            'notifications.paymentOverdueMessage',
             'warning',
-            `/transactions/${payment.id}`
+            `/transactions/${payment.id}`,
+            { amount: payment.amount, tenant_name: payment.tenant_name, daysOverdue: daysOverdue }
           )
         }
 
@@ -124,9 +159,10 @@ export async function checkPaymentOverdueNotifications(): Promise<void> {
           await createNotification(
             admin.id,
             title,
-            message,
+            'notifications.paymentOverdueMessage',
             'warning',
-            `/transactions/${payment.id}`
+            `/transactions/${payment.id}`,
+            { amount: payment.amount, tenant_name: payment.tenant_name, daysOverdue: daysOverdue }
           )
         }
       }
@@ -175,9 +211,10 @@ export async function checkMaintenanceDueNotifications(): Promise<void> {
           await createNotification(
             task.assigned_to,
             title,
-            message,
+            'notifications.maintenanceDueMessage',
             'info',
-            `/tasks/${task.id}`
+            `/tasks/${task.id}`,
+            { description: task.description, scheduled_date: new Date(task.scheduled_date).toLocaleDateString() }
           )
         }
 
@@ -186,9 +223,10 @@ export async function checkMaintenanceDueNotifications(): Promise<void> {
           await createNotification(
             task.loft[0].owner_id,
             title,
-            message,
+            'notifications.maintenanceDueMessage',
             'info',
-            `/tasks/${task.id}`
+            `/tasks/${task.id}`,
+            { description: task.description, scheduled_date: new Date(task.scheduled_date).toLocaleDateString() }
           )
         }
       }

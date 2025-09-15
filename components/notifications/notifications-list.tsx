@@ -17,6 +17,30 @@ export default function NotificationsList({ notifications }: NotificationsListPr
   const locale = useLocale()
   const { refreshNotifications } = useNotifications()
 
+  // Helper function to parse and translate old notification messages
+  const parseAndTranslateOldMessage = (messageKey: string) => {
+    // Pattern for "Due date for task..."
+    const dueDatePattern = /Due date for task "([^"]+)" has been updated\. Due date updated to: (.+)/;
+    let match = messageKey.match(dueDatePattern);
+    if (match) {
+      const taskTitle = match[1];
+      const dueDate = match[2];
+      return t('notifications.taskDueDateUpdatedMessage', { taskTitle, dueDate });
+    }
+
+    // Pattern for "Status of your assigned task..."
+    const statusPattern = /Status of your assigned task "([^"]+)" has been updated to "([^"]+)"\./;
+    match = messageKey.match(statusPattern);
+    if (match) {
+      const taskTitle = match[1];
+      const status = match[2];
+      return t('notifications.taskStatusUpdatedMessage', { taskTitle, status });
+    }
+
+    // If no pattern matches, return the original message key
+    return messageKey;
+  };
+
   // Mark all unread notifications as read when the component mounts
   useEffect(() => {
     const markUnreadAsRead = async () => {
@@ -126,7 +150,7 @@ export default function NotificationsList({ notifications }: NotificationsListPr
             <p className="text-gray-700 leading-relaxed">
               {notification.message_payload
                 ? t(notification.message_key, notification.message_payload)
-                : (notification.message || notification.message_key)}
+                : parseAndTranslateOldMessage(notification.message_key)}
             </p>
             {notification.link && (
               <div className="mt-3">

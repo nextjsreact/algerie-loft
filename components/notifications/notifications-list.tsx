@@ -34,7 +34,8 @@ export default function NotificationsList({ notifications }: NotificationsListPr
     if (match) {
       const taskTitle = match[1];
       const status = match[2];
-      return t('taskStatusUpdatedMessage', { taskTitle, status }); // Removed 'notifications.' prefix
+      // Use the existing static key 'Your Task Status Updated' for consistency with how it was added
+      return t('Your Task Status Updated', { taskTitle, status });
     }
 
     // If no pattern matches, return the original message key

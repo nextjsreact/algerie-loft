@@ -124,7 +124,9 @@ export default function NotificationsList({ notifications }: NotificationsListPr
           </CardHeader>
           <CardContent className="pt-0">
             <p className="text-gray-700 leading-relaxed">
-              {t(notification.message_key, notification.message_payload)}
+              {notification.message_payload
+                ? t(notification.message_key, notification.message_payload)
+                : notification.message_key}
             </p>
             {notification.link && (
               <div className="mt-3">

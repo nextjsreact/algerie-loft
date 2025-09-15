@@ -166,10 +166,13 @@ export async function updateTask(id: string, data: unknown) {
 
         await createNotification(
           validatedData.assigned_to,
-          "Task Assigned to You",
-          `You have been assigned to task: "${originalTitle}"${validatedData.due_date ? ` (Due: ${new Date(validatedData.due_date).toLocaleDateString()})` : ''}`,
+          "newTaskAssigned",
+          "newTaskAssignedMessage",
           'info',
-          `/tasks/${id}`
+          `/tasks/${id}`,
+          session.user.id,
+          undefined,
+          { taskTitle: originalTitle, dueDate: validatedData.due_date ? new Date(validatedData.due_date).toLocaleDateString() : '' }
         );
       }
 
@@ -187,28 +190,18 @@ export async function updateTask(id: string, data: unknown) {
 
     // 2. Status change notification
     if (validatedData.status && validatedData.status !== originalStatus) {
-      // Notify the task creator if they're not the one making the change
-      if (task.created_by && task.created_by !== session.user.id) {
-        await createNotification(
-          task.created_by,
-          "Task Status Updated",
-          `Task "${originalTitle}" status changed from "${originalStatus}" to "${validatedData.status}" by ${session.user.full_name || 'a user'}.`,
-          validatedData.status === 'completed' ? 'success' : 'info',
-          `/tasks/${id}`
-        );
-      }
-
-      // If someone else is assigned and they're not the one making the change, notify them too
-      const currentAssignee = validatedData.assigned_to || originalAssignedTo;
-      if (currentAssignee && currentAssignee !== session.user.id && currentAssignee !== task.created_by) {
-        await createNotification(
-          currentAssignee,
-          "Your Task Status Updated",
-          `Status of your assigned task "${originalTitle}" has been updated to "${validatedData.status}".`,
-          validatedData.status === 'completed' ? 'success' : 'info',
-          `/tasks/${id}`
-        );
-      }
+      await notifyTaskStatusChange(
+        {
+          taskId: task.id,
+          taskTitle: task.title,
+          createdBy: task.created_by,
+          assignedTo: task.assigned_to || undefined,
+        },
+        originalStatus,
+        validatedData.status,
+        session.user.id,
+        session.user.full_name || 'a user'
+      );
     }
 
     // 3. Due date change notification (for admins/managers updating tasks)

@@ -33,41 +33,6 @@ export interface NotificationQueue {
   error_message?: string
 }
 
-export async function createNotification(
-  userId: string,
-  title: string,
-  message: string,
-  type: 'info' | 'warning' | 'error' | 'success' = 'info',
-  link?: string
-): Promise<void> {
-  return measurePerformance(async () => {
-    logger.info('Creating notification', { userId, title, type })
-    const supabase = await createClient()
-
-    try {
-      const { error } = await supabase
-        .from('notifications')
-        .insert({
-          user_id: userId,
-          title,
-          message,
-          type,
-          link,
-          is_read: false,
-          created_at: new Date().toISOString()
-        })
-
-      if (error) {
-        throw error
-      }
-
-      logger.info('Notification created successfully', { userId, title })
-    } catch (error) {
-      logger.error('Failed to create notification', error, { userId, title })
-      throw error
-    }
-  }, 'createNotification')
-}
 
 export async function sendBulkNotifications(
   userIds: string[],

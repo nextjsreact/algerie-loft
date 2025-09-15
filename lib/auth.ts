@@ -6,7 +6,7 @@ import { createClient, createReadOnlyClient } from '@/utils/supabase/server'
 import type { AuthSession } from "./types"
 
 export async function getSession(): Promise<AuthSession | null> {
-  const supabase = await createClient(); // Create client here for each request
+  const supabase = await createReadOnlyClient(); // Create client here for each request
  
   const { data: { user }, error: userError } = await supabase.auth.getUser();
  

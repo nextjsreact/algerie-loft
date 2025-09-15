@@ -31,10 +31,13 @@ export async function notifyTaskAssignment(
 
       await createNotification(
         assignedUserId,
-        "New Task Assigned",
-        `You have been assigned a new task: "${taskData.taskTitle}"${dueDateText}`,
+        "newTaskAssigned",
+        "newTaskAssignedMessage",
         'info',
-        `/tasks/${taskData.taskId}`
+        `/tasks/${taskData.taskId}`,
+        assignedByUserId,
+        undefined, // title_payload
+        { taskTitle: taskData.taskTitle, dueDate: dueDateText.replace(' (Due: ', '').replace(')', '') } // message_payload
       )
 
       logger.info('Task assignment notification created successfully')
@@ -69,10 +72,11 @@ export async function notifyTaskReassignment(
 
         await createNotification(
           newAssigneeId,
-          "Task Assigned to You",
+          "notifications.Task Assigned to You",
           `You have been assigned to task: "${taskData.taskTitle}"${dueDateText}`,
           'info',
-          `/tasks/${taskData.taskId}`
+          `/tasks/${taskData.taskId}`,
+          updatedByUserId
         )
       }
 
@@ -80,10 +84,11 @@ export async function notifyTaskReassignment(
       if (oldAssigneeId && oldAssigneeId !== updatedByUserId && oldAssigneeId !== newAssigneeId) {
         await createNotification(
           oldAssigneeId,
-          "Task Reassigned",
+          "notifications.Task Reassigned",
           `Task "${taskData.taskTitle}" has been reassigned to someone else by ${updatedByName}.`,
           'warning',
-          `/tasks/${taskData.taskId}`
+          `/tasks/${taskData.taskId}`,
+          updatedByUserId
         )
       }
 
@@ -117,10 +122,11 @@ export async function notifyTaskStatusChange(
         
         await createNotification(
           taskData.createdBy,
-          "Task Status Updated",
+          "notifications.Task Status Updated",
           `Task "${taskData.taskTitle}" status changed from "${oldStatus}" to "${newStatus}" by ${updatedByName}.`,
           notificationType,
-          `/tasks/${taskData.taskId}`
+          `/tasks/${taskData.taskId}`,
+          updatedByUserId
         )
       }
 
@@ -133,7 +139,8 @@ export async function notifyTaskStatusChange(
           "Your Task Status Updated",
           `Status of your assigned task "${taskData.taskTitle}" has been updated to "${newStatus}".`,
           notificationType,
-          `/tasks/${taskData.taskId}`
+          `/tasks/${taskData.taskId}`,
+          updatedByUserId
         )
       }
 
@@ -175,7 +182,8 @@ export async function notifyTaskDueDateChange(
           "Task Due Date Updated",
           `Due date for task "${taskData.taskTitle}" has been updated. ${dueDateText}`,
           'info',
-          `/tasks/${taskData.taskId}`
+          `/tasks/${taskData.taskId}`,
+          updatedByUserId
         )
       }
 
@@ -199,7 +207,7 @@ export async function notifyTaskDeletion(
     })
 
     try {
-      const usersToNotify = []
+      const usersToNotify: string[] = []
       
       // Notify assigned user
       if (taskData.assignedTo && taskData.assignedTo !== deletedByUserId) {
@@ -218,7 +226,8 @@ export async function notifyTaskDeletion(
           "Task Deleted",
           `Task "${taskData.taskTitle}" has been deleted by ${deletedByName}.`,
           'warning',
-          '/tasks'
+          '/tasks',
+          deletedByUserId
         )
       }
 
@@ -271,7 +280,8 @@ export async function notifyTaskOverdue(): Promise<void> {
             "Task Overdue",
             `Your task "${task.title}" is ${daysOverdue} day(s) overdue.`,
             'error',
-            `/tasks/${task.id}`
+            `/tasks/${task.id}`,
+            null
           )
         }
 
@@ -282,7 +292,8 @@ export async function notifyTaskOverdue(): Promise<void> {
             "Task Overdue",
             `Task "${task.title}" assigned to someone is ${daysOverdue} day(s) overdue.`,
             'warning',
-            `/tasks/${task.id}`
+            `/tasks/${task.id}`,
+            null
           )
         }
       }

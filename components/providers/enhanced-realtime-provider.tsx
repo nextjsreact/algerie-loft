@@ -152,7 +152,7 @@ export function EnhancedRealtimeProvider({ children, userId }: EnhancedRealtimeP
             description: newNotification.message,
             duration: 6000, // Show for 6 seconds
             action: newNotification.link ? {
-              label: t('notifications.view'),
+              label: t('view'),
               onClick: () => {
                 window.location.href = newNotification.link
               }

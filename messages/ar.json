@@ -1,3 +1,4 @@
+
 {
   "customers": {
     "title": "العملاء",
@@ -557,547 +558,544 @@
     "daysOverdue": "متأخر {count} أيام",
     "due": "مستحق",
     "dueToday": "مستحق اليوم",
-    "excellent": "ممتاز!",
-    "inProgress": "قيد التنفيذ",
-    "latestTaskUpdates": "آخر تحديثات المهام",
-    "lofts": {
-      "addLoft": "إضافة شقة"
-    },
-    "loftsWithBills": "شقق بفواتير",
-    "monthlyFinancialOverview": "نظرة عامة مالية شهرية",
-    "monthlyRevenue": "الإيرادات الشهرية",
-    "next30Days": "الـ30 يوم القادمة",
-    "nextDueDates": "تواريخ الاستحقاق القادمة في 30 يوماً",
-    "noOverdueBills": "لا توجد فواتير متأخرة - عمل رائع!",
-    "noRecentTasks": "لا توجد مهام حديثة",
+    "dueTomorrow": "مستحق غداً",
+    "errorMessage": "فشل في تسجيل الدفع. يرجى المحاولة مرة أخرى.",
+    "loadingError": "فشل في تحميل تنبيهات الفواتير",
+    "markPaid": "تحديد كمدفوع",
+    "noOverdueBillsMessage": "لا توجد فواتير متأخرة - عمل رائع!",
     "noUpcomingBills": "لا توجد فواتير قادمة",
-    "occupiedLofts": "الشقق المشغولة",
-    "overdue": "متأخر",
+    "noUpcomingBillsMessage": "لا توجد فواتير قادمة في الـ30 يوم القادمة",
+    "overdueBills": "فواتير متأخرة",
     "overdueBillsTitle": "فواتير متأخرة",
-    "pay": "دفع",
-    "quickActions": "إجراءات سريعة",
-    "recentTasks": "المهام الحديثة",
-    "revenueVsExpenses": "الإيرادات مقابل المصروفات",
-    "subtitle": "مرحباً بك في لوحة تحكم إدارة العقارات",
-    "systemStatus": "حالة النظام",
-    "tasks": {
-      "status": {
-        "completed": "مكتمل",
-        "inProgress": "قيد التنفيذ",
-        "todo": "للقيام به"
-      },
-      
+    "paymentDate": "تاريخ الدفع",
+    "paymentMethod": "طريقة الدفع",
+    "paymentModal": {
+      "title": "تسجيل الدفع"
     },
-    "teams": "الفرق",
-    "thisMonth": "هذا الشهر",
-    "title": "لوحة التحكم",
-    "toDo": "للقيام به",
-    "today": "اليوم",
-    "tomorrow": "غداً",
-    "totalLofts": "إجمالي الشقق",
-    "upToDate": "أنت محدث!",
-    "upcoming": "قادم",
+    "recordPayment": "تسجيل الدفع",
+    "recording": "جاري التسجيل...",
+    "selectPaymentMethod": "اختر طريقة الدفع",
+    "successMessage": "تم تسجيل الدفع بنجاح.",
+    "title": "الفواتير",
+    "upcomingBills": "فواتير قادمة",
     "upcomingBillsTitle": "فواتير قادمة",
-    "updated": "محدث",
-    "viewReports": "عرض التقارير",
-    "welcomeBack": "مرحباً بعودتك"
-  },
-  "executive": {
-    "alerts": {
-      "resolve": "حل",
-      "resolveError": "خطأ في حل التنبيه",
-      "resolved": "تم حل التنبيه بنجاح"
-    },
-    "title": "المدير التنفيذي",
-    "subtitle": "لوحة القيادة التنفيذية",
-    "confidential": "سري",
-    "executiveOnly": "للتنفيذيين فقط"
-  },
-  "internetConnections": {
-    "active": "نشط",
-    "addFirstConnection": "أضف نوع الاتصال الأول للبدء",
-    "addNewConnectionType": "إضافة نوع اتصال جديد",
-    "cancelButton": "إلغاء",
-    "connectionDetails": "تفاصيل الاتصال",
-    "connectionType": "نوع الاتصال",
-    "connectionTypes": "أنواع الاتصالات",
-    "cost": "التكلفة",
-    "costPlaceholder": "مثال: 29.99",
-    "create": "إنشاء",
-    "createConnectionType": "إنشاء نوع اتصال إنترنت",
-    "createConnectionTypeDescription": "إضافة نوع اتصال إنترنت جديد للنظام",
-    "createNewConnectionType": "إنشاء نوع اتصال إنترنت جديد",
-    "delete": "حذف",
-    "deleteButton": "حذف",
-    "deleteConfirmation": "حذف اتصال {type} من {provider}؟",
-    "deleteConfirmationDescription": "هذا الإجراء لا يمكن التراجع عنه وسيحذف هذا الاتصال نهائياً.",
-    "deleteError": "خطأ في حذف الاتصال",
-    "deleteErrorDescription": "حدث خطأ أثناء حذف الاتصال",
-    "deleteSuccess": "تم حذف الاتصال بنجاح",
-    "deleteSuccessDescription": "تم حذف نوع اتصال {type}",
-    "description": "تكوين وإدارة جميع أنواع اتصالات الإنترنت المتاحة في شققك",
-    "edit": "تعديل",
-    "editConnectionType": "تعديل نوع اتصال الإنترنت",
-    "enterConnectionInfo": "أدخل معلومات الاتصال أدناه",
-    "existingConnectionTypes": "أنواع الاتصالات الموجودة",
-    "inactive": "غير نشط",
-    "loadError": "خطأ في تحميل أنواع اتصالات الإنترنت",
-    "maintenance": "صيانة",
-    "manageConnections": "إدارة اتصالات الإنترنت",
-    "noConnectionTypesFound": "لم يتم العثور على أنواع اتصالات إنترنت",
-    "paginationNext": "التالي",
-    "paginationPage": "صفحة {current} من {total}",
-    "paginationPrevious": "السابق",
-    "paginationShowing": "عرض {start} إلى {end} من {total} نوع اتصال",
-    "provider": "المزود",
-    "providerInfo": "معلومات المزود",
-    "providerPlaceholder": "مثال: اتصالات الجزائر، موبيليس...",
-    "saveChanges": "حفظ التغييرات",
-    "speed": "السرعة",
-    "speedPlaceholder": "مثال: 100 ميجابت، 1 جيجابت...",
-    "status": "الحالة",
-    "statusPlaceholder": "مثال: نشط، غير نشط، صيانة...",
-    "subtitle": "إدارة أنواع اتصالات الإنترنت لعقاراتك",
-    "title": "اتصالات الإنترنت",
-    "total": "المجموع",
-    "totalConnections": "{count} اتصال إنترنت",
-    "totalConnectionsDisplay": "{count} نوع اتصال",
-    "type": "النوع",
-    "typePlaceholder": "مثال: ألياف، ADSL، قمر صناعي...",
-    "updateConnectionInfo": "تحديث تفاصيل نوع اتصال الإنترنت",
-    "createSuccess": "تم إنشاء نوع اتصال الإنترنت بنجاح",
-    "updateSuccess": "تم تحديث نوع اتصال الإنترنت بنجاح",
-    "error": "حدث خطأ. يرجى المحاولة مرة أخرى."
-  },
-  "lofts": {
-    "ar": "Arabic",
-    "addFirstLoft": "Add my first loft",
-    "addLoft": "Add loft",
-    "addNewPropertyListing": "Add a new property listing",
-    "cancel": "Cancel",
-    "selectOption": "Select an option",
-    "additionalInfo": {
-      "airbnbId": "Airbnb ID",
-      "company": "Company",
-      "createdOn": "Created on",
-      "lastUpdated": "Last updated",
-      "owner": "Owner",
-      "percentages": "Percentages",
-      "phone": "Phone",
-      "title": "Additional Information"
-    },
-    "allOwners": "All owners",
-    "allStatuses": "All statuses",
-    "allZoneAreas": "All zones",
-    "available": "Available",
-    "billManagement": {
-      "billMarkedAsPaid": "{billType} bill marked as paid. Next due date calculated automatically.",
-      "cancel": "Cancel",
-      "currentDueDate": "Current Due Date",
-      "daysOverdue": "days overdue",
-      "due": "Due",
-      "dueInDays": "Due in {days} days",
-      "dueToday": "Due Today",
-      "dueTomorrow": "Due Tomorrow",
-      "editLoftToAddBillInfo": "Edit the loft to add bill frequencies and due dates",
-      "energy": "Energy",
-      "enterPaymentAmount": "Enter payment amount",
-      "failedToMarkBillAsPaid": "Failed to mark bill as paid",
-      "frequency": "Frequency",
-      "internet": "Internet",
-      "markAsPaid": "Mark as Paid",
-      "markBillAsPaid": "Mark {billType} Bill as Paid",
-      "nextDueDateAutoCalculated": "Next due date will be automatically calculated based on {frequency} frequency.",
-      "noBillDueDatesSet": "No bill due dates set",
-      "noFrequencySet": "No frequency set",
-      "notSet": "Not Set",
-      "paymentAmount": "Payment Amount",
-      "phone": "Phone",
-      "pleaseEnterPaymentAmount": "Please enter a payment amount",
-      "processing": "Processing...",
-      "title": "Bill Management",
-      "water": "Water"
-    },
-    "billingAlerts": "Billing Alerts",
-    "billingAlertsDescription": "Configure frequencies and due dates for automatic bill tracking",
-    "billingSections": {
-      "energy": "Energy Bills",
-      "gas": "Gas Bills",
-      "internet": "Internet Bills",
-      "phone": "Phone Bills",
-      "tv": "TV Subscription",
-      "water": "Water Bills"
-    },
-    "bimonthly": "Bimonthly",
-    "companyPercentage": "Company Percentage",
-    "companyShare": "Company share",
-    "createLoft": "Create Loft",
-    "createNewLoft": "Create New Loft",
-    "creating": "Creating...",
-    "dailyRent": "Daily Rent",
-    "deleteCancelled": "Deletion cancelled",
-    "deleteCancelledDescription": "Confirmation text was incorrect",
-    "deleteConfirm": "Are you sure you want to delete {loftName}?",
-    "deleteConfirmMessage": "This action is irreversible. It will permanently delete all data associated with this loft, including reservations and transactions. To confirm, please type",
-    "deleteConfirmPrompt": "Type 'DELETE' to confirm",
-    "deleteConfirmTitle": "Are you absolutely sure?",
-    "deleteConfirmationIncorrect": "The confirmation text is incorrect. Deletion aborted.",
-    "deleteConfirmationKeyword": "DELETE",
-    "deleteConfirmationPrompt": "Type 'DELETE' to confirm",
-    "deleteError": "Error deleting",
-    "deleteErrorDescription": "Unable to delete loft",
-    "deleteErrorMessage": "An error occurred while trying to delete the loft. Please try again.",
-    "deleteLoft": "Delete loft",
-    "deleteSuccess": "{loftName} deleted successfully",
-    "deleteSuccessDescription": "The loft has been deleted",
-    "deletingDescription": "Deleting loft in progress",
-    "deletingInProgress": "Deleting...",
-    "deletingLoftData": "Deleting loft data...",
-    "description": "Description",
-    "descriptions": {
-      "aidaLoft": "Modern Aida Loft in the heart of the city",
-      "familyLoftConstantine": "Family loft in Constantine",
-      "heavenLoft": "Paradise Loft with panoramic sea view",
-      "loftStudentBabEzzouar": "Student loft in Bab Ezzouar",
-      "modernCenterAlger": "Modern apartment in downtown Algiers",
-      "nadaLoft": "Spacious Nada Loft with private terrace",
-      "penthouseOranSeaView": "Penthouse in Oran with sea view",
-      "studioHydraPremium": "Premium studio in Hydra with view"
-    },
-    "editLoft": "Edit loft",
-    "electricityCustomerNumber": "Electricity Customer Number",
-    "electricityMeterNumber": "Electricity Meter Number",
-    "electricityPdlRef": "Electricity PDL Ref",
-    "energy": "Energy",
-    "energyBillFrequency": "Energy Bill Frequency",
-    "errorCreatingLoft": "Error Creating Loft",
-    "errorCreatingLoftDescription": "An error occurred while creating the loft. Please try again.",
-    "filterByOwner": "Filter by owner",
-    "filterByStatus": "Filter by status",
-    "filterByZone": "Filter by zone",
-    "filterByZoneArea": "Filter by zone",
-    "filterTitle": "Filter your lofts",
-    "fourMonthly": "Every Four Months",
-    "frequency": {
-      "bimonthly": "Bimonthly",
-      "fourMonthly": "Every Four Months",
-      "monthly": "Monthly",
-      "quarterly": "Quarterly",
-      "sixMonthly": "Every Six Months",
-      "weekly": "Weekly",
-      "yearly": "Yearly"
-    },
-    "gas": "Gas",
-    "gasCustomerNumber": "Gas Customer Number",
-    "gasMeterNumber": "Gas Meter Number",
-    "gasPdlRef": "Gas PDL Ref",
-    "internet": "Internet",
-    "internetBillFrequency": "Internet Bill Frequency",
-    "internetConnection": "Internet Connection",
-    "loftAddress": "Address",
-    "loftCreateError": "Error creating loft",
-    "loftCreatedSuccess": "Loft Created Successfully",
-    "loftCreatedSuccessDescription": "The new loft has been added to your property list.",
-    "loftDataDeleted": "Loft data has been permanently deleted.",
-    "loftDeletedSuccess": "Loft Deleted Successfully",
-    "loftDescription": "Loft Description",
-    "loftInfoDescription": "Provide the main details of the loft, including its name, address, and rental price.",
-    "loftInfoTitle": "Loft Information",
-    "loftName": "Loft name",
-    "loftNotFound": "Loft not found",
-    "loftUpdated": "Loft updated",
-    "loftUpdatedDescription": "All changes have been saved successfully",
-    "maintenance": "Maintenance",
-    "managePropertiesDescription": "Manage your properties - Discover and manage your real estate portfolio with style",
-    "monthly": "Monthly",
-    "nextEnergyBill": "Next Energy Bill Due",
-    "nextInternetBill": "Next Internet Bill Due",
-    "nextPhoneBill": "Next Phone Bill Due",
-    "nextTvBill": "Next TV Bill Due",
-    "nextWaterBill": "Next Water Bill Due",
-    "noLoftFoundForId": "No loft found for ID",
-    "noLoftsFound": "No lofts found",
-    "noLoftsMatch": "No lofts match the filters",
-    "noLoftsYet": "No lofts yet",
-    "occupied": "Occupied",
-    "owner": "Owner",
-    "ownerPercentage": "Owner Percentage",
-    "phone": "Phone",
-    "phoneBillFrequency": "Phone Bill Frequency",
-    "phoneNumber": "Phone Number",
-    "photos": {
-      "addedBy": "Added by {name}",
-      "cancel": "Cancel",
-      "confirmDelete": "Confirm deletion",
-      "confirmDeleteDescription": "Are you sure you want to delete this photo? This action cannot be undone.",
-      "deleteError": "Error deleting photo",
-      "deletePhoto": "Delete photo",
-      "deleteSuccess": "Photo deleted",
-      "description": "Add photos to showcase your loft. Photos help clients better visualize the space.",
-      "downloadError": "Download error",
-      "downloadPhoto": "Download photo",
-      "dragDropText": "Drag your photos here or click to select",
-      "fileSize": "{size} MB",
-      "fileTooLarge": "{filename} is too large (max 5MB)",
-      "invalidFileType": "{filename} is not an image",
-      "loadError": "Error loading photos",
-      "mainPhoto": "Main photo",
-      "maxPhotosReached": "Maximum {max} photos allowed",
-      "noPhotos": "No photos available",
-      "noPhotosDescription": "Photos for this loft have not been added yet.",
-      "photoCount": "{count}/{max} photos",
-      "photoDownloaded": "Photo downloaded",
-      "photoGallery": "Photo Gallery",
-      "photoViewer": "Photo Viewer",
-      "photosAvailable": "{count} photo available",
-      "photosAvailable_plural": "{count} photos available",
-      "selectPhotos": "Select photos",
-      "supportedFormats": "Supported formats: JPG, PNG, WebP (max 5MB per photo)",
-      "thumbnails": "Thumbnails",
-      "title": "Loft Photos",
-      "uploadError": "Error uploading {filename}: {error}",
-      "uploadSuccess": "{filename} uploaded successfully",
-      "uploading": "Uploading...",
-      "viewPhoto": "View photo",
-      "willBeDeleted": "This photo will be permanently deleted"
-    },
-    "pricePerDay": "Price per Day (DA)",
-    "pricePerMonth": "السعر الشهري",
-    "pricePerNight": "السعر لكل ليلة",
-    "quarterly": "Quarterly",
-    "selectFrequency": "Select Frequency",
-    "shouldEqual100": "Total percentage must equal 100%",
-    "sixMonthly": "Every Six Months",
-    "startYourJourney": "Start your real estate journey by adding your first loft!",
-    "status": {
-      "available": "Available",
-      "maintenance": "Maintenance",
-      "occupied": "Occupied"
-    },
-    "subtitle": "Manage your properties",
-    "systemError": "System Error",
-    "systemErrorDescription": "An unexpected error occurred during update. Contact support if the problem persists",
-    "title": "Lofts",
-    "total": "Total",
-    "totalRevenue": "Total Revenue",
-    "tv": "TV",
-    "tvBillFrequency": "TV Subscription Frequency",
-    "unknown": "Unknown",
-    "updateError": "Failed to save changes. Check your data and try again",
-    "updateLoft": "Update Loft",
-    "updatePropertyDetails": "Update property details",
-    "updating": "Updating...",
-    "utilityInfo": {
-      "correspondent": "Correspondent",
-      "customerCode": "Customer code",
-      "customerNumber": "Customer number",
-      "electricity": "Electricity",
-      "gas": "Gas",
-      "meterNumber": "Meter number",
-      "nextBills": "Next Bills",
-      "pdlRef": "PDL Ref",
-      "title": "Utility Information",
-      "water": "Water"
-    },
-    "utilityInformation": "Utility Information",
-    "water": "Water",
-    "waterBillFrequency": "Water Bill Frequency",
-    "waterContractCode": "Water Contract Code",
-    "waterCustomerCode": "Water Customer Code",
-    "waterMeterNumber": "Water Meter Number",
-    "weekly": "Weekly",
-    "yearly": "Yearly",
-    "zoneArea": "Zone",
-    "loftsList": "Lofts List",
-    "searchLofts": "Search lofts...",
-    "found": "found",
-    "loft": "loft",
-    "lofts": "lofts",
-    "name": "Name",
-    "namePlaceholder": "Ex: Modern downtown loft",
-    "address": "Address",
-    "addressPlaceholder": "Ex: 123 Independence Street, Algiers",
-    "status": "Status",
-    "zone": "Zone",
-    "price": "Price",
-    "rooms": "Rooms",
-    "unavailable": "Unavailable"
-  },
-  "nav": {
-    "application": "التطبيق",
-    "availability": "التوفر",
-    "categories": "الفئات",
-    "conversations": "المحادثات",
-    "currencies": "العملات",
-    "dashboard": "لوحة التحكم",
-    "executive": "تنفيذي",
-    "internetConnections": "الاتصالات بالإنترنت",
-    "loftManager": "مدير الشقق",
-    "lofts": "الشقق",
-    "owners": "الملاك",
-    "customers": "العملاء",
-    "notifications": "الإشعارات",
-    "paymentMethods": "طرق الدفع",
-    "paymentMethodsNav": "طرق الدفع",
-    "reports": "التقارير",
-    "reportsNav": "التقارير",
-    "reservations": "الحجوزات",
-    "settings": "الإعدادات",
-    "tasks": "المهام",
-    "teams": "الفرق",
-    "toggleTheme": "تبديل السمة",
-    "transactions": "المعاملات",
-    "zoneAreas": "المناطق الجغرافية"
-  },
-  "notifications": {
-    "title": "الإشعارات",
-    "description": "إدارة الإشعارات الخاصة بك والبقاء على اطلاع على أحدث الأنشطة.",
-    "unreadCount": "{count} غير مقروءة",
-    "markAllAsRead": "وضع علامة على الكل كمقروء",
-    "newTaskAssigned": "مهمة جديدة معينة",
-    "Task Assigned to You": "تم تعيين مهمة لك",
-    "newTaskAssignedMessage": "تم تعيين مهمة جديدة لك: \"{taskTitle}\" (تاريخ الاستحقاق: {dueDate})",
-    "Task Reassigned": "تم إعادة تعيين المهمة",
-    "Task Status Updated": "تم تحديث حالة المهمة",
-    "Your Task Status Updated": "تم تحديث حالة مهمتك",
-    "Task Due Date Updated": "تم تحديث تاريخ استحقاق المهمة",
-    "Task Deleted": "تم حذف المهمة",
-    "Task Overdue": "المهمة متأخرة",
-    "newTaskAssignedMessage": "تم تعيين مهمة جديدة لك: \"{taskTitle}\" (تاريخ الاستحقاق: {dueDate})",
-    "viewDetails": "عرض التفاصيل",
-    "newMessageFrom": "رسالة جديدة من {sender}",
-    "noNotificationsMessage": "ستتلقى هنا إشعارات مهمة حول مهامك وأنشطتك.",
-    "new": "جديد",
-    "noNotifications": "لم يتم العثور على إشعارات.",
-    "view": "عرض"
-  },
-  "owners": {
-    "addFirstOwner": "أضف مالكك الأول",
-    "addOwner": "أضف مالكًا",
-    "address": "العنوان",
-    "cancel": "إلغاء",
-    "company": "شركة",
-    "companyOwned": "مملوكة للشركة",
-    "createNewOwner": "إنشاء مالك جديد",
-    "createOwner": "إنشاء مالك",
-    "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا المالك؟",
-    "deleteError": "فشل حذف المالك",
-    "deleteOwner": "حذف المالك",
-    "deleteOwnerConfirm": "هل أنت متأكد أنك تريد حذف هذا المالك؟ سيؤدي هذا أيضًا إلى حذف جميع شققهم.",
-    "deleteSuccessDescription": "تمت إزالة المالك بنجاح",
-    "deleteSuccessTitle": "تم حذف المالك",
-    "editOwner": "تعديل المالك",
-    "email": "البريد الإلكتروني",
-    "enterOwnerInfo": "أدخل معلومات المالك",
-    "name": "الاسم",
-    "view": "عرض",
-    "edit": "تعديل",
-    "delete": "حذف",
-    "noOwnersDescription": "ابدأ بإضافة مالكك الأول لإدارة ممتلكاتك.",
-    "noOwnersFound": "لم يتم العثور على مالكين",
-    "notFoundDescription": "تعذر العثور على مالك بالمعرف {id}",
-    "notFoundTitle": "المالك غير موجود",
-    "ownerDetails": "تفاصيل المالك",
-    "ownerInformation": "معلومات المالك",
-    "ownershipType": "نوع الملكية",
-    "phone": "الهاتف",
-    "propertiesCount": "{count} عقار",
-    "saving": "جارٍ الحفظ...",
-    "selectType": "اختر النوع",
-    "subtitle": "إدارة مالكي عقاراتك",
-    "thirdParty": "طرف ثالث",
-    "title": "المالكون",
-    "totalMonthlyValue": "إجمالي القيمة الشهرية",
-    "totalOwners": "إجمالي المالكين",
-    "totalProperties": "إجمالي العقارات",
-    "updateOwner": "تحديث المالك",
-    "updateOwnerInfo": "تحديث معلومات المالك",
-    "ownerNotFound": "المالك غير موجود",
-    "couldNotFindOwner": "تعذر العثور على مالك بالمعرف",
-    "placeholders": {
-      "name": "مثال: جون سميث",
-      "email": "مثال: john.smith@email.com",
-      "phone": "مثال: +213 555 123 456",
-      "address": "مثال: 123 شارع السلام، الجزائر"
+    "utilities": {
+      "eau": "فاتورة المياه",
+      "energie": "فاتورة الكهرباء",
+      "gas": "فاتورة الغاز",
+      "internet": "فاتورة الإنترنت",
+      "telephone": "فاتورة الهاتف",
+      "tv": "فاتورة التلفزيون"
     }
   },
-  "paymentMethods": {
-    "common": {
-      "loading": "جارٍ التحميل"
-    },
-    "active": "نشط",
-    "addPaymentMethod": "إضافة طريقة دفع",
-    "additionalDetails": "تفاصيل إضافية",
-    "additionalInfoAvailable": "معلومات إضافية متاحة",
-    "algerianDinar": "دينار جزائري (DZD)",
-    "apiIntegrations": "تكاملات API",
-    "automaticValidation": "التحقق التلقائي",
-    "automaticallyValidateSmallAmounts": "التحقق التلقائي من المبالغ الصغيرة",
-    "back": "رجوع",
-    "bankTransfer": "تحويل بنكي",
-    "basicSettingsForAllMethods": "الإعدادات الأساسية لجميع طرق الدفع",
+  "common": {
+    "actions": "الإجراءات",
+    "all": "الكل",
+    "allOwners": "جميع الملاك",
+    "allZones": "جميع المناطق",
+    "ar": "العربية",
+    "en": "الإنجليزية",
+    "fr": "الفرنسية",
     "cancel": "إلغاء",
-    "cards": "بطاقات",
-    "check": "تحقق",
-    "configureGlobalSettings": "تكوين الإعدادات العالمية لطرق الدفع الخاصة بك",
-    "configureNewMethod": "تكوين طريقة دفع جديدة",
-    "configuredMethods": "الطرق المكونة",
-    "confirmationRequired": "التأكيد مطلوب",
-    "createFirstMethod": "إنشاء الطريقة الأولى",
-    "createNewPaymentMethod": "إنشاء طريقة دفع جديدة",
-    "createPaymentMethod": "إنشاء طريقة دفع",
-    "creditCard": "بطاقة ائتمان",
-    "defaultCurrency": "العملة الافتراضية",
-    "defaultFees": "الرسوم الافتراضية (%)",
-    "description": "تكوين والإشراف على جميع طرق الدفع المتاحة على منصتك",
-    "details": "تفاصيل",
-    "editPaymentMethod": "تعديل طريقة الدفع",
-    "enablePaypalIntegration": "تمكين تكامل PayPal",
-    "enableStripeIntegration": "تمكين تكامل Stripe",
-    "enterPaymentInfo": "أدخل معلومات الدفع",
-    "euro": "يورو (EUR)",
-    "externalPaymentServicesConfiguration": "تكوين خدمات الدفع الخارجية",
-    "fillMethodDetails": "املأ تفاصيل طريقة الدفع",
-    "generalConfiguration": "التكوين العام",
-    "maxAmountAllowed": "الحد الأقصى للمبلغ المسموح به",
-    "methodName": "اسم الطريقة",
-    "methodsActive": "طرق الدفع النشطة على منصتك",
-    "mobilePayment": "الدفع عبر الهاتف المحمول",
-    "modify": "تعديل",
+    "clearFilters": "مسح المرشحات",
+    "back": "رجوع",
+    "saving": "جاري الحفظ...",
+    "currencies": {
+      "da": "دج"
+    },
+    "date": "التاريخ",
+    "edit": "تعديل",
+    "error": "خطأ",
+    "success": "نجاح",
+    "loading": "جاري التحميل...",
     "name": "الاسم",
-    "newMethod": "طريقة جديدة",
-    "newPaymentMethod": "طريقة دفع جديدة",
-    "noAdditionalDetails": "لا توجد تفاصيل إضافية",
-    "noMethodConfigured": "لم يتم تكوين أي طريقة",
-    "noMethodsConfigured": "لم يتم تكوين أي طرق دفع في الوقت الحالي",
-    "notificationSettingsForPayments": "إعدادات الإشعارات للمدفوعات",
-    "notifications": "الإشعارات",
-    "notificationsEnabled": "تم تمكين الإشعارات",
-    "other": "أخرى",
-    "paymentDetails": "تفاصيل الدفع",
-    "paymentInformation": "معلومات الدفع",
-    "paymentMethodsSettings": "إعدادات طرق الدفع",
-    "paymentType": "نوع الدفع",
-    "paypal": "باي بال",
-    "paypalClientId": "معرف عميل PayPal",
-    "receiveNotificationsForNewPayments": "تلقي إشعارات للمدفوعات الجديدة",
-    "requestConfirmationForEachTransaction": "طلب تأكيد لكل معاملة",
-    "required": "مطلوب",
-    "saveSettings": "حفظ الإعدادات",
-    "saving": "جارٍ الحفظ...",
-    "securePayments": "تسمح طرق الدفع لعملائك بالدفع مقابل معاملاتهم بأمان",
-    "securityAndValidation": "الأمان والتحقق",
-    "securitySettingsForTransactions": "إعدادات الأمان للمعاملات",
+    "next": "التالي",
+    "none": "لا شيء",
+    "of": "من",
+    "owners": {
+      "ownershipType": "نوع الملكية"
+    },
+    "page": "الصفحة",
+    "previous": "السابق",
+    "results": "النتائج",
+    "selectOption": "اختر خياراً",
+    "showing": "عرض",
+    "systemError": "خطأ في النظام",
+    "systemErrorDescription": "حدث خطأ في النظام. يرجى المحاولة مرة أخرى.",
+    "time": "الوقت",
+    "to": "إلى",
+    "today": "اليوم",
+    "view": "عرض",
+    "notificationsEnabled": "🔔 تم تفعيل الإشعارات!",
+    "notificationsEnabledDescription": "ستتلقى الآن إشعارات فورية للمهام والرسائل.",
+    "transfer": "تحويل",
+    "edit": "تعديل",
+    "delete": "حذف"
+  },
+  "conversations": {
+    "addMembers": "إضافة أعضاء",
+    "all": "الكل",
+    "allConversations": "جميع المحادثات",
+    "archived": "مؤرشف",
+    "backToConversations": "العودة إلى المحادثات",
+    "conversation": "محادثة",
+    "createDirectOrGroup": "إنشاء محادثة مباشرة أو جماعية",
+    "createdSuccessfully": "تم إنشاء المحادثة بنجاح!",
+    "direct": "مباشر",
+    "directMessage": "رسالة مباشرة",
+    "endToEndEncryption": "رسائلك الشخصية محمية بالتشفير من طرف إلى طرف",
+    "enterGroupName": "أدخل اسم المجموعة",
+    "errorDescription": "غير قادر على تحميل هذه المحادثة. قد يكون هذا بسبب مشاكل سياسة RLS.",
+    "errorTitle": "خطأ في المحادثة",
+    "failedToCreateConversation": "فشل في إنشاء المحادثة",
+    "failedToSearchUsers": "فشل في البحث عن المستخدمين",
+    "findUserToMessage": "العثور على مستخدم لمراسلته",
+    "fixInstruction1": "تشغيل:",
+    "fixInstruction2": "انسخ مخرجات SQL إلى محرر Supabase SQL",
+    "fixInstruction3": "تنفيذ سكريبت SQL",
+    "fixInstruction4": "تحديث هذه الصفحة",
+    "fixInstructionsTitle": "لإصلاح المشكلة:",
+    "group": "مجموعة",
+    "groupChat": "دردشة جماعية",
+    "groupChatBenefits": "ابق على تواصل مع مجموعاتك",
+    "groupName": "اسم المجموعة",
+    "groups": "مجموعات",
+    "loftManager": "مدير الشقق",
+    "member": "عضو",
+    "member1": "عضو 1",
+    "members": "أعضاء",
+    "messages": "رسائل",
+    "multiDeviceSync": "الوصول إلى رسائلك في كل مكان",
+    "new": "جديد",
+    "newConversation": "محادثة جديدة",
+    "noConversations": "لا توجد محادثات",
+    "noConversationsMatch": "لا توجد محادثات تطابق بحثك",
+    "noConversationsYet": "لا توجد محادثات بعد",
+    "noMessage": "لا توجد رسالة",
+    "noMessages": "لا توجد رسائل",
+    "noMessagesYet": "لا توجد رسائل بعد",
+    "noResults": "لا توجد نتائج",
+    "noUsersFound": "لم يتم العثور على مستخدمين",
+    "participant": "مشارك",
+    "participants": "مشاركون",
+    "privacyNotice": "رسائلك الشخصية مشفرة من طرف إلى طرف",
+    "searchByNameOrEmail": "البحث بالاسم أو البريد الإلكتروني",
+    "searchConversations": "البحث في المحادثات",
+    "searchOrCreateNewConversation": "البحث أو بدء محادثة جديدة",
+    "searchResults": "نتائج البحث",
+    "searching": "جاري البحث...",
+    "selectAtLeastOneUser": "اختر مستخدماً واحداً على الأقل",
+    "selectConversation": "اختر محادثة",
+    "selectConversationDesc": "اختر محادثة لبدء المراسلة",
+    "selectedMembers": "الأعضاء المحددون",
+    "selectedUser": "المستخدم المحدد",
+    "sendInstructions": "إرسال التعليمات",
     "settings": "الإعدادات",
-    "settingsSavedSuccessfully": "تم حفظ الإعدادات بنجاح!",
-    "startByAdding": "ابدأ بإضافة طريقة الدفع الأولى",
-    "stripe": "سترايب",
-    "stripeApiKey": "مفتاح API لـ Stripe",
-    "subtitle": "إدارة الدفع المركزية",
-    "title": "طرق الدفع",
-    "total": "المجموع",
-    "type": "النوع",
-    "updatePaymentMethod": "تحديث طريقة الدفع",
+    "someone": "شخص ما",
+    "startChatting": "اختر محادثة من القائمة لبدء الدردشة",
+    "startConversation": "بدء محادثة",
+    "startConversationDesc": "بدء محادثة جديدة",
+    "startNewConversation": "بدء محادثة جديدة",
+    "startNewToBegin": "ابدأ محادثة جديدة للبدء",
+    "title": "المحادثات",
+    "toggleTheme": "تبديل السمة",
+    "totalUnread": "{count} رسالة غير مقروءة",
+    "totalUnread_plural": "{count} رسائل غير مقروءة",
+    "tryDifferentSearch": "جرب مصطلح بحث مختلف",
+    "typeMessage": "اكتب رسالة...",
+    "unknownUser": "مستخدم غير معروف",
+    "unread": "غير مقروء",
+    "whatsappWeb": "واتساب ويب",
+    "whatsappWebDescription": "أرسل واستقبل الرسائل دون الحاجة لإبقاء هاتفك متصلاً.\nاستخدم واتساب على حتى 4 أجهزة مرتبطة وهاتف واحد في نفس الوقت.",
+    "yesterday": "أمس",
+    "you": "أنت"
+  },
+  "dashboard": {
+    "actionRequired": "إجراء مطلوب",
+    "active": "نشط",
+    "activeTasks": "المهام النشطة",
+    "activeTeams": "الفرق النشطة",
+    "addTransaction": "إضافة معاملة",
+    "allBillsCurrent": "جميع الفواتير حديثة",
+    "attentionNeeded": "تحتاج اهتماماً",
+    "billAlerts": "تنبيهات الفواتير",
+    "billMonitoring": "مراقبة الفواتير",
+    "billsNeedAttention": "الفواتير تحتاج إلى اهتمام",
+    "bills": {
+      "due": "مستحقة",
+      "title": "الفواتير"
+    },
+    "billsDueNow": "فواتير مستحقة الآن",
+    "billsPastDue": "فواتير متأخرة",
+    "dayOverdue": "متأخر يوم واحد",
+    "days": "أيام",
+    "daysOverdue": "متأخر {count} أيام",
+    "due": "مستحق",
+    "dueToday": "مستحق اليوم",
+    "dueTomorrow": "مستحق غداً",
+    "errorMessage": "فشل في تسجيل الدفع. يرجى المحاولة مرة أخرى.",
+    "loadingError": "فشل في تحميل تنبيهات الفواتير",
+    "markPaid": "تحديد كمدفوع",
+    "noOverdueBillsMessage": "لا توجد فواتير متأخرة - عمل رائع!",
+    "noUpcomingBills": "لا توجد فواتير قادمة",
+    "noUpcomingBillsMessage": "لا توجد فواتير قادمة في الـ30 يوم القادمة",
+    "overdueBills": "فواتير متأخرة",
+    "overdueBillsTitle": "فواتير متأخرة",
+    "paymentDate": "تاريخ الدفع",
+    "paymentMethod": "طريقة الدفع",
+    "paymentModal": {
+      "title": "تسجيل الدفع"
+    },
+    "recordPayment": "تسجيل الدفع",
+    "recording": "جاري التسجيل...",
+    "selectPaymentMethod": "اختر طريقة الدفع",
+    "successMessage": "تم تسجيل الدفع بنجاح.",
+    "title": "الفواتير",
+    "upcomingBills": "فواتير قادمة",
+    "upcomingBillsTitle": "فواتير قادمة",
+    "utilities": {
+      "eau": "فاتورة المياه",
+      "energie": "فاتورة الكهرباء",
+      "gas": "فاتورة الغاز",
+      "internet": "فاتورة الإنترنت",
+      "telephone": "فاتورة الهاتف",
+      "tv": "فاتورة التلفزيون"
+    }
+  },
+  "common": {
+    "actions": "الإجراءات",
+    "all": "الكل",
+    "allOwners": "جميع الملاك",
+    "allZones": "جميع المناطق",
+    "ar": "العربية",
+    "en": "الإنجليزية",
+    "fr": "الفرنسية",
+    "cancel": "إلغاء",
+    "clearFilters": "مسح المرشحات",
+    "back": "رجوع",
+    "saving": "جاري الحفظ...",
+    "currencies": {
+      "da": "دج"
+    },
+    "date": "التاريخ",
+    "edit": "تعديل",
+    "error": "خطأ",
+    "success": "نجاح",
+    "loading": "جاري التحميل...",
+    "name": "الاسم",
+    "next": "التالي",
+    "none": "لا شيء",
+    "of": "من",
+    "owners": {
+      "ownershipType": "نوع الملكية"
+    },
+    "page": "الصفحة",
+    "previous": "السابق",
+    "results": "النتائج",
+    "selectOption": "اختر خياراً",
+    "showing": "عرض",
+    "systemError": "خطأ في النظام",
+    "systemErrorDescription": "حدث خطأ في النظام. يرجى المحاولة مرة أخرى.",
+    "time": "الوقت",
+    "to": "إلى",
+    "today": "اليوم",
+    "view": "عرض",
+    "notificationsEnabled": "🔔 تم تفعيل الإشعارات!",
+    "notificationsEnabledDescription": "ستتلقى الآن إشعارات فورية للمهام والرسائل.",
+    "transfer": "تحويل",
+    "edit": "تعديل",
+    "delete": "حذف"
+  },
+  "conversations": {
+    "addMembers": "إضافة أعضاء",
+    "all": "الكل",
+    "allConversations": "جميع المحادثات",
+    "archived": "مؤرشف",
+    "backToConversations": "العودة إلى المحادثات",
+    "conversation": "محادثة",
+    "createDirectOrGroup": "إنشاء محادثة مباشرة أو جماعية",
+    "createdSuccessfully": "تم إنشاء المحادثة بنجاح!",
+    "direct": "مباشر",
+    "directMessage": "رسالة مباشرة",
+    "endToEndEncryption": "رسائلك الشخصية محمية بالتشفير من طرف إلى طرف",
+    "enterGroupName": "أدخل اسم المجموعة",
+    "errorDescription": "غير قادر على تحميل هذه المحادثة. قد يكون هذا بسبب مشاكل سياسة RLS.",
+    "errorTitle": "خطأ في المحادثة",
+    "failedToCreateConversation": "فشل في إنشاء المحادثة",
+    "failedToSearchUsers": "فشل في البحث عن المستخدمين",
+    "findUserToMessage": "العثور على مستخدم لمراسلته",
+    "fixInstruction1": "تشغيل:",
+    "fixInstruction2": "انسخ مخرجات SQL إلى محرر Supabase SQL",
+    "fixInstruction3": "تنفيذ سكريبت SQL",
+    "fixInstruction4": "تحديث هذه الصفحة",
+    "fixInstructionsTitle": "لإصلاح المشكلة:",
+    "group": "مجموعة",
+    "groupChat": "دردشة جماعية",
+    "groupChatBenefits": "ابق على تواصل مع مجموعاتك",
+    "groupName": "اسم المجموعة",
+    "groups": "مجموعات",
+    "loftManager": "مدير الشقق",
+    "member": "عضو",
+    "member1": "عضو 1",
+    "members": "أعضاء",
+    "messages": "رسائل",
+    "multiDeviceSync": "الوصول إلى رسائلك في كل مكان",
+    "new": "جديد",
+    "newConversation": "محادثة جديدة",
+    "noConversations": "لا توجد محادثات",
+    "noConversationsMatch": "لا توجد محادثات تطابق بحثك",
+    "noConversationsYet": "لا توجد محادثات بعد",
+    "noMessage": "لا توجد رسالة",
+    "noMessages": "لا توجد رسائل",
+    "noMessagesYet": "لا توجد رسائل بعد",
+    "noResults": "لا توجد نتائج",
+    "noUsersFound": "لم يتم العثور على مستخدمين",
+    "participant": "مشارك",
+    "participants": "مشاركون",
+    "privacyNotice": "رسائلك الشخصية مشفرة من طرف إلى طرف",
+    "searchByNameOrEmail": "البحث بالاسم أو البريد الإلكتروني",
+    "searchConversations": "البحث في المحادثات",
+    "searchOrCreateNewConversation": "البحث أو بدء محادثة جديدة",
+    "searchResults": "نتائج البحث",
+    "searching": "جاري البحث...",
+    "selectAtLeastOneUser": "اختر مستخدماً واحداً على الأقل",
+    "selectConversation": "اختر محادثة",
+    "selectConversationDesc": "اختر محادثة لبدء المراسلة",
+    "selectedMembers": "الأعضاء المحددون",
+    "selectedUser": "المستخدم المحدد",
+    "sendInstructions": "إرسال التعليمات",
+    "settings": "الإعدادات",
+    "someone": "شخص ما",
+    "startChatting": "اختر محادثة من القائمة لبدء الدردشة",
+    "startConversation": "بدء محادثة",
+    "startConversationDesc": "بدء محادثة جديدة",
+    "startNewConversation": "بدء محادثة جديدة",
+    "startNewToBegin": "ابدأ محادثة جديدة للبدء",
+    "title": "المحادثات",
+    "toggleTheme": "تبديل السمة",
+    "totalUnread": "{count} رسالة غير مقروءة",
+    "totalUnread_plural": "{count} رسائل غير مقروءة",
+    "tryDifferentSearch": "جرب مصطلح بحث مختلف",
+    "typeMessage": "اكتب رسالة...",
+    "unknownUser": "مستخدم غير معروف",
+    "unread": "غير مقروء",
+    "whatsappWeb": "واتساب ويب",
+    "whatsappWebDescription": "أرسل واستقبل الرسائل دون الحاجة لإبقاء هاتفك متصلاً.\nاستخدم واتساب على حتى 4 أجهزة مرتبطة وهاتف واحد في نفس الوقت.",
+    "yesterday": "أمس",
+    "you": "أنت"
+  },
+  "dashboard": {
+    "actionRequired": "إجراء مطلوب",
+    "active": "نشط",
+    "activeTasks": "المهام النشطة",
+    "activeTeams": "الفرق النشطة",
+    "addTransaction": "إضافة معاملة",
+    "allBillsCurrent": "جميع الفواتير حديثة",
+    "attentionNeeded": "تحتاج اهتماماً",
+    "billAlerts": "تنبيهات الفواتير",
+    "billMonitoring": "مراقبة الفواتير",
+    "billsNeedAttention": "الفواتير تحتاج إلى اهتمام",
+    "bills": {
+      "due": "مستحقة",
+      "title": "الفواتير"
+    },
+    "billsDueNow": "فواتير مستحقة الآن",
+    "billsPastDue": "فواتير متأخرة",
+    "dayOverdue": "متأخر يوم واحد",
+    "days": "أيام",
+    "daysOverdue": "متأخر {count} أيام",
+    "due": "مستحق",
+    "dueToday": "مستحق اليوم",
+    "dueTomorrow": "مستحق غداً",
+    "errorMessage": "فشل في تسجيل الدفع. يرجى المحاولة مرة أخرى.",
+    "loadingError": "فشل في تحميل تنبيهات الفواتير",
+    "markPaid": "تحديد كمدفوع",
+    "noOverdueBillsMessage": "لا توجد فواتير متأخرة - عمل رائع!",
+    "noUpcomingBills": "لا توجد فواتير قادمة",
+    "noUpcomingBillsMessage": "لا توجد فواتير قادمة في الـ30 يوم القادمة",
+    "overdueBills": "فواتير متأخرة",
+    "overdueBillsTitle": "فواتير متأخرة",
+    "paymentDate": "تاريخ الدفع",
+    "paymentMethod": "طريقة الدفع",
+    "paymentModal": {
+      "title": "تسجيل الدفع"
+    },
+    "recordPayment": "تسجيل الدفع",
+    "recording": "جاري التسجيل...",
+    "selectPaymentMethod": "اختر طريقة الدفع",
+    "successMessage": "تم تسجيل الدفع بنجاح.",
+    "title": "الفواتير",
+    "upcomingBills": "فواتير قادمة",
+    "upcomingBillsTitle": "فواتير قادمة",
+    "utilities": {
+      "eau": "فاتورة المياه",
+      "energie": "فاتورة الكهرباء",
+      "gas": "فاتورة الغاز",
+      "internet": "فاتورة الإنترنت",
+      "telephone": "فاتورة الهاتف",
+      "tv": "فاتورة التلفزيون"
+    }
+  },
+  "common": {
+    "actions": "الإجراءات",
+    "all": "الكل",
+    "allOwners": "جميع الملاك",
+    "allZones": "جميع المناطق",
+    "ar": "العربية",
+    "en": "الإنجليزية",
+    "fr": "الفرنسية",
+    "cancel": "إلغاء",
+    "clearFilters": "مسح المرشحات",
+    "back": "رجوع",
+    "saving": "جاري الحفظ...",
+    "currencies": {
+      "da": "دج"
+    },
+    "date": "التاريخ",
+    "edit": "تعديل",
+    "error": "خطأ",
+    "success": "نجاح",
+    "loading": "جاري التحميل...",
+    "name": "الاسم",
+    "next": "التالي",
+    "none": "لا شيء",
+    "of": "من",
+    "owners": {
+      "ownershipType": "نوع الملكية"
+    },
+    "page": "الصفحة",
+    "previous": "السابق",
+    "results": "النتائج",
+    "selectOption": "اختر خياراً",
+    "showing": "عرض",
+    "systemError": "خطأ في النظام",
+    "systemErrorDescription": "حدث خطأ في النظام. يرجى المحاولة مرة أخرى.",
+    "time": "الوقت",
+    "to": "إلى",
+    "today": "اليوم",
+    "view": "عرض",
+    "notificationsEnabled": "🔔 تم تفعيل الإشعارات!",
+    "notificationsEnabledDescription": "ستتلقى الآن إشعارات فورية للمهام والرسائل.",
+    "transfer": "تحويل",
+    "edit": "تعديل",
+    "delete": "حذف"
+  },
+  "conversations": {
+    "addMembers": "إضافة أعضاء",
+    "all": "الكل",
+    "allConversations": "جميع المحادثات",
+    "archived": "مؤرشف",
+    "backToConversations": "العودة إلى المحادثات",
+    "conversation": "محادثة",
+    "createDirectOrGroup": "إنشاء محادثة مباشرة أو جماعية",
+    "createdSuccessfully": "تم إنشاء المحادثة بنجاح!",
+    "direct": "مباشر",
+    "directMessage": "رسالة مباشرة",
+    "endToEndEncryption": "رسائلك الشخصية محمية بالتشفير من طرف إلى طرف",
+    "enterGroupName": "أدخل اسم المجموعة",
+    "errorDescription": "غير قادر على تحميل هذه المحادثة. قد يكون هذا بسبب مشاكل سياسة RLS.",
+    "errorTitle": "خطأ في المحادثة",
+    "failedToCreateConversation": "فشل في إنشاء المحادثة",
+    "failedToSearchUsers": "فشل في البحث عن المستخدمين",
+    "findUserToMessage": "العثور على مستخدم لمراسلته",
+    "fixInstruction1": "تشغيل:",
+    "fixInstruction2": "انسخ مخرجات SQL إلى محرر Supabase SQL",
+    "fixInstruction3": "تنفيذ سكريبت SQL",
+    "fixInstruction4": "تحديث هذه الصفحة",
+    "fixInstructionsTitle": "لإصلاح المشكلة:",
+    "group": "مجموعة",
+    "groupChat": "دردشة جماعية",
+    "groupChatBenefits": "ابق على تواصل مع مجموعاتك",
+    "groupName": "اسم المجموعة",
+    "groups": "مجموعات",
+    "loftManager": "مدير الشقق",
+    "member": "عضو",
+    "member1": "عضو 1",
+    "members": "أعضاء",
+    "messages": "رسائل",
+    "multiDeviceSync": "الوصول إلى رسائلك في كل مكان",
+    "new": "جديد",
+    "newConversation": "محادثة جديدة",
+    "noConversations": "لا توجد محادثات",
+    "noConversationsMatch": "لا توجد محادثات تطابق بحثك",
+    "noConversationsYet": "لا توجد محادثات بعد",
+    "noMessage": "لا توجد رسالة",
+    "noMessages": "لا توجد رسائل",
+    "noMessagesYet": "لا توجد رسائل بعد",
+    "noResults": "لا توجد نتائج",
+    "noUsersFound": "لم يتم العثور على مستخدمين",
+    "participant": "مشارك",
+    "participants": "مشاركون",
+    "privacyNotice": "رسائلك الشخصية مشفرة من طرف إلى طرف",
+    "searchByNameOrEmail": "البحث بالاسم أو البريد الإلكتروني",
+    "searchConversations": "البحث في المحادثات",
+    "searchOrCreateNewConversation": "البحث أو بدء محادثة جديدة",
+    "searchResults": "نتائج البحث",
+    "searching": "جاري البحث...",
+    "selectAtLeastOneUser": "اختر مستخدماً واحداً على الأقل",
+    "selectConversation": "اختر محادثة",
+    "selectConversationDesc": "اختر محادثة لبدء المراسلة",
+    "selectedMembers": "الأعضاء المحددون",
+    "selectedUser": "المستخدم المحدد",
+    "sendInstructions": "إرسال التعليمات",
+    "settings": "الإعدادات",
+    "someone": "شخص ما",
+    "startChatting": "اختر محادثة من القائمة لبدء الدردشة",
+    "startConversation": "بدء محادثة",
+    "startConversationDesc": "بدء محادثة جديدة",
+    "startNewConversation": "بدء محادثة جديدة",
+    "startNewToBegin": "ابدأ محادثة جديدة للبدء",
+    "title": "المحادثات",
+    "toggleTheme": "تبديل السمة",
+    "totalUnread": "{count} رسالة غير مقروءة",
+    "totalUnread_plural": "{count} رسائل غير مقروءة",
+    "tryDifferentSearch": "جرب مصطلح بحث مختلف",
+    "typeMessage": "اكتب رسالة...",
+    "unknownUser": "مستخدم غير معروف",
+    "unread": "غير مقروء",
+    "whatsappWeb": "واتساب ويب",
+    "whatsappWebDescription": "أرسل واستقبل الرسائل دون الحاجة لإبقاء هاتفك متصلاً.\nاستخدم واتساب على حتى 4 أجهزة مرتبطة وهاتف واحد في نفس الوقت.",
+    "yesterday": "أمس",
+    "you": "أنت"
+  },
+  "dashboard": {
+    "actionRequired": "إجراء مطلوب",
+    "active": "نشط",
+    "activeTasks": "المهام النشطة",
+    "activeTeams": "الفرق النشطة",
+    "addTransaction": "إضافة معاملة",
+    "allBillsCurrent": "جميع الفواتير حديثة",
+    "attentionNeeded": "تحتاج اهتماماً",
+    "billAlerts": "تنبيهات الفواتير",
+    "billMonitoring": "مراقبة الفواتير",
+    "billsNeedAttention": "الفواتير تحتاج إلى اهتمام",
+    "bills": {
+      "due": "مستحقة",
+      "title": "الفواتير"
+    },
+    "billsDueNow": "فواتير مستحقة الآن",
+    "billsPastDue": "فواتير متأخرة",
+    "dayOverdue": "متأخر يوم واحد",
+    "days": "أيام",
+    "daysOverdue": "متأخر {count} أيام",
+    "due": "مستحق",
+    "dueToday": "مستحق اليوم",
+    "dueTomorrow": "مستحق غداً",
+    "errorMessage": "فشل في تسجيل الدفع. يرجى المحاولة مرة أخرى.",
+    "loadingError": "فشل في تحميل تنبيهات الفواتير",
+    "markPaid": "تحديد كمدفوع",
+    "noOverdueBillsMessage": "لا توجد فواتير متأخرة - عمل رائع!",
+    "noUpcomingBills": "لا توجد فواتير قادمة",
+    "noUpcomingBillsMessage": "لا توجد فواتير قادمة في الـ30 يوم القادمة",
+    "overdueBills": "فواتير متأخرة",
+    "overdueBillsTitle": "فواتير متأخرة",
+    "paymentDate": "تاريخ الدفع",
+    "paymentMethod": "طريقة الدفع",
+    "paymentModal": {
+      "title": "تسجيل الدفع"
+    },
+    "recordPayment": "تسجيل الدفع",
+    "recording": "جاري التسجيل...",
     "updatePaymentMethodInfo": "تحديث معلومات طريقة الدفع",
     "usDollar": "دولار أمريكي (USD)",
     "cash": "نقداً"
@@ -1661,8 +1659,9 @@
     "newCategory": "فئة جديدة",
     "categoryName": "اسم الفئة"
   },
-  "navigation": {
+  "nav": {
     "executiveDashboard": "لوحة القيادة التنفيذية",
+    "executive": "تنفيذي",
     "dashboard": "لوحة القيادة",
     "conversations": "المحادثات",
     "notifications": "الإشعارات",
@@ -1675,8 +1674,16 @@
     "owners": "المالكون",
     "transactions": "المعاملات",
     "reports": "التقارير",
+    "reportsNav": "التقارير",
     "settings": "الإعدادات",
     "categories": "الفئات",
+    "currencies": "العملات",
+    "zoneAreas": "مناطق جغرافية",
+    "paymentMethods": "طرق الدفع",
+    "internetConnections": "اتصالات الإنترنت",
+    "application": "تطبيق",
+    "loftManager": "مدير الشقق",
+    "toggleTheme": "تبديل السمة",
     "logout": "تسجيل الخروج"
   },
   "testSound": {
@@ -1715,7 +1722,8 @@
   "theme": {
     "dark": "داكن",
     "light": "فاتح",
-    "system": "النظام"
+    "system": "النظام",
+    "toggleTheme": "تبديل السمة"
   },
   "transactions": {
     "addNewTransaction": "إضافة معاملة جديدة",
@@ -1852,5 +1860,27 @@
     "networkError": "غير قادر على الاتصال بـ API التصحيح",
     "ok": "موافق",
     "error": "خطأ"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "description": "أحدث تنبيهاتك وتحديثاتك",
+    "unreadCount": "{count} غير مقروء",
+    "markAllAsRead": "وضع علامة قراءة على الكل",
+    "noNotifications": "لا توجد إشعارات",
+    "noNotificationsMessage": "لقد ادخرت كل شيء! تحقق لاحقاً للحصول على إشعارات جديدة.",
+    "new": "جديد",
+    "viewDetails": "عرض التفاصيل",
+    "view": "عرض",
+    "newTaskAssigned": "مهمة جديدة معينة",
+    "newTaskAssignedMessage": "تم تعيين مهمة جديدة لك: \"{taskTitle}\" (تاريخ الاستحقاق: {dueDate})",
+    "Task Assigned to You": "تم تعيين مهمة لك",
+    "Task Reassigned": "تم إعادة تعيين المهمة",
+    "Task Status Updated": "تم تحديث حالة المهمة",
+    "Your Task Status Updated": "تم تحديث حالة مهمتك",
+    "Task Due Date Updated": "تم تحديث تاريخ استحقاق المهمة",
+    "Task Deleted": "تم حذف المهمة",
+    "Task Overdue": "مهمة متأخرة",
+    "newMessageFrom": "رسالة جديدة من {sender}",
+    "info": "معلومات"
   }
 }

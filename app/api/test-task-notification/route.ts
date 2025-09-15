@@ -30,11 +30,13 @@ export async function POST(request: NextRequest) {
 
     const result = await createNotification(
       assignedToUserId,
-      "New Task Assigned",
-      `You have been assigned a new task: "${taskTitle}" (Due: ${dueDate.toLocaleDateString()})`,
+      "newTaskAssigned", // title_key
+      "newTaskAssignedMessage", // message_key
       'info',
       `/tasks/test-task-id`,
-      session.user.id
+      session.user.id,
+      undefined, // title_payload
+      { taskTitle, dueDate: dueDate.toLocaleDateString() } // message_payload
     )
 
     console.log('Task assignment notification created successfully:', result)

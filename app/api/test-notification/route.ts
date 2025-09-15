@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth'
-import { createNotification } from '@/app/actions/notifications'
+import { createNotification } from '@/lib/services/notifications'
 
 export async function POST(request: NextRequest) {
   try {

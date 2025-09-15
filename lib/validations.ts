@@ -71,7 +71,7 @@ export const taskSchema = z.object({
   description: z.string().nullable().optional(),
   status: z.enum(['todo', 'in_progress', 'completed']),
   due_date: z.string().nullable().optional(), // Change to string to match HTML input
-  assigned_to: z.string().nullable().optional(), // Allow null for unassigned
+  assigned_to: z.string().uuid("Invalid user ID").optional(), // Assigned to must be a valid user ID, but can be optional initially
   team_id: z.string().nullable().optional(),
   loft_id: z.string().nullable().optional()
 });

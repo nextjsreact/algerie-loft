@@ -26,15 +26,13 @@ export function NotificationsWrapper({ notifications }: NotificationsWrapperProp
           </div>
           <div>
             <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
-            <p className="text-gray-600 mt-1">
-              Gérez vos notifications et restez informé des dernières activités
-            </p>
+            <p className="text-gray-600 mt-1">{t('description')}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           {unreadCount > 0 && (
             <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-              {unreadCount} non lue{unreadCount > 1 ? 's' : ''}
+              {t('unreadCount', { count: unreadCount })}
             </Badge>
           )}
           {unreadNotifications.length > 0 && (
@@ -45,7 +43,7 @@ export function NotificationsWrapper({ notifications }: NotificationsWrapperProp
               className="flex items-center gap-2"
             >
               <CheckCheck className="h-4 w-4" />
-              Tout marquer comme lu
+              {t('markAllAsRead')}
             </Button>
           )}
         </div>

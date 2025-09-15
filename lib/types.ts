@@ -123,13 +123,16 @@ export type Task = {
 
 export type Notification = {
   id: string;
-  message: string;
-  title: string;
+  title_key: string;
+  message_key: string;
+  title_payload?: Record<string, any>;
+  message_payload?: Record<string, any>;
   is_read: boolean;
   created_at: string;
   user_id: string;
   link?: string | null;
   sender_id?: string | null;
+  type: string;
 };
 
 export type Setting = {

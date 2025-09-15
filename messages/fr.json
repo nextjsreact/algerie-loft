@@ -972,9 +972,7 @@
     "noNotificationsMessage": "Vous recevrez ici les notifications importantes concernant vos tâches et activités.",
     "new": "Nouveau",
     "newMessageFrom": "Nouveau message de {sender}",
-    "view": "Voir",
-    "noNotifications": "Aucune notification trouvée.",
-    "view": "Voir"
+    "noNotifications": "Aucune notification trouvée."
   },
   "owners": {
     "addFirstOwner": "Ajouter un propriétaire",
@@ -1721,9 +1719,10 @@
     "title": "Test Translations"
   },
   "theme": {
-    "dark": "Dark",
-    "light": "Light",
-    "system": "System"
+    "dark": "Sombre",
+    "light": "Clair",
+    "system": "Système",
+    "toggleTheme": "Basculer le thème"
   },
   "transactions": {
     "addNewTransaction": "Add New Transaction",
@@ -1860,5 +1859,26 @@
     "networkError": "Unable to contact debug API",
     "ok": "OK",
     "error": "Error"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "description": "Gérez vos notifications et restez informé des dernières activités.",
+    "unreadCount": "{count} non lue(s)",
+    "markAllAsRead": "Tout marquer comme lu",
+    "newTaskAssigned": "Nouvelle tâche assignée",
+    "Task Assigned to You": "Tâche assignée à vous",
+    "Task Reassigned": "Tâche réassignée",
+    "Task Status Updated": "Statut de la tâche mis à jour",
+    "Your Task Status Updated": "Statut de votre tâche mis à jour",
+    "Task Due Date Updated": "Date d'échéance de la tâche mise à jour",
+    "Task Deleted": "Tâche supprimée",
+    "Task Overdue": "Tâche en retard",
+    "newTaskAssignedMessage": "Une nouvelle tâche vous a été assignée : \"{taskTitle}\" (Échéance : {dueDate})",
+    "viewDetails": "Voir les détails",
+    "noNotificationsMessage": "Vous recevrez ici les notifications importantes concernant vos tâches et activités.",
+    "new": "Nouveau",
+    "newMessageFrom": "Nouveau message de {sender}",
+    "noNotifications": "Aucune notification trouvée.",
+    "info": "info"
   }
 }

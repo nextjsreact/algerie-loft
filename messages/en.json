@@ -968,7 +968,7 @@
     "new": "New",
     "newMessageFrom": "New message from {sender}",
     "noNotifications": "No notifications found.",
-    "view": "View"
+    "info": "Info"
   },
   "owners": {
     "addFirstOwner": "Add Owner",
@@ -1717,7 +1717,8 @@
   "theme": {
     "dark": "Dark",
     "light": "Light",
-    "system": "System"
+    "system": "System",
+    "toggleTheme": "Toggle theme"
   },
   "transactions": {
     "addNewTransaction": "Add New Transaction",

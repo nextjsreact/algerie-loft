@@ -96,7 +96,7 @@ export default function NotificationsList({ notifications }: NotificationsListPr
                 {getNotificationIcon(notification.type || 'info')}
                 <div>
                   <CardTitle className="text-base font-semibold">
-                    {t(notification.title_key || '', notification.title_payload)}
+                    {t(notification.title_key, notification.title_payload)}
                   </CardTitle>
                   <CardDescription className="flex items-center gap-2 mt-1">
                     <Clock className="h-3 w-3" />
@@ -117,14 +117,14 @@ export default function NotificationsList({ notifications }: NotificationsListPr
                   </Badge>
                 )}
                 <Badge variant="outline" className="capitalize">
-                  {notification.type || 'info'}
+                  {t(notification.type || 'info')}
                 </Badge>
               </div>
             </div>
           </CardHeader>
           <CardContent className="pt-0">
             <p className="text-gray-700 leading-relaxed">
-              {t(notification.message_key || '', notification.message_payload)}
+              {t(notification.message_key, notification.message_payload)}
             </p>
             {notification.link && (
               <div className="mt-3">

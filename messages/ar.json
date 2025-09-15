@@ -1882,6 +1882,8 @@
     "Task Deleted": "تم حذف المهمة",
     "Task Overdue": "مهمة متأخرة",
     "newMessageFrom": "رسالة جديدة من {sender}",
-    "info": "معلومات"
+    "info": "معلومات",
+    "Due date for task \"{taskTitle}\" has been updated. Due date updated to: {dueDate}": "تم تحديث تاريخ استحقاق المهمة \"{taskTitle}\". تاريخ الاستحقاق الجديد: {dueDate}",
+    "Status of your assigned task \"{taskTitle}\" has been updated to \"{status}\".": "تم تحديث حالة مهمتك المعينة \"{taskTitle}\" إلى \"{status}\"."
   }
 }

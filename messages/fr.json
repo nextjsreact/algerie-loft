@@ -1881,8 +1881,6 @@
     "new": "Nouveau",
     "newMessageFrom": "Nouveau message de {sender}",
     "noNotifications": "Aucune notification trouvée.",
-    "info": "info",
-    "Due date for task \"{taskTitle}\" has been updated. Due date updated to: {dueDate}": "La date d'échéance de la tâche \"{taskTitle}\" a été mise à jour. Nouvelle date d'échéance : {dueDate}",
-    "Status of your assigned task \"{taskTitle}\" has been updated to \"{status}\".": "Le statut de votre tâche assignée \"{taskTitle}\" a été mis à jour à \"{status}\"."
+    "info": "info"
   }
 }

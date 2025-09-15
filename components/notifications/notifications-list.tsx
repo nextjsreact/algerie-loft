@@ -25,7 +25,7 @@ export default function NotificationsList({ notifications }: NotificationsListPr
     if (match) {
       const taskTitle = match[1];
       const dueDate = match[2];
-      return t('notifications.taskDueDateUpdatedMessage', { taskTitle, dueDate });
+      return t('taskDueDateUpdatedMessage', { taskTitle, dueDate }); // Removed 'notifications.' prefix
     }
 
     // Pattern for "Status of your assigned task..."
@@ -34,7 +34,7 @@ export default function NotificationsList({ notifications }: NotificationsListPr
     if (match) {
       const taskTitle = match[1];
       const status = match[2];
-      return t('notifications.taskStatusUpdatedMessage', { taskTitle, status });
+      return t('taskStatusUpdatedMessage', { taskTitle, status }); // Removed 'notifications.' prefix
     }
 
     // If no pattern matches, return the original message key

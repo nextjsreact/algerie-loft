@@ -500,7 +500,7 @@ export function ModernTasksPage({
                             <User className="h-3 w-3 text-gray-400 dark:text-gray-500" />
                             <span className="font-medium text-gray-700 dark:text-gray-300">{t('assignedTo')}:</span>
                             <span className="text-gray-600 dark:text-gray-400">
-                              {assignedUser.full_name === 'member1' ? 'Membre 1' : assignedUser.full_name}
+                              {assignedUser.full_name === 'member1' ? t('conversations.member1') : assignedUser.full_name}
                             </span>
                           </div>
                         )}

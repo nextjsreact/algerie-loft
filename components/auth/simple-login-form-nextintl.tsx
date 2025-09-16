@@ -44,12 +44,16 @@ export function SimpleLoginFormNextIntl() {
     setError("")
 
     try {
-      // The login function will redirect automatically on success
-      // If it returns, it means there was an error
       const result = await login(data.email, data.password, locale)
       
-      // This should only execute if there was an error
-      setError(result.error || "Login failed")
+      if (result.success) {
+        // Handle successful login: redirect to dashboard
+        const validLocale = locale && ['fr', 'en', 'ar'].includes(locale) ? locale : 'fr'
+        router.push(`/${validLocale}/dashboard`)
+      } else {
+        // This should only execute if there was an error
+        setError(result.error || "Login failed")
+      }
     } catch (err) {
       setError("An unexpected error occurred")
     } finally {

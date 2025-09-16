@@ -164,7 +164,7 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-white truncate">
-              {user.full_name === 'member1' ? 'Membre 1' : user.full_name}
+              {user.full_name === 'member1' ? t('conversations.member1') : user.full_name}
             </p>
             <p className="text-xs text-gray-300 capitalize">{t(user.role, { ns: 'roles' })}</p>
           </div>

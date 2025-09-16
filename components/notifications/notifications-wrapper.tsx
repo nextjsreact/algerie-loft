@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl"
 import { useNotifications } from "@/components/providers/notification-context"
-import NotificationsList from '@/components/notifications/notifications-list'
+import NotificationsListOptimized from '@/components/notifications/notifications-list-optimized'
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Bell, CheckCheck } from "lucide-react"
@@ -49,7 +49,7 @@ export function NotificationsWrapper({ notifications }: NotificationsWrapperProp
         </div>
       </div>
       
-      <NotificationsList notifications={notifications} />
+      <NotificationsListOptimized notifications={notifications} />
     </div>
   )
 }

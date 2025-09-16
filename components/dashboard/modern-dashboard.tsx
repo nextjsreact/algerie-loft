@@ -34,7 +34,8 @@ import { BillPaymentModal } from "@/components/modals/bill-payment-modal";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { format } from "date-fns";
-import { useTranslations } from "next-intl";
+import { fr, ar, enUS } from "date-fns/locale";
+import { useTranslations, useLocale } from "next-intl";
 
 type UtilityType = "eau" | "energie" | "telephone" | "internet" | "tv" | "gas";
 
@@ -120,6 +121,27 @@ export function ModernDashboard() {
   const t = useTranslations('dashboard');
   const tTasks = useTranslations('tasks');
   const tBills = useTranslations('bills');
+  const locale = useLocale();
+
+  // Helper function to get date-fns locale
+  const getDateFnsLocale = () => {
+    switch (locale) {
+      case 'ar': return ar;
+      case 'fr': return fr;
+      case 'en': return enUS;
+      default: return fr;
+    }
+  };
+
+  // Helper function to get browser locale
+  const getBrowserLocale = () => {
+    switch (locale) {
+      case 'ar': return 'ar-DZ';
+      case 'fr': return 'fr-FR';
+      case 'en': return 'en-US';
+      default: return 'fr-FR';
+    }
+  };
   
   const [upcomingBills, setUpcomingBills] = useState<BillAlert[]>([]);
   const [overdueBills, setOverdueBills] = useState<BillAlert[]>([]);
@@ -584,7 +606,7 @@ export function ModernDashboard() {
                             {getUtilityLabel(bill.utility_type)}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {t("bills.due")}: {new Date(bill.due_date).toLocaleDateString()}
+                            {t("bills.due")}: {new Date(bill.due_date).toLocaleDateString(getBrowserLocale())}
                           </p>
                         </div>
                       </div>
@@ -651,7 +673,7 @@ export function ModernDashboard() {
                             {getUtilityLabel(bill.utility_type)}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {t("bills.due")}: {new Date(bill.due_date).toLocaleDateString()}
+                            {t("bills.due")}: {new Date(bill.due_date).toLocaleDateString(getBrowserLocale())}
                           </p>
                         </div>
                       </div>
@@ -750,7 +772,7 @@ export function ModernDashboard() {
                     </p>
                     {task.due_date && (
                       <p className="text-xs text-muted-foreground">
-                        {t("due")}: {format(new Date(task.due_date), "d MMM yyyy")}
+                        {t("due")}: {format(new Date(task.due_date), "d MMM yyyy", { locale: getDateFnsLocale() })}
                       </p>
                     )}
                   </div>

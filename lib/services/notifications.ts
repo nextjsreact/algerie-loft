@@ -34,7 +34,7 @@ export interface NotificationQueue {
 }
 
 // Define createNotification helper function
-async function createNotification(
+export async function createNotification(
   userId: string,
   title: string,
   message_key: string,

@@ -160,11 +160,13 @@ export async function markNotificationAsReadAndNotifySender(
 
     await createNotification(
       notification.sender_id,
-      "Notification Read",
-      `Your notification for task "${taskTitle}" has been read by ${user?.full_name || 'a user'}.`,
+      "Notification Read", // This is the title_key, which is fine
+      "notificationReadMessage", // New message_key for translation
       'info',
       undefined,
       notification.user_id,
+      undefined, // title_payload
+      { taskTitle: taskTitle, userName: user?.full_name || 'unknownUser' }, // message_payload
       supabase
     );
   }

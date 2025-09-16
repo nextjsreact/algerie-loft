@@ -7,57 +7,36 @@ import type { AuthSession } from "./types"
 
 export async function getSession(): Promise<AuthSession | null> {
   const supabase = await createReadOnlyClient(); // Create client here for each request
- 
+
   const { data: { user }, error: userError } = await supabase.auth.getUser();
- 
+
   if (userError || !user) {
     return null;
   }
- 
+
   // Get profile information from the profiles table (not user_metadata)
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('full_name, role')
     .eq('id', user.id)
     .single();
- 
-  if (profileError) {
-    console.error('Error fetching user profile:', profileError || 'Unknown profile error');
-    // Fallback to user_metadata if profile doesn't exist
-    const full_name = user.user_metadata?.full_name || null;
-    const role = user.user_metadata?.role || 'member';
-    
-    const { data: { session: supabaseSessionData }, error: sessionError } = await supabase.auth.getSession();
- 
-    if (sessionError || !supabaseSessionData) {
-      return null;
-    }
- 
-    return {
-      user: {
-        id: user.id,
-        email: user.email ?? null,
-        full_name: full_name,
-        role: role,
-        created_at: user.created_at,
-        updated_at: user.updated_at ?? null
-      },
-      token: supabaseSessionData.access_token
-    };
-  }
- 
+
   const { data: { session: supabaseSessionData }, error: sessionError } = await supabase.auth.getSession();
- 
+
   if (sessionError || !supabaseSessionData) {
     return null;
   }
- 
-  const newSession = {
+  
+  // Determine full_name and role, prioritizing profile data
+  const full_name = profile?.full_name || user.user_metadata?.full_name || null;
+  const role = profile?.role || user.user_metadata?.role || 'member';
+
+  const newSession: AuthSession = {
     user: {
       id: user.id,
       email: user.email ?? null,
-      full_name: profile.full_name || user.user_metadata?.full_name || null,
-      role: profile.role || 'member', // Use role from profiles table
+      full_name: full_name,
+      role: role,
       created_at: user.created_at,
       updated_at: user.updated_at ?? null
     },
@@ -118,9 +97,8 @@ export async function login(email: string, password: string, locale?: string): P
     return { success: false, error: error.message }
   }
 
-  // Redirect to dashboard with locale after successful login
-  const validLocale = locale && ['fr', 'en', 'ar'].includes(locale) ? locale : 'fr'
-  redirect(`/${validLocale}/dashboard`)
+  // No direct redirect here. The client will handle redirection.
+  return { success: true }
 }
 
 export async function register(
@@ -149,8 +127,8 @@ export async function register(
 
 export async function logout() {
   const supabase = await createClient()
-  await supabase.auth.signOut()
-  redirect("/login")
+  await supabase.auth.signOut();
+  return { success: true };
 }
 
 export async function requestPasswordReset(email: string): Promise<{ success: boolean; error?: string }> {
@@ -181,61 +159,41 @@ export async function resetPassword(password: string): Promise<{ success: boolea
 // Read-only version of getSession for layouts and other contexts where cookies cannot be set
 export async function getSessionReadOnly(): Promise<AuthSession | null> {
   const supabase = await createReadOnlyClient();
- 
+
   const { data: { user }, error: userError } = await supabase.auth.getUser();
- 
+
   if (userError || !user) {
     return null;
   }
- 
+
   // Get profile information from the profiles table (not user_metadata)
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('full_name, role')
     .eq('id', user.id)
     .single();
- 
-  if (profileError) {
-    // Fallback to user_metadata if profile doesn't exist
-    const full_name = user.user_metadata?.full_name || null;
-    const role = user.user_metadata?.role || 'member';
-    
-    const { data: { session: supabaseSessionData }, error: sessionError } = await supabase.auth.getSession();
- 
-    if (sessionError || !supabaseSessionData) {
-      return null;
-    }
- 
-    return {
-      user: {
-        id: user.id,
-        email: user.email ?? null,
-        full_name: full_name,
-        role: role,
-        created_at: user.created_at,
-        updated_at: user.updated_at ?? null
-      },
-      token: supabaseSessionData.access_token
-    };
-  }
- 
+
   const { data: { session: supabaseSessionData }, error: sessionError } = await supabase.auth.getSession();
- 
+
   if (sessionError || !supabaseSessionData) {
     return null;
   }
- 
+
+  // Determine full_name and role, prioritizing profile data
+  const full_name = profile?.full_name || user.user_metadata?.full_name || null;
+  const role = profile?.role || user.user_metadata?.role || 'member';
+
   const session: AuthSession = {
     user: {
       id: user.id,
       email: user.email ?? null,
-      full_name: profile.full_name,
-      role: profile.role,
+      full_name: full_name,
+      role: role,
       created_at: user.created_at,
       updated_at: user.updated_at ?? null
     },
     token: supabaseSessionData.access_token
   };
- 
+
   return session;
 }

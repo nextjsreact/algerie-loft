@@ -84,7 +84,7 @@ export function WhatsAppSidebar({
       let name = otherParticipant?.user?.full_name || t('conversation')
       
       // Corriger les noms génériques
-      if (name === 'member1') name = 'Membre 1'
+      if (name === 'member1') name = t('conversations.member1')
       if (name === 'Team Member') name = 'Membre'
       
       return name

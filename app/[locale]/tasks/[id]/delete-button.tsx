@@ -2,8 +2,11 @@
 
 import { Button } from "@/components/ui/button"
 import { deleteTask } from "@/app/actions/tasks"
+import { useTranslations } from 'next-intl'
 
 export function DeleteTaskButton({ taskId }: { taskId: string }) {
+  const tCommon = useTranslations('common')
+
   const handleDelete = async () => {
     await deleteTask(taskId)
   }
@@ -11,7 +14,7 @@ export function DeleteTaskButton({ taskId }: { taskId: string }) {
   return (
     <form action={handleDelete}>
       <Button variant="destructive" type="submit">
-        Delete
+        {tCommon('delete')}
       </Button>
     </form>
   )

@@ -107,18 +107,31 @@ export async function notifyTaskStatusChange(
   updatedByName: string
 ): Promise<void> {
   return measurePerformance(async () => {
-    logger.info('Creating task status change notifications', { 
-      taskId: taskData.taskId, 
+    logger.info('Creating task status change notifications', {
+      taskId: taskData.taskId,
       oldStatus,
       newStatus,
-      updatedBy: updatedByUserId 
+      updatedBy: updatedByUserId
     })
 
     try {
+      // Helper function to get translated status
+      const getTranslatedStatus = (status: string) => {
+        const statusMap: Record<string, string> = {
+          'todo': 'To Do',
+          'in_progress': 'In Progress',
+          'completed': 'Completed'
+        }
+        return statusMap[status] || status
+      }
+
+      const translatedNewStatus = getTranslatedStatus(newStatus)
+      const translatedOldStatus = getTranslatedStatus(oldStatus)
+
       // Notify the task creator if they're not the one making the change
       if (taskData.createdBy && taskData.createdBy !== updatedByUserId) {
         const notificationType = newStatus === 'completed' ? 'success' : 'info'
-        
+
         await createNotification(
           taskData.createdBy,
           "Task Status Updated", // Literal title for the notification
@@ -126,14 +139,14 @@ export async function notifyTaskStatusChange(
           notificationType,
           `/tasks/${taskData.taskId}`,
           updatedByUserId,
-          { taskTitle: taskData.taskTitle, oldStatus: oldStatus, newStatus: newStatus } // message_payload with raw status keys
+          { taskTitle: taskData.taskTitle, oldStatus: translatedOldStatus, newStatus: translatedNewStatus } // message_payload with translated status
         );
       }
 
       // Notify the assigned user if they're not the one making the change
       if (taskData.assignedTo && taskData.assignedTo !== updatedByUserId && taskData.assignedTo !== taskData.createdBy) {
         const notificationType = newStatus === 'completed' ? 'success' : 'info'
-        
+
         await createNotification(
           taskData.assignedTo,
           "Your Task Status Updated", // Literal title for the notification
@@ -141,7 +154,7 @@ export async function notifyTaskStatusChange(
           notificationType,
           `/tasks/${taskData.taskId}`,
           updatedByUserId,
-          { taskTitle: taskData.taskTitle, newStatus: newStatus } // message_payload with raw status key
+          { taskTitle: taskData.taskTitle, newStatus: translatedNewStatus } // message_payload with translated status
         );
       }
 

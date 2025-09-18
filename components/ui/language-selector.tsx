@@ -40,8 +40,11 @@ export function LanguageSelector({ showText = false }: LanguageSelectorProps) {
     // Get current path without locale
     const pathWithoutLocale = pathname.replace(`/${currentLocale}`, '') || '/'
     
-    // Navigate to new locale
-    router.push(`/${langCode}${pathWithoutLocale}`)
+    // Navigate to new locale with force refresh
+    const newUrl = `/${langCode}${pathWithoutLocale}`
+    
+    // Use window.location for immediate navigation
+    window.location.href = newUrl
   }
 
   const currentLanguage = languages.find(lang => lang.code === currentLocale) || languages[0]

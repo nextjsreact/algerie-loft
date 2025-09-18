@@ -7,6 +7,10 @@ export interface DashboardStats {
   activeTasks: number
   monthlyRevenue: number
   totalTeams: number
+  tasksWithLoft: number
+  tasksWithoutLoft: number
+  orphanedTasks: number
+  loftsWithTasks: number
 }
 
 export interface DashboardData {
@@ -58,6 +62,33 @@ export async function getDashboardData(): Promise<DashboardData> {
         }
       })
 
+      // Get all tasks for loft statistics
+      const { data: allTasksData, error: allTasksError } = await supabase
+        .from("tasks")
+        .select("loft_id")
+
+      if (allTasksError) {
+        errors.push(`Failed to fetch all tasks for loft stats: ${allTasksError.message}`)
+      }
+
+      // Calculate loft-related statistics
+      const allTasks = allTasksData || []
+      const tasksWithLoft = allTasks.filter(task => task.loft_id).length
+      const tasksWithoutLoft = allTasks.filter(task => !task.loft_id).length
+      
+      // Calculate orphaned tasks (simplified check)
+      const loftIds = new Set((loftsData || []).map(loft => loft.id))
+      const orphanedTasks = allTasks.filter(task => 
+        task.loft_id && !loftIds.has(task.loft_id)
+      ).length
+
+      // Calculate lofts with tasks
+      const loftsWithTasksSet = new Set(
+        allTasks
+          .filter(task => task.loft_id && loftIds.has(task.loft_id))
+          .map(task => task.loft_id)
+      )
+
       // Calculate stats with fallback values
       const stats: DashboardStats = {
         totalLofts: loftsData?.length || 0,
@@ -65,6 +96,10 @@ export async function getDashboardData(): Promise<DashboardData> {
         activeTasks: (tasksData || []).length || 0,
         monthlyRevenue: (transactionsData || []).reduce((acc, t) => acc + t.amount, 0) || 0,
         totalTeams: (teamsData || []).length || 0,
+        tasksWithLoft: tasksWithLoft - orphanedTasks, // Exclude orphaned
+        tasksWithoutLoft,
+        orphanedTasks,
+        loftsWithTasks: loftsWithTasksSet.size
       }
 
       const recentTasks = (recentTasksData || []).map((task: any) => ({

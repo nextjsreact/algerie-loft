@@ -1,6 +1,6 @@
 "use client"
 
-import { requireRole } from "@/lib/auth"
+import { getSession } from "@/lib/auth"
 import { getPaymentMethods } from "@/app/actions/payment-methods"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -9,7 +9,8 @@ import { Plus, CreditCard, Banknote, Smartphone, Building2, Edit, Trash2, Settin
 import Link from "next/link"
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from "react"
-import type { PaymentMethod } from "@/lib/types"
+import type { PaymentMethod, AuthSession } from "@/lib/types"
+import { RoleBasedAccess } from "@/components/auth/role-based-access"
 
 const getPaymentMethodIcon = (type: string) => {
   switch (type?.toLowerCase()) {
@@ -73,21 +74,26 @@ const getPaymentMethodTypeTranslation = (type: string, t: any) => {
 export default function PaymentMethodsPage() {
   const t = useTranslations('paymentMethods')
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
+  const [session, setSession] = useState<AuthSession | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    async function loadPaymentMethods() {
+    async function loadData() {
       try {
-        await requireRole(["admin"])
-        const data = await getPaymentMethods()
-        setPaymentMethods(data)
+        const sessionData = await getSession()
+        setSession(sessionData)
+        
+        if (sessionData && ['admin', 'manager'].includes(sessionData.user.role)) {
+          const data = await getPaymentMethods()
+          setPaymentMethods(data)
+        }
       } catch (error) {
-        console.error('Failed to load payment methods:', error)
+        console.error('Failed to load data:', error)
       } finally {
         setLoading(false)
       }
     }
-    loadPaymentMethods()
+    loadData()
   }, [])
 
   if (loading) {
@@ -95,13 +101,44 @@ export default function PaymentMethodsPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 dark:from-gray-950 dark:via-slate-900 dark:to-indigo-950/20 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600 dark:text-gray-400">{t('common.loading')}...</p>
+          <p className="text-lg text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 dark:from-gray-950 dark:via-slate-900 dark:to-indigo-950/20 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg text-gray-600 dark:text-gray-400">Please log in to access payment methods.</p>
         </div>
       </div>
     )
   }
 
   return (
+    <RoleBasedAccess 
+      userRole={session.user.role}
+      allowedRoles={['admin', 'manager']}
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 dark:from-gray-950 dark:via-slate-900 dark:to-indigo-950/20 p-8">
+          <div className="container mx-auto">
+            <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+              <div className="flex">
+                <div className="ml-3">
+                  <h3 className="text-lg font-medium text-red-800">Access Restricted</h3>
+                  <p className="text-red-700 mt-2">
+                    Payment method management is only available to administrators and managers. 
+                    Your current role ({session.user.role}) does not have permission to access this content.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    >
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 dark:from-gray-950 dark:via-slate-900 dark:to-indigo-950/20">
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* En-tête moderne avec design épuré */}
@@ -492,5 +529,6 @@ export default function PaymentMethodsPage() {
         </Card>
       </div>
     </div>
+    </RoleBasedAccess>
   )
 }

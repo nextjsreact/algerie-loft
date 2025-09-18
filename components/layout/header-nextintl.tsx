@@ -3,7 +3,7 @@
 import { Menu, Building2 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 import { Sidebar } from "@/components/layout/sidebar-nextintl"
 import { LanguageSelector } from "@/components/ui/language-selector"
 import type { User } from "@/lib/types"
@@ -36,6 +36,7 @@ export function Header({ user }: HeaderProps) {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-64 bg-gray-900 p-0">
+            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
             <Sidebar user={user} unreadCount={0} />
           </SheetContent>
         </Sheet>

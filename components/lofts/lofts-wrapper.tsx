@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Plus, Home, MapPin, Users, TrendingUp } from "lucide-react"
 import Link from "next/link"
 import { LoftsList } from "@/components/lofts/lofts-list"
-import type { LoftWithRelations, LoftOwner, ZoneArea } from "@/lib/types"
+import { RoleBasedAccess } from "@/components/auth/role-based-access"
+import type { LoftWithRelations, LoftOwner, ZoneArea, UserRole } from "@/lib/types"
 
 interface LoftsWrapperProps {
   lofts: LoftWithRelations[]
@@ -13,6 +14,7 @@ interface LoftsWrapperProps {
   zoneAreas: ZoneArea[]
   isAdmin: boolean
   canManage: boolean
+  userRole: UserRole
 }
 
 export function LoftsWrapper({
@@ -20,7 +22,8 @@ export function LoftsWrapper({
   owners,
   zoneAreas,
   isAdmin,
-  canManage
+  canManage,
+  userRole
 }: LoftsWrapperProps) {
   const locale = useLocale()
   const t = useTranslations('lofts')
@@ -118,17 +121,23 @@ export function LoftsWrapper({
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-50 to-violet-100 p-6 rounded-2xl border border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-purple-600 text-sm font-medium">{t('totalRevenue')}</p>
-              <p className="text-2xl font-bold text-purple-700">{totalRevenue.toLocaleString()} DA</p>
-            </div>
-            <div className="p-3 bg-purple-200 rounded-full">
-              <TrendingUp className="w-6 h-6 text-purple-600" />
+        <RoleBasedAccess 
+          userRole={userRole} 
+          allowedRoles={['admin', 'manager', 'executive']}
+          showFallback={false}
+        >
+          <div className="bg-gradient-to-br from-purple-50 to-violet-100 p-6 rounded-2xl border border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-purple-600 text-sm font-medium">{t('totalRevenue')}</p>
+                <p className="text-2xl font-bold text-purple-700">{totalRevenue.toLocaleString()} DA</p>
+              </div>
+              <div className="p-3 bg-purple-200 rounded-full">
+                <TrendingUp className="w-6 h-6 text-purple-600" />
+              </div>
             </div>
           </div>
-        </div>
+        </RoleBasedAccess>
       </div>
 
       {/* Message d'accueil si aucun loft */}
@@ -159,6 +168,7 @@ export function LoftsWrapper({
             owners={owners}
             zoneAreas={zoneAreas}
             isAdmin={isAdmin}
+            userRole={userRole}
           />
         </div>
       )}

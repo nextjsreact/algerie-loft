@@ -4,12 +4,17 @@ import { useLocale, useTranslations } from "next-intl"
 import { useEffect, useCallback, useMemo, memo, useState } from "react"
 import { markNotificationAsRead } from "@/app/actions/notifications"
 import { useNotifications } from "@/components/providers/notification-context"
+import { useFilteredNotifications, useNotificationTypeLabels } from "@/hooks/use-filtered-notifications"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Bell, CheckCircle, Clock, AlertTriangle, Info, XCircle } from "lucide-react"
+import { Bell, CheckCircle, Clock, AlertTriangle, Info, XCircle, Shield, AlertCircle } from "lucide-react"
+import { Notification, UserRole } from "@/lib/types"
 
 interface NotificationsListProps {
-  notifications: any[]
+  notifications: Notification[]
+  userRole: UserRole
+  userId: string
+  assignedTaskIds?: string[]
 }
 
 // Component to handle async message translation
@@ -45,18 +50,23 @@ const NotificationCard = memo(({
   translateTitle,
   translateMessage,
   translateBadge,
-  locale 
+  locale,
+  priority,
+  typeLabels
 }: any) => {
   return (
     <Card 
       className={`transition-all duration-200 hover:shadow-md ${
         !notification.is_read ? 'ring-2 ring-blue-200' : ''
-      } ${getNotificationColor(notification.type || 'info')}`}
+      } ${getNotificationColor(notification)} ${
+        priority === 'high' ? 'border-l-4 border-l-red-500' : 
+        priority === 'medium' ? 'border-l-4 border-l-orange-500' : ''
+      }`}
     >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            {getNotificationIcon(notification.type || 'info')}
+            {getNotificationIcon(notification)}
             <div>
               <CardTitle className="text-base font-semibold">
                 {translateTitle(notification)}
@@ -74,13 +84,18 @@ const NotificationCard = memo(({
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {priority === 'high' && (
+              <Badge variant="destructive" className="text-xs">
+                High Priority
+              </Badge>
+            )}
             {!notification.is_read && (
               <Badge variant="secondary" className="bg-blue-100 text-blue-800">
                 {translateBadge('new')}
               </Badge>
             )}
             <Badge variant="outline" className="capitalize">
-              {translateBadge(notification.type || 'info')}
+              {typeLabels[notification.type] || notification.type}
             </Badge>
           </div>
         </div>
@@ -108,11 +123,33 @@ const NotificationCard = memo(({
 
 NotificationCard.displayName = 'NotificationCard'
 
-export default function NotificationsListOptimized({ notifications }: NotificationsListProps) {
+export default function NotificationsListOptimized({ 
+  notifications, 
+  userRole, 
+  userId, 
+  assignedTaskIds = [] 
+}: NotificationsListProps) {
   const t = useTranslations("notifications")
   const tTasks = useTranslations("tasks")
   const locale = useLocale()
   const { refreshNotifications } = useNotifications()
+
+  // Use enhanced notification filtering
+  const {
+    filteredNotifications,
+    stats,
+    isNotificationVisible,
+    getNotificationPriority,
+    getFallbackMessage
+  } = useFilteredNotifications(notifications, {
+    userRole,
+    userId,
+    assignedTaskIds,
+    showOnlyUnread: false,
+    priorityFilter: 'all'
+  })
+
+  const typeLabels = useNotificationTypeLabels(userRole)
 
   // Cache for parsed messages to avoid re-parsing
   const messageCache = useMemo(() => new Map<string, string>(), [])
@@ -228,9 +265,9 @@ export default function NotificationsListOptimized({ notifications }: Notificati
     }
   }, [refreshNotifications])
 
-  // Mark all unread notifications as read when component mounts
+  // Mark all unread filtered notifications as read when component mounts
   useEffect(() => {
-    const unreadIds = notifications
+    const unreadIds = filteredNotifications
       .filter(n => !n.is_read)
       .map(n => n.id)
     
@@ -239,24 +276,61 @@ export default function NotificationsListOptimized({ notifications }: Notificati
     }
   }, []) // Empty dependency array - only run once on mount
 
-  // Memoized icon getter
-  const getNotificationIcon = useCallback((type: string) => {
+  // Memoized icon getter with priority support
+  const getNotificationIcon = useCallback((notification: Notification) => {
+    const priority = getNotificationPriority(notification)
+    const { type } = notification
+
+    // High priority notifications get special icons
+    if (priority === 'high') {
+      switch (type) {
+        case 'error':
+        case 'critical_alert':
+          return <XCircle className="h-5 w-5 text-red-500" />
+        case 'task_overdue':
+          return <AlertCircle className="h-5 w-5 text-red-500" />
+        default:
+          return <AlertTriangle className="h-5 w-5 text-red-500" />
+      }
+    }
+
+    // Standard icons based on type
     switch (type) {
       case 'success':
+      case 'task_completed':
         return <CheckCircle className="h-5 w-5 text-green-500" />
       case 'warning':
+      case 'task_overdue':
         return <AlertTriangle className="h-5 w-5 text-yellow-500" />
       case 'error':
         return <XCircle className="h-5 w-5 text-red-500" />
+      case 'task_assigned':
+      case 'newTaskAssigned':
+        return <Shield className="h-5 w-5 text-blue-500" />
       default:
         return <Info className="h-5 w-5 text-blue-500" />
     }
-  }, [])
+  }, [getNotificationPriority])
 
-  // Memoized color getter
-  const getNotificationColor = useCallback((type: string) => {
+  // Memoized color getter with priority support
+  const getNotificationColor = useCallback((notification: Notification) => {
+    const priority = getNotificationPriority(notification)
+    const { type } = notification
+
+    // High priority notifications get red styling
+    if (priority === 'high') {
+      return 'border-red-200 bg-red-50'
+    }
+
+    // Medium priority gets orange/yellow styling
+    if (priority === 'medium') {
+      return 'border-orange-200 bg-orange-50'
+    }
+
+    // Standard colors based on type
     switch (type) {
       case 'success':
+      case 'task_completed':
         return 'border-green-200 bg-green-50'
       case 'warning':
         return 'border-yellow-200 bg-yellow-50'
@@ -265,7 +339,7 @@ export default function NotificationsListOptimized({ notifications }: Notificati
       default:
         return 'border-blue-200 bg-blue-50'
     }
-  }, [])
+  }, [getNotificationPriority])
 
   // Memoized translation functions
   const translateTitle = useCallback((notification: any) => {
@@ -324,7 +398,7 @@ export default function NotificationsListOptimized({ notifications }: Notificati
     return t(key)
   }, [t])
 
-  // Memoize empty state
+  // Memoize empty state with role-specific messaging
   const emptyState = useMemo(() => (
     <div className="flex flex-col items-center justify-center py-12">
       <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -334,12 +408,17 @@ export default function NotificationsListOptimized({ notifications }: Notificati
         {t('noNotifications')}
       </h3>
       <p className="text-gray-500 text-center max-w-sm">
-        {t('noNotificationsMessage')}
+        {getFallbackMessage()}
       </p>
+      {stats.total > 0 && (
+        <p className="text-xs text-gray-400 mt-2">
+          {stats.total} notifications filtered based on your role permissions
+        </p>
+      )}
     </div>
-  ), [t])
+  ), [t, getFallbackMessage, stats.total])
 
-  if (notifications.length === 0) {
+  if (filteredNotifications.length === 0) {
     return emptyState
   }
 
@@ -355,19 +434,50 @@ export default function NotificationsListOptimized({ notifications }: Notificati
           {t('optimizedBanner.description')}
         </p>
       </div>
+
+      {/* Statistics summary for admin/manager roles */}
+      {['admin', 'manager'].includes(userRole) && stats.total > 0 && (
+        <div className="bg-gray-50 rounded-lg p-4 mb-6">
+          <h4 className="text-sm font-medium text-gray-700 mb-2">Notification Summary</h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div>
+              <span className="text-gray-500">Total:</span>
+              <span className="ml-1 font-medium">{stats.total}</span>
+            </div>
+            <div>
+              <span className="text-gray-500">Unread:</span>
+              <span className="ml-1 font-medium text-blue-600">{stats.unread}</span>
+            </div>
+            <div>
+              <span className="text-gray-500">High Priority:</span>
+              <span className="ml-1 font-medium text-red-600">{stats.byPriority.high}</span>
+            </div>
+            <div>
+              <span className="text-gray-500">Medium Priority:</span>
+              <span className="ml-1 font-medium text-orange-600">{stats.byPriority.medium}</span>
+            </div>
+          </div>
+        </div>
+      )}
       
-      {notifications.map((notification) => (
-        <NotificationCard
-          key={notification.id}
-          notification={notification}
-          getNotificationIcon={getNotificationIcon}
-          getNotificationColor={getNotificationColor}
-          translateTitle={translateTitle}
-          translateMessage={translateMessage}
-          translateBadge={translateBadge}
-          locale={locale}
-        />
-      ))}
+      {filteredNotifications.map((notification) => {
+        const priority = getNotificationPriority(notification)
+        
+        return (
+          <NotificationCard
+            key={notification.id}
+            notification={notification}
+            getNotificationIcon={getNotificationIcon}
+            getNotificationColor={getNotificationColor}
+            translateTitle={translateTitle}
+            translateMessage={translateMessage}
+            translateBadge={translateBadge}
+            locale={locale}
+            priority={priority}
+            typeLabels={typeLabels}
+          />
+        )
+      })}
     </div>
   )
 }

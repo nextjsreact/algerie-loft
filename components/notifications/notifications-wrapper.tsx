@@ -6,12 +6,21 @@ import NotificationsListOptimized from '@/components/notifications/notifications
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Bell, CheckCheck } from "lucide-react"
+import { Notification, UserRole } from "@/lib/types"
 
 interface NotificationsWrapperProps {
-  notifications: any[]
+  notifications: Notification[]
+  userRole: UserRole
+  userId: string
+  assignedTaskIds?: string[]
 }
 
-export function NotificationsWrapper({ notifications }: NotificationsWrapperProps) {
+export function NotificationsWrapper({ 
+  notifications, 
+  userRole, 
+  userId, 
+  assignedTaskIds = [] 
+}: NotificationsWrapperProps) {
   const t = useTranslations("notifications")
   const { unreadCount, markAllAsRead } = useNotifications()
 
@@ -49,7 +58,12 @@ export function NotificationsWrapper({ notifications }: NotificationsWrapperProp
         </div>
       </div>
       
-      <NotificationsListOptimized notifications={notifications} />
+      <NotificationsListOptimized 
+        notifications={notifications}
+        userRole={userRole}
+        userId={userId}
+        assignedTaskIds={assignedTaskIds}
+      />
     </div>
   )
 }

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { LoftBillManagement } from "@/components/loft/bill-management"
 import { LoftPhotoGallery } from "@/components/lofts/loft-photo-gallery"
+import { RoleBasedAccess } from "@/components/auth/role-based-access"
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 import { cookies } from "next/headers"
@@ -114,20 +115,26 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
             </div>
           </div>
           <div className="flex gap-3">
-            <Button asChild variant="outline">
-              <Link href={`/lofts/${awaitedParams.id}/edit`}>
-                <Edit className="h-4 w-4 mr-2" />
-                {t('editLoft')}
-              </Link>
-            </Button>
-            {loft.airbnb_listing_id && (
-              <Button asChild>
-                <Link href={`/lofts/${awaitedParams.id}/link-airbnb`}>
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Lier à Airbnb
+            <RoleBasedAccess 
+              userRole={session.user.role}
+              allowedRoles={['admin', 'manager']}
+              showFallback={false}
+            >
+              <Button asChild variant="outline">
+                <Link href={`/lofts/${awaitedParams.id}/edit`}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  {t('editLoft')}
                 </Link>
               </Button>
-            )}
+              {loft.airbnb_listing_id && (
+                <Button asChild>
+                  <Link href={`/lofts/${awaitedParams.id}/link-airbnb`}>
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    Lier à Airbnb
+                  </Link>
+                </Button>
+              )}
+            </RoleBasedAccess>
           </div>
         </div>
 
@@ -145,15 +152,21 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <Euro className="h-5 w-5 text-green-600" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">{t('pricePerMonth')}</p>
-                        <p className="text-2xl font-bold text-green-600">
-                          {loft.price_per_month} {tCommon('currencies.da')}
-                        </p>
+                    <RoleBasedAccess 
+                      userRole={session.user.role}
+                      allowedRoles={['admin', 'manager', 'executive']}
+                      showFallback={false}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Euro className="h-5 w-5 text-green-600" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">{t('pricePerMonth')}</p>
+                          <p className="text-2xl font-bold text-green-600">
+                            {loft.price_per_month} {tCommon('currencies.da')}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    </RoleBasedAccess>
                     
                     <div className="flex items-center gap-3">
                       <User className="h-5 w-5 text-blue-600" />
@@ -182,20 +195,26 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                   </>
                 )}
 
-                <Separator />
-                <div>
-                  <p className="text-sm text-muted-foreground mb-3">Pourcentages</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="text-center p-3 bg-blue-50 rounded-lg">
-                      <div className="text-xl font-bold text-blue-600">{loft.company_percentage}%</div>
-                      <div className="text-xs text-muted-foreground">Société</div>
-                    </div>
-                    <div className="text-center p-3 bg-green-50 rounded-lg">
-                      <div className="text-xl font-bold text-green-600">{loft.owner_percentage}%</div>
-                      <div className="text-xs text-muted-foreground">Propriétaire</div>
+                <RoleBasedAccess 
+                  userRole={session.user.role}
+                  allowedRoles={['admin', 'manager', 'executive']}
+                  showFallback={false}
+                >
+                  <Separator />
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-3">Pourcentages</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="text-center p-3 bg-blue-50 rounded-lg">
+                        <div className="text-xl font-bold text-blue-600">{loft.company_percentage}%</div>
+                        <div className="text-xs text-muted-foreground">Société</div>
+                      </div>
+                      <div className="text-center p-3 bg-green-50 rounded-lg">
+                        <div className="text-xl font-bold text-green-600">{loft.owner_percentage}%</div>
+                        <div className="text-xs text-muted-foreground">Propriétaire</div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </RoleBasedAccess>
 
                 {loft.phone_number && (
                   <>
@@ -375,14 +394,20 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
         </div>
 
         {/* Gestion des factures */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Gestion des Factures</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <LoftBillManagement loftId={awaitedParams.id} loftData={loft} />
-          </CardContent>
-        </Card>
+        <RoleBasedAccess 
+          userRole={session.user.role}
+          allowedRoles={['admin', 'manager']}
+          showFallback={false}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle>Gestion des Factures</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <LoftBillManagement loftId={awaitedParams.id} loftData={loft} />
+            </CardContent>
+          </Card>
+        </RoleBasedAccess>
       </div>
     )
   } catch (error) {

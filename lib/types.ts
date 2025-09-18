@@ -119,7 +119,14 @@ export type Task = {
   created_at: string;
   due_date?: string | null;
   assigned_to?: string | null;
+  loft_id?: string | null;
 };
+
+// Extended interface for tasks with loft information
+export interface TaskWithLoft extends Task {
+  loft_name?: string | null;
+  loft_address?: string | null;
+}
 
 export type Notification = {
   id: string;

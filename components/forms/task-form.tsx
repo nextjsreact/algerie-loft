@@ -14,9 +14,10 @@ import type { Task, User, AuthSession } from '@/lib/types'
 import { getSession } from '@/lib/auth'
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
+import { fetchLoftsForSelection, formatLoftDisplayName, type LoftSelectionItem } from '@/lib/services/loft'
 
 interface TaskFormProps {
-  task?: Task
+  task?: Task & { loft?: { id: string; name: string; address: string } | null }
   users: User[]
   onSubmit: (data: TaskFormData | TaskStatusUpdateData) => Promise<void>
   isSubmitting?: boolean
@@ -25,6 +26,8 @@ interface TaskFormProps {
 export function TaskForm({ task, users, onSubmit, isSubmitting = false }: TaskFormProps) {
   const router = useRouter()
   const [session, setSession] = useState<AuthSession | null>(null)
+  const [lofts, setLofts] = useState<LoftSelectionItem[]>([])
+  const [loftsLoading, setLoftsLoading] = useState(false)
   const t = useTranslations('tasks');
   const tCommon = useTranslations('common');
 
@@ -35,6 +38,27 @@ export function TaskForm({ task, users, onSubmit, isSubmitting = false }: TaskFo
     }
     fetchSession();
   }, []);
+
+  // Fetch lofts for selection (only for admins and managers)
+  useEffect(() => {
+    async function loadLofts() {
+      if (session?.user?.role === 'admin' || session?.user?.role === 'manager') {
+        setLoftsLoading(true)
+        try {
+          const response = await fetchLoftsForSelection()
+          setLofts(response.lofts)
+        } catch (error) {
+          console.error('Error loading lofts:', error)
+        } finally {
+          setLoftsLoading(false)
+        }
+      }
+    }
+    
+    if (session) {
+      loadLofts()
+    }
+  }, [session]);
 
   // Use different validation schema based on user role
   const isMember = session?.user?.role === 'member'
@@ -50,8 +74,9 @@ export function TaskForm({ task, users, onSubmit, isSubmitting = false }: TaskFo
         description: task.description ?? undefined, // Convert null to undefined
         due_date: task.due_date ? new Date(task.due_date).toISOString().split('T')[0] : undefined,
         assigned_to: task.assigned_to ?? 'unassigned', // Convert null to 'unassigned'
+        loft_id: task.loft_id ?? 'no_loft', // Convert null to 'no_loft'
       }
-    ) : { status: 'todo', due_date: new Date().toISOString().split('T')[0] },
+    ) : { status: 'todo', due_date: new Date().toISOString().split('T')[0], loft_id: 'no_loft' },
   })
 
   return (
@@ -158,6 +183,28 @@ export function TaskForm({ task, users, onSubmit, isSubmitting = false }: TaskFo
                 </Select>
                 {(errors as any).assigned_to && <p className="text-sm text-red-500">{(errors as any).assigned_to.message}</p>}
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="loft_id">{t('associatedLoft')}</Label>
+                <Select 
+                  onValueChange={(value) => setValue('loft_id', value === 'no_loft' ? null : value)} 
+                  defaultValue={task?.loft_id || 'no_loft'}
+                  disabled={loftsLoading}
+                >
+                  <SelectTrigger className="bg-white">
+                    <SelectValue placeholder={loftsLoading ? t('loadingLofts') : tCommon('selectOption')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="no_loft">{t('noLoftAssociated')}</SelectItem>
+                    {lofts.map((loft) => (
+                      <SelectItem key={loft.id} value={loft.id}>
+                        {formatLoftDisplayName(loft)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {(errors as any).loft_id && <p className="text-sm text-red-500">{(errors as any).loft_id.message}</p>}
+              </div>
             </>
           )}
 
@@ -179,6 +226,18 @@ export function TaskForm({ task, users, onSubmit, isSubmitting = false }: TaskFo
                 <Input 
                   id="assigned_to_readonly" 
                   value={task?.assigned_to ? users.find(u => u.id === task.assigned_to)?.full_name || 'Unknown User' : tCommon('none')} 
+                  disabled 
+                  className="bg-muted" 
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="loft_readonly">{t('associatedLoft')}</Label>
+                <Input 
+                  id="loft_readonly" 
+                  value={task?.loft ? 
+                    formatLoftDisplayName(task.loft) : 
+                    t('noLoftAssociated')} 
                   disabled 
                   className="bg-muted" 
                 />

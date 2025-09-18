@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/auth"
 import type { Database, LoftWithRelations } from "@/lib/types"
 import { LoftsWrapper } from "@/components/lofts/lofts-wrapper"
+import { MemberLoftsClientWrapper } from "@/components/lofts/member-lofts-client-wrapper"
 import { createClient } from '@/utils/supabase/server'
 
 type Loft = Database['public']['Tables']['lofts']['Row']
@@ -8,7 +9,18 @@ type LoftOwner = Database['public']['Tables']['loft_owners']['Row']
 type ZoneArea = Database['public']['Tables']['zone_areas']['Row']
 
 export default async function LoftsPage() {
-  const session = await requireRole(["admin", "manager"]);
+  const session = await requireRole(["admin", "manager", "member"]);
+  
+  // Si l'utilisateur est un membre, afficher la vue spéciale membre
+  if (session.user.role === 'member') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <MemberLoftsClientWrapper />
+      </div>
+    );
+  }
+
+  // Pour admin et manager, continuer avec la vue complète
   const supabase = await createClient()
 
   try {
@@ -74,6 +86,7 @@ export default async function LoftsPage() {
             zoneAreas={zoneAreas}
             isAdmin={isAdmin}
             canManage={canManage}
+            userRole={session.user.role}
           />
         </div>
       </div>

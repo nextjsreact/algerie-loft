@@ -5,6 +5,10 @@ import { ReportsWrapper } from '@/components/reports/reports-wrapper'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { FileText, BarChart3, TrendingUp, Sparkles } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { RoleBasedAccess } from '@/components/auth/role-based-access'
+import { useEffect, useState } from 'react'
+import { getSession } from '@/lib/auth'
+import type { AuthSession } from '@/lib/types'
 
 // Mock data - replace with real data from your API
 const mockLoftRevenue = [
@@ -26,8 +30,61 @@ const mockMonthlyRevenue = [
 
 export default function ReportsPage() {
   const t = useTranslations()
+  const [session, setSession] = useState<AuthSession | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchSession() {
+      try {
+        const sessionData = await getSession()
+        setSession(sessionData)
+      } catch (error) {
+        console.error('Failed to fetch session:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchSession()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">{t('common.loading')}</div>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Please log in to access reports.</div>
+      </div>
+    )
+  }
 
   return (
+    <RoleBasedAccess 
+      userRole={session.user.role}
+      allowedRoles={['admin', 'manager', 'executive']}
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-purple-50/50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900/20 p-8">
+          <div className="container mx-auto">
+            <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+              <div className="flex">
+                <div className="ml-3">
+                  <h3 className="text-lg font-medium text-red-800">Access Restricted</h3>
+                  <p className="text-red-700 mt-2">
+                    Financial reports are only available to administrators, managers, and executives. 
+                    Your current role ({session.user.role}) does not have permission to view this content.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    >
     <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-purple-50/50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900/20">
       <div className="container mx-auto py-8">
         <div className="space-y-8">
@@ -92,6 +149,7 @@ export default function ReportsPage() {
         </div>
       </div>
     </div>
+    </RoleBasedAccess>
   )
 }
 

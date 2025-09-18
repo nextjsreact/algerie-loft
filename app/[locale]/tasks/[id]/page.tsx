@@ -11,7 +11,8 @@ import { notFound, useParams, useRouter } from "next/navigation"
 import type { Task, AuthSession } from "@/lib/types"
 import { getSession } from "@/lib/auth"
 import { DeleteTaskButton } from './delete-button'
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl'
+import { Building2, MapPin, AlertCircle, ExternalLink, Clock } from "lucide-react"
 
 export default function TaskPage() {
   const params = useParams()
@@ -21,7 +22,7 @@ export default function TaskPage() {
   const tCommon = useTranslations('common');
   const locale = useLocale();
 
-  const [task, setTask] = useState<Task | null>(null)
+  const [task, setTask] = useState<(Task & { loft?: { id: string; name: string; address: string } | null; isOrphaned?: boolean; orphanedLoftId?: string }) | null>(null)
   const [session, setSession] = useState<AuthSession | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -127,6 +128,97 @@ export default function TaskPage() {
               <Link href="/tasks">{tCommon('back')}</Link>
             </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Loft Information Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Building2 className="h-5 w-5 text-blue-500" />
+            {t('associatedLoft')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {task.loft ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+                    {t('loftName')}
+                  </h4>
+                  <p className="text-gray-600 dark:text-gray-400">{task.loft.name}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    {t('loftAddress')}
+                  </h4>
+                  <p className="text-gray-600 dark:text-gray-400">{task.loft.address}</p>
+                </div>
+              </div>
+              <div className="pt-4 border-t">
+                {(session.user.role === 'admin' || session.user.role === 'manager') ? (
+                  <Button asChild variant="outline" size="sm">
+                    <Link href={`/lofts/${task.loft.id}`} className="flex items-center gap-2">
+                      <ExternalLink className="h-4 w-4" />
+                      {t('viewLoftDetails')}
+                    </Link>
+                  </Button>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="text-sm text-gray-500 italic">
+                      Loft details are restricted for members
+                    </div>
+                    <Button asChild variant="outline" size="sm">
+                      <Link href={`/tasks/${task.id}/history`} className="flex items-center gap-2">
+                        <Clock className="h-4 w-4" />
+                        View Task History
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : task.isOrphaned ? (
+            <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+              <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <div>
+                <p className="text-red-800 dark:text-red-200 font-medium">
+                  {t('loftDeleted')}
+                </p>
+                <p className="text-red-600 dark:text-red-400 text-sm mt-1">
+                  {t('loftDeletedDescription')} (ID: {task.orphanedLoftId})
+                </p>
+                {(session.user.role === 'admin' || session.user.role === 'manager') && (
+                  <Button asChild variant="outline" size="sm" className="mt-2">
+                    <Link href={`/tasks/${task.id}/edit`}>
+                      {t('reassignLoft')}
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <Building2 className="h-5 w-5 text-gray-400 flex-shrink-0" />
+              <div>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {t('noLoftAssociated')}
+                </p>
+                <p className="text-gray-500 dark:text-gray-500 text-sm mt-1">
+                  {t('noLoftAssociatedDescription')}
+                </p>
+                {(session.user.role === 'admin' || session.user.role === 'manager') && (
+                  <Button asChild variant="outline" size="sm" className="mt-2">
+                    <Link href={`/tasks/${task.id}/edit`}>
+                      {t('assignLoft')}
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

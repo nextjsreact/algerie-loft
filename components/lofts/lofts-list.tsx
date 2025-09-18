@@ -18,6 +18,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from "lucide-react"
+import { RoleBasedAccess } from "@/components/auth/role-based-access"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -43,20 +44,22 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import type { LoftWithRelations, LoftOwner, ZoneArea } from "@/lib/types"
+import type { LoftWithRelations, LoftOwner, ZoneArea, UserRole } from "@/lib/types"
 
 interface LoftsListProps {
   lofts: LoftWithRelations[]
   owners: LoftOwner[]
   zoneAreas: ZoneArea[]
   isAdmin: boolean
+  userRole?: UserRole
 }
 
 export function LoftsList({
   lofts,
   owners,
   zoneAreas,
-  isAdmin
+  isAdmin,
+  userRole = 'admin'
 }: LoftsListProps) {
   const locale = useLocale()
   const t = useTranslations('lofts')
@@ -204,10 +207,22 @@ export function LoftsList({
             <TableRow className="bg-gray-50">
               <TableHead className="font-semibold">{t('name')}</TableHead>
               <TableHead className="font-semibold">{t('address')}</TableHead>
-              <TableHead className="font-semibold">{t('status')}</TableHead>
-              <TableHead className="font-semibold">{t('owner')}</TableHead>
+              <TableHead className="font-semibold">{t('statusTitle')}</TableHead>
+              <RoleBasedAccess 
+                userRole={userRole} 
+                allowedRoles={['admin', 'manager', 'executive']}
+                showFallback={false}
+              >
+                <TableHead className="font-semibold">{t('owner')}</TableHead>
+              </RoleBasedAccess>
               <TableHead className="font-semibold">{t('zone')}</TableHead>
-              <TableHead className="font-semibold">{t('price')}</TableHead>
+              <RoleBasedAccess 
+                userRole={userRole} 
+                allowedRoles={['admin', 'manager', 'executive']}
+                showFallback={false}
+              >
+                <TableHead className="font-semibold">{t('price')}</TableHead>
+              </RoleBasedAccess>
               <TableHead className="font-semibold">{t('rooms')}</TableHead>
               <TableHead className="font-semibold text-right">{tCommon('actions')}</TableHead>
             </TableRow>
@@ -240,21 +255,33 @@ export function LoftsList({
                   <TableCell>
                     {getStatusBadge(loft.status)}
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <User className="h-4 w-4" />
-                      {loft.owner_name || "N/A"}
-                    </div>
-                  </TableCell>
+                  <RoleBasedAccess 
+                    userRole={userRole} 
+                    allowedRoles={['admin', 'manager', 'executive']}
+                    showFallback={false}
+                  >
+                    <TableCell>
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <User className="h-4 w-4" />
+                        {loft.owner_name || "N/A"}
+                      </div>
+                    </TableCell>
+                  </RoleBasedAccess>
                   <TableCell>
                     {loft.zone_area_name || "N/A"}
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <DollarSign className="h-4 w-4" />
-                      {formatPrice(loft.price_per_night)}
-                    </div>
-                  </TableCell>
+                  <RoleBasedAccess 
+                    userRole={userRole} 
+                    allowedRoles={['admin', 'manager', 'executive']}
+                    showFallback={false}
+                  >
+                    <TableCell>
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <DollarSign className="h-4 w-4" />
+                        {formatPrice(loft.price_per_night)}
+                      </div>
+                    </TableCell>
+                  </RoleBasedAccess>
                   <TableCell>
                     {loft.rooms || "N/A"}
                   </TableCell>

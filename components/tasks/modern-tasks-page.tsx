@@ -28,8 +28,11 @@ import {
   TrendingUp,
   ListTodo,
   PlayCircle,
-  CheckCircle2
+  CheckCircle2,
+  Building2
 } from "lucide-react"
+import { TaskActions } from "./task-actions"
+import { useTaskManagement } from "@/hooks/use-task-management"
 
 interface Task {
   id: string
@@ -40,6 +43,14 @@ interface Task {
   assigned_to?: string
   created_at: string
   updated_at: string
+  loft_id?: string | null
+  loft?: {
+    id: string
+    name: string
+    address: string
+  } | null
+  isOrphaned?: boolean
+  orphanedLoftId?: string
 }
 
 interface User {
@@ -79,48 +90,69 @@ export function ModernTasksPage({
         return status
     }
   }
+
+  // Use enhanced task management hook
+  const {
+    filteredTasks,
+    stats,
+    permissions,
+    getTaskPermissions,
+    updateFilters,
+    currentFilters
+  } = useTaskManagement(tasks, {
+    userRole,
+    userId: currentUserId,
+    assignedLoftIds: [], // Could be populated from user's loft assignments
+    teamIds: []
+  })
   
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [assigneeFilter, setAssigneeFilter] = useState<string>("all")
+  const [loftFilter, setLoftFilter] = useState<string>("all")
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
 
-  // Filter tasks
-  const filteredTasks = useMemo(() => {
-    return tasks.filter((task) => {
-      const taskDate = task.due_date ? new Date(task.due_date) : null
-      const startDateMatch = !startDate || (taskDate && taskDate >= new Date(startDate))
-      const endDateMatch = !endDate || (taskDate && taskDate <= new Date(endDate))
-      const matchesSearch = !searchTerm || 
-                           task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           task.description.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesStatus = statusFilter === "all" || task.status === statusFilter
-      const matchesAssignee = assigneeFilter === "all" || task.assigned_to === assigneeFilter
-
-      return startDateMatch && endDateMatch && matchesSearch && matchesStatus && matchesAssignee
+  // Get unique lofts from tasks for filter options
+  const availableLofts = useMemo(() => {
+    const loftMap = new Map()
+    tasks.forEach(task => {
+      if (task.loft) {
+        loftMap.set(task.loft.id, task.loft)
+      }
     })
-  }, [tasks, searchTerm, statusFilter, assigneeFilter, startDate, endDate])
+    return Array.from(loftMap.values())
+  }, [tasks])
 
-  // Calculs des statistiques
-  const { todoCount, inProgressCount, completedCount, myTasksCount, overdueCount } = useMemo(() => {
-    const now = new Date()
-    return tasks.reduce(
-      (acc, task) => {
-        if (task.status === 'todo') acc.todoCount++
-        if (task.status === 'in_progress') acc.inProgressCount++
-        if (task.status === 'completed') acc.completedCount++
-        if (task.assigned_to === currentUserId) acc.myTasksCount++
-        
-        if (task.due_date && new Date(task.due_date) < now && task.status !== 'completed') {
-          acc.overdueCount++
-        }
-        
-        return acc
-      },
-      { todoCount: 0, inProgressCount: 0, completedCount: 0, myTasksCount: 0, overdueCount: 0 }
-    )
-  }, [tasks, currentUserId])
+  // Update filters when local state changes
+  const handleFilterChange = (filterType: string, value: string) => {
+    switch (filterType) {
+      case 'search':
+        setSearchTerm(value)
+        updateFilters({ searchTerm: value })
+        break
+      case 'status':
+        setStatusFilter(value)
+        updateFilters({ statusFilter: value })
+        break
+      case 'assignee':
+        setAssigneeFilter(value)
+        updateFilters({ assigneeFilter: value })
+        break
+      case 'loft':
+        setLoftFilter(value)
+        updateFilters({ loftFilter: value })
+        break
+      case 'startDate':
+        setStartDate(value)
+        updateFilters({ startDate: value })
+        break
+      case 'endDate':
+        setEndDate(value)
+        updateFilters({ endDate: value })
+        break
+    }
+  }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -156,8 +188,17 @@ export function ModernTasksPage({
     setSearchTerm("")
     setStatusFilter("all")
     setAssigneeFilter("all")
+    setLoftFilter("all")
     setStartDate("")
     setEndDate("")
+    updateFilters({
+      searchTerm: "",
+      statusFilter: "all",
+      assigneeFilter: "all",
+      loftFilter: "all",
+      startDate: "",
+      endDate: ""
+    })
   }
 
   return (
@@ -177,7 +218,7 @@ export function ModernTasksPage({
           </p>
           
           {/* Bouton d'action */}
-          {(userRole === "admin" || userRole === "manager") && (
+          {permissions.canCreateTask && (
             <div className="flex justify-center">
               <Button 
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl px-6 py-3 text-base font-medium transition-all duration-200" 
@@ -208,7 +249,7 @@ export function ModernTasksPage({
             <CardContent>
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-gray-600 dark:text-gray-400">
-                  {todoCount}
+                  {stats.todo}
                 </span>
                 <span className="text-gray-600 dark:text-gray-400 font-medium">{t('tasks')}</span>
               </div>
@@ -229,7 +270,7 @@ export function ModernTasksPage({
             <CardContent>
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-blue-600">
-                  {inProgressCount}
+                  {stats.inProgress}
                 </span>
                 <span className="text-blue-600 font-medium">{t('status.inProgress')}</span>
               </div>
@@ -250,7 +291,7 @@ export function ModernTasksPage({
             <CardContent>
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-green-600">
-                  {completedCount}
+                  {stats.completed}
                 </span>
                 <span className="text-green-600 font-medium">{t('status.completed')}</span>
               </div>
@@ -271,7 +312,7 @@ export function ModernTasksPage({
             <CardContent>
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-purple-600">
-                  {myTasksCount}
+                  {stats.myTasks}
                 </span>
                 <span className="text-purple-600 font-medium">{t('assigned')}</span>
               </div>
@@ -292,7 +333,7 @@ export function ModernTasksPage({
             <CardContent>
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-red-600">
-                  {overdueCount}
+                  {stats.overdue}
                 </span>
                 <span className="text-red-600 font-medium">{t('overdue')}</span>
               </div>
@@ -320,7 +361,7 @@ export function ModernTasksPage({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
               {/* Recherche */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium mb-2">
@@ -332,7 +373,7 @@ export function ModernTasksPage({
                   <Input
                     placeholder={t('searchPlaceholder')}
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => handleFilterChange('search', e.target.value)}
                     className="pl-10 border-2 hover:border-blue-300 focus:border-blue-500 transition-colors"
                   />
                 </div>
@@ -348,7 +389,7 @@ export function ModernTasksPage({
                   <Input
                     type="date"
                     value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
+                    onChange={(e) => handleFilterChange('startDate', e.target.value)}
                     placeholder="jj/mm/aaaa"
                     className="flex-1 border-2 hover:border-blue-300 focus:border-blue-500 transition-colors"
                   />
@@ -356,7 +397,7 @@ export function ModernTasksPage({
                   <Input
                     type="date"
                     value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
+                    onChange={(e) => handleFilterChange('endDate', e.target.value)}
                     placeholder="jj/mm/aaaa"
                     className="flex-1 border-2 hover:border-blue-300 focus:border-blue-500 transition-colors"
                   />
@@ -369,7 +410,7 @@ export function ModernTasksPage({
                   <CheckCircle className="h-4 w-4 text-blue-500" />
                   {t('taskStatus')}
                 </label>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <Select value={statusFilter} onValueChange={(value) => handleFilterChange('status', value)}>
                   <SelectTrigger className="border-2 hover:border-blue-300 transition-colors">
                     <SelectValue />
                   </SelectTrigger>
@@ -403,7 +444,7 @@ export function ModernTasksPage({
                   <Users className="h-4 w-4 text-blue-500" />
                   {t('assignedTo')}
                 </label>
-                <Select value={assigneeFilter} onValueChange={setAssigneeFilter}>
+                <Select value={assigneeFilter} onValueChange={(value) => handleFilterChange('assignee', value)}>
                   <SelectTrigger className="border-2 hover:border-blue-300 transition-colors">
                     <SelectValue />
                   </SelectTrigger>
@@ -412,6 +453,36 @@ export function ModernTasksPage({
                     {users.map((user) => (
                       <SelectItem key={user.id} value={user.id}>
                         {user.full_name === 'member1' ? tCommon('member1') : user.full_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Loft Filter */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium mb-2">
+                  <Building2 className="h-4 w-4 text-blue-500" />
+                  {t('associatedLoft')}
+                </label>
+                <Select value={loftFilter} onValueChange={(value) => handleFilterChange('loft', value)}>
+                  <SelectTrigger className="border-2 hover:border-blue-300 transition-colors">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('allLofts')}</SelectItem>
+                    <SelectItem value="no_loft">
+                      <div className="flex items-center gap-2">
+                        <Building2 className="h-4 w-4 text-gray-400" />
+                        {t('noLoftAssociated')}
+                      </div>
+                    </SelectItem>
+                    {availableLofts.map((loft) => (
+                      <SelectItem key={loft.id} value={loft.id}>
+                        <div className="flex items-center gap-2">
+                          <Building2 className="h-4 w-4 text-blue-600" />
+                          <span className="truncate">{loft.name}</span>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -441,7 +512,7 @@ export function ModernTasksPage({
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
                   {t('noTasksDescription')}
                 </p>
-                {(userRole === "admin" || userRole === "manager") && (
+                {permissions.canCreateTask && (
                   <Button asChild>
                     <Link href="/tasks/new">
                       <Plus className="mr-2 h-4 w-4" />
@@ -465,9 +536,19 @@ export function ModernTasksPage({
                               <div className={`p-1.5 rounded-full ${task.status === 'completed' ? 'bg-green-100' : task.status === 'in_progress' ? 'bg-blue-100' : 'bg-gray-100'}`}>
                                 {getStatusIcon(task.status)}
                               </div>
-                              <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
+                              <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate flex-1">
                                 {task.title}
                               </CardTitle>
+                              {task.loft && (
+                                <div className="p-1 bg-blue-50 rounded-full" title={`${t('associatedLoft')}: ${task.loft.name}`}>
+                                  <Building2 className="h-3 w-3 text-blue-600" />
+                                </div>
+                              )}
+                              {task.isOrphaned && (
+                                <div className="p-1 bg-red-50 rounded-full" title={`${t('loftDeleted')} (ID: ${task.orphanedLoftId})`}>
+                                  <AlertCircle className="h-3 w-3 text-red-600" />
+                                </div>
+                              )}
                             </div>
                             {task.due_date && (
                               <div className="flex items-center gap-2 text-sm">
@@ -505,23 +586,34 @@ export function ModernTasksPage({
                           </div>
                         )}
 
-                        {/* Actions */}
-                        <div className="flex gap-2 pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                          <Button variant="outline" size="sm" className="flex-1" asChild>
-                            <Link href={`/tasks/${task.id}`}>
-                              <Eye className="h-3 w-3 mr-1" />
-                              {t('viewTask')}
-                            </Link>
-                          </Button>
-                          
-                          {(userRole === "admin" || userRole === "manager" || (userRole === "member" && task.assigned_to === currentUserId)) && (
-                            <Button variant="outline" size="sm" asChild>
-                              <Link href={`/tasks/${task.id}/edit`}>
-                                <Edit className="h-3 w-3" />
-                              </Link>
-                            </Button>
+                        {/* Associated Loft */}
+                        <div className="flex items-center gap-2 text-sm">
+                          <Building2 className="h-3 w-3 text-gray-400 dark:text-gray-500" />
+                          <span className="font-medium text-gray-700 dark:text-gray-300">{t('associatedLoft')}:</span>
+                          {task.loft ? (
+                            <span className="text-gray-600 dark:text-gray-400 truncate" title={`${task.loft.name} - ${task.loft.address}`}>
+                              {task.loft.name}
+                            </span>
+                          ) : task.isOrphaned ? (
+                            <div className="flex items-center gap-1">
+                              <span className="text-red-600 dark:text-red-400 italic">
+                                {t('loftDeleted')}
+                              </span>
+                              <AlertCircle className="h-3 w-3 text-red-500" title={`ID: ${task.orphanedLoftId}`} />
+                            </div>
+                          ) : (
+                            <span className="text-gray-500 dark:text-gray-500 italic">
+                              {t('noLoftAssociated')}
+                            </span>
                           )}
                         </div>
+
+                        {/* Actions */}
+                        <TaskActions 
+                          task={task}
+                          userRole={userRole}
+                          currentUserId={currentUserId}
+                        />
                       </CardContent>
                     </Card>
                   )

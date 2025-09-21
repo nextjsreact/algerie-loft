@@ -205,7 +205,7 @@
   "companyShare": "Company share",
   "noLoftsMatch": "No lofts match the filters",
   "loftName": "Loft name",
-  "pricePerMonth": "Price per month",
+  "pricePerMonth": "Price per Night",
   "loftCreateError": "Error creating loft",
   "loftUpdatedDescription": "All changes have been saved successfully",
   "updateError": "Failed to save changes. Check your data and try again",

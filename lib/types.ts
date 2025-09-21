@@ -52,7 +52,8 @@ export type Loft = {
   name: string;
   address: string;
   description?: string;
-  price_per_month: number;
+  price_per_month: number | null;
+  price_per_night?: number | null;
   status: LoftStatus;
   owner_id: string;
   company_percentage: number;

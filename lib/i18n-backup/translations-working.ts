@@ -264,7 +264,7 @@ export const translations = {
       deleteErrorDescription: "Could not delete the loft. It might be linked to other data. Contact support.",
       deleteCancelled: "⚠️ Deletion cancelled",
       deleteCancelledDescription: "The confirmation was incorrect. The loft was not deleted.",
-      pricePerMonth: "Monthly Price ($)",
+      pricePerMonth: "Price per Month ($)",
       loftCreatedSuccess: "🏠 Loft \"{name}\" created successfully!",
       loftCreatedSuccessDescription: "The loft has been added to your management system"
     },
@@ -752,7 +752,7 @@ export const translations = {
       deleteErrorDescription: "Impossible de supprimer le loft. Il peut être lié à d'autres données. Contactez le support.",
       deleteCancelled: "⚠️ Suppression annulée",
       deleteCancelledDescription: "La confirmation était incorrecte. Le loft n'a pas été supprimé.",
-      pricePerMonth: "Prix mensuel ($)",
+      pricePerMonth: "Prix par mois ($)",
       loftCreatedSuccess: "🏠 Loft \"{name}\" créé avec succès !",
       loftCreatedSuccessDescription: "Le loft a été ajouté à votre système de gestion"
     },
@@ -1239,7 +1239,7 @@ export const translations = {
       deleteErrorDescription: "تعذر حذف الشقة. قد تكون مرتبطة ببيانات أخرى. اتصل بالدعم.",
       deleteCancelled: "⚠️ تم إلغاء الحذف",
       deleteCancelledDescription: "التأكيد غير صحيح. لم يتم حذف الشقة.",
-      pricePerMonth: "السعر الشهري ($)",
+      pricePerMonth: "السعر للشهر ($)",
       loftCreatedSuccess: "🏠 تم إنشاء الشقة \"{name}\" بنجاح!",
       loftCreatedSuccessDescription: "تمت إضافة الشقة إلى نظام الإدارة الخاص بك"
     },

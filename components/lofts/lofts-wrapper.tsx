@@ -7,6 +7,7 @@ import Link from "next/link"
 import { LoftsList } from "@/components/lofts/lofts-list"
 import { RoleBasedAccess } from "@/components/auth/role-based-access"
 import type { LoftWithRelations, LoftOwner, ZoneArea, UserRole } from "@/lib/types"
+import { formatCurrencyAuto } from "@/utils/currency-formatter"
 
 interface LoftsWrapperProps {
   lofts: LoftWithRelations[]
@@ -39,7 +40,7 @@ export function LoftsWrapper({
   const availableLofts = lofts.filter(loft => loft.status === 'available').length
   const occupiedLofts = lofts.filter(loft => loft.status === 'occupied').length
   const maintenanceLofts = lofts.filter(loft => loft.status === 'maintenance').length
-  const totalRevenue = lofts.reduce((sum, loft) => sum + (loft.price_per_night || 0), 0)
+  const totalRevenue = lofts.reduce((sum, loft) => sum + (loft.price_per_month || 0), 0)
 
   return (
     <div className="space-y-8">
@@ -130,7 +131,7 @@ export function LoftsWrapper({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-purple-600 text-sm font-medium">{t('totalRevenue')}</p>
-                <p className="text-2xl font-bold text-purple-700">{totalRevenue.toLocaleString()} DA</p>
+                <p className="text-2xl font-bold text-purple-700">{formatCurrencyAuto(totalRevenue, 'DZD', `/${locale}/lofts`)}</p>
               </div>
               <div className="p-3 bg-purple-200 rounded-full">
                 <TrendingUp className="w-6 h-6 text-purple-600" />

@@ -41,6 +41,9 @@
     "phone": "الهاتف",
     "pleaseEnterPaymentAmount": "يرجى إدخال مبلغ الدفع",
     "processing": "جاري المعالجة...",
+    "quarterly": "ربع سنوي",
+    "monthly": "شهري",
+    "yearly": "سنوي",
     "title": "إدارة الفواتير",
     "water": "المياه"
   },
@@ -176,6 +179,8 @@
     "photoViewer": "عارض الصور",
     "photosAvailable": "{{count}} صورة متاحة",
     "photosAvailable_plural": "{{count}} صور متاحة",
+    "photosAvailable_one": "{{count}} صورة متاحة",
+    "photosAvailable_other": "{{count}} صور متاحة",
     "selectPhotos": "اختيار الصور",
     "supportedFormats": "الصيغ المدعومة: JPG, PNG, WebP (حد أقصى 5 ميجابايت لكل صورة)",
     "thumbnails": "الصور المصغرة",
@@ -187,7 +192,8 @@
     "willBeDeleted": "سيتم حذف هذه الصورة نهائياً"
   },
   "pricePerDay": "السعر اليومي (دج)",
-  "pricePerMonth": "السعر شهرياً",
+  "pricePerMonth": "السعر للشهر",
+  "pricePerNight": "السعر لليلة",
   "quarterly": "ربع سنوي",
   "selectFrequency": "اختر التكرار",
   "shouldEqual100": "يجب أن يساوي المجموع 100٪",
@@ -231,5 +237,6 @@
   "waterMeterNumber": "رقم عداد المياه",
   "weekly": "أسبوعي",
   "yearly": "سنوي",
-  "zoneArea": "المنطقة"
+  "zoneArea": "المنطقة",
+  "percentages": "النسب المئوية"
 }

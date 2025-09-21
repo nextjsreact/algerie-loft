@@ -55,6 +55,19 @@ export function DashboardClientWrapper() {
     )
   }
 
-  // For admin, manager, executive roles - use the existing ModernDashboard
+  // For executive role - redirect to dedicated executive dashboard
+  if (session.user.role === 'executive') {
+    // Use window.location for client-side redirect to executive page
+    if (typeof window !== 'undefined') {
+      window.location.href = `/${session.user.role === 'executive' ? 'executive' : 'dashboard'}`
+    }
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Redirecting to executive dashboard...</div>
+      </div>
+    )
+  }
+
+  // For admin, manager roles - use the existing ModernDashboard
   return <ModernDashboard />
 }

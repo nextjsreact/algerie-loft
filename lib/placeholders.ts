@@ -15,6 +15,7 @@ export const placeholders = {
   loftAddress: "Ex: 123 Rue Didouche Mourad, Alger",
   loftDescription: "Ex: Appartement spacieux avec vue sur mer...",
   pricePerMonth: "Ex: 50000",
+  pricePerNight: "Ex: 1500",
   
   // Champs financiers
   amount: "Ex: 25000",

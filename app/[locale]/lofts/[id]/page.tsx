@@ -35,17 +35,127 @@ const getTranslatedDescription = (originalDescription: string, loftName: string,
   return originalDescription
 }
 
-export default async function LoftDetailPage({ params }: { params: Promise<{ id: string }> }) {
+// Fonction pour obtenir les traductions statiques selon la langue
+const getStaticTranslation = (key: string, t: any, locale: string = 'fr') => {
+  // Fallback vers les traductions par défaut selon la langue détectée
+
+  switch (locale) {
+    case 'ar':
+       switch (key) {
+         case 'utilityInfo.title': return 'معلومات المرافق';
+         case 'utilityInfo.nextBills': return 'الفواتير القادمة';
+         case 'photos.photoGallery': return 'معرض الصور';
+         case 'additionalInfo.title': return 'معلومات إضافية';
+         case 'billManagement.title': return 'إدارة الفواتير';
+         case 'additionalInfo.createdOn': return 'تم الإنشاء في';
+         case 'additionalInfo.lastUpdated': return 'آخر تحديث';
+         case 'notSet': return 'غير محدد';
+         case 'percentages': return 'النسب المئوية';
+         case 'photosAvailable': return '{{count}} صورة متاحة';
+         // Noms des services
+         case 'water': return 'المياه';
+         case 'electricity': return 'الكهرباء';
+         case 'gas': return 'الغاز';
+         // Labels des champs
+         case 'customerCode': return 'رمز العميل';
+         case 'meterNumber': return 'رقم العداد';
+         case 'pdlRef': return 'مرجع PDL';
+         case 'clientNumber': return 'رقم العميل';
+         case 'correspondent': return 'المراسل';
+         // Fréquences
+         case 'frequency': return 'التردد';
+         case 'quarterly': return 'ربع سنوي';
+         case 'monthly': return 'شهري';
+         case 'trimestriel': return 'ربع سنوي';
+         case 'mensuel': return 'شهري';
+         case 'phone': return 'الهاتف';
+         case 'internet': return 'الإنترنت';
+         case 'energy': return 'الطاقة';
+         default: return key;
+       }
+    case 'en':
+       switch (key) {
+         case 'utilityInfo.title': return 'Utility Information';
+         case 'utilityInfo.nextBills': return 'Next Bills';
+         case 'photos.photoGallery': return 'Photo Gallery';
+         case 'additionalInfo.title': return 'Additional Information';
+         case 'billManagement.title': return 'Bill Management';
+         case 'additionalInfo.createdOn': return 'Created on';
+         case 'additionalInfo.lastUpdated': return 'Last updated';
+         case 'notSet': return 'Not set';
+         case 'percentages': return 'Percentages';
+         case 'photosAvailable': return '{{count}} photos available';
+         // Service names
+         case 'water': return 'Water';
+         case 'electricity': return 'Electricity';
+         case 'gas': return 'Gas';
+         // Field labels
+         case 'customerCode': return 'Customer Code';
+         case 'meterNumber': return 'Meter Number';
+         case 'pdlRef': return 'PDL Reference';
+         case 'clientNumber': return 'Client Number';
+         case 'correspondent': return 'Correspondent';
+         // Frequencies
+         case 'frequency': return 'Frequency';
+         case 'quarterly': return 'Quarterly';
+         case 'monthly': return 'Monthly';
+         case 'trimestriel': return 'Quarterly';
+         case 'mensuel': return 'Monthly';
+         case 'phone': return 'Phone';
+         case 'internet': return 'Internet';
+         case 'energy': return 'Energy';
+         default: return key;
+       }
+    default: // Français par défaut
+       switch (key) {
+         case 'utilityInfo.title': return 'Informations Utilitaires';
+         case 'utilityInfo.nextBills': return 'Prochaines échéances';
+         case 'photos.photoGallery': return 'Photos du Loft';
+         case 'additionalInfo.title': return 'Informations Complémentaires';
+         case 'billManagement.title': return 'Gestion des Factures';
+         case 'additionalInfo.createdOn': return 'Créé le';
+         case 'additionalInfo.lastUpdated': return 'Dernière mise à jour';
+         case 'notSet': return 'Prix à définir';
+         case 'percentages': return 'Pourcentages';
+         case 'photosAvailable': return '{{count}} photos disponibles';
+         // Noms des services
+         case 'water': return 'Eau';
+         case 'electricity': return 'Électricité';
+         case 'gas': return 'Gaz';
+         // Labels des champs
+         case 'customerCode': return 'Code client';
+         case 'meterNumber': return 'N° compteur';
+         case 'pdlRef': return 'Réf PDL';
+         case 'clientNumber': return 'N° client';
+         case 'correspondent': return 'Correspondant';
+         // Fréquences
+         case 'frequency': return 'Fréquence';
+         case 'quarterly': return 'Trimestriel';
+         case 'monthly': return 'Mensuel';
+         case 'trimestriel': return 'Trimestriel';
+         case 'mensuel': return 'Mensuel';
+         case 'phone': return 'Téléphone';
+         case 'internet': return 'Internet';
+         case 'energy': return 'Énergie';
+         default: return key;
+       }
+  }
+}
+
+export default async function LoftDetailPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
   const awaitedParams = await params;
-  
+
   try {
     const session = await requireRole(["admin", "manager"])
     const supabase = await createClient()
-    
+
     // Récupérer les traductions
     const t = await getTranslations('lofts')
     const tCommon = await getTranslations('common')
     const tOwners = await getTranslations('owners')
+
+    // Extraire la locale des paramètres
+    const locale = awaitedParams.locale || 'fr'
 
     // Test simple sans jointure d'abord
     const { data: loft, error } = await supabase
@@ -157,15 +267,27 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                       allowedRoles={['admin', 'manager', 'executive']}
                       showFallback={false}
                     >
-                      <div className="flex items-center gap-3">
-                        <Euro className="h-5 w-5 text-green-600" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">{t('pricePerMonth')}</p>
-                          <p className="text-2xl font-bold text-green-600">
-                            {loft.price_per_month} {tCommon('currencies.da')}
-                          </p>
+                      {loft.price_per_night ? (
+                        <div className="flex items-center gap-3">
+                          <Euro className="h-5 w-5 text-green-600" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">{t('pricePerNight')}</p>
+                            <p className="text-2xl font-bold text-green-600">
+                              {loft.price_per_night.toLocaleString()} {tCommon('currencies.da')}
+                            </p>
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="flex items-center gap-3">
+                          <Euro className="h-5 w-5 text-yellow-600" />
+                          <div>
+                            <p className="text-sm text-muted-foreground">{t('pricePerNight')}</p>
+                            <p className="text-lg font-medium text-yellow-600">
+                              {getStaticTranslation('notSet', t, locale)}
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </RoleBasedAccess>
                     
                     <div className="flex items-center gap-3">
@@ -202,7 +324,7 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                 >
                   <Separator />
                   <div>
-                    <p className="text-sm text-muted-foreground mb-3">Pourcentages</p>
+                    <p className="text-sm text-muted-foreground mb-3">{getStaticTranslation('percentages', t, locale)}</p>
                     <div className="grid grid-cols-2 gap-3">
                       <div className="text-center p-3 bg-blue-50 rounded-lg">
                         <div className="text-xl font-bold text-blue-600">{loft.company_percentage}%</div>
@@ -222,7 +344,7 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                     <div className="flex items-center gap-3">
                       <Phone className="h-5 w-5 text-blue-600" />
                       <div>
-                        <p className="text-sm text-muted-foreground">Téléphone</p>
+                        <p className="text-sm text-muted-foreground">{getStaticTranslation('phone', t, locale)}</p>
                         <p className="font-medium">{loft.phone_number}</p>
                       </div>
                     </div>
@@ -234,7 +356,7 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
             {/* Informations utilitaires */}
             <Card>
               <CardHeader>
-                <CardTitle>Informations Utilitaires</CardTitle>
+                <CardTitle>{getStaticTranslation('utilityInfo.title', t, locale)}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -242,24 +364,24 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Droplets className="h-5 w-5 text-blue-500" />
-                      <h4 className="font-semibold">Eau</h4>
+                      <h4 className="font-semibold">{getStaticTranslation('water', t, locale)}</h4>
                     </div>
                     <div className="space-y-2 text-sm">
                       {loft.water_customer_code && (
                         <div>
-                          <span className="text-muted-foreground">Code client: </span>
+                          <span className="text-muted-foreground">{getStaticTranslation('customerCode', t, locale)}: </span>
                           <span className="font-medium">{loft.water_customer_code}</span>
                         </div>
                       )}
                       {loft.water_meter_number && (
                         <div>
-                          <span className="text-muted-foreground">N° compteur: </span>
+                          <span className="text-muted-foreground">{getStaticTranslation('meterNumber', t, locale)}: </span>
                           <span className="font-medium">{loft.water_meter_number}</span>
                         </div>
                       )}
                       {loft.water_correspondent && (
                         <div>
-                          <span className="text-muted-foreground">Correspondant: </span>
+                          <span className="text-muted-foreground">{getStaticTranslation('correspondent', t, locale)}: </span>
                           <span className="font-medium">{loft.water_correspondent}</span>
                         </div>
                       )}
@@ -270,24 +392,24 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Zap className="h-5 w-5 text-yellow-500" />
-                      <h4 className="font-semibold">Électricité</h4>
+                      <h4 className="font-semibold">{getStaticTranslation('electricity', t, locale)}</h4>
                     </div>
                     <div className="space-y-2 text-sm">
                       {loft.electricity_customer_number && (
                         <div>
-                          <span className="text-muted-foreground">N° client: </span>
+                          <span className="text-muted-foreground">{getStaticTranslation('clientNumber', t, locale)}: </span>
                           <span className="font-medium">{loft.electricity_customer_number}</span>
                         </div>
                       )}
                       {loft.electricity_meter_number && (
                         <div>
-                          <span className="text-muted-foreground">N° compteur: </span>
+                          <span className="text-muted-foreground">{getStaticTranslation('meterNumber', t, locale)}: </span>
                           <span className="font-medium">{loft.electricity_meter_number}</span>
                         </div>
                       )}
                       {loft.electricity_pdl_ref && (
                         <div>
-                          <span className="text-muted-foreground">Réf PDL: </span>
+                          <span className="text-muted-foreground">{getStaticTranslation('pdlRef', t, locale)}: </span>
                           <span className="font-medium">{loft.electricity_pdl_ref}</span>
                         </div>
                       )}
@@ -298,18 +420,18 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Flame className="h-5 w-5 text-orange-500" />
-                      <h4 className="font-semibold">Gaz</h4>
+                      <h4 className="font-semibold">{getStaticTranslation('gas', t, locale)}</h4>
                     </div>
                     <div className="space-y-2 text-sm">
                       {loft.gas_customer_number && (
                         <div>
-                          <span className="text-muted-foreground">N° client: </span>
+                          <span className="text-muted-foreground">{getStaticTranslation('clientNumber', t, locale)}: </span>
                           <span className="font-medium">{loft.gas_customer_number}</span>
                         </div>
                       )}
                       {loft.gas_meter_number && (
                         <div>
-                          <span className="text-muted-foreground">N° compteur: </span>
+                          <span className="text-muted-foreground">{getStaticTranslation('meterNumber', t, locale)}: </span>
                           <span className="font-medium">{loft.gas_meter_number}</span>
                         </div>
                       )}
@@ -320,12 +442,12 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-5 w-5 text-purple-500" />
-                      <h4 className="font-semibold">Prochaines échéances</h4>
+                      <h4 className="font-semibold">{getStaticTranslation('utilityInfo.nextBills', t, locale)}</h4>
                     </div>
                     <div className="space-y-2 text-sm">
                       {loft.prochaine_echeance_eau && (
                         <div>
-                          <span className="text-muted-foreground">Eau: </span>
+                          <span className="text-muted-foreground">{getStaticTranslation('water', t, locale)}: </span>
                           <span className="font-medium">
                             {new Date(loft.prochaine_echeance_eau).toLocaleDateString('fr-FR')}
                           </span>
@@ -333,7 +455,7 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                       )}
                       {loft.prochaine_echeance_energie && (
                         <div>
-                          <span className="text-muted-foreground">Électricité: </span>
+                          <span className="text-muted-foreground">{getStaticTranslation('electricity', t, locale)}: </span>
                           <span className="font-medium">
                             {new Date(loft.prochaine_echeance_energie).toLocaleDateString('fr-FR')}
                           </span>
@@ -353,7 +475,7 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <span>📸</span>
-                  Photos du Loft
+                  {getStaticTranslation('photos.photoGallery', t, locale)}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -367,17 +489,17 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
             {/* Informations supplémentaires */}
             <Card>
               <CardHeader>
-                <CardTitle>Informations Complémentaires</CardTitle>
+                <CardTitle>{getStaticTranslation('additionalInfo.title', t, locale)}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Créé le</p>
+                  <p className="text-sm text-muted-foreground">{getStaticTranslation('additionalInfo.createdOn', t, locale)}</p>
                   <p className="font-medium">
                     {new Date(loft.created_at).toLocaleDateString('fr-FR')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Dernière mise à jour</p>
+                  <p className="text-sm text-muted-foreground">{getStaticTranslation('additionalInfo.lastUpdated', t, locale)}</p>
                   <p className="font-medium">
                     {new Date(loft.updated_at).toLocaleDateString('fr-FR')}
                   </p>
@@ -401,7 +523,7 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
         >
           <Card>
             <CardHeader>
-              <CardTitle>Gestion des Factures</CardTitle>
+              <CardTitle>{getStaticTranslation('billManagement.title', t, locale)}</CardTitle>
             </CardHeader>
             <CardContent>
               <LoftBillManagement loftId={awaitedParams.id} loftData={loft} />

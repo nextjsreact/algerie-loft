@@ -45,6 +45,7 @@ import {
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import type { LoftWithRelations, LoftOwner, ZoneArea, UserRole } from "@/lib/types"
+import { formatCurrencyAuto } from "@/utils/currency-formatter"
 
 interface LoftsListProps {
   lofts: LoftWithRelations[]
@@ -91,6 +92,16 @@ export function LoftsList({
   const startIndex = (currentPage - 1) * itemsPerPage
   const paginatedLofts = filteredLofts.slice(startIndex, startIndex + itemsPerPage)
 
+  // Debug: Log the first few lofts to see their data structure
+  console.log('Lofts data sample:', paginatedLofts.slice(0, 3).map(loft => ({
+    id: loft.id,
+    name: loft.name,
+    price_per_month: loft.price_per_month,
+    price_per_month_type: typeof loft.price_per_month,
+    price_per_night: (loft as any).price_per_night,
+    price_per_night_type: typeof (loft as any).price_per_night
+  })))
+
   // Fonction pour obtenir le badge de statut
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -110,8 +121,12 @@ export function LoftsList({
 
   // Fonction pour formater le prix
   const formatPrice = (price: number | null) => {
-    if (!price) return "N/A"
-    return `${price.toLocaleString()} DA`
+    console.log('formatPrice called with:', price, 'Type:', typeof price)
+    if (!price || price === null || price === undefined) {
+      console.log('Price is null/undefined, returning N/A')
+      return "N/A"
+    }
+    return formatCurrencyAuto(price, 'DZD', `/${locale}/lofts`)
   }
 
   return (
@@ -278,12 +293,12 @@ export function LoftsList({
                     <TableCell>
                       <div className="flex items-center gap-2 text-gray-600">
                         <DollarSign className="h-4 w-4" />
-                        {formatPrice(loft.price_per_night)}
+                        {formatPrice(loft.price_per_month || 0)}
                       </div>
                     </TableCell>
                   </RoleBasedAccess>
                   <TableCell>
-                    {loft.rooms || "N/A"}
+                    {"N/A"}
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>

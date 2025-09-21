@@ -99,7 +99,8 @@
     "reports:install": "npm install jspdf jspdf-autotable html2canvas react-to-print @types/jspdf",
     "reports:test": "tsx scripts/test-pdf-generation.ts",
     "fix:webpack": "tsx scripts/fix-webpack-errors.ts",
-    "test:dry-run": "tsx scripts/test-dry-run.ts"
+    "test:dry-run": "tsx scripts/test-dry-run.ts",
+    "fix:prices": "tsx scripts/fix-missing-prices.ts"
   },
   "ts-node": {
     "esm": true

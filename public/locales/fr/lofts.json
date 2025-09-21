@@ -197,7 +197,7 @@
   "companyShare": "Part société",
   "noLoftsMatch": "Aucun loft ne correspond aux filtres",
   "loftName": "Nom du loft",
-  "pricePerMonth": "Prix par mois",
+  "pricePerMonth": "Prix par nuit",
   "loftCreateError": "Erreur lors de la création du loft",
   "loftUpdatedDescription": "Toutes les modifications ont été sauvegardées",
   "updateError": "Impossible de sauvegarder les modifications. Vérifiez vos données et réessayez",

@@ -113,7 +113,7 @@ export default function ReportsPage() {
             <div className="absolute -bottom-6 -left-6 h-32 w-32 rounded-full bg-white/5"></div>
           </div>
 
-          <Tabs defaultValue="analytics" className="space-y-8">
+          <Tabs defaultValue={new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('tab') || "analytics"} className="space-y-8">
             <TabsList className="grid w-full grid-cols-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-lg rounded-xl p-1">
               <TabsTrigger 
                 value="analytics" 

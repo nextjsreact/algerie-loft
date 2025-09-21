@@ -36,6 +36,7 @@ import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { format } from "date-fns";
 import { fr, ar, enUS } from "date-fns/locale";
 import { useTranslations, useLocale } from "next-intl";
+import { formatCurrencyAuto } from "@/utils/currency-formatter";
 
 type UtilityType = "eau" | "energie" | "telephone" | "internet" | "tv" | "gas";
 
@@ -170,6 +171,11 @@ export function ModernDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [defaultCurrencySymbol, setDefaultCurrencySymbol] = useState<string>('$'); // New state for currency symbol
   const supabase = createClient();
+
+  // Currency formatting function (uses global utility)
+  const formatCurrency = (amount: number) => {
+    return formatCurrencyAuto(amount, 'DZD', window.location.pathname)
+  }
 
   useEffect(() => {
     fetchDashboardData();
@@ -413,7 +419,7 @@ export function ModernDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-green-100 text-sm font-medium">{t("monthlyRevenue")}</p>
-                <p className="text-3xl font-bold">{defaultCurrencySymbol}{stats.monthlyRevenue.toLocaleString()}</p>
+                <p className="text-3xl font-bold">{formatCurrency(stats.monthlyRevenue)}</p>
                 <div className="flex items-center text-green-100 text-xs mt-1">
                   <ArrowUpRight className="h-3 w-3 mr-1" />
                   +12% {t("thisMonth")}

@@ -48,7 +48,7 @@ export function EnhancedSidebar({ user, unreadCount, className }: EnhancedSideba
     { name: t('teams'), href: `/${locale}/teams`, icon: Users, roles: ["admin", "manager"] },
     { name: t('owners'), href: `/${locale}/owners`, icon: UserCheck, roles: ["admin"] },
     { name: t('transactions'), href: `/${locale}/transactions`, icon: DollarSign, roles: ["admin", "manager"] },
-    { name: t('reports'), href: `/${locale}/reports`, icon: Calendar, roles: ["admin", "manager"] },
+    { name: t('reports'), href: `/${locale}/reports`, icon: Calendar, roles: ["admin", "manager", "executive"] },
     { 
       name: t('settings'), 
       href: `/${locale}/settings`, 

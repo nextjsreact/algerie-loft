@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Star, Trash2 } from "lucide-react"
 import { Currency } from "@/lib/types"
+import { getCurrencySymbol } from "@/utils/currency-formatter"
 
 export const getColumns = (
   onSetDefault: (id: string) => Promise<void>,
   onDelete: (id: string) => Promise<void>,
   router: any,
-  t: any
+  t: any,
+  locale: string = 'en'
 ): ColumnDef<Currency>[] => [
   {
     accessorKey: "name",
@@ -23,6 +25,10 @@ export const getColumns = (
   {
     accessorKey: "symbol",
     header: t('currencies.symbol'),
+    cell: ({ row }) => {
+      const currency = row.original
+      return getCurrencySymbol(currency.code as any, locale as any)
+    },
   },
   {
     accessorKey: "is_default",

@@ -29,10 +29,10 @@ interface LoftBillManagementProps {
 }
 
 const UTILITY_CONFIG = {
-  eau: { icon: <Droplets className="h-4 w-4" />, color: 'bg-blue-100 text-blue-800' },
-  energie: { icon: <Zap className="h-4 w-4" />, color: 'bg-yellow-100 text-yellow-800' },
-  telephone: { icon: <Phone className="h-4 w-4" />, color: 'bg-green-100 text-green-800' },
-  internet: { icon: <Wifi className="h-4 w-4" />, color: 'bg-purple-100 text-purple-800' }
+  eau: { icon: <Droplets className="h-4 w-4 text-blue-500" />, color: 'bg-blue-100 text-blue-800' },
+  energie: { icon: <Zap className="h-4 w-4 text-yellow-500" />, color: 'bg-yellow-100 text-yellow-800' },
+  telephone: { icon: <Phone className="h-4 w-4 text-green-600" />, color: 'bg-green-100 text-green-800' },
+  internet: { icon: <Wifi className="h-4 w-4 text-purple-500" />, color: 'bg-purple-100 text-purple-800' }
 }
 
 export function LoftBillManagement({ loftId, loftData }: LoftBillManagementProps) {
@@ -41,6 +41,19 @@ export function LoftBillManagement({ loftId, loftData }: LoftBillManagementProps
   const [loading, setLoading] = useState(false)
   const [paymentDialog, setPaymentDialog] = useState<{ open: boolean; bill: BillInfo | null }>({ open: false, bill: null })
   const [paymentAmount, setPaymentAmount] = useState('')
+
+  // Fonction pour traduire les fréquences selon la langue
+  const getTranslatedFrequency = (frequency: string) => {
+    const frequencyMap: { [key: string]: string } = {
+      'trimestriel': t('quarterly'),
+      'mensuel': t('monthly'),
+      'annuel': t('yearly'),
+      'hebdomadaire': t('weekly'),
+      'bimestriel': t('bimonthly'),
+      'quadrimestriel': t('fourMonthly')
+    }
+    return frequencyMap[frequency] || frequency
+  }
 
   useEffect(() => {
     processBillData()
@@ -166,7 +179,7 @@ export function LoftBillManagement({ loftId, loftData }: LoftBillManagementProps
                 <div>
                   <div className="font-medium">{bill.label}</div>
                   <div className="text-sm text-gray-600">
-                    {bill.frequency ? `${t('billManagement.frequency')}: ${bill.frequency}` : t('billManagement.noFrequencySet')}
+                    {bill.frequency ? `${t('billManagement.frequency')}: ${getTranslatedFrequency(bill.frequency)}` : t('billManagement.noFrequencySet')}
                   </div>
                 </div>
               </div>

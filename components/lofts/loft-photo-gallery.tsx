@@ -30,6 +30,7 @@ interface LoftPhotoGalleryProps {
 
 export function LoftPhotoGallery({ loftId, loftName }: LoftPhotoGalleryProps) {
   const t = useTranslations('lofts')
+  const tCommon = useTranslations('common')
   const [photos, setPhotos] = useState<LoftPhoto[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedPhoto, setSelectedPhoto] = useState<number | null>(null)
@@ -143,13 +144,13 @@ export function LoftPhotoGallery({ loftId, loftName }: LoftPhotoGalleryProps) {
                 <div className="absolute bottom-4 right-4 flex gap-2">
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           variant="secondary"
                           onClick={() => setSelectedPhoto(0)}
                         >
                           <Eye className="h-4 w-4 mr-2" />
-                          {t('common.view')}
+                          {tCommon('view')}
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="max-w-4xl w-full p-0">
@@ -226,7 +227,7 @@ export function LoftPhotoGallery({ loftId, loftName }: LoftPhotoGalleryProps) {
 
       {/* Compteur de photos */}
       <div className="text-center text-sm text-muted-foreground">
-        {photos.length} photo{photos.length > 1 ? 's' : ''} disponible{photos.length > 1 ? 's' : ''}
+        {t('photos.photosAvailable', { count: photos.length })}
       </div>
     </div>
   )

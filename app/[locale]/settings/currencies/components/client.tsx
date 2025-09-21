@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation"
 import { getColumns } from "../columns"
 import { Currency } from "@/lib/types"
 import { useTranslations, useLocale } from 'next-intl';
+import { getCurrencySymbol } from '@/utils/currency-formatter';
 
 interface CurrencyClientProps {
   data: Currency[]
@@ -67,7 +68,7 @@ export const CurrencyClient = ({ data, onSetDefault, onDelete }: CurrencyClientP
                 <div>
                   <h3 className="font-bold text-xl text-gray-900 dark:text-gray-100">{defaultCurrency.name}</h3>
                   <p className="text-sm text-muted-foreground font-medium">
-                    {defaultCurrency.code} • {defaultCurrency.symbol}
+                    {defaultCurrency.code} • {getCurrencySymbol(defaultCurrency.code as any, locale as any)}
                   </p>
                 </div>
               </div>
@@ -107,10 +108,10 @@ export const CurrencyClient = ({ data, onSetDefault, onDelete }: CurrencyClientP
               </Button>
             </div>
           ) : (
-            <DataTable 
-              key={data.length} 
-              columns={getColumns(onSetDefault, onDelete, router, t)} 
-              data={data} 
+            <DataTable
+              key={data.length}
+              columns={getColumns(onSetDefault, onDelete, router, t, locale)}
+              data={data}
             />
           )}
         </CardContent>

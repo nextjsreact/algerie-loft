@@ -149,8 +149,8 @@ export function HomePage() {
     },
     {
       title: t('quickAccessButtons.pdfReports.title'),
-      href: `/${locale}/reports`,
-      description: t('quickAccessButtons.pdfReports.description'), 
+      href: `/${locale}/reports?tab=generator`,
+      description: t('quickAccessButtons.pdfReports.description'),
       icon: FileText,
       allowedRoles: ['admin', 'manager', 'executive'] // Financial reports
     }

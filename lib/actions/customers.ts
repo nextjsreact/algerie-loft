@@ -2,19 +2,15 @@
 
 import { createClient } from '@/utils/supabase/server';
 
-// Type definitions for Customer based on the SQL schema
+// Type definitions for Customer based on the actual database schema
 export type Customer = {
   id: string;
-  first_name: string;
-  last_name: string;
   email: string;
-  phone?: string;
-  status: 'prospect' | 'active' | 'former';
-  notes?: string;
-  current_loft_id?: string;
+  full_name: string | null;
+  phone: string | null;
+  address: string | null;
   created_at: string;
   updated_at: string;
-  created_by?: string;
 };
 
 // Function to fetch all customers
@@ -48,22 +44,16 @@ export async function createCustomer(formData: FormData): Promise<{ success: boo
   const supabase = createClient();
   const client = await supabase;
 
-  const first_name = formData.get('first_name') as string;
-  const last_name = formData.get('last_name') as string;
   const email = formData.get('email') as string;
+  const full_name = formData.get('full_name') as string | undefined;
   const phone = formData.get('phone') as string | undefined;
-  const status = formData.get('status') as 'prospect' | 'active' | 'former';
-  const notes = formData.get('notes') as string | undefined;
-  const current_loft_id = formData.get('current_loft_id') as string | undefined;
+  const address = formData.get('address') as string | undefined;
 
   const { error } = await client.from('customers').insert({
-    first_name,
-    last_name,
     email,
-    phone,
-    status,
-    notes,
-    current_loft_id: current_loft_id || null,
+    full_name: full_name || null,
+    phone: phone || null,
+    address: address || null,
   });
 
   if (error) {
@@ -83,22 +73,16 @@ export async function updateCustomer(id: string, formData: FormData): Promise<{ 
   const supabase = createClient();
   const client = await supabase;
 
-  const first_name = formData.get('first_name') as string;
-  const last_name = formData.get('last_name') as string;
   const email = formData.get('email') as string;
+  const full_name = formData.get('full_name') as string | undefined;
   const phone = formData.get('phone') as string | undefined;
-  const status = formData.get('status') as 'prospect' | 'active' | 'former';
-  const notes = formData.get('notes') as string | undefined;
-  const current_loft_id = formData.get('current_loft_id') as string | undefined;
+  const address = formData.get('address') as string | undefined;
 
   const { error } = await client.from('customers').update({
-    first_name,
-    last_name,
     email,
-    phone,
-    status,
-    notes,
-    current_loft_id: current_loft_id || null,
+    full_name: full_name || null,
+    phone: phone || null,
+    address: address || null,
   }).eq('id', id);
 
   if (error) {

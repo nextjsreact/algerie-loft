@@ -1612,6 +1612,49 @@
     "zones": {
       "subtitle": "Manage geographic zones",
       "title": "Zones"
+    },
+    "application": {
+      "title": "Application Settings",
+      "subtitle": "General configuration and system settings",
+      "authRequired": "Authentication Required",
+      "loginPrompt": "Please log in to access application settings.",
+      "accountSettings": {
+        "title": "Account Settings",
+        "description": "Manage your account information and security",
+        "fullName": "Full Name",
+        "email": "Email",
+        "role": "Role"
+      },
+      "passwordChange": {
+        "title": "Change Password",
+        "description": "Update your account password",
+        "currentPassword": "Current Password",
+        "currentPasswordPlaceholder": "Enter your current password",
+        "newPassword": "New Password",
+        "newPasswordPlaceholder": "Enter your new password",
+        "confirmNewPassword": "Confirm New Password",
+        "confirmNewPasswordPlaceholder": "Confirm your new password",
+        "button": "Change Password",
+        "buttonProgress": "Changing Password..."
+      },
+      "appInfo": {
+        "title": "Application Information",
+        "description": "Current application details and status",
+        "appName": "Application Name",
+        "version": "Version",
+        "status": "Status",
+        "statusActive": "Active",
+        "statusProduction": "Production"
+      },
+      "admin": {
+        "title": "System Administration",
+        "description": "Administrative functions (Admin only)",
+        "quickActions": "Quick Actions",
+        "clearCache": "Clear Cache"
+      },
+      "saveAll": {
+        "button": "Save All Settings"
+      }
     }
   },
   "tasks": {

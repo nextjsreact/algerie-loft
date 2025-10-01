@@ -1589,6 +1589,49 @@
     "zones": {
       "subtitle": "Gérer les zones géographiques",
       "title": "Zones"
+    },
+    "application": {
+      "title": "Paramètres de l'application",
+      "subtitle": "Configuration générale et paramètres système",
+      "authRequired": "Authentification requise",
+      "loginPrompt": "Veuillez vous connecter pour accéder aux paramètres de l'application.",
+      "accountSettings": {
+        "title": "Paramètres du compte",
+        "description": "Gérez les informations et la sécurité de votre compte",
+        "fullName": "Nom complet",
+        "email": "Email",
+        "role": "Rôle"
+      },
+      "passwordChange": {
+        "title": "Changer le mot de passe",
+        "description": "Mettez à jour le mot de passe de votre compte",
+        "currentPassword": "Mot de passe actuel",
+        "currentPasswordPlaceholder": "Entrez votre mot de passe actuel",
+        "newPassword": "Nouveau mot de passe",
+        "newPasswordPlaceholder": "Entrez votre nouveau mot de passe",
+        "confirmNewPassword": "Confirmez le nouveau mot de passe",
+        "confirmNewPasswordPlaceholder": "Confirmez votre nouveau mot de passe",
+        "button": "Changer le mot de passe",
+        "buttonProgress": "Changement du mot de passe..."
+      },
+      "appInfo": {
+        "title": "Informations sur l'application",
+        "description": "Détails et statut actuels de l'application",
+        "appName": "Nom de l'application",
+        "version": "Version",
+        "status": "Statut",
+        "statusActive": "Actif",
+        "statusProduction": "Production"
+      },
+      "admin": {
+        "title": "Administration système",
+        "description": "Fonctions administratives (Admin uniquement)",
+        "quickActions": "Actions rapides",
+        "clearCache": "Vider le cache"
+      },
+      "saveAll": {
+        "button": "Enregistrer tous les paramètres"
+      }
     }
   },
   "tasks": {

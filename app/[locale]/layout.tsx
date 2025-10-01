@@ -25,21 +25,14 @@ export default async function LocaleLayout({
   try {
     messages = (await import(`@/messages/${locale}.json`)).default;
   } catch (error) {
-    console.error("Error loading messages for locale:", locale, error);
     messages = {};
   }
-
-  console.log("Loaded messages for locale:", locale);
-  console.log("Notifications messages:", messages?.notifications);
-  console.log("newTaskAssigned key exists:", !!messages?.notifications?.newTaskAssigned);
-  console.log("newTaskAssignedMessage key exists:", !!messages?.notifications?.newTaskAssignedMessage);
 
   // Simplified session loading
   let session: Awaited<ReturnType<typeof getSessionReadOnly>>;
   try {
     session = await getSessionReadOnly();
   } catch (error) {
-    console.error("Error loading session:", error);
     session = null;
   }
 

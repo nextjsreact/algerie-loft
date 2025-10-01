@@ -68,7 +68,7 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
   const filteredNavigation = navigation.filter((item) => item.roles.includes(user.role))
 
   return (
-    <div className={cn("flex h-full w-72 flex-col bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 backdrop-blur-xl border-r border-white/10", className)}>
+     <div className={cn("flex h-full w-full max-w-72 flex-col bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 backdrop-blur-xl border-r border-white/10", className)}>
       <div className="flex h-16 shrink-0 items-center justify-between px-3 border-b border-white/20 bg-white/5 backdrop-blur-md">
         <Link href={`/${locale}/dashboard`} className="flex items-center group min-w-0 flex-1">
           <div className="relative flex-shrink-0">

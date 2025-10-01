@@ -35,6 +35,7 @@ async function cloneProdToTest() {
     target: 'test',
     excludeSensitive: false, // Inclure TOUTES les données (avec anonymisation)
     dryRun: false
+    // truncate: true // Removed - using professional reset approach instead
   })
 
   await cloner.cloneData()

@@ -22,7 +22,6 @@ export const createClient = async (useServiceRole?: boolean) => {
           )
         } catch (error) {
           // Ignore cookie setting errors in read-only contexts (like layouts)
-          // This is expected behavior in Next.js 15 for layouts and other read-only contexts
           if (process.env.NODE_ENV === 'development') {
             console.warn('Cookie setting ignored in read-only context:', error);
           }
@@ -40,6 +39,8 @@ export const createClient = async (useServiceRole?: boolean) => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = useServiceRole ? process.env.SUPABASE_SERVICE_ROLE_KEY : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
+
+
   if (!supabaseUrl || !supabaseKey) {
     throw new Error('@supabase/ssr: Your project\'s URL and API key are required to create a Supabase client!\n\nCheck your Supabase project\'s API settings to find these values\n\nhttps://supabase.com/dashboard/project/_/settings/api')
   }

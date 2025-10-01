@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login Simple</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:disabled { background: #ccc; }
+        .error { color: red; margin-top: 10px; }
+        .success { color: green; margin-top: 10px; }
+        .info { background: #f0f0f0; padding: 10px; border-radius: 4px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🔐 Test Login Simple - DEV</h1>
+    
+    <div class="info">
+        <strong>Identifiants de test:</strong><br>
+        Email: admin@dev.local<br>
+        Mot de passe: dev123
+    </div>
+
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" value="admin@dev.local" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Mot de passe:</label>
+            <input type="password" id="password" value="dev123" required>
+        </div>
+        
+        <button type="submit" id="loginBtn">Se connecter</button>
+    </form>
+
+    <div id="status"></div>
+    <div id="sessionInfo"></div>
+
+    <script>
+        // Configuration Supabase DEV
+        const supabaseUrl = 'https://wtcbyjdwjrrqyzpvjfze.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind0Y2J5amR3anJycXl6cHZqZnplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU4NDY0NTYsImV4cCI6MjA2MTQyMjQ1Nn0.qQrgqOSLldFuHK1XjCZyRcCgJsmSBdibmo40DsxyF3o'
+        
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+        
+        const form = document.getElementById('loginForm')
+        const loginBtn = document.getElementById('loginBtn')
+        const status = document.getElementById('status')
+        const sessionInfo = document.getElementById('sessionInfo')
+
+        // Vérifier la session au chargement
+        checkSession()
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault()
+            
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value
+            
+            loginBtn.disabled = true
+            loginBtn.textContent = 'Connexion en cours...'
+            status.innerHTML = ''
+            
+            try {
+                console.log('🔐 Tentative de connexion:', email)
+                
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                })
+                
+                if (error) {
+                    throw error
+                }
+                
+                status.innerHTML = '<div class="success">✅ Connexion réussie!</div>'
+                console.log('✅ Connexion réussie:', data)
+                
+                // Afficher les infos de session
+                displaySessionInfo(data)
+                
+            } catch (error) {
+                console.error('❌ Erreur:', error)
+                status.innerHTML = `<div class="error">❌ Erreur: ${error.message}</div>`
+            } finally {
+                loginBtn.disabled = false
+                loginBtn.textContent = 'Se connecter'
+            }
+        })
+
+        async function checkSession() {
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession()
+                
+                if (error) {
+                    console.error('Erreur session:', error)
+                    return
+                }
+                
+                if (session) {
+                    status.innerHTML = '<div class="success">✅ Session active détectée</div>'
+                    displaySessionInfo({ session, user: session.user })
+                } else {
+                    status.innerHTML = '<div class="info">ℹ️ Aucune session active</div>'
+                }
+            } catch (error) {
+                console.error('Erreur vérification session:', error)
+            }
+        }
+
+        function displaySessionInfo(data) {
+            if (data.session && data.user) {
+                sessionInfo.innerHTML = `
+                    <div class="info">
+                        <h3>📋 Informations de session:</h3>
+                        <p><strong>Email:</strong> ${data.user.email}</p>
+                        <p><strong>ID:</strong> ${data.user.id}</p>
+                        <p><strong>Créé:</strong> ${new Date(data.user.created_at).toLocaleString()}</p>
+                        <p><strong>Session expire:</strong> ${new Date(data.session.expires_at * 1000).toLocaleString()}</p>
+                        <button onclick="logout()">Se déconnecter</button>
+                    </div>
+                `
+            }
+        }
+
+        async function logout() {
+            try {
+                const { error } = await supabase.auth.signOut()
+                if (error) throw error
+                
+                status.innerHTML = '<div class="success">✅ Déconnexion réussie</div>'
+                sessionInfo.innerHTML = ''
+                console.log('✅ Déconnexion réussie')
+            } catch (error) {
+                console.error('❌ Erreur déconnexion:', error)
+                status.innerHTML = `<div class="error">❌ Erreur déconnexion: ${error.message}</div>`
+            }
+        }
+
+        // Écouter les changements d'état d'authentification
+        supabase.auth.onAuthStateChange((event, session) => {
+            console.log('🔄 Auth state change:', event, session?.user?.email)
+            
+            if (event === 'SIGNED_IN') {
+                status.innerHTML = '<div class="success">✅ Connexion confirmée par listener</div>'
+            } else if (event === 'SIGNED_OUT') {
+                status.innerHTML = '<div class="info">ℹ️ Déconnexion confirmée</div>'
+                sessionInfo.innerHTML = ''
+            }
+        })
+    </script>
+</body>
+</html>

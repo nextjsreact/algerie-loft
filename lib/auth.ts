@@ -49,7 +49,7 @@ export async function getSession(): Promise<AuthSession | null> {
 export async function requireAuth(): Promise<AuthSession> {
   const session = await getSession()
   if (!session) {
-    redirect("/login")
+    redirect("/fr/login")
   }
   return session
 }
@@ -66,7 +66,7 @@ export async function requireRole(allowedRoles: string[]): Promise<AuthSession> 
   }
 
   if (!allowedRoles.includes(session.user.role)) {
-    redirect("/unauthorized")
+    redirect("/fr/unauthorized")
   }
 
   return session
@@ -86,19 +86,33 @@ export async function requireRoleAPI(allowedRoles: string[]): Promise<AuthSessio
 }
 
 export async function login(email: string, password: string, locale?: string): Promise<{ success: boolean; error?: string }> {
-  const supabase = await createClient()
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
+  // For server-side login, we need to handle this differently
+  // The actual sign-in should happen on the client side
+  // This function should only validate credentials
+  
+  const supabase = await createClient() // Use normal client
+  
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
 
-  if (error) {
-    console.error("Supabase signInWithPassword error:", error); // Log the specific error
-    return { success: false, error: error.message }
+    if (error) {
+      console.error("Supabase signInWithPassword error:", error);
+      return { success: false, error: error.message }
+    }
+
+    if (data.user) {
+      console.log("Login successful for user:", data.user.email);
+      return { success: true }
+    }
+
+    return { success: false, error: "No user data returned" }
+  } catch (err) {
+    console.error("Login exception:", err);
+    return { success: false, error: "Authentication failed" }
   }
-
-  // No direct redirect here. The client will handle redirection.
-  return { success: true }
 }
 
 export async function register(
@@ -106,7 +120,7 @@ export async function register(
   password: string,
   fullName: string,
 ): Promise<{ success: boolean; error?: string }> {
-  const supabase = await createClient()
+  const supabase = await createClient() // Use normal client (anon key) for user auth
   const { error } = await supabase.auth.signUp({
     email,
     password,
@@ -128,13 +142,27 @@ export async function register(
 export async function logout() {
   const supabase = await createClient()
   await supabase.auth.signOut();
-  return { success: true };
+  redirect("/fr/login");
 }
 
 export async function requestPasswordReset(email: string): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient()
+
+  // Configuration avec fallback pour développement
+  const baseUrl = process.env.NODE_ENV === 'development'
+    ? `http://localhost:3000`
+    : process.env.NEXT_PUBLIC_APP_URL || `http://localhost:3000`
+
+  // Pour le développement, on utilise une approche plus flexible
+  // En production, il faudra configurer les URLs dans Supabase dashboard
+  const redirectTo = `${baseUrl}/api/auth/reset-password`
+
+  console.log('Password reset request for:', email)
+  console.log('Redirect URL configured:', redirectTo)
+  console.log('Environment:', process.env.NODE_ENV)
+
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/forgot-password`,
+    redirectTo: redirectTo,
   })
 
   if (error) {
@@ -142,6 +170,7 @@ export async function requestPasswordReset(email: string): Promise<{ success: bo
     return { success: false, error: "An error occurred while processing your request." }
   }
 
+  console.log('Password reset email sent successfully')
   return { success: true }
 }
 

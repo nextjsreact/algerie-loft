@@ -44,7 +44,6 @@ interface CustomersManagementProps {
 export function CustomersManagement({ customers, setCustomers }: CustomersManagementProps) {
   const t = useTranslations('customers');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [animatedStats, setAnimatedStats] = useState({
     total: 0,
@@ -56,9 +55,9 @@ export function CustomersManagement({ customers, setCustomers }: CustomersManage
   // Calculer les statistiques
   const stats = {
     total: customers.length,
-    active: customers.filter(c => c.status === 'active').length,
-    prospects: customers.filter(c => c.status === 'prospect').length,
-    former: customers.filter(c => c.status === 'former').length
+    active: customers.length, // All customers are considered active since we don't have status field
+    prospects: 0,
+    former: 0
   };
 
   // Animation des statistiques
@@ -96,14 +95,13 @@ export function CustomersManagement({ customers, setCustomers }: CustomersManage
 
   // Filtrer les clients
   const filteredCustomers = customers.filter(customer => {
-    const matchesSearch = 
-      customer.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = selectedStatus === 'all' || customer.status === selectedStatus;
-    
-    return matchesSearch && matchesStatus;
+    const matchesSearch =
+      (customer.full_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (customer.phone?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (customer.address?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+
+    return matchesSearch;
   });
 
   const handleDelete = async (id: string, name: string) => {
@@ -118,22 +116,12 @@ export function CustomersManagement({ customers, setCustomers }: CustomersManage
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
-      case 'prospect': return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-      case 'former': return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
-      default: return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
-    }
+  const getStatusColor = () => {
+    return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'active': return <Crown className="h-3 w-3" />;
-      case 'prospect': return <Target className="h-3 w-3" />;
-      case 'former': return <Activity className="h-3 w-3" />;
-      default: return <Users className="h-3 w-3" />;
-    }
+  const getStatusIcon = () => {
+    return <Crown className="h-3 w-3" />;
   };
 
   return (
@@ -286,16 +274,7 @@ export function CustomersManagement({ customers, setCustomers }: CustomersManage
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4 text-slate-400" />
-                    <select
-                      value={selectedStatus}
-                      onChange={(e) => setSelectedStatus(e.target.value)}
-                      className="bg-black/20 border border-white/20 text-white rounded-lg px-3 py-2 text-sm focus:border-blue-500/50"
-                    >
-                      <option value="all">{t('filters.all')}</option>
-                      <option value="active">{t('filters.active')}</option>
-                      <option value="prospect">{t('filters.prospect')}</option>
-                      <option value="former">{t('filters.former')}</option>
-                    </select>
+                    <span className="text-slate-300 text-sm">Tous les clients</span>
                   </div>
 
                   {/* Mode d'affichage */}
@@ -363,7 +342,7 @@ export function CustomersManagement({ customers, setCustomers }: CustomersManage
                   </div>
                   <h3 className="text-xl font-semibold text-white mb-2">{t('noCustomersFound')}</h3>
                   <p className="text-slate-400 mb-6">
-                    {searchTerm || selectedStatus !== 'all' 
+                    {searchTerm
                       ? t('noCustomersMessage')
                       : t('addFirstCustomer')
                     }
@@ -388,16 +367,16 @@ export function CustomersManagement({ customers, setCustomers }: CustomersManage
                               <Avatar className="h-12 w-12 border-2 border-white/20">
                                 <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${customer.email}`} />
                                 <AvatarFallback className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
-                                  {customer.first_name[0]}{customer.last_name[0]}
+                                  {customer.full_name ? customer.full_name[0].toUpperCase() : customer.email[0].toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
                               <div>
                                 <h3 className="font-semibold text-white">
-                                  {customer.first_name} {customer.last_name}
+                                  {customer.full_name || customer.email}
                                 </h3>
-                                <Badge className={`${getStatusColor(customer.status)} text-xs`}>
-                                  {getStatusIcon(customer.status)}
-                                  <span className="ml-1">{t(`statusOptions.${customer.status}`)}</span>
+                                <Badge className={`${getStatusColor()} text-xs`}>
+                                  {getStatusIcon()}
+                                  <span className="ml-1">Client</span>
                                 </Badge>
                               </div>
                             </div>
@@ -417,6 +396,12 @@ export function CustomersManagement({ customers, setCustomers }: CustomersManage
                             <div className="flex items-center gap-2 text-sm text-slate-300">
                               <Phone className="h-3 w-3 text-green-400" />
                               <span>{customer.phone}</span>
+                            </div>
+                          )}
+                          {customer.address && (
+                            <div className="flex items-center gap-2 text-sm text-slate-300">
+                              <MapPin className="h-3 w-3 text-orange-400" />
+                              <span className="truncate">{customer.address}</span>
                             </div>
                           )}
                           <div className="flex items-center gap-2 text-sm text-slate-300">
@@ -443,10 +428,10 @@ export function CustomersManagement({ customers, setCustomers }: CustomersManage
                                   <Edit className="h-3 w-3" />
                                 </Link>
                               </Button>
-                              <Button 
-                                size="sm" 
+                              <Button
+                                size="sm"
                                 variant="outline"
-                                onClick={() => handleDelete(customer.id, `${customer.first_name} ${customer.last_name}`)}
+                                onClick={() => handleDelete(customer.id, customer.full_name || customer.email)}
                                 className="bg-black/20 border-white/20 text-white hover:bg-red-500/20 hover:border-red-500/50"
                               >
                                 <Trash2 className="h-3 w-3" />
@@ -468,17 +453,17 @@ export function CustomersManagement({ customers, setCustomers }: CustomersManage
                           <Avatar className="h-10 w-10 border-2 border-white/20">
                             <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${customer.email}`} />
                             <AvatarFallback className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm">
-                              {customer.first_name[0]}{customer.last_name[0]}
+                              {customer.full_name ? customer.full_name[0].toUpperCase() : customer.email[0].toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-1">
                               <h3 className="font-semibold text-white">
-                                {customer.first_name} {customer.last_name}
+                                {customer.full_name || customer.email}
                               </h3>
-                              <Badge className={`${getStatusColor(customer.status)} text-xs`}>
-                                {getStatusIcon(customer.status)}
-                                <span className="ml-1">{t(`statusOptions.${customer.status}`)}</span>
+                              <Badge className={`${getStatusColor()} text-xs`}>
+                                {getStatusIcon()}
+                                <span className="ml-1">Client</span>
                               </Badge>
                             </div>
                             <div className="flex items-center gap-4 text-sm text-slate-300">
@@ -490,6 +475,12 @@ export function CustomersManagement({ customers, setCustomers }: CustomersManage
                                 <div className="flex items-center gap-1">
                                   <Phone className="h-3 w-3 text-green-400" />
                                   <span>{customer.phone}</span>
+                                </div>
+                              )}
+                              {customer.address && (
+                                <div className="flex items-center gap-1">
+                                  <MapPin className="h-3 w-3 text-orange-400" />
+                                  <span className="truncate max-w-32">{customer.address}</span>
                                 </div>
                               )}
                               <div className="flex items-center gap-1">
@@ -512,10 +503,10 @@ export function CustomersManagement({ customers, setCustomers }: CustomersManage
                               {t('actions.edit')}
                             </Link>
                           </Button>
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             variant="outline"
-                            onClick={() => handleDelete(customer.id, `${customer.first_name} ${customer.last_name}`)}
+                            onClick={() => handleDelete(customer.id, customer.full_name || customer.email)}
                             className="bg-black/20 border-white/20 text-white hover:bg-red-500/20 hover:border-red-500/50"
                           >
                             <Trash2 className="h-3 w-3 mr-1" />

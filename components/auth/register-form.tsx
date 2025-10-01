@@ -29,11 +29,18 @@ export function RegisterForm() {
     setError("")
 
     try {
-      // Registration logic would go here
-      console.log('Registration attempt:', formData)
-      // Redirect to login or dashboard
-      router.push('/login')
+      // Call the register function from our auth library
+      const { register } = await import('@/lib/auth')
+      const result = await register(formData.email, formData.password, formData.fullName)
+
+      if (result.success) {
+        // Registration successful - redirect to login
+        router.push('/login?message=registration-success')
+      } else {
+        setError(result.error || t('registrationFailed'))
+      }
     } catch (err) {
+      console.error('Registration error:', err)
       setError(t('registrationFailed'))
     } finally {
       setIsLoading(false)

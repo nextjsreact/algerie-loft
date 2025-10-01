@@ -35,6 +35,7 @@ async function cloneProdToDev() {
     target: 'dev',
     excludeSensitive: false, // Inclure TOUTES les données (avec anonymisation)
     dryRun: false
+    // truncate: true // Removed - using professional reset approach instead
   })
 
   await cloner.cloneData()

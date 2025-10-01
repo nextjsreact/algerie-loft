@@ -19,6 +19,11 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Debug logging for missing application route
+    console.log('🔍 DEBUG: Current pathname:', window.location.pathname)
+    console.log('🔍 DEBUG: Available settings routes should be checked')
+    console.log('🔍 DEBUG: Looking for /settings/application route - NOT FOUND in directory structure')
+
     async function fetchSession() {
       try {
         const sessionData = await getSession()

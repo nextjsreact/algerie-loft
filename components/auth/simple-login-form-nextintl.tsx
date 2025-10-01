@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator"
 import { NextIntlLanguageSelector } from "@/components/ui/next-intl-language-selector"
 import { Eye, EyeOff, Building2 } from "lucide-react"
 import Link from "next/link"
-import { login } from "@/lib/auth"
+import { createClient } from "@/utils/supabase/client"
 import { loginSchema, type LoginFormData } from "@/lib/validations"
 
 /**
@@ -27,6 +27,7 @@ export function SimpleLoginFormNextIntl() {
   const [error, setError] = useState("")
   const router = useRouter()
   const locale = useLocale()
+  const supabase = createClient()
   
   // Utilisation de next-intl au lieu de useSimpleTranslation
   const t = useTranslations('auth')
@@ -44,19 +45,46 @@ export function SimpleLoginFormNextIntl() {
     setError("")
 
     try {
-      const result = await login(data.email, data.password, locale)
+      console.log('🔐 Tentative de connexion avec:', data.email)
       
-      if (result.success) {
-        // Handle successful login: redirect to dashboard
-        const validLocale = locale && ['fr', 'en', 'ar'].includes(locale) ? locale : 'fr'
-        router.push(`/${validLocale}/dashboard`)
-      } else {
-        // This should only execute if there was an error
-        setError(result.error || "Login failed")
+      // Timeout pour éviter les blocages
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout de connexion (10s)')), 10000)
+      )
+      
+      const loginPromise = supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      })
+
+      const { data: signInData, error: signInError } = await Promise.race([
+        loginPromise,
+        timeoutPromise
+      ]) as any
+
+      if (signInError) {
+        console.error("Erreur connexion:", signInError)
+        setError(signInError.message)
+        setIsLoading(false)
+        return
       }
-    } catch (err) {
-      setError("An unexpected error occurred")
-    } finally {
+
+      if (signInData.user && signInData.session) {
+        console.log('✅ Connexion réussie:', signInData.user.email)
+        console.log('✅ Session établie - redirection...')
+        
+        // Redirection vers la racine
+        const validLocale = locale && ['fr', 'en', 'ar'].includes(locale) ? locale : 'fr'
+        window.location.href = `/${validLocale}`
+        // Ne pas appeler setIsLoading(false) ici car on redirige
+      } else {
+        console.warn('⚠️ Pas de session dans la réponse')
+        setError("Erreur d'authentification - session non établie")
+        setIsLoading(false)
+      }
+    } catch (err: any) {
+      console.error("Erreur inattendue:", err)
+      setError(err.message || "Une erreur inattendue s'est produite")
       setIsLoading(false)
     }
   }
@@ -136,7 +164,7 @@ export function SimpleLoginFormNextIntl() {
               </div>
 
               <div className="flex items-center justify-between">
-                <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                <Link href={`/${locale}/forgot-password`} className="text-sm text-blue-600 hover:underline">
                   {t('forgotPassword')}
                 </Link>
               </div>
@@ -162,16 +190,10 @@ export function SimpleLoginFormNextIntl() {
               <Separator className="my-4" />
               
               <div>
-                <p className="text-sm font-medium mb-3 text-blue-900">{t('demoAccounts')}</p>
+                <p className="text-sm font-medium mb-3 text-blue-900">Identifiants DEV</p>
                 <div className="space-y-2 text-xs text-blue-700">
                   <p>
-                    <strong>{t('admin')}:</strong> admin@loftmanager.com / password123
-                  </p>
-                  <p>
-                    <strong>{t('manager')}:</strong> manager@loftmanager.com / password123
-                  </p>
-                  <p>
-                    <strong>{t('member')}:</strong> member@loftmanager.com / password123
+                    <strong>Test User:</strong> user1759066310913@dev.local / password123
                   </p>
                 </div>
               </div>

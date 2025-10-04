@@ -5,6 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { AuditHistory } from "@/components/audit/audit-history"
+import { AuditPermissionManager } from "@/lib/permissions/audit-permissions"
 import { LoftBillManagement } from "@/components/loft/bill-management"
 import { LoftPhotoGallery } from "@/components/lofts/loft-photo-gallery"
 import { RoleBasedAccess } from "@/components/auth/role-based-access"
@@ -207,6 +210,13 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
       }
     }
 
+    // Check if user can view audit history
+    const canViewAudit = AuditPermissionManager.canViewEntityAuditHistory(
+      session.user.role, 
+      'lofts', 
+      loft.id
+    );
+
     return (
       <div className="max-w-7xl mx-auto space-y-8 p-6">
         {/* Header avec titre et actions */}
@@ -247,6 +257,16 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
             </RoleBasedAccess>
           </div>
         </div>
+
+        <Tabs defaultValue="details" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="details">Loft Details</TabsTrigger>
+            {canViewAudit && (
+              <TabsTrigger value="audit">Audit History</TabsTrigger>
+            )}
+          </TabsList>
+          
+          <TabsContent value="details" className="space-y-6">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Colonne principale */}
@@ -515,21 +535,33 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
           </div>
         </div>
 
-        {/* Gestion des factures */}
-        <RoleBasedAccess 
-          userRole={session.user.role}
-          allowedRoles={['admin', 'manager']}
-          showFallback={false}
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle>{getStaticTranslation('billManagement.title', t, locale)}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <LoftBillManagement loftId={awaitedParams.id} loftData={loft} />
-            </CardContent>
-          </Card>
-        </RoleBasedAccess>
+            {/* Gestion des factures */}
+            <RoleBasedAccess 
+              userRole={session.user.role}
+              allowedRoles={['admin', 'manager']}
+              showFallback={false}
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle>{getStaticTranslation('billManagement.title', t, locale)}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <LoftBillManagement loftId={awaitedParams.id} loftData={loft} />
+                </CardContent>
+              </Card>
+            </RoleBasedAccess>
+          </TabsContent>
+
+          {canViewAudit && (
+            <TabsContent value="audit" className="space-y-4">
+              <AuditHistory 
+                tableName="lofts" 
+                recordId={loft.id}
+                className="w-full"
+              />
+            </TabsContent>
+          )}
+        </Tabs>
       </div>
     )
   } catch (error) {

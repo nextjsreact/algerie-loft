@@ -9,6 +9,7 @@ import { useParams } from 'next/navigation'
 import { Currency, Transaction } from '@/lib/types' // Corrected import
 import { getLofts } from '@/app/actions/lofts' // Import getLofts
 import { getPaymentMethods } from '@/app/actions/payment-methods'
+import { getCurrencies } from '@/app/actions/currencies'
 interface Category {
   id: string;
   name: string;
@@ -43,7 +44,7 @@ export default function EditTransactionPage() {
           getTransaction(id),
           getCategories(),
           getLofts(),
-          fetch('/api/currencies').then(res => res.json()),
+          getCurrencies(),
           getPaymentMethods()
         ])
         setTransaction(transactionData)

@@ -78,7 +78,7 @@ export default function ClientProviders({ children, session, unreadCount, locale
                        <ErrorBoundary>
                          <Header user={session.user} />
                        </ErrorBoundary>
-                       <main className="flex-1 overflow-y-auto relative z-0">
+                       <main className="flex-1 overflow-y-auto relative z-0 p-6 md:p-8 lg:p-12">
                          {children}
                        </main>
                      </div>

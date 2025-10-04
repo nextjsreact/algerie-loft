@@ -706,3 +706,27 @@ export async function getReservationStats(): Promise<ActionResult<{
     }
   };
 }
+e
+xport async function getReservation(id: string): Promise<any> {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from('reservations')
+    .select(`
+      *,
+      lofts (
+        id,
+        name,
+        address
+      )
+    `)
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching reservation:', error);
+    return null;
+  }
+
+  return data;
+}

@@ -34,7 +34,8 @@ import {
   XCircle,
   AlertTriangle,
   Sparkles,
-  RefreshCw
+  RefreshCw,
+  Info
 } from "lucide-react"
 import {
   AlertDialog,
@@ -50,6 +51,9 @@ import {
 import { deleteTransaction } from "@/app/actions/transactions"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
+import { currencyDisplayService } from "@/lib/services/currency-display"
+import { formatDualCurrency, getCurrencySymbol, shouldShowConversion } from "@/lib/utils/currency-display-utils"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 interface Transaction {
   id: string
@@ -171,6 +175,26 @@ export function ModernTransactionsPage({
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(amount)
+  }
+
+  const formatCurrencyAmount = (
+    amount: number, 
+    currency: any, 
+    equivalentAmount?: number,
+    showConversion: boolean = true
+  ) => {
+    if (!currency) {
+      return `${formatAmount(amount)} ${defaultCurrencySymbol}`
+    }
+
+    const originalDisplay = `${formatAmount(amount)} ${getCurrencySymbol(currency)}`
+    
+    if (!showConversion || !equivalentAmount || currency.id === defaultCurrency?.id) {
+      return originalDisplay
+    }
+
+    const convertedDisplay = `${formatAmount(equivalentAmount)} ${defaultCurrencySymbol}`
+    return `${originalDisplay} ≈ ${convertedDisplay}`
   }
 
   const clearFilters = () => {
@@ -548,13 +572,27 @@ export function ModernTransactionsPage({
                         <div className="text-right">
                           <div className={`text-lg font-bold ${transaction.transaction_type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                             {transaction.transaction_type === 'income' ? '+' : '-'}
-                            {formatAmount(transaction.amount)} {currency?.symbol || defaultCurrencySymbol}
+                            {formatAmount(transaction.amount)} {getCurrencySymbol(currency || defaultCurrency)}
                           </div>
                           {transaction.equivalent_amount_default_currency && 
-                           transaction.currency_id !== defaultCurrency?.id && (
-                            <div className="text-xs text-gray-500">
-                              ≈ {formatAmount(transaction.equivalent_amount_default_currency)} {defaultCurrencySymbol}
-                            </div>
+                           currency && shouldShowConversion(currency, defaultCurrency) && (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div className="text-xs text-gray-500 flex items-center gap-1 cursor-help">
+                                    <Info className="h-3 w-3" />
+                                    ≈ {formatAmount(transaction.equivalent_amount_default_currency)} {defaultCurrencySymbol}
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>
+                                    {transaction.ratio_at_transaction && (
+                                      `1 ${currency.code} = ${transaction.ratio_at_transaction.toFixed(4)} ${defaultCurrency?.code || 'DZD'}`
+                                    )}
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           )}
                         </div>
                       </div>

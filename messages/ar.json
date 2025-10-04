@@ -287,7 +287,55 @@
     "signingIn": "جاري تسجيل الدخول...",
     "signingUp": "جاري التسجيل...",
     "unexpectedError": "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.",
-    "welcomeBack": "مرحباً بعودتك"
+    "welcomeBack": "مرحباً بعودتك",
+    "passwordReset": {
+      "title": "استرداد الحساب",
+      "subtitle": "أدخل عنوان بريدك الإلكتروني لتلقي التعليمات",
+      "cardTitle": "استرداد كلمة المرور",
+      "emailLabel": "عنوان البريد الإلكتروني",
+      "emailPlaceholder": "your@email.com",
+      "sendButton": "إرسال التعليمات",
+      "sendingButton": "جاري الإرسال...",
+      "backToLogin": "العودة لتسجيل الدخول",
+      "footerText": "سيتم إرسال رابط استرداد آمن إلى عنوان بريدك الإلكتروني",
+      "success": {
+        "title": "تم إرسال التعليمات",
+        "subtitle": "تحقق من صندوق بريدك الإلكتروني",
+        "message": "تم إرسال تعليمات الاسترداد",
+        "description": "تم إرسال رابط استرداد آمن إلى عنوان بريدك الإلكتروني. اتبع التعليمات لاستعادة الوصول إلى حسابك.",
+        "securityNote": "صالح لمدة 60 دقيقة لأمانك",
+        "noEmailTitle": "لم تستلم البريد الإلكتروني؟",
+        "noEmailDesc": "تحقق من مجلد الرسائل غير المرغوب فيها أو انتظر بضع لحظات",
+        "tryAgain": "جرب بعنوان بريد إلكتروني آخر"
+      },
+      "newPassword": {
+        "title": "أمان الحساب",
+        "subtitle": "قم بتعيين كلمة مرور قوية جديدة",
+        "cardTitle": "إعداد الأمان",
+        "passwordLabel": "كلمة المرور الأساسية",
+        "passwordPlaceholder": "أدخل كلمة المرور",
+        "confirmLabel": "تأكيد كلمة المرور",
+        "confirmPlaceholder": "أعد إدخال كلمة المرور",
+        "criteriaTitle": "معايير القوة",
+        "criteria": {
+          "minLength": "8+ أحرف",
+          "lowercase": "أحرف صغيرة (a-z)",
+          "uppercase": "أحرف كبيرة (A-Z)",
+          "number": "رقم (0-9)"
+        },
+        "updateButton": "تأمين الحساب",
+        "updatingButton": "جاري التحديث...",
+        "footerText": "بيانات المصادقة الخاصة بك مشفرة ومحمية",
+        "success": {
+          "title": "تم تأمين الحساب بنجاح",
+          "subtitle": "تم تعزيز المصادقة الخاصة بك",
+          "message": "تم تعزيز المصادقة",
+          "description": "تم الانتهاء من تأمين حسابك بنجاح. يمكنك الآن الوصول إلى مساحتك باستخدام بيانات الاعتماد الجديدة.",
+          "redirecting": "إعادة التوجيه لتسجيل الدخول...",
+          "footerText": "احتفظ ببيانات الوصول الخاصة بك سرية"
+        }
+      }
+    }
   },
   "availability": {
     "activeFilters": "{count} مرشح نشط",
@@ -442,6 +490,7 @@
       "ownershipType": "نوع الملكية"
     },
     "page": "الصفحة",
+    "pickDateRange": "اختر نطاق التاريخ",
     "previous": "السابق",
     "results": "النتائج",
     "selectOption": "اختر خياراً",
@@ -1049,6 +1098,51 @@
     "teams": "الفرق",
     "toggleTheme": "تبديل المظهر",
     "transactions": "المعاملات",
+    "userPasswords": {
+      "common": {
+        "loading": "جاري التحميل..."
+      },
+      "title": "كلمات مرور المستخدمين",
+      "subtitle": "إدارة كلمات مرور المستخدمين (مسؤول فقط)",
+      "userSelection": {
+        "title": "اختيار المستخدم",
+        "description": "اختر المستخدم الذي تريد تغيير كلمة مرورة",
+        "searchLabel": "البحث عن مستخدم",
+        "searchPlaceholder": "البحث بالاسم أو البريد الإلكتروني...",
+        "selectLabel": "اختر مستخدماً",
+        "noResults": "لم يتم العثور على مستخدمين",
+        "selectedUser": "المستخدم المحدد: {name}"
+      },
+      "passwordForm": {
+        "title": "كلمة مرور جديدة",
+        "description": "تعيين كلمة مرور جديدة للمستخدم المحدد",
+        "newPassword": "كلمة مرور جديدة",
+        "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
+        "confirmPassword": "تأكيد كلمة المرور",
+        "confirmPasswordPlaceholder": "أكد كلمة المرور الجديدة",
+        "button": "تغيير كلمة المرور",
+        "buttonProgress": "جاري تغيير كلمة المرور...",
+        "selectedUser": "تغيير كلمة المرور لـ {name}"
+      },
+      "security": {
+        "title": "اعتبارات الأمان",
+        "description": "معلومات مهمة حول تغييرات كلمة المرور",
+        "warning1": "تذكر إبلاغ المستخدم بتغيير كلمة المرور",
+        "warning2": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+        "warning3": "هذا الإجراء لا رجعة فيه"
+      },
+      "selectUserError": "الرجاء اختيار مستخدم",
+      "passwordMismatchError": "كلمات المرور غير متطابقة",
+      "passwordLengthError": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+      "passwordUpdateSuccess": "تم تحديث كلمة المرور بنجاح لـ {name}",
+      "passwordUpdateError": "خطأ في تحديث كلمة المرور",
+      "roles": {
+        "admin": "مسؤول",
+        "manager": "مدير",
+        "member": "عضو",
+        "executive": "تنفيذي"
+      }
+    },
     "zoneAreas": "المناطق الجغرافية"
   },
   "notifications": {
@@ -1515,6 +1609,8 @@
     "user": "مستخدم"
   },
   "settings": {
+    "profileInfo": "معلومات الملف الشخصي",
+    "updatePersonalInfo": "قم بتحديث معلوماتك الشخصية وتفضيلاتك.",
     "categories": {
       "addNew": "إضافة فئة جديدة",
       "allCategories": "جميع الفئات",
@@ -1552,21 +1648,71 @@
     "currencies": {
       "addFirstCurrency": "أضف عملتك الأولى للبدء",
       "addNew": "إضافة عملة جديدة",
+      "addNewCurrency": "إضافة عملة جديدة",
       "allCurrencies": "جميع العملات",
       "code": "الرمز",
+      "createCurrency": "إنشاء عملة",
+      "createNewCurrency": "إنشاء عملة جديدة",
+      "creating": "قيد الإنشاء...",
+      "currencyForm": {
+        "title": "معلومات العملة",
+        "name": "اسم العملة",
+        "namePlaceholder": "مثال: دولار أمريكي",
+        "code": "رمز العملة",
+        "codePlaceholder": "مثال: USD",
+        "symbol": "الرمز",
+        "symbolPlaceholder": "مثال: $",
+        "ratio": "سعر الصرف",
+        "ratioPlaceholder": "مثال: 1.00",
+        "ratioHelp": "سعر الصرف بالنسبة للدينار الجزائري (مثال: 1 دينار جزائري = X من هذه العملة)",
+        "status": "الحالة",
+        "statusPlaceholder": "اختر الحالة",
+        "createButton": "إنشاء العملة",
+        "updateButton": "تحديث العملة",
+        "cancelButton": "إلغاء"
+      },
       "default": "افتراضي",
       "defaultCurrency": "العملة الافتراضية",
       "defaultCurrencyDesc": "تستخدم هذه العملة كعملة افتراضية لجميع المعاملات",
+      "delete": "حذف",
+      "deleteConfirm": "هل أنت متأكد من حذف هذه العملة؟",
+      "deleteSuccess": "تم حذف العملة بنجاح",
+      "deleteError": "خطأ في حذف العملة",
+      "edit": "تعديل",
+      "editCurrency": "تعديل العملة",
       "enterCurrencyDetails": "أدخل تفاصيل العملة أدناه",
+      "exchangeRate": "سعر الصرف",
+      "loading": "جاري تحميل العملات...",
       "name": "الاسم",
       "noCurrenciesFound": "لم يتم العثور على عملات",
+      "primary": "أساسي",
+      "ratio": "سعر الصرف",
+      "ratioHelp": "سعر الصرف بالنسبة للدولار الأمريكي (مثال: 1 دولار أمريكي = X من هذه العملة)",
+      "ratioTooltip": "أدخل نسبة التحويل إلى الدولار الأمريكي أو العملة الأساسية",
+      "saveChanges": "حفظ التغييرات",
+      "saving": "جاري الحفظ...",
+      "searchCurrencies": "البحث في العملات...",
+      "searchPlaceholder": "البحث بالاسم أو الرمز أو رمز العملة",
       "secondary": "ثانوي",
       "setAsDefault": "تعيين كافتراضي",
       "setDefault": "تعيين كافتراضي",
+      "setDefaultConfirm": "هل أنت متأكد من تعيين هذه العملة كعملة افتراضية؟",
+      "setDefaultSuccess": "تم تحديث العملة الافتراضية بنجاح",
       "status": "الحالة",
       "subtitle": "إدارة العملات لمعاملاتك",
       "symbol": "الرمز",
-      "totalCurrencies": "المجموع: {count} عملات"
+      "table": {
+        "name": "الاسم",
+        "code": "الرمز",
+        "symbol": "الرمز",
+        "exchangeRate": "سعر الصرف",
+        "status": "الحالة",
+        "actions": "الإجراءات"
+      },
+      "totalCurrencies": "المجموع: {count} عملات",
+      "updateCurrency": "تحديث العملة",
+      "updateSuccess": "تم تحديث العملة بنجاح",
+      "updateError": "خطأ في تحديث العملة"
     },
     "paymentMethods": {
       "addFirstMethod": "أضف طريقة الدفع الأولى للبدء",
@@ -1580,7 +1726,8 @@
     },
     "common": {
       "actions": "الإجراءات",
-      "delete": "حذف"
+      "delete": "حذف",
+      "edit": "تعديل"
     },
     "subtitle": "إدارة إعدادات وتفضيلات التطبيق الخاص بك",
     "title": "الإعدادات",
@@ -1629,6 +1776,48 @@
       },
       "saveAll": {
         "button": "حفظ جميع الإعدادات"
+      }
+    },
+    "userPasswords": {
+      "title": "كلمات مرور المستخدمين",
+      "subtitle": "إدارة كلمات مرور المستخدمين (مسؤول فقط)",
+      "userSelection": {
+        "title": "اختيار المستخدم",
+        "description": "اختر المستخدم الذي تريد تغيير كلمة مروره",
+        "searchLabel": "البحث عن مستخدم",
+        "searchPlaceholder": "البحث بالاسم أو البريد الإلكتروني...",
+        "selectLabel": "اختر مستخدماً",
+        "noResults": "لم يتم العثور على مستخدمين",
+        "selectedUser": "المستخدم المحدد: {name}"
+      },
+      "passwordForm": {
+        "title": "كلمة مرور جديدة",
+        "description": "تعيين كلمة مرور جديدة للمستخدم المحدد",
+        "newPassword": "كلمة مرور جديدة",
+        "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
+        "confirmPassword": "تأكيد كلمة المرور",
+        "confirmPasswordPlaceholder": "أكد كلمة المرور الجديدة",
+        "button": "تغيير كلمة المرور",
+        "buttonProgress": "جاري تغيير كلمة المرور...",
+        "selectedUser": "تغيير كلمة المرور لـ {name}"
+      },
+      "security": {
+        "title": "اعتبارات الأمان",
+        "description": "معلومات مهمة حول تغييرات كلمة المرور",
+        "warning1": "تذكر إبلاغ المستخدم بتغيير كلمة المرور",
+        "warning2": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+        "warning3": "هذا الإجراء لا رجعة فيه"
+      },
+      "selectUserError": "الرجاء اختيار مستخدم",
+      "passwordMismatchError": "كلمات المرور غير متطابقة",
+      "passwordLengthError": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+      "passwordUpdateSuccess": "تم تحديث كلمة المرور بنجاح لـ {name}",
+      "passwordUpdateError": "خطأ في تحديث كلمة المرور",
+      "roles": {
+        "admin": "مسؤول",
+        "manager": "مدير",
+        "member": "عضو",
+        "executive": "تنفيذي"
       }
     }
   },
@@ -1950,7 +2139,7 @@
     "selectedCurrency": "العملة المحددة",
     "startDate": "تاريخ البدء",
     "status": "الحالة",
-    "subtitle": "تتبع جميع تحركاتك المالية, بما في ذلك الدخل والمصروفات.",
+    "subtitle": "إدارة المبالغ المرجعية لفئات المعاملات لتبسيط إدخال البيانات.",
     "title": "المعاملات",
     "to": "إلى",
     "totalExpenses": "إجمالي المصروفات",
@@ -1963,7 +2152,52 @@
     "transactionsList": "قائمة المعاملات",
     "type": "النوع",
     "updateTransaction": "تحديث المعاملة",
-    "updateTransactionInfo": "تحديث معلومات المعاملة"
+    "updateTransactionInfo": "تحديث معلومات المعاملة",
+    "original": "الأصلي",
+    "loadingError": "خطأ في تحميل المبالغ المرجعية.",
+    "updateSuccess": "تم تحديث المبلغ المرجعي بنجاح.",
+    "updateError": "خطأ في تحديث المبلغ المرجعي.",
+    "fillAllFields": "يرجى ملء جميع الحقول المطلوبة.",
+    "addError": "خطأ في إضافة مبلغ مرجعي جديد.",
+    "referenceAmountsTitle": "إدارة المبالغ المرجعية",
+    "add": "إضافة",
+    "addNewCategory": "إضافة مرجع جديد",
+    "categoryLabel": "اسم الفئة",
+    "categoryPlaceholder": "مثال: صيانة, تنظيف",
+    "selectType": "اختر نوعًا",
+    "referenceAmountDZD": "المبلغ المرجعي (دج)",
+    "addCategory": "إضافة مرجع",
+    "expenses": "المصروفات",
+    "howItWorks": "كيف يعمل؟",
+    "howItWorksSteps": {
+      "step1": "تُستخدم المبالغ المرجعية لملء المبلغ مسبقًا عند إنشاء معاملة جديدة.",
+      "step2": "يمكنك تحديد مبلغ مرجعي لكل فئة من فئات المعاملات (دخل أو مصروف).",
+      "step3": "عند تحديد فئة في نموذج المعاملة ، سيتم ملء المبلغ تلقائيًا.",
+      "step4": "يمكنك دائمًا تعديل المبلغ يدويًا."
+    },
+    "edit": "تعديل",
+    "enterAmount": "يرجى إدخال مبلغ.",
+    "save": "حفظ",
+    "categories": {
+      "maintenance": "صيانة",
+      "cleaning": "تنظيف",
+      "repair": "إصلاح",
+      "plumbing": "سباكة",
+      "electrical": "كهرباء",
+      "painting": "طلاء",
+      "security": "أمان",
+      "inspection": "فحص",
+      "utilities": "خدمات",
+      "insurance": "تأمين",
+      "taxes": "ضرائب",
+      "supplies": "لوازم",
+      "rent": "إيجار",
+      "deposit": "وديعة",
+      "late_fees": "رسوم تأخير",
+      "parking": "موقف سيارات",
+      "services": "خدمات",
+      "other": "أخرى"
+    }
   },
   "unauthorized": {
     "accessDenied": "الوصول مرفوض",
@@ -2034,5 +2268,130 @@
     "networkError": "تعذر الاتصال بواجهة برمجة تطبيقات التصحيح",
     "ok": "موافق",
     "error": "خطأ"
+  },
+  "audit": {
+    "auditDashboard": "لوحة تحكم التدقيق",
+    "auditDashboardDescription": "عرض وتصفية سجلات التدقيق لجميع الإجراءات التي يتم تنفيذها في النظام.",
+    "accessLevel": "مستوى الوصول",
+    "accessLevels": {
+      "full": "وصول كامل",
+      "assigned": "وصول مخصص",
+      "none": "لا يوجد وصول",
+      "all": "كل الوصول"
+    },
+    "auditHistory": "سجل التدقيق",
+    "auditHistoryFor": "سجل التدقيق لـ",
+    "actions": {
+      "created": "تم الإنشاء",
+      "updated": "تم التحديث", 
+      "deleted": "تم الحذف"
+    },
+    "tables": {
+      "transactions": "المعاملة",
+      "tasks": "المهمة",
+      "reservations": "الحجز",
+      "lofts": "الشقة"
+    },
+    "unknownUser": "مستخدم غير معروف",
+    "changedFields": "الحقول المتغيرة",
+    "oldValue": "القيمة القديمة",
+    "newValue": "القيمة الجديدة",
+    "empty": "فارغ",
+    "createdData": "البيانات المنشأة",
+    "deletedData": "البيانات المحذوفة",
+    "metadata": "البيانات الوصفية",
+    "ipAddress": "عنوان IP",
+    "userAgent": "وكيل المستخدم",
+    "refresh": "تحديث",
+    "totalChanges": "إجمالي التغييرات",
+    "created": "تم الإنشاء",
+    "updated": "تم التحديث",
+    "deleted": "تم الحذف",
+    "users": "المستخدمون",
+    "filters": "المرشحات",
+    "clearFilters": "مسح المرشحات",
+    "action": "الإجراء",
+    "allActions": "جميع الإجراءات",
+    "user": "المستخدم",
+    "allUsers": "جميع المستخدمين",
+    "dateRange": "نطاق التاريخ",
+    "showingResults": "عرض {filtered} من {total} نتيجة",
+    "noAuditLogs": "لا توجد سجلات تدقيق",
+    "noMatchingLogs": "لا توجد سجلات مطابقة",
+    "noAuditLogsDescription": "لم يتم تسجيل أي تغييرات لهذا العنصر بعد.",
+    "tryAdjustingFilters": "جرب تعديل المرشحات لرؤية المزيد من النتائج.",
+    "chronologicalOrder": "الترتيب الزمني (الأحدث أولاً)",
+    "fetchError": "فشل في تحميل سجلات التدقيق",
+    "retry": "إعادة المحاولة",
+    "loadingAuditData": "جاري تحميل بيانات التدقيق...",
+    "totalLogs": "إجمالي السجلات",
+    "todayLogs": "سجلات اليوم",
+    "uniqueUsers": "المستخدمون الفريدون",
+    "topAction": "الإجراء الأعلى",
+    "none": "لا شيء",
+    "tableView": "عرض الجدول",
+    "timelineView": "عرض الجدول الزمني",
+    "search": "بحث",
+    "searchPlaceholder": "البحث في السجلات...",
+    "searchDescription": "البحث بواسطة بريد المستخدم أو الإجراء أو اسم الجدول",
+    "tableName": "اسم الجدول",
+    "allTables": "جميع الجداول",
+    "allActions": "جميع الإجراءات",
+    "allUsers": "جميع المستخدمين",
+    "recordId": "معرف السجل",
+    "recordIdPlaceholder": "أدخل معرف السجل",
+    "dateRangeDescription": "تصفية حسب نطاق التاريخ",
+    "applyFilters": "تطبيق المرشحات",
+    "resetFilters": "إعادة تعيين المرشحات",
+    "auditLogs": "سجلات التدقيق",
+    "entries": "إدخالات",
+    "selectAll": "تحديد الكل",
+    "timestamp": "الطابع الزمني",
+    "table": "جدول",
+    "changes": "التغييرات",
+    "actionsColumn": "الإجراءات",
+    "showingEntries": "عرض {start} إلى {end} من {total} إدخال",
+    "selectedCount": "{count} محدد",
+    "auditDetails": "تفاصيل التدقيق",
+    "auditTimeline": "الجدول الزمني للتدقيق",
+    "selectedEntries": "{count} إدخال محدد",
+    "filtersActive": "مرشحات نشطة",
+    "activeFiltersCount": "{count} مرشح نشط",
+    "openMenu": "فتح القائمة",
+    "exportSelected": "تصدير المحدد",
+    "action": "إجراء",
+    "user": "مستخدم",
+    "selectLog": "تحديد السجل",
+    "fieldsChanged": "الحقول المتغيرة",
+    "newRecord": "سجل جديد",
+    "recordDeleted": "تم حذف السجل",
+    "noChanges": "لا توجد تغييرات",
+    "viewDetails": "عرض التفاصيل",
+    "copyRecordId": "نسخ المعرف",
+    "tables": {
+      "transactions": "معاملة",
+      "tasks": "مهمة",
+      "reservations": "حجز",
+      "lofts": "شقة"
+    },
+    "actionLabels": {
+      "created": "تم الإنشاء",
+      "updated": "تم التحديث", 
+      "deleted": "تم الحذف"
+    },
+    "actionTypes": {
+      "created": "تم الإنشاء",
+      "updated": "تم التحديث", 
+      "deleted": "تم الحذف",
+      "view": "عرض",
+      "export": "تصدير"
+    },
+    "times": "مرات",
+    "topActions": "أهم الإجراءات",
+    "selectLog": "تحديد السجل",
+    "fieldsChanged": "الحقول التي تم تغييرها",
+    "openMenu": "افتح القائمة",
+    "viewDetails": "عرض التفاصيل",
+    "copyRecordId": "نسخ معرف السجل"
   }
 }

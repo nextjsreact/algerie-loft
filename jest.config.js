@@ -24,6 +24,10 @@ const customJestConfig = {
     '**/__tests__/**/*.(js|jsx|ts|tsx)',
     '**/tests/unit/**/*.(test|spec).(js|jsx|ts|tsx)',
   ],
+  transformIgnorePatterns: [
+    'node_modules/(?!(next-intl|use-intl)/)',
+  ],
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

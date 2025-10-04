@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification du statut administrateur</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .user-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .navigation-test {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnostic - Gestion des mots de passe</h1>
+        <p>Ce script va vérifier pourquoi la fonctionnalité de gestion des mots de passe n'apparaît pas.</p>
+        
+        <div id="results"></div>
+        
+        <button onclick="checkAdminStatus()">Vérifier le statut administrateur</button>
+        <button onclick="testNavigation()">Tester la navigation</button>
+        <button onclick="checkAPI()">Tester l'API</button>
+        
+        <div class="navigation-test">
+            <h3>🧭 Test de navigation direct</h3>
+            <p>Essayez ces liens directs :</p>
+            <ul>
+                <li><a href="/fr/settings" target="_blank">Page des paramètres</a></li>
+                <li><a href="/fr/settings/user-passwords" target="_blank">Gestion des mots de passe</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function checkAdminStatus() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="info">🔄 Vérification en cours...</div>';
+            
+            try {
+                // Vérifier la session utilisateur
+                const sessionResponse = await fetch('/api/auth/session');
+                const sessionData = await sessionResponse.json();
+                
+                let html = '<h3>📊 Résultats du diagnostic</h3>';
+                
+                if (sessionResponse.ok && sessionData.user) {
+                    html += `
+                        <div class="success">
+                            ✅ <strong>Utilisateur connecté</strong><br>
+                            Email: ${sessionData.user.email}<br>
+                            Nom: ${sessionData.user.full_name || 'Non défini'}<br>
+                            Rôle: <strong>${sessionData.user.role}</strong>
+                        </div>
+                    `;
+                    
+                    if (sessionData.user.role === 'admin') {
+                        html += `
+                            <div class="success">
+                                👑 <strong>Vous êtes administrateur !</strong><br>
+                                La fonctionnalité de gestion des mots de passe devrait être visible.
+                            </div>
+                        `;
+                        
+                        // Vérifier si l'élément de navigation existe
+                        html += `
+                            <div class="info">
+                                🔍 <strong>Vérification de la navigation...</strong><br>
+                                Recherche de l'élément "Gestion des mots de passe" dans la sidebar...
+                            </div>
+                        `;
+                        
+                        // Vérifier la présence dans le DOM
+                        setTimeout(() => {
+                            const sidebarLinks = document.querySelectorAll('a[href*="user-passwords"]');
+                            if (sidebarLinks.length > 0) {
+                                results.innerHTML += `
+                                    <div class="success">
+                                        ✅ <strong>Lien trouvé dans la navigation !</strong><br>
+                                        Nombre de liens trouvés: ${sidebarLinks.length}
+                                    </div>
+                                `;
+                            } else {
+                                results.innerHTML += `
+                                    <div class="error">
+                                        ❌ <strong>Lien non trouvé dans la navigation</strong><br>
+                                        Le lien vers /settings/user-passwords n'est pas présent dans le DOM.
+                                    </div>
+                                `;
+                            }
+                        }, 1000);
+                        
+                    } else {
+                        html += `
+                            <div class="warning">
+                                ⚠️ <strong>Vous n'êtes pas administrateur</strong><br>
+                                Rôle actuel: ${sessionData.user.role}<br>
+                                Seuls les administrateurs peuvent voir cette fonctionnalité.
+                            </div>
+                        `;
+                    }
+                } else {
+                    html += `
+                        <div class="error">
+                            ❌ <strong>Utilisateur non connecté</strong><br>
+                            Vous devez vous connecter pour accéder aux paramètres.
+                        </div>
+                    `;
+                }
+                
+                results.innerHTML = html;
+                
+            } catch (error) {
+                results.innerHTML = `
+                    <div class="error">
+                        💥 <strong>Erreur lors de la vérification</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        async function testNavigation() {
+            const results = document.getElementById('results');
+            
+            // Vérifier si nous sommes sur la bonne page
+            const currentPath = window.location.pathname;
+            let html = `<h3>🧭 Test de navigation</h3>`;
+            html += `<div class="info">Chemin actuel: ${currentPath}</div>`;
+            
+            // Vérifier la présence des éléments de navigation
+            const sidebar = document.querySelector('[data-sidebar]') || document.querySelector('.sidebar');
+            if (sidebar) {
+                html += `<div class="success">✅ Sidebar trouvée</div>`;
+                
+                const userPasswordsLink = sidebar.querySelector('a[href*="user-passwords"]');
+                if (userPasswordsLink) {
+                    html += `<div class="success">✅ Lien "Gestion des mots de passe" trouvé dans la sidebar</div>`;
+                } else {
+                    html += `<div class="error">❌ Lien "Gestion des mots de passe" non trouvé dans la sidebar</div>`;
+                    
+                    // Lister tous les liens de la sidebar
+                    const allLinks = sidebar.querySelectorAll('a');
+                    html += `<div class="info">Liens trouvés dans la sidebar (${allLinks.length}):<br>`;
+                    allLinks.forEach(link => {
+                        html += `- ${link.href} (${link.textContent.trim()})<br>`;
+                    });
+                    html += `</div>`;
+                }
+            } else {
+                html += `<div class="error">❌ Sidebar non trouvée</div>`;
+            }
+            
+            results.innerHTML = html;
+        }
+        
+        async function checkAPI() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="info">🔄 Test de l\'API en cours...</div>';
+            
+            try {
+                // Tester l'API de recherche d'utilisateurs
+                const usersResponse = await fetch('/api/users/search?q=');
+                let html = '<h3>🔌 Test de l\'API</h3>';
+                
+                if (usersResponse.ok) {
+                    const users = await usersResponse.json();
+                    html += `
+                        <div class="success">
+                            ✅ <strong>API utilisateurs accessible</strong><br>
+                            Nombre d'utilisateurs trouvés: ${users.length}
+                        </div>
+                    `;
+                    
+                    const admins = users.filter(user => user.role === 'admin');
+                    html += `
+                        <div class="info">
+                            👑 <strong>Administrateurs dans la base:</strong> ${admins.length}<br>
+                            ${admins.map(admin => `- ${admin.full_name || admin.email} (${admin.email})`).join('<br>')}
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="error">
+                            ❌ <strong>Erreur API utilisateurs</strong><br>
+                            Status: ${usersResponse.status}
+                        </div>
+                    `;
+                }
+                
+                results.innerHTML = html;
+                
+            } catch (error) {
+                results.innerHTML = `
+                    <div class="error">
+                        💥 <strong>Erreur lors du test API</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Lancer automatiquement la vérification au chargement
+        window.addEventListener('load', () => {
+            setTimeout(checkAdminStatus, 500);
+        });
+    </script>
+</body>
+</html>

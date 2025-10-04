@@ -102,11 +102,15 @@ export function SimpleTransactionsPage({
   }, [transactions, searchTerm, typeFilter, statusFilter, categoryFilter, loftFilter, 
       currencyFilter, paymentMethodFilter, startDate, endDate])
 
-  // Calculs simples
+  // Calculs des totaux avec conversion de devises
   const { totalIncome, totalExpenses, netTotal } = useMemo(() => {
     return filteredTransactions.reduce(
       (acc, transaction) => {
-        const amount = parseFloat(transaction.equivalent_amount_default_currency?.toString() ?? transaction.amount.toString())
+        // Utiliser le montant converti en devise par défaut si disponible, sinon le montant original
+        const amount = transaction.equivalent_amount_default_currency 
+          ? parseFloat(transaction.equivalent_amount_default_currency.toString())
+          : parseFloat(transaction.amount.toString())
+        
         if (transaction.transaction_type === "income") {
           acc.totalIncome += amount
         } else {
@@ -605,8 +609,14 @@ export function SimpleTransactionsPage({
                             <div className="text-right">
                               <div className={`text-xl font-bold ${transaction.transaction_type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                                 {transaction.transaction_type === 'income' ? '+' : '-'}
-                                {formatAmount(transaction.amount)} {defaultCurrencySymbol}
+                                {formatAmount(transaction.equivalent_amount_default_currency || transaction.amount)} {defaultCurrencySymbol}
                               </div>
+                              {transaction.equivalent_amount_default_currency && 
+                               transaction.equivalent_amount_default_currency !== transaction.amount && (
+                                <div className="text-xs text-gray-500">
+                                  {t('original')}: {formatAmount(transaction.amount)} {currencies.find(c => c.id === transaction.currency_id)?.symbol || defaultCurrencySymbol}
+                                </div>
+                              )}
                             </div>
                             
                             <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">

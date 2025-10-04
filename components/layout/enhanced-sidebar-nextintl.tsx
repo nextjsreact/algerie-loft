@@ -2,7 +2,7 @@
 
 import { 
   Building2, Calendar, DollarSign, Home, LogOut, Settings, Users, 
-  ClipboardList, UserCheck, ChevronDown, ChevronRight, LayoutDashboard, CreditCard, MessageSquare, Bell, CalendarCheck
+  ClipboardList, UserCheck, ChevronDown, ChevronRight, LayoutDashboard, CreditCard, MessageSquare, Bell, CalendarCheck, Shield
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -60,6 +60,7 @@ export function EnhancedSidebar({ user, unreadCount, className }: EnhancedSideba
         { name: t('zoneAreas'), href: `/${locale}/settings/zone-areas`, icon: Home, roles: ["admin"] },
         { name: t('paymentMethods'), href: `/${locale}/settings/payment-methods`, icon: CreditCard, roles: ["admin"] },
         { name: t('internetConnections'), href: `/${locale}/settings/internet-connections`, icon: Building2, roles: ["admin"] },
+        { name: 'Audit', href: `/${locale}/settings/audit`, icon: Shield, roles: ["admin", "manager"] },
         { name: t('application'), href: `/${locale}/settings/application`, icon: Settings, roles: ["admin"] }
       ]
     },

@@ -234,7 +234,7 @@ export function ResetPasswordPageClient({ params }: { params: Promise<{ locale: 
                   </Link>
                   <Link href={`/${locale}/login`}>
                     <Button variant="outline" className="w-full">
-                      Retour à la connexion
+                      {t('passwordReset.backToLogin')}
                     </Button>
                   </Link>
                 </div>
@@ -256,10 +256,10 @@ export function ResetPasswordPageClient({ params }: { params: Promise<{ locale: 
               <CheckCircle className="h-10 w-10 text-green-600" />
             </div>
             <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
-              Compte sécurisé avec succès
+              {t('passwordReset.newPassword.success.title')}
             </h2>
             <p className="text-sm text-gray-600">
-              Votre authentification a été renforcée
+              {t('passwordReset.newPassword.success.subtitle')}
             </p>
           </div>
           
@@ -269,12 +269,11 @@ export function ResetPasswordPageClient({ params }: { params: Promise<{ locale: 
                 <div className="space-y-4">
                   <div className="flex items-center justify-center space-x-2 text-green-700">
                     <Shield className="h-5 w-5" />
-                    <span className="font-medium">Authentification renforcée</span>
+                    <span className="font-medium">{t('passwordReset.newPassword.success.message')}</span>
                   </div>
                   
                   <p className="text-gray-600 text-sm leading-relaxed">
-                    La sécurisation de votre compte a été finalisée avec succès. 
-                    Vous pouvez désormais accéder à votre espace avec vos nouveaux identifiants.
+                    {t('passwordReset.newPassword.success.description')}
                   </p>
                 </div>
 
@@ -285,7 +284,7 @@ export function ResetPasswordPageClient({ params }: { params: Promise<{ locale: 
                   </div>
                   <div className="flex items-center justify-center space-x-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
-                    <span className="text-green-700 text-xs">Redirection vers la connexion...</span>
+                    <span className="text-green-700 text-xs">{t('passwordReset.newPassword.success.redirecting')}</span>
                   </div>
                 </div>
 
@@ -305,7 +304,7 @@ export function ResetPasswordPageClient({ params }: { params: Promise<{ locale: 
 
           <div className="text-center">
             <p className="text-xs text-gray-500">
-              Préservez la confidentialité de vos identifiants d'accès
+              {t('passwordReset.newPassword.success.footerText')}
             </p>
           </div>
         </div>
@@ -322,10 +321,10 @@ export function ResetPasswordPageClient({ params }: { params: Promise<{ locale: 
             <Lock className="h-8 w-8 text-green-600" />
           </div>
           <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
-            Sécurisation du compte
+            {t('passwordReset.newPassword.title')}
           </h2>
           <p className="text-sm text-gray-600">
-            Définissez un nouveau mot de passe robuste
+            {t('passwordReset.newPassword.subtitle')}
           </p>
         </div>
 
@@ -333,7 +332,7 @@ export function ResetPasswordPageClient({ params }: { params: Promise<{ locale: 
           <CardHeader className="text-center pb-4">
             <CardTitle className="flex items-center justify-center gap-2 text-lg">
               <Shield className="h-5 w-5 text-green-600" />
-              Configuration sécurisée
+              {t('passwordReset.newPassword.cardTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -366,14 +365,14 @@ export function ResetPasswordPageClient({ params }: { params: Promise<{ locale: 
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-                  Mot de passe principal
+                  {t('passwordReset.newPassword.passwordLabel')}
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Saisissez votre mot de passe"
+                    placeholder={t('passwordReset.newPassword.passwordPlaceholder')}
                     {...register("password")}
                     className="pl-10 pr-10 h-12 border-gray-300 focus:border-green-500 focus:ring-green-500"
                   />
@@ -399,14 +398,14 @@ export function ResetPasswordPageClient({ params }: { params: Promise<{ locale: 
 
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
-                  Confirmation du mot de passe
+                  {t('passwordReset.newPassword.confirmLabel')}
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Ressaisissez le mot de passe"
+                    placeholder={t('passwordReset.newPassword.confirmPlaceholder')}
                     {...register("confirmPassword")}
                     className="pl-10 pr-10 h-12 border-gray-300 focus:border-green-500 focus:ring-green-500"
                   />
@@ -434,24 +433,24 @@ export function ResetPasswordPageClient({ params }: { params: Promise<{ locale: 
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                 <p className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                   <Shield className="h-4 w-4 text-gray-600" />
-                  Critères de robustesse
+                  {t('passwordReset.newPassword.criteriaTitle')}
                 </p>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className={`flex items-center space-x-2 ${passwordValidation.minLength ? "text-green-600" : "text-gray-400"}`}>
                     <div className={`w-2 h-2 rounded-full ${passwordValidation.minLength ? "bg-green-500" : "bg-gray-300"}`}></div>
-                    <span>8+ caractères</span>
+                    <span>{t('passwordReset.newPassword.criteria.minLength')}</span>
                   </div>
                   <div className={`flex items-center space-x-2 ${passwordValidation.hasLowercase ? "text-green-600" : "text-gray-400"}`}>
                     <div className={`w-2 h-2 rounded-full ${passwordValidation.hasLowercase ? "bg-green-500" : "bg-gray-300"}`}></div>
-                    <span>Minuscule (a-z)</span>
+                    <span>{t('passwordReset.newPassword.criteria.lowercase')}</span>
                   </div>
                   <div className={`flex items-center space-x-2 ${passwordValidation.hasUppercase ? "text-green-600" : "text-gray-400"}`}>
                     <div className={`w-2 h-2 rounded-full ${passwordValidation.hasUppercase ? "bg-green-500" : "bg-gray-300"}`}></div>
-                    <span>Majuscule (A-Z)</span>
+                    <span>{t('passwordReset.newPassword.criteria.uppercase')}</span>
                   </div>
                   <div className={`flex items-center space-x-2 ${passwordValidation.hasNumber ? "text-green-600" : "text-gray-400"}`}>
                     <div className={`w-2 h-2 rounded-full ${passwordValidation.hasNumber ? "bg-green-500" : "bg-gray-300"}`}></div>
-                    <span>Chiffre (0-9)</span>
+                    <span>{t('passwordReset.newPassword.criteria.number')}</span>
                   </div>
                 </div>
               </div>
@@ -464,12 +463,12 @@ export function ResetPasswordPageClient({ params }: { params: Promise<{ locale: 
                 {isLoading ? (
                   <div className="flex items-center justify-center space-x-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    <span>Mise à jour...</span>
+                    <span>{t('passwordReset.newPassword.updatingButton')}</span>
                   </div>
                 ) : (
                   <div className="flex items-center justify-center space-x-2">
                     <CheckCircle className="h-4 w-4" />
-                    <span>Sécuriser le compte</span>
+                    <span>{t('passwordReset.newPassword.updateButton')}</span>
                   </div>
                 )}
               </Button>
@@ -482,7 +481,7 @@ export function ResetPasswordPageClient({ params }: { params: Promise<{ locale: 
                   className="inline-flex items-center justify-center space-x-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
                 >
                   <ArrowLeft className="h-4 w-4" />
-                  <span>Retour à la connexion</span>
+                  <span>{t('passwordReset.backToLogin')}</span>
                 </Link>
               </div>
             </form>
@@ -491,7 +490,7 @@ export function ResetPasswordPageClient({ params }: { params: Promise<{ locale: 
 
         <div className="text-center">
           <p className="text-xs text-gray-500">
-            Vos données d'authentification sont chiffrées et protégées
+            {t('passwordReset.newPassword.footerText')}
           </p>
         </div>
       </div>

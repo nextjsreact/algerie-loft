@@ -207,3 +207,64 @@ export type Conversation = {
   name: string;
   latestMessage: string;
 };
+
+// Audit system types
+export type AuditAction = 'INSERT' | 'UPDATE' | 'DELETE';
+export type AuditableTable = 'transactions' | 'tasks' | 'reservations' | 'lofts';
+
+export interface AuditLog {
+  id: string;
+  tableName: string;
+  recordId: string;
+  action: AuditAction;
+  userId: string;
+  userEmail: string;
+  timestamp: string;
+  oldValues: Record<string, any> | null;
+  newValues: Record<string, any> | null;
+  changedFields: string[];
+  ipAddress?: string;
+  userAgent?: string;
+  integrityHash?: string;
+}
+
+export interface AuditFilters {
+  tableName?: string;
+  recordId?: string;
+  userId?: string;
+  action?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  search?: string;
+}
+
+export interface AuditLogEntry {
+  id: string;
+  tableName: AuditableTable;
+  recordId: string;
+  action: AuditAction;
+  userId: string;
+  userEmail: string;
+  timestamp: Date;
+  oldValues: Record<string, any> | null;
+  newValues: Record<string, any> | null;
+  changedFields: string[];
+  metadata?: {
+    ipAddress?: string;
+    userAgent?: string;
+  };
+}
+
+export interface AuditSearchParams {
+  tableName?: AuditableTable;
+  recordId?: string;
+  userId?: string;
+  action?: AuditAction;
+  dateRange?: {
+    from: Date;
+    to: Date;
+  };
+  searchTerm?: string;
+  page?: number;
+  limit?: number;
+}

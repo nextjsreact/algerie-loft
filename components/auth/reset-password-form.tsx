@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useLocale } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { createClient } from "@/utils/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -25,6 +25,7 @@ export function ResetPasswordForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const locale = useLocale()
+  const t = useTranslations('auth')
   const supabase = createClient()
 
   useEffect(() => {
@@ -218,7 +219,7 @@ export function ResetPasswordForm() {
             <div className="space-y-2">
               <Link href={`/${locale}/login`}>
                 <Button variant="outline" className="w-full">
-                  Retour à la connexion
+                  {t('passwordReset.backToLogin')}
                 </Button>
               </Link>
               {errorInfo.showRetry && (
@@ -366,7 +367,7 @@ export function ResetPasswordForm() {
 
           <div className="text-center">
             <Link href={`/${locale}/login`} className="text-sm text-blue-600 hover:underline">
-              Retour à la connexion
+              {t('passwordReset.backToLogin')}
             </Link>
           </div>
         </form>

@@ -287,7 +287,55 @@
     "signingIn": "Signing in...",
     "signingUp": "Signing up...",
     "unexpectedError": "An unexpected error occurred. Please try again.",
-    "welcomeBack": "Welcome back"
+    "welcomeBack": "Welcome back",
+    "passwordReset": {
+      "title": "Account Recovery",
+      "subtitle": "Enter your email address to receive instructions",
+      "cardTitle": "Password Recovery",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "sendButton": "Send Instructions",
+      "sendingButton": "Sending...",
+      "backToLogin": "Back to Login",
+      "footerText": "A secure recovery link will be sent to your email address",
+      "success": {
+        "title": "Instructions Sent",
+        "subtitle": "Check your email inbox",
+        "message": "Recovery instructions sent",
+        "description": "A secure recovery link has been sent to your email address. Follow the instructions to restore access to your account.",
+        "securityNote": "Valid for 60 minutes for your security",
+        "noEmailTitle": "Email not received?",
+        "noEmailDesc": "Check your spam folder or wait a few moments",
+        "tryAgain": "Try with another email address"
+      },
+      "newPassword": {
+        "title": "Account Security",
+        "subtitle": "Set a strong new password",
+        "cardTitle": "Security Configuration",
+        "passwordLabel": "Primary Password",
+        "passwordPlaceholder": "Enter your password",
+        "confirmLabel": "Password Confirmation",
+        "confirmPlaceholder": "Re-enter password",
+        "criteriaTitle": "Strength Criteria",
+        "criteria": {
+          "minLength": "8+ characters",
+          "lowercase": "Lowercase (a-z)",
+          "uppercase": "Uppercase (A-Z)",
+          "number": "Number (0-9)"
+        },
+        "updateButton": "Secure Account",
+        "updatingButton": "Updating...",
+        "footerText": "Your authentication data is encrypted and protected",
+        "success": {
+          "title": "Account Secured Successfully",
+          "subtitle": "Your authentication has been strengthened",
+          "message": "Authentication Enhanced",
+          "description": "Your account security has been successfully finalized. You can now access your space with your new credentials.",
+          "redirecting": "Redirecting to login...",
+          "footerText": "Keep your access credentials confidential"
+        }
+      }
+    }
   },
   "availability": {
     "activeFilters": "{count} active filter(s)",
@@ -434,6 +482,7 @@
     "error": "Error",
     "success": "Success",
     "loading": "Loading...",
+    "actions": "Actions",
     "name": "Name",
     "next": "Next",
     "none": "None",
@@ -442,6 +491,7 @@
       "ownershipType": "Ownership Type"
     },
     "page": "Page",
+    "pickDateRange": "Pick date range",
     "previous": "Previous",
     "results": "results",
     "selectOption": "Select an option",
@@ -456,7 +506,8 @@
     "notificationsEnabledDescription": "You will now receive instant notifications for tasks and messages.",
     "transfer": "Transfer",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "pickDateRange": "Pick a date range"
   },
   "conversations": {
     "addMembers": "Add Members",
@@ -1052,6 +1103,7 @@
     "teams": "Teams",
     "toggleTheme": "Toggle theme",
     "transactions": "Transactions",
+    "userPasswords": "User Passwords",
     "zoneAreas": "Geographic Zones"
   },
   "notifications": {
@@ -1540,6 +1592,8 @@
     "user": "User"
   },
   "settings": {
+    "profileInfo": "Profile Information",
+    "updatePersonalInfo": "Update your personal information and preferences.",
     "categories": {
       "addNew": "Add New Category",
       "allCategories": "All Categories",
@@ -1577,21 +1631,71 @@
     "currencies": {
       "addFirstCurrency": "Add your first currency to get started",
       "addNew": "Add New Currency",
+      "addNewCurrency": "Add New Currency",
       "allCurrencies": "All Currencies",
       "code": "Code",
+      "createCurrency": "Create Currency",
+      "createNewCurrency": "Create New Currency",
+      "creating": "Creating...",
+      "currencyForm": {
+        "title": "Currency Information",
+        "name": "Currency Name",
+        "namePlaceholder": "e.g., US Dollar",
+        "code": "Currency Code",
+        "codePlaceholder": "e.g., USD",
+        "symbol": "Symbol",
+        "symbolPlaceholder": "e.g., $",
+        "ratio": "Exchange Rate",
+        "ratioPlaceholder": "e.g., 1.00",
+        "ratioHelp": "Exchange rate relative to Algerian Dinar (e.g., 1 DZD = X of this currency)",
+        "status": "Status",
+        "statusPlaceholder": "Select status",
+        "createButton": "Create Currency",
+        "updateButton": "Update Currency",
+        "cancelButton": "Cancel"
+      },
       "default": "Default",
       "defaultCurrency": "Default Currency",
       "defaultCurrencyDesc": "This currency is used as the default for all transactions",
+      "delete": "Delete",
+      "deleteConfirm": "Are you sure you want to delete this currency?",
+      "deleteSuccess": "Currency deleted successfully",
+      "deleteError": "Error deleting currency",
+      "edit": "Edit",
+      "editCurrency": "Edit Currency",
       "enterCurrencyDetails": "Enter the currency details below",
+      "exchangeRate": "Exchange Rate",
+      "loading": "Loading currencies...",
       "name": "Name",
       "noCurrenciesFound": "No currencies found",
+      "primary": "Primary",
+      "ratio": "Exchange Rate",
+      "ratioHelp": "Exchange rate relative to USD (e.g., 1 USD = X of this currency)",
+      "ratioTooltip": "Enter the conversion ratio to USD or base currency",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "searchCurrencies": "Search currencies...",
+      "searchPlaceholder": "Search by currency name, code, or symbol",
       "secondary": "Secondary",
       "setAsDefault": "Set as default",
       "setDefault": "Set as default",
+      "setDefaultConfirm": "Are you sure you want to set this as the default currency?",
+      "setDefaultSuccess": "Default currency updated successfully",
       "status": "Status",
       "subtitle": "Manage currencies for your transactions",
       "symbol": "Symbol",
-      "totalCurrencies": "Total: {count} currencies"
+      "table": {
+        "name": "Name",
+        "code": "Code",
+        "symbol": "Symbol",
+        "exchangeRate": "Exchange Rate",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "totalCurrencies": "Total: {count} currencies",
+      "updateCurrency": "Update Currency",
+      "updateSuccess": "Currency updated successfully",
+      "updateError": "Error updating currency"
     },
     "paymentMethods": {
       "addFirstMethod": "Add your first payment method to get started",
@@ -1605,7 +1709,8 @@
     },
     "common": {
       "actions": "Actions",
-      "delete": "Delete"
+      "delete": "Delete",
+      "edit": "Edit"
     },
     "subtitle": "Manage your application settings and preferences",
     "title": "Settings",
@@ -1654,6 +1759,51 @@
       },
       "saveAll": {
         "button": "Save All Settings"
+      }
+    },
+    "userPasswords": {
+      "common": {
+        "loading": "Loading..."
+      },
+      "title": "User Passwords",
+      "subtitle": "Manage user passwords (admin only)",
+      "userSelection": {
+        "title": "Select User",
+        "description": "Select the user whose password you want to change",
+        "searchLabel": "Search for a user",
+        "searchPlaceholder": "Search by name or email...",
+        "selectLabel": "Select a user",
+        "noResults": "No users found",
+        "selectedUser": "Selected user: {name}"
+      },
+      "passwordForm": {
+        "title": "New Password",
+        "description": "Set a new password for the selected user",
+        "newPassword": "New Password",
+        "newPasswordPlaceholder": "Enter the new password",
+        "confirmPassword": "Confirm Password",
+        "confirmPasswordPlaceholder": "Confirm the new password",
+        "button": "Change Password",
+        "buttonProgress": "Changing Password...",
+        "selectedUser": "Change password for {name}"
+      },
+      "security": {
+        "title": "Security Considerations",
+        "description": "Important information about password changes",
+        "warning1": "Remember to inform the user about the password change",
+        "warning2": "Password must be at least 6 characters long",
+        "warning3": "This action is irreversible"
+      },
+      "selectUserError": "Please select a user",
+      "passwordMismatchError": "Passwords do not match",
+      "passwordLengthError": "Password must be at least 6 characters long",
+      "passwordUpdateSuccess": "Password updated successfully for {name}",
+      "passwordUpdateError": "Error updating password",
+      "roles": {
+        "admin": "Administrator",
+        "manager": "Manager",
+        "member": "Member",
+        "executive": "Executive"
       }
     }
   },
@@ -1977,7 +2127,7 @@
     "selectedCurrency": "Selected Currency",
     "startDate": "Start Date",
     "status": "Status",
-    "subtitle": "Track all your financial movements, including income and expenses.",
+    "subtitle": "Manage reference amounts for transaction categories to streamline data entry.",
     "title": "Transactions",
     "to": "to",
     "totalExpenses": "Total Expenses",
@@ -1990,7 +2140,52 @@
     "transactionsList": "Transactions List",
     "type": "Type",
     "updateTransaction": "Update Transaction",
-    "updateTransactionInfo": "Update transaction information"
+    "updateTransactionInfo": "Update transaction information",
+    "original": "Original",
+    "loadingError": "Error loading reference amounts.",
+    "updateSuccess": "Reference amount updated successfully.",
+    "updateError": "Error updating reference amount.",
+    "fillAllFields": "Please fill in all required fields.",
+    "addError": "Error adding new reference amount.",
+    "referenceAmountsTitle": "Reference Amounts Management",
+    "add": "Add",
+    "addNewCategory": "Add New Reference",
+    "categoryLabel": "Category Name",
+    "categoryPlaceholder": "e.g., maintenance, cleaning",
+    "selectType": "Select a type",
+    "referenceAmountDZD": "Reference Amount (DZD)",
+    "addCategory": "Add Reference",
+    "expenses": "Expenses",
+    "howItWorks": "How it works?",
+    "howItWorksSteps": {
+      "step1": "Reference amounts pre-fill the amount when creating a new transaction.",
+      "step2": "Define a reference amount for each transaction category (income or expense).",
+      "step3": "When you select a category in the transaction form, the amount is auto-filled.",
+      "step4": "You can always modify the amount manually during transaction entry."
+    },
+    "edit": "Edit",
+    "enterAmount": "Please enter an amount.",
+    "save": "Save",
+    "categories": {
+      "maintenance": "Maintenance",
+      "cleaning": "Cleaning",
+      "repair": "Repair",
+      "plumbing": "Plumbing",
+      "electrical": "Electrical",
+      "painting": "Painting",
+      "security": "Security",
+      "inspection": "Inspection",
+      "utilities": "Utilities",
+      "insurance": "Insurance",
+      "taxes": "Taxes",
+      "supplies": "Supplies",
+      "rent": "Rent",
+      "deposit": "Deposit",
+      "late_fees": "Late Fees",
+      "parking": "Parking",
+      "services": "Services",
+      "other": "Other"
+    }
   },
   "unauthorized": {
     "accessDenied": "Access Denied",
@@ -2061,5 +2256,129 @@
     "networkError": "Unable to contact debug API",
     "ok": "OK",
     "error": "Error"
+  },
+  "audit": {
+    "auditDashboard": "Audit Dashboard",
+    "auditDashboardDescription": "View and filter audit logs for all actions performed in the system.",
+    "accessLevel": "Access Level",
+    "accessLevels": {
+      "full": "Full Access",
+      "assigned": "Assigned Access",
+      "none": "No Access",
+      "all": "All Access"
+    },
+    "auditHistory": "Audit History",
+    "auditHistoryFor": "Audit History for",
+    "actions": {
+      "created": "Created",
+      "updated": "Updated", 
+      "deleted": "Deleted"
+    },
+    "tables": {
+      "transactions": "Transaction",
+      "tasks": "Task",
+      "reservations": "Reservation",
+      "lofts": "Loft"
+    },
+    "unknownUser": "Unknown User",
+    "changedFields": "Changed Fields",
+    "oldValue": "Old Value",
+    "newValue": "New Value",
+    "empty": "Empty",
+    "createdData": "Created Data",
+    "deletedData": "Deleted Data",
+    "metadata": "Metadata",
+    "ipAddress": "IP Address",
+    "userAgent": "User Agent",
+    "refresh": "Refresh",
+    "totalChanges": "Total Changes",
+    "created": "Created",
+    "updated": "Updated",
+    "deleted": "Deleted",
+    "users": "Users",
+    "filters": "Filters",
+    "clearFilters": "Clear Filters",
+    "action": "Action",
+    "allActions": "All Actions",
+    "user": "User",
+    "allUsers": "All Users",
+    "dateRange": "Date Range",
+    "showingResults": "Showing {filtered} of {total} results",
+    "noAuditLogs": "No Audit Logs",
+    "noMatchingLogs": "No Matching Logs",
+    "noAuditLogsDescription": "No changes have been recorded for this item yet.",
+    "tryAdjustingFilters": "Try adjusting your filters to see more results.",
+    "chronologicalOrder": "Chronological Order (newest first)",
+    "fetchError": "Failed to load audit logs",
+    "retry": "Retry",
+    "loadingAuditData": "Loading audit data...",
+    "totalLogs": "Total Logs",
+    "todayLogs": "Today's Logs",
+    "uniqueUsers": "Unique Users",
+    "topAction": "Top Action",
+    "none": "None",
+    "tableView": "Table View",
+    "timelineView": "Timeline View",
+    "search": "Search",
+    "searchPlaceholder": "Search logs...",
+    "searchDescription": "Search by user email, action, or table name",
+    "tableName": "Table Name",
+    "allTables": "All Tables",
+    "allActions": "All Actions",
+    "allUsers": "All Users",
+    "recordId": "Record ID",
+    "recordIdPlaceholder": "Enter record ID",
+    "dateRangeDescription": "Filter by date range",
+    "applyFilters": "Apply Filters",
+    "resetFilters": "Reset Filters",
+    "auditLogs": "Audit Logs",
+    "entries": "entries",
+    "selectAll": "Select All",
+    "timestamp": "Timestamp",
+    "table": "Table",
+    "changes": "Changes",
+    "actionsColumn": "Actions",
+    "showingEntries": "Showing {start} to {end} of {total} entries",
+    "selectedCount": "{count} selected",
+    "auditDetails": "Audit Details",
+    "auditTimeline": "Audit Timeline",
+    "selectedEntries": "{count} selected entries",
+    "filtersActive": "filters active",
+    "activeFiltersCount": "{count} active filter(s)",
+    "openMenu": "Open menu",
+    "exportSelected": "Export Selected",
+    "action": "Action",
+    "user": "User",
+    "selectLog": "Select log",
+    "fieldsChanged": "fields changed",
+    "newRecord": "New record",
+    "recordDeleted": "Record deleted",
+    "noChanges": "No changes",
+    "viewDetails": "View Details",
+    "copyRecordId": "Copy ID",
+    "tables": {
+      "transactions": "Transaction",
+      "tasks": "Task",
+      "reservations": "Reservation",
+      "lofts": "Loft"
+    },
+    "actionLabels": {
+      "created": "Created",
+      "updated": "Updated", 
+      "deleted": "Deleted"
+    },
+    "actionTypes": {
+      "created": "Created",
+      "updated": "Updated", 
+      "deleted": "Deleted",
+      "view": "View",
+      "export": "Export"
+    },
+    "times": "times",
+    "topActions": "Top Actions",
+    "selectLog": "Select log",
+    "fieldsChanged": "Fields Changed",
+    "viewDetails": "View Details",
+    "copyRecordId": "Copy Record ID"
   }
 }

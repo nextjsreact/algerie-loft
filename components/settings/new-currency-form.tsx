@@ -23,6 +23,7 @@ export function NewCurrencyForm() {
     name: "",
     code: "",
     symbol: "",
+    ratio: 1,
     is_default: false
   })
 
@@ -35,6 +36,7 @@ export function NewCurrencyForm() {
         name: formData.name,
         code: formData.code.toUpperCase(),
         symbol: formData.symbol,
+        ratio: formData.ratio,
         is_default: formData.is_default
       })
       
@@ -47,21 +49,21 @@ export function NewCurrencyForm() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" asChild>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+        <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
           <Link href={`/${locale}/settings/currencies`}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             {tCommon("back")}
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-3">
-            <DollarSign className="h-8 w-8 text-primary" />
+          <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2 sm:gap-3">
+            <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
             {t("addNew")}
           </h1>
-          <p className="text-muted-foreground">{t("addFirstCurrency")}</p>
+          <p className="text-muted-foreground text-sm sm:text-base">{t("addFirstCurrency")}</p>
         </div>
       </div>
 
@@ -107,6 +109,34 @@ export function NewCurrencyForm() {
               />
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="ratio" className="flex items-center gap-2">
+                {t("ratio")}
+                <span
+                  className="text-xs text-muted-foreground cursor-help"
+                  title={t("ratioTooltip") || "Enter the conversion ratio to USD or base currency"}
+                >
+                  ⓘ
+                </span>
+              </Label>
+              <Input
+                id="ratio"
+                type="number"
+                step="0.000001"
+                min="0.000001"
+                value={formData.ratio}
+                onChange={(e) => setFormData(prev => ({
+                  ...prev,
+                  ratio: parseFloat(e.target.value) || 1
+                }))}
+                placeholder="e.g. 0.0069"
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                {t("ratioHelp") || "Exchange rate relative to USD (e.g., 1 USD = X of this currency)"}
+              </p>
+            </div>
+
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="is_default"
@@ -116,12 +146,12 @@ export function NewCurrencyForm() {
               <Label htmlFor="is_default">{t("setAsDefault")}</Label>
             </div>
 
-            <div className="flex gap-4">
-              <Button type="submit" disabled={isLoading}>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-2" />
                 {isLoading ? tCommon("saving") : t("addNew")}
               </Button>
-              <Button type="button" variant="outline" asChild>
+              <Button type="button" variant="outline" asChild className="w-full sm:w-auto">
                 <Link href={`/${locale}/settings/currencies`}>
                   {tCommon("cancel")}
                 </Link>

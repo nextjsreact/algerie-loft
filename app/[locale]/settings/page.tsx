@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { User, Shield, Bell, Database } from "lucide-react"
+import { User, Shield, Bell, Database, Key } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from "react"
@@ -193,6 +193,29 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
         </RoleBasedAccess>
+
+        <RoleBasedAccess 
+          userRole={session.user.role}
+          allowedRoles={['admin', 'manager']}
+          showFallback={false}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5" />
+                Audit et Traçabilité
+              </CardTitle>
+              <CardDescription>Consulter l'historique des modifications et les logs d'audit</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/settings/audit">
+                  Voir les logs d'audit
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </RoleBasedAccess>
         
         <RoleBasedAccess 
           userRole={session.user.role}
@@ -211,6 +234,52 @@ export default function SettingsPage() {
               <Button variant="outline" size="sm" asChild>
                 <Link href="/settings/payment-methods">
                   {t('settings.managePaymentMethodsBtn')}
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </RoleBasedAccess>
+
+        <RoleBasedAccess 
+          userRole={session.user.role}
+          allowedRoles={['admin', 'manager']}
+          showFallback={false}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5" />
+                Audit et Traçabilité
+              </CardTitle>
+              <CardDescription>Consulter l'historique des modifications et les logs d'audit</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/settings/audit">
+                  Voir les logs d'audit
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </RoleBasedAccess>
+
+        <RoleBasedAccess 
+          userRole={session.user.role}
+          allowedRoles={['admin']}
+          showFallback={false}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Key className="h-5 w-5" />
+                Gestion des mots de passe
+              </CardTitle>
+              <CardDescription>Changer les mots de passe des autres utilisateurs (admin uniquement)</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/settings/user-passwords">
+                  Gérer les mots de passe
                 </Link>
               </Button>
             </CardContent>

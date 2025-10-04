@@ -25,7 +25,10 @@ export interface RolePermissions {
 export const ROLE_PERMISSIONS: RolePermissions = {
   admin: [
     // Admin has full access to everything
-    { resource: '*', action: '*', scope: 'all' }
+    { resource: '*', action: '*', scope: 'all' },
+    // Explicit audit permissions
+    { resource: 'audit', action: '*', scope: 'all' },
+    { resource: 'audit-export', action: '*', scope: 'all' }
   ],
   manager: [
     // Dashboard access
@@ -52,7 +55,10 @@ export const ROLE_PERMISSIONS: RolePermissions = {
     
     // User management
     { resource: 'users', action: 'read', scope: 'all' },
-    { resource: 'users', action: 'write', scope: 'team' }
+    { resource: 'users', action: 'write', scope: 'team' },
+    
+    // Audit access
+    { resource: 'audit', action: 'read', scope: 'all' }
   ],
   executive: [
     // Executive dashboard access

@@ -538,7 +538,7 @@ function ReservationsPageContent() {
                 <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg">
                   <Plus className="h-5 w-5 text-white" />
                 </div>
-                {t('form.title')}
+                {t('create')}
               </DialogTitle>
             </DialogHeader>
             <ReservationFormHybrid

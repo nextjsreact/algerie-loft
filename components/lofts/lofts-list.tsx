@@ -3,6 +3,9 @@
 import { useState } from "react"
 import { useTranslations, useLocale } from "next-intl"
 import Link from "next/link"
+import { deleteLoft } from "@/app/actions/lofts"
+import { toast } from "sonner"
+import { useConfirmationToast } from "@/hooks/use-confirmation-toast"
 import { 
   Edit, 
   Trash2, 
@@ -65,6 +68,7 @@ export function LoftsList({
   const locale = useLocale()
   const t = useTranslations('lofts')
   const tCommon = useTranslations('common')
+  const { confirm } = useConfirmationToast()
   
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -72,6 +76,7 @@ export function LoftsList({
   const [zoneFilter, setZoneFilter] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
+  const [deletingLoftId, setDeletingLoftId] = useState<string | null>(null)
 
   // Filtrage des lofts
   const filteredLofts = lofts.filter((loft) => {
@@ -92,15 +97,7 @@ export function LoftsList({
   const startIndex = (currentPage - 1) * itemsPerPage
   const paginatedLofts = filteredLofts.slice(startIndex, startIndex + itemsPerPage)
 
-  // Debug: Log the first few lofts to see their data structure
-  console.log('Lofts data sample:', paginatedLofts.slice(0, 3).map(loft => ({
-    id: loft.id,
-    name: loft.name,
-    price_per_month: loft.price_per_month,
-    price_per_month_type: typeof loft.price_per_month,
-    price_per_night: (loft as any).price_per_night,
-    price_per_night_type: typeof (loft as any).price_per_night
-  })))
+
 
   // Fonction pour obtenir le badge de statut
   const getStatusBadge = (status: string) => {
@@ -120,13 +117,47 @@ export function LoftsList({
   }
 
   // Fonction pour formater le prix
-  const formatPrice = (price: number | null) => {
-    console.log('formatPrice called with:', price, 'Type:', typeof price)
-    if (!price || price === null || price === undefined) {
-      console.log('Price is null/undefined, returning N/A')
+  const formatPrice = (price: number | null | undefined) => {
+    if (price === null || price === undefined) {
       return "N/A"
     }
+    // 0 est un prix valide, donc on l'affiche
     return formatCurrencyAuto(price, 'DZD', `/${locale}/lofts`)
+  }
+
+  // Fonction pour supprimer un loft
+  const handleDeleteLoft = async (loftId: string, loftName: string) => {
+    const confirmed = await confirm({
+      title: t('confirmDeleteTitle'),
+      description: t('confirmDeleteDescription', { name: loftName }),
+      confirmText: t('confirmDeleteButton'),
+      cancelText: tCommon('cancel'),
+      variant: 'destructive'
+    })
+
+    if (!confirmed) {
+      return
+    }
+
+    setDeletingLoftId(loftId)
+    
+    try {
+      await deleteLoft(loftId)
+      toast.success(t('deleteSuccess', { name: loftName }), {
+        description: t('deleteSuccessDescription'),
+        duration: 4000,
+      })
+      // Recharger la page pour refléter les changements
+      window.location.reload()
+    } catch (error) {
+      console.error('Error deleting loft:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Une erreur inconnue s\'est produite'
+      toast.error(t('deleteError', { name: loftName }), {
+        description: errorMessage,
+        duration: 8000,
+      })
+      setDeletingLoftId(null)
+    }
   }
 
   return (
@@ -293,7 +324,7 @@ export function LoftsList({
                     <TableCell>
                       <div className="flex items-center gap-2 text-gray-600">
                         <DollarSign className="h-4 w-4" />
-                        {formatPrice(loft.price_per_month || 0)}
+                        {formatPrice(loft.price_per_night)}
                       </div>
                     </TableCell>
                   </RoleBasedAccess>
@@ -321,9 +352,13 @@ export function LoftsList({
                           </Link>
                         </DropdownMenuItem>
                         {isAdmin && (
-                          <DropdownMenuItem className="flex items-center gap-2 text-red-600">
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 text-red-600 cursor-pointer"
+                            onClick={() => handleDeleteLoft(loft.id, loft.name)}
+                            disabled={deletingLoftId === loft.id}
+                          >
                             <Trash2 className="h-4 w-4" />
-                            {tCommon('delete')}
+                            {deletingLoftId === loft.id ? t('deleting') : tCommon('delete')}
                           </DropdownMenuItem>
                         )}
                       </DropdownMenuContent>

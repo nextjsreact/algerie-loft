@@ -25,7 +25,7 @@ const customJestConfig = {
     '**/tests/unit/**/*.(test|spec).(js|jsx|ts|tsx)',
   ],
   transformIgnorePatterns: [
-    'node_modules/(?!(next-intl|use-intl)/)',
+    'node_modules/(?!(next-intl|use-intl|@faker-js)/)',
   ],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
 }

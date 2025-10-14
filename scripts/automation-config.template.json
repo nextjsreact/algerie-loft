@@ -1,0 +1,134 @@
+{
+  "dailyRefresh": {
+    "enabled": true,
+    "config": {
+      "targetEnvironments": ["test", "training"],
+      "refreshTime": "02:00",
+      "weekdaysOnly": true,
+      "anonymizeData": true,
+      "includeAuditLogs": true,
+      "includeConversations": true,
+      "includeReservations": true,
+      "createBackups": true,
+      "validateAfterRefresh": true,
+      "notifyOnSuccess": false,
+      "notifyOnFailure": true,
+      "notificationEmail": "admin@loft-algerie.com"
+    }
+  },
+  
+  "weeklyRefresh": {
+    "enabled": true,
+    "config": {
+      "targetEnvironments": ["test", "training", "development"],
+      "dayOfWeek": 0,
+      "refreshTime": "01:00",
+      "performDeepClean": true,
+      "optimizeDatabase": true,
+      "updateSchemas": true,
+      "fullValidation": true,
+      "anonymizeData": true,
+      "includeAuditLogs": true,
+      "includeConversations": true,
+      "includeReservations": true,
+      "createFullBackups": true,
+      "retainBackupDays": 30,
+      "generateDetailedReport": true,
+      "notificationEmail": "admin@loft-algerie.com"
+    }
+  },
+  
+  "autoTrainingSetup": {
+    "enabled": false,
+    "config": {
+      "environmentName": "auto-training",
+      "baseEnvironment": "production",
+      "generateSampleData": true,
+      "sampleDataSize": "medium",
+      "includeHistoricalData": true,
+      "createTrainingUsers": true,
+      "trainingUserRoles": [
+        {
+          "role": "admin",
+          "count": 1,
+          "permissions": ["all"],
+          "sampleData": true
+        },
+        {
+          "role": "manager", 
+          "count": 2,
+          "permissions": ["lofts", "reservations", "transactions", "reports"],
+          "sampleData": true
+        },
+        {
+          "role": "member",
+          "count": 3,
+          "permissions": ["lofts", "reservations", "tasks"],
+          "sampleData": true
+        }
+      ],
+      "setupTrainingScenarios": true,
+      "trainingScenarios": [
+        {
+          "name": "Basic Loft Management",
+          "description": "Learn to create, edit, and manage loft properties",
+          "dataRequirements": ["lofts", "owners"],
+          "setupSteps": [
+            "Create sample lofts with different configurations",
+            "Assign owners to lofts",
+            "Set up pricing and availability"
+          ],
+          "expectedOutcomes": [
+            "Understand loft CRUD operations",
+            "Learn owner assignment", 
+            "Master pricing setup"
+          ]
+        }
+      ],
+      "includeAuditSystem": true,
+      "includeConversations": true,
+      "includeReservations": true,
+      "includeNotifications": true,
+      "autoCleanupAfterDays": 30,
+      "createBackup": true,
+      "generateTrainingGuide": true,
+      "includeTestData": true
+    },
+    "triggers": ["weekly", "on-demand"]
+  },
+  
+  "autoDevelopmentSetup": {
+    "enabled": false,
+    "config": {
+      "sourceEnvironment": "production",
+      "minimalDataSet": true,
+      "includeDevTools": true,
+      "enableDebugMode": true,
+      "fastSetup": true,
+      "anonymizeData": true,
+      "includeAuditLogs": false,
+      "includeConversations": false,
+      "includeReservations": true,
+      "maxRecordsPerTable": 10,
+      "createDevUsers": true,
+      "enableHotReload": true,
+      "setupTestData": true,
+      "skipValidation": false,
+      "parallelProcessing": true,
+      "useLocalDatabase": false
+    },
+    "triggers": ["on-demand"]
+  },
+  
+  "notifications": {
+    "email": "admin@loft-algerie.com",
+    "webhook": "",
+    "slack": ""
+  },
+  
+  "monitoring": {
+    "enabled": true,
+    "healthChecks": true,
+    "performanceMetrics": true
+  }
+}

@@ -706,8 +706,7 @@ export async function getReservationStats(): Promise<ActionResult<{
     }
   };
 }
-e
-xport async function getReservation(id: string): Promise<any> {
+export async function getReservation(id: string): Promise<any> {
   const supabase = await createClient();
   
   const { data, error } = await supabase

@@ -24,17 +24,94 @@ export async function getLofts() {
 }
 
 export async function deleteLoft(id: string) {
-  await requireRole(["admin"])
+  const session = await requireRole(["admin"])
 
-  const supabase = await createClient() // Create client here
-  const { error } = await supabase.from("lofts").delete().eq("id", id)
+  const supabase = await createClient()
+  
+  try {
+    // Récupérer les informations du loft avant suppression pour l'audit
+    const { data: loftToDelete, error: fetchError } = await supabase
+      .from("lofts")
+      .select("*")
+      .eq("id", id)
+      .single()
 
-  if (error) {
-    console.error("Error deleting loft:", error)
+    if (fetchError) {
+      console.error("Error fetching loft for deletion:", fetchError)
+      throw new Error("Loft non trouvé")
+    }
+
+    if (!loftToDelete) {
+      throw new Error("Loft non trouvé")
+    }
+
+    // Vérifier s'il y a des dépendances qui pourraient empêcher la suppression
+    const { data: relatedTasks } = await supabase
+      .from("tasks")
+      .select("id")
+      .eq("loft_id", id)
+      .limit(1)
+
+    const { data: relatedTransactions } = await supabase
+      .from("transactions")
+      .select("id")
+      .eq("loft_id", id)
+      .limit(1)
+
+    // Si il y a des dépendances, informer l'utilisateur
+    if (relatedTasks?.length || relatedTransactions?.length) {
+      const dependencies = []
+      if (relatedTasks?.length) dependencies.push("tâches")
+      if (relatedTransactions?.length) dependencies.push("transactions")
+      
+      throw new Error(`Impossible de supprimer ce loft car il est lié à des ${dependencies.join(", ")}. Veuillez d'abord supprimer ou modifier ces éléments.`)
+    }
+
+    // Supprimer d'abord les photos associées (si elles existent)
+    await supabase
+      .from("loft_photos")
+      .delete()
+      .eq("loft_id", id)
+
+    // Supprimer les disponibilités associées
+    await supabase
+      .from("loft_availability")
+      .delete()
+      .eq("loft_id", id)
+
+    // Supprimer le loft
+    const { error: deleteError } = await supabase
+      .from("lofts")
+      .delete()
+      .eq("id", id)
+
+    if (deleteError) {
+      console.error("Error deleting loft:", deleteError)
+      throw new Error(`Erreur lors de la suppression: ${deleteError.message}`)
+    }
+
+    // Créer un log d'audit pour la suppression
+    try {
+      await supabase.from("audit_logs").insert({
+        table_name: "lofts",
+        record_id: id,
+        action: "DELETE",
+        old_values: loftToDelete,
+        new_values: null,
+        user_id: session.user.id,
+        user_email: session.user.email,
+        timestamp: new Date().toISOString()
+      })
+    } catch (auditError) {
+      console.error("Error creating audit log:", auditError)
+      // Ne pas faire échouer la suppression si l'audit échoue
+    }
+
+    return { success: true }
+  } catch (error) {
+    console.error("Error in deleteLoft:", error)
     throw error
   }
-
-  redirect("/lofts")
 }
 
 export async function getLoft(id: string): Promise<Loft | null> {

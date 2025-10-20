@@ -86,6 +86,73 @@
       "addNote": "Ajouter une note"
     }
   },
+  "blog": {
+    "title": "Blog & Actualités",
+    "subtitle": "Découvrez nos derniers articles et conseils sur la gestion immobilière",
+    "meta": {
+      "title": "Blog - Loft Algérie",
+      "description": "Découvrez nos articles et conseils sur la gestion immobilière, les tendances du marché et les meilleures pratiques."
+    },
+    "noPosts": "Aucun article trouvé",
+    "noPostsDescription": "Il n'y a pas d'articles correspondant à vos critères de recherche.",
+    "loading": "Chargement des articles...",
+    "readMore": "Lire la suite",
+    "relatedPosts": "Articles similaires",
+    "tags": "Étiquettes",
+    "categories": {
+      "property-management": "Gestion immobilière",
+      "real-estate-tips": "Conseils immobiliers",
+      "market-analysis": "Analyse de marché",
+      "company-news": "Actualités de l'entreprise",
+      "client-stories": "Témoignages clients"
+    },
+    "filters": {
+      "selectCategory": "Sélectionner une catégorie",
+      "allCategories": "Toutes les catégories",
+      "selectTag": "Sélectionner une étiquette",
+      "allTags": "Toutes les étiquettes",
+      "clearAll": "Effacer les filtres"
+    },
+    "pagination": {
+      "previous": "Précédent",
+      "next": "Suivant"
+    },
+    "navigation": {
+      "home": "Accueil",
+      "backToBlog": "Retour au blog"
+    },
+    "share": {
+      "title": "Partager",
+      "share": "Partager",
+      "copyLink": "Copier le lien",
+      "linkCopied": "Lien copié dans le presse-papiers",
+      "linkCopyError": "Erreur lors de la copie du lien"
+    },
+    "comments": {
+      "title": "Commentaires",
+      "addComment": "Ajouter un commentaire",
+      "noComments": "Aucun commentaire pour le moment",
+      "beFirst": "Soyez le premier à commenter cet article",
+      "moderationNotice": "Votre commentaire sera modéré avant publication.",
+      "submitSuccess": "Commentaire soumis avec succès",
+      "submitError": "Erreur lors de l'envoi du commentaire",
+      "form": {
+        "name": "Nom",
+        "namePlaceholder": "Votre nom",
+        "email": "Email",
+        "emailPlaceholder": "votre@email.com",
+        "comment": "Commentaire",
+        "commentPlaceholder": "Partagez vos thoughts...",
+        "submit": "Publier le commentaire",
+        "submitting": "Publication...",
+        "cancel": "Annuler"
+      },
+      "validation": {
+        "required": "Tous les champs sont requis",
+        "invalidEmail": "Adresse email invalide"
+      }
+    }
+  },
   "landing": {
     "title": "Algerie Loft",
     "subtitle": "Optimisez la gestion de vos propriétés.",

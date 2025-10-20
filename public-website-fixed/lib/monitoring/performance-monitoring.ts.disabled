@@ -1,0 +1,219 @@
+// Performance monitoring utilities
+interface PerformanceMetric {
+  name: string;
+  value: number;
+  unit: string;
+  timestamp: number;
+  url: string;
+}
+
+interface WebVitalsMetric {
+  name: 'CLS' | 'FID' | 'FCP' | 'LCP' | 'TTFB';
+  value: number;
+  rating: 'good' | 'needs-improvement' | 'poor';
+  delta: number;
+  id: string;
+}
+
+export class PerformanceMonitor {
+  private metrics: PerformanceMetric[] = [];
+  private webVitalsMetrics: WebVitalsMetric[] = [];
+
+  constructor() {
+    this.initializeWebVitals();
+    this.initializePerformanceObserver();
+  }
+
+  private initializeWebVitals() {
+    if (typeof window === 'undefined') return;
+
+    // Dynamic import of web-vitals
+    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+      getCLS(this.onWebVital.bind(this));
+      getFID(this.onWebVital.bind(this));
+      getFCP(this.onWebVital.bind(this));
+      getLCP(this.onWebVital.bind(this));
+      getTTFB(this.onWebVital.bind(this));
+    });
+  }
+
+  private onWebVital(metric: WebVitalsMetric) {
+    this.webVitalsMetrics.push(metric);
+    
+    // Report to analytics
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', metric.name, {
+        event_category: 'Web Vitals',
+        event_label: metric.id,
+        value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
+        non_interaction: true,
+      });
+    }
+
+    // Report to Sentry
+    if (typeof window !== 'undefined' && window.__SENTRY__) {
+      import('@sentry/nextjs').then(({ addBreadcrumb }) => {
+        addBreadcrumb({
+          category: 'web-vitals',
+          message: `${metric.name}: ${metric.value}`,
+          level: metric.rating === 'poor' ? 'warning' : 'info',
+          data: {
+            value: metric.value,
+            rating: metric.rating,
+            delta: metric.delta,
+          },
+        });
+      });
+    }
+  }
+
+  private initializePerformanceObserver() {
+    if (typeof window === 'undefined' || !window.PerformanceObserver) return;
+
+    // Observe navigation timing
+    const navObserver = new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        if (entry.entryType === 'navigation') {
+          const navEntry = entry as PerformanceNavigationTiming;
+          this.recordNavigationMetrics(navEntry);
+        }
+      }
+    });
+
+    navObserver.observe({ entryTypes: ['navigation'] });
+
+    // Observe resource timing
+    const resourceObserver = new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        if (entry.entryType === 'resource') {
+          this.recordResourceMetric(entry as PerformanceResourceTiming);
+        }
+      }
+    });
+
+    resourceObserver.observe({ entryTypes: ['resource'] });
+  }
+
+  private recordNavigationMetrics(entry: PerformanceNavigationTiming) {
+    const metrics = [
+      {
+        name: 'DNS Lookup',
+        value: entry.domainLookupEnd - entry.domainLookupStart,
+        unit: 'ms'
+      },
+      {
+        name: 'TCP Connection',
+        value: entry.connectEnd - entry.connectStart,
+        unit: 'ms'
+      },
+      {
+        name: 'Server Response',
+        value: entry.responseEnd - entry.requestStart,
+        unit: 'ms'
+      },
+      {
+        name: 'DOM Processing',
+        value: entry.domComplete - entry.domLoading,
+        unit: 'ms'
+      },
+      {
+        name: 'Page Load',
+        value: entry.loadEventEnd - entry.loadEventStart,
+        unit: 'ms'
+      }
+    ];
+
+    metrics.forEach(metric => {
+      this.addMetric(metric.name, metric.value, metric.unit);
+    });
+  }
+
+  private recordResourceMetric(entry: PerformanceResourceTiming) {
+    // Only track significant resources
+    if (entry.transferSize > 10000) { // > 10KB
+      this.addMetric(
+        `Resource Load: ${this.getResourceType(entry.name)}`,
+        entry.responseEnd - entry.requestStart,
+        'ms'
+      );
+    }
+  }
+
+  private getResourceType(url: string): string {
+    if (url.includes('.js')) return 'JavaScript';
+    if (url.includes('.css')) return 'CSS';
+    if (url.match(/\.(jpg|jpeg|png|gif|webp|svg)$/)) return 'Image';
+    if (url.includes('.woff') || url.includes('.ttf')) return 'Font';
+    return 'Other';
+  }
+
+  private addMetric(name: string, value: number, unit: string) {
+    this.metrics.push({
+      name,
+      value: Math.round(value),
+      unit,
+      timestamp: Date.now(),
+      url: window.location.href
+    });
+  }
+
+  // Get performance summary
+  getPerformanceSummary() {
+    const webVitalsSummary = this.webVitalsMetrics.reduce((acc, metric) => {
+      acc[metric.name] = {
+        value: metric.value,
+        rating: metric.rating
+      };
+      return acc;
+    }, {} as Record<string, { value: number; rating: string }>);
+
+    const averageMetrics = this.getAverageMetrics();
+
+    return {
+      webVitals: webVitalsSummary,
+      averageMetrics,
+      totalMetrics: this.metrics.length,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  private getAverageMetrics() {
+    const grouped = this.metrics.reduce((acc, metric) => {
+      if (!acc[metric.name]) {
+        acc[metric.name] = { total: 0, count: 0, unit: metric.unit };
+      }
+      acc[metric.name].total += metric.value;
+      acc[metric.name].count += 1;
+      return acc;
+    }, {} as Record<string, { total: number; count: number; unit: string }>);
+
+    return Object.entries(grouped).reduce((acc, [name, data]) => {
+      acc[name] = {
+        average: Math.round(data.total / data.count),
+        unit: data.unit
+      };
+      return acc;
+    }, {} as Record<string, { average: number; unit: string }>);
+  }
+
+  // Report performance data
+  async reportPerformanceData() {
+    const summary = this.getPerformanceSummary();
+    
+    // Send to analytics endpoint
+    try {
+      await fetch('/api/analytics/performance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(summary),
+      });
+    } catch (error) {
+      console.warn('Failed to report performance data:', error);
+    }
+  }
+}
+
+// Singleton instance
+export const performanceMonitor = new PerformanceMonitor();

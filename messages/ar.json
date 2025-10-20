@@ -1,4 +1,71 @@
 {
+  "blog": {
+    "title": "المدونة والأخبار",
+    "subtitle": "اكتشف أحدث مقالاتنا ونصائحنا حول إدارة العقارات",
+    "meta": {
+      "title": "المدونة - لوفت الجزائر",
+      "description": "اكتشف مقالاتنا ونصائحنا حول إدارة العقارات واتجاهات السوق وأفضل الممارسات."
+    },
+    "noPosts": "لم يتم العثور على مقالات",
+    "noPostsDescription": "لا توجد مقالات تطابق معايير البحث الخاصة بك.",
+    "loading": "جاري تحميل المقالات...",
+    "readMore": "اقرأ المزيد",
+    "relatedPosts": "مقالات ذات صلة",
+    "tags": "العلامات",
+    "categories": {
+      "property-management": "إدارة العقارات",
+      "real-estate-tips": "نصائح عقارية",
+      "market-analysis": "تحليل السوق",
+      "company-news": "أخبار الشركة",
+      "client-stories": "قصص العملاء"
+    },
+    "filters": {
+      "selectCategory": "اختر فئة",
+      "allCategories": "جميع الفئات",
+      "selectTag": "اختر علامة",
+      "allTags": "جميع العلامات",
+      "clearAll": "مسح المرشحات"
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي"
+    },
+    "navigation": {
+      "home": "الرئيسية",
+      "backToBlog": "العودة إلى المدونة"
+    },
+    "share": {
+      "title": "مشاركة",
+      "share": "مشاركة",
+      "copyLink": "نسخ الرابط",
+      "linkCopied": "تم نسخ الرابط إلى الحافظة",
+      "linkCopyError": "خطأ في نسخ الرابط"
+    },
+    "comments": {
+      "title": "التعليقات",
+      "addComment": "إضافة تعليق",
+      "noComments": "لا توجد تعليقات حتى الآن",
+      "beFirst": "كن أول من يعلق على هذا المقال",
+      "moderationNotice": "سيتم مراجعة تعليقك قبل النشر.",
+      "submitSuccess": "تم إرسال التعليق بنجاح",
+      "submitError": "خطأ في إرسال التعليق",
+      "form": {
+        "name": "الاسم",
+        "namePlaceholder": "اسمك",
+        "email": "البريد الإلكتروني",
+        "emailPlaceholder": "your@email.com",
+        "comment": "التعليق",
+        "commentPlaceholder": "شارك أفكارك...",
+        "submit": "نشر التعليق",
+        "submitting": "جاري النشر...",
+        "cancel": "إلغاء"
+      },
+      "validation": {
+        "required": "جميع الحقول مطلوبة",
+        "invalidEmail": "عنوان بريد إلكتروني غير صالح"
+      }
+    }
+  },
   "customers": {
     "title": "العملاء",
     "subtitle": "إدارة عملائك ومعلوماتهم.",

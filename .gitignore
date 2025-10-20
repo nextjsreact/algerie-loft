@@ -108,3 +108,6 @@ ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 .vercel
+
+*storybook.log
+storybook-static

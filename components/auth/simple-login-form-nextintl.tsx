@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslations, useLocale } from "next-intl"
@@ -26,6 +26,8 @@ export function SimpleLoginFormNextIntl() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const returnUrl = searchParams.get('returnUrl')
   const locale = useLocale()
   const supabase = createClient()
   
@@ -73,9 +75,13 @@ export function SimpleLoginFormNextIntl() {
         console.log('✅ Connexion réussie:', signInData.user.email)
         console.log('✅ Session établie - redirection...')
         
-        // Redirection vers la racine
-        const validLocale = locale && ['fr', 'en', 'ar'].includes(locale) ? locale : 'fr'
-        window.location.href = `/${validLocale}`
+        // If we have a return URL, redirect there, otherwise go to dashboard
+        if (returnUrl) {
+          window.location.href = decodeURIComponent(returnUrl)
+        } else {
+          const validLocale = locale && ['fr', 'en', 'ar'].includes(locale) ? locale : 'fr'
+          window.location.href = `/${validLocale}`
+        }
         // Ne pas appeler setIsLoading(false) ici car on redirige
       } else {
         console.warn('⚠️ Pas de session dans la réponse')
@@ -95,8 +101,8 @@ export function SimpleLoginFormNextIntl() {
         {/* Header */}
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="bg-blue-100 p-3 rounded-full">
-              <Building2 className="h-12 w-12 text-blue-600" />
+            <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full">
+              <Building2 className="h-12 w-12 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
           <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
@@ -133,7 +139,7 @@ export function SimpleLoginFormNextIntl() {
                   placeholder="Ex: nom@exemple.com" 
                   {...register("email")} 
                   disabled={isLoading}
-                  className="bg-white placeholder:text-gray-400 placeholder:opacity-100"
+                  className="bg-white dark:bg-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 placeholder:opacity-100"
                 />
                 {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
               </div>
@@ -147,7 +153,7 @@ export function SimpleLoginFormNextIntl() {
                     placeholder="••••••••"
                     {...register("password")}
                     disabled={isLoading}
-                    className="bg-white placeholder:text-gray-400 placeholder:opacity-100"
+                    className="bg-white dark:bg-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 placeholder:opacity-100"
                   />
                   <Button
                     type="button"
@@ -177,12 +183,12 @@ export function SimpleLoginFormNextIntl() {
         </Card>
 
         {/* Sign Up Section */}
-        <Card className="bg-blue-50 border-blue-200">
+        <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
           <CardContent className="pt-6">
             <div className="text-center">
               <p className="text-sm text-muted-foreground mb-4">
                 {t('noAccount')}{" "}
-                <Link href="/register" className="text-blue-600 hover:underline font-medium">
+                <Link href="/register" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
                   {t('signUp')}
                 </Link>
               </p>
@@ -190,8 +196,8 @@ export function SimpleLoginFormNextIntl() {
               <Separator className="my-4" />
               
               <div>
-                <p className="text-sm font-medium mb-3 text-blue-900">Identifiants DEV</p>
-                <div className="space-y-2 text-xs text-blue-700">
+                <p className="text-sm font-medium mb-3 text-blue-900 dark:text-blue-300">Identifiants DEV</p>
+                <div className="space-y-2 text-xs text-blue-700 dark:text-blue-300">
                   <p>
                     <strong>Test User:</strong> user1759066310913@dev.local / password123
                   </p>

@@ -1,0 +1,305 @@
+{
+  "contact": {
+    "page": {
+      "title": "Contactez-nous",
+      "subtitle": "Entrez en contact avec nos experts en gestion immobilière. Nous sommes là pour vous aider à maximiser votre investissement immobilier.",
+      "responseTime": "Réponse sous 24 heures",
+      "freeConsultation": "Consultation gratuite"
+    },
+    "form": {
+      "title": "Envoyez-nous un message",
+      "description": "Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.",
+      "sectionTitle": "Entrer en Contact",
+      "sectionDescription": "Prêt à discuter de vos besoins en gestion immobilière ? Envoyez-nous un message et nous répondrons sous 24 heures.",
+      "name": "Nom Complet",
+      "namePlaceholder": "Entrez votre nom complet",
+      "email": "Adresse Email",
+      "emailPlaceholder": "Entrez votre adresse email",
+      "phone": "Numéro de Téléphone",
+      "phonePlaceholder": "Entrez votre numéro de téléphone (optionnel)",
+      "subject": "Sujet",
+      "subjectPlaceholder": "Comment pouvons-nous vous aider ?",
+      "message": "Message",
+      "messagePlaceholder": "Parlez-nous de vos besoins en gestion immobilière...",
+      "preferredContact": "Méthode de Contact Préférée",
+      "contactMethods": {
+        "email": "Email",
+        "phone": "Téléphone"
+      },
+      "consentText": "J'accepte d'être contacté concernant ma demande",
+      "privacyNotice": "Nous respectons votre vie privée et ne partagerons jamais vos informations avec des tiers.",
+      "submit": "Envoyer le Message",
+      "submitting": "Envoi en cours...",
+      "submitAnother": "Envoyer un Autre Message",
+      "successTitle": "Message Envoyé !",
+      "successMessage": "Merci pour votre message. Nous vous répondrons sous 24 heures.",
+      "responseTime": "Nous répondons généralement sous 2-4 heures pendant les heures d'ouverture.",
+      "submitError": "Échec de l'envoi du message. Veuillez réessayer."
+    },
+    "info": {
+      "sectionTitle": "Informations de Contact",
+      "sectionDescription": "Plusieurs façons de nous joindre. Choisissez ce qui vous convient le mieux.",
+      "primary": "Principal",
+      "available": "Disponible Maintenant",
+      "clickToContact": "Cliquez pour contacter",
+      "callNow": "Appeler Maintenant",
+      "phone": {
+        "label": "Téléphone",
+        "number": "+213 XXX XXX XXX",
+        "description": "Appelez-nous directement pour une assistance immédiate"
+      },
+      "email": {
+        "label": "Email",
+        "address": "contact@loftalgerie.com",
+        "description": "Envoyez-nous un email pour des demandes détaillées"
+      },
+      "whatsapp": {
+        "label": "WhatsApp",
+        "number": "+213 XXX XXX XXX",
+        "description": "Envoyez-nous un message WhatsApp pour des réponses rapides"
+      },
+      "address": {
+        "label": "Adresse du Bureau",
+        "full": "123 Quartier d'Affaires, Alger, Algérie",
+        "description": "Visitez notre bureau pour des consultations en personne",
+        "details": "Rez-de-chaussée, Bâtiment A, Suite 101"
+      },
+      "businessHours": "Heures d'Ouverture",
+      "businessHoursDescription": "Notre équipe est disponible pendant ces heures pour une assistance immédiate.",
+      "hours": {
+        "monday": "Lundi",
+        "tuesday": "Mardi",
+        "wednesday": "Mercredi",
+        "thursday": "Jeudi",
+        "friday": "Vendredi",
+        "saturday": "Samedi",
+        "sunday": "Dimanche",
+        "weekdayHours": "9h00 - 18h00",
+        "saturdayHours": "9h00 - 14h00",
+        "sundayHours": "Fermé"
+      },
+      "appointmentNote": "Rendez-vous Disponibles",
+      "appointmentDescription": "Planifiez une réunion en dehors des heures d'ouverture en appelant à l'avance.",
+      "emergency": {
+        "title": "Contact d'Urgence",
+        "description": "Pour les problèmes immobiliers urgents en dehors des heures d'ouverture",
+        "phone": "+213 XXX XXX XXX",
+        "availability": "Disponible 24h/24 et 7j/7 pour les urgences"
+      },
+      "location": {
+        "title": "Notre Emplacement",
+        "description": "Trouvez-nous au cœur du quartier d'affaires d'Alger"
+      },
+      "map": {
+        "placeholder": "Carte Interactive",
+        "openInMaps": "Ouvrir dans Maps"
+      },
+      "directions": {
+        "publicTransport": "Transport Public",
+        "publicTransportDetails": "Ligne de Métro 1, Station Quartier d'Affaires (5 min à pied)",
+        "parking": "Parking",
+        "parkingDetails": "Parking gratuit disponible dans le garage du bâtiment"
+      }
+    },
+    "reasons": {
+      "title": "Comment Pouvons-nous Vous Aider ?",
+      "description": "Raisons courantes pour lesquelles nos clients nous contactent",
+      "propertyManagement": {
+        "title": "Gestion Immobilière",
+        "description": "Solutions complètes de gestion immobilière",
+        "badge": "Plus Populaire"
+      },
+      "rentalServices": {
+        "title": "Services de Location",
+        "description": "Sélection de locataires et gestion locative",
+        "badge": "Configuration Rapide"
+      },
+      "maintenance": {
+        "title": "Maintenance",
+        "description": "Maintenance et réparations immobilières",
+        "badge": "Support 24/7"
+      },
+      "consultation": {
+        "title": "Consultation",
+        "description": "Conseils d'experts sur l'investissement immobilier",
+        "badge": "Gratuit"
+      }
+    },
+    "process": {
+      "title": "Notre Processus de Réponse",
+      "description": "Voici ce qui se passe après que vous nous contactez",
+      "step1": {
+        "title": "Nous Recevons Votre Message",
+        "description": "Votre demande est immédiatement enregistrée et assignée au bon spécialiste",
+        "time": "Instantané"
+      },
+      "step2": {
+        "title": "Réponse Initiale",
+        "description": "Nous accusons réception de votre message et fournissons des conseils initiaux",
+        "time": "Sous 2 heures"
+      },
+      "step3": {
+        "title": "Suivi Détaillé",
+        "description": "Notre spécialiste vous contacte avec une réponse détaillée et les prochaines étapes",
+        "time": "Sous 24 heures"
+      }
+    },
+    "faq": {
+      "title": "Questions Fréquemment Posées",
+      "description": "Réponses rapides aux questions courantes",
+      "q1": {
+        "question": "À quelle vitesse répondez-vous aux demandes ?",
+        "answer": "Nous répondons à toutes les demandes sous 24 heures, généralement sous 2-4 heures pendant les heures d'ouverture."
+      },
+      "q2": {
+        "question": "Offrez-vous des consultations gratuites ?",
+        "answer": "Oui, nous offrons des consultations initiales gratuites pour discuter de vos besoins en gestion immobilière et comment nous pouvons vous aider."
+      },
+      "q3": {
+        "question": "Quelles zones desservez-vous ?",
+        "answer": "Nous desservons principalement la région métropolitaine d'Alger et les régions environnantes. Contactez-nous pour confirmer le service dans votre zone."
+      },
+      "q4": {
+        "question": "Puis-je programmer une réunion en dehors des heures d'ouverture ?",
+        "answer": "Oui, nous pouvons organiser des réunions en dehors des heures régulières sur rendez-vous. Veuillez appeler à l'avance pour programmer."
+      }
+    }
+  },
+  "propertyInquiry": {
+    "form": {
+      "title": "Demande de Propriété",
+      "description": "Intéressé par cette propriété ? Contactez-nous pour plus d'informations.",
+      "descriptionWithProperty": "Intéressé par {property} ? Contactez-nous pour plus d'informations.",
+      "propertyInfo": "Informations sur la Propriété",
+      "name": "Nom Complet",
+      "namePlaceholder": "Entrez votre nom complet",
+      "email": "Adresse Email",
+      "emailPlaceholder": "Entrez votre adresse email",
+      "phone": "Numéro de Téléphone",
+      "phonePlaceholder": "Entrez votre numéro de téléphone (optionnel)",
+      "inquiryType": "Type de Demande",
+      "inquiryTypes": {
+        "viewing": "Programmer une Visite",
+        "information": "Demander des Informations",
+        "rental": "Demande de Location",
+        "purchase": "Demande d'Achat",
+        "management": "Services de Gestion"
+      },
+      "preferredContactTime": "Heure de Contact Préférée",
+      "contactTimes": {
+        "morning": "Matin (9h - 12h)",
+        "afternoon": "Après-midi (12h - 18h)",
+        "evening": "Soir (18h - 21h)",
+        "anytime": "N'importe quand"
+      },
+      "budget": "Gamme de Budget",
+      "budgetPlaceholder": "ex: 1000-1500€/mois",
+      "moveInDate": "Date d'Emménagement Préférée",
+      "message": "Détails Supplémentaires",
+      "messagePlaceholder": "Parlez-nous de vos exigences, questions ou besoins spécifiques...",
+      "consentText": "J'accepte d'être contacté concernant cette demande de propriété",
+      "privacyNotice": "Vos informations sont sécurisées et ne seront utilisées que pour répondre à votre demande.",
+      "submit": "Envoyer la Demande",
+      "submitting": "Envoi en cours...",
+      "submitAnother": "Soumettre une Autre Demande",
+      "successTitle": "Demande Envoyée !",
+      "successMessage": "Merci pour votre intérêt. Nous vous contacterons bientôt avec plus d'informations sur cette propriété.",
+      "responseTime": "Nos spécialistes immobiliers répondent généralement sous 2-4 heures.",
+      "submitError": "Échec de l'envoi de la demande. Veuillez réessayer."
+    }
+  },
+  "serviceInquiry": {
+    "form": {
+      "title": "Demande de Service",
+      "description": "Parlez-nous de vos besoins en gestion immobilière et nous fournirons une solution personnalisée.",
+      "name": "Nom Complet",
+      "namePlaceholder": "Entrez votre nom complet",
+      "email": "Adresse Email",
+      "emailPlaceholder": "Entrez votre adresse email",
+      "phone": "Numéro de Téléphone",
+      "phonePlaceholder": "Entrez votre numéro de téléphone (optionnel)",
+      "serviceType": "Type de Service",
+      "serviceTypes": {
+        "property_management": "Gestion Immobilière",
+        "rental_services": "Services de Location",
+        "maintenance": "Services de Maintenance",
+        "consultation": "Consultation",
+        "other": "Autres Services"
+      },
+      "propertyType": "Type de Propriété",
+      "propertyTypes": {
+        "apartment": "Appartement",
+        "house": "Maison",
+        "commercial": "Commercial",
+        "multiple": "Propriétés Multiples",
+        "other": "Autre"
+      },
+      "propertyCount": "Nombre de Propriétés",
+      "location": "Emplacement de la Propriété",
+      "locationPlaceholder": "Ville ou zone",
+      "currentSituation": "Situation Actuelle",
+      "situations": {
+        "new_owner": "Nouveau Propriétaire",
+        "current_owner": "Propriétaire Actuel",
+        "looking_to_buy": "Cherche à Acheter",
+        "property_manager": "Gestionnaire Immobilier",
+        "other": "Autre"
+      },
+      "timeline": "Calendrier",
+      "timelines": {
+        "immediate": "Immédiat (ASAP)",
+        "within_month": "Dans 1 Mois",
+        "within_3months": "Dans 3 Mois",
+        "within_6months": "Dans 6 Mois",
+        "planning": "Phase de Planification"
+      },
+      "budget": "Gamme de Budget",
+      "budgetPlaceholder": "ex: 500-1000€/mois par propriété",
+      "message": "Décrivez Vos Besoins",
+      "messagePlaceholder": "Parlez-nous de vos exigences spécifiques, défis ou objectifs...",
+      "selectOption": "Sélectionnez une option",
+      "consentText": "J'accepte d'être contacté concernant ma demande de service",
+      "privacyNotice": "Vos informations sont sécurisées et ne seront utilisées que pour vous fournir des informations sur les services.",
+      "submit": "Envoyer la Demande de Service",
+      "submitting": "Envoi en cours...",
+      "submitAnother": "Soumettre une Autre Demande",
+      "successTitle": "Demande de Service Envoyée !",
+      "successMessage": "Merci pour votre intérêt pour nos services. Nous vous contacterons bientôt avec une proposition personnalisée.",
+      "responseTime": "Nos spécialistes de service répondent généralement sous 4-6 heures avec une proposition détaillée.",
+      "submitError": "Échec de l'envoi de la demande de service. Veuillez réessayer."
+    }
+  },
+  "callbackRequest": {
+    "form": {
+      "title": "Demander un Rappel",
+      "description": "Laissez votre numéro et nous vous rappellerons à l'heure qui vous convient.",
+      "name": "Nom Complet",
+      "namePlaceholder": "Entrez votre nom complet",
+      "phone": "Numéro de Téléphone",
+      "phonePlaceholder": "Entrez votre numéro de téléphone",
+      "preferredTime": "Heure d'Appel Préférée",
+      "times": {
+        "morning": "Matin (9h - 12h)",
+        "afternoon": "Après-midi (12h - 18h)",
+        "evening": "Soir (18h - 21h)"
+      },
+      "topic": "Sujet (Optionnel)",
+      "selectTopic": "Sélectionnez un sujet",
+      "topics": {
+        "property_management": "Gestion Immobilière",
+        "rental_inquiry": "Demande de Location",
+        "general_inquiry": "Demande Générale",
+        "other": "Autre"
+      },
+      "consentText": "J'accepte d'être appelé au numéro fourni",
+      "privacyNotice": "Nous utiliserons uniquement votre numéro pour vous rappeler concernant votre demande.",
+      "submit": "Demander un Rappel",
+      "submitting": "Envoi en cours...",
+      "requestAnother": "Demander un Autre Rappel",
+      "successTitle": "Rappel Demandé !",
+      "successMessage": "Merci ! Nous vous rappellerons à l'heure qui vous convient.",
+      "callbackTime": "Vous pouvez vous attendre à notre appel sous 2-4 heures pendant les heures d'ouverture.",
+      "submitError": "Échec de la soumission de la demande de rappel. Veuillez réessayer."
+    }
+  }
+}

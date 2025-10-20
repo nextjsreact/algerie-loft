@@ -1,0 +1,388 @@
+import * as Sentry from '@sentry/nextjs';
+
+// Performance monitoring configuration
+export const performanceConfig = {
+  // Core Web Vitals thresholds
+  thresholds: {
+    CLS: { good: 0.1, poor: 0.25 },
+    FID: { good: 100, poor: 300 },
+    FCP: { good: 1800, poor: 3000 },
+    LCP: { good: 2500, poor: 4000 },
+    TTFB: { good: 800, poor: 1800 },
+  },
+  
+  // Performance monitoring settings
+  sampleRate: 0.1, // Sample 10% of sessions
+  enableLongTaskMonitoring: true,
+  enableResourceMonitoring: true,
+  enableMemoryMonitoring: true,
+};
+
+// Error tracking configuration
+export const errorConfig = {
+  // Sentry configuration
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  environment: process.env.NODE_ENV,
+  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+  
+  // Error filtering
+  ignoreErrors: [
+    // Browser extensions
+    'top.GLOBALS',
+    'originalCreateNotification',
+    'canvas.contentDocument',
+    'MyApp_RemoveAllHighlights',
+    'http://tt.epicplay.com',
+    'Can\'t find variable: ZiteReader',
+    'jigsaw is not defined',
+    'ComboSearch is not defined',
+    'http://loading.retry.widdit.com/',
+    'atomicFindClose',
+    // Facebook flakiness
+    'fb_xd_fragment',
+    // ISP "optimizing" proxy - `Cache-Control: no-transform` seems to reduce this. (thanks @acdha)
+    'bmi_SafeAddOnload',
+    'EBCallBackMessageReceived',
+    // See http://blog.errorception.com/2012/03/tale-of-unfindable-js-error.html
+    'Script error.',
+    // Network errors
+    'Network request failed',
+    'NetworkError',
+    'Failed to fetch',
+    // Timeout errors
+    'Request timeout',
+    'The operation was aborted',
+  ],
+  
+  // URLs to ignore
+  denyUrls: [
+    // Facebook flakiness
+    /graph\.facebook\.com/i,
+    // Facebook blocked
+    /connect\.facebook\.net\/en_US\/all\.js/i,
+    // Woopra flakiness
+    /eatdifferent\.com\.woopra-ns\.com/i,
+    /static\.woopra\.com\/js\/woopra\.js/i,
+    // Chrome extensions
+    /extensions\//i,
+    /^chrome:\/\//i,
+    // Other plugins
+    /127\.0\.0\.1:4001\/isrunning/i, // Cacaoweb
+    /webappstoolbarba\.texthelp\.com\//i,
+    /metrics\.itunes\.apple\.com\.edgesuite\.net\//i,
+  ],
+};
+
+// Initialize monitoring
+export function initializeMonitoring() {
+  if (typeof window === 'undefined') return;
+
+  // Initialize Sentry
+  if (errorConfig.dsn) {
+    Sentry.init({
+      dsn: errorConfig.dsn,
+      environment: errorConfig.environment,
+      tracesSampleRate: errorConfig.tracesSampleRate,
+      ignoreErrors: errorConfig.ignoreErrors,
+      denyUrls: errorConfig.denyUrls,
+      beforeSend(event) {
+        // Filter out development errors
+        if (errorConfig.environment === 'development') {
+          console.log('Sentry Event:', event);
+        }
+        return event;
+      },
+    });
+  }
+
+  // Initialize performance monitoring
+  initializePerformanceMonitoring();
+  
+  // Initialize error monitoring
+  initializeErrorMonitoring();
+}
+
+// Performance monitoring implementation
+function initializePerformanceMonitoring() {
+  if (!('PerformanceObserver' in window)) return;
+
+  // Monitor Core Web Vitals
+  try {
+    import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+      const sendToAnalytics = (metric: any) => {
+        // Determine rating
+        const thresholds = performanceConfig.thresholds[metric.name as keyof typeof performanceConfig.thresholds];
+        let rating = 'good';
+        if (thresholds) {
+          if (metric.value > thresholds.poor) {
+            rating = 'poor';
+          } else if (metric.value > thresholds.good) {
+            rating = 'needs-improvement';
+          }
+        }
+
+        // Send to analytics
+        fetch('/api/analytics/web-vitals', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...metric,
+            rating,
+            url: window.location.href,
+            userAgent: navigator.userAgent,
+          }),
+        }).catch(console.error);
+
+        // Send to Sentry for poor performance
+        if (rating === 'poor') {
+          Sentry.addBreadcrumb({
+            category: 'performance',
+            message: `Poor ${metric.name}: ${metric.value}`,
+            level: 'warning',
+          });
+        }
+      };
+
+      getCLS(sendToAnalytics);
+      getFID(sendToAnalytics);
+      getFCP(sendToAnalytics);
+      getLCP(sendToAnalytics);
+      getTTFB(sendToAnalytics);
+    });
+  } catch (error) {
+    console.warn('Failed to initialize Core Web Vitals monitoring:', error);
+  }
+
+  // Monitor Long Tasks
+  if (performanceConfig.enableLongTaskMonitoring) {
+    try {
+      const longTaskObserver = new PerformanceObserver((list) => {
+        list.getEntries().forEach((entry) => {
+          if (entry.duration > 50) { // Tasks longer than 50ms
+            Sentry.addBreadcrumb({
+              category: 'performance',
+              message: `Long task detected: ${entry.duration}ms`,
+              level: 'warning',
+              data: {
+                duration: entry.duration,
+                startTime: entry.startTime,
+              },
+            });
+
+            // Send to analytics
+            fetch('/api/analytics/events', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                event: 'long_task',
+                properties: {
+                  duration: entry.duration,
+                  startTime: entry.startTime,
+                  url: window.location.href,
+                },
+              }),
+            }).catch(console.error);
+          }
+        });
+      });
+
+      longTaskObserver.observe({ entryTypes: ['longtask'] });
+    } catch (error) {
+      console.warn('Long Task Observer not supported:', error);
+    }
+  }
+
+  // Monitor Resource Loading
+  if (performanceConfig.enableResourceMonitoring) {
+    try {
+      const resourceObserver = new PerformanceObserver((list) => {
+        list.getEntries().forEach((entry) => {
+          // Track slow resources
+          if (entry.duration > 2000) {
+            Sentry.addBreadcrumb({
+              category: 'performance',
+              message: `Slow resource: ${entry.name}`,
+              level: 'warning',
+              data: {
+                duration: entry.duration,
+                size: (entry as any).transferSize,
+                type: (entry as any).initiatorType,
+              },
+            });
+          }
+
+          // Track failed resources
+          if ((entry as any).responseStatus >= 400) {
+            Sentry.captureMessage(`Resource failed to load: ${entry.name}`, 'warning');
+          }
+        });
+      });
+
+      resourceObserver.observe({ entryTypes: ['resource'] });
+    } catch (error) {
+      console.warn('Resource Observer not supported:', error);
+    }
+  }
+
+  // Monitor Memory Usage
+  if (performanceConfig.enableMemoryMonitoring && 'memory' in performance) {
+    const checkMemoryUsage = () => {
+      const memory = (performance as any).memory;
+      const usedMB = memory.usedJSHeapSize / 1024 / 1024;
+      const totalMB = memory.totalJSHeapSize / 1024 / 1024;
+
+      if (usedMB > 100) { // More than 100MB
+        Sentry.addBreadcrumb({
+          category: 'performance',
+          message: `High memory usage: ${usedMB.toFixed(2)}MB`,
+          level: 'warning',
+          data: {
+            usedJSHeapSize: memory.usedJSHeapSize,
+            totalJSHeapSize: memory.totalJSHeapSize,
+            jsHeapSizeLimit: memory.jsHeapSizeLimit,
+          },
+        });
+      }
+    };
+
+    // Check memory usage every 30 seconds
+    setInterval(checkMemoryUsage, 30000);
+  }
+}
+
+// Error monitoring implementation
+function initializeErrorMonitoring() {
+  // Global error handler
+  window.addEventListener('error', (event) => {
+    Sentry.captureException(event.error, {
+      contexts: {
+        errorEvent: {
+          filename: event.filename,
+          lineno: event.lineno,
+          colno: event.colno,
+          message: event.message,
+        },
+      },
+    });
+  });
+
+  // Unhandled promise rejection handler
+  window.addEventListener('unhandledrejection', (event) => {
+    Sentry.captureException(event.reason, {
+      contexts: {
+        promiseRejection: {
+          reason: event.reason,
+        },
+      },
+    });
+  });
+
+  // Network error monitoring
+  const originalFetch = window.fetch;
+  window.fetch = async (...args) => {
+    try {
+      const response = await originalFetch(...args);
+      
+      // Track failed requests
+      if (!response.ok) {
+        Sentry.addBreadcrumb({
+          category: 'http',
+          message: `HTTP ${response.status}: ${args[0]}`,
+          level: response.status >= 500 ? 'error' : 'warning',
+          data: {
+            url: args[0],
+            status: response.status,
+            statusText: response.statusText,
+          },
+        });
+      }
+      
+      return response;
+    } catch (error) {
+      Sentry.captureException(error, {
+        tags: {
+          component: 'fetch',
+        },
+        contexts: {
+          request: {
+            url: args[0],
+            options: args[1],
+          },
+        },
+      });
+      throw error;
+    }
+  };
+}
+
+// Utility functions for manual monitoring
+export const monitoring = {
+  // Track custom events
+  trackEvent: (name: string, properties: Record<string, any> = {}) => {
+    fetch('/api/analytics/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: name,
+        properties: {
+          ...properties,
+          timestamp: Date.now(),
+          url: window.location.href,
+        },
+      }),
+    }).catch(console.error);
+  },
+
+  // Track errors manually
+  trackError: (error: Error, context: Record<string, any> = {}) => {
+    Sentry.withScope((scope) => {
+      Object.entries(context).forEach(([key, value]) => {
+        scope.setContext(key, value);
+      });
+      Sentry.captureException(error);
+    });
+  },
+
+  // Track performance manually
+  trackPerformance: (name: string, value: number, context: Record<string, any> = {}) => {
+    fetch('/api/analytics/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'custom_performance',
+        properties: {
+          metric_name: name,
+          metric_value: value,
+          ...context,
+          timestamp: Date.now(),
+          url: window.location.href,
+        },
+      }),
+    }).catch(console.error);
+  },
+
+  // Add breadcrumb
+  addBreadcrumb: (message: string, category: string = 'custom', level: 'info' | 'warning' | 'error' = 'info') => {
+    Sentry.addBreadcrumb({
+      message,
+      category,
+      level,
+      timestamp: Date.now() / 1000,
+    });
+  },
+
+  // Set user context
+  setUser: (user: { id?: string; email?: string; username?: string }) => {
+    Sentry.setUser(user);
+  },
+
+  // Set additional context
+  setContext: (key: string, context: Record<string, any>) => {
+    Sentry.setContext(key, context);
+  },
+};
+
+// React hook for monitoring
+export function useMonitoring() {
+  return monitoring;
+}

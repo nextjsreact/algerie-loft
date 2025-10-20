@@ -1,0 +1,470 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "next": "Next",
+    "previous": "Previous",
+    "readMore": "Read more",
+    "learnMore": "Learn more",
+    "contactUs": "Contact us",
+    "getStarted": "Get started"
+  },
+  "navigation": {
+    "home": "Home",
+    "services": "Services",
+    "portfolio": "Portfolio",
+    "about": "About",
+    "contact": "Contact",
+    "blog": "News",
+    "login": "Login",
+    "app": "Application",
+    "logoAlt": "LoftAlgérie - Return to homepage",
+    "mainNavigation": "Main navigation",
+    "mobileNavigation": "Mobile navigation",
+    "openMobileMenu": "Open mobile menu",
+    "closeMobileMenu": "Close mobile menu",
+    "languageSelection": "Language selection",
+    "homeDescription": "Go to homepage",
+    "servicesDescription": "View our services",
+    "portfolioDescription": "Browse our property portfolio",
+    "aboutDescription": "Learn about our company",
+    "contactDescription": "Contact us for more information",
+    "blogDescription": "Read our latest news and articles"
+  },
+  "accessibility": {
+    "skipToMain": "Skip to main content",
+    "skipToNavigation": "Skip to navigation",
+    "skipToFooter": "Skip to footer",
+    "screenReaderOnly": "This content is for screen readers only",
+    "newWindow": "Opens in a new window",
+    "externalLink": "External link",
+    "toolbarTitle": "Accessibility Settings",
+    "openToolbar": "Open accessibility toolbar",
+    "closeToolbar": "Close accessibility toolbar",
+    "highContrast": "High Contrast",
+    "toggleHighContrast": "Toggle high contrast mode",
+    "reducedMotion": "Reduce Motion",
+    "toggleReducedMotion": "Toggle reduced motion",
+    "fontSize": {
+      "title": "Text Size",
+      "small": "Small",
+      "normal": "Normal",
+      "large": "Large",
+      "extraLarge": "Extra Large"
+    },
+    "increaseFontSize": "Increase text size",
+    "decreaseFontSize": "Decrease text size",
+    "resetSettings": "Reset to defaults"
+  },
+  "HomePage": {
+    "title": "LOFT ALGERIA - IT WORKS FINALLY!",
+    "companyName": "Loft Algeria",
+    "description": "Professional loft and accommodation management services in Algeria. Maximize your rental income with our expertise.",
+    "contactButton": "Contact us",
+    "portfolioButton": "View our work",
+    "servicesTitle": "Our Services",
+    "services": {
+      "management": {
+        "title": "Property Management",
+        "description": "Complete management of your real estate with personalized monitoring."
+      },
+      "booking": {
+        "title": "Reservations",
+        "description": "Optimized booking system to maximize your occupancy rate."
+      },
+      "maintenance": {
+        "title": "Maintenance",
+        "description": "Preventive and corrective maintenance service for your properties."
+      },
+      "consulting": {
+        "title": "Consulting",
+        "description": "Expertise and advice to optimize your real estate investments."
+      }
+    },
+    "statsTitle": "Our Results",
+    "stats": {
+      "clients": "Satisfied Clients",
+      "occupancy": "Occupancy Rate",
+      "satisfaction": "Satisfaction",
+      "support": "Support"
+    },
+    "footer": "Functional Website!"
+  },
+  "DebugPage": {
+    "title": "SUCCESS! Debug Page Works!",
+    "infoTitle": "Debug Information",
+    "checks": {
+      "nextjs": "Next.js 15 works perfectly",
+      "routing": "Routing with locales works",
+      "i18n": "Internationalization configured",
+      "tailwind": "Tailwind CSS configured",
+      "components": "Components migrated"
+    },
+    "nextStepsTitle": "Next steps",
+    "nextSteps": {
+      "sentry": "Configure Sentry for monitoring",
+      "analytics": "Add analytics",
+      "testing": "Test all pages",
+      "deployment": "Prepare deployment"
+    },
+    "backHome": "Back to home"
+  },
+  "hero": {
+    "title": "Professional Loft and Accommodation Management",
+    "subtitle": "Maximize your rental income with our real estate management expertise",
+    "cta": "Discover our services",
+    "ctaSecondary": "View portfolio"
+  },
+  "seo": {
+    "defaultTitle": "Loft Algeria - Professional Property Management",
+    "defaultDescription": "Professional loft and accommodation management services in Algeria. Maximize your rental income with our real estate management expertise.",
+    "siteName": "Loft Algeria",
+    "keywords": {
+      "primary": ["property management Algeria", "loft rentals", "tourist accommodation", "real estate investment", "Airbnb Algeria"],
+      "secondary": ["rental management", "property maintenance", "rental income", "Algiers real estate", "short-term rentals"]
+    }
+  },
+  "services": {
+    "title": "Our Services",
+    "subtitle": "A complete range of services to optimize your real estate investment",
+    "viewAll": "View all our services",
+    "propertyManagement": {
+      "title": "Property Management",
+      "description": "Complete management of your real estate properties with personalized monitoring and revenue optimization",
+      "features": [
+        "Complete rental management",
+        "Detailed financial tracking",
+        "Preventive maintenance",
+        "24/7 customer support"
+      ]
+    },
+    "reservations": {
+      "title": "Reservation Management",
+      "description": "Optimization of reservations and occupancy rates with our intelligent system",
+      "features": [
+        "Unified calendar",
+        "Dynamic pricing",
+        "Multi-platform management",
+        "Advanced analytics"
+      ]
+    },
+    "maintenance": {
+      "title": "Maintenance & Upkeep",
+      "description": "Maintenance and preventive care to preserve the value of your properties",
+      "features": [
+        "Quick interventions",
+        "Network of qualified partners",
+        "Work tracking",
+        "Transparent quotes"
+      ]
+    },
+    "consulting": {
+      "title": "Consulting & Expertise",
+      "description": "Personalized support to maximize your return on investment",
+      "features": [
+        "Market analysis",
+        "Investment strategy",
+        "Tax optimization",
+        "Owner training"
+      ]
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Ready to optimize your rental income?",
+    "form": {
+      "title": "Send us a message",
+      "description": "Fill out this form and we'll get back to you within 24 hours.",
+      "name": "Full name",
+      "email": "Email address",
+      "phone": "Phone",
+      "subject": "Subject",
+      "message": "Message",
+      "optional": "optional",
+      "submit": "Send message",
+      "submitting": "Sending...",
+      "preferredContact": "Preferred contact method",
+      "contactMethods": {
+        "email": "Email",
+        "phone": "Phone"
+      },
+      "placeholders": {
+        "name": "Enter your full name",
+        "email": "Enter your email address",
+        "phone": "Enter your phone number",
+        "subject": "What can we help you with?",
+        "message": "Tell us about your property management needs..."
+      },
+      "validation": {
+        "nameRequired": "Name is required",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email address",
+        "subjectRequired": "Subject is required",
+        "messageRequired": "Message is required",
+        "messageTooShort": "Message must be at least 10 characters",
+        "phoneInvalid": "Please enter a valid phone number"
+      },
+      "success": {
+        "title": "Message sent successfully!",
+        "message": "Thank you for contacting us. We'll get back to you within 24 hours.",
+        "sendAnother": "Send another message"
+      },
+      "error": {
+        "title": "Error sending message",
+        "message": "There was a problem sending your message. Please try again or contact us directly."
+      },
+      "privacy": {
+        "notice": "By submitting this form, you agree to our privacy policy. Your information will be used solely to respond to your inquiry."
+      }
+    },
+    "info": {
+      "title": "Get in touch",
+      "address": {
+        "title": "Address",
+        "details": "Professional property management services"
+      },
+      "phone": {
+        "title": "Phone",
+        "hours": "Monday to Friday, 9 AM to 6 PM"
+      },
+      "email": {
+        "title": "Email",
+        "response": "We respond within 24 hours"
+      }
+    },
+    "hours": {
+      "title": "Business Hours",
+      "weekdays": "Monday - Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "closed": "Closed"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "call": "Call now",
+      "email": "Send email"
+    }
+  },
+  "footer": {
+    "company": "LoftAlgeria",
+    "description": "Your trusted partner for loft and accommodation management",
+    "quickLinks": "Quick links",
+    "quickLinksNav": "Footer quick links navigation",
+    "contact": "Contact",
+    "contactInfo": "Contact information",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "followUs": "Follow us",
+    "socialLinks": "Social media links",
+    "socialAria": {
+      "facebook": "Follow us on Facebook (opens in new window)",
+      "twitter": "Follow us on Twitter (opens in new window)",
+      "instagram": "Follow us on Instagram (opens in new window)",
+      "linkedin": "Follow us on LinkedIn (opens in new window)"
+    },
+    "appAccessAria": "Access internal application (opens in new window)",
+    "legalNav": "Legal information navigation",
+    "rights": "All rights reserved"
+  },
+  "language": {
+    "select": "Select language",
+    "french": "Français",
+    "english": "English",
+    "arabic": "العربية"
+  },
+  "testimonials": {
+    "title": "What our clients say",
+    "subtitle": "Discover testimonials from property owners who trust us",
+    "items": [
+      {
+        "name": "Ahmed Benali",
+        "role": "Owner of 3 lofts",
+        "content": "Thanks to LoftAlgeria, my rental income increased by 40% in one year. Their expertise and professionalism are remarkable.",
+        "rating": 5
+      },
+      {
+        "name": "Sarah Meziane",
+        "role": "Real estate investor",
+        "content": "An exceptional team that manages my properties as if they were their own. I highly recommend their services.",
+        "rating": 5
+      },
+      {
+        "name": "Karim Ouali",
+        "role": "Airbnb owner",
+        "content": "Since I entrusted management to LoftAlgeria, I have no more worries. Everything is managed from A to Z with transparency.",
+        "rating": 5
+      }
+    ]
+  },
+  "cta": {
+    "primary": {
+      "title": "Ready to optimize your rental income?",
+      "subtitle": "Join over 200 property owners who trust us",
+      "button": "Request a free consultation",
+      "features": [
+        "Free 30-minute consultation",
+        "Personalized portfolio analysis",
+        "Custom optimization strategy",
+        "No commitment"
+      ]
+    },
+    "secondary": {
+      "title": "Discover our portfolio",
+      "subtitle": "Explore the properties we successfully manage",
+      "button": "View portfolio"
+    }
+  },
+  "stats": {
+    "properties": {
+      "number": "200+",
+      "label": "Properties managed"
+    },
+    "clients": {
+      "number": "150+",
+      "label": "Satisfied clients"
+    },
+    "revenue": {
+      "number": "40%",
+      "label": "Average revenue increase"
+    },
+    "experience": {
+      "number": "5+",
+      "label": "Years of experience"
+    }
+  },
+  "portfolio": {
+    "title": "Our Portfolio",
+    "subtitle": "Discover the properties we successfully manage",
+    "featured": "Featured",
+    "viewDetails": "View details",
+    "moreFeatures": "more",
+    "loading": "Loading...",
+    "loadMore": "Load more properties",
+    "noProperties": {
+      "title": "No properties found",
+      "description": "Try adjusting your search criteria or removing some filters."
+    },
+    "filters": {
+      "title": "Filters",
+      "active": "active",
+      "show": "Show filters",
+      "hide": "Hide filters",
+      "searchPlaceholder": "Search for a property...",
+      "propertyType": "Property type",
+      "location": "Location",
+      "features": "Features",
+      "clearAll": "Clear all filters"
+    },
+    "types": {
+      "apartment": "Apartment",
+      "villa": "Villa",
+      "studio": "Studio",
+      "loft": "Loft",
+      "house": "House"
+    },
+    "specs": {
+      "bedrooms": "bedrooms",
+      "bathrooms": "bathrooms",
+      "area": "area",
+      "capacity": "guests"
+    },
+    "sort": {
+      "title": "Sort by",
+      "newest": "Newest",
+      "oldest": "Oldest",
+      "priceAsc": "Price ascending",
+      "priceDesc": "Price descending",
+      "nameAsc": "Name A-Z",
+      "nameDesc": "Name Z-A"
+    },
+    "home": "Home",
+    "propertyNotFound": "Property not found",
+    "propertyNotFoundDescription": "The property you are looking for does not exist or is no longer available.",
+    "backToPortfolio": "Back to portfolio",
+    "noImages": "No images available",
+    "features": "Features",
+    "specifications": "Specifications",
+    "propertyType": "Property type",
+    "location": "Location",
+    "mapPlaceholder": "Interactive map (coming soon)",
+    "interestedTitle": "Interested in this property?",
+    "interestedDescription": "Contact us for more information or to schedule a visit.",
+    "contactAboutProperty": "Contact us",
+    "relatedProperties": "Similar properties",
+    "relatedPropertiesDescription": "Discover other properties that might interest you"
+  },
+  "legal": {
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "seo": {
+    "defaultTitle": "Loft Algeria - Professional Property Management",
+    "defaultDescription": "Professional loft and accommodation management services in Algeria. Maximize your rental income with our real estate management expertise.",
+    "siteName": "Loft Algeria",
+    "keywords": {
+      "home": ["property management Algeria", "loft rentals", "tourist accommodation", "real estate investment", "Airbnb Algeria"],
+      "services": ["real estate management services", "rental management", "property maintenance", "investment consulting"],
+      "portfolio": ["property portfolio", "Algiers lofts", "tourist accommodations", "managed properties"],
+      "contact": ["contact loft algeria", "property management quote", "real estate consultation"],
+      "about": ["about loft algeria", "real estate management team", "property expertise"]
+    },
+    "pages": {
+      "home": {
+        "title": "Home",
+        "description": "Discover our professional loft and accommodation management services in Algeria. Maximize your rental income with our expertise."
+      },
+      "services": {
+        "title": "Our Services",
+        "description": "Complete real estate management services: rental management, maintenance, reservations and real estate investment consulting."
+      },
+      "portfolio": {
+        "title": "Portfolio",
+        "description": "Discover our portfolio of successfully managed properties. Lofts, apartments and villas in Algeria."
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "Contact us for a free consultation. Our real estate management experts are at your disposal."
+      },
+      "about": {
+        "title": "About",
+        "description": "Discover the Loft Algeria team, our expertise and our mission in professional property management."
+      }
+    }
+  },
+  "app": {
+    "access": {
+      "title": "Application Access",
+      "description": "Connect to your management space to access all features.",
+      "login": {
+        "title": "Login Required",
+        "description": "You must log in to access the management application.",
+        "button": "Log In"
+      },
+      "dashboard": {
+        "button": "Access Dashboard"
+      },
+      "authenticated": {
+        "title": "Access Authorized",
+        "description": "You are logged in and authorized to access the application.",
+        "welcome": "Welcome!",
+        "ready": "You can now access your management space."
+      },
+      "logout": {
+        "button": "Log Out",
+        "processing": "Logging out..."
+      },
+      "redirecting": "Redirecting...",
+      "or": "or",
+      "security": {
+        "notice": "Secure connection via our authentication system.",
+        "authenticated": "Secure session active. You can safely access the application."
+      }
+    }
+  }
+}

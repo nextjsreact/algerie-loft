@@ -1,0 +1,311 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "retry": "Réessayer",
+    "close": "Fermer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "submit": "Envoyer",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "readMore": "Lire la suite",
+    "learnMore": "En savoir plus",
+    "contactUs": "Nous contacter",
+    "getStarted": "Commencer"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "services": "Services",
+    "portfolio": "Portfolio",
+    "about": "À propos",
+    "contact": "Contact",
+    "blog": "Actualités",
+    "login": "Se connecter",
+    "app": "Application"
+  },
+  "hero": {
+    "title": "Gestion Professionnelle de Lofts et Hébergements",
+    "subtitle": "Maximisez vos revenus locatifs avec notre expertise en gestion immobilière",
+    "cta": "Découvrir nos services",
+    "ctaSecondary": "Voir le portfolio"
+  },
+  "seo": {
+    "defaultTitle": "Loft Algérie - Gestion Professionnelle de Propriétés",
+    "defaultDescription": "Services professionnels de gestion de lofts et hébergements en Algérie. Maximisez vos revenus locatifs avec notre expertise en gestion immobilière.",
+    "siteName": "Loft Algérie",
+    "keywords": {
+      "primary": ["gestion propriétés Algérie", "location lofts", "hébergement touristique", "investissement immobilier", "Airbnb Algérie"],
+      "secondary": ["gestion locative", "maintenance propriétés", "revenus locatifs", "immobilier Alger", "location courte durée"]
+    }
+  },
+  "services": {
+    "title": "Nos Services",
+    "subtitle": "Une gamme complète de services pour optimiser votre investissement immobilier",
+    "viewAll": "Voir tous nos services",
+    "propertyManagement": {
+      "title": "Gestion de Propriétés",
+      "description": "Gestion complète de vos biens immobiliers avec suivi personnalisé et optimisation des revenus",
+      "features": [
+        "Gestion locative complète",
+        "Suivi financier détaillé",
+        "Maintenance préventive",
+        "Support client 24/7"
+      ]
+    },
+    "reservations": {
+      "title": "Gestion des Réservations",
+      "description": "Optimisation des réservations et du taux d'occupation avec notre système intelligent",
+      "features": [
+        "Calendrier unifié",
+        "Tarification dynamique",
+        "Gestion multi-plateformes",
+        "Analytics avancés"
+      ]
+    },
+    "maintenance": {
+      "title": "Maintenance & Entretien",
+      "description": "Entretien et maintenance préventive pour préserver la valeur de vos propriétés",
+      "features": [
+        "Interventions rapides",
+        "Réseau de partenaires qualifiés",
+        "Suivi des travaux",
+        "Devis transparents"
+      ]
+    },
+    "consulting": {
+      "title": "Conseil & Expertise",
+      "description": "Accompagnement personnalisé pour maximiser votre retour sur investissement",
+      "features": [
+        "Analyse de marché",
+        "Stratégie d'investissement",
+        "Optimisation fiscale",
+        "Formation propriétaires"
+      ]
+    }
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "subtitle": "Prêt à optimiser vos revenus locatifs ?",
+    "form": {
+      "name": "Nom complet",
+      "email": "Adresse email",
+      "phone": "Téléphone",
+      "subject": "Sujet",
+      "message": "Message",
+      "submit": "Envoyer le message",
+      "success": "Message envoyé avec succès !",
+      "error": "Erreur lors de l'envoi du message"
+    }
+  },
+  "footer": {
+    "company": "LoftAlgérie",
+    "description": "Votre partenaire de confiance pour la gestion de lofts et hébergements",
+    "quickLinks": "Liens rapides",
+    "contact": "Contact",
+    "followUs": "Suivez-nous",
+    "rights": "Tous droits réservés"
+  },
+  "language": {
+    "select": "Choisir la langue",
+    "french": "Français",
+    "english": "English",
+    "arabic": "العربية"
+  },
+  "theme": {
+    "toggle": "Changer le thème",
+    "current": "Thème actuel : {theme}",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "testimonials": {
+    "title": "Ce que disent nos clients",
+    "subtitle": "Découvrez les témoignages de propriétaires qui nous font confiance",
+    "items": [
+      {
+        "name": "Ahmed Benali",
+        "role": "Propriétaire de 3 lofts",
+        "content": "Grâce à LoftAlgérie, mes revenus locatifs ont augmenté de 40% en un an. Leur expertise et leur professionnalisme sont remarquables.",
+        "rating": 5
+      },
+      {
+        "name": "Sarah Meziane",
+        "role": "Investisseuse immobilière",
+        "content": "Une équipe exceptionnelle qui gère mes propriétés comme si c'étaient les leurs. Je recommande vivement leurs services.",
+        "rating": 5
+      },
+      {
+        "name": "Karim Ouali",
+        "role": "Propriétaire Airbnb",
+        "content": "Depuis que j'ai confié la gestion à LoftAlgérie, je n'ai plus de soucis. Tout est géré de A à Z avec transparence.",
+        "rating": 5
+      }
+    ]
+  },
+  "cta": {
+    "primary": {
+      "title": "Prêt à optimiser vos revenus locatifs ?",
+      "subtitle": "Rejoignez plus de 200 propriétaires qui nous font confiance",
+      "button": "Demander une consultation gratuite",
+      "features": [
+        "Consultation gratuite de 30 minutes",
+        "Analyse personnalisée de votre portefeuille",
+        "Stratégie d'optimisation sur mesure",
+        "Aucun engagement"
+      ]
+    },
+    "secondary": {
+      "title": "Découvrez notre portfolio",
+      "subtitle": "Explorez les propriétés que nous gérons avec succès",
+      "button": "Voir le portfolio"
+    }
+  },
+  "stats": {
+    "properties": {
+      "number": "200+",
+      "label": "Propriétés gérées"
+    },
+    "clients": {
+      "number": "150+",
+      "label": "Clients satisfaits"
+    },
+    "revenue": {
+      "number": "40%",
+      "label": "Augmentation moyenne des revenus"
+    },
+    "experience": {
+      "number": "5+",
+      "label": "Années d'expérience"
+    }
+  },
+  "portfolio": {
+    "title": "Notre Portfolio",
+    "subtitle": "Découvrez les propriétés que nous gérons avec succès",
+    "featured": "Mis en avant",
+    "viewDetails": "Voir les détails",
+    "moreFeatures": "autres",
+    "loading": "Chargement...",
+    "loadMore": "Voir plus de propriétés",
+    "noProperties": {
+      "title": "Aucune propriété trouvée",
+      "description": "Essayez de modifier vos critères de recherche ou de supprimer certains filtres."
+    },
+    "filters": {
+      "title": "Filtres",
+      "active": "actifs",
+      "show": "Afficher les filtres",
+      "hide": "Masquer les filtres",
+      "searchPlaceholder": "Rechercher une propriété...",
+      "propertyType": "Type de propriété",
+      "location": "Localisation",
+      "features": "Caractéristiques",
+      "clearAll": "Effacer tous les filtres"
+    },
+    "types": {
+      "apartment": "Appartement",
+      "villa": "Villa",
+      "studio": "Studio",
+      "loft": "Loft",
+      "house": "Maison"
+    },
+    "specs": {
+      "bedrooms": "chambres",
+      "bathrooms": "salles de bain",
+      "area": "surface",
+      "capacity": "personnes"
+    },
+    "sort": {
+      "title": "Trier par",
+      "newest": "Plus récent",
+      "oldest": "Plus ancien",
+      "priceAsc": "Prix croissant",
+      "priceDesc": "Prix décroissant",
+      "nameAsc": "Nom A-Z",
+      "nameDesc": "Nom Z-A"
+    },
+    "home": "Accueil",
+    "propertyNotFound": "Propriété introuvable",
+    "propertyNotFoundDescription": "La propriété que vous recherchez n'existe pas ou n'est plus disponible.",
+    "backToPortfolio": "Retour au portfolio",
+    "noImages": "Aucune image disponible",
+    "features": "Caractéristiques",
+    "specifications": "Spécifications",
+    "propertyType": "Type de propriété",
+    "location": "Localisation",
+    "mapPlaceholder": "Carte interactive (à venir)",
+    "interestedTitle": "Intéressé par cette propriété ?",
+    "interestedDescription": "Contactez-nous pour plus d'informations ou pour planifier une visite.",
+    "contactAboutProperty": "Nous contacter",
+    "relatedProperties": "Propriétés similaires",
+    "relatedPropertiesDescription": "Découvrez d'autres propriétés qui pourraient vous intéresser"
+  },
+  "legal": {
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation"
+  },
+  "seo": {
+    "defaultTitle": "Loft Algérie - Gestion Professionnelle de Propriétés",
+    "defaultDescription": "Services professionnels de gestion de lofts et hébergements en Algérie. Maximisez vos revenus locatifs avec notre expertise en gestion immobilière.",
+    "siteName": "Loft Algérie",
+    "keywords": {
+      "home": ["gestion propriétés Algérie", "location lofts", "hébergement touristique", "investissement immobilier", "Airbnb Algérie"],
+      "services": ["services gestion immobilière", "gestion locative", "maintenance propriétés", "conseil investissement"],
+      "portfolio": ["portfolio propriétés", "lofts Alger", "hébergements touristiques", "propriétés gérées"],
+      "contact": ["contact loft algérie", "devis gestion propriété", "consultation immobilière"],
+      "about": ["à propos loft algérie", "équipe gestion immobilière", "expertise propriétés"]
+    },
+    "pages": {
+      "home": {
+        "title": "Accueil",
+        "description": "Découvrez nos services de gestion professionnelle de lofts et hébergements en Algérie. Maximisez vos revenus locatifs avec notre expertise."
+      },
+      "services": {
+        "title": "Nos Services",
+        "description": "Services complets de gestion immobilière : gestion locative, maintenance, réservations et conseil en investissement immobilier."
+      },
+      "portfolio": {
+        "title": "Portfolio",
+        "description": "Découvrez notre portfolio de propriétés gérées avec succès. Lofts, appartements et villas en Algérie."
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "Contactez-nous pour une consultation gratuite. Nos experts en gestion immobilière sont à votre disposition."
+      },
+      "about": {
+        "title": "À Propos",
+        "description": "Découvrez l'équipe Loft Algérie, notre expertise et notre mission dans la gestion professionnelle de propriétés."
+      }
+    }
+  },
+  "app": {
+    "access": {
+      "title": "Accès à l'Application",
+      "description": "Connectez-vous à votre espace de gestion pour accéder à toutes les fonctionnalités.",
+      "login": {
+        "title": "Connexion Requise",
+        "description": "Vous devez vous connecter pour accéder à l'application de gestion.",
+        "button": "Se connecter"
+      },
+      "dashboard": {
+        "button": "Accéder au tableau de bord"
+      },
+      "authenticated": {
+        "title": "Accès Autorisé",
+        "description": "Vous êtes connecté et autorisé à accéder à l'application.",
+        "welcome": "Bienvenue !",
+        "ready": "Vous pouvez maintenant accéder à votre espace de gestion."
+      },
+      "logout": {
+        "button": "Se déconnecter",
+        "processing": "Déconnexion..."
+      },
+      "redirecting": "Redirection...",
+      "or": "ou",
+      "security": {
+        "notice": "Connexion sécurisée via notre système d'authentification.",
+        "authenticated": "Session sécurisée active. Vous pouvez accéder à l'application en toute sécurité."
+      }
+    }
+  }
+}

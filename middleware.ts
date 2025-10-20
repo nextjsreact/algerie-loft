@@ -10,9 +10,33 @@ const intlMiddleware = createIntlMiddleware({
 });
 
 export async function middleware(request: NextRequest) {
-  // La logique est maintenant plus simple car le matcher exclut /reset-password
   const response = intlMiddleware(request);
 
+  // Routes publiques qui ne nécessitent pas d'authentification
+  const publicRoutes = [
+    '/public',
+    '/site-public',
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/reset-password'
+  ];
+
+  // Vérifier si la route actuelle est publique
+  const pathname = request.nextUrl.pathname;
+  const isPublicRoute = publicRoutes.some(route => {
+    // Vérifier avec et sans préfixe de locale
+    return pathname.includes(route) || 
+           pathname.match(new RegExp(`^/[a-z]{2}${route}$`)) ||
+           pathname.match(new RegExp(`^/[a-z]{2}${route}/`));
+  });
+
+  // Si c'est une route publique, on retourne directement la réponse sans vérification d'auth
+  if (isPublicRoute) {
+    return response;
+  }
+
+  // Pour les autres routes, on vérifie l'authentification
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -31,7 +55,14 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  await supabase.auth.getSession();
+  const { data: { session } } = await supabase.auth.getSession();
+
+  // Si pas de session et pas une route publique, rediriger vers login
+  if (!session) {
+    const locale = pathname.split('/')[1] || 'fr';
+    const loginUrl = new URL(`/${locale}/login`, request.url);
+    return NextResponse.redirect(loginUrl);
+  }
 
   return response;
 }

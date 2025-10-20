@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 
 export async function GET() {
   try {
-    // Vérifications de santé de base
+    // Enhanced health check with monitoring integration
     const healthCheck = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
@@ -15,11 +16,35 @@ export async function GET() {
           used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
           total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
         },
+        monitoring: {
+          sentry: !!process.env.NEXT_PUBLIC_SENTRY_DSN,
+          analytics: !!process.env.NEXT_PUBLIC_GA_ID,
+          vercelAnalytics: true,
+        },
       },
     };
 
+    // Add breadcrumb for health check
+    Sentry.addBreadcrumb({
+      category: 'health-check',
+      message: 'Health check performed',
+      level: 'info',
+      data: {
+        uptime: healthCheck.uptime,
+        memoryUsed: healthCheck.checks.memory.used,
+      },
+    });
+
     return NextResponse.json(healthCheck, { status: 200 });
   } catch (error) {
+    console.error('Health check failed:', error);
+    
+    Sentry.captureException(error, {
+      tags: {
+        component: 'health-check',
+      },
+    });
+
     return NextResponse.json(
       {
         status: 'unhealthy',
@@ -28,5 +53,14 @@ export async function GET() {
       },
       { status: 500 }
     );
+  }
+}
+
+// HEAD request for simple uptime checks
+export async function HEAD() {
+  try {
+    return new NextResponse(null, { status: 200 });
+  } catch (error) {
+    return new NextResponse(null, { status: 500 });
   }
 }

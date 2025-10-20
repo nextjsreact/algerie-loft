@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test d'accès - Loft Algérie</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #f0f9ff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        .success {
+            background: #f0fdf4;
+            border-left-color: #10b981;
+        }
+        .error {
+            background: #fef2f2;
+            border-left-color: #ef4444;
+        }
+        .link-test {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 10px 10px 10px 0;
+        }
+        .link-test:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test d'accès au site Loft Algérie</h1>
+    
+    <div class="test-section">
+        <h2>📍 URLs à tester</h2>
+        <p>Le serveur de développement fonctionne sur <strong>http://localhost:3001</strong></p>
+        
+        <h3>Pages principales (FONCTIONNELLES) :</h3>
+        <a href="http://localhost:3001" class="link-test" target="_blank">🏠 Accueil - Hub multilingue</a>
+        <a href="http://localhost:3001/app-access" class="link-test" target="_blank">🔐 Accès Application</a>
+        
+        <h3>Pages par langue (FONCTIONNELLES) :</h3>
+        <a href="http://localhost:3001/fr-page" class="link-test" target="_blank">🇫🇷 Page Française complète</a>
+        <a href="http://localhost:3001/en-page" class="link-test" target="_blank">🇺🇸 English Page complète</a>
+        <a href="http://localhost:3001/ar-page" class="link-test" target="_blank">🇩🇿 الصفحة العربية (RTL)</a>
+        
+        <h3>Pages de test (pour référence) :</h3>
+        <a href="http://localhost:3001/working-fr" class="link-test" target="_blank">✅ Working FR (ancienne)</a>
+        <a href="http://localhost:3001/debug-test" class="link-test" target="_blank">🔧 Debug test</a>
+        <a href="http://localhost:3001/test-simple" class="link-test" target="_blank">🧪 Test simple</a>
+        
+        <h3>Accès à l'application :</h3>
+        <a href="http://localhost:3001/fr/app" class="link-test" target="_blank">🔐 Application (FR)</a>
+        <a href="http://localhost:3001/en/app" class="link-test" target="_blank">🔐 Application (EN)</a>
+        <a href="http://localhost:3001/ar/app" class="link-test" target="_blank">🔐 التطبيق (AR)</a>
+        
+        <h3>Autres pages :</h3>
+        <a href="http://localhost:3001/fr/services" class="link-test" target="_blank">💼 Services</a>
+        <a href="http://localhost:3001/fr/portfolio" class="link-test" target="_blank">📁 Portfolio</a>
+        <a href="http://localhost:3001/fr/contact" class="link-test" target="_blank">📞 Contact</a>
+    </div>
+    
+    <div class="test-section success">
+        <h2>🎉 SOLUTION FONCTIONNELLE - PAGES DIRECTES !</h2>
+        <ul>
+            <li><strong>✅ Serveur Next.js</strong> - Démarré et prêt sur localhost:3001</li>
+            <li><strong>✅ Pages directes</strong> - Structure simple sans conflits</li>
+            <li><strong>✅ Multilingue</strong> - Pages séparées pour chaque langue</li>
+            <li><strong>✅ Support RTL</strong> - Page arabe avec direction RTL</li>
+            <li><strong>✅ Navigation</strong> - Liens entre les langues</li>
+            <li><strong>✅ Accès application</strong> - Page de connexion fonctionnelle</li>
+            <li><strong>✅ Dossier [locale] sauvegardé</strong> - Peut être restauré plus tard</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔧 Corrections appliquées</h2>
+        <ul>
+            <li><strong>Middleware simplifié</strong> - Configuration directe sans import de routing</li>
+            <li><strong>Paramètres async</strong> - Correction pour Next.js 15 (await params)</li>
+            <li><strong>Instrumentation désactivée</strong> - Évite les conflits Sentry/Prisma en développement</li>
+            <li><strong>Matcher corrigé</strong> - Pattern regex amélioré pour les routes</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>🌙 Nouveau : Système de thème</h2>
+        <p>Le site supporte maintenant 3 modes de thème :</p>
+        <ul>
+            <li><strong>Mode Clair</strong> - Thème par défaut avec fond blanc</li>
+            <li><strong>Mode Sombre</strong> - Thème sombre avec fond noir</li>
+            <li><strong>Mode Système</strong> - Suit automatiquement les préférences du système</li>
+        </ul>
+        <p><strong>Comment tester :</strong></p>
+        <ol>
+            <li>Cherchez l'icône ☀️/🌙 dans le header (à côté du sélecteur de langue)</li>
+            <li>Cliquez dessus pour ouvrir le menu de sélection de thème</li>
+            <li>Testez les 3 options : Clair, Sombre, Système</li>
+            <li>Le thème est sauvegardé automatiquement dans le navigateur</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔧 Fonctionnalités de l'accès à l'application</h2>
+        <p>Quand vous cliquez sur le bouton "Application" ou "Se connecter" dans le header :</p>
+        <ol>
+            <li>Vous êtes redirigé vers <code>/[locale]/app</code></li>
+            <li>Le système vérifie si vous êtes déjà connecté à l'application interne</li>
+            <li>Si vous êtes connecté : accès direct au dashboard</li>
+            <li>Si vous n'êtes pas connecté : redirection vers la page de connexion</li>
+            <li>L'URL de l'application interne est configurée via <code>NEXT_PUBLIC_INTERNAL_APP_URL</code></li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h2>⚙️ Configuration requise</h2>
+        <p>Pour que l'accès à l'application fonctionne complètement, assurez-vous que :</p>
+        <ul>
+            <li>La variable d'environnement <code>NEXT_PUBLIC_INTERNAL_APP_URL</code> pointe vers votre application principale</li>
+            <li>L'application principale a les endpoints d'API nécessaires (/api/auth/verify-session, /api/auth/logout)</li>
+            <li>Les cookies de session sont partagés entre les deux applications</li>
+        </ul>
+    </div>
+    
+    <script>
+        // Test automatique des liens
+        function testLinks() {
+            const links = document.querySelectorAll('.link-test');
+            console.log(`🧪 ${links.length} liens à tester trouvés`);
+            
+            links.forEach((link, index) => {
+                console.log(`${index + 1}. ${link.textContent.trim()} -> ${link.href}`);
+            });
+        }
+        
+        // Exécuter le test au chargement
+        window.addEventListener('load', testLinks);
+        
+        // Afficher les informations de debug
+        console.log('🚀 Site public Loft Algérie - Test d\'accès');
+        console.log('📍 Serveur de développement : http://localhost:3001');
+        console.log('🔧 Middleware i18n : Activé');
+        console.log('🌐 Langues supportées : fr, en, ar');
+    </script>
+</body>
+</html>

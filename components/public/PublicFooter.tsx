@@ -21,7 +21,7 @@ export default function PublicFooter({ locale, text }: PublicFooterProps) {
               {text.clientArea}
             </a>
             <a 
-              href="mailto:contact@loft-algerie.com" 
+              href="mailto:contact@loftalgerie.com" 
               className="text-blue-300 dark:text-blue-400 hover:text-blue-200 dark:hover:text-blue-300 transition-colors"
             >
               {text.contact}

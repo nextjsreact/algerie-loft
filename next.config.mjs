@@ -10,7 +10,7 @@ const nextConfig = {
     // Optimisations pour next-intl
     optimizePackageImports: ['next-intl'],
   },
-  // Optimisation des images pour Vercel
+  // Optimisation des images pour Vercel et domaine personnalisé
   images: {
     remotePatterns: [
       {
@@ -24,10 +24,17 @@ const nextConfig = {
         hostname: 'mhngbluefyucoesgcjoy.supabase.co',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'loftalgerie.com',
+        port: '',
+        pathname: '/**',
       }
     ],
     formats: ['image/webp', 'image/avif'],
     unoptimized: false, // Activé pour Vercel
+    domains: ['loftalgerie.com', 'www.loftalgerie.com'], // Support du domaine personnalisé
   },
   
   // Configuration webpack pour résoudre les erreurs d'exports

@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
+import { withDomainErrorHandling, validateLocale, createSafeRedirect } from '@/lib/domain-error-handler';
 
 const intlMiddleware = createIntlMiddleware({
   locales: ['fr', 'ar', 'en'],
@@ -9,7 +10,7 @@ const intlMiddleware = createIntlMiddleware({
   localeDetection: true,
 });
 
-export async function middleware(request: NextRequest) {
+async function middlewareHandler(request: NextRequest) {
   const response = intlMiddleware(request);
 
   // Routes publiques qui ne nécessitent pas d'authentification
@@ -24,6 +25,11 @@ export async function middleware(request: NextRequest) {
 
   // Vérifier si la route actuelle est publique
   const pathname = request.nextUrl.pathname;
+  const hostname = request.nextUrl.hostname;
+  
+  // Support pour le domaine personnalisé loftalgerie.com
+  const isCustomDomain = hostname === 'loftalgerie.com' || hostname === 'www.loftalgerie.com';
+  
   const isPublicRoute = publicRoutes.some(route => {
     // Vérifier avec et sans préfixe de locale
     return pathname.includes(route) || 
@@ -59,13 +65,17 @@ export async function middleware(request: NextRequest) {
 
   // Si pas de session et pas une route publique, rediriger vers login
   if (!session) {
-    const locale = pathname.split('/')[1] || 'fr';
-    const loginUrl = new URL(`/${locale}/login`, request.url);
-    return NextResponse.redirect(loginUrl);
+    const rawLocale = pathname.split('/')[1] || 'fr';
+    const locale = validateLocale(rawLocale);
+    const safeRedirect = createSafeRedirect(request, `/${locale}/login`);
+    return safeRedirect || NextResponse.redirect(new URL(`/${locale}/login`, request.url));
   }
 
   return response;
 }
+
+// Export the middleware with error handling
+export const middleware = withDomainErrorHandling(middlewareHandler);
 
 export const config = {
   matcher: [

@@ -15,6 +15,6 @@ export default async function HomeRedirectPage() {
     locale = 'ar'
   }
   
-  // Redirect to the localized home page
-  redirect(`/${locale}`)
+  // Redirect to the public website with detected locale
+  redirect(`/${locale}/public`)
 }

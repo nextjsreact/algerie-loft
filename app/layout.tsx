@@ -8,6 +8,39 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Loft Algérie - Gestion des Lofts",
   description: "Application complète de gestion des lofts",
+  metadataBase: new URL('https://loftalgerie.com'),
+  alternates: {
+    canonical: '/',
+    languages: {
+      'fr': '/fr',
+      'en': '/en',
+      'ar': '/ar',
+    },
+  },
+  openGraph: {
+    title: "Loft Algérie - Gestion des Lofts",
+    description: "Application complète de gestion des lofts",
+    url: 'https://loftalgerie.com',
+    siteName: 'Loft Algérie',
+    locale: 'fr_FR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Loft Algérie - Gestion des Lofts",
+    description: "Application complète de gestion des lofts",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 }
 
 export default function RootLayout({

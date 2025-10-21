@@ -6,9 +6,57 @@ import SmoothScroll from '@/components/ui/SmoothScroll';
 import BackToTop from '@/components/ui/BackToTop';
 import StatsSection from '@/components/public/StatsSection';
 import TestimonialsSection from '@/components/public/TestimonialsSection';
+import { Metadata } from 'next';
 
 interface PublicPageProps {
   params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: PublicPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  
+  const metaContent = {
+    fr: {
+      title: "Loft Algérie - Gestion Professionnelle de Lofts en Algérie",
+      description: "Services professionnels de gestion de lofts et hébergements en Algérie. Maximisez vos revenus locatifs avec notre expertise reconnue. Gestion complète, réservations et optimisation des revenus.",
+    },
+    en: {
+      title: "Loft Algeria - Professional Loft Management in Algeria",
+      description: "Professional loft and accommodation management services in Algeria. Maximize your rental income with our recognized expertise. Complete management, reservations and revenue optimization.",
+    },
+    ar: {
+      title: "لوفت الجزائر - إدارة احترافية للشقق المفروشة في الجزائر",
+      description: "خدمات إدارة احترافية للشقق المفروشة والإقامة في الجزائر. اعظم عوائدك الإيجارية مع خبرتنا المعترف بها. إدارة شاملة وحجوزات وتحسين الإيرادات.",
+    }
+  };
+
+  const content = metaContent[locale as keyof typeof metaContent] || metaContent.fr;
+
+  return {
+    title: content.title,
+    description: content.description,
+    alternates: {
+      canonical: `https://loftalgerie.com/${locale}/public`,
+      languages: {
+        'fr': 'https://loftalgerie.com/fr/public',
+        'en': 'https://loftalgerie.com/en/public',
+        'ar': 'https://loftalgerie.com/ar/public',
+      },
+    },
+    openGraph: {
+      title: content.title,
+      description: content.description,
+      url: `https://loftalgerie.com/${locale}/public`,
+      siteName: 'Loft Algérie',
+      locale: locale === 'ar' ? 'ar_DZ' : locale === 'en' ? 'en_US' : 'fr_FR',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: content.title,
+      description: content.description,
+    },
+  };
 }
 
 export default async function PublicPage({ params }: PublicPageProps) {
@@ -140,8 +188,8 @@ export default async function PublicPage({ params }: PublicPageProps) {
               {text.contactDesc}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-lg sm:max-w-none mx-auto">
-              <TouchButton href="mailto:contact@loft-algerie.com" variant="primary" size="md">
-                📧 contact@loft-algerie.com
+              <TouchButton href="mailto:contact@loftalgerie.com" variant="primary" size="md">
+                📧 contact@loftalgerie.com
               </TouchButton>
               <TouchButton href="tel:+213123456789" variant="secondary" size="md">
                 📞 +213 123 456 789

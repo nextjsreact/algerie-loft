@@ -1,7 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
-import { withDomainErrorHandling, validateLocale, createSafeRedirect } from '@/lib/domain-error-handler';
 
 const intlMiddleware = createIntlMiddleware({
   locales: ['fr', 'ar', 'en'],
@@ -10,12 +9,16 @@ const intlMiddleware = createIntlMiddleware({
   localeDetection: true,
 });
 
-async function middlewareHandler(request: NextRequest) {
+export async function middleware(request: NextRequest) {
+  // D'abord, laissons next-intl gérer l'internationalisation
   const response = intlMiddleware(request);
 
   // Routes publiques qui ne nécessitent pas d'authentification
   const publicRoutes = [
     '/',
+    '/fr',
+    '/en', 
+    '/ar',
     '/public',
     '/site-public',
     '/login',
@@ -24,30 +27,27 @@ async function middlewareHandler(request: NextRequest) {
     '/reset-password'
   ];
 
-  // Vérifier si la route actuelle est publique
   const pathname = request.nextUrl.pathname;
-  const hostname = request.nextUrl.hostname;
   
-  // Support pour le domaine personnalisé loftalgerie.com
-  const isCustomDomain = hostname === 'loftalgerie.com' || hostname === 'www.loftalgerie.com';
-  
+  // Vérifier si c'est une route publique
   const isPublicRoute = publicRoutes.some(route => {
-    // Route racine exacte
-    if (route === '/' && pathname === '/') {
-      return true;
-    }
-    // Vérifier avec et sans préfixe de locale
-    return pathname.includes(route) || 
-           pathname.match(new RegExp(`^/[a-z]{2}${route}`)) ||
-           pathname.match(new RegExp(`^/[a-z]{2}${route}/`));
+    // Route exacte
+    if (pathname === route) return true;
+    // Route avec préfixe de locale
+    if (pathname.startsWith('/fr' + route) || 
+        pathname.startsWith('/en' + route) || 
+        pathname.startsWith('/ar' + route)) return true;
+    // Route contenant le pattern public
+    if (pathname.includes('/public')) return true;
+    return false;
   });
 
-  // Si c'est une route publique, on retourne directement la réponse sans vérification d'auth
+  // Si c'est une route publique, pas besoin d'authentification
   if (isPublicRoute) {
     return response;
   }
 
-  // Pour les autres routes, on vérifie l'authentification
+  // Pour les autres routes, vérifier l'authentification
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -68,19 +68,15 @@ async function middlewareHandler(request: NextRequest) {
 
   const { data: { session } } = await supabase.auth.getSession();
 
-  // Si pas de session et pas une route publique, rediriger vers login
+  // Si pas de session, rediriger vers login
   if (!session) {
-    const rawLocale = pathname.split('/')[1] || 'fr';
-    const locale = validateLocale(rawLocale);
-    const safeRedirect = createSafeRedirect(request, `/${locale}/login`);
-    return safeRedirect || NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+    const locale = pathname.split('/')[1] || 'fr';
+    const loginUrl = new URL(`/${locale}/login`, request.url);
+    return NextResponse.redirect(loginUrl);
   }
 
   return response;
 }
-
-// Export the middleware with error handling
-export const middleware = withDomainErrorHandling(middlewareHandler);
 
 export const config = {
   matcher: [
@@ -90,8 +86,7 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - reset-password (password reset page)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|reset-password).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };

@@ -15,6 +15,9 @@ export async function middleware(request: NextRequest) {
   // Routes publiques - ne pas appliquer l'authentification
   const isPublicPath = 
     pathname === '/' ||
+    pathname === '/fr' ||
+    pathname === '/en' ||
+    pathname === '/ar' ||
     pathname.startsWith('/fr/public') ||
     pathname.startsWith('/en/public') ||
     pathname.startsWith('/ar/public') ||

@@ -12,11 +12,6 @@
   },
   "redirects": [
     {
-      "source": "/",
-      "destination": "/public",
-      "permanent": false
-    },
-    {
       "source": "/www/(.*)",
       "destination": "https://loftalgerie.com/$1",
       "permanent": true

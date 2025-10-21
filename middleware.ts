@@ -10,44 +10,36 @@ const intlMiddleware = createIntlMiddleware({
 });
 
 export async function middleware(request: NextRequest) {
-  // D'abord, laissons next-intl gérer l'internationalisation
-  const response = intlMiddleware(request);
-
-  // Routes publiques qui ne nécessitent pas d'authentification
-  const publicRoutes = [
-    '/',
-    '/fr',
-    '/en', 
-    '/ar',
-    '/public',
-    '/site-public',
-    '/login',
-    '/register',
-    '/forgot-password',
-    '/reset-password'
-  ];
-
   const pathname = request.nextUrl.pathname;
   
-  // Vérifier si c'est une route publique
-  const isPublicRoute = publicRoutes.some(route => {
-    // Route exacte
-    if (pathname === route) return true;
-    // Route avec préfixe de locale
-    if (pathname.startsWith('/fr' + route) || 
-        pathname.startsWith('/en' + route) || 
-        pathname.startsWith('/ar' + route)) return true;
-    // Route contenant le pattern public
-    if (pathname.includes('/public')) return true;
-    return false;
-  });
+  // Routes publiques - ne pas appliquer l'authentification
+  const isPublicPath = 
+    pathname === '/' ||
+    pathname.startsWith('/fr/public') ||
+    pathname.startsWith('/en/public') ||
+    pathname.startsWith('/ar/public') ||
+    pathname.startsWith('/fr/login') ||
+    pathname.startsWith('/en/login') ||
+    pathname.startsWith('/ar/login') ||
+    pathname.startsWith('/fr/register') ||
+    pathname.startsWith('/en/register') ||
+    pathname.startsWith('/ar/register') ||
+    pathname.startsWith('/fr/forgot-password') ||
+    pathname.startsWith('/en/forgot-password') ||
+    pathname.startsWith('/ar/forgot-password') ||
+    pathname.startsWith('/fr/reset-password') ||
+    pathname.startsWith('/en/reset-password') ||
+    pathname.startsWith('/ar/reset-password') ||
+    pathname.startsWith('/site-public');
 
-  // Si c'est une route publique, pas besoin d'authentification
-  if (isPublicRoute) {
-    return response;
+  // Pour les routes publiques, appliquer seulement l'internationalisation
+  if (isPublicPath) {
+    return intlMiddleware(request);
   }
 
-  // Pour les autres routes, vérifier l'authentification
+  // Pour les autres routes, appliquer l'internationalisation puis l'authentification
+  const response = intlMiddleware(request);
+  
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -68,7 +60,6 @@ export async function middleware(request: NextRequest) {
 
   const { data: { session } } = await supabase.auth.getSession();
 
-  // Si pas de session, rediriger vers login
   if (!session) {
     const locale = pathname.split('/')[1] || 'fr';
     const loginUrl = new URL(`/${locale}/login`, request.url);

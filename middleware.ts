@@ -15,6 +15,7 @@ async function middlewareHandler(request: NextRequest) {
 
   // Routes publiques qui ne nécessitent pas d'authentification
   const publicRoutes = [
+    '/',
     '/public',
     '/site-public',
     '/login',
@@ -31,9 +32,13 @@ async function middlewareHandler(request: NextRequest) {
   const isCustomDomain = hostname === 'loftalgerie.com' || hostname === 'www.loftalgerie.com';
   
   const isPublicRoute = publicRoutes.some(route => {
+    // Route racine exacte
+    if (route === '/' && pathname === '/') {
+      return true;
+    }
     // Vérifier avec et sans préfixe de locale
     return pathname.includes(route) || 
-           pathname.match(new RegExp(`^/[a-z]{2}${route}$`)) ||
+           pathname.match(new RegExp(`^/[a-z]{2}${route}`)) ||
            pathname.match(new RegExp(`^/[a-z]{2}${route}/`));
   });
 

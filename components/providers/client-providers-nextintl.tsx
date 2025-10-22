@@ -32,13 +32,17 @@ export default function ClientProviders({ children, session, unreadCount, locale
                      pathname?.includes('/forgot-password') || 
                      pathname?.includes('/reset-password')
   
-  // Forcer le layout minimal pour les pages d'authentification
-  const shouldHideSidebar = hideSidebar || isAuthPage
+  // Pages publiques qui ne doivent pas avoir de sidebar
+  const isPublicPage = pathname?.includes('/public') || 
+                       pathname?.includes('/site-public')
+  
+  // Forcer le layout minimal pour les pages d'authentification et publiques
+  const shouldHideSidebar = hideSidebar || isAuthPage || isPublicPage
 
    return (
      <ErrorBoundary>
-       {!session || isAuthPage ? (
-         // For pages without session OR auth pages, use minimal providers
+       {!session || isAuthPage || isPublicPage ? (
+         // For pages without session OR auth pages OR public pages, use minimal providers
          <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos">
            <ThemeProvider
              attribute="class"

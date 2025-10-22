@@ -21,7 +21,7 @@ export default async function LocaleLayout({
   }
   
   // Simplified message loading
-  let messages: Record<string, any>; // Use a more flexible type for messages
+  let messages: Record<string, any>;
   try {
     messages = (await import(`@/messages/${locale}.json`)).default;
   } catch (error) {

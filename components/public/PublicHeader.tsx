@@ -26,36 +26,36 @@ export default function PublicHeader({ locale, text }: PublicHeaderProps) {
           </div>
           
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className={`hidden md:flex items-center ${locale === 'ar' ? 'space-x-reverse space-x-6 flex-row-reverse' : 'space-x-6'}`}>
             {/* Main Navigation */}
-            <nav className="flex space-x-6">
+            <nav className={`flex ${locale === 'ar' ? 'arabic-nav' : 'space-x-6'}`}>
               <a 
                 href={`/${locale}/public`}
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
+                className={`text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors ${locale === 'ar' ? 'arabic-text' : ''}`}
               >
                 {locale === 'fr' ? 'Accueil' : locale === 'en' ? 'Home' : 'الرئيسية'}
               </a>
               <a 
                 href={`/${locale}/public/services`}
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
+                className={`text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors ${locale === 'ar' ? 'arabic-text' : ''}`}
               >
                 {locale === 'fr' ? 'Services' : locale === 'en' ? 'Services' : 'الخدمات'}
               </a>
               <a 
                 href={`/${locale}/public/portfolio`}
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
+                className={`text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors ${locale === 'ar' ? 'arabic-text' : ''}`}
               >
                 {locale === 'fr' ? 'Portfolio' : locale === 'en' ? 'Portfolio' : 'المعرض'}
               </a>
               <a 
                 href={`/${locale}/public/about`}
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
+                className={`text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors ${locale === 'ar' ? 'arabic-text' : ''}`}
               >
                 {locale === 'fr' ? 'À Propos' : locale === 'en' ? 'About' : 'حولنا'}
               </a>
               <a 
                 href={`/${locale}/public/contact`}
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
+                className={`text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors ${locale === 'ar' ? 'arabic-text' : ''}`}
               >
                 {locale === 'fr' ? 'Contact' : locale === 'en' ? 'Contact' : 'اتصال'}
               </a>

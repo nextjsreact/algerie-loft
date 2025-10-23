@@ -1,0 +1,15 @@
+console.log('🔄 Configuration Next.js mise à jour !');
+console.log('');
+console.log('📝 Changements appliqués :');
+console.log('  ✅ Domaine images.unsplash.com ajouté');
+console.log('  ✅ Support des images placeholder');
+console.log('  ✅ Fallbacks locaux configurés');
+console.log('');
+console.log('🚀 Pour appliquer les changements :');
+console.log('  1. Arrêtez le serveur (Ctrl+C)');
+console.log('  2. Relancez avec: npm run dev');
+console.log('');
+console.log('🖼️ Pour installer les images placeholder :');
+console.log('  npm run setup:loft-images');
+console.log('');
+console.log('🌐 Puis visitez: http://localhost:3000/fr/public');

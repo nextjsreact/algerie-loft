@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Assets Logo</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #1a1a1a; 
+            color: white; 
+            padding: 20px; 
+        }
+        .test-container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+        }
+        .asset-test { 
+            background: rgba(255,255,255,0.1); 
+            padding: 20px; 
+            margin: 10px 0; 
+            border-radius: 8px; 
+        }
+        .asset-test img { 
+            max-width: 200px; 
+            max-height: 100px; 
+            border: 2px solid #333; 
+        }
+        .success { border-color: #4CAF50; }
+        .error { border-color: #f44336; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 Test des Assets Logo</h1>
+        <p>Ce test vérifie que les assets logo sont accessibles avec et sans préfixe de locale.</p>
+        
+        <div class="asset-test">
+            <h3>Logo principal (/logo.jpg)</h3>
+            <img src="/logo.jpg" alt="Logo principal" onload="this.className='success'" onerror="this.className='error'">
+            <p>URL: <code>/logo.jpg</code></p>
+        </div>
+
+        <div class="asset-test">
+            <h3>Logo avec préfixe FR (/fr/logo.jpg)</h3>
+            <img src="/fr/logo.jpg" alt="Logo FR" onload="this.className='success'" onerror="this.className='error'">
+            <p>URL: <code>/fr/logo.jpg</code> (devrait être redirigé vers /logo.jpg)</p>
+        </div>
+
+        <div class="asset-test">
+            <h3>Logo temporaire (/logo-temp.svg)</h3>
+            <img src="/logo-temp.svg" alt="Logo temp" onload="this.className='success'" onerror="this.className='error'">
+            <p>URL: <code>/logo-temp.svg</code></p>
+        </div>
+
+        <div class="asset-test">
+            <h3>Logo fallback (/logo-fallback.svg)</h3>
+            <img src="/logo-fallback.svg" alt="Logo fallback" onload="this.className='success'" onerror="this.className='error'">
+            <p>URL: <code>/logo-fallback.svg</code></p>
+        </div>
+
+        <div class="asset-test">
+            <h3>Placeholder (/placeholder-logo.svg)</h3>
+            <img src="/placeholder-logo.svg" alt="Placeholder" onload="this.className='success'" onerror="this.className='error'">
+            <p>URL: <code>/placeholder-logo.svg</code></p>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: rgba(0,100,200,0.2); border-radius: 8px;">
+            <h3>📋 Instructions</h3>
+            <ul>
+                <li><strong>Bordure verte</strong> : Asset chargé avec succès</li>
+                <li><strong>Bordure rouge</strong> : Erreur de chargement</li>
+                <li>Ouvrez la console (F12) pour voir les requêtes réseau</li>
+                <li>Tous les assets devraient avoir une bordure verte</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        console.log('🧪 Test des assets logo démarré');
+        console.log('Vérifiez que toutes les images se chargent sans erreur 404');
+    </script>
+</body>
+</html>

@@ -52,8 +52,8 @@ export class SessionManager {
     const hasSession = await this.hasActiveSession();
     
     if (hasSession) {
-      // User is authenticated, redirect to dashboard
-      window.location.href = `/${locale}/dashboard`;
+      // User is authenticated, redirect to home page (not dashboard)
+      window.location.href = `/${locale}/home`;
     } else {
       // User is not authenticated, redirect to login with return URL
       const returnUrl = encodeURIComponent('/app');
@@ -82,12 +82,12 @@ export class SessionManager {
         });
       }
       
-      // Redirect to public homepage or login
-      window.location.href = '/';
+      // Redirect to public website instead of login
+      window.location.href = '/fr/public';
     } catch (error) {
       console.error('Error during logout:', error);
-      // Even if there's an error, redirect to clear the session
-      window.location.href = '/';
+      // Even if there's an error, redirect to public website
+      window.location.href = '/fr/public';
     }
   }
 

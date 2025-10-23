@@ -80,7 +80,7 @@ export function SimpleLoginFormNextIntl() {
           window.location.href = decodeURIComponent(returnUrl)
         } else {
           const validLocale = locale && ['fr', 'en', 'ar'].includes(locale) ? locale : 'fr'
-          window.location.href = `/${validLocale}`
+          window.location.href = `/${validLocale}/home`
         }
         // Ne pas appeler setIsLoading(false) ici car on redirige
       } else {

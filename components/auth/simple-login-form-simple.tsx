@@ -49,8 +49,8 @@ export function SimpleLoginFormSimple() {
         if (returnUrl) {
           router.push(decodeURIComponent(returnUrl))
         } else {
-          // Default redirect to dashboard
-          router.push('/fr/dashboard')
+          // Default redirect to home page (not dashboard)
+          router.push('/fr/home')
         }
       } else {
         setError(result.error || "Login failed")

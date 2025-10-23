@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
+import { performanceMiddleware, addResourceHints, addPerformanceMonitoring, addCSP } from './middleware/performance';
 
 const intlMiddleware = createIntlMiddleware({
   locales: ['fr', 'ar', 'en'],
@@ -14,9 +15,27 @@ export async function middleware(request: NextRequest) {
   
   console.log(`[MIDDLEWARE] Processing: ${pathname}`);
   
-  // Appliquer seulement l'internationalisation - pas d'auth dans le middleware
-  // L'authentification sera gérée au niveau des pages individuelles
-  return intlMiddleware(request);
+  // Apply internationalization first
+  let response = intlMiddleware(request);
+  
+  // If intlMiddleware returns a redirect, return it immediately
+  if (response instanceof Response && response.status >= 300 && response.status < 400) {
+    return response;
+  }
+  
+  // Apply performance optimizations
+  response = performanceMiddleware(request);
+  
+  // Add resource hints
+  response = addResourceHints(response, pathname);
+  
+  // Add performance monitoring
+  response = addPerformanceMonitoring(response);
+  
+  // Add Content Security Policy
+  response = addCSP(response);
+  
+  return response;
 }
 
 export const config = {

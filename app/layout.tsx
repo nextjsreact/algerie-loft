@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { AnalyticsProvider } from "@/components/providers/analytics-provider"
+import { LogoInitializer } from "@/components/providers/logo-initializer"
+import { PerformanceProvider } from "@/components/providers/PerformanceProvider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -72,9 +74,13 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <AnalyticsProvider>
-          {children}
-        </AnalyticsProvider>
+        <PerformanceProvider enableMonitoring={process.env.NODE_ENV === 'development'}>
+          <LogoInitializer>
+            <AnalyticsProvider>
+              {children}
+            </AnalyticsProvider>
+          </LogoInitializer>
+        </PerformanceProvider>
       </body>
     </html>
   )

@@ -5,10 +5,22 @@ const withNextIntl = createNextIntlPlugin('./i18n.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Configuration expérimentale
+  // Configuration expérimentale pour les performances
   experimental: {
-    // Optimisations pour next-intl
-    optimizePackageImports: ['next-intl'],
+    // Optimisations pour next-intl et autres packages
+    optimizePackageImports: [
+      'next-intl',
+      'lucide-react',
+      'framer-motion',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      'recharts'
+    ],
+    // Optimisations supplémentaires
+    scrollRestoration: true,
+    // Préchargement des pages critiques
+    workerThreads: false,
+    esmExternals: true,
   },
   // Optimisation des images pour Vercel et domaine personnalisé
   images: {
@@ -30,11 +42,18 @@ const nextConfig = {
         hostname: 'loftalgerie.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        port: '',
+        pathname: '/**',
       }
     ],
     formats: ['image/webp', 'image/avif'],
     unoptimized: false, // Activé pour Vercel
-    domains: ['loftalgerie.com', 'www.loftalgerie.com'], // Support du domaine personnalisé
+    qualities: [75, 85, 90, 95], // Qualités supportées
+    // domains: ['loftalgerie.com', 'www.loftalgerie.com', 'images.unsplash.com'], // Deprecated - using remotePatterns instead
   },
   
   // Configuration webpack pour résoudre les erreurs d'exports
@@ -66,6 +85,24 @@ const nextConfig = {
   
   // Optimisations pour la production
   compress: true,
+  poweredByHeader: false,
+  generateEtags: true,
+  
+  // Configuration du compilateur
+  compiler: {
+    // Supprime les console.log en production
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn']
+    } : false,
+  },
+  
+  // Optimisation des bundles
+  onDemandEntries: {
+    // Période avant de décharger les pages (en ms)
+    maxInactiveAge: 25 * 1000,
+    // Nombre de pages à garder simultanément
+    pagesBufferLength: 2,
+  },
   
   // Headers de sécurité
   async headers() {
@@ -99,6 +136,39 @@ const nextConfig = {
         permanent: true,
       },
     ]
+  },
+
+  // Rewrites pour les assets statiques (bypass i18n routing)
+  async rewrites() {
+    return {
+      beforeFiles: [
+        // Bypass i18n routing for static assets
+        {
+          source: '/:locale(fr|en|ar)/logo.jpg',
+          destination: '/logo.jpg',
+        },
+        {
+          source: '/:locale(fr|en|ar)/logo.png',
+          destination: '/logo.png',
+        },
+        {
+          source: '/:locale(fr|en|ar)/logo-temp.svg',
+          destination: '/logo-temp.svg',
+        },
+        {
+          source: '/:locale(fr|en|ar)/logo-fallback.svg',
+          destination: '/logo-fallback.svg',
+        },
+        {
+          source: '/:locale(fr|en|ar)/placeholder-logo.svg',
+          destination: '/placeholder-logo.svg',
+        },
+        {
+          source: '/:locale(fr|en|ar)/placeholder-logo.png',
+          destination: '/placeholder-logo.png',
+        },
+      ],
+    };
   },
   
   typescript: {

@@ -88,7 +88,7 @@ export default function FuturisticHero({ locale, title, subtitle, ctaButtons }: 
             variants={itemVariants}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight"
           >
-            <span className="text-gradient-primary bg-clip-text text-transparent">
+            <span className="text-adaptive-contrast">
               {title}
             </span>
           </motion.h1>
@@ -96,7 +96,7 @@ export default function FuturisticHero({ locale, title, subtitle, ctaButtons }: 
           {/* Subtitle */}
           <motion.p
             variants={itemVariants}
-            className="text-lg sm:text-xl lg:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed px-4"
+            className="text-lg sm:text-xl lg:text-2xl subtitle-contrast max-w-4xl mx-auto leading-relaxed px-4"
           >
             {subtitle}
           </motion.p>

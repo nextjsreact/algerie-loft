@@ -199,7 +199,7 @@ function StatCard({
 
           {/* Label */}
           <motion.p
-            className="text-sm sm:text-base text-gray-600 dark:text-gray-300 font-medium"
+            className="text-sm sm:text-base service-description-contrast font-medium"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.2 + 0.5, duration: 0.4 }}
@@ -339,7 +339,7 @@ export default function EnhancedStatsSection({ locale, className = '' }: Enhance
                  'نتائجنا'}
               </span>
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl service-description-contrast max-w-3xl mx-auto">
               {locale === 'fr' ? 'Des chiffres qui témoignent de notre expertise et de la confiance de nos clients' :
                locale === 'en' ? 'Numbers that demonstrate our expertise and our clients\' trust' :
                'أرقام تشهد على خبرتنا وثقة عملائنا'}

@@ -231,10 +231,10 @@ export default function AnimatedContact({
 
             {/* Info */}
             <div className="flex-grow min-w-0">
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
+              <h4 className="font-semibold card-text-contrast mb-1">
                 {method.label}
               </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
+              <p className="text-sm service-description-contrast truncate">
                 {method.value}
               </p>
             </div>
@@ -326,7 +326,7 @@ export default function AnimatedContact({
                   {contactTitle}
                 </span>
               </h2>
-              <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-lg sm:text-xl service-description-contrast max-w-3xl mx-auto leading-relaxed">
                 {contactDesc}
               </p>
             </motion.div>

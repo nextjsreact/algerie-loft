@@ -167,6 +167,16 @@ const nextConfig = {
           source: '/:locale(fr|en|ar)/placeholder-logo.png',
           destination: '/placeholder-logo.png',
         },
+        // Bypass i18n routing for loft images
+        {
+          source: '/:locale(fr|en|ar)/loft-images/:path*',
+          destination: '/loft-images/:path*',
+        },
+        // Bypass i18n routing for all static images
+        {
+          source: '/:locale(fr|en|ar)/:path*\\.:ext(jpg|jpeg|png|gif|svg|webp|ico)',
+          destination: '/:path*.:ext',
+        },
       ],
     };
   },

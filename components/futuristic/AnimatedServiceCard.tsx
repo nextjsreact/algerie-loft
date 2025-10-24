@@ -164,7 +164,7 @@ export default function AnimatedServiceCard({
 
           {/* Title */}
           <motion.h3
-            className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4"
+            className="text-xl sm:text-2xl font-bold card-text-contrast mb-3 sm:mb-4"
             variants={contentVariants}
           >
             {title}
@@ -172,7 +172,7 @@ export default function AnimatedServiceCard({
 
           {/* Description */}
           <motion.p
-            className="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed flex-grow"
+            className="text-sm sm:text-base service-description-contrast leading-relaxed flex-grow"
             variants={contentVariants}
           >
             {description}

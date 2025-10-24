@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import FuturisticHero from './FuturisticHero';
-import LoftCarousel from './LoftCarousel';
+import CrispSlideCarousel from './CrispSlideCarousel';
 import AnimatedServiceCard from './AnimatedServiceCard';
 import EnhancedStatsSection from './EnhancedStatsSection';
 import AnimatedContact from './AnimatedContact';
@@ -119,19 +119,23 @@ export default function FuturisticPublicPage({ locale }: FuturisticPublicPagePro
                 className="text-center mb-12 sm:mb-16"
                 variants={sectionVariants}
               >
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold card-text-contrast mb-4">
                   <span className="text-gradient-primary">
                     {text.portfolioTitle}
                   </span>
                 </h2>
-                <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                <p className="text-lg sm:text-xl service-description-contrast max-w-3xl mx-auto">
                   {text.portfolioSubtitle}
                 </p>
               </motion.div>
 
               {/* Carousel */}
               <motion.div variants={sectionVariants}>
-                <LoftCarousel />
+                <CrispSlideCarousel 
+                  autoPlayInterval={5000}
+                  showNavigation={true}
+                  showDots={true}
+                />
               </motion.div>
             </div>
           </SectionBackground>
@@ -149,7 +153,7 @@ export default function FuturisticPublicPage({ locale }: FuturisticPublicPagePro
               className="text-center mb-12 sm:mb-16"
               variants={sectionVariants}
             >
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold card-text-contrast mb-4">
                 <span className="text-gradient-secondary">
                   {text.servicesTitle}
                 </span>

@@ -1,0 +1,207 @@
+/* Styles pour le carrousel à fondu très doux */
+
+/* Transitions ultra-douces pour tous les éléments */
+.gentle-fade * {
+  transition: all 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Ombres de texte pour une meilleure lisibilité */
+.text-shadow {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+}
+
+/* Animation de fondu croisé sans vide */
+@keyframes crossFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes crossFadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Fondu croisé continu */
+.cross-fade-carousel {
+  position: relative;
+}
+
+.cross-fade-carousel .image-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gentle-fade-in {
+  animation: gentleFadeIn 2.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+.gentle-fade-out {
+  animation: gentleFadeOut 2.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+/* Effet de zoom très subtil */
+@keyframes subtleZoom {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.02);
+  }
+}
+
+.subtle-zoom {
+  animation: subtleZoom 10s ease-in-out infinite alternate;
+}
+
+/* Glassmorphism très subtil */
+.gentle-glass {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Contrôles très discrets */
+.gentle-control {
+  opacity: 0.6;
+  transition: opacity 1s ease-in-out;
+}
+
+.gentle-control:hover {
+  opacity: 1;
+}
+
+/* Barre de progression très subtile */
+.gentle-progress {
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.2)
+  );
+}
+
+/* Animation de progression très douce */
+@keyframes gentleProgress {
+  0% {
+    width: 0%;
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 0.5;
+  }
+}
+
+.gentle-progress-bar {
+  animation: gentleProgress 10s linear;
+}
+
+/* Indicateurs très subtils */
+.gentle-dot {
+  transition: all 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+  opacity: 0.4;
+}
+
+.gentle-dot.active {
+  opacity: 1;
+}
+
+.gentle-dot:hover {
+  opacity: 0.8;
+}
+
+/* Overlay très subtil */
+.gentle-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.1) 30%,
+    transparent 60%
+  );
+}
+
+/* Texte avec apparition très douce */
+.gentle-text-appear {
+  animation: gentleFadeIn 2s ease-out 1.5s both;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .gentle-glass {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+  }
+}
+
+/* Préférences de mouvement réduit */
+@media (prefers-reduced-motion: reduce) {
+  .gentle-fade *,
+  .gentle-control,
+  .gentle-dot {
+    transition: none;
+  }
+  
+  .gentle-fade-in,
+  .gentle-fade-out,
+  .subtle-zoom,
+  .gentle-progress-bar,
+  .gentle-text-appear {
+    animation: none;
+  }
+}
+
+/* Optimisation des performances */
+.gentle-carousel {
+  will-change: opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.gentle-carousel img {
+  will-change: transform, opacity;
+}
+
+/* États de focus améliorés */
+.gentle-control:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Amélioration de l'accessibilité */
+.gentle-carousel[aria-live="polite"] {
+  position: relative; /* Assure le contexte pour les lecteurs d'écran */
+}
+
+/* Effet de lueur très subtile */
+.gentle-glow {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.gentle-glow:hover {
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+}

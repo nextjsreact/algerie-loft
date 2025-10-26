@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { User, Shield, Bell, Database, Key } from "lucide-react"
+import { User, Shield, Bell, Database, Key, Building } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from "react"
@@ -280,6 +280,29 @@ export default function SettingsPage() {
               <Button variant="outline" size="sm" asChild>
                 <Link href="/settings/user-passwords">
                   Gérer les mots de passe
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </RoleBasedAccess>
+
+        <RoleBasedAccess 
+          userRole={session.user.role}
+          allowedRoles={['admin', 'manager']}
+          showFallback={false}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building className="h-5 w-5" />
+                Gestion des Partenaires
+              </CardTitle>
+              <CardDescription>Vérifier et approuver les candidatures de partenaires</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/settings/partners">
+                  Gérer les partenaires
                 </Link>
               </Button>
             </CardContent>

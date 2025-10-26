@@ -1,4 +1,136 @@
 {
+  "homepage": {
+    "hero": {
+      "headline": "Réservez votre loft idéal en Algérie",
+      "subheadline": "Découvrez des lofts uniques et authentiques dans les plus belles villes d'Algérie",
+      "ctaPrimary": "Rechercher maintenant",
+      "ctaSecondary": "Voir les lofts disponibles",
+      "trustBadge": "Plus de 1000 clients satisfaits"
+    },
+    "search": {
+      "location": "Destination",
+      "checkIn": "Arrivée",
+      "checkOut": "Départ",
+      "guests": "Voyageurs",
+      "searchButton": "Rechercher",
+      "locationPlaceholder": "Où souhaitez-vous séjourner ?",
+      "guestsLabel": "{count} voyageur",
+      "guestsLabel_plural": "{count} voyageurs"
+    },
+    "featuredLofts": {
+      "title": "Lofts disponibles",
+      "subtitle": "Découvrez notre sélection de lofts de qualité",
+      "pricePerNight": "par nuit",
+      "bookNow": "Réserver",
+      "viewDetails": "Voir détails",
+      "available": "Disponible",
+      "unavailable": "Indisponible",
+      "rating": "Note",
+      "reviews": "avis",
+      "instantBook": "Réservation instantanée"
+    },
+    "filters": {
+      "priceRange": "Gamme de prix",
+      "amenities": "Équipements",
+      "location": "Localisation",
+      "sortBy": "Trier par",
+      "sortOptions": {
+        "price_asc": "Prix croissant",
+        "price_desc": "Prix décroissant",
+        "rating": "Note",
+        "availability": "Disponibilité"
+      },
+      "viewMode": {
+        "grid": "Grille",
+        "list": "Liste",
+        "map": "Carte"
+      }
+    },
+    "trust": {
+      "title": "Pourquoi nous choisir ?",
+      "subtitle": "Votre satisfaction est notre priorité",
+      "reviews": {
+        "title": "Avis vérifiés",
+        "subtitle": "Des témoignages authentiques de nos clients"
+      },
+      "certifications": {
+        "title": "Certifications qualité",
+        "subtitle": "Gestion professionnelle et standards élevés"
+      },
+      "support": {
+        "title": "Support 24/7",
+        "subtitle": "Une équipe dédiée à votre service",
+        "responseTime": "Temps de réponse moyen : 2h"
+      },
+      "guarantees": {
+        "title": "Garanties",
+        "cancellation": "Annulation flexible",
+        "quality": "Qualité garantie",
+        "security": "Paiement sécurisé"
+      }
+    },
+    "owners": {
+      "title": "Propriétaires : Maximisez vos revenus",
+      "subtitle": "Confiez-nous la gestion de votre bien et augmentez votre rentabilité",
+      "metrics": {
+        "occupancyRate": "Taux d'occupation moyen",
+        "revenueIncrease": "Augmentation des revenus",
+        "averageRevenue": "Revenus moyens mensuels"
+      },
+      "services": {
+        "title": "Nos services",
+        "management": "Gestion complète",
+        "marketing": "Marketing professionnel",
+        "maintenance": "Maintenance et entretien",
+        "support": "Support client 24/7"
+      },
+      "cta": {
+        "primary": "Évaluer mon bien",
+        "secondary": "En savoir plus"
+      },
+      "testimonials": {
+        "title": "Témoignages de propriétaires"
+      }
+    },
+    "locations": {
+      "algiers": "Alger",
+      "oran": "Oran",
+      "constantine": "Constantine",
+      "annaba": "Annaba",
+      "tlemcen": "Tlemcen",
+      "setif": "Sétif",
+      "sidibelabbes": "Sidi Bel Abbès",
+      "biskra": "Biskra",
+      "batna": "Batna",
+      "blida": "Blida"
+    },
+    "attractions": {
+      "algiers": {
+        "casbah": "La Casbah d'Alger",
+        "notredame": "Notre-Dame d'Afrique",
+        "martyrs": "Mémorial du Martyr"
+      },
+      "oran": {
+        "santacruz": "Fort de Santa Cruz",
+        "theatre": "Théâtre d'Oran",
+        "corniche": "La Corniche"
+      },
+      "constantine": {
+        "bridges": "Les Ponts suspendus",
+        "palace": "Palais du Bey",
+        "cirta": "Musée Cirta"
+      }
+    }
+  },
+  "currency": {
+    "dzd": "Dinar algérien",
+    "eur": "Euro",
+    "usd": "Dollar américain",
+    "selector": {
+      "title": "Devise",
+      "change": "Changer de devise"
+    }
+  },
   "customers": {
     "title": "Clients",
     "subtitle": "Gérez vos clients et leurs informations.",
@@ -402,6 +534,78 @@
           "footerText": "Préservez la confidentialité de vos identifiants d'accès"
         }
       }
+    },
+    "roleSelector": {
+      "title": "Choisissez votre type de compte",
+      "subtitle": "Sélectionnez le type de compte qui correspond à vos besoins",
+      "continue": "Continuer",
+      "client": {
+        "title": "Client",
+        "description": "Je veux réserver des lofts pour mes séjours"
+      },
+      "partner": {
+        "title": "Partenaire",
+        "description": "Je veux louer mes biens immobiliers"
+      },
+      "employee": {
+        "title": "Employé",
+        "description": "J'ai un code d'accès employé"
+      }
+    },
+    "clientRegistration": {
+      "title": "Inscription Client",
+      "description": "Créez votre compte pour réserver des lofts",
+      "fullName": "Nom complet",
+      "fullNamePlaceholder": "Votre nom complet",
+      "email": "Adresse email",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Minimum 8 caractères",
+      "confirmPassword": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "Ressaisissez votre mot de passe",
+      "submit": "Créer mon compte client",
+      "benefits": "Accès instantané à la recherche et réservation de lofts"
+    },
+    "partnerRegistration": {
+      "title": "Inscription Partenaire",
+      "description": "Rejoignez notre réseau de partenaires immobiliers",
+      "step": "Étape",
+      "nextStep": "Étape suivante",
+      "previousStep": "Étape précédente",
+      "fullName": "Nom complet",
+      "fullNamePlaceholder": "Votre nom complet",
+      "email": "Adresse email professionnelle",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Minimum 8 caractères",
+      "confirmPassword": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "Ressaisissez votre mot de passe",
+      "businessType": "Type d'activité",
+      "individual": "Particulier",
+      "company": "Entreprise",
+      "businessName": "Nom de l'entreprise",
+      "businessNamePlaceholder": "Nom de votre entreprise",
+      "address": "Adresse complète",
+      "addressPlaceholder": "Adresse complète de votre domicile ou entreprise",
+      "phone": "Numéro de téléphone",
+      "phonePlaceholder": "+213 XX XX XX XX",
+      "taxId": "Numéro fiscal (optionnel)",
+      "taxIdPlaceholder": "Numéro d'identification fiscale",
+      "verificationNotice": "Votre compte sera vérifié par notre équipe avant activation (24-48h).",
+      "submit": "Soumettre ma candidature"
+    },
+    "clientRegistrationSuccess": {
+      "title": "Inscription réussie !",
+      "subtitle": "Votre compte client a été créé avec succès",
+      "emailSent": "Email de confirmation envoyé",
+      "nextSteps": "Vérifiez votre boîte mail et cliquez sur le lien de confirmation pour activer votre compte.",
+      "whatNext": "Que faire ensuite ?",
+      "step1": "Vérifiez votre email et confirmez votre compte",
+      "step2": "Connectez-vous à votre espace client",
+      "step3": "Commencez à rechercher et réserver des lofts",
+      "continueToLogin": "Se connecter",
+      "browseProperties": "Parcourir les propriétés",
+      "supportText": "Besoin d'aide ? Contactez notre support client"
     }
   },
   "availability": {
@@ -2080,7 +2284,36 @@
   "admin": {
     "editCategory": "Modifier la catégorie",
     "newCategory": "Nouvelle catégorie",
-    "categoryName": "Nom de la catégorie"
+    "categoryName": "Nom de la catégorie",
+    "partners": {
+      "title": "Gestion des Partenaires",
+      "description": "Vérification et approbation des candidatures de partenaires",
+      "tabs": {
+        "pending": "En attente",
+        "verified": "Vérifiés",
+        "rejected": "Rejetés"
+      },
+      "status": {
+        "pending": "En attente",
+        "verified": "Vérifié",
+        "rejected": "Rejeté"
+      },
+      "submittedOn": "Soumis le",
+      "contactPerson": "Personne de contact",
+      "businessType": "Type d'activité",
+      "phone": "Téléphone",
+      "address": "Adresse",
+      "taxId": "ID fiscal",
+      "company": "Entreprise",
+      "individual": "Particulier",
+      "verificationNotes": "Notes de vérification",
+      "notesPlaceholder": "Ajoutez des notes sur la vérification (optionnel)...",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "noPendingPartners": "Aucune candidature de partenaire en attente.",
+      "noVerifiedPartners": "Aucun partenaire vérifié.",
+      "noRejectedPartners": "Aucun partenaire rejeté."
+    }
   },
   "navigation": {
     "executiveDashboard": "Tableau de bord exécutif",

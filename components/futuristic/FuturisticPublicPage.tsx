@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { Suspense, useEffect } from 'react';
 import FuturisticHero from './FuturisticHero';
 import CrispSlideCarousel from './CrispSlideCarousel';
 import AnimatedServiceCard from './AnimatedServiceCard';
@@ -13,6 +14,7 @@ import SmoothScroll from '@/components/ui/SmoothScroll';
 import BackToTop from '@/components/ui/BackToTop';
 import { SectionBackground } from './AnimatedBackground';
 import { useResponsiveAnimations } from '@/hooks/useResponsiveAnimations';
+import { usePerformanceOptimization, useWebVitals } from '@/hooks/usePerformanceOptimization';
 
 interface FuturisticPublicPageProps {
   locale: string;
@@ -20,6 +22,43 @@ interface FuturisticPublicPageProps {
 
 export default function FuturisticPublicPage({ locale }: FuturisticPublicPageProps) {
   const { getMotionVariants, shouldEnableFeature } = useResponsiveAnimations();
+  
+  // Initialize performance optimizations
+  const {
+    isOptimized,
+    optimizationProgress,
+    audience,
+    performanceMetrics,
+    preloadImages
+  } = usePerformanceOptimization({
+    enableImageOptimization: true,
+    enableCodeSplitting: true,
+    enableCaching: true,
+    criticalImages: [
+      '/hero-background.jpg',
+      '/featured-loft-1.jpg',
+      '/featured-loft-2.jpg'
+    ]
+  });
+
+  // Monitor Core Web Vitals
+  const webVitals = useWebVitals();
+
+  // Preload additional images based on audience
+  useEffect(() => {
+    if (isOptimized && audience === 'guest') {
+      preloadImages([
+        '/guest-testimonial-1.jpg',
+        '/guest-testimonial-2.jpg',
+        '/trust-badge-1.png'
+      ]);
+    } else if (isOptimized && audience === 'owner') {
+      preloadImages([
+        '/owner-success-story-1.jpg',
+        '/revenue-chart-bg.jpg'
+      ]);
+    }
+  }, [isOptimized, audience, preloadImages]);
 
   // Contenu multilingue
   const content = {
@@ -87,6 +126,17 @@ export default function FuturisticPublicPage({ locale }: FuturisticPublicPagePro
   return (
     <div dir={locale === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       <SmoothScroll />
+      
+      {/* Performance optimization loading indicator */}
+      {!isOptimized && (
+        <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 dark:bg-gray-700 z-50">
+          <div 
+            className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
+            style={{ width: `${optimizationProgress}%` }}
+          />
+        </div>
+      )}
+      
       <PublicHeader locale={locale} text={{ login: text.login }} />
 
       <motion.main
@@ -96,15 +146,19 @@ export default function FuturisticPublicPage({ locale }: FuturisticPublicPagePro
       >
         {/* Hero Section */}
         <motion.section variants={sectionVariants}>
-          <FuturisticHero
-            locale={locale}
-            title={text.title}
-            subtitle={text.subtitle}
-            ctaButtons={{
-              primary: { text: text.discoverServices, href: "#services" },
-              secondary: { text: text.contactUs, href: "#contact" }
-            }}
-          />
+          <Suspense fallback={
+            <div className="h-[600px] bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 animate-pulse" />
+          }>
+            <FuturisticHero
+              locale={locale}
+              title={text.title}
+              subtitle={text.subtitle}
+              ctaButtons={{
+                primary: { text: text.discoverServices, href: "#services" },
+                secondary: { text: text.contactUs, href: "#contact" }
+              }}
+            />
+          </Suspense>
         </motion.section>
 
         {/* Portfolio/Carousel Section */}
@@ -131,11 +185,15 @@ export default function FuturisticPublicPage({ locale }: FuturisticPublicPagePro
 
               {/* Carousel */}
               <motion.div variants={sectionVariants}>
-                <CrispSlideCarousel 
-                  autoPlayInterval={5000}
-                  showNavigation={true}
-                  showDots={true}
-                />
+                <Suspense fallback={
+                  <div className="h-[400px] bg-gray-100 dark:bg-gray-800 rounded-lg animate-pulse" />
+                }>
+                  <CrispSlideCarousel 
+                    autoPlayInterval={5000}
+                    showNavigation={true}
+                    showDots={true}
+                  />
+                </Suspense>
               </motion.div>
             </div>
           </SectionBackground>
@@ -233,6 +291,20 @@ export default function FuturisticPublicPage({ locale }: FuturisticPublicPagePro
       />
       
       <BackToTop />
+      
+      {/* Performance monitoring in development */}
+      {process.env.NODE_ENV === 'development' && isOptimized && (
+        <div className="fixed bottom-4 right-4 p-4 bg-black/80 text-white text-xs rounded-lg max-w-xs">
+          <div className="font-semibold mb-2">Performance Metrics</div>
+          <div>Audience: {audience}</div>
+          {webVitals.LCP && <div>LCP: {Math.round(webVitals.LCP)}ms</div>}
+          {webVitals.FID && <div>FID: {Math.round(webVitals.FID)}ms</div>}
+          {webVitals.CLS && <div>CLS: {webVitals.CLS.toFixed(3)}</div>}
+          {performanceMetrics?.cacheHitRate && (
+            <div>Cache Hit Rate: {Math.round(performanceMetrics.cacheHitRate)}%</div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

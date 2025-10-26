@@ -21,7 +21,14 @@ const nextConfig = {
     // Préchargement des pages critiques
     workerThreads: false,
     esmExternals: true,
+    // Code splitting optimizations
+    // Enhanced performance optimizations
+    webVitalsAttribution: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB']
   },
+  
+  // Server external packages
+  serverExternalPackages: ['sharp'],
+  
   // Optimisation des images pour Vercel et domaine personnalisé
   images: {
     remotePatterns: [
@@ -50,10 +57,16 @@ const nextConfig = {
         pathname: '/**',
       }
     ],
-    formats: ['image/webp', 'image/avif'],
+    formats: ['image/avif', 'image/webp'], // AVIF first for better compression
     unoptimized: false, // Activé pour Vercel
-    qualities: [75, 85, 90, 95], // Qualités supportées
-    // domains: ['loftalgerie.com', 'www.loftalgerie.com', 'images.unsplash.com'], // Deprecated - using remotePatterns instead
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840], // Enhanced device sizes
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Enhanced image sizes
+    minimumCacheTTL: 31536000, // 1 year cache for optimized images
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // Enhanced quality settings for dual-audience optimization
+    loader: 'default',
+    loaderFile: undefined,
   },
   
   // Configuration webpack pour résoudre les erreurs d'exports
@@ -104,7 +117,7 @@ const nextConfig = {
     pagesBufferLength: 2,
   },
   
-  // Headers de sécurité
+  // Headers de sécurité et PWA
   async headers() {
     return [
       {
@@ -121,6 +134,34 @@ const nextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin',
+          },
+        ],
+      },
+      // Service Worker headers
+      {
+        source: '/sw.js',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+          {
+            key: 'Service-Worker-Allowed',
+            value: '/',
+          },
+        ],
+      },
+      // Manifest headers
+      {
+        source: '/manifest.json',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/manifest+json',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },

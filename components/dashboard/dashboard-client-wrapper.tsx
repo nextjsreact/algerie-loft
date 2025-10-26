@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { getSession } from "@/lib/auth"
 import { MemberDashboard } from "./member-dashboard"
 import { ModernDashboard } from "./modern-dashboard"
+import { AdminManagementDashboard } from "../admin/admin-management-dashboard"
 import type { AuthSession } from "@/lib/types"
 
 export function DashboardClientWrapper() {
@@ -88,6 +89,18 @@ export function DashboardClientWrapper() {
     )
   }
 
-  // For admin, manager roles - use the existing ModernDashboard
+  // For admin, manager roles - show both modern dashboard and admin management
+  if (session.user.role === 'admin' || session.user.role === 'manager') {
+    return (
+      <div className="space-y-8">
+        <ModernDashboard />
+        <div className="border-t pt-8">
+          <AdminManagementDashboard />
+        </div>
+      </div>
+    )
+  }
+
+  // For other employee roles - use the existing ModernDashboard
   return <ModernDashboard />
 }

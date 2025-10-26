@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { PerformanceMonitor } from '@/components/debug/PerformanceMonitor';
 import { OptimizedFonts, FontOptimizer } from '@/components/ui/OptimizedFonts';
+import { usePerformanceMonitoring } from '@/lib/performance';
 
 interface PerformanceContextType {
   isMonitoringEnabled: boolean;
@@ -41,6 +42,9 @@ export function PerformanceProvider({
     cacheMisses: 0
   });
 
+  // Initialize our new performance monitoring system
+  const { recordRender } = usePerformanceMonitoring('PerformanceProvider');
+
   // Initialize performance monitoring
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -73,6 +77,9 @@ export function PerformanceProvider({
     // Initial measurements
     measurePageLoad();
     measureMemory();
+
+    // Record initial render performance
+    recordRender(performance.now());
 
     // Set up periodic monitoring
     const interval = setInterval(() => {

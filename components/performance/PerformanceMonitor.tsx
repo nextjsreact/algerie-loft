@@ -1,175 +1,241 @@
 'use client';
 
-import React from 'react';
-import { performanceMonitor } from '@/lib/performance/performance-monitor';
-import { cacheManager } from '@/lib/performance/cache-manager';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Zap, Database, Clock, TrendingUp, RefreshCw } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { getCachePerformanceMetrics } from '@/lib/performance/caching-strategy';
 
-export function PerformanceMonitor() {
-  const [metrics, setMetrics] = React.useState<any[]>([]);
-  const [cacheStats, setCacheStats] = React.useState<any>({});
-  const [isVisible, setIsVisible] = React.useState(false);
+interface PerformanceMetrics {
+  lcp: number | null; // Largest Contentful Paint
+  fid: number | null; // First Input Delay
+  cls: number | null; // Cumulative Layout Shift
+  fcp: number | null; // First Contentful Paint
+  ttfb: number | null; // Time to First Byte
+}
 
-  React.useEffect(() => {
-    const updateStats = () => {
-      setMetrics(performanceMonitor.getPerformanceSummary());
-      setCacheStats(cacheManager.getStats());
+interface CacheMetrics {
+  hitRate: number;
+  totalItems: number;
+  validItems: number;
+}
+
+export default function PerformanceMonitor() {
+  const [metrics, setMetrics] = useState<PerformanceMetrics>({
+    lcp: null,
+    fid: null,
+    cls: null,
+    fcp: null,
+    ttfb: null,
+  });
+  
+  const [cacheMetrics, setCacheMetrics] = useState<CacheMetrics | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    // Only show in development or when explicitly enabled
+    const shouldShow = process.env.NODE_ENV === 'development' || 
+                      localStorage.getItem('show-performance-monitor') === 'true';
+    setIsVisible(shouldShow);
+
+    if (!shouldShow) return;
+
+    // Measure Core Web Vitals
+    const measureWebVitals = () => {
+      // LCP - Largest Contentful Paint
+      new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        const lastEntry = entries[entries.length - 1];
+        setMetrics(prev => ({ ...prev, lcp: lastEntry.startTime }));
+      }).observe({ entryTypes: ['largest-contentful-paint'] });
+
+      // FID - First Input Delay
+      new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        entries.forEach((entry: any) => {
+          setMetrics(prev => ({ ...prev, fid: entry.processingStart - entry.startTime }));
+        });
+      }).observe({ entryTypes: ['first-input'] });
+
+      // CLS - Cumulative Layout Shift
+      let clsValue = 0;
+      new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        entries.forEach((entry: any) => {
+          if (!entry.hadRecentInput) {
+            clsValue += entry.value;
+            setMetrics(prev => ({ ...prev, cls: clsValue }));
+          }
+        });
+      }).observe({ entryTypes: ['layout-shift'] });
+
+      // FCP - First Contentful Paint
+      new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        entries.forEach((entry) => {
+          if (entry.name === 'first-contentful-paint') {
+            setMetrics(prev => ({ ...prev, fcp: entry.startTime }));
+          }
+        });
+      }).observe({ entryTypes: ['paint'] });
+
+      // TTFB - Time to First Byte
+      const navigationEntries = performance.getEntriesByType('navigation');
+      if (navigationEntries.length > 0) {
+        const navEntry = navigationEntries[0] as PerformanceNavigationTiming;
+        setMetrics(prev => ({ ...prev, ttfb: navEntry.responseStart - navEntry.requestStart }));
+      }
     };
 
-    updateStats();
-    const interval = setInterval(updateStats, 5000); // Mise à jour toutes les 5 secondes
+    // Update cache metrics periodically
+    const updateCacheMetrics = () => {
+      const cacheStats = getCachePerformanceMetrics();
+      setCacheMetrics(cacheStats.client);
+    };
 
-    return () => clearInterval(interval);
+    measureWebVitals();
+    updateCacheMetrics();
+
+    // Update cache metrics every 5 seconds
+    const cacheInterval = setInterval(updateCacheMetrics, 5000);
+
+    return () => {
+      clearInterval(cacheInterval);
+    };
   }, []);
 
-  const clearCache = () => {
-    cacheManager.clear();
-    performanceMonitor.clearMetrics();
-    setCacheStats(cacheManager.getStats());
-    setMetrics([]);
+  // Send metrics to analytics
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'gtag' in window) {
+      Object.entries(metrics).forEach(([key, value]) => {
+        if (value !== null) {
+          (window as any).gtag('event', 'web_vitals', {
+            metric_name: key,
+            metric_value: Math.round(value),
+            page_path: window.location.pathname,
+          });
+        }
+      });
+    }
+  }, [metrics]);
+
+  if (!isVisible) return null;
+
+  const getMetricColor = (metric: string, value: number | null) => {
+    if (value === null) return 'text-gray-400';
+    
+    switch (metric) {
+      case 'lcp':
+        return value <= 2500 ? 'text-green-500' : value <= 4000 ? 'text-yellow-500' : 'text-red-500';
+      case 'fid':
+        return value <= 100 ? 'text-green-500' : value <= 300 ? 'text-yellow-500' : 'text-red-500';
+      case 'cls':
+        return value <= 0.1 ? 'text-green-500' : value <= 0.25 ? 'text-yellow-500' : 'text-red-500';
+      case 'fcp':
+        return value <= 1800 ? 'text-green-500' : value <= 3000 ? 'text-yellow-500' : 'text-red-500';
+      case 'ttfb':
+        return value <= 800 ? 'text-green-500' : value <= 1800 ? 'text-yellow-500' : 'text-red-500';
+      default:
+        return 'text-gray-600';
+    }
   };
 
-  if (!isVisible) {
-    return (
-      <div className="fixed bottom-4 right-4 z-50">
-        <Button
-          onClick={() => setIsVisible(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-3 shadow-lg"
-          title="Ouvrir le moniteur de performance"
-        >
-          <Zap className="h-5 w-5" />
-        </Button>
-      </div>
-    );
-  }
+  const formatValue = (metric: string, value: number | null) => {
+    if (value === null) return 'N/A';
+    
+    switch (metric) {
+      case 'cls':
+        return value.toFixed(3);
+      case 'lcp':
+      case 'fid':
+      case 'fcp':
+      case 'ttfb':
+        return `${Math.round(value)}ms`;
+      default:
+        return value.toString();
+    }
+  };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-96">
-      <Card className="shadow-2xl border-2 border-blue-200">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Zap className="h-5 w-5 text-blue-600" />
-              Performance Monitor
-            </CardTitle>
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={clearCache}
-                title="Vider le cache"
-              >
-                <RefreshCw className="h-4 w-4" />
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => setIsVisible(false)}
-              >
-                ✕
-              </Button>
-            </div>
+    <div className="fixed bottom-4 right-4 bg-black bg-opacity-80 text-white p-4 rounded-lg text-xs font-mono z-50 max-w-xs">
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="font-bold text-sm">Performance</h3>
+        <button
+          onClick={() => {
+            localStorage.setItem('show-performance-monitor', 'false');
+            setIsVisible(false);
+          }}
+          className="text-gray-400 hover:text-white"
+        >
+          ×
+        </button>
+      </div>
+      
+      {/* Core Web Vitals */}
+      <div className="space-y-1 mb-3">
+        <div className="text-xs text-gray-300 font-semibold">Core Web Vitals</div>
+        {Object.entries(metrics).map(([key, value]) => (
+          <div key={key} className="flex justify-between">
+            <span className="uppercase">{key}:</span>
+            <span className={getMetricColor(key, value)}>
+              {formatValue(key, value)}
+            </span>
           </div>
-        </CardHeader>
-        
-        <CardContent className="space-y-4">
-          {/* Cache Stats */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Database className="h-4 w-4 text-green-600" />
-              <span className="font-medium">Cache</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2 text-sm">
-              <div className="text-center">
-                <div className="font-bold text-blue-600">{cacheStats.size || 0}</div>
-                <div className="text-gray-500">Entrées</div>
-              </div>
-              <div className="text-center">
-                <div className="font-bold text-green-600">{Math.round(cacheStats.usage || 0)}%</div>
-                <div className="text-gray-500">Utilisation</div>
-              </div>
-              <div className="text-center">
-                <div className="font-bold text-purple-600">{cacheStats.limit || 0}</div>
-                <div className="text-gray-500">Limite</div>
-              </div>
-            </div>
-          </div>
+        ))}
+      </div>
 
-          {/* Performance Metrics */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-orange-600" />
-              <span className="font-medium">Métriques</span>
-            </div>
-            
-            {metrics.length > 0 ? (
-              <div className="space-y-2 max-h-40 overflow-y-auto">
-                {metrics.map((metric, index) => (
-                  <div key={index} className="flex items-center justify-between text-sm">
-                    <span className="truncate">{metric.name}</span>
-                    <div className="flex items-center gap-2">
-                      <Badge 
-                        variant={metric.average < 100 ? 'default' : metric.average < 500 ? 'secondary' : 'destructive'}
-                        className="text-xs"
-                      >
-                        {Math.round(metric.average)}ms
-                      </Badge>
-                      <span className="text-gray-400 text-xs">({metric.count})</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center text-gray-500 text-sm py-4">
-                Aucune métrique collectée
-              </div>
-            )}
+      {/* Cache Metrics */}
+      {cacheMetrics && (
+        <div className="space-y-1 border-t border-gray-600 pt-2">
+          <div className="text-xs text-gray-300 font-semibold">Cache</div>
+          <div className="flex justify-between">
+            <span>Hit Rate:</span>
+            <span className={cacheMetrics.hitRate > 0.8 ? 'text-green-500' : 'text-yellow-500'}>
+              {(cacheMetrics.hitRate * 100).toFixed(1)}%
+            </span>
           </div>
+          <div className="flex justify-between">
+            <span>Items:</span>
+            <span className="text-blue-400">{cacheMetrics.validItems}/{cacheMetrics.totalItems}</span>
+          </div>
+        </div>
+      )}
 
-          {/* Quick Actions */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-indigo-600" />
-              <span className="font-medium">Actions</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => window.location.reload()}
-                className="text-xs"
-              >
-                Recharger
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.getRegistrations().then(registrations => {
-                      registrations.forEach(registration => registration.unregister());
-                    });
-                  }
-                }}
-                className="text-xs"
-              >
-                Clear SW
-              </Button>
-            </div>
-          </div>
-
-          {/* Status */}
-          <div className="pt-2 border-t">
-            <div className="flex items-center justify-between text-xs text-gray-500">
-              <span>Monitoring actif</span>
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Performance Tips */}
+      <div className="mt-2 pt-2 border-t border-gray-600">
+        <div className="text-xs text-gray-300">
+          {metrics.lcp && metrics.lcp > 2500 && '⚠️ Optimize LCP'}
+          {metrics.fid && metrics.fid > 100 && '⚠️ Reduce FID'}
+          {metrics.cls && metrics.cls > 0.1 && '⚠️ Fix Layout Shift'}
+          {cacheMetrics && cacheMetrics.hitRate < 0.5 && '⚠️ Low Cache Hit Rate'}
+        </div>
+      </div>
     </div>
   );
+}
+
+// Hook for performance monitoring
+export function usePerformanceMonitoring() {
+  const [isMonitoring, setIsMonitoring] = useState(false);
+
+  useEffect(() => {
+    const shouldMonitor = process.env.NODE_ENV === 'development' || 
+                         localStorage.getItem('enable-performance-monitoring') === 'true';
+    setIsMonitoring(shouldMonitor);
+  }, []);
+
+  const startMonitoring = () => {
+    localStorage.setItem('enable-performance-monitoring', 'true');
+    localStorage.setItem('show-performance-monitor', 'true');
+    setIsMonitoring(true);
+  };
+
+  const stopMonitoring = () => {
+    localStorage.setItem('enable-performance-monitoring', 'false');
+    localStorage.setItem('show-performance-monitor', 'false');
+    setIsMonitoring(false);
+  };
+
+  return {
+    isMonitoring,
+    startMonitoring,
+    stopMonitoring,
+  };
 }

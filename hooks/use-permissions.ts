@@ -144,6 +144,14 @@ export const DataFilters = {
       case 'executive':
         return true; // Can see all lofts
       
+      case 'partner':
+        // Partners can see their own lofts
+        return loft.owner_id === userId;
+      
+      case 'client':
+        // Clients can see available lofts
+        return loft.status === 'available';
+      
       case 'member':
         // Members can only see lofts where they have assigned tasks
         return assignedLoftIds ? assignedLoftIds.includes(loft.id) : false;
@@ -164,10 +172,83 @@ export const DataFilters = {
       case 'executive':
         return true; // Can see financial data
       
+      case 'partner':
+        // Partners can see their own earnings data
+        return data.partner_id === data.userId;
+      
       case 'member':
+      case 'client':
       case 'guest':
       default:
         return false; // Cannot see financial data
+    }
+  },
+
+  /**
+   * Filter bookings based on user role and involvement
+   */
+  bookings: (booking: any, userRole: UserRole, userId?: string) => {
+    switch (userRole) {
+      case 'admin':
+      case 'manager':
+        return true; // Can see all bookings
+      
+      case 'client':
+        // Clients can only see their own bookings
+        return booking.client_id === userId;
+      
+      case 'partner':
+        // Partners can see bookings for their properties
+        return booking.partner_id === userId;
+      
+      case 'executive':
+        // Executives can see booking summaries but not personal details
+        return true;
+      
+      case 'member':
+      case 'guest':
+      default:
+        return false;
+    }
+  },
+
+  /**
+   * Filter booking messages based on user involvement
+   */
+  bookingMessages: (message: any, userRole: UserRole, userId?: string, bookingData?: any) => {
+    switch (userRole) {
+      case 'admin':
+      case 'manager':
+        return true; // Can see all messages
+      
+      case 'client':
+      case 'partner':
+        // Can see messages for bookings they're involved in
+        return bookingData && (
+          bookingData.client_id === userId || 
+          bookingData.partner_id === userId
+        );
+      
+      default:
+        return false;
+    }
+  },
+
+  /**
+   * Filter partner profiles based on user role
+   */
+  partnerProfiles: (profile: any, userRole: UserRole, userId?: string) => {
+    switch (userRole) {
+      case 'admin':
+      case 'manager':
+        return true; // Can see all partner profiles
+      
+      case 'partner':
+        // Partners can only see their own profile
+        return profile.user_id === userId;
+      
+      default:
+        return false;
     }
   }
 };

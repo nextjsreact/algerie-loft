@@ -1,4 +1,4 @@
-import FuturisticPublicPage from '@/components/futuristic/FuturisticPublicPage';
+import DualAudienceHomepage from '@/components/homepage/DualAudienceHomepage';
 import { Metadata } from 'next';
 
 interface PublicPageProps {
@@ -10,16 +10,16 @@ export async function generateMetadata({ params }: PublicPageProps): Promise<Met
   
   const metaContent = {
     fr: {
-      title: "Loft Algérie - Gestion Professionnelle de Lofts en Algérie",
-      description: "Services professionnels de gestion de lofts et hébergements en Algérie. Maximisez vos revenus locatifs avec notre expertise reconnue. Gestion complète, réservations et optimisation des revenus.",
+      title: "Loft Algérie - Réservez votre loft idéal en Algérie",
+      description: "Découvrez des lofts uniques en Algérie. Réservation facile, gestion professionnelle pour propriétaires. Séjours authentiques et revenus optimisés.",
     },
     en: {
-      title: "Loft Algeria - Professional Loft Management in Algeria",
-      description: "Professional loft and accommodation management services in Algeria. Maximize your rental income with our recognized expertise. Complete management, reservations and revenue optimization.",
+      title: "Loft Algeria - Book your ideal loft in Algeria",
+      description: "Discover unique lofts in Algeria. Easy booking, professional management for owners. Authentic stays and optimized revenue.",
     },
     ar: {
-      title: "لوفت الجزائر - إدارة احترافية للشقق المفروشة في الجزائر",
-      description: "خدمات إدارة احترافية للشقق المفروشة والإقامة في الجزائر. اعظم عوائدك الإيجارية مع خبرتنا المعترف بها. إدارة شاملة وحجوزات وتحسين الإيرادات.",
+      title: "لوفت الجزائر - احجز شقتك المفروشة المثالية في الجزائر",
+      description: "اكتشف شققاً مفروشة فريدة في الجزائر. حجز سهل، إدارة احترافية للمالكين. إقامات أصيلة وإيرادات محسنة.",
     }
   };
 
@@ -55,5 +55,5 @@ export async function generateMetadata({ params }: PublicPageProps): Promise<Met
 export default async function PublicPage({ params }: PublicPageProps) {
   const { locale } = await params;
   
-  return <FuturisticPublicPage locale={locale} />;
+  return <DualAudienceHomepage locale={locale} />;
 }

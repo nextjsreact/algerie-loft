@@ -1,4 +1,136 @@
 {
+  "homepage": {
+    "hero": {
+      "headline": "احجز لوفتك المثالي في الجزائر",
+      "subheadline": "اكتشف لوفتات فريدة وأصيلة في أجمل مدن الجزائر",
+      "ctaPrimary": "ابحث الآن",
+      "ctaSecondary": "عرض اللوفتات المتاحة",
+      "trustBadge": "أكثر من 1000 عميل راضٍ"
+    },
+    "search": {
+      "location": "الوجهة",
+      "checkIn": "تاريخ الوصول",
+      "checkOut": "تاريخ المغادرة",
+      "guests": "الضيوف",
+      "searchButton": "بحث",
+      "locationPlaceholder": "أين تريد الإقامة؟",
+      "guestsLabel": "{count} ضيف",
+      "guestsLabel_plural": "{count} ضيوف"
+    },
+    "featuredLofts": {
+      "title": "اللوفتات المتاحة",
+      "subtitle": "اكتشف مجموعتنا من اللوفتات عالية الجودة",
+      "pricePerNight": "في الليلة",
+      "bookNow": "احجز الآن",
+      "viewDetails": "عرض التفاصيل",
+      "available": "متاح",
+      "unavailable": "غير متاح",
+      "rating": "التقييم",
+      "reviews": "مراجعات",
+      "instantBook": "حجز فوري"
+    },
+    "filters": {
+      "priceRange": "نطاق السعر",
+      "amenities": "المرافق",
+      "location": "الموقع",
+      "sortBy": "ترتيب حسب",
+      "sortOptions": {
+        "price_asc": "السعر: من الأقل إلى الأعلى",
+        "price_desc": "السعر: من الأعلى إلى الأقل",
+        "rating": "التقييم",
+        "availability": "التوفر"
+      },
+      "viewMode": {
+        "grid": "شبكة",
+        "list": "قائمة",
+        "map": "خريطة"
+      }
+    },
+    "trust": {
+      "title": "لماذا تختارنا؟",
+      "subtitle": "رضاكم أولويتنا",
+      "reviews": {
+        "title": "مراجعات موثقة",
+        "subtitle": "شهادات حقيقية من عملائنا"
+      },
+      "certifications": {
+        "title": "شهادات الجودة",
+        "subtitle": "إدارة مهنية ومعايير عالية"
+      },
+      "support": {
+        "title": "دعم 24/7",
+        "subtitle": "فريق مخصص في خدمتكم",
+        "responseTime": "متوسط وقت الاستجابة: ساعتان"
+      },
+      "guarantees": {
+        "title": "الضمانات",
+        "cancellation": "إلغاء مرن",
+        "quality": "جودة مضمونة",
+        "security": "دفع آمن"
+      }
+    },
+    "owners": {
+      "title": "أصحاب العقارات: اعظموا إيراداتكم",
+      "subtitle": "اعهدوا إلينا بإدارة عقاركم وزيدوا ربحيتكم",
+      "metrics": {
+        "occupancyRate": "معدل الإشغال المتوسط",
+        "revenueIncrease": "زيادة الإيرادات",
+        "averageRevenue": "الإيرادات الشهرية المتوسطة"
+      },
+      "services": {
+        "title": "خدماتنا",
+        "management": "إدارة شاملة",
+        "marketing": "تسويق مهني",
+        "maintenance": "صيانة وعناية",
+        "support": "دعم العملاء 24/7"
+      },
+      "cta": {
+        "primary": "قيم عقاري",
+        "secondary": "اعرف المزيد"
+      },
+      "testimonials": {
+        "title": "شهادات الملاك"
+      }
+    },
+    "locations": {
+      "algiers": "الجزائر العاصمة",
+      "oran": "وهران",
+      "constantine": "قسنطينة",
+      "annaba": "عنابة",
+      "tlemcen": "تلمسان",
+      "setif": "سطيف",
+      "sidibelabbes": "سيدي بلعباس",
+      "biskra": "بسكرة",
+      "batna": "باتنة",
+      "blida": "البليدة"
+    },
+    "attractions": {
+      "algiers": {
+        "casbah": "قصبة الجزائر",
+        "notredame": "كنيسة نوتردام الأفريقية",
+        "martyrs": "مقام الشهيد"
+      },
+      "oran": {
+        "santacruz": "حصن سانتا كروز",
+        "theatre": "مسرح وهران",
+        "corniche": "الكورنيش"
+      },
+      "constantine": {
+        "bridges": "الجسور المعلقة",
+        "palace": "قصر الباي",
+        "cirta": "متحف سيرتا"
+      }
+    }
+  },
+  "currency": {
+    "dzd": "الدينار الجزائري",
+    "eur": "اليورو",
+    "usd": "الدولار الأمريكي",
+    "selector": {
+      "title": "العملة",
+      "change": "تغيير العملة"
+    }
+  },
   "blog": {
     "title": "المدونة والأخبار",
     "subtitle": "اكتشف أحدث مقالاتنا ونصائحنا حول إدارة العقارات",
@@ -402,6 +534,78 @@
           "footerText": "احتفظ ببيانات الوصول الخاصة بك سرية"
         }
       }
+    },
+    "roleSelector": {
+      "title": "اختر نوع حسابك",
+      "subtitle": "حدد نوع الحساب الذي يناسب احتياجاتك",
+      "continue": "متابعة",
+      "client": {
+        "title": "عميل",
+        "description": "أريد حجز شقق لإقامتي"
+      },
+      "partner": {
+        "title": "شريك",
+        "description": "أريد تأجير عقاراتي"
+      },
+      "employee": {
+        "title": "موظف",
+        "description": "لدي رمز وصول موظف"
+      }
+    },
+    "clientRegistration": {
+      "title": "تسجيل العميل",
+      "description": "أنشئ حسابك لحجز الشقق",
+      "fullName": "الاسم الكامل",
+      "fullNamePlaceholder": "اسمك الكامل",
+      "email": "عنوان البريد الإلكتروني",
+      "emailPlaceholder": "your@email.com",
+      "password": "كلمة المرور",
+      "passwordPlaceholder": "8 أحرف على الأقل",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
+      "submit": "إنشاء حساب العميل",
+      "benefits": "وصول فوري للبحث وحجز الشقق"
+    },
+    "partnerRegistration": {
+      "title": "تسجيل الشريك",
+      "description": "انضم إلى شبكة شركائنا العقاريين",
+      "step": "خطوة",
+      "nextStep": "الخطوة التالية",
+      "previousStep": "الخطوة السابقة",
+      "fullName": "الاسم الكامل",
+      "fullNamePlaceholder": "اسمك الكامل",
+      "email": "عنوان البريد الإلكتروني المهني",
+      "emailPlaceholder": "your@email.com",
+      "password": "كلمة المرور",
+      "passwordPlaceholder": "8 أحرف على الأقل",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
+      "businessType": "نوع النشاط",
+      "individual": "فرد",
+      "company": "شركة",
+      "businessName": "اسم الشركة",
+      "businessNamePlaceholder": "اسم شركتك",
+      "address": "العنوان الكامل",
+      "addressPlaceholder": "العنوان الكامل لمنزلك أو شركتك",
+      "phone": "رقم الهاتف",
+      "phonePlaceholder": "+213 XX XX XX XX",
+      "taxId": "الرقم الضريبي (اختياري)",
+      "taxIdPlaceholder": "رقم التعريف الضريبي",
+      "verificationNotice": "سيتم التحقق من حسابك من قبل فريقنا قبل التفعيل (24-48 ساعة).",
+      "submit": "تقديم طلبي"
+    },
+    "clientRegistrationSuccess": {
+      "title": "تم التسجيل بنجاح!",
+      "subtitle": "تم إنشاء حساب العميل بنجاح",
+      "emailSent": "تم إرسال بريد التأكيد",
+      "nextSteps": "تحقق من بريدك الإلكتروني وانقر على رابط التأكيد لتفعيل حسابك.",
+      "whatNext": "ما التالي؟",
+      "step1": "تحقق من بريدك الإلكتروني وأكد حسابك",
+      "step2": "سجل دخولك إلى منطقة العميل",
+      "step3": "ابدأ البحث وحجز الشقق",
+      "continueToLogin": "تسجيل الدخول",
+      "browseProperties": "تصفح العقارات",
+      "supportText": "تحتاج مساعدة؟ اتصل بدعم العملاء"
     }
   },
   "availability": {
@@ -2106,7 +2310,36 @@
   "admin": {
     "editCategory": "تعديل الفئة",
     "newCategory": "فئة جديدة",
-    "categoryName": "اسم الفئة"
+    "categoryName": "اسم الفئة",
+    "partners": {
+      "title": "إدارة الشركاء",
+      "description": "التحقق من طلبات الشراكة والموافقة عليها",
+      "tabs": {
+        "pending": "قيد الانتظار",
+        "verified": "تم التحقق",
+        "rejected": "مرفوض"
+      },
+      "status": {
+        "pending": "قيد الانتظار",
+        "verified": "تم التحقق",
+        "rejected": "مرفوض"
+      },
+      "submittedOn": "تم التقديم في",
+      "contactPerson": "شخص الاتصال",
+      "businessType": "نوع النشاط",
+      "phone": "الهاتف",
+      "address": "العنوان",
+      "taxId": "الرقم الضريبي",
+      "company": "شركة",
+      "individual": "فرد",
+      "verificationNotes": "ملاحظات التحقق",
+      "notesPlaceholder": "أضف ملاحظات التحقق (اختياري)...",
+      "approve": "موافقة",
+      "reject": "رفض",
+      "noPendingPartners": "لا توجد طلبات شراكة قيد الانتظار.",
+      "noVerifiedPartners": "لا يوجد شركاء تم التحقق منهم.",
+      "noRejectedPartners": "لا يوجد شركاء مرفوضون."
+    }
   },
   "navigation": {
     "executiveDashboard": "لوحة التحكم التنفيذية",

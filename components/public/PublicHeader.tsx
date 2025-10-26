@@ -69,13 +69,46 @@ export default function PublicHeader({ locale, text }: PublicHeaderProps) {
               <ThemeToggle />
             </div>
             
-            {/* Login Button */}
-            <a 
-              href={`/${locale}/login`}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-            >
-              🔐 {text.login}
-            </a>
+            {/* Login Dropdown */}
+            <div className="relative group">
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2">
+                🔐 {text.login}
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="py-2">
+                  <a 
+                    href={`/${locale}/login?role=client`}
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                  >
+                    🏠 Client - Réserver
+                  </a>
+                  <a 
+                    href={`/${locale}/login?role=partner`}
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"
+                  >
+                    🏢 Partenaire - Gérer
+                  </a>
+                  <a 
+                    href={`/${locale}/login?role=admin`}
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                  >
+                    ⚙️ Employé - Admin
+                  </a>
+                  <div className="border-t border-gray-200 dark:border-gray-600 my-1"></div>
+                  <a 
+                    href={`/${locale}/login`}
+                    className="block px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    🔑 Connexion générale
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Mobile controls */}
@@ -155,15 +188,41 @@ export default function PublicHeader({ locale, text }: PublicHeaderProps) {
                 />
               </div>
               
-              {/* Mobile Login Button */}
+              {/* Mobile Login Options */}
               <div className="px-2 pt-4">
-                <a 
-                  href={`/${locale}/login`}
-                  className="block w-full bg-blue-600 dark:bg-blue-700 text-white text-center px-4 py-3 rounded-lg font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  🔐 {text.login}
-                </a>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 px-2">
+                  🔐 Connexion
+                </p>
+                <div className="space-y-2">
+                  <a 
+                    href={`/${locale}/login?role=client`}
+                    className="block w-full bg-blue-600 dark:bg-blue-700 text-white text-center px-4 py-2 rounded-lg font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors text-sm"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    🏠 Client - Réserver
+                  </a>
+                  <a 
+                    href={`/${locale}/login?role=partner`}
+                    className="block w-full bg-green-600 dark:bg-green-700 text-white text-center px-4 py-2 rounded-lg font-medium hover:bg-green-700 dark:hover:bg-green-600 transition-colors text-sm"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    🏢 Partenaire - Gérer
+                  </a>
+                  <a 
+                    href={`/${locale}/login?role=admin`}
+                    className="block w-full bg-red-600 dark:bg-red-700 text-white text-center px-4 py-2 rounded-lg font-medium hover:bg-red-700 dark:hover:bg-red-600 transition-colors text-sm"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    ⚙️ Employé - Admin
+                  </a>
+                  <a 
+                    href={`/${locale}/login`}
+                    className="block w-full bg-gray-600 dark:bg-gray-700 text-white text-center px-4 py-2 rounded-lg font-medium hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors text-sm"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    🔑 Connexion générale
+                  </a>
+                </div>
               </div>
             </nav>
           </div>

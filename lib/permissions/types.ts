@@ -95,6 +95,54 @@ export const ROLE_PERMISSIONS: RolePermissions = {
   guest: [
     // Very limited access
     { resource: 'public', action: 'read', scope: 'all' }
+  ],
+  client: [
+    // Client dashboard and profile
+    { resource: 'dashboard', action: 'read', scope: 'own' },
+    { resource: 'profile', action: '*', scope: 'own' },
+    
+    // Loft search and viewing
+    { resource: 'lofts', action: 'read', scope: 'public' },
+    { resource: 'loft-search', action: 'read', scope: 'all' },
+    { resource: 'loft-availability', action: 'read', scope: 'all' },
+    { resource: 'loft-reviews', action: 'read', scope: 'all' },
+    
+    // Booking management
+    { resource: 'bookings', action: '*', scope: 'own' },
+    { resource: 'booking-messages', action: '*', scope: 'own' },
+    { resource: 'booking-reviews', action: '*', scope: 'own' },
+    
+    // Notifications
+    { resource: 'notifications', action: 'read', scope: 'own' }
+  ],
+  partner: [
+    // Partner dashboard and profile
+    { resource: 'dashboard', action: 'read', scope: 'own' },
+    { resource: 'profile', action: '*', scope: 'own' },
+    { resource: 'partner-profile', action: '*', scope: 'own' },
+    
+    // Property management
+    { resource: 'lofts', action: '*', scope: 'own' },
+    { resource: 'loft-images', action: '*', scope: 'own' },
+    { resource: 'loft-amenities', action: '*', scope: 'own' },
+    { resource: 'loft-availability', action: '*', scope: 'own' },
+    { resource: 'loft-pricing', action: '*', scope: 'own' },
+    
+    // Booking management for own properties
+    { resource: 'bookings', action: 'read', scope: 'own' },
+    { resource: 'bookings', action: 'write', scope: 'own' },
+    { resource: 'booking-messages', action: '*', scope: 'own' },
+    
+    // Reviews and ratings
+    { resource: 'loft-reviews', action: 'read', scope: 'own' },
+    { resource: 'loft-reviews', action: 'write', scope: 'own' },
+    
+    // Financial data for own properties
+    { resource: 'partner-earnings', action: 'read', scope: 'own' },
+    { resource: 'partner-analytics', action: 'read', scope: 'own' },
+    
+    // Notifications
+    { resource: 'notifications', action: 'read', scope: 'own' }
   ]
 };
 
@@ -158,6 +206,39 @@ export class PermissionValidator {
       
       case 'transaction-management':
         return this.hasPermission(userRole, 'transactions', 'write');
+      
+      // Client-specific components
+      case 'loft-search':
+        return this.hasPermission(userRole, 'loft-search', 'read');
+      
+      case 'booking-management':
+        return this.hasPermission(userRole, 'bookings', 'read', 'own');
+      
+      case 'client-dashboard':
+        return userRole === 'client' && this.hasPermission(userRole, 'dashboard', 'read', 'own');
+      
+      // Partner-specific components
+      case 'partner-dashboard':
+        return userRole === 'partner' && this.hasPermission(userRole, 'dashboard', 'read', 'own');
+      
+      case 'property-management':
+        return this.hasPermission(userRole, 'lofts', 'write', 'own');
+      
+      case 'partner-bookings':
+        return userRole === 'partner' && this.hasPermission(userRole, 'bookings', 'read', 'own');
+      
+      case 'partner-earnings':
+        return this.hasPermission(userRole, 'earnings', 'read', 'own');
+      
+      case 'partner-verification':
+        return userRole === 'partner' && this.hasPermission(userRole, 'partner-profile', 'read', 'own');
+      
+      // Multi-role components
+      case 'booking-messages':
+        return this.hasPermission(userRole, 'booking-messages', 'read', 'own');
+      
+      case 'loft-reviews':
+        return this.hasPermission(userRole, 'loft-reviews', 'read');
       
       default:
         return false;

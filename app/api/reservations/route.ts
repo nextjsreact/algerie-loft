@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { z } from 'zod';
+import { globalPerformanceMonitor } from '@/lib/performance';
 
 // Validation schemas for API-only operations
 const searchReservationsSchema = z.object({
@@ -14,6 +15,9 @@ const searchReservationsSchema = z.object({
 });
 
 export async function GET(request: NextRequest) {
+  const startTime = Date.now();
+  const route = '/api/reservations';
+  
   try {
     const supabase = await createClient();
     
@@ -107,6 +111,16 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Record performance metrics
+    globalPerformanceMonitor.recordMetrics({
+      timestamp: Date.now(),
+      route,
+      method: 'GET',
+      responseTime: Date.now() - startTime,
+      statusCode: 200,
+      dbQueryTime: Date.now() - startTime // Simplified - would track actual DB time
+    });
+
     return NextResponse.json({
       reservations: reservationsWithLofts,
       pagination: {
@@ -117,6 +131,16 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
+    // Record error metrics
+    globalPerformanceMonitor.recordMetrics({
+      timestamp: Date.now(),
+      route,
+      method: 'GET',
+      responseTime: Date.now() - startTime,
+      statusCode: 500,
+      errorCount: 1
+    });
+
     console.error('Error in GET /api/reservations:', error);
     return NextResponse.json(
       { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },

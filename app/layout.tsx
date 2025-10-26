@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "Loft Algérie - Gestion des Lofts",
   description: "Application complète de gestion des lofts",
   metadataBase: new URL('https://loftalgerie.com'),
+  manifest: '/manifest.json',
   alternates: {
     canonical: '/',
     languages: {
@@ -43,6 +44,21 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Loft Algérie',
+  },
+  other: {
+    'mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'default',
+    'apple-mobile-web-app-title': 'Loft Algérie',
+    'application-name': 'Loft Algérie',
+    'msapplication-TileColor': '#2563eb',
+    'msapplication-config': '/browserconfig.xml',
+    'theme-color': '#2563eb',
+  },
 }
 
 export default function RootLayout({
@@ -53,6 +69,12 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#2563eb" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Loft Algérie" />
+        <link rel="apple-touch-icon" href="/logo.png" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -69,6 +91,19 @@ export default function RootLayout({
                   document.documentElement.dir = 'ltr';
                 }
               })();
+              
+              // Register service worker for offline support
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                      console.log('SW registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                      console.log('SW registration failed: ', registrationError);
+                    });
+                });
+              }
             `,
           }}
         />

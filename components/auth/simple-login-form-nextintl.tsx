@@ -25,14 +25,23 @@ export function SimpleLoginFormNextIntl() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [selectedRole, setSelectedRole] = useState<string | null>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
   const returnUrl = searchParams.get('returnUrl')
+  const roleParam = searchParams.get('role')
   const locale = useLocale()
   const supabase = createClient()
   
   // Utilisation de next-intl au lieu de useSimpleTranslation
   const t = useTranslations('auth')
+
+  // Initialize selected role from URL parameter
+  useState(() => {
+    if (roleParam) {
+      setSelectedRole(roleParam)
+    }
+  })
 
   const {
     register,
@@ -75,10 +84,35 @@ export function SimpleLoginFormNextIntl() {
         console.log('✅ Connexion réussie:', signInData.user.email)
         console.log('✅ Session établie - redirection...')
         
-        // If we have a return URL, redirect there, otherwise go to dashboard
+        // Check for role parameter in URL or selected role
+        const redirectParam = searchParams.get('redirect')
+        const roleToUse = selectedRole || roleParam
+        
+        // If we have a return URL, redirect there
         if (returnUrl) {
           window.location.href = decodeURIComponent(returnUrl)
+        } else if (redirectParam) {
+          // If we have a specific redirect, use it
+          window.location.href = `/${locale}${redirectParam}`
+        } else if (roleToUse) {
+          // Redirect based on selected role or role parameter
+          switch (roleToUse) {
+            case 'client':
+              window.location.href = `/${locale}/client/dashboard`
+              break
+            case 'partner':
+              window.location.href = `/${locale}/partner/dashboard`
+              break
+            case 'admin':
+            case 'manager':
+            case 'executive':
+              window.location.href = `/${locale}/app/dashboard`
+              break
+            default:
+              window.location.href = `/${locale}/home`
+          }
         } else {
+          // Default redirect
           const validLocale = locale && ['fr', 'en', 'ar'].includes(locale) ? locale : 'fr'
           window.location.href = `/${validLocale}/home`
         }
@@ -117,6 +151,71 @@ export function SimpleLoginFormNextIntl() {
         <div className="flex justify-end">
           <NextIntlLanguageSelector />
         </div>
+
+        {/* Role Selection */}
+        <Card className="shadow-lg border-blue-200 dark:border-blue-800">
+          <CardHeader>
+            <CardTitle className="text-center text-lg text-blue-900 dark:text-blue-300">
+              👤 Choisissez votre profil
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <button
+                type="button"
+                onClick={() => setSelectedRole('client')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  selectedRole === 'client'
+                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'
+                }`}
+              >
+                <div className="text-2xl mb-2">🏠</div>
+                <div className="font-medium text-sm">Client</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Réserver des lofts</div>
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => setSelectedRole('partner')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  selectedRole === 'partner'
+                    ? 'border-green-500 bg-green-50 dark:bg-green-900/30'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-green-300'
+                }`}
+              >
+                <div className="text-2xl mb-2">🏢</div>
+                <div className="font-medium text-sm">Partenaire</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Gérer mes biens</div>
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => setSelectedRole('admin')}
+                className={`p-4 rounded-lg border-2 transition-all ${
+                  selectedRole === 'admin'
+                    ? 'border-red-500 bg-red-50 dark:bg-red-900/30'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-red-300'
+                }`}
+              >
+                <div className="text-2xl mb-2">⚙️</div>
+                <div className="font-medium text-sm">Employé</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Administration</div>
+              </button>
+            </div>
+            
+            {selectedRole && (
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="text-sm text-blue-800 dark:text-blue-300">
+                  ✓ Profil sélectionné : <strong>
+                    {selectedRole === 'client' ? 'Client' : 
+                     selectedRole === 'partner' ? 'Partenaire' : 'Employé'}
+                  </strong>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Login Form */}
         <Card className="shadow-xl">

@@ -1,0 +1,135 @@
+{
+  "properties": {
+    "title": "Property Management",
+    "description": "Manage your properties, availability, and settings",
+    "addProperty": "Add Property",
+    "addFirstProperty": "Add Your First Property",
+    "editProperty": "Edit Property",
+    "createProperty": "Create Property",
+    "updateProperty": "Update Property",
+    "saveChanges": "Save Changes",
+    "loading": "Loading properties...",
+    "loadError": "Error loading properties",
+    "saveError": "Error saving property",
+    "createSuccess": "Property created successfully",
+    "updateSuccess": "Property updated successfully",
+    "statusUpdateSuccess": "Property status updated successfully",
+    "statusUpdateError": "Error updating property status",
+    "publishSuccess": "Property published successfully",
+    "unpublishSuccess": "Property unpublished successfully",
+    "noProperties": "No properties yet",
+    "noPropertiesDescription": "Start by adding your first property to the platform",
+    "saveFirstToUpload": "Save the property first to upload photos",
+    
+    "name": "Property Name",
+    "namePlaceholder": "Enter property name",
+    "address": "Address",
+    "addressPlaceholder": "Enter full address",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe your property...",
+    "pricePerNight": "Price per Night ($)",
+    "pricePerMonth": "Price per Month ($)",
+    "maxGuests": "Max Guests",
+    "bedrooms": "Bedrooms",
+    "bathrooms": "Bathrooms",
+    "area": "Area (m²)",
+    "amenities": "Amenities",
+    "publishProperty": "Publish Property",
+    "publishDescription": "Make this property visible to clients",
+    "published": "Published",
+    "unpublished": "Unpublished",
+    
+    "basicInfo": "Basic Information",
+    "propertyDetails": "Property Details",
+    "pricing": "Pricing",
+    "photos": "Property Photos",
+    "notes": "Notes",
+    "maintenanceNotes": "Maintenance Notes",
+    "maintenanceNotesPlaceholder": "Describe the maintenance work...",
+    "availabilityNotes": "Availability Notes",
+    "availabilityNotesPlaceholder": "Special instructions or notes for guests...",
+    "maintenanceWarning": "Properties under maintenance are automatically unpublished and cannot accept new bookings.",
+    
+    "tabs": {
+      "basic": "Basic Info",
+      "details": "Details",
+      "pricing": "Pricing",
+      "photos": "Photos"
+    },
+    
+    "status": {
+      "label": "Status",
+      "placeholder": "Select status",
+      "available": "Available",
+      "availableDescription": "Property is ready for bookings",
+      "occupied": "Occupied",
+      "occupiedDescription": "Property is currently occupied",
+      "maintenance": "Maintenance",
+      "maintenanceDescription": "Property is under maintenance"
+    },
+    
+    "amenities": {
+      "wifi": "WiFi",
+      "kitchen": "Kitchen",
+      "parking": "Parking",
+      "air_conditioning": "Air Conditioning",
+      "heating": "Heating",
+      "washing_machine": "Washing Machine",
+      "tv": "TV",
+      "balcony": "Balcony",
+      "pool": "Pool",
+      "gym": "Gym",
+      "elevator": "Elevator",
+      "pet_friendly": "Pet Friendly"
+    },
+    
+    "bookings": "Bookings",
+    "earnings": "Earnings",
+    "edit": "Edit",
+    "availability": "Calendar",
+    "currentStatus": "Current Status",
+    "statusControls": "Status Controls",
+    "propertyStatus": "Property Status",
+    "pricingControls": "Pricing Controls",
+    "statusManager": "Property Status & Settings"
+  },
+  
+  "availability": {
+    "title": "Manage Availability",
+    "loading": "Loading availability...",
+    "loadError": "Error loading availability",
+    "updateSuccess": "Availability updated successfully",
+    "updateError": "Error updating availability",
+    "selectDatesFirst": "Please select dates first",
+    "bulkUpdate": "Bulk Update",
+    "datesSelected": "dates selected",
+    "available": "Available",
+    "customPrice": "Custom Price ($)",
+    "minimumStay": "Minimum Stay (nights)",
+    "maximumStay": "Maximum Stay (nights)",
+    "notes": "Notes",
+    "notesPlaceholder": "Optional notes...",
+    "updating": "Updating...",
+    "updateSelected": "Update Selected Dates",
+    "quickActions": "Quick Actions",
+    "selectRestOfMonth": "Select Rest of Month",
+    "clearSelection": "Clear Selection",
+    
+    "legend": {
+      "today": "Today",
+      "selected": "Selected",
+      "unavailable": "Unavailable",
+      "customPrice": "Custom Price"
+    }
+  },
+  
+  "dashboard": {
+    "title": "Partner Dashboard",
+    "welcome": "Welcome back",
+    "overview": "Overview",
+    "totalProperties": "Total Properties",
+    "activeBookings": "Active Bookings",
+    "monthlyEarnings": "Monthly Earnings",
+    "occupancyRate": "Occupancy Rate"
+  }
+}

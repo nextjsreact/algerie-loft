@@ -1,7 +1,7 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
 import { performanceMiddleware, addResourceHints, addPerformanceMonitoring, addCSP } from './middleware/performance';
+import { authMiddleware } from './middleware/auth';
 
 const intlMiddleware = createIntlMiddleware({
   locales: ['fr', 'ar', 'en'],
@@ -22,6 +22,17 @@ export async function middleware(request: NextRequest) {
   if (response instanceof Response && response.status >= 300 && response.status < 400) {
     return response;
   }
+
+  // Apply authentication middleware
+  const authResponse = await authMiddleware(request);
+  
+  // If auth middleware returns a redirect, return it immediately
+  if (authResponse instanceof Response && authResponse.status >= 300 && authResponse.status < 400) {
+    return authResponse;
+  }
+  
+  // Use the response from auth middleware if it's not a redirect
+  response = authResponse;
   
   // Apply performance optimizations
   response = performanceMiddleware(request);
@@ -55,5 +66,8 @@ export const config = {
     '/reports/:path*',
     '/settings/:path*',
     '/profile/:path*',
+    '/register/:path*',
+    '/client/:path*',
+    '/partner/:path*',
   ],
 };

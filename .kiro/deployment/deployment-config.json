@@ -1,0 +1,182 @@
+{
+  "deploymentStrategy": {
+    "type": "gradual_rollout",
+    "description": "Gradual rollout strategy for dual-audience homepage",
+    "environments": {
+      "development": {
+        "rolloutPercentage": 100,
+        "enableMonitoring": true,
+        "enableRollback": false,
+        "healthCheckTimeout": 10000
+      },
+      "staging": {
+        "rolloutPercentage": 100,
+        "enableMonitoring": true,
+        "enableRollback": true,
+        "healthCheckTimeout": 15000
+      },
+      "production": {
+        "rolloutPercentage": 5,
+        "enableMonitoring": true,
+        "enableRollback": true,
+        "healthCheckTimeout": 30000,
+        "gradualRolloutSteps": [
+          { "percentage": 5, "duration": 24 },
+          { "percentage": 15, "duration": 24 },
+          { "percentage": 30, "duration": 24 },
+          { "percentage": 50, "duration": 48 },
+          { "percentage": 75, "duration": 48 },
+          { "percentage": 100, "duration": 0 }
+        ]
+      }
+    }
+  },
+  "monitoring": {
+    "performanceThresholds": {
+      "responseTime": {
+        "warning": 2000,
+        "critical": 5000
+      },
+      "errorRate": {
+        "warning": 1,
+        "critical": 5
+      },
+      "webVitals": {
+        "lcp": {
+          "good": 2500,
+          "needsImprovement": 4000
+        },
+        "fid": {
+          "good": 100,
+          "needsImprovement": 300
+        },
+        "cls": {
+          "good": 0.1,
+          "needsImprovement": 0.25
+        }
+      }
+    },
+    "alerting": {
+      "channels": ["webhook", "log"],
+      "emailRecipients": ["admin@loftalgerie.com"],
+      "webhookUrl": "${WEBHOOK_URL}",
+      "cooldownPeriod": 300
+    }
+  },
+  "rollback": {
+    "triggers": {
+      "errorRate": {
+        "threshold": 10,
+        "timeWindow": 5,
+        "action": "emergency_rollback"
+      },
+      "responseTime": {
+        "threshold": 5000,
+        "timeWindow": 10,
+        "action": "reduce_rollout"
+      },
+      "webVitalsLCP": {
+        "threshold": 4000,
+        "timeWindow": 15,
+        "action": "disable_feature"
+      },
+      "healthCheckFailures": {
+        "threshold": 2,
+        "timeWindow": 5,
+        "action": "reduce_rollout"
+      }
+    },
+    "actions": {
+      "emergency_rollback": {
+        "description": "Disable all features immediately",
+        "rolloutPercentage": 0
+      },
+      "reduce_rollout": {
+        "description": "Reduce rollout by 50%",
+        "rolloutReduction": 50
+      },
+      "disable_feature": {
+        "description": "Disable specific problematic features",
+        "targetFeatures": ["analytics_conversion_optimization", "advanced_booking_functionality"]
+      }
+    }
+  },
+  "featureFlags": {
+    "dualAudienceHomepage": {
+      "id": "dual_audience_homepage",
+      "name": "Dual Audience Homepage",
+      "description": "Main feature flag for the new homepage design",
+      "dependencies": []
+    },
+    "enhancedHeroSection": {
+      "id": "enhanced_hero_section",
+      "name": "Enhanced Hero Section",
+      "description": "Guest-focused hero section with booking CTA",
+      "dependencies": ["dual_audience_homepage"]
+    },
+    "featuredLoftsShowcase": {
+      "id": "featured_lofts_showcase",
+      "name": "Featured Lofts Showcase",
+      "description": "Interactive loft cards with booking functionality",
+      "dependencies": ["dual_audience_homepage"]
+    },
+    "trustSocialProof": {
+      "id": "trust_social_proof",
+      "name": "Trust and Social Proof Section",
+      "description": "Verified reviews and testimonials display",
+      "dependencies": ["dual_audience_homepage"]
+    },
+    "repositionedOwnerSection": {
+      "id": "repositioned_owner_section",
+      "name": "Repositioned Property Owner Section",
+      "description": "Owner value proposition with performance metrics",
+      "dependencies": ["dual_audience_homepage"]
+    },
+    "multilingualCurrencySupport": {
+      "id": "multilingual_currency_support",
+      "name": "Multilingual and Currency Support",
+      "description": "Comprehensive language and currency support",
+      "dependencies": ["dual_audience_homepage"]
+    },
+    "advancedBookingFunctionality": {
+      "id": "advanced_booking_functionality",
+      "name": "Advanced Booking Functionality",
+      "description": "Contextual customer support and mobile optimization",
+      "dependencies": ["dual_audience_homepage", "featured_lofts_showcase"]
+    },
+    "analyticsConversionOptimization": {
+      "id": "analytics_conversion_optimization",
+      "name": "Analytics and Conversion Optimization",
+      "description": "Dual-audience analytics tracking and A/B testing",
+      "dependencies": ["dual_audience_homepage"]
+    }
+  },
+  "healthChecks": {
+    "endpoints": [
+      {
+        "name": "Homepage",
+        "path": "/",
+        "method": "GET",
+        "expectedStatus": 200,
+        "timeout": 10000,
+        "interval": 60
+      },
+      {
+        "name": "API Health",
+        "path": "/api/health",
+        "method": "GET",
+        "expectedStatus": 200,
+        "timeout": 5000,
+        "interval": 30
+      },
+      {
+        "name": "Monitoring API",
+        "path": "/api/deployment/monitoring",
+        "method": "GET",
+        "expectedStatus": 200,
+        "timeout": 10000,
+        "interval": 120
+      }
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'member' | 'guest' | 'manager' | 'executive';
+export type UserRole = 'admin' | 'member' | 'guest' | 'manager' | 'executive' | 'client' | 'partner';
 
 export type User = {
   id: string;
@@ -56,6 +56,7 @@ export type Loft = {
   price_per_night?: number | null;
   status: LoftStatus;
   owner_id: string;
+  partner_id?: string;
   company_percentage: number;
   owner_percentage: number;
   zone_area_id?: string;
@@ -83,6 +84,17 @@ export type Loft = {
   prochaine_echeance_internet?: string;
   frequence_paiement_tv?: string;
   prochaine_echeance_tv?: string;
+  // Additional fields for partner properties
+  max_guests?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  area_sqm?: number;
+  amenities?: string[];
+  is_published?: boolean;
+  maintenance_notes?: string;
+  availability_notes?: string;
+  created_at?: string;
+  updated_at?: string;
 };
 
 export interface LoftWithRelations extends Loft {
@@ -133,15 +145,27 @@ export type Notification = {
   id: string;
   title_key?: string;
   message_key?: string;
+  title?: string;
   message?: string;
   title_payload?: Record<string, any>;
   message_payload?: Record<string, any>;
   is_read: boolean;
+  read_at?: string | null;
   created_at: string;
   user_id: string;
   link?: string | null;
   sender_id?: string | null;
   type: string;
+  notification_category?: string;
+  priority?: string;
+  booking_id?: string | null;
+  metadata?: Record<string, any>;
+  sender?: {
+    id: string;
+    full_name?: string;
+    email?: string;
+    avatar_url?: string;
+  };
 };
 
 export type Setting = {
@@ -208,6 +232,156 @@ export type Conversation = {
   latestMessage: string;
 };
 
+// Multi-Role Booking System Types
+export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
+export type PaymentStatus = 'pending' | 'paid' | 'refunded' | 'failed';
+export type VerificationStatus = 'pending' | 'verified' | 'rejected';
+export type BusinessType = 'individual' | 'company';
+
+export interface PartnerProfile {
+  id: string;
+  user_id: string;
+  business_name?: string;
+  business_type: BusinessType;
+  tax_id?: string;
+  address: string;
+  phone: string;
+  verification_status: VerificationStatus;
+  verification_documents: string[];
+  bank_details: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Booking {
+  id: string;
+  loft_id: string;
+  client_id: string;
+  partner_id: string;
+  check_in: string;
+  check_out: string;
+  guests: number;
+  total_price: number;
+  status: BookingStatus;
+  payment_status: PaymentStatus;
+  special_requests?: string;
+  booking_reference: string;
+  payment_intent_id?: string;
+  cancellation_reason?: string;
+  cancelled_at?: string;
+  confirmed_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BookingWithDetails extends Booking {
+  loft: {
+    id: string;
+    name: string;
+    address: string;
+    price_per_night: number;
+  };
+  client: {
+    id: string;
+    full_name: string;
+    email: string;
+  };
+  partner: {
+    id: string;
+    full_name: string;
+    business_name?: string;
+  };
+}
+
+export interface LoftAvailability {
+  id: string;
+  loft_id: string;
+  date: string;
+  is_available: boolean;
+  price_override?: number;
+  minimum_stay: number;
+  maximum_stay?: number;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BookingMessage {
+  id: string;
+  booking_id: string;
+  sender_id: string;
+  message: string;
+  message_type: 'text' | 'system' | 'attachment';
+  attachment_url?: string;
+  is_read: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LoftReview {
+  id: string;
+  booking_id: string;
+  loft_id: string;
+  client_id: string;
+  rating: number;
+  review_text?: string;
+  is_published: boolean;
+  response_text?: string;
+  response_date?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BookingFee {
+  id: string;
+  booking_id: string;
+  fee_type: 'cleaning' | 'service' | 'tax' | 'deposit' | 'other';
+  fee_name: string;
+  amount: number;
+  is_refundable: boolean;
+  created_at: string;
+}
+
+export interface ClientLoftView {
+  id: string;
+  name: string;
+  address: string;
+  description?: string;
+  price_per_night: number;
+  status: LoftStatus;
+  images?: string[];
+  amenities?: string[];
+  average_rating: number;
+  review_count: number;
+  partner: {
+    id: string;
+    name: string;
+    business_name?: string;
+  };
+}
+
+export interface SearchFilters {
+  check_in?: string;
+  check_out?: string;
+  location?: string;
+  min_price?: number;
+  max_price?: number;
+  guests?: number;
+  amenities?: string[];
+}
+
+export interface BookingSearchParams {
+  status?: BookingStatus;
+  payment_status?: PaymentStatus;
+  date_from?: string;
+  date_to?: string;
+  loft_id?: string;
+  client_id?: string;
+  partner_id?: string;
+  page?: number;
+  limit?: number;
+}
+
 // Audit system types
 export type AuditAction = 'INSERT' | 'UPDATE' | 'DELETE';
 export type AuditableTable = 'transactions' | 'tasks' | 'reservations' | 'lofts';
@@ -265,6 +439,156 @@ export interface AuditSearchParams {
     to: Date;
   };
   searchTerm?: string;
+  page?: number;
+  limit?: number;
+}
+
+// Multi-Role Booking System Types
+export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
+export type PaymentStatus = 'pending' | 'paid' | 'refunded' | 'failed';
+export type VerificationStatus = 'pending' | 'verified' | 'rejected';
+export type BusinessType = 'individual' | 'company';
+
+export interface PartnerProfile {
+  id: string;
+  user_id: string;
+  business_name?: string;
+  business_type: BusinessType;
+  tax_id?: string;
+  address: string;
+  phone: string;
+  verification_status: VerificationStatus;
+  verification_documents: string[];
+  bank_details: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Booking {
+  id: string;
+  loft_id: string;
+  client_id: string;
+  partner_id: string;
+  check_in: string;
+  check_out: string;
+  guests: number;
+  total_price: number;
+  status: BookingStatus;
+  payment_status: PaymentStatus;
+  special_requests?: string;
+  booking_reference: string;
+  payment_intent_id?: string;
+  cancellation_reason?: string;
+  cancelled_at?: string;
+  confirmed_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BookingWithDetails extends Booking {
+  loft: {
+    id: string;
+    name: string;
+    address: string;
+    price_per_night: number;
+  };
+  client: {
+    id: string;
+    full_name: string;
+    email: string;
+  };
+  partner: {
+    id: string;
+    full_name: string;
+    business_name?: string;
+  };
+}
+
+export interface LoftAvailability {
+  id: string;
+  loft_id: string;
+  date: string;
+  is_available: boolean;
+  price_override?: number;
+  minimum_stay: number;
+  maximum_stay?: number;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BookingMessage {
+  id: string;
+  booking_id: string;
+  sender_id: string;
+  message: string;
+  message_type: 'text' | 'system' | 'attachment';
+  attachment_url?: string;
+  is_read: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LoftReview {
+  id: string;
+  booking_id: string;
+  loft_id: string;
+  client_id: string;
+  rating: number;
+  review_text?: string;
+  is_published: boolean;
+  response_text?: string;
+  response_date?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BookingFee {
+  id: string;
+  booking_id: string;
+  fee_type: 'cleaning' | 'service' | 'tax' | 'deposit' | 'other';
+  fee_name: string;
+  amount: number;
+  is_refundable: boolean;
+  created_at: string;
+}
+
+export interface ClientLoftView {
+  id: string;
+  name: string;
+  address: string;
+  description?: string;
+  price_per_night: number;
+  status: LoftStatus;
+  images?: string[];
+  amenities?: string[];
+  average_rating: number;
+  review_count: number;
+  partner: {
+    id: string;
+    name: string;
+    business_name?: string;
+  };
+}
+
+export interface SearchFilters {
+  check_in?: string;
+  check_out?: string;
+  location?: string;
+  min_price?: number;
+  max_price?: number;
+  guests?: number;
+  amenities?: string[];
+}
+
+export interface BookingSearchParams {
+  status?: BookingStatus;
+  payment_status?: PaymentStatus;
+  date_from?: string;
+  date_to?: string;
+  loft_id?: string;
+  client_id?: string;
+  partner_id?: string;
   page?: number;
   limit?: number;
 }

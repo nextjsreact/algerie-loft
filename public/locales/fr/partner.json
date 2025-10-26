@@ -1,0 +1,135 @@
+{
+  "properties": {
+    "title": "Gestion des Propriétés",
+    "description": "Gérez vos propriétés, disponibilités et paramètres",
+    "addProperty": "Ajouter une Propriété",
+    "addFirstProperty": "Ajouter Votre Première Propriété",
+    "editProperty": "Modifier la Propriété",
+    "createProperty": "Créer la Propriété",
+    "updateProperty": "Mettre à Jour la Propriété",
+    "saveChanges": "Enregistrer les Modifications",
+    "loading": "Chargement des propriétés...",
+    "loadError": "Erreur lors du chargement des propriétés",
+    "saveError": "Erreur lors de l'enregistrement de la propriété",
+    "createSuccess": "Propriété créée avec succès",
+    "updateSuccess": "Propriété mise à jour avec succès",
+    "statusUpdateSuccess": "Statut de la propriété mis à jour avec succès",
+    "statusUpdateError": "Erreur lors de la mise à jour du statut de la propriété",
+    "publishSuccess": "Propriété publiée avec succès",
+    "unpublishSuccess": "Propriété dépubliée avec succès",
+    "noProperties": "Aucune propriété pour le moment",
+    "noPropertiesDescription": "Commencez par ajouter votre première propriété à la plateforme",
+    "saveFirstToUpload": "Enregistrez d'abord la propriété pour télécharger des photos",
+    
+    "name": "Nom de la Propriété",
+    "namePlaceholder": "Entrez le nom de la propriété",
+    "address": "Adresse",
+    "addressPlaceholder": "Entrez l'adresse complète",
+    "description": "Description",
+    "descriptionPlaceholder": "Décrivez votre propriété...",
+    "pricePerNight": "Prix par Nuit ($)",
+    "pricePerMonth": "Prix par Mois ($)",
+    "maxGuests": "Invités Max",
+    "bedrooms": "Chambres",
+    "bathrooms": "Salles de Bain",
+    "area": "Superficie (m²)",
+    "amenities": "Équipements",
+    "publishProperty": "Publier la Propriété",
+    "publishDescription": "Rendre cette propriété visible aux clients",
+    "published": "Publiée",
+    "unpublished": "Non publiée",
+    
+    "basicInfo": "Informations de Base",
+    "propertyDetails": "Détails de la Propriété",
+    "pricing": "Tarification",
+    "photos": "Photos de la Propriété",
+    "notes": "Notes",
+    "maintenanceNotes": "Notes de Maintenance",
+    "maintenanceNotesPlaceholder": "Décrivez les travaux de maintenance...",
+    "availabilityNotes": "Notes de Disponibilité",
+    "availabilityNotesPlaceholder": "Instructions spéciales ou notes pour les invités...",
+    "maintenanceWarning": "Les propriétés en maintenance sont automatiquement dépubliées et ne peuvent pas accepter de nouvelles réservations.",
+    
+    "tabs": {
+      "basic": "Info de Base",
+      "details": "Détails",
+      "pricing": "Tarification",
+      "photos": "Photos"
+    },
+    
+    "status": {
+      "label": "Statut",
+      "placeholder": "Sélectionner le statut",
+      "available": "Disponible",
+      "availableDescription": "La propriété est prête pour les réservations",
+      "occupied": "Occupée",
+      "occupiedDescription": "La propriété est actuellement occupée",
+      "maintenance": "Maintenance",
+      "maintenanceDescription": "La propriété est en maintenance"
+    },
+    
+    "amenities": {
+      "wifi": "WiFi",
+      "kitchen": "Cuisine",
+      "parking": "Parking",
+      "air_conditioning": "Climatisation",
+      "heating": "Chauffage",
+      "washing_machine": "Lave-linge",
+      "tv": "Télévision",
+      "balcony": "Balcon",
+      "pool": "Piscine",
+      "gym": "Salle de Sport",
+      "elevator": "Ascenseur",
+      "pet_friendly": "Animaux Acceptés"
+    },
+    
+    "bookings": "Réservations",
+    "earnings": "Revenus",
+    "edit": "Modifier",
+    "availability": "Calendrier",
+    "currentStatus": "Statut Actuel",
+    "statusControls": "Contrôles de Statut",
+    "propertyStatus": "Statut de la Propriété",
+    "pricingControls": "Contrôles de Tarification",
+    "statusManager": "Statut et Paramètres de la Propriété"
+  },
+  
+  "availability": {
+    "title": "Gérer la Disponibilité",
+    "loading": "Chargement de la disponibilité...",
+    "loadError": "Erreur lors du chargement de la disponibilité",
+    "updateSuccess": "Disponibilité mise à jour avec succès",
+    "updateError": "Erreur lors de la mise à jour de la disponibilité",
+    "selectDatesFirst": "Veuillez d'abord sélectionner des dates",
+    "bulkUpdate": "Mise à Jour en Lot",
+    "datesSelected": "dates sélectionnées",
+    "available": "Disponible",
+    "customPrice": "Prix Personnalisé ($)",
+    "minimumStay": "Séjour Minimum (nuits)",
+    "maximumStay": "Séjour Maximum (nuits)",
+    "notes": "Notes",
+    "notesPlaceholder": "Notes optionnelles...",
+    "updating": "Mise à jour...",
+    "updateSelected": "Mettre à Jour les Dates Sélectionnées",
+    "quickActions": "Actions Rapides",
+    "selectRestOfMonth": "Sélectionner le Reste du Mois",
+    "clearSelection": "Effacer la Sélection",
+    
+    "legend": {
+      "today": "Aujourd'hui",
+      "selected": "Sélectionné",
+      "unavailable": "Indisponible",
+      "customPrice": "Prix Personnalisé"
+    }
+  },
+  
+  "dashboard": {
+    "title": "Tableau de Bord Partenaire",
+    "welcome": "Bon retour",
+    "overview": "Aperçu",
+    "totalProperties": "Total des Propriétés",
+    "activeBookings": "Réservations Actives",
+    "monthlyEarnings": "Revenus Mensuels",
+    "occupancyRate": "Taux d'Occupation"
+  }
+}

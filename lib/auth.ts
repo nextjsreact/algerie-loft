@@ -3,7 +3,7 @@
 import { NextResponse } from "next/server"
 import { redirect } from "next/navigation"
 import { createClient, createReadOnlyClient } from '@/utils/supabase/server'
-import type { AuthSession } from "./types"
+import type { AuthSession, UserRole } from "./types"
 
 export async function getSession(): Promise<AuthSession | null> {
   const supabase = await createReadOnlyClient(); // Create client here for each request
@@ -59,10 +59,10 @@ export async function requireAuthAPI(): Promise<AuthSession | null> {
   return session
 }
 
-export async function requireRole(allowedRoles: string[]): Promise<AuthSession> {
+export async function requireRole(allowedRoles: UserRole[]): Promise<AuthSession> {
   const session = await getSession()
   if (!session) {
-    redirect("/login")
+    redirect("/fr/login")
   }
 
   if (!allowedRoles.includes(session.user.role)) {
@@ -72,7 +72,7 @@ export async function requireRole(allowedRoles: string[]): Promise<AuthSession> 
   return session
 }
 
-export async function requireRoleAPI(allowedRoles: string[]): Promise<AuthSession | null> {
+export async function requireRoleAPI(allowedRoles: UserRole[]): Promise<AuthSession | null> {
   const session = await getSession()
   if (!session) {
     return null
@@ -119,6 +119,7 @@ export async function register(
   email: string,
   password: string,
   fullName: string,
+  role: UserRole = 'member'
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient() // Use normal client (anon key) for user auth
   const { error } = await supabase.auth.signUp({
@@ -127,7 +128,7 @@ export async function register(
     options: {
       data: {
         full_name: fullName,
-        role: 'member',
+        role: role,
       },
     },
   })
@@ -137,6 +138,131 @@ export async function register(
   }
 
   return { success: true }
+}
+
+export async function registerClient(
+  email: string,
+  password: string,
+  fullName: string
+): Promise<{ success: boolean; error?: string }> {
+  return register(email, password, fullName, 'client');
+}
+
+export async function registerPartner(
+  email: string,
+  password: string,
+  fullName: string,
+  businessInfo: {
+    businessName?: string;
+    businessType: 'individual' | 'company';
+    address: string;
+    phone: string;
+    taxId?: string;
+  }
+): Promise<{ success: boolean; error?: string; requiresApproval?: boolean }> {
+  const supabase = await createClient();
+  
+  // First register the user with partner role
+  const { data: authData, error: authError } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName,
+        role: 'partner',
+      },
+    },
+  });
+
+  if (authError) {
+    return { success: false, error: authError.message };
+  }
+
+  // If user registration successful, create partner profile
+  if (authData.user) {
+    const { error: profileError } = await supabase
+      .from('partner_profiles')
+      .insert({
+        user_id: authData.user.id,
+        business_name: businessInfo.businessName,
+        business_type: businessInfo.businessType,
+        address: businessInfo.address,
+        phone: businessInfo.phone,
+        tax_id: businessInfo.taxId,
+        verification_status: 'pending'
+      });
+
+    if (profileError) {
+      return { success: false, error: 'Failed to create partner profile' };
+    }
+  }
+
+  return { success: true, requiresApproval: true };
+}
+
+export async function registerWithRole(
+  email: string,
+  password: string,
+  fullName: string,
+  role: 'client' | 'partner',
+  additionalData?: {
+    businessName?: string;
+    businessType?: 'individual' | 'company';
+    address?: string;
+    phone?: string;
+    taxId?: string;
+  }
+): Promise<{ success: boolean; error?: string; requiresApproval?: boolean }> {
+  const supabase = await createClient()
+  
+  try {
+    // Create the user account
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          role: role,
+        },
+      },
+    })
+
+    if (authError) {
+      return { success: false, error: authError.message }
+    }
+
+    if (!authData.user) {
+      return { success: false, error: "User creation failed" }
+    }
+
+    // If partner, create partner profile
+    if (role === 'partner' && additionalData) {
+      const { error: profileError } = await supabase
+        .from('partner_profiles')
+        .insert({
+          user_id: authData.user.id,
+          business_name: additionalData.businessName,
+          business_type: additionalData.businessType || 'individual',
+          address: additionalData.address || '',
+          phone: additionalData.phone || '',
+          tax_id: additionalData.taxId,
+          verification_status: 'pending'
+        })
+
+      if (profileError) {
+        console.error("Partner profile creation error:", profileError)
+        // Don't fail the registration, just log the error
+      }
+
+      return { success: true, requiresApproval: true }
+    }
+
+    return { success: true, requiresApproval: false }
+  } catch (err) {
+    console.error("Registration exception:", err)
+    return { success: false, error: "Registration failed" }
+  }
 }
 
 export async function logout() {

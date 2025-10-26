@@ -1,252 +1,240 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { 
+  initializePerformanceOptimizations,
+  usePerformanceMonitoring,
+  type PerformanceMetrics
+} from '@/lib/performance/performance-manager';
+import { detectAudience, preloadAudienceComponents } from '@/lib/performance/code-splitting';
+import { preloadCriticalImages } from '@/lib/performance/enhanced-image-optimization';
+import { CacheManager } from '@/lib/performance/enhanced-caching';
 
+// Performance optimization hook for dual-audience homepage
+export const usePerformanceOptimization = (options: {
+  enableImageOptimization?: boolean;
+  enableCodeSplitting?: boolean;
+  enableCaching?: boolean;
+  criticalImages?: string[];
+} = {}) => {
+  const {
+    enableImageOptimization = true,
+    enableCodeSplitting = true,
+    enableCaching = true,
+    criticalImages = []
+  } = options;
 
-// Hook for debouncing values
-export function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+  const [isOptimized, setIsOptimized] = useState(false);
+  const [optimizationProgress, setOptimizationProgress] = useState(0);
+  const [audience, setAudience] = useState<'guest' | 'owner' | 'both'>('both');
+  const { getMetrics, analyzePerformance } = usePerformanceMonitoring();
 
+  // Initialize performance optimizations
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
+    const initializeOptimizations = async () => {
+      try {
+        setOptimizationProgress(10);
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
+        // Detect audience type
+        const detectedAudience = detectAudience();
+        setAudience(detectedAudience);
+        setOptimizationProgress(20);
 
-  return debouncedValue;
-}
-
-// Hook for throttling functions
-export function useThrottle<T extends (...args: any[]) => any>(
-  func: T,
-  delay: number
-): T {
-  const lastRan = useRef<number>(Date.now());
-
-  return useCallback(
-    ((...args: Parameters<T>) => {
-      if (Date.now() - lastRan.current >= delay) {
-        func(...args);
-        lastRan.current = Date.now();
-      }
-    }) as T,
-    [func, delay]
-  );
-}
-
-// Hook for memoizing expensive calculations
-export function useExpensiveCalculation<T>(
-  calculation: () => T,
-  dependencies: React.DependencyList
-): T {
-  return useMemo(() => {
-    const start = performance.now();
-    const result = calculation();
-    const end = performance.now();
-    
-    if (end - start > 16) { // More than one frame (16ms)
-      console.warn(`Expensive calculation took ${(end - start).toFixed(2)}ms`);
-    }
-    
-    return result;
-  }, dependencies);
-}
-
-// Hook for intersection observer (lazy loading)
-export function useIntersectionObserver(
-  elementRef: React.RefObject<Element>,
-  options: IntersectionObserverInit = {}
-) {
-  const [isIntersecting, setIsIntersecting] = useState(false);
-  const [hasIntersected, setHasIntersected] = useState(false);
-
-  useEffect(() => {
-    const element = elementRef.current;
-    if (!element) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsIntersecting(entry.isIntersecting);
-        if (entry.isIntersecting && !hasIntersected) {
-          setHasIntersected(true);
+        // Initialize caching if enabled
+        if (enableCaching) {
+          const cacheManager = CacheManager.getInstance();
+          // Cache manager is already initialized
+          setOptimizationProgress(40);
         }
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '50px',
-        ...options
+
+        // Preload critical images if enabled
+        if (enableImageOptimization && criticalImages.length > 0) {
+          await preloadCriticalImages(criticalImages);
+          setOptimizationProgress(60);
+        }
+
+        // Preload audience-specific components if enabled
+        if (enableCodeSplitting) {
+          await preloadAudienceComponents(detectedAudience);
+          setOptimizationProgress(80);
+        }
+
+        // Initialize all performance optimizations
+        await initializePerformanceOptimizations();
+        setOptimizationProgress(100);
+        setIsOptimized(true);
+
+      } catch (error) {
+        console.error('Performance optimization failed:', error);
+        setIsOptimized(true); // Continue without optimizations
       }
-    );
-
-    observer.observe(element);
-
-    return () => {
-      observer.unobserve(element);
     };
-  }, [elementRef, hasIntersected, options]);
 
-  return { isIntersecting, hasIntersected };
-}
+    initializeOptimizations();
+  }, [enableImageOptimization, enableCodeSplitting, enableCaching, criticalImages]);
 
-// Hook for measuring component render performance
-export function useRenderPerformance(componentName: string) {
-  const renderCount = useRef(0);
-  const lastRenderTime = useRef<number>(0);
-  const totalRenderTime = useRef<number>(0);
+  // Performance metrics state
+  const [performanceMetrics, setPerformanceMetrics] = useState<PerformanceMetrics | null>(null);
 
+  // Update performance metrics periodically
   useEffect(() => {
-    renderCount.current += 1;
-    const renderTime = performance.now() - lastRenderTime.current;
-    totalRenderTime.current += renderTime;
+    if (!isOptimized) return;
 
-    if (renderCount.current % 10 === 0) {
-      const avgRenderTime = totalRenderTime.current / renderCount.current;
-      console.log(`${componentName} - Renders: ${renderCount.current}, Avg: ${avgRenderTime.toFixed(2)}ms`);
+    const updateMetrics = () => {
+      const metrics = getMetrics();
+      setPerformanceMetrics(metrics);
+    };
+
+    // Initial metrics
+    updateMetrics();
+
+    // Update metrics every 5 seconds
+    const interval = setInterval(updateMetrics, 5000);
+
+    return () => clearInterval(interval);
+  }, [isOptimized, getMetrics]);
+
+  // Get performance analysis
+  const getPerformanceAnalysis = () => {
+    if (!isOptimized) return null;
+    return analyzePerformance();
+  };
+
+  // Preload specific images
+  const preloadImages = async (imagePaths: string[]) => {
+    if (!enableImageOptimization) return;
+    
+    try {
+      await preloadCriticalImages(imagePaths);
+    } catch (error) {
+      console.warn('Failed to preload images:', error);
     }
-  });
+  };
 
-  useEffect(() => {
-    lastRenderTime.current = performance.now();
-  });
+  // Cache specific data
+  const cacheData = (key: string, data: any, type: 'guest' | 'owner' | 'static' = 'static') => {
+    if (!enableCaching) return;
+
+    const cacheManager = CacheManager.getInstance();
+    const cache = cacheManager.getCache(
+      type === 'guest' ? 'guestData' : 
+      type === 'owner' ? 'ownerData' : 'staticContent'
+    );
+    cache.set(key, data);
+  };
+
+  // Get cached data
+  const getCachedData = <T>(key: string, type: 'guest' | 'owner' | 'static' = 'static'): T | null => {
+    if (!enableCaching) return null;
+
+    const cacheManager = CacheManager.getInstance();
+    const cache = cacheManager.getCache<T>(
+      type === 'guest' ? 'guestData' : 
+      type === 'owner' ? 'ownerData' : 'staticContent'
+    );
+    return cache.get(key);
+  };
 
   return {
-    renderCount: renderCount.current,
-    avgRenderTime: renderCount.current > 0 ? totalRenderTime.current / renderCount.current : 0
+    // Optimization state
+    isOptimized,
+    optimizationProgress,
+    audience,
+    
+    // Performance metrics
+    performanceMetrics,
+    getPerformanceAnalysis,
+    
+    // Utility functions
+    preloadImages,
+    cacheData,
+    getCachedData,
+    
+    // Configuration
+    config: {
+      enableImageOptimization,
+      enableCodeSplitting,
+      enableCaching
+    }
   };
-}
+};
 
-// Hook for optimizing list rendering
-export function useVirtualizedList<T>({
-  items,
-  itemHeight,
-  containerHeight,
-  overscan = 5
-}: {
-  items: T[];
-  itemHeight: number;
-  containerHeight: number;
-  overscan?: number;
-}) {
-  const [scrollTop, setScrollTop] = useState(0);
+// Hook for monitoring Core Web Vitals
+export const useWebVitals = () => {
+  const [vitals, setVitals] = useState<{
+    LCP?: number;
+    FID?: number;
+    CLS?: number;
+    FCP?: number;
+    TTFB?: number;
+  }>({});
 
-  const visibleRange = useMemo(() => {
-    const visibleStart = Math.floor(scrollTop / itemHeight);
-    const visibleEnd = Math.min(
-      visibleStart + Math.ceil(containerHeight / itemHeight),
-      items.length - 1
-    );
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
 
-    return {
-      start: Math.max(0, visibleStart - overscan),
-      end: Math.min(items.length - 1, visibleEnd + overscan)
-    };
-  }, [scrollTop, itemHeight, containerHeight, items.length, overscan]);
+    // Import web-vitals dynamically to avoid SSR issues
+    import('web-vitals').then(({ onLCP, onFID, onCLS, onFCP, onTTFB }) => {
+      onLCP((metric) => {
+        setVitals(prev => ({ ...prev, LCP: metric.value }));
+      });
 
-  const visibleItems = useMemo(() => {
-    return items.slice(visibleRange.start, visibleRange.end + 1);
-  }, [items, visibleRange]);
+      onFID((metric) => {
+        setVitals(prev => ({ ...prev, FID: metric.value }));
+      });
 
-  const totalHeight = items.length * itemHeight;
-  const offsetY = visibleRange.start * itemHeight;
+      onCLS((metric) => {
+        setVitals(prev => ({ ...prev, CLS: metric.value }));
+      });
 
-  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    setScrollTop(e.currentTarget.scrollTop);
+      onFCP((metric) => {
+        setVitals(prev => ({ ...prev, FCP: metric.value }));
+      });
+
+      onTTFB((metric) => {
+        setVitals(prev => ({ ...prev, TTFB: metric.value }));
+      });
+    }).catch((error) => {
+      console.warn('Failed to load web-vitals:', error);
+    });
   }, []);
 
-  return {
-    visibleItems,
-    totalHeight,
-    offsetY,
-    handleScroll,
-    visibleRange
-  };
-}
+  return vitals;
+};
 
-// Hook for preloading resources
-export function usePreloader(resources: string[]) {
-  const [loadedResources, setLoadedResources] = useState<Set<string>>(new Set());
-  const [failedResources, setFailedResources] = useState<Set<string>>(new Set());
+// Hook for image loading optimization
+export const useImageOptimization = (imageSrc: string, options: {
+  priority?: boolean;
+  audienceType?: 'guest' | 'owner' | 'shared';
+} = {}) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isOptimized, setIsOptimized] = useState(false);
+  const [optimizedSrc, setOptimizedSrc] = useState(imageSrc);
 
   useEffect(() => {
-    const preloadPromises = resources.map(resource => {
-      return new Promise<string>((resolve, reject) => {
-        if (resource.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)) {
-          // Preload image
-          const img = new Image();
-          img.onload = () => resolve(resource);
-          img.onerror = () => reject(resource);
-          img.src = resource;
-        } else if (resource.match(/\.(js|css)$/i)) {
-          // Preload script or stylesheet
-          const link = document.createElement('link');
-          link.rel = resource.endsWith('.css') ? 'stylesheet' : 'preload';
-          if (resource.endsWith('.js')) {
-            link.as = 'script';
-          }
-          link.href = resource;
-          link.onload = () => resolve(resource);
-          link.onerror = () => reject(resource);
-          document.head.appendChild(link);
-        } else {
-          // Generic fetch preload
-          fetch(resource)
-            .then(() => resolve(resource))
-            .catch(() => reject(resource));
-        }
-      });
-    });
+    const optimizeImage = async () => {
+      try {
+        // This would use the enhanced image optimization
+        // For now, we'll just use the original src
+        setOptimizedSrc(imageSrc);
+        setIsOptimized(true);
+      } catch (error) {
+        console.warn('Image optimization failed:', error);
+        setOptimizedSrc(imageSrc);
+        setIsOptimized(true);
+      }
+    };
 
-    Promise.allSettled(preloadPromises).then(results => {
-      const loaded = new Set<string>();
-      const failed = new Set<string>();
+    optimizeImage();
+  }, [imageSrc]);
 
-      results.forEach((result, index) => {
-        if (result.status === 'fulfilled') {
-          loaded.add(result.value);
-        } else {
-          failed.add(resources[index]);
-        }
-      });
-
-      setLoadedResources(loaded);
-      setFailedResources(failed);
-    });
-  }, [resources]);
+  const handleLoad = () => {
+    setIsLoaded(true);
+  };
 
   return {
-    loadedResources,
-    failedResources,
-    isLoading: loadedResources.size + failedResources.size < resources.length,
-    progress: (loadedResources.size + failedResources.size) / resources.length
+    src: optimizedSrc,
+    isLoaded,
+    isOptimized,
+    onLoad: handleLoad
   };
-}
-
-// Hook for optimizing re-renders with shallow comparison
-export function useShallowMemo<T extends Record<string, any>>(obj: T): T {
-  const ref = useRef<T>(obj);
-
-  return useMemo(() => {
-    // Shallow comparison
-    const keys = Object.keys(obj);
-    const prevKeys = Object.keys(ref.current);
-
-    if (keys.length !== prevKeys.length) {
-      ref.current = obj;
-      return obj;
-    }
-
-    for (const key of keys) {
-      if (obj[key] !== ref.current[key]) {
-        ref.current = obj;
-        return obj;
-      }
-    }
-
-    return ref.current;
-  }, [obj]);
-}
-
-import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+};

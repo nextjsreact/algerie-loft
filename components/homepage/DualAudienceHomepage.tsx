@@ -1,197 +1,103 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { DualAudienceLayout, SectionContainer } from '@/components/ui/ResponsiveGrid';
 import PublicHeader from '@/components/public/PublicHeader';
 import PublicFooter from '@/components/public/PublicFooter';
-import SmoothScroll from '@/components/ui/SmoothScroll';
-import BackToTop from '@/components/ui/BackToTop';
-import { useResponsiveAnimations } from '@/hooks/useResponsiveAnimations';
-import { useOfflineSupport } from '@/hooks/useOfflineSupport';
-import { ConnectionIndicator } from '@/components/ui/ProgressiveLoading';
-import { offlineDataManager } from '@/lib/utils/offline-data-manager';
-
-// Import section components (to be created)
-import GuestHeroSection from './sections/GuestHeroSection';
-import FeaturedLoftsSection from './sections/FeaturedLoftsSection';
-import TrustSocialProofSection from './sections/TrustSocialProofSection';
-import PropertyOwnerSection from './sections/PropertyOwnerSection';
-import ContactSupportSection from './sections/ContactSupportSection';
-import DualAudienceNavigation from './sections/DualAudienceNavigation';
-import SubtleOwnerCTA from './sections/SubtleOwnerCTA';
-
-// Import integration components
-import { BookingSystemGrid } from './booking-system-integration';
-import { PropertyManagementSummary } from './property-management-integration';
-import { SeamlessAuthIntegration } from './seamless-auth-integration';
 
 interface DualAudienceHomepageProps {
   locale: string;
 }
 
 /**
- * Main dual-audience homepage component
- * Implements guest-first design with 70/30 content distribution
+ * Dual-Audience Homepage Component - Simplified Version
  */
 export default function DualAudienceHomepage({ locale }: DualAudienceHomepageProps) {
-  const { getMotionVariants } = useResponsiveAnimations();
-  const [activeSection, setActiveSection] = React.useState('hero');
-  
-  // Initialize offline support
-  const { 
-    isOnline, 
-    isSlowConnection, 
-    serviceWorkerReady,
-    preloadCriticalResources 
-  } = useOfflineSupport();
-
-  // Preload critical data when component mounts
-  React.useEffect(() => {
-    if (serviceWorkerReady) {
-      // Preload critical resources for offline use
-      const criticalUrls = [
-        `/${locale}/public`,
-        '/logo.png',
-        '/logo.jpg'
-      ];
-      preloadCriticalResources(criticalUrls);
-      
-      // Preload critical data
-      offlineDataManager.preloadCriticalData([locale]);
-    }
-  }, [serviceWorkerReady, locale, preloadCriticalResources]);
-
-  // Multilingual content
-  const content = {
-    fr: {
-      login: "Connexion",
-      clientArea: "Espace Client",
-      contact: "Contact",
-      allRightsReserved: "Tous droits réservés"
-    },
-    en: {
-      login: "Login",
-      clientArea: "Client Area", 
-      contact: "Contact",
-      allRightsReserved: "All rights reserved"
-    },
-    ar: {
-      login: "تسجيل الدخول",
-      clientArea: "منطقة العميل",
-      contact: "اتصال", 
-      allRightsReserved: "جميع الحقوق محفوظة"
-    }
-  };
-
-  const text = content[locale as keyof typeof content] || content.fr;
-
-  const containerVariants = getMotionVariants('stagger');
-  const sectionVariants = getMotionVariants('fade');
-
-  // Guest-focused content (Primary - 70%)
-  const guestContent = (
-    <>
-      {/* Hero Section - Guest Focus */}
-      <motion.div variants={sectionVariants}>
-        <SectionContainer id="hero" background="default" padding="large">
-          <GuestHeroSection locale={locale} />
-        </SectionContainer>
-      </motion.div>
-
-      {/* Featured Lofts Section */}
-      <motion.div variants={sectionVariants}>
-        <SectionContainer id="lofts" background="default" padding="large">
-          <FeaturedLoftsSection locale={locale} />
-        </SectionContainer>
-      </motion.div>
-
-      {/* Trust & Social Proof Section */}
-      <motion.div variants={sectionVariants}>
-        <SectionContainer id="reviews" background="alternate" padding="large">
-          <TrustSocialProofSection locale={locale} />
-        </SectionContainer>
-      </motion.div>
-    </>
-  );
-
-  // Owner-focused content (Secondary - 30%)
-  const ownerContent = (
-    <>
-      {/* Property Owner Section - Positioned after guest experience (80/20 rule) */}
-      <motion.div variants={sectionVariants}>
-        <SectionContainer id="owners" background="gradient" padding="large">
-          <PropertyOwnerSection 
-            locale={locale} 
-            showTestimonials={true}
-            showMarketAnalysis={false}
-            showEvaluationForm={false}
-          />
-        </SectionContainer>
-      </motion.div>
-    </>
-  );
-
   return (
-    <div 
-      dir={locale === 'ar' ? 'rtl' : 'ltr'} 
-      className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors"
-    >
-      <SmoothScroll />
-      
-      {/* Connection Quality Indicator */}
-      <ConnectionIndicator />
-      
-      {/* Dual-audience navigation - maintains guest-first while providing owner access */}
-      <DualAudienceNavigation 
-        locale={locale} 
-        activeSection={activeSection}
-        onSectionChange={setActiveSection}
-      />
-      
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <PublicHeader locale={locale} text={{ login: text.login }} />
+      <PublicHeader locale={locale} />
 
       {/* Main Content */}
-      <motion.main
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative"
-      >
-        {/* Dual-audience layout with guest-first priority */}
-        <DualAudienceLayout
-          guestContent={guestContent}
-          ownerContent={ownerContent}
-        />
+      <main className="relative">
+        {/* Hero Section */}
+        <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-700">
+          <div className="container mx-auto px-4 text-center text-white">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              {locale === 'fr' && 'Réservez votre loft idéal en Algérie'}
+              {locale === 'en' && 'Book your ideal loft in Algeria'}
+              {locale === 'ar' && 'احجز شقتك المثالية في الجزائر'}
+            </h1>
+            <p className="text-xl md:text-2xl mb-8 opacity-90">
+              {locale === 'fr' && 'Découvrez nos lofts exceptionnels avec service professionnel'}
+              {locale === 'en' && 'Discover our exceptional lofts with professional service'}
+              {locale === 'ar' && 'اكتشف شققنا الاستثنائية مع الخدمة المهنية'}
+            </p>
+            <button className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
+              {locale === 'fr' && 'Réserver maintenant'}
+              {locale === 'en' && 'Book now'}
+              {locale === 'ar' && 'احجز الآن'}
+            </button>
+          </div>
+        </section>
 
-        {/* Contact & Support Section - Shared */}
-        <motion.div variants={sectionVariants}>
-          <SectionContainer id="contact" background="default" padding="large">
-            <ContactSupportSection locale={locale} />
-          </SectionContainer>
-        </motion.div>
-      </motion.main>
+        {/* Featured Lofts Section */}
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12">
+              {locale === 'fr' && 'Lofts en vedette'}
+              {locale === 'en' && 'Featured Lofts'}
+              {locale === 'ar' && 'الشقق المميزة'}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-white rounded-lg shadow-lg overflow-hidden">
+                  <div className="h-48 bg-gray-300"></div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-2">Loft {i}</h3>
+                    <p className="text-gray-600 mb-4">
+                      {locale === 'fr' && 'Magnifique loft moderne avec toutes les commodités'}
+                      {locale === 'en' && 'Beautiful modern loft with all amenities'}
+                      {locale === 'ar' && 'شقة حديثة جميلة مع جميع وسائل الراحة'}
+                    </p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-2xl font-bold text-blue-600">€{50 + i * 10}/nuit</span>
+                      <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        {locale === 'fr' && 'Voir'}
+                        {locale === 'en' && 'View'}
+                        {locale === 'ar' && 'عرض'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Property Owner Section */}
+        <section className="py-16 bg-blue-50">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold mb-8">
+              {locale === 'fr' && 'Propriétaires, maximisez vos revenus'}
+              {locale === 'en' && 'Property owners, maximize your income'}
+              {locale === 'ar' && 'أصحاب العقارات، اعظموا دخلكم'}
+            </h2>
+            <p className="text-xl mb-8 max-w-2xl mx-auto">
+              {locale === 'fr' && 'Confiez-nous la gestion de votre propriété et bénéficiez de notre expertise pour optimiser vos revenus locatifs.'}
+              {locale === 'en' && 'Entrust us with the management of your property and benefit from our expertise to optimize your rental income.'}
+              {locale === 'ar' && 'عهد إلينا بإدارة ممتلكاتك واستفد من خبرتنا لتحسين دخلك الإيجاري.'}
+            </p>
+            <button className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors">
+              {locale === 'fr' && 'Devenir partenaire'}
+              {locale === 'en' && 'Become a partner'}
+              {locale === 'ar' && 'كن شريكاً'}
+            </button>
+          </div>
+        </section>
+      </main>
 
       {/* Footer */}
-      <PublicFooter 
-        locale={locale} 
-        text={{ 
-          clientArea: text.clientArea,
-          contact: text.contact,
-          allRightsReserved: text.allRightsReserved
-        }} 
-      />
-      
-      {/* Subtle Owner CTA - Non-intrusive floating CTA */}
-      <SubtleOwnerCTA 
-        locale={locale} 
-        variant="floating" 
-        position="bottom-right"
-        showMetrics={true}
-      />
-      
-      <BackToTop />
+      <PublicFooter locale={locale} />
     </div>
   );
 }

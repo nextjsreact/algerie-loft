@@ -7,7 +7,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals'
+import { onCLS, onINP, onFCP, onLCP, onTTFB } from 'web-vitals'
 
 interface WebVitalsMetric {
   name: string
@@ -58,11 +58,11 @@ export function WebVitalsTracker() {
     }
 
     // Register Web Vitals observers
-    getCLS(sendToAnalytics)
-    getFID(sendToAnalytics)
-    getFCP(sendToAnalytics)
-    getLCP(sendToAnalytics)
-    getTTFB(sendToAnalytics)
+    onCLS(sendToAnalytics)
+    onINP(sendToAnalytics)
+    onFCP(sendToAnalytics)
+    onLCP(sendToAnalytics)
+    onTTFB(sendToAnalytics)
 
     // Track custom performance metrics
     const trackCustomMetrics = () => {

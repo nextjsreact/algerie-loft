@@ -1,4 +1,4 @@
-import DualAudienceHomepage from '@/components/homepage/DualAudienceHomepage';
+import FuturisticPublicPage from '@/components/futuristic/FuturisticPublicPage';
 import { Metadata } from 'next';
 
 interface LocalePageProps {
@@ -55,5 +55,5 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
 export default async function LocalePage({ params }: LocalePageProps) {
   const { locale } = await params;
   
-  return <DualAudienceHomepage locale={locale} />;
+  return <FuturisticPublicPage locale={locale} />;
 }

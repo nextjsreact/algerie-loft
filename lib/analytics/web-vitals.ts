@@ -1,4 +1,4 @@
-import { getCLS, getFID, getFCP, getLCP, getTTFB, Metric } from 'web-vitals';
+import { onCLS, onFCP, onINP, onLCP, onTTFB, type Metric } from 'web-vitals';
 
 // Google Analytics 4 event tracking
 declare global {
@@ -76,13 +76,11 @@ export function initWebVitals() {
   if (typeof window === 'undefined') return;
 
   try {
-    // Temporarily disabled due to compatibility issues
-    // getCLS(handleMetric);
-    // getFID(handleMetric);
-    // getFCP(handleMetric);
-    // getLCP(handleMetric);
-    // getTTFB(handleMetric);
-    console.log('Web Vitals temporarily disabled');
+    onCLS(handleMetric);
+    onINP(handleMetric);
+    onFCP(handleMetric);
+    onLCP(handleMetric);
+    onTTFB(handleMetric);
   } catch (error) {
     console.error('Failed to initialize Web Vitals:', error);
   }
@@ -90,10 +88,10 @@ export function initWebVitals() {
 
 // Export individual metric collectors for custom usage
 export {
-  getCLS,
-  getFID,
-  getFCP,
-  getLCP,
-  getTTFB,
+  onCLS,
+  onINP,
+  onFCP,
+  onLCP,
+  onTTFB,
   type Metric,
 };

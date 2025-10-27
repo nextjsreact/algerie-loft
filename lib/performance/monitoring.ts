@@ -255,7 +255,12 @@ export class PerformanceMonitor {
       // Check system-level alerts
       this.checkSystemAlerts(systemMetrics);
     } catch (error) {
-      logger.error('Failed to collect system metrics', { error });
+      // Silently handle system metrics collection errors in development
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('System metrics collection skipped in development');
+      } else {
+        logger.error('Failed to collect system metrics', { error: error instanceof Error ? error.message : 'Unknown error' });
+      }
     }
   }
 

@@ -1,0 +1,57 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - img [ref=e8]
+        - heading "🔐 Welcome back" [level=2] [ref=e12]
+        - paragraph [ref=e13]: Sign in to your account
+      - button [ref=e15] [cursor=pointer]:
+        - img
+        - img
+      - generic [ref=e16]:
+        - generic [ref=e18]: 👤 Choisissez votre profil
+        - generic [ref=e20]:
+          - button "🏠 Client Réserver des lofts" [ref=e21] [cursor=pointer]:
+            - generic [ref=e22] [cursor=pointer]: 🏠
+            - generic [ref=e23] [cursor=pointer]: Client
+            - generic [ref=e24] [cursor=pointer]: Réserver des lofts
+          - button "🏢 Partenaire Gérer mes biens" [ref=e25] [cursor=pointer]:
+            - generic [ref=e26] [cursor=pointer]: 🏢
+            - generic [ref=e27] [cursor=pointer]: Partenaire
+            - generic [ref=e28] [cursor=pointer]: Gérer mes biens
+          - button "⚙️ Employé Administration" [ref=e29] [cursor=pointer]:
+            - generic [ref=e30] [cursor=pointer]: ⚙️
+            - generic [ref=e31] [cursor=pointer]: Employé
+            - generic [ref=e32] [cursor=pointer]: Administration
+      - generic [ref=e33]:
+        - generic [ref=e35]: Sign In
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - generic [ref=e39]: Email
+            - textbox "Email" [ref=e40]
+          - generic [ref=e41]:
+            - generic [ref=e42]: Password
+            - generic [ref=e43]:
+              - textbox "Password" [ref=e44]
+              - button [ref=e45] [cursor=pointer]:
+                - img
+          - link "Forgot password?" [ref=e47]:
+            - /url: /en/forgot-password
+          - button "Sign In" [ref=e48] [cursor=pointer]
+      - generic [ref=e51]:
+        - paragraph [ref=e52]:
+          - text: Don't have an account?
+          - link "Sign Up" [ref=e53]:
+            - /url: /register
+        - generic [ref=e54]:
+          - paragraph [ref=e55]: Identifiants DEV
+          - paragraph [ref=e57]:
+            - strong [ref=e58]: "Test User:"
+            - text: user1759066310913@dev.local / password123
+  - button "Open Next.js Dev Tools" [ref=e64] [cursor=pointer]:
+    - img [ref=e65] [cursor=pointer]
+  - alert [ref=e70]
+```

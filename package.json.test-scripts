@@ -1,0 +1,24 @@
+{
+  "scripts": {
+    "test:integration": "node tests/run-integration-tests.js",
+    "test:integration:headed": "node tests/run-integration-tests.js --headed",
+    "test:integration:debug": "node tests/run-integration-tests.js --headed --debug --workers=1",
+    "test:api": "node tests/run-integration-tests.js --api-only",
+    "test:e2e": "node tests/run-integration-tests.js --e2e-only",
+    "test:db": "node tests/run-integration-tests.js --db-only",
+    "test:quick": "node tests/run-integration-tests.js --quick --workers=2",
+    "test:chrome": "node tests/run-integration-tests.js --project=chromium",
+    "test:firefox": "node tests/run-integration-tests.js --project=firefox",
+    "test:mobile": "node tests/run-integration-tests.js --project=mobile-chrome",
+    "test:install": "node tests/run-integration-tests.js --install",
+    "test:report": "node tests/run-integration-tests.js --report",
+    "test:ci": "node tests/run-integration-tests.js --workers=1 --retries=2 --reporter=junit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@supabase/supabase-js": "^2.38.0",
+    "dotenv": "^16.3.1",
+    "chalk": "^5.3.0",
+    "ora": "^7.0.1"
+  }
+}

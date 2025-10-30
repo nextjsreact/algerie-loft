@@ -1,0 +1,336 @@
+# Page snapshot
+
+```yaml
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e6]:
+      - generic [ref=e9]:
+        - generic [ref=e10]: LOFT ALGÉRIE
+        - generic [ref=e11]: Chargement...
+      - button "Toggle mobile menu" [ref=e15] [cursor=pointer]:
+        - img [ref=e16] [cursor=pointer]
+    - main [ref=e18]:
+      - generic [ref=e20]:
+        - generic [ref=e58]:
+          - heading "Modern Hydra Loft" [level=1] [ref=e59]:
+            - generic [ref=e60]: Modern Hydra Loft
+          - paragraph [ref=e61]: Panoramic view of Algiers bay
+          - generic [ref=e62]: 25,000 DZD/nuit
+          - generic [ref=e63]:
+            - button "BOOK NOW" [ref=e64] [cursor=pointer]:
+              - img [ref=e65] [cursor=pointer]
+              - text: BOOK NOW
+            - button "FREE Call" [ref=e67] [cursor=pointer]:
+              - img [ref=e68] [cursor=pointer]
+              - text: FREE Call
+          - paragraph [ref=e70]: "⚡ Special offer: -20% today only!"
+        - generic:
+          - button [ref=e71] [cursor=pointer]:
+            - img [ref=e72] [cursor=pointer]
+          - button [ref=e74] [cursor=pointer]:
+            - img [ref=e75] [cursor=pointer]
+        - button "⏸️ Pause" [ref=e78] [cursor=pointer]:
+          - generic [ref=e79] [cursor=pointer]: ⏸️ Pause
+        - generic [ref=e81]:
+          - generic [ref=e82]:
+            - button [ref=e83] [cursor=pointer]
+            - button [ref=e85] [cursor=pointer]
+            - button [ref=e86] [cursor=pointer]
+            - button [ref=e87] [cursor=pointer]
+            - button [ref=e88] [cursor=pointer]
+          - generic [ref=e89]: 1/5
+      - generic [ref=e92]:
+        - generic [ref=e93]:
+          - generic [ref=e97]:
+            - generic [ref=e98]: 2,500+
+            - generic [ref=e99]: Happy Guests
+          - generic [ref=e103]:
+            - generic [ref=e104]: 150+
+            - generic [ref=e105]: Available Lofts
+          - generic [ref=e109]:
+            - generic [ref=e110]: "12"
+            - generic [ref=e111]: Cities Covered
+          - generic [ref=e115]:
+            - generic [ref=e116]: "4.8"
+            - generic [ref=e117]: Average Rating
+        - generic [ref=e118]:
+          - heading "🔥 LIMITED OFFER - Book NOW!" [level=3] [ref=e119]
+          - paragraph [ref=e120]: ✨ -20% on your first booking + FREE Breakfast
+          - button "BOOK IMMEDIATELY" [ref=e121] [cursor=pointer]:
+            - img [ref=e122] [cursor=pointer]
+            - text: BOOK IMMEDIATELY
+          - paragraph [ref=e124]: ⏰ Only 48h left to enjoy this offer!
+      - generic [ref=e129]:
+        - generic [ref=e130]:
+          - heading "What our clients say" [level=2] [ref=e131]:
+            - generic [ref=e132]: What our clients say
+          - paragraph [ref=e133]: Discover testimonials from our satisfied clients
+        - generic [ref=e134]:
+          - generic [ref=e135]:
+            - generic [ref=e136]:
+              - img "Sarah M." [ref=e137]
+              - generic [ref=e138]:
+                - heading "Sarah M." [level=4] [ref=e139]
+                - paragraph [ref=e140]: Business Traveler
+            - generic [ref=e141]:
+              - img [ref=e142]
+              - img [ref=e144]
+              - img [ref=e146]
+              - img [ref=e148]
+              - img [ref=e150]
+            - blockquote [ref=e152]: "\"Exceptional stay in the Hydra loft. Magnificent view and impeccable service. Highly recommend!\""
+          - generic [ref=e153]:
+            - generic [ref=e154]:
+              - img "Ahmed K." [ref=e155]
+              - generic [ref=e156]:
+                - heading "Ahmed K." [level=4] [ref=e157]
+                - paragraph [ref=e158]: Family on vacation
+            - generic [ref=e159]:
+              - img [ref=e160]
+              - img [ref=e162]
+              - img [ref=e164]
+              - img [ref=e166]
+              - img [ref=e168]
+            - blockquote [ref=e170]: "\"Perfect for our family stay in Oran. Spacious, well-equipped and very clean loft. The kids loved it!\""
+          - generic [ref=e171]:
+            - generic [ref=e172]:
+              - img "Fatima B." [ref=e173]
+              - generic [ref=e174]:
+                - heading "Fatima B." [level=4] [ref=e175]
+                - paragraph [ref=e176]: Romantic couple
+            - generic [ref=e177]:
+              - img [ref=e178]
+              - img [ref=e180]
+              - img [ref=e182]
+              - img [ref=e184]
+              - img [ref=e186]
+            - blockquote [ref=e188]: "\"Perfect romantic weekend in Constantine. Charming loft with careful decoration. We will be back!\""
+        - generic [ref=e189]:
+          - heading "💎 You too, experience EXCELLENCE!" [level=3] [ref=e190]
+          - paragraph [ref=e191]: 🏆 Join + 2500 clients who trust us • 100% satisfaction guaranteed
+          - generic [ref=e192]:
+            - button "BOOK MY DREAM STAY" [ref=e193] [cursor=pointer]:
+              - img [ref=e194] [cursor=pointer]
+              - text: BOOK MY DREAM STAY
+            - button "Call NOW" [ref=e196] [cursor=pointer]:
+              - img [ref=e197] [cursor=pointer]
+              - text: Call NOW
+      - generic [ref=e201]:
+        - generic [ref=e202]:
+          - heading "Recommended Lofts" [level=2] [ref=e203]:
+            - generic [ref=e204]: Recommended Lofts
+          - paragraph [ref=e205]: Our highest-rated accommodations by our guests
+        - generic [ref=e206]:
+          - generic [ref=e207]:
+            - generic [ref=e208]:
+              - img "Modern Hydra Loft - Panoramic View" [ref=e210]
+              - generic [ref=e213]:
+                - img [ref=e214]
+                - generic [ref=e216]: "4.8"
+                - generic [ref=e217]: (127)
+              - generic [ref=e219]:
+                - img [ref=e220]
+                - generic [ref=e223]: Hydra, Algiers
+            - generic [ref=e224]:
+              - heading "Modern Hydra Loft - Panoramic View" [level=3] [ref=e225]
+              - paragraph [ref=e226]: Beautiful 120m² loft with private terrace and stunning view of Algiers bay.
+              - generic [ref=e227]:
+                - img [ref=e229]
+                - img [ref=e234]
+                - img [ref=e239]
+                - img [ref=e242]
+              - generic [ref=e245]:
+                - generic [ref=e246]:
+                  - generic [ref=e247]: 25 000 DZD
+                  - generic [ref=e248]: /night
+                - button "Book Now" [ref=e249] [cursor=pointer]:
+                  - img [ref=e250] [cursor=pointer]
+                  - text: Book Now
+          - generic [ref=e252]:
+            - generic [ref=e253]:
+              - img "Luxury Penthouse Oran Center" [ref=e255]
+              - generic [ref=e258]:
+                - img [ref=e259]
+                - generic [ref=e261]: "4.9"
+                - generic [ref=e262]: (89)
+              - generic [ref=e264]:
+                - img [ref=e265]
+                - generic [ref=e268]: City Center, Oran
+            - generic [ref=e269]:
+              - heading "Luxury Penthouse Oran Center" [level=3] [ref=e270]
+              - paragraph [ref=e271]: Exceptional 180m² penthouse in the heart of Oran. Contemporary design, 3 bedrooms.
+              - generic [ref=e272]:
+                - img [ref=e274]
+                - img [ref=e279]
+                - img [ref=e284]
+                - img [ref=e287]
+              - generic [ref=e290]:
+                - generic [ref=e291]:
+                  - generic [ref=e292]: 45 000 DZD
+                  - generic [ref=e293]: /night
+                - button "Book Now" [ref=e294] [cursor=pointer]:
+                  - img [ref=e295] [cursor=pointer]
+                  - text: Book Now
+          - generic [ref=e297]:
+            - generic [ref=e298]:
+              - img "Artistic Loft Constantine" [ref=e300]
+              - generic [ref=e303]:
+                - img [ref=e304]
+                - generic [ref=e306]: "4.7"
+                - generic [ref=e307]: (156)
+              - generic [ref=e309]:
+                - img [ref=e310]
+                - generic [ref=e313]: Old City, Constantine
+            - generic [ref=e314]:
+              - heading "Artistic Loft Constantine" [level=3] [ref=e315]
+              - paragraph [ref=e316]: Unique 95m² loft in a renovated historic building. High ceilings.
+              - generic [ref=e317]:
+                - img [ref=e319]
+                - img [ref=e324]
+                - img [ref=e327]
+              - generic [ref=e330]:
+                - generic [ref=e331]:
+                  - generic [ref=e332]: 18 000 DZD
+                  - generic [ref=e333]: /night
+                - button "Book Now" [ref=e334] [cursor=pointer]:
+                  - img [ref=e335] [cursor=pointer]
+                  - text: Book Now
+      - generic [ref=e341]:
+        - heading "Our Services" [level=2] [ref=e343]
+        - generic [ref=e344]:
+          - generic [ref=e345]:
+            - generic [ref=e347]: 🏢
+            - heading "Property Management" [level=3] [ref=e348]
+            - paragraph [ref=e349]: Complete management of your real estate with personalized monitoring.
+            - button "Learn more" [ref=e350] [cursor=pointer]
+          - generic [ref=e351]:
+            - generic [ref=e353]: 📅
+            - heading "Reservations" [level=3] [ref=e354]
+            - paragraph [ref=e355]: Professional booking system to maximize your occupancy rate.
+            - button "Learn more" [ref=e356] [cursor=pointer]
+          - generic [ref=e357]:
+            - generic [ref=e359]: 💰
+            - heading "Revenue Optimization" [level=3] [ref=e360]
+            - paragraph [ref=e361]: Personalized strategies to maximize your rental income.
+            - button "Learn more" [ref=e362] [cursor=pointer]
+        - generic [ref=e363]:
+          - heading "🎯 Don't miss ANY opportunity!" [level=3] [ref=e364]
+          - paragraph [ref=e365]: ✅ VIP Service • 24/7 Availability • 1-click booking
+          - button "IMMEDIATE VIP ACCESS" [ref=e366] [cursor=pointer]:
+            - img [ref=e367] [cursor=pointer]
+            - text: IMMEDIATE VIP ACCESS
+      - generic [ref=e374]:
+        - generic [ref=e375]:
+          - 'heading "Property Owners: Maximize Your Income" [level=2] [ref=e376]':
+            - generic [ref=e377]: "Property Owners: Maximize Your Income"
+          - paragraph [ref=e378]: Trust us with your property management and generate up to 40% additional revenue
+          - generic [ref=e379]:
+            - generic [ref=e380]:
+              - generic [ref=e382]: ✓
+              - generic [ref=e383]: Gestion complète de votre propriété
+            - generic [ref=e384]:
+              - generic [ref=e386]: ✓
+              - generic [ref=e387]: Marketing professionnel et photos HD
+            - generic [ref=e388]:
+              - generic [ref=e390]: ✓
+              - generic [ref=e391]: Service client 24/7 pour vos locataires
+            - generic [ref=e392]:
+              - generic [ref=e394]: ✓
+              - generic [ref=e395]: Paiements garantis et assurance incluse
+          - generic [ref=e396]:
+            - heading "💰 DOUBLE your income in 30 days!" [level=4] [ref=e397]
+            - paragraph [ref=e398]: 🚀 Written guarantee • €0 hidden fees • Payment within 48h
+          - generic [ref=e399]:
+            - button "START EARNING NOW" [ref=e400] [cursor=pointer]:
+              - img [ref=e401] [cursor=pointer]
+              - text: START EARNING NOW
+            - button "FREE Express Evaluation" [ref=e403] [cursor=pointer]:
+              - img [ref=e404] [cursor=pointer]
+              - text: FREE Express Evaluation
+          - paragraph [ref=e406]: ⚡ Response in less than 2h • More than 150 owners already trust us
+        - generic [ref=e407]:
+          - heading "Average Monthly Revenue" [level=3] [ref=e408]
+          - generic [ref=e409]:
+            - generic [ref=e410]:
+              - generic [ref=e411]: Alger (Hydra)
+              - generic [ref=e412]: 45,000 DZD
+            - generic [ref=e413]:
+              - generic [ref=e414]: Oran (Centre)
+              - generic [ref=e415]: 38,000 DZD
+            - generic [ref=e416]:
+              - generic [ref=e417]: Constantine
+              - generic [ref=e418]: 28,000 DZD
+          - generic [ref=e420]:
+            - generic [ref=e421]: +40%
+            - generic [ref=e422]: Average revenue increase
+      - generic [ref=e427]:
+        - generic [ref=e428]:
+          - heading "Ready to maximize your income?" [level=2] [ref=e429]
+          - paragraph [ref=e430]: Contact us for a free consultation.
+        - generic [ref=e432]:
+          - generic [ref=e433]:
+            - generic [ref=e434]:
+              - generic [ref=e435]:
+                - img [ref=e436]
+                - text: Where would you like to stay?
+              - textbox "Where would you like to stay?" [ref=e439]
+            - generic [ref=e440]:
+              - generic [ref=e441]:
+                - img [ref=e442]
+                - text: When?
+              - textbox [ref=e444]
+            - generic [ref=e445]:
+              - generic [ref=e446]:
+                - img [ref=e447]
+                - text: Guests
+              - combobox [ref=e452]:
+                - option "1 personne"
+                - option "2 personnes" [selected]
+                - option "3 personnes"
+                - option "4+ personnes"
+          - button "Search Lofts" [ref=e453] [cursor=pointer]:
+            - img [ref=e454] [cursor=pointer]
+            - text: Search Lofts
+      - generic [ref=e458]:
+        - generic [ref=e459]:
+          - generic [ref=e460]:
+            - generic [ref=e461]:
+              - generic [ref=e463]: L
+              - generic [ref=e464]:
+                - heading "Loft Algérie" [level=3] [ref=e465]
+                - paragraph [ref=e466]: Premium Rentals
+            - paragraph [ref=e467]: The reference for luxury loft rentals in Algeria
+          - generic [ref=e468]:
+            - heading "Quick Links" [level=3] [ref=e469]
+            - generic [ref=e470]:
+              - link "Our Lofts" [ref=e471]:
+                - /url: "#featured-lofts"
+              - link "Become Partner" [ref=e472] [cursor=pointer]:
+                - /url: "#"
+          - generic [ref=e473]:
+            - heading "Contact" [level=3] [ref=e474]
+            - generic [ref=e475]:
+              - link "+213 23 45 67 89" [ref=e476]:
+                - /url: tel:+213234567890
+                - img [ref=e477]
+                - generic [ref=e479]: +213 23 45 67 89
+              - link "contact@loftalgerie.com" [ref=e480]:
+                - /url: mailto:contact@loftalgerie.com
+                - img [ref=e481]
+                - generic [ref=e484]: contact@loftalgerie.com
+        - generic [ref=e485]:
+          - generic [ref=e490]:
+            - generic [ref=e491]: LOFT ALGÉRIE
+            - generic [ref=e492]: Chargement...
+          - paragraph [ref=e493]: © 2024 Loft Algérie - All rights reserved
+          - generic [ref=e494]:
+            - link "Client Area" [ref=e495]:
+              - /url: /en/login
+            - link "Contact" [ref=e496]:
+              - /url: mailto:contact@loftalgerie.com
+      - generic [ref=e499] [cursor=pointer]:
+        - generic [ref=e501] [cursor=pointer]:
+          - paragraph [ref=e502] [cursor=pointer]: 💰 Owner ?
+          - paragraph [ref=e503] [cursor=pointer]: Earn +40% NOW
+        - img [ref=e504] [cursor=pointer]
+```

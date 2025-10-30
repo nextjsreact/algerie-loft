@@ -121,13 +121,13 @@ export default function StyleVariant7() {
               <HeaderLogo className="drop-shadow-lg" />
               <div className="hidden md:block">
                 <motion.div 
-                  className="text-2xl font-bold bg-gradient-to-r from-yellow-600 via-amber-600 to-orange-600 bg-clip-text text-transparent"
+                  className="text-3xl font-bold bg-gradient-to-r from-yellow-600 via-amber-600 to-orange-600 bg-clip-text text-transparent"
                   variants={floatingVariants}
                   animate="animate"
                 >
                   Loft Algérie
                 </motion.div>
-                <div className={`text-sm font-medium transition-colors duration-500 ${
+                <div className={`text-base font-semibold transition-colors duration-500 ${
                   theme === 'dark' ? 'text-amber-300' : 'text-amber-700'
                 }`}>
                   Votre Confort Notre Priorité
@@ -140,7 +140,7 @@ export default function StyleVariant7() {
                 <motion.a
                   key={item}
                   href="#"
-                  className={`font-medium transition-colors relative group ${
+                  className={`font-bold text-lg transition-colors relative group ${
                     theme === 'dark' 
                       ? 'text-amber-200 hover:text-yellow-300' 
                       : 'text-amber-800 hover:text-yellow-600'
@@ -161,7 +161,7 @@ export default function StyleVariant7() {
             <div className="flex items-center space-x-4">
               <ThemeToggle variant="golden" />
               <motion.button
-                className="bg-gradient-to-r from-yellow-500 to-amber-600 text-white px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                className="bg-gradient-to-r from-yellow-500 to-amber-600 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
                 whileHover={{ scale: prefersReducedMotion ? 1 : 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
               >

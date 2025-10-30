@@ -592,3 +592,163 @@ export interface BookingSearchParams {
   page?: number;
   limit?: number;
 }
+// Cl
+ient Reservation Flow Types
+export type ReservationStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'no_show';
+export type ReservationPaymentStatus = 'pending' | 'partial' | 'paid' | 'refunded' | 'failed';
+
+export interface ReservationGuestInfo {
+  primary_guest: {
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    nationality?: string;
+  };
+  additional_guests?: Array<{
+    first_name: string;
+    last_name: string;
+    age_group: 'adult' | 'child' | 'infant';
+  }>;
+  total_guests: number;
+  adults: number;
+  children: number;
+  infants: number;
+}
+
+export interface ReservationPricing {
+  base_price: number;
+  nights: number;
+  nightly_rate: number;
+  cleaning_fee: number;
+  service_fee: number;
+  taxes: number;
+  total_amount: number;
+  currency: string;
+  breakdown: Array<{
+    date: string;
+    rate: number;
+    type: string;
+  }>;
+}
+
+export interface ClientReservation {
+  id: string;
+  customer_id: string | null;
+  loft_id: string;
+  check_in_date: string;
+  check_out_date: string;
+  nights: number;
+  guest_info: ReservationGuestInfo;
+  pricing: ReservationPricing;
+  special_requests?: string;
+  dietary_requirements?: string;
+  accessibility_needs?: string;
+  status: ReservationStatus;
+  payment_status: ReservationPaymentStatus;
+  confirmation_code: string;
+  booking_reference: string;
+  communication_preferences?: {
+    email: boolean;
+    sms: boolean;
+    whatsapp: boolean;
+  };
+  terms_accepted: boolean;
+  terms_accepted_at?: string;
+  terms_version?: string;
+  cancelled_at?: string;
+  cancellation_reason?: string;
+  cancelled_by?: string;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+  updated_by?: string;
+  booking_source?: string;
+  user_agent?: string;
+  ip_address?: string;
+}
+
+export interface ReservationAuditLog {
+  id: string;
+  reservation_id: string;
+  action: string;
+  old_values?: any;
+  new_values?: any;
+  changed_fields?: string[];
+  user_id?: string;
+  user_type?: string;
+  session_id?: string;
+  ip_address?: string;
+  user_agent?: string;
+  request_id?: string;
+  notes?: string;
+  created_at: string;
+}
+
+export interface ReservationCommunication {
+  id: string;
+  reservation_id: string;
+  type: 'booking_confirmation' | 'payment_confirmation' | 'check_in_instructions' | 
+        'check_out_reminder' | 'cancellation_notice' | 'modification_notice' |
+        'customer_inquiry' | 'support_response' | 'review_request';
+  subject?: string;
+  message: string;
+  sender_type: 'customer' | 'system' | 'admin';
+  sender_id?: string;
+  recipient_email?: string;
+  recipient_phone?: string;
+  channel: 'email' | 'sms' | 'whatsapp' | 'in_app';
+  status: 'pending' | 'sent' | 'delivered' | 'failed' | 'bounced';
+  sent_at?: string;
+  delivered_at?: string;
+  read_at?: string;
+  template_id?: string;
+  template_variables?: any;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReservationRequest {
+  loft_id: string;
+  customer_id: string;
+  check_in_date: string;
+  check_out_date: string;
+  guest_info: ReservationGuestInfo;
+  pricing: ReservationPricing;
+  special_requests?: string;
+  dietary_requirements?: string;
+  accessibility_needs?: string;
+  communication_preferences?: {
+    email: boolean;
+    sms: boolean;
+    whatsapp: boolean;
+  };
+  terms_accepted: boolean;
+  terms_version?: string;
+  booking_source?: string;
+  user_agent?: string;
+  ip_address?: string;
+}
+
+export interface ReservationFilters {
+  customer_id?: string;
+  loft_id?: string;
+  status?: ReservationStatus;
+  payment_status?: ReservationPaymentStatus;
+  check_in_from?: string;
+  check_in_to?: string;
+  created_from?: string;
+  created_to?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface ReservationUpdateData {
+  status?: ReservationStatus;
+  payment_status?: ReservationPaymentStatus;
+  special_requests?: string;
+  dietary_requirements?: string;
+  accessibility_needs?: string;
+  cancellation_reason?: string;
+  updated_by?: string;
+}

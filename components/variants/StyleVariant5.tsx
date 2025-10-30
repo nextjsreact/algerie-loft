@@ -41,7 +41,7 @@ export default function StyleVariant5() {
                 <a 
                   key={item}
                   href="#" 
-                  className={`font-semibold tracking-wide transition-all duration-300 relative group ${
+                  className={`font-bold text-lg tracking-wide transition-all duration-300 relative group ${
                     isDark 
                       ? 'text-slate-300 hover:text-white' 
                       : 'text-slate-700 hover:text-slate-900'
@@ -65,7 +65,7 @@ export default function StyleVariant5() {
               >
                 <Palette className="w-5 h-5" />
               </button>
-              <button className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
+              <button className={`px-10 py-4 rounded-xl font-bold text-lg transition-all duration-300 ${
                 isDark 
                   ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600' 
                   : 'bg-gradient-to-r from-slate-800 to-slate-900 text-white hover:from-slate-900 hover:to-black'

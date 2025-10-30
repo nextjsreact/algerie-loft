@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuthAPI } from "@/lib/auth";
 import { createClient } from "@/utils/supabase/server";
+import { ensureDatabaseReady } from "@/lib/initialization/server-database-init";
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,6 +10,9 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
     }
+
+    // Ensure database is initialized with test data if needed
+    await ensureDatabaseReady();
 
     const supabase = await createClient();
 

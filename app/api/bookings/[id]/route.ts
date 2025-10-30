@@ -1,173 +1,111 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
-import { requireAuthAPI } from '@/lib/auth'
 
+// GET /api/bookings/[id] - Get booking details (public access for reservation confirmation)
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Check authentication
-    const session = await requireAuthAPI()
-    if (!session) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      )
-    }
-
+    const { id } = await params;
     const supabase = await createClient()
 
-    // Get booking details with loft and partner information
-    const { data: booking, error } = await supabase
-      .from('bookings')
+    // Get reservation with related data from reservations table
+    const { data: reservation, error } = await supabase
+      .from('reservations')
       .select(`
-        id,
-        booking_reference,
-        check_in,
-        check_out,
-        guests,
-        total_price,
-        status,
-        payment_status,
-        special_requests,
-        created_at,
-        lofts (
-          id,
-          name,
-          address,
-          price_per_night
-        ),
-        partner_profiles!bookings_partner_id_fkey (
-          user_id,
-          business_name,
-          profiles!partner_profiles_user_id_fkey (
-            full_name
-          )
-        )
+        *,
+        loft:lofts(*),
+        customer:customers(*)
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
-    if (error || !booking) {
+    if (error || !reservation) {
       return NextResponse.json(
-        { error: 'Booking not found' },
+        { error: 'Réservation non trouvée' },
         { status: 404 }
       )
     }
 
-    // Check if user has access to this booking
-    const hasAccess = 
-      booking.client_id === session.user.id || // Client owns the booking
-      booking.partner_id === session.user.id || // Partner owns the loft
-      ['admin', 'manager'].includes(session.user.role) // Admin access
-
-    if (!hasAccess) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      )
+    // Transform reservation data to match expected booking format
+    const booking = {
+      id: reservation.id,
+      loft_id: reservation.loft_id,
+      customer_id: reservation.customer_id,
+      check_in_date: reservation.check_in_date,
+      check_out_date: reservation.check_out_date,
+      nights: reservation.nights,
+      guest_info: reservation.guest_info,
+      pricing: reservation.pricing,
+      status: reservation.status,
+      special_requests: reservation.special_requests,
+      created_at: reservation.created_at,
+      updated_at: reservation.updated_at,
+      loft: reservation.loft,
+      customer: reservation.customer
     }
 
-    // Format the response
-    const formattedBooking = {
-      ...booking,
-      partner: booking.partner_profiles ? {
-        id: booking.partner_profiles.user_id,
-        name: booking.partner_profiles.profiles?.full_name || 'Propriétaire',
-        business_name: booking.partner_profiles.business_name
-      } : undefined
-    }
-
-    return NextResponse.json(formattedBooking)
+    return NextResponse.json(booking)
 
   } catch (error) {
-    console.error('Booking detail API error:', error)
+    console.error('Error fetching booking:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Erreur serveur' },
       { status: 500 }
     )
   }
 }
 
+// PUT /api/bookings/[id] - Update reservation (public access for status updates)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Check authentication
-    const session = await requireAuthAPI()
-    if (!session) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      )
-    }
-
+    const { id } = await params;
     const body = await request.json()
-    const { status, payment_status, special_requests } = body
-
     const supabase = await createClient()
 
-    // Get current booking to check permissions
-    const { data: currentBooking, error: fetchError } = await supabase
-      .from('bookings')
-      .select('client_id, partner_id, status')
-      .eq('id', params.id)
+    // Get existing reservation
+    const { data: existingReservation, error: fetchError } = await supabase
+      .from('reservations')
+      .select('*')
+      .eq('id', id)
       .single()
 
-    if (fetchError || !currentBooking) {
+    if (fetchError || !existingReservation) {
       return NextResponse.json(
-        { error: 'Booking not found' },
+        { error: 'Réservation non trouvée' },
         { status: 404 }
       )
     }
 
-    // Check permissions
-    const canModify = 
-      currentBooking.client_id === session.user.id ||
-      currentBooking.partner_id === session.user.id ||
-      ['admin', 'manager'].includes(session.user.role)
-
-    if (!canModify) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      )
-    }
-
-    // Prepare update data
-    const updateData: any = {}
-    if (status !== undefined) updateData.status = status
-    if (payment_status !== undefined) updateData.payment_status = payment_status
-    if (special_requests !== undefined) updateData.special_requests = special_requests
-    updateData.updated_at = new Date().toISOString()
-
-    // Update the booking
-    const { data: updatedBooking, error: updateError } = await supabase
-      .from('bookings')
-      .update(updateData)
-      .eq('id', params.id)
+    // Update reservation
+    const { data: updatedReservation, error: updateError } = await supabase
+      .from('reservations')
+      .update({
+        ...body,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
       .select()
       .single()
 
     if (updateError) {
-      console.error('Booking update error:', updateError)
+      console.error('Error updating reservation:', updateError)
       return NextResponse.json(
-        { error: 'Failed to update booking' },
+        { error: 'Erreur lors de la mise à jour' },
         { status: 500 }
       )
     }
 
-    return NextResponse.json({
-      success: true,
-      booking: updatedBooking
-    })
+    return NextResponse.json(updatedReservation)
 
   } catch (error) {
-    console.error('Booking update API error:', error)
+    console.error('Error updating booking:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Erreur serveur' },
       { status: 500 }
     )
   }

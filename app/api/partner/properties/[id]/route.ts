@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createClient()
@@ -14,7 +14,8 @@ export async function GET(
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 
-    const propertyId = params.id
+    const { id } = await params;
+    const propertyId = id;
 
     // Get property with ownership verification
     const { data: property, error } = await supabase
@@ -41,7 +42,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createClient()
@@ -53,7 +54,8 @@ export async function PUT(
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 
-    const propertyId = params.id
+    const { id } = await params;
+    const propertyId = id;
 
     // Verify property ownership
     const { data: existingProperty, error: fetchError } = await supabase

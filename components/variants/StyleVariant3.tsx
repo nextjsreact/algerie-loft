@@ -14,12 +14,12 @@ export default function StyleVariant3() {
           <div className="flex items-center justify-between">
             <HeaderLogo />
             <nav className="hidden md:flex space-x-8">
-              <a href="#" className="text-amber-800 hover:text-amber-600 transition-colors font-semibold">Accueil</a>
-              <a href="#" className="text-amber-800 hover:text-amber-600 transition-colors font-semibold">Nos Lofts</a>
-              <a href="#" className="text-amber-800 hover:text-amber-600 transition-colors font-semibold">Services</a>
-              <a href="#" className="text-amber-800 hover:text-amber-600 transition-colors font-semibold">À Propos</a>
+              <a href="#" className="text-amber-800 hover:text-amber-600 transition-colors font-bold text-lg">Accueil</a>
+              <a href="#" className="text-amber-800 hover:text-amber-600 transition-colors font-bold text-lg">Nos Lofts</a>
+              <a href="#" className="text-amber-800 hover:text-amber-600 transition-colors font-bold text-lg">Services</a>
+              <a href="#" className="text-amber-800 hover:text-amber-600 transition-colors font-bold text-lg">À Propos</a>
             </nav>
-            <button className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-3 rounded-full hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg">
+            <button className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-8 py-4 rounded-full hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg font-bold text-lg">
               Nous Contacter
             </button>
           </div>

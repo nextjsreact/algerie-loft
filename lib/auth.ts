@@ -86,10 +86,20 @@ export async function requireRoleAPI(allowedRoles: UserRole[]): Promise<AuthSess
 }
 
 export async function login(email: string, password: string, locale?: string): Promise<{ success: boolean; error?: string }> {
-  // For server-side login, we need to handle this differently
-  // The actual sign-in should happen on the client side
-  // This function should only validate credentials
+  // Check account lockout status
+  const { AccountLockout } = await import('./security/password-security');
+  const lockoutStatus = await AccountLockout.isAccountLocked(email);
   
+  if (lockoutStatus.isLocked) {
+    const timeRemaining = lockoutStatus.lockoutExpires 
+      ? Math.ceil((lockoutStatus.lockoutExpires.getTime() - new Date().getTime()) / (1000 * 60))
+      : 0;
+    return { 
+      success: false, 
+      error: `Account is locked due to multiple failed login attempts. Please try again in ${timeRemaining} minutes.` 
+    };
+  }
+
   const supabase = await createClient() // Use normal client
   
   try {
@@ -100,17 +110,42 @@ export async function login(email: string, password: string, locale?: string): P
 
     if (error) {
       console.error("Supabase signInWithPassword error:", error);
+      
+      // Record failed login attempt
+      await AccountLockout.recordFailedAttempt(email);
+      
       return { success: false, error: error.message }
     }
 
     if (data.user) {
       console.log("Login successful for user:", data.user.email);
+      
+      // Clear any failed login attempts on successful login
+      await AccountLockout.clearFailedAttempts(email);
+      
+      // Record successful login for audit
+      try {
+        const { DataLifecycleTracker } = await import('./security/data-retention');
+        await DataLifecycleTracker.recordEvent({
+          userId: data.user.id,
+          dataType: 'user_profile',
+          action: 'accessed',
+          metadata: { action: 'login', timestamp: new Date().toISOString() }
+        });
+      } catch (auditError) {
+        console.error('Failed to record login audit:', auditError);
+      }
+      
       return { success: true }
     }
 
     return { success: false, error: "No user data returned" }
   } catch (err) {
     console.error("Login exception:", err);
+    
+    // Record failed login attempt
+    await AccountLockout.recordFailedAttempt(email);
+    
     return { success: false, error: "Authentication failed" }
   }
 }
@@ -121,8 +156,28 @@ export async function register(
   fullName: string,
   role: UserRole = 'member'
 ): Promise<{ success: boolean; error?: string }> {
+  // Validate password strength
+  const { validatePasswordStrength } = await import('./security/password-security');
+  const passwordValidation = validatePasswordStrength(password);
+  
+  if (!passwordValidation.isValid) {
+    return { 
+      success: false, 
+      error: `Password requirements not met: ${passwordValidation.errors.join(', ')}` 
+    };
+  }
+
+  // Check if password is compromised
+  const { checkPasswordCompromise } = await import('./security/password-security');
+  if (checkPasswordCompromise(password)) {
+    return { 
+      success: false, 
+      error: 'This password has been found in data breaches. Please choose a different password.' 
+    };
+  }
+
   const supabase = await createClient() // Use normal client (anon key) for user auth
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -135,6 +190,45 @@ export async function register(
 
   if (error) {
     return { success: false, error: error.message }
+  }
+
+  // Record GDPR consent and data processing
+  if (data.user) {
+    try {
+      const { ConsentManager, DataProcessingRegistry } = await import('./security/gdpr-compliance');
+      const { DataLifecycleTracker } = await import('./security/data-retention');
+      
+      // Record consent for account creation
+      await ConsentManager.recordConsent({
+        userId: data.user.id,
+        dataCategory: 'personal_identity' as any,
+        legalBasis: 'contract' as any,
+        purpose: 'Account creation and service provision',
+        consentGiven: true,
+        version: '1.0'
+      });
+
+      // Record data processing activity
+      await DataProcessingRegistry.recordProcessing({
+        userId: data.user.id,
+        dataCategory: 'personal_identity' as any,
+        legalBasis: 'contract' as any,
+        purpose: 'User account management',
+        dataFields: ['email', 'full_name', 'role'],
+        encrypted: false,
+        source: 'registration_form'
+      });
+
+      // Record lifecycle event
+      await DataLifecycleTracker.recordEvent({
+        userId: data.user.id,
+        dataType: 'user_profile',
+        action: 'created'
+      });
+    } catch (gdprError) {
+      // Log GDPR error but don't fail registration
+      console.error('GDPR compliance recording failed:', gdprError);
+    }
   }
 
   return { success: true }

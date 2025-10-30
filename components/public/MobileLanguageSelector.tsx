@@ -23,8 +23,8 @@ export default function MobileLanguageSelector({ locale, onLanguageChange }: Mob
       onLanguageChange();
     }
     
-    // Navigate to new locale
-    window.location.href = `/${newLocale}/public`;
+    // Navigate to new locale - now points to main page
+    window.location.href = `/${newLocale}`;
   };
 
   return (

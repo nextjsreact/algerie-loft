@@ -4,6 +4,7 @@ import "./globals.css"
 import { AnalyticsProvider } from "@/components/providers/analytics-provider"
 import { LogoInitializer } from "@/components/providers/logo-initializer"
 import { PerformanceProvider } from "@/components/providers/PerformanceProvider"
+import { DatabaseInitializer } from "@/components/providers/database-initializer"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -110,11 +111,13 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <PerformanceProvider enableMonitoring={process.env.NODE_ENV === 'development'}>
-          <LogoInitializer>
-            <AnalyticsProvider>
-              {children}
-            </AnalyticsProvider>
-          </LogoInitializer>
+          <DatabaseInitializer enableSeeding={process.env.NODE_ENV !== 'production'}>
+            <LogoInitializer>
+              <AnalyticsProvider>
+                {children}
+              </AnalyticsProvider>
+            </LogoInitializer>
+          </DatabaseInitializer>
         </PerformanceProvider>
       </body>
     </html>

@@ -14,12 +14,12 @@ export default function StyleVariant2() {
           <div className="flex items-center justify-between">
             <HeaderLogo />
             <nav className="hidden md:flex space-x-12">
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors font-medium tracking-wide">ACCUEIL</a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors font-medium tracking-wide">LOFTS</a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors font-medium tracking-wide">SERVICES</a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors font-medium tracking-wide">CONTACT</a>
+              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors font-semibold text-lg tracking-wide">ACCUEIL</a>
+              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors font-semibold text-lg tracking-wide">LOFTS</a>
+              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors font-semibold text-lg tracking-wide">SERVICES</a>
+              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors font-semibold text-lg tracking-wide">CONTACT</a>
             </nav>
-            <button className="bg-blue-600 text-white px-8 py-3 hover:bg-blue-700 transition-colors font-medium tracking-wide">
+            <button className="bg-blue-600 text-white px-10 py-4 hover:bg-blue-700 transition-colors font-bold text-lg tracking-wide">
               RÉSERVER
             </button>
           </div>

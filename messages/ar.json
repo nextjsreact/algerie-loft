@@ -691,7 +691,34 @@
     "statusTitle": "الحالة",
     "selectStatuses": "تحديد الحالات",
     "allStatuses": "كل الحالات",
-    "statusesSelected": "{count} حالات محددة"
+    "statusesSelected": "{count} حالات محددة",
+    "calendar": {
+      "selectDates": "اختيار التواريخ",
+      "selectDatesDescription": "اختر تواريخ الوصول والمغادرة"
+    },
+    "errors": {
+      "fetchFailed": "فشل في تحميل بيانات التوفر",
+      "availabilityCheckFailed": "خطأ في فحص التوفر",
+      "minimumStay": "الحد الأدنى للإقامة {nights} ليلة مطلوب",
+      "maximumStay": "الحد الأقصى للإقامة {nights} ليلة مسموح"
+    },
+    "pricing": {
+      "title": "تفصيل الأسعار",
+      "description": "السعر لـ {nights} ليلة",
+      "nightlyRate": "سعر الليلة ({nights} ليالي)",
+      "cleaningFee": "رسوم التنظيف",
+      "serviceFee": "رسوم الخدمة",
+      "taxes": "الضرائب",
+      "total": "المجموع",
+      "calculating": "حساب السعر...",
+      "seasonalPricing": "تم تطبيق الأسعار الموسمية للتواريخ المحددة"
+    },
+    "rules": {
+      "title": "قواعد الحجز",
+      "minimumStay": "الحد الأدنى للإقامة: {nights} ليلة",
+      "maximumStay": "الحد الأقصى للإقامة: {nights} ليلة",
+      "pricePerNight": "السعر لكل ليلة: {price} يورو"
+    }
   },
   "bills": {
     "amount": "المبلغ",

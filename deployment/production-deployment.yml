@@ -1,0 +1,297 @@
+# =====================================================
+# PRODUCTION DEPLOYMENT CONFIGURATION
+# =====================================================
+# Docker Compose configuration for production deployment
+# Requirements: 10.1, 10.2
+# =====================================================
+
+version: '3.8'
+
+services:
+  # =====================================================
+  # APPLICATION SERVICE
+  # =====================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+      args:
+        NODE_ENV: production
+    image: loft-algerie:production
+    container_name: loft-algerie-app
+    restart: unless-stopped
+    
+    # Environment Configuration
+    env_file:
+      - .env.production
+    
+    # Port Mapping
+    ports:
+      - "3000:3000"
+    
+    # Health Check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Resource Limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    
+    # Logging Configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+    
+    # Dependencies
+    depends_on:
+      - redis
+    
+    # Networks
+    networks:
+      - app-network
+    
+    # Volumes
+    volumes:
+      - app-logs:/var/log/loft-algerie
+      - app-uploads:/app/uploads
+      - app-cache:/app/.next/cache
+
+  # =====================================================
+  # REDIS CACHE SERVICE
+  # =====================================================
+  redis:
+    image: redis:7-alpine
+    container_name: loft-algerie-redis
+    restart: unless-stopped
+    
+    # Configuration
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    
+    # Port Mapping (internal only)
+    expose:
+      - "6379"
+    
+    # Health Check
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    
+    # Resource Limits
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    
+    # Volumes
+    volumes:
+      - redis-data:/data
+    
+    # Networks
+    networks:
+      - app-network
+
+  # =====================================================
+  # NGINX REVERSE PROXY
+  # =====================================================
+  nginx:
+    image: nginx:alpine
+    container_name: loft-algerie-nginx
+    restart: unless-stopped
+    
+    # Port Mapping
+    ports:
+      - "80:80"
+      - "443:443"
+    
+    # Configuration
+    volumes:
+      - ./deployment/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deployment/nginx/sites-available:/etc/nginx/sites-available:ro
+      - ./deployment/ssl:/etc/nginx/ssl:ro
+      - nginx-logs:/var/log/nginx
+    
+    # Health Check
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    
+    # Dependencies
+    depends_on:
+      - app
+    
+    # Networks
+    networks:
+      - app-network
+
+  # =====================================================
+  # MONITORING SERVICES
+  # =====================================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: loft-algerie-prometheus
+    restart: unless-stopped
+    
+    # Configuration
+    volumes:
+      - ./deployment/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    
+    # Port Mapping (internal monitoring)
+    expose:
+      - "9090"
+    
+    # Command
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    
+    # Networks
+    networks:
+      - monitoring-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: loft-algerie-grafana
+    restart: unless-stopped
+    
+    # Environment
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    
+    # Volumes
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./deployment/monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./deployment/monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    
+    # Port Mapping
+    ports:
+      - "3001:3000"
+    
+    # Dependencies
+    depends_on:
+      - prometheus
+    
+    # Networks
+    networks:
+      - monitoring-network
+
+  # =====================================================
+  # LOG AGGREGATION
+  # =====================================================
+  loki:
+    image: grafana/loki:latest
+    container_name: loft-algerie-loki
+    restart: unless-stopped
+    
+    # Configuration
+    volumes:
+      - ./deployment/logging/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    
+    # Port Mapping
+    expose:
+      - "3100"
+    
+    # Networks
+    networks:
+      - monitoring-network
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: loft-algerie-promtail
+    restart: unless-stopped
+    
+    # Configuration
+    volumes:
+      - ./deployment/logging/promtail-config.yml:/etc/promtail/config.yml:ro
+      - app-logs:/var/log/loft-algerie:ro
+      - nginx-logs:/var/log/nginx:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    
+    # Dependencies
+    depends_on:
+      - loki
+    
+    # Networks
+    networks:
+      - monitoring-network
+
+# =====================================================
+# NETWORKS
+# =====================================================
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+  
+  monitoring-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
+# =====================================================
+# VOLUMES
+# =====================================================
+volumes:
+  # Application Data
+  app-logs:
+    driver: local
+  app-uploads:
+    driver: local
+  app-cache:
+    driver: local
+  
+  # Database & Cache
+  redis-data:
+    driver: local
+  
+  # Monitoring Data
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+  loki-data:
+    driver: local
+  
+  # Logs
+  nginx-logs:
+    driver: local
+
+# =====================================================
+# DEPLOYMENT NOTES
+# =====================================================
+# 1. Ensure .env.production is properly configured
+# 2. SSL certificates should be placed in deployment/ssl/
+# 3. Run with: docker-compose -f deployment/production-deployment.yml up -d
+# 4. Monitor logs with: docker-compose logs -f
+# 5. Scale app service: docker-compose up -d --scale app=3
+# 6. Update deployment: docker-compose pull && docker-compose up -d

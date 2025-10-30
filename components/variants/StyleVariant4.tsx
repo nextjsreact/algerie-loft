@@ -31,7 +31,7 @@ export default function StyleVariant4() {
                 <a 
                   key={item}
                   href="#" 
-                  className={`font-medium transition-colors ${
+                  className={`font-bold text-lg transition-colors ${
                     isDark 
                       ? 'text-gray-300 hover:text-white' 
                       : 'text-gray-700 hover:text-indigo-600'
@@ -52,7 +52,7 @@ export default function StyleVariant4() {
               >
                 {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               </button>
-              <button className={`px-6 py-3 rounded-full font-medium transition-all ${
+              <button className={`px-8 py-4 rounded-full font-bold text-lg transition-all ${
                 isDark 
                   ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700' 
                   : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700'

@@ -39,7 +39,7 @@ export default function StyleVariant6() {
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className={`font-bold text-sm tracking-[0.2em] transition-all duration-300 relative group ${
+                  className={`font-bold text-lg tracking-[0.2em] transition-all duration-300 relative group ${
                     isDark 
                       ? 'text-zinc-400 hover:text-white' 
                       : 'text-zinc-600 hover:text-black'
@@ -95,14 +95,14 @@ export default function StyleVariant6() {
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`px-8 py-3 rounded-full font-bold text-sm tracking-wide transition-all duration-500 ${
+                className={`px-10 py-4 rounded-full font-bold text-lg tracking-wide transition-all duration-500 ${
                   isDark 
                     ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-black hover:from-cyan-400 hover:to-blue-400' 
                     : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700'
                 }`}
               >
                 BOOK NOW
-              </motion.button>
+              </button>
             </div>
           </div>
         </div>

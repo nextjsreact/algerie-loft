@@ -138,32 +138,51 @@ export default function LoftCard({
         className={cn("group", className)}
       >
         <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-          {/* Image Gallery */}
+          {/* Image Gallery - Glissement fluide */}
           <div className="relative aspect-[4/3] overflow-hidden">
-            <ResponsiveImage
-              src={loft.images[currentImageIndex]}
-              alt={loft.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
+            {/* Container de glissement pour les images */}
+            <div className="relative w-full h-full">
+              {loft.images.map((image, index) => {
+                // Calcul de la position pour le glissement fluide
+                const position = (index - currentImageIndex) * 100;
+                
+                return (
+                  <div
+                    key={index}
+                    className="absolute top-0 w-full h-full"
+                    style={{
+                      left: `${position}%`,
+                      transition: 'left 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)',
+                    }}
+                  >
+                    <ResponsiveImage
+                      src={image}
+                      alt={loft.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                );
+              })}
+            </div>
             
             {/* Image Navigation */}
             {loft.images.length > 1 && (
               <>
                 <button
                   onClick={() => handleImageNavigation('prev')}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity z-10"
                 >
                   ←
                 </button>
                 <button
                   onClick={() => handleImageNavigation('next')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity z-10"
                 >
                   →
                 </button>
                 
                 {/* Image Indicators */}
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 z-10">
                   {loft.images.map((_, index) => (
                     <button
                       key={index}
@@ -378,14 +397,33 @@ function QuickViewModal({ isOpen, onClose, loft, locale, onBookingClick }: Quick
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 p-6">
-          {/* Image Gallery */}
+          {/* Image Gallery - Glissement fluide */}
           <div className="space-y-4">
             <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
-              <ResponsiveImage
-                src={loft.images[currentImageIndex]}
-                alt={loft.title}
-                className="w-full h-full object-cover"
-              />
+              {/* Container de glissement pour les images */}
+              <div className="relative w-full h-full">
+                {loft.images.map((image, index) => {
+                  // Calcul de la position pour le glissement fluide
+                  const position = (index - currentImageIndex) * 100;
+                  
+                  return (
+                    <div
+                      key={index}
+                      className="absolute top-0 w-full h-full"
+                      style={{
+                        left: `${position}%`,
+                        transition: 'left 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)',
+                      }}
+                    >
+                      <ResponsiveImage
+                        src={image}
+                        alt={loft.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
             
             {loft.images.length > 1 && (

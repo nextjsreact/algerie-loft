@@ -1,0 +1,106 @@
+# =====================================================
+# PRODUCTION DOCKERFILE
+# =====================================================
+# Multi-stage Docker build for production deployment
+# Requirements: 10.1, 10.2
+# =====================================================
+
+# =====================================================
+# STAGE 1: Dependencies
+# =====================================================
+FROM node:18-alpine AS deps
+LABEL stage=deps
+
+# Install system dependencies
+RUN apk add --no-cache libc6-compat
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json ./
+
+# Install dependencies
+RUN npm ci --only=production --frozen-lockfile
+
+# =====================================================
+# STAGE 2: Builder
+# =====================================================
+FROM node:18-alpine AS builder
+LABEL stage=builder
+
+# Set working directory
+WORKDIR /app
+
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copy source code
+COPY . .
+
+# Set build environment
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build application
+RUN npm run build
+
+# =====================================================
+# STAGE 3: Production Runtime
+# =====================================================
+FROM node:18-alpine AS runner
+LABEL stage=runner
+
+# Set production environment
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Create app user for security
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Set working directory
+WORKDIR /app
+
+# Install runtime dependencies
+RUN apk add --no-cache \
+    curl \
+    dumb-init \
+    && rm -rf /var/cache/apk/*
+
+# Copy built application
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+# Create necessary directories
+RUN mkdir -p /var/log/loft-algerie /app/uploads /app/.next/cache
+
+# Set proper permissions
+RUN chown -R nextjs:nodejs /app /var/log/loft-algerie
+RUN chmod -R 755 /app /var/log/loft-algerie
+
+# Switch to non-root user
+USER nextjs
+
+# Expose port
+EXPOSE 3000
+
+# Set environment variables
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:3000/api/health || exit 1
+
+# Start application with dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["node", "server.js"]
+
+# =====================================================
+# BUILD INSTRUCTIONS
+# =====================================================
+# Build: docker build -f Dockerfile.production -t loft-algerie:production .
+# Run: docker run -p 3000:3000 --env-file .env.production loft-algerie:production
+# =====================================================

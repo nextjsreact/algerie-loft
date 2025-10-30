@@ -268,10 +268,10 @@ export default function DualAudienceHomepage({ locale }: DualAudienceHomepagePro
 
             {/* Auth Buttons */}
             <div className="flex items-center space-x-3">
-              <button className="text-gray-600 hover:text-blue-600 px-4 py-2 rounded-lg transition-colors">
+              <button className="text-gray-600 hover:text-blue-600 px-6 py-3 rounded-lg transition-colors font-bold text-lg">
                 {t.login}
               </button>
-              <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              <button className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-bold text-lg">
                 {t.signup}
               </button>
             </div>

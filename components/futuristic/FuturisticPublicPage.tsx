@@ -292,19 +292,7 @@ export default function FuturisticPublicPage({ locale }: FuturisticPublicPagePro
       
       <BackToTop />
       
-      {/* Performance monitoring in development */}
-      {process.env.NODE_ENV === 'development' && isOptimized && (
-        <div className="fixed bottom-4 right-4 p-4 bg-black/80 text-white text-xs rounded-lg max-w-xs">
-          <div className="font-semibold mb-2">Performance Metrics</div>
-          <div>Audience: {audience}</div>
-          {webVitals.LCP && <div>LCP: {Math.round(webVitals.LCP)}ms</div>}
-          {webVitals.FID && <div>FID: {Math.round(webVitals.FID)}ms</div>}
-          {webVitals.CLS && <div>CLS: {webVitals.CLS.toFixed(3)}</div>}
-          {performanceMetrics?.cacheHitRate && (
-            <div>Cache Hit Rate: {Math.round(performanceMetrics.cacheHitRate)}%</div>
-          )}
-        </div>
-      )}
+
     </div>
   );
 }

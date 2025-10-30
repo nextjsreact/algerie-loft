@@ -1,97 +1,102 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const loftId = params.id
-    const { searchParams } = new URL(request.url)
-    const checkIn = searchParams.get('check_in')
-    const checkOut = searchParams.get('check_out')
+    const { id } = await params;
+    const { searchParams } = new URL(request.url);
+    
+    const checkIn = searchParams.get('check_in');
+    const checkOut = searchParams.get('check_out');
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Loft ID is required" },
+        { status: 400 }
+      );
+    }
 
     if (!checkIn || !checkOut) {
       return NextResponse.json(
-        { error: 'check_in and check_out dates are required' },
+        { error: "Check-in and check-out dates are required" },
         { status: 400 }
-      )
+      );
     }
 
-    const supabase = await createClient()
+    const supabase = await createClient();
 
-    // Check availability using the database function
-    const { data: isAvailable, error: availabilityError } = await supabase.rpc(
-      'check_loft_availability',
-      {
-        p_loft_id: loftId,
-        p_check_in: checkIn,
-        p_check_out: checkOut
-      }
-    )
+    // Check if loft exists and is published
+    const { data: loft, error: loftError } = await supabase
+      .from('lofts')
+      .select('id, name, status, is_published, minimum_stay, maximum_stay')
+      .eq('id', id)
+      .single();
 
-    if (availabilityError) {
-      console.error('Availability check error:', availabilityError)
+    if (loftError || !loft) {
       return NextResponse.json(
-        { error: 'Failed to check availability' },
-        { status: 500 }
-      )
+        { error: "Loft not found" },
+        { status: 404 }
+      );
     }
 
-    if (!isAvailable) {
+    if (!loft.is_published || loft.status !== 'available') {
       return NextResponse.json({
         available: false,
-        message: 'Le loft n\'est pas disponible pour ces dates'
-      })
+        reason: "Loft is not available for booking"
+      });
     }
 
-    // Calculate total price using the database function
-    const { data: totalPrice, error: priceError } = await supabase.rpc(
-      'calculate_booking_total',
-      {
-        p_loft_id: loftId,
-        p_check_in: checkIn,
-        p_check_out: checkOut
-      }
-    )
+    // Check for unavailable dates in the range
+    const { data: unavailableDates, error: availabilityError } = await supabase
+      .from('loft_availability')
+      .select('date, notes')
+      .eq('loft_id', id)
+      .eq('is_available', false)
+      .gte('date', checkIn)
+      .lt('date', checkOut);
 
-    if (priceError) {
-      console.error('Price calculation error:', priceError)
+    if (availabilityError) {
+      console.error("Availability check error:", availabilityError);
       return NextResponse.json(
-        { error: 'Failed to calculate price' },
+        { error: "Failed to check availability" },
         { status: 500 }
-      )
+      );
     }
 
-    // Calculate number of nights
-    const checkInDate = new Date(checkIn)
-    const checkOutDate = new Date(checkOut)
-    const nights = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24))
+    // Calculate stay duration
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+    const stayDuration = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24));
 
-    // Calculate fees (simplified for now)
-    const serviceFee = Math.round(totalPrice * 0.1) // 10% service fee
-    const cleaningFee = 2000 // Fixed cleaning fee in DZD
-    const totalWithFees = totalPrice + serviceFee + cleaningFee
+    // Check minimum and maximum stay requirements
+    let available = true;
+    let reason = "";
+
+    if (unavailableDates && unavailableDates.length > 0) {
+      available = false;
+      reason = "Some dates in the selected range are not available";
+    } else if (loft.minimum_stay && stayDuration < loft.minimum_stay) {
+      available = false;
+      reason = `Minimum stay is ${loft.minimum_stay} nights`;
+    } else if (loft.maximum_stay && stayDuration > loft.maximum_stay) {
+      available = false;
+      reason = `Maximum stay is ${loft.maximum_stay} nights`;
+    }
 
     return NextResponse.json({
-      available: true,
-      pricing: {
-        basePrice: totalPrice,
-        nights: nights,
-        pricePerNight: Math.round(totalPrice / nights),
-        fees: {
-          service: serviceFee,
-          cleaning: cleaningFee
-        },
-        total: totalWithFees
-      }
-    })
+      available,
+      reason: available ? "Available for booking" : reason,
+      stay_duration: stayDuration,
+      minimum_stay: loft.minimum_stay,
+      maximum_stay: loft.maximum_stay,
+      unavailable_dates: unavailableDates || []
+    });
 
   } catch (error) {
-    console.error('Availability API error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    console.error("Availability API error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

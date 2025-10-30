@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface BookingDetails {
@@ -28,13 +28,14 @@ interface BookingDetails {
 }
 
 interface BookingPageProps {
-  params: {
+  params: Promise<{
     id: string
     locale: string
-  }
+  }>
 }
 
 export default function BookingDetailPage({ params }: BookingPageProps) {
+  const resolvedParams = use(params)
   const router = useRouter()
   const [booking, setBooking] = useState<BookingDetails | null>(null)
   const [loading, setLoading] = useState(true)
@@ -44,7 +45,7 @@ export default function BookingDetailPage({ params }: BookingPageProps) {
   const fetchBookingDetails = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/bookings/${params.id}`)
+      const response = await fetch(`/api/bookings/${resolvedParams.id}`)
       
       if (!response.ok) {
         throw new Error('Réservation non trouvée')
@@ -61,7 +62,7 @@ export default function BookingDetailPage({ params }: BookingPageProps) {
 
   useEffect(() => {
     fetchBookingDetails()
-  }, [params.id])
+  }, [resolvedParams.id])
 
   const calculateNights = () => {
     if (!booking) return 0

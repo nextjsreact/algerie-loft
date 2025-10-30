@@ -130,7 +130,7 @@ export default function StyleVariant8() {
               <HeaderLogo className="drop-shadow-lg" />
               <div className="hidden md:block">
                 <motion.div 
-                  className="text-2xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent"
+                  className="text-3xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent"
                   animate={{
                     backgroundPosition: prefersReducedMotion ? '0%' : ['0%', '100%', '0%'],
                   }}
@@ -141,7 +141,7 @@ export default function StyleVariant8() {
                 >
                   Loft Algérie
                 </motion.div>
-                <div className={`text-sm font-medium transition-colors duration-500 ${
+                <div className={`text-base font-semibold transition-colors duration-500 ${
                   theme === 'dark' ? 'text-teal-300' : 'text-teal-700'
                 }`}>
                   Votre Confort Notre Priorité
@@ -154,7 +154,7 @@ export default function StyleVariant8() {
                 <motion.a
                   key={item}
                   href="#"
-                  className={`font-medium transition-colors relative group ${
+                  className={`font-bold text-lg transition-colors relative group ${
                     theme === 'dark' 
                       ? 'text-teal-200 hover:text-emerald-300' 
                       : 'text-teal-800 hover:text-emerald-600'
@@ -175,7 +175,7 @@ export default function StyleVariant8() {
             <div className="flex items-center space-x-4">
               <ThemeToggle variant="emerald" />
               <motion.button
-                className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
                 whileHover={{ scale: prefersReducedMotion ? 1 : 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
               >

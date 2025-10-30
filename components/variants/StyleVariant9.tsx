@@ -121,14 +121,14 @@ export default function StyleVariant9() {
               <HeaderLogo className="drop-shadow-sm" />
               <div className="hidden md:block">
                 <motion.div 
-                  className="text-2xl font-bold bg-gradient-to-r from-slate-700 via-gray-800 to-stone-700 bg-clip-text text-transparent"
+                  className="text-3xl font-bold bg-gradient-to-r from-slate-700 via-gray-800 to-stone-700 bg-clip-text text-transparent"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
                 >
                   Loft Algérie
                 </motion.div>
-                <div className="text-sm text-slate-600 font-medium">Votre Confort Notre Priorité</div>
+                <div className="text-base text-slate-600 font-semibold">Votre Confort Notre Priorité</div>
               </div>
             </div>
             
@@ -137,7 +137,7 @@ export default function StyleVariant9() {
                 <motion.a
                   key={item}
                   href="#"
-                  className="text-slate-700 hover:text-gray-900 font-medium transition-colors relative group"
+                  className="text-slate-700 hover:text-gray-900 font-semibold text-lg transition-colors relative group"
                   whileHover={{ scale: prefersReducedMotion ? 1 : 1.05 }}
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -152,7 +152,7 @@ export default function StyleVariant9() {
             </nav>
 
             <motion.button
-              className="bg-gradient-to-r from-slate-700 to-gray-800 text-white px-6 py-2 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-gradient-to-r from-slate-700 to-gray-800 text-white px-8 py-3 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
               whileHover={{ scale: prefersReducedMotion ? 1 : 1.05, y: -1 }}
               whileTap={{ scale: 0.95 }}
             >

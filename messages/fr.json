@@ -690,7 +690,34 @@
     "status": "Statut",
     "selectStatuses": "Sélectionner les statuts",
     "allStatuses": "Tous les statuts",
-    "statusesSelected": "{count} statuts sélectionnés"
+    "statusesSelected": "{count} statuts sélectionnés",
+    "calendar": {
+      "selectDates": "Sélectionner les dates",
+      "selectDatesDescription": "Choisissez vos dates d'arrivée et de départ"
+    },
+    "errors": {
+      "fetchFailed": "Impossible de charger les données de disponibilité",
+      "availabilityCheckFailed": "Erreur lors de la vérification de la disponibilité",
+      "minimumStay": "Séjour minimum de {nights} nuit(s) requis",
+      "maximumStay": "Séjour maximum de {nights} nuit(s) autorisé"
+    },
+    "pricing": {
+      "title": "Détail des prix",
+      "description": "Prix pour {nights} nuit(s)",
+      "nightlyRate": "Tarif nuitée ({nights} nuits)",
+      "cleaningFee": "Frais de ménage",
+      "serviceFee": "Frais de service",
+      "taxes": "Taxes",
+      "total": "Total",
+      "calculating": "Calcul du prix en cours...",
+      "seasonalPricing": "Tarifs saisonniers appliqués pour certaines dates"
+    },
+    "rules": {
+      "title": "Règles de réservation",
+      "minimumStay": "Séjour minimum : {nights} nuit(s)",
+      "maximumStay": "Séjour maximum : {nights} nuit(s)",
+      "pricePerNight": "Prix par nuit : {price} EUR"
+    }
   },
   "bills": {
     "amount": "Montant",

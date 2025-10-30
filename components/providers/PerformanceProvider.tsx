@@ -170,7 +170,7 @@ export function PerformanceProvider({
     <PerformanceContext.Provider value={contextValue}>
       <OptimizedFonts />
       {children}
-      {(isMonitoringEnabled || enableDebugMode) && <PerformanceMonitor />}
+      {/* Performance Monitor disabled for production */}
     </PerformanceContext.Provider>
   );
 }

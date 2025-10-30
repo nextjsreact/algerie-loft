@@ -252,18 +252,37 @@ function MobileLoftCard({
 
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-      {/* Image Gallery with Touch Navigation */}
+      {/* Image Gallery with Touch Navigation - Glissement fluide */}
       <div className="relative aspect-[4/3] overflow-hidden">
-        <ResponsiveImage
-          src={loft.images[currentImageIndex]}
-          alt={loft.title}
-          className="w-full h-full object-cover"
-        />
+        {/* Container de glissement pour les images */}
+        <div className="relative w-full h-full">
+          {loft.images.map((image, index) => {
+            // Calcul de la position pour le glissement fluide
+            const position = (index - currentImageIndex) * 100;
+            
+            return (
+              <div
+                key={index}
+                className="absolute top-0 w-full h-full"
+                style={{
+                  left: `${position}%`,
+                  transition: 'left 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)',
+                }}
+              >
+                <ResponsiveImage
+                  src={image}
+                  alt={loft.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            );
+          })}
+        </div>
 
         {/* Image Navigation for Touch */}
         {loft.images.length > 1 && (
           <>
-            <div className="absolute inset-0 flex">
+            <div className="absolute inset-0 flex z-10">
               <button
                 className="flex-1"
                 onClick={() => setCurrentImageIndex(
@@ -279,7 +298,7 @@ function MobileLoftCard({
             </div>
 
             {/* Image Indicators */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 z-10">
               {loft.images.map((_, index) => (
                 <div
                   key={index}

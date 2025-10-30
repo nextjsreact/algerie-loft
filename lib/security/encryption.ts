@@ -215,6 +215,180 @@ export function maskSensitiveData(data: string, visibleChars: number = 4): strin
 }
 
 /**
+ * Encrypt user personal data (PII)
+ */
+export async function encryptPersonalData(personalData: {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  address?: string;
+  nationalId?: string;
+  passportNumber?: string;
+  dateOfBirth?: string;
+}): Promise<{
+  encryptedFirstName?: string;
+  encryptedLastName?: string;
+  encryptedPhone?: string;
+  encryptedAddress?: string;
+  encryptedNationalId?: string;
+  encryptedPassportNumber?: string;
+  encryptedDateOfBirth?: string;
+}> {
+  const encrypted: any = {};
+
+  if (personalData.firstName) {
+    encrypted.encryptedFirstName = await encryptSensitiveData(personalData.firstName);
+  }
+  if (personalData.lastName) {
+    encrypted.encryptedLastName = await encryptSensitiveData(personalData.lastName);
+  }
+  if (personalData.phone) {
+    encrypted.encryptedPhone = await encryptSensitiveData(personalData.phone);
+  }
+  if (personalData.address) {
+    encrypted.encryptedAddress = await encryptSensitiveData(personalData.address);
+  }
+  if (personalData.nationalId) {
+    encrypted.encryptedNationalId = await encryptSensitiveData(personalData.nationalId);
+  }
+  if (personalData.passportNumber) {
+    encrypted.encryptedPassportNumber = await encryptSensitiveData(personalData.passportNumber);
+  }
+  if (personalData.dateOfBirth) {
+    encrypted.encryptedDateOfBirth = await encryptSensitiveData(personalData.dateOfBirth);
+  }
+
+  return encrypted;
+}
+
+/**
+ * Decrypt user personal data (PII)
+ */
+export async function decryptPersonalData(encryptedPersonalData: {
+  encryptedFirstName?: string;
+  encryptedLastName?: string;
+  encryptedPhone?: string;
+  encryptedAddress?: string;
+  encryptedNationalId?: string;
+  encryptedPassportNumber?: string;
+  encryptedDateOfBirth?: string;
+}): Promise<{
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  address?: string;
+  nationalId?: string;
+  passportNumber?: string;
+  dateOfBirth?: string;
+}> {
+  const decrypted: any = {};
+
+  if (encryptedPersonalData.encryptedFirstName) {
+    decrypted.firstName = await decryptSensitiveData(encryptedPersonalData.encryptedFirstName);
+  }
+  if (encryptedPersonalData.encryptedLastName) {
+    decrypted.lastName = await decryptSensitiveData(encryptedPersonalData.encryptedLastName);
+  }
+  if (encryptedPersonalData.encryptedPhone) {
+    decrypted.phone = await decryptSensitiveData(encryptedPersonalData.encryptedPhone);
+  }
+  if (encryptedPersonalData.encryptedAddress) {
+    decrypted.address = await decryptSensitiveData(encryptedPersonalData.encryptedAddress);
+  }
+  if (encryptedPersonalData.encryptedNationalId) {
+    decrypted.nationalId = await decryptSensitiveData(encryptedPersonalData.encryptedNationalId);
+  }
+  if (encryptedPersonalData.encryptedPassportNumber) {
+    decrypted.passportNumber = await decryptSensitiveData(encryptedPersonalData.encryptedPassportNumber);
+  }
+  if (encryptedPersonalData.encryptedDateOfBirth) {
+    decrypted.dateOfBirth = await decryptSensitiveData(encryptedPersonalData.encryptedDateOfBirth);
+  }
+
+  return decrypted;
+}
+
+/**
+ * Encrypt reservation guest information
+ */
+export async function encryptGuestInfo(guestInfo: any): Promise<any> {
+  if (!guestInfo) return guestInfo;
+
+  const encrypted = { ...guestInfo };
+
+  // Encrypt primary guest information
+  if (encrypted.primary_guest) {
+    const primaryGuest = encrypted.primary_guest;
+    if (primaryGuest.first_name) {
+      primaryGuest.first_name = await encryptSensitiveData(primaryGuest.first_name);
+    }
+    if (primaryGuest.last_name) {
+      primaryGuest.last_name = await encryptSensitiveData(primaryGuest.last_name);
+    }
+    if (primaryGuest.phone) {
+      primaryGuest.phone = await encryptSensitiveData(primaryGuest.phone);
+    }
+    if (primaryGuest.nationality) {
+      primaryGuest.nationality = await encryptSensitiveData(primaryGuest.nationality);
+    }
+  }
+
+  // Encrypt additional guests information
+  if (encrypted.additional_guests && Array.isArray(encrypted.additional_guests)) {
+    for (const guest of encrypted.additional_guests) {
+      if (guest.first_name) {
+        guest.first_name = await encryptSensitiveData(guest.first_name);
+      }
+      if (guest.last_name) {
+        guest.last_name = await encryptSensitiveData(guest.last_name);
+      }
+    }
+  }
+
+  return encrypted;
+}
+
+/**
+ * Decrypt reservation guest information
+ */
+export async function decryptGuestInfo(encryptedGuestInfo: any): Promise<any> {
+  if (!encryptedGuestInfo) return encryptedGuestInfo;
+
+  const decrypted = { ...encryptedGuestInfo };
+
+  // Decrypt primary guest information
+  if (decrypted.primary_guest) {
+    const primaryGuest = decrypted.primary_guest;
+    if (primaryGuest.first_name) {
+      primaryGuest.first_name = await decryptSensitiveData(primaryGuest.first_name);
+    }
+    if (primaryGuest.last_name) {
+      primaryGuest.last_name = await decryptSensitiveData(primaryGuest.last_name);
+    }
+    if (primaryGuest.phone) {
+      primaryGuest.phone = await decryptSensitiveData(primaryGuest.phone);
+    }
+    if (primaryGuest.nationality) {
+      primaryGuest.nationality = await decryptSensitiveData(primaryGuest.nationality);
+    }
+  }
+
+  // Decrypt additional guests information
+  if (decrypted.additional_guests && Array.isArray(decrypted.additional_guests)) {
+    for (const guest of decrypted.additional_guests) {
+      if (guest.first_name) {
+        guest.first_name = await decryptSensitiveData(guest.first_name);
+      }
+      if (guest.last_name) {
+        guest.last_name = await decryptSensitiveData(guest.last_name);
+      }
+    }
+  }
+
+  return decrypted;
+}
+
+/**
  * Validate encryption environment setup
  */
 export function validateEncryptionSetup(): { isValid: boolean; errors: string[] } {

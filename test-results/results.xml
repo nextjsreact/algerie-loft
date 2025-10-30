@@ -1,0 +1,1003 @@
+<testsuites id="" name="" tests="30" failures="30" skipped="0" errors="0" time="240.26590800000002">
+<testsuite name="navigation.spec.ts" timestamp="2025-10-29T09:38:14.547Z" hostname="chromium" tests="6" failures="6" skipped="0" time="315.423" errors="0">
+<testcase name="🧭 Navigation › should display homepage correctly" classname="navigation.spec.ts" time="52.83">
+<failure message="navigation.spec.ts:12:3 should display homepage correctly" type="FAILURE">
+<![CDATA[  [chromium] › navigation.spec.ts:12:3 › 🧭 Navigation › should display homepage correctly ─────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      11 |
+      12 |   test('should display homepage correctly', async ({ page }) => {
+    > 13 |     await page.goto('/');
+         |                ^
+      14 |     
+      15 |     // Check main elements
+      16 |     await expect(page.locator('h1')).toContainText('Loft Algérie');
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:13:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-display-homepage-correctly-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-display-homepage-correctly-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should navigate to different sections from homepage" classname="navigation.spec.ts" time="52.54">
+<failure message="navigation.spec.ts:26:3 should navigate to different sections from homepage" type="FAILURE">
+<![CDATA[  [chromium] › navigation.spec.ts:26:3 › 🧭 Navigation › should navigate to different sections from homepage 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      25 |
+      26 |   test('should navigate to different sections from homepage', async ({ page }) => {
+    > 27 |     await page.goto('/');
+         |                ^
+      28 |     
+      29 |     // Test navigation to lofts
+      30 |     await page.click('text=Voir les Lofts');
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:27:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-s-d22cd-rent-sections-from-homepage-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-s-d22cd-rent-sections-from-homepage-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should display responsive navigation" classname="navigation.spec.ts" time="52.231">
+<failure message="navigation.spec.ts:48:3 should display responsive navigation" type="FAILURE">
+<![CDATA[  [chromium] › navigation.spec.ts:48:3 › 🧭 Navigation › should display responsive navigation ──────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+      - navigating to "http://localhost:3000/dashboard", waiting until "load"
+
+
+      49 |     // Test desktop navigation
+      50 |     await page.setViewportSize({ width: 1200, height: 800 });
+    > 51 |     await page.goto('/dashboard');
+         |                ^
+      52 |     
+      53 |     // Should show sidebar on desktop
+      54 |     await expect(page.locator('[data-testid="sidebar"]')).toBeVisible();
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:51:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-s-63103-splay-responsive-navigation-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-s-63103-splay-responsive-navigation-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should open mobile menu" classname="navigation.spec.ts" time="52.604">
+<failure message="navigation.spec.ts:67:3 should open mobile menu" type="FAILURE">
+<![CDATA[  [chromium] › navigation.spec.ts:67:3 › 🧭 Navigation › should open mobile menu ───────────────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+      - navigating to "http://localhost:3000/dashboard", waiting until "load"
+
+
+      67 |   test('should open mobile menu', async ({ page }) => {
+      68 |     await page.setViewportSize({ width: 375, height: 667 });
+    > 69 |     await page.goto('/dashboard');
+         |                ^
+      70 |     
+      71 |     // Click menu button
+      72 |     await page.click('[data-testid="menu-button"]');
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:69:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-open-mobile-menu-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-open-mobile-menu-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should display language selector" classname="navigation.spec.ts" time="52.891">
+<failure message="navigation.spec.ts:78:3 should display language selector" type="FAILURE">
+<![CDATA[  [chromium] › navigation.spec.ts:78:3 › 🧭 Navigation › should display language selector ──────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+      - navigating to "http://localhost:3000/dashboard", waiting until "load"
+
+
+      77 |
+      78 |   test('should display language selector', async ({ page }) => {
+    > 79 |     await page.goto('/dashboard');
+         |                ^
+      80 |     
+      81 |     // Should show language selector
+      82 |     await expect(page.locator('[data-testid="language-selector"]')).toBeVisible();
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:79:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-display-language-selector-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-display-language-selector-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should change language" classname="navigation.spec.ts" time="52.327">
+<failure message="navigation.spec.ts:93:3 should change language" type="FAILURE">
+<![CDATA[  [chromium] › navigation.spec.ts:93:3 › 🧭 Navigation › should change language ────────────────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+      - navigating to "http://localhost:3000/dashboard", waiting until "load"
+
+
+      92 |
+      93 |   test('should change language', async ({ page }) => {
+    > 94 |     await page.goto('/dashboard');
+         |                ^
+      95 |     
+      96 |     // Click language selector
+      97 |     await page.click('[data-testid="language-selector"]');
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:94:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-change-language-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-change-language-chromium\video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="navigation.spec.ts" timestamp="2025-10-29T09:38:14.547Z" hostname="firefox" tests="6" failures="6" skipped="0" time="180.483" errors="0">
+<testcase name="🧭 Navigation › should display homepage correctly" classname="navigation.spec.ts" time="30.044">
+<failure message="navigation.spec.ts:12:3 should display homepage correctly" type="FAILURE">
+<![CDATA[  [firefox] › navigation.spec.ts:12:3 › 🧭 Navigation › should display homepage correctly ──────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      2 |
+      3 | test.describe('🧭 Navigation', () => {
+    > 4 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      5 |     // Mock authentication for navigation tests
+      6 |     await page.goto('/');
+      7 |     
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:4:8
+
+    Error: browserContext.newPage: Test timeout of 30000ms exceeded.
+]]>
+</failure>
+</testcase>
+<testcase name="🧭 Navigation › should navigate to different sections from homepage" classname="navigation.spec.ts" time="30.057">
+<failure message="navigation.spec.ts:26:3 should navigate to different sections from homepage" type="FAILURE">
+<![CDATA[  [firefox] › navigation.spec.ts:26:3 › 🧭 Navigation › should navigate to different sections from homepage 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      2 |
+      3 | test.describe('🧭 Navigation', () => {
+    > 4 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      5 |     // Mock authentication for navigation tests
+      6 |     await page.goto('/');
+      7 |     
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:4:8
+
+    Error: browserContext.newPage: Test timeout of 30000ms exceeded.
+]]>
+</failure>
+</testcase>
+<testcase name="🧭 Navigation › should display responsive navigation" classname="navigation.spec.ts" time="30.077">
+<failure message="navigation.spec.ts:48:3 should display responsive navigation" type="FAILURE">
+<![CDATA[  [firefox] › navigation.spec.ts:48:3 › 🧭 Navigation › should display responsive navigation ───────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      2 |
+      3 | test.describe('🧭 Navigation', () => {
+    > 4 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      5 |     // Mock authentication for navigation tests
+      6 |     await page.goto('/');
+      7 |     
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:4:8
+
+    Error: browserContext.newPage: Test timeout of 30000ms exceeded.
+]]>
+</failure>
+</testcase>
+<testcase name="🧭 Navigation › should open mobile menu" classname="navigation.spec.ts" time="30.066">
+<failure message="navigation.spec.ts:67:3 should open mobile menu" type="FAILURE">
+<![CDATA[  [firefox] › navigation.spec.ts:67:3 › 🧭 Navigation › should open mobile menu ────────────────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      2 |
+      3 | test.describe('🧭 Navigation', () => {
+    > 4 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      5 |     // Mock authentication for navigation tests
+      6 |     await page.goto('/');
+      7 |     
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:4:8
+
+    Error: browserContext.newPage: Test timeout of 30000ms exceeded.
+]]>
+</failure>
+</testcase>
+<testcase name="🧭 Navigation › should display language selector" classname="navigation.spec.ts" time="30.107">
+<failure message="navigation.spec.ts:78:3 should display language selector" type="FAILURE">
+<![CDATA[  [firefox] › navigation.spec.ts:78:3 › 🧭 Navigation › should display language selector ───────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      2 |
+      3 | test.describe('🧭 Navigation', () => {
+    > 4 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      5 |     // Mock authentication for navigation tests
+      6 |     await page.goto('/');
+      7 |     
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:4:8
+
+    Error: browserContext.newPage: Test timeout of 30000ms exceeded.
+]]>
+</failure>
+</testcase>
+<testcase name="🧭 Navigation › should change language" classname="navigation.spec.ts" time="30.132">
+<failure message="navigation.spec.ts:93:3 should change language" type="FAILURE">
+<![CDATA[  [firefox] › navigation.spec.ts:93:3 › 🧭 Navigation › should change language ─────────────────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      2 |
+      3 | test.describe('🧭 Navigation', () => {
+    > 4 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      5 |     // Mock authentication for navigation tests
+      6 |     await page.goto('/');
+      7 |     
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:4:8
+
+    Error: browserContext.newPage: Test timeout of 30000ms exceeded.
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="navigation.spec.ts" timestamp="2025-10-29T09:38:14.547Z" hostname="webkit" tests="6" failures="6" skipped="0" time="218.548" errors="0">
+<testcase name="🧭 Navigation › should display homepage correctly" classname="navigation.spec.ts" time="37.038">
+<failure message="navigation.spec.ts:12:3 should display homepage correctly" type="FAILURE">
+<![CDATA[  [webkit] › navigation.spec.ts:12:3 › 🧭 Navigation › should display homepage correctly ───────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      2 |
+      3 | test.describe('🧭 Navigation', () => {
+    > 4 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      5 |     // Mock authentication for navigation tests
+      6 |     await page.goto('/');
+      7 |     
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:4:8
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Mock authentication for navigation tests
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |     
+      8 |     // Add authentication cookie/session mock here
+      9 |     // This would depend on your auth implementation
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:6:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-display-homepage-correctly-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\navigation-🧭-Navigation-should-display-homepage-correctly-webkit\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-display-homepage-correctly-webkit\video.webm]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-should-display-homepage-correctly-webkit\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should navigate to different sections from homepage" classname="navigation.spec.ts" time="36.254">
+<failure message="navigation.spec.ts:26:3 should navigate to different sections from homepage" type="FAILURE">
+<![CDATA[  [webkit] › navigation.spec.ts:26:3 › 🧭 Navigation › should navigate to different sections from homepage 
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      2 |
+      3 | test.describe('🧭 Navigation', () => {
+    > 4 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      5 |     // Mock authentication for navigation tests
+      6 |     await page.goto('/');
+      7 |     
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:4:8
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Mock authentication for navigation tests
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |     
+      8 |     // Add authentication cookie/session mock here
+      9 |     // This would depend on your auth implementation
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:6:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-s-d22cd-rent-sections-from-homepage-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\navigation-🧭-Navigation-s-d22cd-rent-sections-from-homepage-webkit\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-s-d22cd-rent-sections-from-homepage-webkit\video.webm]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-s-d22cd-rent-sections-from-homepage-webkit\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should display responsive navigation" classname="navigation.spec.ts" time="38.143">
+<failure message="navigation.spec.ts:48:3 should display responsive navigation" type="FAILURE">
+<![CDATA[  [webkit] › navigation.spec.ts:48:3 › 🧭 Navigation › should display responsive navigation ────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      2 |
+      3 | test.describe('🧭 Navigation', () => {
+    > 4 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      5 |     // Mock authentication for navigation tests
+      6 |     await page.goto('/');
+      7 |     
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:4:8
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Mock authentication for navigation tests
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |     
+      8 |     // Add authentication cookie/session mock here
+      9 |     // This would depend on your auth implementation
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:6:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-s-63103-splay-responsive-navigation-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\navigation-🧭-Navigation-s-63103-splay-responsive-navigation-webkit\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-s-63103-splay-responsive-navigation-webkit\video.webm]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-s-63103-splay-responsive-navigation-webkit\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should open mobile menu" classname="navigation.spec.ts" time="36.524">
+<failure message="navigation.spec.ts:67:3 should open mobile menu" type="FAILURE">
+<![CDATA[  [webkit] › navigation.spec.ts:67:3 › 🧭 Navigation › should open mobile menu ─────────────────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      2 |
+      3 | test.describe('🧭 Navigation', () => {
+    > 4 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      5 |     // Mock authentication for navigation tests
+      6 |     await page.goto('/');
+      7 |     
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:4:8
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Mock authentication for navigation tests
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |     
+      8 |     // Add authentication cookie/session mock here
+      9 |     // This would depend on your auth implementation
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:6:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-open-mobile-menu-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\navigation-🧭-Navigation-should-open-mobile-menu-webkit\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-open-mobile-menu-webkit\video.webm]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-should-open-mobile-menu-webkit\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should display language selector" classname="navigation.spec.ts" time="35.292">
+<failure message="navigation.spec.ts:78:3 should display language selector" type="FAILURE">
+<![CDATA[  [webkit] › navigation.spec.ts:78:3 › 🧭 Navigation › should display language selector ────────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      2 |
+      3 | test.describe('🧭 Navigation', () => {
+    > 4 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      5 |     // Mock authentication for navigation tests
+      6 |     await page.goto('/');
+      7 |     
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:4:8
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Mock authentication for navigation tests
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |     
+      8 |     // Add authentication cookie/session mock here
+      9 |     // This would depend on your auth implementation
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:6:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-display-language-selector-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\navigation-🧭-Navigation-should-display-language-selector-webkit\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-display-language-selector-webkit\video.webm]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-should-display-language-selector-webkit\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should change language" classname="navigation.spec.ts" time="35.297">
+<failure message="navigation.spec.ts:93:3 should change language" type="FAILURE">
+<![CDATA[  [webkit] › navigation.spec.ts:93:3 › 🧭 Navigation › should change language ──────────────────────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      2 |
+      3 | test.describe('🧭 Navigation', () => {
+    > 4 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      5 |     // Mock authentication for navigation tests
+      6 |     await page.goto('/');
+      7 |     
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:4:8
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      4 |   test.beforeEach(async ({ page }) => {
+      5 |     // Mock authentication for navigation tests
+    > 6 |     await page.goto('/');
+        |                ^
+      7 |     
+      8 |     // Add authentication cookie/session mock here
+      9 |     // This would depend on your auth implementation
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:6:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-change-language-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\navigation-🧭-Navigation-should-change-language-webkit\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-change-language-webkit\video.webm]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-should-change-language-webkit\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="navigation.spec.ts" timestamp="2025-10-29T09:38:14.547Z" hostname="mobile" tests="6" failures="6" skipped="0" time="248.612" errors="0">
+<testcase name="🧭 Navigation › should display homepage correctly" classname="navigation.spec.ts" time="40.421">
+<failure message="navigation.spec.ts:12:3 should display homepage correctly" type="FAILURE">
+<![CDATA[  [mobile] › navigation.spec.ts:12:3 › 🧭 Navigation › should display homepage correctly ───────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      11 |
+      12 |   test('should display homepage correctly', async ({ page }) => {
+    > 13 |     await page.goto('/');
+         |                ^
+      14 |     
+      15 |     // Check main elements
+      16 |     await expect(page.locator('h1')).toContainText('Loft Algérie');
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:13:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-display-homepage-correctly-mobile\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-display-homepage-correctly-mobile\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should navigate to different sections from homepage" classname="navigation.spec.ts" time="44.674">
+<failure message="navigation.spec.ts:26:3 should navigate to different sections from homepage" type="FAILURE">
+<![CDATA[  [mobile] › navigation.spec.ts:26:3 › 🧭 Navigation › should navigate to different sections from homepage 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      25 |
+      26 |   test('should navigate to different sections from homepage', async ({ page }) => {
+    > 27 |     await page.goto('/');
+         |                ^
+      28 |     
+      29 |     // Test navigation to lofts
+      30 |     await page.click('text=Voir les Lofts');
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:27:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-s-d22cd-rent-sections-from-homepage-mobile\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-s-d22cd-rent-sections-from-homepage-mobile\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should display responsive navigation" classname="navigation.spec.ts" time="42.696">
+<failure message="navigation.spec.ts:48:3 should display responsive navigation" type="FAILURE">
+<![CDATA[  [mobile] › navigation.spec.ts:48:3 › 🧭 Navigation › should display responsive navigation ────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+      - navigating to "http://localhost:3000/dashboard", waiting until "load"
+
+
+      49 |     // Test desktop navigation
+      50 |     await page.setViewportSize({ width: 1200, height: 800 });
+    > 51 |     await page.goto('/dashboard');
+         |                ^
+      52 |     
+      53 |     // Should show sidebar on desktop
+      54 |     await expect(page.locator('[data-testid="sidebar"]')).toBeVisible();
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:51:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-s-63103-splay-responsive-navigation-mobile\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-s-63103-splay-responsive-navigation-mobile\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should open mobile menu" classname="navigation.spec.ts" time="40.3">
+<failure message="navigation.spec.ts:67:3 should open mobile menu" type="FAILURE">
+<![CDATA[  [mobile] › navigation.spec.ts:67:3 › 🧭 Navigation › should open mobile menu ─────────────────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+      - navigating to "http://localhost:3000/dashboard", waiting until "load"
+
+
+      67 |   test('should open mobile menu', async ({ page }) => {
+      68 |     await page.setViewportSize({ width: 375, height: 667 });
+    > 69 |     await page.goto('/dashboard');
+         |                ^
+      70 |     
+      71 |     // Click menu button
+      72 |     await page.click('[data-testid="menu-button"]');
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:69:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-open-mobile-menu-mobile\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-open-mobile-menu-mobile\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should display language selector" classname="navigation.spec.ts" time="40.341">
+<failure message="navigation.spec.ts:78:3 should display language selector" type="FAILURE">
+<![CDATA[  [mobile] › navigation.spec.ts:78:3 › 🧭 Navigation › should display language selector ────────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+      - navigating to "http://localhost:3000/dashboard", waiting until "load"
+
+
+      77 |
+      78 |   test('should display language selector', async ({ page }) => {
+    > 79 |     await page.goto('/dashboard');
+         |                ^
+      80 |     
+      81 |     // Should show language selector
+      82 |     await expect(page.locator('[data-testid="language-selector"]')).toBeVisible();
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:79:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-display-language-selector-mobile\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-display-language-selector-mobile\video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should change language" classname="navigation.spec.ts" time="40.18">
+<failure message="navigation.spec.ts:93:3 should change language" type="FAILURE">
+<![CDATA[  [mobile] › navigation.spec.ts:93:3 › 🧭 Navigation › should change language ──────────────────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+      - navigating to "http://localhost:3000/dashboard", waiting until "load"
+
+
+      92 |
+      93 |   test('should change language', async ({ page }) => {
+    > 94 |     await page.goto('/dashboard');
+         |                ^
+      95 |     
+      96 |     // Click language selector
+      97 |     await page.click('[data-testid="language-selector"]');
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:94:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-change-language-mobile\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-change-language-mobile\video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="navigation.spec.ts" timestamp="2025-10-29T09:38:14.547Z" hostname="mobile-safari" tests="6" failures="6" skipped="0" time="183.416" errors="0">
+<testcase name="🧭 Navigation › should display homepage correctly" classname="navigation.spec.ts" time="31.483">
+<failure message="navigation.spec.ts:12:3 should display homepage correctly" type="FAILURE">
+<![CDATA[  [mobile-safari] › navigation.spec.ts:12:3 › 🧭 Navigation › should display homepage correctly ────
+
+    Test timeout of 30000ms exceeded while running "beforeEach" hook.
+
+      2 |
+      3 | test.describe('🧭 Navigation', () => {
+    > 4 |   test.beforeEach(async ({ page }) => {
+        |        ^
+      5 |     // Mock authentication for navigation tests
+      6 |     await page.goto('/');
+      7 |     
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:4:8
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-display-homepage-correctly-mobile-safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-display-homepage-correctly-mobile-safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\navigation-🧭-Navigation-should-display-homepage-correctly-mobile-safari\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-display-homepage-correctly-mobile-safari\test-failed-1.png]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-should-display-homepage-correctly-mobile-safari\video.webm]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-should-display-homepage-correctly-mobile-safari\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should navigate to different sections from homepage" classname="navigation.spec.ts" time="30.319">
+<failure message="navigation.spec.ts:26:3 should navigate to different sections from homepage" type="FAILURE">
+<![CDATA[  [mobile-safari] › navigation.spec.ts:26:3 › 🧭 Navigation › should navigate to different sections from homepage 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      25 |
+      26 |   test('should navigate to different sections from homepage', async ({ page }) => {
+    > 27 |     await page.goto('/');
+         |                ^
+      28 |     
+      29 |     // Test navigation to lofts
+      30 |     await page.click('text=Voir les Lofts');
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:27:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-s-d22cd-rent-sections-from-homepage-mobile-safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-s-d22cd-rent-sections-from-homepage-mobile-safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\navigation-🧭-Navigation-s-d22cd-rent-sections-from-homepage-mobile-safari\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-s-d22cd-rent-sections-from-homepage-mobile-safari\test-failed-1.png]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-s-d22cd-rent-sections-from-homepage-mobile-safari\video.webm]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-s-d22cd-rent-sections-from-homepage-mobile-safari\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should display responsive navigation" classname="navigation.spec.ts" time="30.668">
+<failure message="navigation.spec.ts:48:3 should display responsive navigation" type="FAILURE">
+<![CDATA[  [mobile-safari] › navigation.spec.ts:48:3 › 🧭 Navigation › should display responsive navigation ─
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/dashboard", waiting until "load"
+
+
+      49 |     // Test desktop navigation
+      50 |     await page.setViewportSize({ width: 1200, height: 800 });
+    > 51 |     await page.goto('/dashboard');
+         |                ^
+      52 |     
+      53 |     // Should show sidebar on desktop
+      54 |     await expect(page.locator('[data-testid="sidebar"]')).toBeVisible();
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:51:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-s-63103-splay-responsive-navigation-mobile-safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-s-63103-splay-responsive-navigation-mobile-safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\navigation-🧭-Navigation-s-63103-splay-responsive-navigation-mobile-safari\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-s-63103-splay-responsive-navigation-mobile-safari\test-failed-1.png]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-s-63103-splay-responsive-navigation-mobile-safari\video.webm]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-s-63103-splay-responsive-navigation-mobile-safari\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should open mobile menu" classname="navigation.spec.ts" time="30.298">
+<failure message="navigation.spec.ts:67:3 should open mobile menu" type="FAILURE">
+<![CDATA[  [mobile-safari] › navigation.spec.ts:67:3 › 🧭 Navigation › should open mobile menu ──────────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/dashboard", waiting until "load"
+
+
+      67 |   test('should open mobile menu', async ({ page }) => {
+      68 |     await page.setViewportSize({ width: 375, height: 667 });
+    > 69 |     await page.goto('/dashboard');
+         |                ^
+      70 |     
+      71 |     // Click menu button
+      72 |     await page.click('[data-testid="menu-button"]');
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:69:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-open-mobile-menu-mobile-safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-open-mobile-menu-mobile-safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\navigation-🧭-Navigation-should-open-mobile-menu-mobile-safari\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-open-mobile-menu-mobile-safari\test-failed-1.png]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-should-open-mobile-menu-mobile-safari\video.webm]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-should-open-mobile-menu-mobile-safari\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should display language selector" classname="navigation.spec.ts" time="30.353">
+<failure message="navigation.spec.ts:78:3 should display language selector" type="FAILURE">
+<![CDATA[  [mobile-safari] › navigation.spec.ts:78:3 › 🧭 Navigation › should display language selector ─────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/dashboard", waiting until "load"
+
+
+      77 |
+      78 |   test('should display language selector', async ({ page }) => {
+    > 79 |     await page.goto('/dashboard');
+         |                ^
+      80 |     
+      81 |     // Should show language selector
+      82 |     await expect(page.locator('[data-testid="language-selector"]')).toBeVisible();
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:79:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-display-language-selector-mobile-safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-display-language-selector-mobile-safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\navigation-🧭-Navigation-should-display-language-selector-mobile-safari\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-display-language-selector-mobile-safari\test-failed-1.png]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-should-display-language-selector-mobile-safari\video.webm]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-should-display-language-selector-mobile-safari\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="🧭 Navigation › should change language" classname="navigation.spec.ts" time="30.295">
+<failure message="navigation.spec.ts:93:3 should change language" type="FAILURE">
+<![CDATA[  [mobile-safari] › navigation.spec.ts:93:3 › 🧭 Navigation › should change language ───────────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[data-testid="language-selector"]')
+
+
+       95 |     
+       96 |     // Click language selector
+    >  97 |     await page.click('[data-testid="language-selector"]');
+          |                ^
+       98 |     
+       99 |     // Select English
+      100 |     await page.click('text=English');
+        at C:\Users\SERVICE-INFO\IA\algerie-loft\tests\e2e\navigation.spec.ts:97:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-change-language-mobile-safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\navigation-🧭-Navigation-should-change-language-mobile-safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\navigation-🧭-Navigation-should-change-language-mobile-safari\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|navigation-🧭-Navigation-should-change-language-mobile-safari\test-failed-1.png]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-should-change-language-mobile-safari\video.webm]]
+
+[[ATTACHMENT|navigation-🧭-Navigation-should-change-language-mobile-safari\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

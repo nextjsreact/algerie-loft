@@ -5,11 +5,11 @@ import { createClient } from '@/utils/supabase/server';
 // PATCH /api/partner/properties/[id]/status - Update property status
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await requireRole(['partner']);
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     const {

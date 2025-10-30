@@ -14,12 +14,12 @@ export default function StyleVariant1() {
           <div className="flex items-center justify-between">
             <HeaderLogo />
             <nav className="hidden md:flex space-x-8">
-              <a href="#" className="text-gray-300 hover:text-white transition-colors font-medium">Accueil</a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors font-medium">Services</a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors font-medium">Portfolio</a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors font-medium">Contact</a>
+              <a href="#" className="text-gray-300 hover:text-white transition-colors font-semibold text-lg">Accueil</a>
+              <a href="#" className="text-gray-300 hover:text-white transition-colors font-semibold text-lg">Services</a>
+              <a href="#" className="text-gray-300 hover:text-white transition-colors font-semibold text-lg">Portfolio</a>
+              <a href="#" className="text-gray-300 hover:text-white transition-colors font-semibold text-lg">Contact</a>
             </nav>
-            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full hover:from-blue-700 hover:to-purple-700 transition-all">
+            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-full hover:from-blue-700 hover:to-purple-700 transition-all text-lg font-bold">
               Connexion
             </button>
           </div>

@@ -1,4 +1,4 @@
-import FuturisticPublicPage from '@/components/futuristic/FuturisticPublicPage';
+import FusionDualAudienceHomepage from '@/components/homepage/FusionDualAudienceHomepage';
 import { Metadata } from 'next';
 
 interface LocalePageProps {
@@ -10,16 +10,19 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
   
   const metaContent = {
     fr: {
-      title: "Loft Algérie - Gestion Professionnelle de Lofts en Algérie",
-      description: "Services professionnels de gestion de lofts et hébergements en Algérie. Maximisez vos revenus locatifs avec notre expertise reconnue. Gestion complète, réservations et optimisation des revenus.",
+      title: "Loft Algérie - Découvrez les Plus Beaux Lofts d'Algérie | Réservation & Gestion",
+      description: "🏆 Réservez votre loft de rêve en Algérie ! Alger, Oran, Constantine. ✨ -20% première réservation + petit-déjeuner GRATUIT. Propriétaires: doublez vos revenus en 30 jours. Service VIP 24/7.",
+      keywords: "loft algérie, réservation loft alger, hébergement oran, gestion propriété algérie, revenus locatifs, loft constantine, séjour algérie",
     },
     en: {
-      title: "Loft Algeria - Professional Loft Management in Algeria",
-      description: "Professional loft and accommodation management services in Algeria. Maximize your rental income with our recognized expertise. Complete management, reservations and revenue optimization.",
+      title: "Loft Algeria - Discover Algeria's Most Beautiful Lofts | Booking & Management",
+      description: "🏆 Book your dream loft in Algeria! Algiers, Oran, Constantine. ✨ -20% first booking + FREE breakfast. Property owners: double your income in 30 days. VIP service 24/7.",
+      keywords: "loft algeria, algiers loft booking, oran accommodation, algeria property management, rental income, constantine loft, algeria stay",
     },
     ar: {
-      title: "لوفت الجزائر - إدارة احترافية للشقق المفروشة في الجزائر",
-      description: "خدمات إدارة احترافية للشقق المفروشة والإقامة في الجزائر. اعظم عوائدك الإيجارية مع خبرتنا المعترف بها. إدارة شاملة وحجوزات وتحسين الإيرادات.",
+      title: "لوفت الجزائر - اكتشف أجمل الشقق المفروشة في الجزائر | حجز وإدارة",
+      description: "🏆 احجز شقة أحلامك في الجزائر! الجزائر، وهران، قسنطينة. ✨ خصم 20% أول حجز + إفطار مجاني. أصحاب العقارات: ضاعفوا دخلكم في 30 يوماً. خدمة VIP 24/7.",
+      keywords: "شقق مفروشة الجزائر, حجز شقة الجزائر العاصمة, إقامة وهران, إدارة عقارات الجزائر, دخل إيجاري, شقة قسنطينة, إقامة الجزائر",
     }
   };
 
@@ -28,6 +31,7 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
   return {
     title: content.title,
     description: content.description,
+    keywords: content.keywords,
     alternates: {
       canonical: `https://loftalgerie.com/${locale}`,
       languages: {
@@ -43,11 +47,31 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
       siteName: 'Loft Algérie',
       locale: locale === 'ar' ? 'ar_DZ' : locale === 'en' ? 'en_US' : 'fr_FR',
       type: 'website',
+      images: [
+        {
+          url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&h=630&fit=crop',
+          width: 1200,
+          height: 630,
+          alt: 'Loft moderne avec vue panoramique - Loft Algérie',
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: content.title,
       description: content.description,
+      images: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&h=630&fit=crop'],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
     },
   };
 }
@@ -55,5 +79,5 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
 export default async function LocalePage({ params }: LocalePageProps) {
   const { locale } = await params;
   
-  return <FuturisticPublicPage locale={locale} />;
+  return <FusionDualAudienceHomepage locale={locale} />;
 }

@@ -274,9 +274,9 @@ export default function ClientSearchPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div>
             <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>
-              {loading ? 'Recherche en cours...' : `${pagination.total} loft${pagination.total > 1 ? 's' : ''} trouvé${pagination.total > 1 ? 's' : ''}`}
+              {loading ? 'Recherche en cours...' : `${pagination?.total || 0} loft${(pagination?.total || 0) > 1 ? 's' : ''} trouvé${(pagination?.total || 0) > 1 ? 's' : ''}`}
             </h2>
-            {pagination.totalPages > 1 && (
+            {pagination && pagination.totalPages > 1 && (
               <p style={{ color: '#6B7280', fontSize: '0.875rem', margin: '0.25rem 0 0 0' }}>
                 Page {pagination.page} sur {pagination.totalPages}
               </p>
@@ -381,11 +381,11 @@ export default function ClientSearchPage() {
                       fontSize: '0.75rem',
                       fontWeight: '600'
                     }}>
-                      {loft.partner.name.charAt(0)}
+                      {loft.partner?.name?.charAt(0) || loft.partner?.business_name?.charAt(0) || 'P'}
                     </div>
                     <div>
                       <div style={{ fontSize: '0.875rem', fontWeight: '500' }}>
-                        {loft.partner.business_name || loft.partner.name}
+                        {loft.partner?.business_name || loft.partner?.name || 'Propriétaire'}
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>
                         Partenaire vérifié ✅
@@ -454,31 +454,31 @@ export default function ClientSearchPage() {
         )}
 
         {/* Pagination */}
-        {pagination.totalPages > 1 && (
+        {pagination && pagination.totalPages > 1 && (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginTop: '2rem' }}>
             <button
-              onClick={() => searchLofts(pagination.page - 1)}
-              disabled={pagination.page <= 1}
+              onClick={() => searchLofts((pagination?.page || 1) - 1)}
+              disabled={(pagination?.page || 1) <= 1}
               style={{
                 ...buttonStyle,
-                backgroundColor: pagination.page <= 1 ? '#9CA3AF' : '#6B7280',
-                cursor: pagination.page <= 1 ? 'not-allowed' : 'pointer'
+                backgroundColor: (pagination?.page || 1) <= 1 ? '#9CA3AF' : '#6B7280',
+                cursor: (pagination?.page || 1) <= 1 ? 'not-allowed' : 'pointer'
               }}
             >
               ← Précédent
             </button>
             
             <span style={{ padding: '0 1rem', color: '#6B7280' }}>
-              Page {pagination.page} sur {pagination.totalPages}
+              Page {pagination?.page || 1} sur {pagination?.totalPages || 1}
             </span>
             
             <button
-              onClick={() => searchLofts(pagination.page + 1)}
-              disabled={pagination.page >= pagination.totalPages}
+              onClick={() => searchLofts((pagination?.page || 1) + 1)}
+              disabled={(pagination?.page || 1) >= (pagination?.totalPages || 1)}
               style={{
                 ...buttonStyle,
-                backgroundColor: pagination.page >= pagination.totalPages ? '#9CA3AF' : '#6B7280',
-                cursor: pagination.page >= pagination.totalPages ? 'not-allowed' : 'pointer'
+                backgroundColor: (pagination?.page || 1) >= (pagination?.totalPages || 1) ? '#9CA3AF' : '#6B7280',
+                cursor: (pagination?.page || 1) >= (pagination?.totalPages || 1) ? 'not-allowed' : 'pointer'
               }}
             >
               Suivant →

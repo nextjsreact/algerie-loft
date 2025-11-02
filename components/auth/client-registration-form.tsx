@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, ArrowLeft } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { registerClient } from '@/lib/auth'
+import { registerClientComplete } from '@/lib/client-auth'
 
 const clientRegistrationSchema = z.object({
   fullName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -48,10 +48,18 @@ export function ClientRegistrationForm({ onBack, onSuccess }: ClientRegistration
     setError(null)
 
     try {
-      const result = await registerClient(data.email, data.password, data.fullName)
+      const result = await registerClientComplete({
+        email: data.email,
+        password: data.password,
+        fullName: data.fullName
+      })
       
       if (result.success) {
-        onSuccess()
+        if (result.requiresEmailVerification) {
+          setError('Please check your email to verify your account before logging in.')
+        } else {
+          onSuccess()
+        }
       } else {
         setError(result.error || 'Registration failed')
       }

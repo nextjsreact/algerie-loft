@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 import { Sidebar } from "@/components/layout/sidebar-nextintl"
 import { LanguageSelector } from "@/components/ui/language-selector"
+import { UserAvatarDropdown } from "@/components/auth/user-avatar-dropdown"
 import type { User } from "@/lib/types"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useTranslations, useLocale } from "next-intl"
@@ -25,6 +26,9 @@ export function Header({ user }: HeaderProps) {
          <span className="ml-2 text-xl font-semibold text-white">{t('loftManager')}</span>
        </Link>
        <div className="flex items-center gap-2">
+         {/* User Avatar - visible on all screen sizes */}
+         <UserAvatarDropdown locale={locale} />
+         
          <div className="flex items-center bg-white/20 dark:bg-gray-800 rounded-md p-1 gap-1">
            <LanguageSelector />
            <ThemeToggle variant="ghost" size="sm" className="text-white hover:text-white" />

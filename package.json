@@ -9,6 +9,8 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "dev:clear": "node scripts/clear-cache.js && next dev",
+    "dev:fresh": "powershell -ExecutionPolicy Bypass -File scripts/dev-fresh.ps1",
     "lint": "next lint",
     "env-manager": "tsx lib/environment-management/cli/index.ts",
     "validate:translations": "tsx scripts/validate-translations.ts",

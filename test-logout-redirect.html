@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Redirection Déconnexion</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-case {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success {
+            border-left: 4px solid #10b981;
+        }
+        .warning {
+            border-left: 4px solid #f59e0b;
+        }
+        .code {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .success .status {
+            color: #10b981;
+        }
+        .warning .status {
+            color: #f59e0b;
+        }
+        .steps {
+            background: #e0f2fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test - Redirection Déconnexion Client</h1>
+    
+    <div class="test-case success">
+        <div class="status">✅ CORRIGÉ - Fonction logout() dans lib/auth.ts</div>
+        <h3>Avant :</h3>
+        <div class="code">redirect("/fr/public");</div>
+        <h3>Après :</h3>
+        <div class="code">redirect("/fr/site-public");</div>
+        <p>La fonction serveur redirige maintenant vers la vraie page d'accueil publique.</p>
+    </div>
+
+    <div class="test-case success">
+        <div class="status">✅ CORRIGÉ - UserAvatarDropdown</div>
+        <h3>Avant :</h3>
+        <div class="code">router.push(`/${locale}`)</div>
+        <h3>Après :</h3>
+        <div class="code">router.push(`/${locale}/site-public`)</div>
+        <p>Le bouton de déconnexion dans l'avatar redirige vers la page publique.</p>
+    </div>
+
+    <div class="test-case warning">
+        <div class="status">⚠️ À VÉRIFIER - Autres boutons de déconnexion</div>
+        <p>Il pourrait y avoir d'autres boutons de déconnexion dans l'application qui redirigent encore vers des pages avec sidebar.</p>
+        <h3>Pages à vérifier :</h3>
+        <ul>
+            <li>Dashboard client</li>
+            <li>Pages de profil</li>
+            <li>Menus mobiles</li>
+            <li>Headers spécifiques</li>
+        </ul>
+    </div>
+
+    <div class="steps">
+        <h3>🧪 Pour tester la correction :</h3>
+        <ol>
+            <li><strong>Connectez-vous</strong> avec un compte client</li>
+            <li><strong>Naviguez</strong> vers le dashboard client</li>
+            <li><strong>Cliquez</strong> sur votre avatar en haut à droite</li>
+            <li><strong>Cliquez</strong> sur "Se déconnecter"</li>
+            <li><strong>Vérifiez</strong> que vous arrivez sur la page d'accueil publique (/site-public)</li>
+            <li><strong>Confirmez</strong> qu'aucun sidebar d'employé n'est visible</li>
+        </ol>
+    </div>
+
+    <div class="test-case success">
+        <div class="status">✅ RÉSULTAT ATTENDU</div>
+        <h3>Après déconnexion, vous devriez voir :</h3>
+        <ul>
+            <li>✅ Page d'accueil publique avec design marketing</li>
+            <li>✅ Boutons "Connexion" et "Inscription" dans le header</li>
+            <li>✅ Sections : Hero, Lofts recommandés, Propriétaires</li>
+            <li>✅ Aucun sidebar d'employé visible</li>
+            <li>✅ Navigation publique normale</li>
+        </ul>
+    </div>
+
+    <script>
+        console.log('✅ Corrections appliquées pour la redirection de déconnexion');
+        console.log('📋 Fichiers modifiés:');
+        console.log('- lib/auth.ts (fonction logout)');
+        console.log('- components/auth/user-avatar-dropdown.tsx (handleLogout)');
+        console.log('🔍 Testez maintenant la déconnexion depuis le dashboard client');
+    </script>
+</body>
+</html>

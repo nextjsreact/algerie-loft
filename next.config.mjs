@@ -23,7 +23,11 @@ const nextConfig = {
     esmExternals: true,
     // Code splitting optimizations
     // Enhanced performance optimizations
-    webVitalsAttribution: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB']
+    webVitalsAttribution: ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB'],
+    // Désactiver le cache ISR en développement (option supprimée car non supportée)
+    // ...(process.env.NODE_ENV === 'development' && {
+    //   isrMemoryCacheSize: 0,
+    // })
   },
   
   // Server external packages
@@ -111,10 +115,10 @@ const nextConfig = {
   
   // Optimisation des bundles
   onDemandEntries: {
-    // Période avant de décharger les pages (en ms)
-    maxInactiveAge: 25 * 1000,
-    // Nombre de pages à garder simultanément
-    pagesBufferLength: 2,
+    // Période avant de décharger les pages (en ms) - réduite en développement
+    maxInactiveAge: process.env.NODE_ENV === 'development' ? 1000 : 25 * 1000,
+    // Nombre de pages à garder simultanément - réduit en développement
+    pagesBufferLength: process.env.NODE_ENV === 'development' ? 1 : 2,
   },
   
   // Headers de sécurité et PWA

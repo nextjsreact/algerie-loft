@@ -83,11 +83,11 @@ export class SessionManager {
       }
       
       // Redirect to public website instead of login
-      window.location.href = '/fr/public';
+      window.location.href = '/fr';
     } catch (error) {
       console.error('Error during logout:', error);
       // Even if there's an error, redirect to public website
-      window.location.href = '/fr/public';
+      window.location.href = '/fr';
     }
   }
 

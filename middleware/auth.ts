@@ -16,6 +16,7 @@ const AUTH_CONFIG: AuthMiddlewareConfig = {
   publicRoutes: [
     '/',
     '/public',
+    '/site-public',
     '/login',
     '/register',
     '/forgot-password',

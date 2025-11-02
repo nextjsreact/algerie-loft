@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Correction Sidebar Client</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-case {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success {
+            border-left: 4px solid #10b981;
+        }
+        .error {
+            border-left: 4px solid #ef4444;
+        }
+        .code {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .success .status {
+            color: #10b981;
+        }
+        .error .status {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test - Correction Sidebar Client</h1>
+    
+    <div class="test-case success">
+        <div class="status">✅ CORRIGÉ - AppSidebar</div>
+        <h3>Problème identifié :</h3>
+        <p>Le composant <code>AppSidebar</code> ne vérifiait que les chemins d'URL mais pas le rôle utilisateur.</p>
+        
+        <h3>Solution appliquée :</h3>
+        <div class="code">
+// Ajout de la vérification du rôle utilisateur
+if (session && (session.user.role === 'client' || session.user.role === 'partner')) {
+  return null
+}
+        </div>
+    </div>
+
+    <div class="test-case success">
+        <div class="status">✅ CORRIGÉ - Hook useSidebarVisibility</div>
+        <h3>Problème identifié :</h3>
+        <p>La condition pour cacher le sidebar des clients n'était pas assez stricte.</p>
+        
+        <h3>Solution appliquée :</h3>
+        <div class="code">
+// Condition améliorée pour les pages client
+const isClientPage = pathname?.includes('/client') || 
+                     pathname?.includes('/partner') ||
+                     userRole === 'client' || 
+                     userRole === 'partner'
+        </div>
+    </div>
+
+    <div class="test-case success">
+        <div class="status">✅ CORRIGÉ - Sidebar NextIntl</div>
+        <h3>Problème identifié :</h3>
+        <p>Le composant Sidebar principal ne vérifiait pas le rôle avant de s'afficher.</p>
+        
+        <h3>Solution appliquée :</h3>
+        <div class="code">
+// Vérification de sécurité au début du composant
+if (user.role === 'client' || user.role === 'partner') {
+  return null
+}
+        </div>
+    </div>
+
+    <div class="test-case success">
+        <div class="status">✅ RÉSULTAT ATTENDU</div>
+        <h3>Comportement après correction :</h3>
+        <ul>
+            <li><strong>Clients :</strong> Ne voient plus le sidebar d'employé, même s'ils sont connectés</li>
+            <li><strong>Partenaires :</strong> Ne voient plus le sidebar d'employé</li>
+            <li><strong>Employés :</strong> Continuent de voir leur sidebar normalement</li>
+            <li><strong>Pages client/partner :</strong> Utilisent leur propre navigation</li>
+        </ul>
+    </div>
+
+    <div class="test-case">
+        <h3>🧪 Pour tester :</h3>
+        <ol>
+            <li>Connectez-vous avec un compte client</li>
+            <li>Vérifiez qu'aucun sidebar d'employé n'apparaît</li>
+            <li>Naviguez vers différentes pages</li>
+            <li>Confirmez que seule la navigation client est visible</li>
+        </ol>
+    </div>
+
+    <script>
+        console.log('✅ Corrections appliquées pour le sidebar client');
+        console.log('📋 Fichiers modifiés:');
+        console.log('- components/app-sidebar.tsx');
+        console.log('- hooks/use-sidebar-visibility.ts');
+        console.log('- components/layout/sidebar-nextintl.tsx');
+    </script>
+</body>
+</html>

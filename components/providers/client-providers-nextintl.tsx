@@ -1,7 +1,10 @@
 "use client"
 
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
+import { useSidebarVisibility } from "@/hooks/use-sidebar-visibility"
+import { SidebarDebug } from "@/components/debug/sidebar-debug"
+import { DesktopHeader } from "@/components/layout/desktop-header"
 import { NextIntlClientProvider } from 'next-intl'
 import SupabaseProvider from "@/components/providers/supabase-provider"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -25,19 +28,18 @@ interface ClientProvidersProps {
 
 export default function ClientProviders({ children, session, unreadCount, locale, messages, hideSidebar = false }: ClientProvidersProps) {
   const pathname = usePathname()
+  const [renderKey, setRenderKey] = useState(0)
   
-  // Pages qui doivent utiliser un layout minimal (sans sidebar/header)
-  const isAuthPage = pathname?.includes('/login') || 
-                     pathname?.includes('/register') || 
-                     pathname?.includes('/forgot-password') || 
-                     pathname?.includes('/reset-password')
+  // Use custom hook for sidebar visibility logic
+  const { shouldHideSidebar, isAuthPage, isPublicPage } = useSidebarVisibility({
+    userRole: session?.user?.role,
+    hideSidebar
+  })
   
-  // Pages publiques qui ne doivent pas avoir de sidebar
-  const isPublicPage = pathname?.includes('/public') || 
-                       pathname?.includes('/site-public')
-  
-  // Forcer le layout minimal pour les pages d'authentification et publiques
-  const shouldHideSidebar = hideSidebar || isAuthPage || isPublicPage
+  // Force re-render when pathname or user role changes
+  useEffect(() => {
+    setRenderKey(prev => prev + 1)
+  }, [pathname, session?.user?.role, shouldHideSidebar])
 
    return (
      <ErrorBoundary>
@@ -69,7 +71,7 @@ export default function ClientProviders({ children, session, unreadCount, locale
              <ErrorBoundary>
                <EnhancedRealtimeProvider userId={session.user.id}>
                  <NotificationProvider userId={session.user.id}>
-                   <div className="flex h-screen bg-background">
+                   <div className="flex h-screen bg-background" key={`layout-${renderKey}`}>
                      {/* Only show desktop sidebar if not hidden */}
                      {!shouldHideSidebar && (
                        <div className="hidden md:flex md:w-72 md:flex-shrink-0 md:z-10">
@@ -79,9 +81,18 @@ export default function ClientProviders({ children, session, unreadCount, locale
                        </div>
                      )}
                      <div className="flex flex-1 flex-col min-w-0 relative">
+                       {/* Desktop header when sidebar is hidden */}
+                       {shouldHideSidebar && (
+                         <ErrorBoundary>
+                           <DesktopHeader />
+                         </ErrorBoundary>
+                       )}
+                       
+                       {/* Mobile header - always show */}
                        <ErrorBoundary>
                          <Header user={session.user} />
                        </ErrorBoundary>
+                       
                        <main className="flex-1 overflow-y-auto relative z-0 p-6 md:p-8 lg:p-12">
                          {children}
                        </main>
@@ -97,6 +108,8 @@ export default function ClientProviders({ children, session, unreadCount, locale
                      <ErrorBoundary>
                        <InstallPrompt />
                      </ErrorBoundary>
+                     {/* Debug component for development */}
+                     <SidebarDebug userRole={session.user.role} hideSidebar={hideSidebar} />
                    </div>
                  </NotificationProvider>
                </EnhancedRealtimeProvider>

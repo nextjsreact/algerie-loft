@@ -120,10 +120,18 @@ export function EnhancedRealtimeProvider({ children, userId }: EnhancedRealtimeP
   }, [refreshCounts])
 
   useEffect(() => {
+    // Check if WebSocket is available
+    if (typeof window === 'undefined' || !window.WebSocket) {
+      console.warn('WebSocket not available, skipping real-time notifications')
+      return
+    }
 
     // Set up real-time subscription for task notifications
-    const notificationsSubscription = supabase
-      .channel('user_notifications')
+    let notificationsSubscription: any = null
+    
+    try {
+      notificationsSubscription = supabase
+        .channel('user_notifications')
       .on(
         'postgres_changes',
         {
@@ -206,7 +214,14 @@ export function EnhancedRealtimeProvider({ children, userId }: EnhancedRealtimeP
           }))
         }
       )
-      .subscribe()
+      .subscribe({
+        error: (error) => {
+          console.warn('WebSocket subscription error (non-critical):', error)
+        }
+      })
+    } catch (error) {
+      console.warn('Failed to set up real-time notifications (non-critical):', error)
+    }
 
     // Conversations system temporarily disabled to prevent infinite loops
     console.log('Conversations system temporarily disabled')
@@ -236,7 +251,13 @@ export function EnhancedRealtimeProvider({ children, userId }: EnhancedRealtimeP
     const refreshInterval = setInterval(refreshCounts, 30000)
 
     return () => {
-      notificationsSubscription.unsubscribe()
+      if (notificationsSubscription) {
+        try {
+          notificationsSubscription.unsubscribe()
+        } catch (error) {
+          console.warn('WebSocket unsubscribe error (non-critical):', error)
+        }
+      }
       window.removeEventListener('online', handleOnline)
       window.removeEventListener('offline', handleOffline)
       clearInterval(refreshInterval)

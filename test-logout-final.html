@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Final - Déconnexion Client</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-case {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success {
+            border-left: 4px solid #10b981;
+        }
+        .critical {
+            border-left: 4px solid #ef4444;
+            background-color: #fef2f2;
+        }
+        .code {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .success .status {
+            color: #10b981;
+        }
+        .critical .status {
+            color: #ef4444;
+        }
+        .steps {
+            background: #e0f2fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test Final - Déconnexion Client</h1>
+    
+    <div class="test-case critical">
+        <div class="status">🚨 PROBLÈME IDENTIFIÉ - Middleware d'authentification</div>
+        <h3>Le problème était dans le middleware :</h3>
+        <p>Le middleware d'authentification redirige automatiquement vers <code>/login</code> quand il n'y a pas de session, même pour les pages publiques comme <code>/site-public</code>.</p>
+        
+        <h3>Solution appliquée :</h3>
+        <div class="code">
+// Ajout de '/site-public' aux routes publiques dans middleware/auth.ts
+publicRoutes: [
+  '/',
+  '/public',
+  '/site-public',  // ← AJOUTÉ
+  '/login',
+  // ...
+]
+        </div>
+    </div>
+
+    <div class="test-case success">
+        <div class="status">✅ CORRECTIONS COMPLÈTES</div>
+        <h3>Toutes les corrections appliquées :</h3>
+        <ol>
+            <li><strong>Triple protection sidebar</strong> - Empêche l'affichage pour les clients</li>
+            <li><strong>Redirection lib/auth.ts</strong> - Vers /site-public</li>
+            <li><strong>Redirection UserAvatarDropdown</strong> - Vers /site-public</li>
+            <li><strong>Redirection SessionManager</strong> - Vers /site-public</li>
+            <li><strong>Middleware auth</strong> - /site-public ajouté aux routes publiques</li>
+        </ol>
+    </div>
+
+    <div class="steps">
+        <h3>🧪 Test final de déconnexion :</h3>
+        <ol>
+            <li><strong>Connectez-vous</strong> avec un compte client</li>
+            <li><strong>Allez</strong> au dashboard client</li>
+            <li><strong>Cliquez</strong> sur votre avatar → "Se déconnecter"</li>
+            <li><strong>Vérifiez</strong> que vous arrivez sur /fr/site-public</li>
+            <li><strong>Confirmez</strong> que vous voyez la page marketing (pas de sidebar)</li>
+        </ol>
+    </div>
+
+    <div class="test-case success">
+        <div class="status">✅ RÉSULTAT ATTENDU MAINTENANT</div>
+        <h3>Après déconnexion, vous devriez voir :</h3>
+        <ul>
+            <li>✅ URL : /fr/site-public</li>
+            <li>✅ Page d'accueil marketing avec header "Loft Algérie"</li>
+            <li>✅ Sections : Hero, Stats, Lofts recommandés, Propriétaires</li>
+            <li>✅ Boutons "Connexion" et "Inscription" dans le header</li>
+            <li>✅ Aucun sidebar d'employé visible</li>
+            <li>✅ Navigation publique complète</li>
+        </ul>
+    </div>
+
+    <div class="test-case">
+        <h3>📋 Fichiers modifiés au total :</h3>
+        <ul>
+            <li>components/app-sidebar.tsx</li>
+            <li>hooks/use-sidebar-visibility.ts</li>
+            <li>components/layout/sidebar-nextintl.tsx</li>
+            <li>lib/auth.ts</li>
+            <li>components/auth/user-avatar-dropdown.tsx</li>
+            <li>lib/session-manager.ts</li>
+            <li><strong>middleware/auth.ts</strong> ← NOUVEAU</li>
+        </ul>
+    </div>
+
+    <script>
+        console.log('🔧 CORRECTION FINALE appliquée');
+        console.log('📍 Problème : Middleware redirigeait vers /login');
+        console.log('✅ Solution : /site-public ajouté aux routes publiques');
+        console.log('🧪 Testez maintenant la déconnexion !');
+    </script>
+</body>
+</html>

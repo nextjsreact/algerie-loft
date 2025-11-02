@@ -76,9 +76,18 @@ export function NotificationProvider({ children, userId }: { children: React.Rea
     // Initial fetch
     refreshNotifications()
 
-    // Set up real-time subscription
-    const subscription = supabase
-      .channel('notification-count')
+    // Set up real-time subscription with error handling
+    let subscription: any = null
+    
+    try {
+      // Check if WebSocket is available
+      if (typeof window === 'undefined' || !window.WebSocket) {
+        console.warn('WebSocket not available, skipping real-time notifications')
+        return
+      }
+
+      subscription = supabase
+        .channel('notification-count')
       .on(
         'postgres_changes',
         {
@@ -134,10 +143,23 @@ export function NotificationProvider({ children, userId }: { children: React.Rea
           }
         }
       )
-      .subscribe()
+      .subscribe({
+        error: (error) => {
+          console.warn('WebSocket subscription error (non-critical):', error)
+        }
+      })
+    } catch (error) {
+      console.warn('Failed to set up real-time notifications (non-critical):', error)
+    }
 
     return () => {
-      subscription.unsubscribe()
+      if (subscription) {
+        try {
+          subscription.unsubscribe()
+        } catch (error) {
+          console.warn('WebSocket unsubscribe error (non-critical):', error)
+        }
+      }
     }
   }, [userId, supabase, playNotificationSound])
 

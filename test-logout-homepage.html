@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Déconnexion vers Page d'Accueil</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-case {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success {
+            border-left: 4px solid #10b981;
+        }
+        .info {
+            border-left: 4px solid #3b82f6;
+            background-color: #eff6ff;
+        }
+        .code {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .success .status {
+            color: #10b981;
+        }
+        .info .status {
+            color: #3b82f6;
+        }
+        .steps {
+            background: #e0f2fe;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏠 Test - Déconnexion vers Page d'Accueil</h1>
+    
+    <div class="test-case info">
+        <div class="status">ℹ️ CHANGEMENT DEMANDÉ</div>
+        <h3>Nouvelle destination de déconnexion :</h3>
+        <p>Au lieu de rediriger vers <code>/fr/site-public</code>, vous voulez rediriger vers la page racine de chaque langue :</p>
+        <ul>
+            <li><strong>Français :</strong> <code>/fr</code></li>
+            <li><strong>Anglais :</strong> <code>/en</code></li>
+            <li><strong>Arabe :</strong> <code>/ar</code></li>
+        </ul>
+    </div>
+
+    <div class="test-case success">
+        <div class="status">✅ CORRECTIONS APPLIQUÉES</div>
+        <h3>1. lib/auth.ts :</h3>
+        <div class="code">redirect("/fr");</div>
+        
+        <h3>2. components/auth/user-avatar-dropdown.tsx :</h3>
+        <div class="code">router.push(`/${locale}`)</div>
+        
+        <h3>3. lib/session-manager.ts :</h3>
+        <div class="code">window.location.href = '/fr';</div>
+    </div>
+
+    <div class="test-case info">
+        <div class="status">📋 CE QUE VOUS VERREZ MAINTENANT</div>
+        <h3>Page d'accueil (/fr, /en, /ar) contient :</h3>
+        <ul>
+            <li>✨ <strong>FusionDualAudienceHomepage</strong> - Page marketing complète</li>
+            <li>🎠 <strong>Carrousel hero</strong> avec lofts en vedette</li>
+            <li>📊 <strong>Statistiques</strong> (2500+ clients, 150+ lofts, etc.)</li>
+            <li>⭐ <strong>Témoignages</strong> clients</li>
+            <li>🏠 <strong>Lofts recommandés</strong> avec prix et réservation</li>
+            <li>🎯 <strong>Section propriétaires</strong> pour maximiser revenus</li>
+            <li>📞 <strong>Contact et footer</strong> complets</li>
+        </ul>
+    </div>
+
+    <div class="steps">
+        <h3>🧪 Test de déconnexion :</h3>
+        <ol>
+            <li><strong>Connectez-vous</strong> avec un compte client</li>
+            <li><strong>Allez</strong> au dashboard client</li>
+            <li><strong>Cliquez</strong> sur votre avatar → "Se déconnecter"</li>
+            <li><strong>Vérifiez l'URL :</strong> Vous devriez être sur <code>/fr</code> (ou /en, /ar selon la langue)</li>
+            <li><strong>Vérifiez le contenu :</strong> Page marketing avec carrousel, stats, témoignages</li>
+        </ol>
+    </div>
+
+    <div class="test-case success">
+        <div class="status">✅ RÉSULTAT ATTENDU</div>
+        <h3>Après déconnexion :</h3>
+        <ul>
+            <li>✅ URL : <code>/fr</code> (ou /en, /ar selon la langue)</li>
+            <li>✅ Page d'accueil marketing complète</li>
+            <li>✅ Header avec "Loft Algérie" et boutons Connexion/Inscription</li>
+            <li>✅ Carrousel avec lofts en vedette</li>
+            <li>✅ Sections marketing pour clients et propriétaires</li>
+            <li>✅ Aucun sidebar d'employé visible</li>
+            <li>✅ Navigation publique complète</li>
+        </ul>
+    </div>
+
+    <div class="test-case">
+        <h3>🎯 Avantages de cette approche :</h3>
+        <ul>
+            <li><strong>URL plus propre :</strong> /fr au lieu de /fr/site-public</li>
+            <li><strong>SEO optimisé :</strong> Page racine pour chaque langue</li>
+            <li><strong>Navigation intuitive :</strong> Retour à l'accueil naturel</li>
+            <li><strong>Multilingue :</strong> Respect de la langue sélectionnée</li>
+        </ul>
+    </div>
+
+    <script>
+        console.log('🏠 REDIRECTION MODIFIÉE vers page d\'accueil');
+        console.log('📍 Nouvelles destinations :');
+        console.log('  - Français: /fr');
+        console.log('  - Anglais: /en');
+        console.log('  - Arabe: /ar');
+        console.log('🧪 Testez maintenant la déconnexion !');
+    </script>
+</body>
+</html>

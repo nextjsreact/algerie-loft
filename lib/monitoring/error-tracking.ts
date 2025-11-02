@@ -81,12 +81,16 @@ export class ErrorTracker {
     // Check if we need to send alerts
     this.checkAlertThresholds(fingerprint, currentCount + 1, alert);
     
-    // Log locally
-    console.error(`[Error Tracker] ${level.toUpperCase()}: ${message}`, {
-      context,
-      count: currentCount + 1,
-      fingerprint,
-    });
+    // Log locally with error handling
+    try {
+      console.error(`[Error Tracker] ${level.toUpperCase()}: ${message}`, {
+        context,
+        count: currentCount + 1,
+        fingerprint,
+      });
+    } catch (logError) {
+      console.warn('Error logging failed:', logError);
+    }
     
     return alert.id;
   }

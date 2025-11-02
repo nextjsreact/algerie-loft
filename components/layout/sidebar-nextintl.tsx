@@ -18,6 +18,7 @@ import { NotificationBadge } from "@/components/ui/notification-badge"
 import { useEnhancedRealtime } from "@/components/providers/enhanced-realtime-provider"
 import { useNotifications } from "@/components/providers/notification-context"
 import { useTranslations, useLocale, useMessages } from "next-intl"
+import { UserAvatarDropdown } from "@/components/auth/user-avatar-dropdown"
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   user: User;
@@ -33,6 +34,11 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
   const t = useTranslations('nav')
   const tRoles = useTranslations('roles')
   const tAuth = useTranslations('auth')
+
+  // Ne pas afficher le sidebar d'employé pour les clients et partenaires
+  if (user.role === 'client' || user.role === 'partner') {
+    return null
+  }
 
 
   const navigation = [
@@ -192,11 +198,9 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
 
       <div className="flex-shrink-0 p-4 border-t border-white/20 bg-white/5 backdrop-blur-md">
         <div className="flex items-center gap-3 p-3 rounded-xl bg-white/10 backdrop-blur-md hover:bg-white/15 transition-all duration-300 border border-white/10 hover:border-white/20 hover:shadow-lg hover:shadow-cyan-500/10">
-          <div className="relative">
-            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/25 hover:shadow-cyan-500/30 transition-all duration-300">
-              <span className="text-sm font-bold text-white">{(user.full_name || '').charAt(0).toUpperCase()}</span>
-            </div>
-            <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-indigo-900 bg-gradient-to-r from-green-400 to-emerald-500 animate-pulse shadow-lg shadow-green-500/25"></div>
+          {/* Interactive User Avatar */}
+          <div className="flex-shrink-0">
+            <UserAvatarDropdown locale={locale} />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-white truncate">

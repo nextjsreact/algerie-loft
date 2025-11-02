@@ -1,11 +1,13 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import PublicLanguageSelector from './PublicLanguageSelector';
 import MobileLanguageSelector from './MobileLanguageSelector';
 import { HeaderLogo } from '@/components/futuristic/AnimatedLogo';
 import RobustLogo from '@/components/futuristic/RobustLogo';
+import { UserAvatarDropdown } from '@/components/auth/user-avatar-dropdown';
+import { createClient } from '@/utils/supabase/client';
 
 interface PublicHeaderProps {
   locale: string;
@@ -16,6 +18,25 @@ interface PublicHeaderProps {
 
 export default function PublicHeader({ locale, text }: PublicHeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsAuthenticated(!!user);
+    };
+
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setIsAuthenticated(!!session?.user);
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
   return (
     <header className="bg-white dark:bg-gray-900 shadow-sm transition-colors">
       {/* Google Fonts - Caveat pour cohérence avec la page principale */}
@@ -105,8 +126,11 @@ export default function PublicHeader({ locale, text }: PublicHeaderProps) {
               <ThemeToggle />
             </div>
             
-            {/* Login Dropdown */}
-            <div className="relative group">
+            {/* User Avatar or Login */}
+            {isAuthenticated ? (
+              <UserAvatarDropdown locale={locale} />
+            ) : (
+              <div className="relative group">
               <button 
                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg font-bold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 flex items-center gap-2 text-xl shadow-lg"
               >
@@ -147,6 +171,7 @@ export default function PublicHeader({ locale, text }: PublicHeaderProps) {
                 </div>
               </div>
             </div>
+            )}
           </div>
 
           {/* Mobile controls */}

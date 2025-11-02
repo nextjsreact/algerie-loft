@@ -362,7 +362,7 @@ export async function registerWithRole(
 export async function logout() {
   const supabase = await createClient()
   await supabase.auth.signOut();
-  redirect("/fr/public");
+  redirect("/fr");
 }
 
 export async function requestPasswordReset(email: string): Promise<{ success: boolean; error?: string }> {

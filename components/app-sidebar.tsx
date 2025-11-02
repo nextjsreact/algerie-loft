@@ -53,6 +53,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter()
   const [session, setSession] = React.useState<AuthSession | null>(null)
 
+  // Don't show sidebar on client or partner pages - they have their own navigation
+  if (pathname.includes('/client/') || pathname.includes('/partner/')) {
+    return null
+  }
+
+  // Don't show employee sidebar for client or partner users
+  if (session && (session.user.role === 'client' || session.user.role === 'partner')) {
+    return null
+  }
+
   React.useEffect(() => {
     async function fetchSession() {
       try {

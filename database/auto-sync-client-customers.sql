@@ -8,7 +8,7 @@
 -- =====================================================
 
 CREATE OR REPLACE FUNCTION sync_client_to_customers()
-RETURNS TRIGGER AS $
+RETURNS TRIGGER AS $$
 DECLARE
     user_role TEXT;
     full_name TEXT;
@@ -74,7 +74,7 @@ BEGIN
     
     RETURN NEW;
 END;
-$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- =====================================================
 -- 2. CREATE TRIGGER ON auth.users
@@ -97,10 +97,13 @@ CREATE OR REPLACE FUNCTION sync_existing_client_users()
 RETURNS TABLE(
     synced_count INTEGER,
     message TEXT
-) AS $
+) AS $$
 DECLARE
     sync_count INTEGER := 0;
     user_record RECORD;
+    full_name TEXT;
+    first_name TEXT;
+    last_name TEXT;
 BEGIN
     -- Loop through all client users in auth.users
     FOR user_record IN 
@@ -109,15 +112,58 @@ BEGIN
     LOOP
         -- Check if customer record already exists
         IF NOT EXISTS (SELECT 1 FROM public.customers WHERE id = user_record.id) THEN
-            -- Trigger the sync function manually
-            PERFORM sync_client_to_customers() FROM (SELECT user_record.*) AS NEW;
+            -- Extract name information
+            full_name := COALESCE(user_record.raw_user_meta_data->>'full_name', split_part(user_record.email, '@', 1));
+            
+            -- Split full name into first and last name
+            first_name := split_part(full_name, ' ', 1);
+            last_name := CASE 
+                WHEN position(' ' in full_name) > 0 THEN 
+                    substring(full_name from position(' ' in full_name) + 1)
+                ELSE 
+                    first_name
+            END;
+            
+            -- Insert into customers table
+            INSERT INTO public.customers (
+                id,
+                first_name,
+                last_name,
+                email,
+                status,
+                email_verified,
+                preferences,
+                created_by,
+                created_at,
+                updated_at
+            ) VALUES (
+                user_record.id,
+                first_name,
+                last_name,
+                user_record.email,
+                'active',
+                CASE WHEN user_record.email_confirmed_at IS NOT NULL THEN true ELSE false END,
+                jsonb_build_object(
+                    'language', 'fr',
+                    'currency', 'DZD',
+                    'notifications', jsonb_build_object(
+                        'email', true,
+                        'sms', false,
+                        'marketing', false
+                    )
+                ),
+                user_record.id,
+                user_record.created_at,
+                COALESCE(user_record.updated_at, user_record.created_at)
+            );
+            
             sync_count := sync_count + 1;
         END IF;
     END LOOP;
     
     RETURN QUERY SELECT sync_count, format('Synced %s existing client users to customers table', sync_count);
 END;
-$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- =====================================================
 -- 4. GRANT PERMISSIONS

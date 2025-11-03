@@ -1,14 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
+// Configuration pour éviter les erreurs de build
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
+export async function GET() {
   return NextResponse.json({ 
     message: 'Secure login endpoint',
-    status: 'available' 
+    status: 'available',
+    method: 'GET'
   })
 }
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   return NextResponse.json({ 
-    error: 'Not implemented' 
+    message: 'Secure login endpoint',
+    status: 'not_implemented',
+    method: 'POST'
   }, { status: 501 })
 }

@@ -83,11 +83,11 @@ export class ErrorTracker {
     
     // Log locally with error handling
     try {
-      console.error(`[Error Tracker] ${level.toUpperCase()}: ${message}`, {
+      console.error(`[Error Tracker] ${level.toUpperCase()}: ${message}`, JSON.stringify({
         context,
         count: currentCount + 1,
         fingerprint,
-      });
+      }));
     } catch (logError) {
       console.warn('Error logging failed:', logError);
     }
@@ -351,23 +351,31 @@ export function setupGlobalErrorHandling() {
   // Handle unhandled errors
   if (typeof window !== 'undefined') {
     window.addEventListener('error', (event) => {
-      errorTracker.trackError(event.error || event.message, {
-        page: window.location.pathname,
-        action: 'unhandled_error',
-        additionalData: {
-          filename: event.filename,
-          lineno: event.lineno,
-          colno: event.colno,
-        },
-      });
+      try {
+        errorTracker.trackError(event.error || event.message, {
+          page: window.location.pathname,
+          action: 'unhandled_error',
+          additionalData: {
+            filename: event.filename,
+            lineno: event.lineno,
+            colno: event.colno,
+          },
+        });
+      } catch (trackingError) {
+        console.warn('Error tracking failed:', trackingError);
+      }
     });
 
     // Handle unhandled promise rejections
     window.addEventListener('unhandledrejection', (event) => {
-      errorTracker.trackError(event.reason, {
-        page: window.location.pathname,
-        action: 'unhandled_promise_rejection',
-      });
+      try {
+        errorTracker.trackError(event.reason, {
+          page: window.location.pathname,
+          action: 'unhandled_promise_rejection',
+        });
+      } catch (trackingError) {
+        console.warn('Promise rejection tracking failed:', trackingError);
+      }
     });
   }
 
@@ -376,7 +384,12 @@ export function setupGlobalErrorHandling() {
 
 // Convenience functions
 export const trackError = (error: Error | string, context?: ErrorContext, level?: 'error' | 'warning' | 'info') => {
-  return ErrorTracker.getInstance().trackError(error, context, level);
+  try {
+    return ErrorTracker.getInstance().trackError(error, context, level);
+  } catch (trackingError) {
+    console.warn('Error tracking failed:', trackingError);
+    return null;
+  }
 };
 
 export const trackAPIError = (endpoint: string, method: string, statusCode: number, error: Error | string, context?: ErrorContext) => {

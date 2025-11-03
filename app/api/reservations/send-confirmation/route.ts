@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Get reservation details with related data
     const { data: reservation, error: reservationError } = await (await supabase)
@@ -156,7 +156,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Get reservation details
     const { data: reservation, error: reservationError } = await (await supabase)

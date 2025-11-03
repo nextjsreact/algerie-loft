@@ -5,9 +5,9 @@ import { UserProfilePage } from '@/components/profile/user-profile-page'
 export default async function ProfilePage({
   params
 }: {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }) {
-  const { locale } = params
+  const { locale } = await params
   const supabase = await createClient()
 
   const { data: { user }, error } = await supabase.auth.getUser()

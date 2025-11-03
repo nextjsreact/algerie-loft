@@ -6,10 +6,10 @@ export default async function AuthCallbackPage({
   params,
   searchParams,
 }: {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
   searchParams: { code?: string; error?: string }
 }) {
-  const { locale } = params
+  const { locale } = await params
   const { code, error } = searchParams
 
   if (error) {

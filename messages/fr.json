@@ -606,6 +606,10 @@
       "continueToLogin": "Se connecter",
       "browseProperties": "Parcourir les propriétés",
       "supportText": "Besoin d'aide ? Contactez notre support client"
+    },
+    "register": {
+      "title": "Inscription - Algerie Loft",
+      "description": "Créez votre compte pour accéder à nos services de location de lofts en Algérie"
     }
   },
   "availability": {

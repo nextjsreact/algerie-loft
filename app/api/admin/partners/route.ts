@@ -1,83 +1,87 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@/utils/supabase/server'
 
+
+// GET /api/admin/partners - List partners with filtering
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
-    const { searchParams } = new URL(request.url)
-    const status = searchParams.get('status')
-    
-    // Get current user and verify admin permissions
+    const supabase = await createClient()
+
+    // Check if user is admin
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
-      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get user profile to check role
+    // Verify admin role
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single()
 
-    if (!profile || !['admin', 'manager', 'executive'].includes(profile.role)) {
-      return NextResponse.json({ error: 'Permissions insuffisantes' }, { status: 403 })
+    if (!profile || profile.role !== 'admin') {
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
+
+    // Parse query parameters
+    const { searchParams } = new URL(request.url)
+    const status = searchParams.get('status') || 'all'
+    const search = searchParams.get('search')
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const offset = (page - 1) * limit
 
     // Build query
     let query = supabase
-      .from('partner_profiles')
+      .from('partners')
       .select(`
-        id,
-        user_id,
-        business_name,
-        business_type,
-        tax_id,
-        address,
-        phone,
-        verification_status,
-        verification_documents,
-        created_at,
-        profiles!partner_profiles_user_id_fkey(full_name, email)
+        *,
+        user:profiles!partners_user_id_fkey(
+          id,
+          full_name,
+          email
+        )
       `)
       .order('created_at', { ascending: false })
 
-    // Filter by status if provided
-    if (status && status !== 'all') {
+    // Apply filters
+    if (status !== 'all') {
       query = query.eq('verification_status', status)
     }
 
-    const { data: partners, error } = await query
-
-    if (error) {
-      throw error
+    if (search) {
+      query = query.or(`business_name.ilike.%${search}%,address.ilike.%${search}%`)
     }
 
-    // Transform the data for the frontend
+    // Apply pagination
+    query = query.range(offset, offset + limit - 1)
+
+    const { data: partners, error, count } = await query
+
+    if (error) {
+      console.error('Error fetching partners:', error)
+      return NextResponse.json({ error: 'Failed to fetch partners' }, { status: 500 })
+    }
+
+    // Transform data to include computed fields
     const transformedPartners = partners?.map(partner => ({
-      id: partner.id,
-      user_id: partner.user_id,
-      business_name: partner.business_name,
-      business_type: partner.business_type,
-      tax_id: partner.tax_id,
-      address: partner.address,
-      phone: partner.phone,
-      verification_status: partner.verification_status,
-      verification_documents: partner.verification_documents || [],
-      created_at: partner.created_at,
-      user: {
-        full_name: partner.profiles?.full_name || 'Nom inconnu',
-        email: partner.profiles?.email || 'Email inconnu'
-      }
+      ...partner,
+      properties_count: 0, // This would need a separate query to count properties
+      total_revenue: 0,    // This would need calculation from reservations
+      active_reservations_count: 0 // This would need a separate query
     })) || []
 
-    return NextResponse.json({ partners: transformedPartners })
+    return NextResponse.json({
+      partners: transformedPartners,
+      total: count,
+      page,
+      limit,
+      totalPages: Math.ceil((count || 0) / limit)
+    })
 
   } catch (error) {
-    console.error('Error fetching partners:', error)
-    return NextResponse.json(
-      { error: 'Erreur lors du chargement des partenaires' },
-      { status: 500 }
-    )
+    console.error('Admin partners API error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

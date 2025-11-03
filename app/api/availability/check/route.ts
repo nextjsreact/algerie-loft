@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
 
 async function checkLoftAvailability(loftId: string, checkIn: string, checkOut: string): Promise<boolean> {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Check for overlapping reservations
     const { data: overlappingReservations, error } = await supabase

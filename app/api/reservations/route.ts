@@ -199,7 +199,7 @@ async function checkLoftExists(loftId: string): Promise<boolean> {
       return false;
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, error } = await supabase
       .from('lofts')
       .select('id')
@@ -215,7 +215,7 @@ async function checkLoftExists(loftId: string): Promise<boolean> {
 
 async function checkAvailability(loftId: string, checkIn: string, checkOut: string): Promise<boolean> {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check for overlapping reservations
     const { data: overlappingReservations, error } = await supabase
@@ -240,7 +240,7 @@ async function checkAvailability(loftId: string, checkIn: string, checkOut: stri
 
 async function createReservation(data: any) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // First, try to find or create customer
     let customerId = null;
@@ -333,7 +333,7 @@ async function createReservation(data: any) {
 
 async function getReservationsByEmail(email: string) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     const { data: reservations, error } = await supabase
       .from('reservations')
@@ -366,7 +366,7 @@ async function getReservationsByEmail(email: string) {
 
 async function getReservationsByLoft(loftId: string) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     const { data: reservations, error } = await supabase
       .from('reservations')

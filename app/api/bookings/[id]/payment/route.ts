@@ -13,14 +13,13 @@ export async function POST(
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
+      );
     }
 
     const { id } = await params;
-      )
-    }
 
-    const body = await request.json()
-    const { payment_method, amount } = body
+    const body = await request.json();
+    const { payment_method, amount } = body;
 
     if (!payment_method || !amount) {
       return NextResponse.json(
@@ -45,7 +44,7 @@ export async function POST(
           name
         )
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (bookingError || !booking) {
@@ -98,7 +97,7 @@ export async function POST(
           payment_status: 'failed',
           updated_at: new Date().toISOString()
         })
-        .eq('id', params.id)
+        .eq('id', id)
 
       return NextResponse.json(
         { error: 'Payment failed. Please try again.' },
@@ -115,7 +114,7 @@ export async function POST(
         confirmed_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
 
@@ -134,7 +133,7 @@ export async function POST(
     // Simulate creating a payment record
     const paymentRecord = {
       id: `pay_${Date.now()}`,
-      booking_id: params.id,
+      booking_id: id,
       amount: amount,
       currency: 'EUR',
       payment_method: payment_method,
@@ -150,10 +149,10 @@ export async function POST(
     })
 
   } catch (error) {
-    console.error('Payment API error:', error)
+    console.error('Payment API error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
-    )
+    );
   }
 }

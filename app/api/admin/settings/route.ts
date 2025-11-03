@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Get current user and verify admin permissions
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { settings } = await request.json()
     
     // Get current user and verify admin permissions

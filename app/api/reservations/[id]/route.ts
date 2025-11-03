@@ -20,7 +20,7 @@ export async function GET(
       );
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Get reservation with related data
     const { data: reservation, error: reservationError } = await (await supabase)
@@ -176,7 +176,7 @@ export async function PUT(
       );
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Get current reservation for audit trail
     const { data: currentReservation, error: fetchError } = await (await supabase)
@@ -280,7 +280,7 @@ export async function DELETE(
       );
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Get current reservation
     const { data: reservation, error: fetchError } = await (await supabase)

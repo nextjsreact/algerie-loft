@@ -59,8 +59,8 @@ Sentry.init({
     // }),
   ],
   
-  // Additional options
-  debug: process.env.NODE_ENV === 'development',
+  // Additional options - debug disabled to avoid bundle warnings
+  debug: false,
   
   // Capture unhandled promise rejections
   captureUnhandledRejections: true,

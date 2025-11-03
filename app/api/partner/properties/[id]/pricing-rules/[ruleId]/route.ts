@@ -6,7 +6,7 @@ export async function PUT(
   { params }: { params: { id: string; ruleId: string } }
 ) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const updates = await request.json()
     
     // Get current user and verify they own this property
@@ -100,7 +100,7 @@ export async function DELETE(
   { params }: { params: { id: string; ruleId: string } }
 ) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Get current user and verify they own this property
     const { data: { user }, error: authError } = await supabase.auth.getUser()

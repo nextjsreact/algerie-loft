@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
                     'unknown'
 
     // Store in database
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: submission, error: dbError } = await supabase
       .from('contact_submissions')
       .insert({

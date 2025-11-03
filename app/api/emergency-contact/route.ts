@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
                     'unknown'
 
     // Store in database with high priority
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: emergencySubmission, error: dbError } = await supabase
       .from('emergency_contacts')
       .insert({
@@ -233,7 +233,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: emergency, error } = await supabase
       .from('emergency_contacts')
       .select('*')

@@ -1,0 +1,6 @@
+
+# Temporary ignore for staging deployment
+app/api/bookings/[id]/cancel/route.ts
+app/api/bookings/[id]/payment/route.ts
+components/variants/StyleVariant6.tsx
+pages/api/analytics/index.js

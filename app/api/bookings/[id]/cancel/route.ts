@@ -13,16 +13,15 @@ export async function POST(
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
+      );
     }
 
     const { id } = await params;
-      )
-    }
 
-    const body = await request.json()
-    const { cancellation_reason } = body
+    const body = await request.json();
+    const { cancellation_reason } = body;
 
-    const supabase = await createClient()
+    const supabase = await createClient();
 
     // Get booking details
     const { data: booking, error: bookingError } = await supabase
@@ -39,7 +38,7 @@ export async function POST(
           name
         )
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (bookingError || !booking) {
@@ -106,7 +105,7 @@ export async function POST(
         cancelled_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
 
@@ -128,7 +127,7 @@ export async function POST(
           payment_status: 'refunded',
           updated_at: new Date().toISOString()
         })
-        .eq('id', params.id)
+        .eq('id', id)
 
       // TODO: Process actual refund through payment provider
       // TODO: Send refund confirmation email
@@ -149,10 +148,10 @@ export async function POST(
     })
 
   } catch (error) {
-    console.error('Cancellation API error:', error)
+    console.error('Cancellation API error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
-    )
+    );
   }
 }

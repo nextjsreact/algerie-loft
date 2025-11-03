@@ -49,7 +49,12 @@ function preloadFont(config: FontConfig) {
     link.as = 'font';
     link.type = 'font/woff2';
     link.crossOrigin = 'anonymous';
-    link.href = `https://fonts.gstatic.com/s/${config.family.toLowerCase()}/v1/${config.family}-${weight}.woff2`;
+    // Use correct Google Fonts URL structure
+    link.href = `https://fonts.gstatic.com/s/${config.family.toLowerCase()}/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2`;
+    
+    link.onerror = () => {
+      console.warn(`Failed to preload font: ${config.family}-${weight}`);
+    };
     
     document.head.appendChild(link);
   });

@@ -6,7 +6,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Get current user and verify they own this property
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -45,7 +45,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const updates = await request.json()
     
     // Get current user and verify they own this property

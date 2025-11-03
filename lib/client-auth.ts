@@ -20,7 +20,7 @@ export interface ClientLoginData {
 
 /**
  * Register a new client with proper database synchronization
- * Creates user in both auth.users AND public.customers
+ * Creates user in Supabase Auth with metadata
  */
 export async function registerClientComplete(data: ClientRegistrationData): Promise<{
   success: boolean
@@ -30,7 +30,7 @@ export async function registerClientComplete(data: ClientRegistrationData): Prom
   const supabase = createClient()
 
   try {
-    // 1. Create user in Supabase Auth
+    // Create user in Supabase Auth with all necessary metadata
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
@@ -38,11 +38,23 @@ export async function registerClientComplete(data: ClientRegistrationData): Prom
         data: {
           full_name: data.fullName,
           role: 'client',
+          phone: data.phone || null,
+          // Store client-specific data in user metadata
+          client_preferences: {
+            language: 'fr',
+            currency: 'DZD',
+            notifications: {
+              email: true,
+              sms: false,
+              marketing: false
+            }
+          }
         },
       },
     })
 
     if (authError) {
+      console.error('Supabase auth error:', authError)
       return { success: false, error: authError.message }
     }
 
@@ -50,38 +62,9 @@ export async function registerClientComplete(data: ClientRegistrationData): Prom
       return { success: false, error: 'User creation failed' }
     }
 
-    // 2. Create corresponding record in public.customers table
-    const [firstName, ...lastNameParts] = data.fullName.split(' ')
-    const lastName = lastNameParts.join(' ') || firstName
-
-    const { error: customerError } = await supabase
-      .from('customers')
-      .insert({
-        id: authData.user.id, // Use same ID as auth.users
-        first_name: firstName,
-        last_name: lastName,
-        email: data.email,
-        phone: data.phone || null,
-        status: 'prospect',
-        email_verified: false,
-        preferences: {
-          language: 'fr',
-          currency: 'DZD',
-          notifications: {
-            email: true,
-            sms: false,
-            marketing: false
-          }
-        },
-        created_by: authData.user.id
-      })
-
-    if (customerError) {
-      console.error('Failed to create customer record:', customerError)
-      // Don't fail the registration, but log the error
-      // The user is created in auth.users, we can sync later
-    }
-
+    // The customer record will be created by database triggers
+    // or can be created later when the user first logs in
+    
     return { 
       success: true, 
       requiresEmailVerification: !authData.session // If no session, email verification required

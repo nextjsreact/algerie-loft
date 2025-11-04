@@ -67,7 +67,7 @@ export function HomePageClient() {
     )
   }
 
-  // Sections communes à tous les employés
+  // Sections communes pour Admin, Manager et Member uniquement
   const commonSections = [
     {
       title: "🏢 Appartements",
@@ -75,7 +75,7 @@ export function HomePageClient() {
       href: `/${locale}/lofts`,
       icon: Building2,
       color: "from-blue-500 to-blue-600",
-      roles: ['admin', 'manager', 'executive', 'member']
+      roles: ['admin', 'manager', 'member']
     },
     {
       title: "📅 Réservations", 
@@ -83,15 +83,15 @@ export function HomePageClient() {
       href: `/${locale}/reservations`,
       icon: Calendar,
       color: "from-green-500 to-green-600",
-      roles: ['admin', 'manager', 'executive', 'member']
+      roles: ['admin', 'manager', 'member']
     },
     {
       title: "📋 Disponibilité",
-      description: "Calendrier de disponibilité", 
+      description: "Gérer la disponibilité", 
       href: `/${locale}/availability`,
       icon: CalendarCheck,
       color: "from-purple-500 to-purple-600",
-      roles: ['admin', 'manager', 'executive', 'member']
+      roles: ['admin', 'manager', 'member']
     },
     {
       title: "✅ Tâches",
@@ -99,77 +99,20 @@ export function HomePageClient() {
       href: `/${locale}/tasks`, 
       icon: ClipboardList,
       color: "from-orange-500 to-orange-600",
-      roles: ['admin', 'manager', 'executive', 'member']
+      roles: ['admin', 'manager', 'member']
     }
   ]
 
   // Sections spécifiques selon le profil
   const profileSpecificSections = [
-    // Sections pour Admin et Executive
+    // Sections pour Admin uniquement
     {
       title: "👥 Équipes",
       description: "Gérer les équipes",
       href: `/${locale}/teams`,
       icon: Users,
       color: "from-indigo-500 to-indigo-600",
-      roles: ['admin', 'executive']
-    },
-    {
-      title: "🏠 Propriétaires",
-      description: "Gérer les propriétaires", 
-      href: `/${locale}/owners`,
-      icon: UserCheck,
-      color: "from-teal-500 to-teal-600",
-      roles: ['admin', 'executive', 'manager']
-    },
-    {
-      title: "💰 Transactions",
-      description: "Gestion financière",
-      href: `/${locale}/transactions`,
-      icon: DollarSign,
-      color: "from-yellow-500 to-yellow-600",
-      roles: ['admin', 'executive', 'manager']
-    },
-    {
-      title: "📊 Rapports",
-      description: "Tableaux de bord et rapports",
-      href: `/${locale}/reports`,
-      icon: BarChart3,
-      color: "from-red-500 to-red-600",
-      roles: ['admin', 'executive', 'manager']
-    },
-    // Nouvelles sections demandées
-    {
-      title: "🤝 Partenaires en attente",
-      description: "Gérer les demandes de partenariat",
-      href: `/${locale}/partner/pending`,
-      icon: UserPlus,
-      color: "from-amber-500 to-amber-600",
-      roles: ['admin', 'executive']
-    },
-    {
-      title: "✅ Valider partenaires",
-      description: "Validation des partenaires",
-      href: `/${locale}/partner/validation`,
-      icon: CheckCircle,
-      color: "from-emerald-500 to-emerald-600",
-      roles: ['admin', 'executive']
-    },
-    {
-      title: "⚠️ Litiges ouverts",
-      description: "Consulter les litiges en cours",
-      href: `/${locale}/disputes/open`,
-      icon: AlertTriangle,
-      color: "from-red-500 to-red-600",
-      roles: ['admin', 'executive', 'manager']
-    },
-    {
-      title: "⚖️ Gérer litiges",
-      description: "Résolution des litiges",
-      href: `/${locale}/disputes/manage`,
-      icon: Gavel,
-      color: "from-purple-500 to-purple-600",
-      roles: ['admin', 'executive']
+      roles: ['admin']
     },
     {
       title: "⚙️ Paramètres Plateforme",
@@ -177,6 +120,72 @@ export function HomePageClient() {
       href: `/${locale}/platform/settings`,
       icon: Cog,
       color: "from-gray-500 to-gray-600",
+      roles: ['admin']
+    },
+    
+    // Sections pour Admin, Manager et Executive
+    {
+      title: "🏠 Propriétaires",
+      description: "Gérer les propriétaires", 
+      href: `/${locale}/owners`,
+      icon: UserCheck,
+      color: "from-teal-500 to-teal-600",
+      roles: ['admin', 'manager']
+    },
+    {
+      title: "💰 Transactions",
+      description: "Gestion financière",
+      href: `/${locale}/transactions`,
+      icon: DollarSign,
+      color: "from-yellow-500 to-yellow-600",
+      roles: ['admin', 'manager']
+    },
+    
+
+    
+    // Sections pour Admin et Manager (gestion opérationnelle)
+    {
+      title: "📊 Rapports Détaillés",
+      description: "Rapports opérationnels détaillés",
+      href: `/${locale}/reports`,
+      icon: BarChart3,
+      color: "from-red-500 to-red-600",
+      roles: ['admin', 'manager']
+    },
+    
+    // Sections partenaires (Admin uniquement)
+    {
+      title: "🤝 Partenaires en attente",
+      description: "Gérer les demandes de partenariat",
+      href: `/${locale}/partner/pending`,
+      icon: UserPlus,
+      color: "from-amber-500 to-amber-600",
+      roles: ['admin']
+    },
+    {
+      title: "✅ Valider partenaires",
+      description: "Validation des partenaires",
+      href: `/${locale}/partner/validation`,
+      icon: CheckCircle,
+      color: "from-emerald-500 to-emerald-600",
+      roles: ['admin']
+    },
+    
+    // Sections litiges (gestion pour Admin et Manager)
+    {
+      title: "⚠️ Litiges ouverts",
+      description: "Gérer les litiges en cours",
+      href: `/${locale}/disputes/open`,
+      icon: AlertTriangle,
+      color: "from-red-500 to-red-600",
+      roles: ['admin', 'manager']
+    },
+    {
+      title: "⚖️ Gérer litiges",
+      description: "Résolution des litiges",
+      href: `/${locale}/disputes/manage`,
+      icon: Gavel,
+      color: "from-purple-500 to-purple-600",
       roles: ['admin']
     }
   ]
@@ -196,31 +205,34 @@ export function HomePageClient() {
         href: `/${locale}/conversations`,
         icon: MessageSquare,
         description: "Messages et communications",
-        roles: ['admin', 'manager', 'executive', 'member']
+        roles: ['admin', 'manager', 'member']
       },
       {
         title: "🔔 Notifications",
         href: `/${locale}/notifications`, 
         icon: Bell,
         description: "Alertes et notifications",
-        roles: ['admin', 'manager', 'executive', 'member']
+        roles: ['admin', 'manager', 'member']
       }
     ]
 
     const roleSpecificItems = [
+
+      
+      // Pour Admin et Manager - Vue opérationnelle
       {
         title: "📊 Tableau de bord",
         href: `/${locale}/dashboard`,
         icon: BarChart3,
-        description: "Vue d'ensemble des données",
-        roles: ['admin', 'executive', 'manager']
+        description: "Vue d'ensemble opérationnelle",
+        roles: ['admin', 'manager']
       },
       {
-        title: "📄 Rapports PDF",
+        title: "📄 Rapports Détaillés",
         href: `/${locale}/reports`,
         icon: BarChart3,
-        description: "Générer des rapports",
-        roles: ['admin', 'executive', 'manager']
+        description: "Rapports opérationnels détaillés",
+        roles: ['admin', 'manager']
       }
     ]
 

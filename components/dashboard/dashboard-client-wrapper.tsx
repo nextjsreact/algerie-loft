@@ -76,15 +76,49 @@ export function DashboardClientWrapper() {
     )
   }
 
-  // For executive role - redirect to dedicated executive dashboard
+  // For executive role - show executive-specific dashboard
   if (session.user.role === 'executive') {
-    // Use window.location for client-side redirect to executive page
-    if (typeof window !== 'undefined') {
-      window.location.href = `/${session.user.role === 'executive' ? 'executive' : 'dashboard'}`
-    }
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Redirecting to executive dashboard...</div>
+      <div className="p-4 md:p-8">
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Tableau de Bord Exécutif
+            </h1>
+            <p className="text-gray-600">
+              Bienvenue, {session.user.full_name || session.user.email || 'Executive'}
+            </p>
+            <p className="text-sm text-purple-600 font-medium">
+              Rôle: Executive - Vue Stratégique
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg shadow text-white">
+              <h3 className="text-lg font-semibold mb-2">📊 Rapports Exécutifs</h3>
+              <p className="text-blue-100">Vue d'ensemble stratégique et KPIs</p>
+            </div>
+            
+            <div className="bg-gradient-to-r from-green-500 to-green-600 p-6 rounded-lg shadow text-white">
+              <h3 className="text-lg font-semibold mb-2">🏢 Supervision Appartements</h3>
+              <p className="text-green-100">Consultation des propriétés</p>
+            </div>
+            
+            <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-6 rounded-lg shadow text-white">
+              <h3 className="text-lg font-semibold mb-2">📈 Performance Globale</h3>
+              <p className="text-purple-100">Indicateurs de performance</p>
+            </div>
+          </div>
+
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+              <p className="text-yellow-800 font-medium">
+                Accès Executive - Vue consultation et supervision uniquement
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }

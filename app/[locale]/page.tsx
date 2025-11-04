@@ -1,5 +1,7 @@
 import FusionDualAudienceHomepage from '@/components/homepage/FusionDualAudienceHomepage';
 import { Metadata } from 'next';
+import { getSession } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 interface LocalePageProps {
   params: Promise<{ locale: string }>;
@@ -79,5 +81,37 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
 export default async function LocalePage({ params }: LocalePageProps) {
   const { locale } = await params;
   
+  // Vérifier si l'utilisateur est connecté et rediriger selon son rôle
+  const session = await getSession();
+  
+  if (session) {
+    // Rediriger les employés vers leur dashboard approprié
+    switch (session.user.role) {
+      case 'admin':
+        redirect(`/${locale}/home`);
+        break;
+      case 'manager':
+        redirect(`/${locale}/home`);
+        break;
+      case 'executive':
+        redirect(`/${locale}/executive`);
+        break;
+      case 'member':
+        redirect(`/${locale}/home`);
+        break;
+      case 'client':
+        // Les clients restent sur la page publique mais avec accès client
+        redirect(`/${locale}/client/dashboard`);
+        break;
+      case 'partner':
+        redirect(`/${locale}/partner/dashboard`);
+        break;
+      default:
+        // Rôle inconnu, rester sur la page publique
+        break;
+    }
+  }
+  
+  // Utilisateurs non connectés ou rôles non reconnus voient la page publique
   return <FusionDualAudienceHomepage locale={locale} />;
 }

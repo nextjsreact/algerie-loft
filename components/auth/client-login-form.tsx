@@ -66,7 +66,7 @@ export function ClientLoginForm() {
         console.log('✅ Session établie - redirection...')
         
         // Redirection avec locale - important pour next-intl
-        router.push("/fr/dashboard")
+        router.push("/fr/home")
         // Ne pas appeler setIsLoading(false) ici car on redirige
       } else {
         console.warn('⚠️ Pas de session dans la réponse')

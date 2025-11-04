@@ -16,31 +16,30 @@ export async function GET(request: NextRequest) {
       if (!error && data.user) {
         console.log('OAuth callback successful for:', data.user.email, 'with role:', selectedRole)
         
-        // Update user metadata with selected role
+        // Get the user's actual role from the profiles table instead of using selected role
+        let actualUserRole = selectedRole; // Default fallback
         try {
-          const { error: updateError } = await supabase.auth.updateUser({
-            data: {
-              ...data.user.user_metadata,
-              active_role: selectedRole,
-              role: selectedRole, // Keep for compatibility
-              last_role_update: new Date().toISOString() // Force cache invalidation
-            }
-          })
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', data.user.id)
+            .single();
           
-          if (updateError) {
-            console.error('Failed to update user role:', updateError)
+          if (!profileError && profile) {
+            actualUserRole = profile.role;
+            console.log('✅ User actual role from database:', actualUserRole)
           } else {
-            console.log('✅ User role updated to:', selectedRole)
+            console.log('⚠️ No profile found, using selected role as fallback:', selectedRole)
           }
-        } catch (updateErr) {
-          console.error('Exception updating user role:', updateErr)
+        } catch (profileErr) {
+          console.error('Exception getting user profile:', profileErr)
         }
         
-        // Redirect based on selected role with forced cache busting
+        // Redirect based on actual user role with forced cache busting
         const locale = next.replace('/', '') || 'fr'
         const timestamp = Date.now()
         
-        switch (selectedRole) {
+        switch (actualUserRole) {
           case 'client':
             return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
           case 'partner':
@@ -48,7 +47,8 @@ export async function GET(request: NextRequest) {
           case 'admin':
           case 'manager':
           case 'executive':
-            return NextResponse.redirect(`${origin}/${locale}/app/dashboard?t=${timestamp}`)
+          case 'member':
+            return NextResponse.redirect(`${origin}/${locale}/home?t=${timestamp}`)
           default:
             return NextResponse.redirect(`${origin}${next}?t=${timestamp}`)
         }

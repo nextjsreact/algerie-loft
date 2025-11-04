@@ -45,7 +45,7 @@ export function LoginForm() {
     try {
       const result = await login(data.email, data.password)
       if (result.success) {
-        router.push("/dashboard")
+        router.push("/fr/home")
         router.refresh()
       } else {
         setError(result.error || "Login failed")

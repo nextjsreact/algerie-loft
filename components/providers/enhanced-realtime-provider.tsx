@@ -61,15 +61,9 @@ export function EnhancedRealtimeProvider({ children, userId }: EnhancedRealtimeP
           const data = await messageResponse.json()
           setUnreadMessagesCount(data.count || 0)
         } else {
-          // API existe mais erreur (probablement tables manquantes)
-          console.log('Conversations API error:', messageResponse.status)
           setUnreadMessagesCount(0)
         }
       } catch (messageError) {
-        // Erreur réseau ou API non disponible
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Conversations feature not available:', messageError instanceof Error ? messageError.message : messageError)
-        }
         setUnreadMessagesCount(0)
       }
 
@@ -86,22 +80,14 @@ export function EnhancedRealtimeProvider({ children, userId }: EnhancedRealtimeP
           const data = await notificationResponse.json()
           setUnreadNotificationsCount(data.count || 0)
         } else {
-          console.log('Notifications API error:', notificationResponse.status)
           setUnreadNotificationsCount(0)
         }
       } catch (notificationError) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Notifications API error:', notificationError instanceof Error ? notificationError.message : notificationError)
-        }
         setUnreadNotificationsCount(0)
       }
       
     } catch (error) {
       // Erreur générale - ne pas faire planter l'app
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to refresh counts:', error)
-      }
-      // Réinitialiser les compteurs en cas d'erreur
       setUnreadMessagesCount(0)
       setUnreadNotificationsCount(0)
     }
@@ -122,7 +108,6 @@ export function EnhancedRealtimeProvider({ children, userId }: EnhancedRealtimeP
   useEffect(() => {
     // Check if WebSocket is available
     if (typeof window === 'undefined' || !window.WebSocket) {
-      console.warn('WebSocket not available, skipping real-time notifications')
       return
     }
 
@@ -132,18 +117,19 @@ export function EnhancedRealtimeProvider({ children, userId }: EnhancedRealtimeP
     try {
       notificationsSubscription = supabase
         .channel('user_notifications')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${userId}`
-        },
-        async (payload) => {
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'notifications',
+            filter: `user_id=eq.${userId}`
+          },
+          async (payload) => {
+            try {
           const newNotification = payload.new as any
           
-          console.log('🔔 Real-time notification received:', newNotification)
+
           
           // Determine notification type and sound
           const notificationType = newNotification.type || 'info'
@@ -212,19 +198,17 @@ export function EnhancedRealtimeProvider({ children, userId }: EnhancedRealtimeP
           window.dispatchEvent(new CustomEvent('notification-received', {
             detail: { type: notificationType, count: unreadNotificationsCount + 1 }
           }))
-        }
-      )
-      .subscribe({
-        error: (error) => {
-          console.warn('WebSocket subscription error (non-critical):', error)
-        }
-      })
+            } catch (callbackError) {
+              // Erreur silencieuse pour éviter le spam de logs
+            }
+          }
+        )
+      .subscribe()
     } catch (error) {
-      console.warn('Failed to set up real-time notifications (non-critical):', error)
+      // Erreur silencieuse pour les notifications temps réel
     }
 
-    // Conversations system temporarily disabled to prevent infinite loops
-    console.log('Conversations system temporarily disabled')
+
 
     // Monitor online status
     const handleOnline = () => {
@@ -253,9 +237,10 @@ export function EnhancedRealtimeProvider({ children, userId }: EnhancedRealtimeP
     return () => {
       if (notificationsSubscription) {
         try {
-          notificationsSubscription.unsubscribe()
+          // Use the correct method to unsubscribe
+          supabase.removeChannel(notificationsSubscription)
         } catch (error) {
-          console.warn('WebSocket unsubscribe error (non-critical):', error)
+          // Erreur silencieuse lors du cleanup
         }
       }
       window.removeEventListener('online', handleOnline)

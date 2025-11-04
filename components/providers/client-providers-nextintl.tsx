@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import { useSidebarVisibility } from "@/hooks/use-sidebar-visibility"
-import { SidebarDebug } from "@/components/debug/sidebar-debug"
+
 import { DesktopHeader } from "@/components/layout/desktop-header"
 import { NextIntlClientProvider } from 'next-intl'
 import SupabaseProvider from "@/components/providers/supabase-provider"
@@ -104,12 +104,11 @@ export default function ClientProviders({ children, session, unreadCount, locale
                          userRole={session.user.role}
                        />
                      </ErrorBoundary>
-                     {/* Prompt d'installation PWA */}
+                     {/* Prompt d'installation PWA avec paramètres intelligents */}
                      <ErrorBoundary>
-                       <InstallPrompt />
+                       <InstallPrompt userRole={session.user.role} />
                      </ErrorBoundary>
-                     {/* Debug component for development */}
-                     <SidebarDebug userRole={session.user.role} hideSidebar={hideSidebar} />
+
                    </div>
                  </NotificationProvider>
                </EnhancedRealtimeProvider>

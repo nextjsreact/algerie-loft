@@ -19,7 +19,12 @@ import {
   CalendarCheck,
   ArrowRight,
   Home,
-  Zap
+  Zap,
+  UserPlus,
+  CheckCircle,
+  AlertTriangle,
+  Gavel,
+  Cog
 } from "lucide-react"
 import Link from "next/link"
 import { useTranslations, useLocale } from "next-intl"
@@ -44,6 +49,8 @@ export function HomePageClient() {
     fetchSession()
   }, [])
 
+
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -60,91 +67,168 @@ export function HomePageClient() {
     )
   }
 
-  const mainSections = [
+  // Sections communes à tous les employés
+  const commonSections = [
     {
       title: "🏢 Appartements",
       description: "Gérer les propriétés",
       href: `/${locale}/lofts`,
       icon: Building2,
-      color: "from-blue-500 to-blue-600"
+      color: "from-blue-500 to-blue-600",
+      roles: ['admin', 'manager', 'executive', 'member']
     },
     {
       title: "📅 Réservations", 
       description: "Gérer les réservations",
       href: `/${locale}/reservations`,
       icon: Calendar,
-      color: "from-green-500 to-green-600"
+      color: "from-green-500 to-green-600",
+      roles: ['admin', 'manager', 'executive', 'member']
     },
     {
       title: "📋 Disponibilité",
       description: "Calendrier de disponibilité", 
       href: `/${locale}/availability`,
       icon: CalendarCheck,
-      color: "from-purple-500 to-purple-600"
+      color: "from-purple-500 to-purple-600",
+      roles: ['admin', 'manager', 'executive', 'member']
     },
     {
       title: "✅ Tâches",
       description: "Gérer les tâches",
       href: `/${locale}/tasks`, 
       icon: ClipboardList,
-      color: "from-orange-500 to-orange-600"
-    },
+      color: "from-orange-500 to-orange-600",
+      roles: ['admin', 'manager', 'executive', 'member']
+    }
+  ]
+
+  // Sections spécifiques selon le profil
+  const profileSpecificSections = [
+    // Sections pour Admin et Executive
     {
       title: "👥 Équipes",
       description: "Gérer les équipes",
       href: `/${locale}/teams`,
       icon: Users,
-      color: "from-indigo-500 to-indigo-600"
+      color: "from-indigo-500 to-indigo-600",
+      roles: ['admin', 'executive']
     },
     {
       title: "🏠 Propriétaires",
       description: "Gérer les propriétaires", 
       href: `/${locale}/owners`,
       icon: UserCheck,
-      color: "from-teal-500 to-teal-600"
+      color: "from-teal-500 to-teal-600",
+      roles: ['admin', 'executive', 'manager']
     },
     {
       title: "💰 Transactions",
       description: "Gestion financière",
       href: `/${locale}/transactions`,
       icon: DollarSign,
-      color: "from-yellow-500 to-yellow-600"
+      color: "from-yellow-500 to-yellow-600",
+      roles: ['admin', 'executive', 'manager']
     },
     {
       title: "📊 Rapports",
       description: "Tableaux de bord et rapports",
       href: `/${locale}/reports`,
       icon: BarChart3,
-      color: "from-red-500 to-red-600"
+      color: "from-red-500 to-red-600",
+      roles: ['admin', 'executive', 'manager']
+    },
+    // Nouvelles sections demandées
+    {
+      title: "🤝 Partenaires en attente",
+      description: "Gérer les demandes de partenariat",
+      href: `/${locale}/partner/pending`,
+      icon: UserPlus,
+      color: "from-amber-500 to-amber-600",
+      roles: ['admin', 'executive']
+    },
+    {
+      title: "✅ Valider partenaires",
+      description: "Validation des partenaires",
+      href: `/${locale}/partner/validation`,
+      icon: CheckCircle,
+      color: "from-emerald-500 to-emerald-600",
+      roles: ['admin', 'executive']
+    },
+    {
+      title: "⚠️ Litiges ouverts",
+      description: "Consulter les litiges en cours",
+      href: `/${locale}/disputes/open`,
+      icon: AlertTriangle,
+      color: "from-red-500 to-red-600",
+      roles: ['admin', 'executive', 'manager']
+    },
+    {
+      title: "⚖️ Gérer litiges",
+      description: "Résolution des litiges",
+      href: `/${locale}/disputes/manage`,
+      icon: Gavel,
+      color: "from-purple-500 to-purple-600",
+      roles: ['admin', 'executive']
+    },
+    {
+      title: "⚙️ Paramètres Plateforme",
+      description: "Configuration de la plateforme",
+      href: `/${locale}/platform/settings`,
+      icon: Cog,
+      color: "from-gray-500 to-gray-600",
+      roles: ['admin']
     }
   ]
 
-  const quickAccess = [
-    {
-      title: "📊 Tableau de bord",
-      href: `/${locale}/dashboard`,
-      icon: BarChart3,
-      description: "Vue d'ensemble des données"
-    },
-    {
-      title: "💬 Conversations", 
-      href: `/${locale}/conversations`,
-      icon: MessageSquare,
-      description: "Messages et communications"
-    },
-    {
-      title: "🔔 Notifications",
-      href: `/${locale}/notifications`, 
-      icon: Bell,
-      description: "Alertes et notifications"
-    },
-    {
-      title: "📄 Rapports PDF",
-      href: `/${locale}/reports`,
-      icon: BarChart3,
-      description: "Générer des rapports"
-    }
-  ]
+  // Filtrer les sections selon le rôle de l'utilisateur
+  const getAvailableSections = (userRole: string) => {
+    const allSections = [...commonSections, ...profileSpecificSections]
+    return allSections.filter(section => section.roles.includes(userRole))
+  }
+
+  const mainSections = session ? getAvailableSections(session.user.role) : []
+
+  const getQuickAccessItems = (userRole: string) => {
+    const baseItems = [
+      {
+        title: "💬 Conversations", 
+        href: `/${locale}/conversations`,
+        icon: MessageSquare,
+        description: "Messages et communications",
+        roles: ['admin', 'manager', 'executive', 'member']
+      },
+      {
+        title: "🔔 Notifications",
+        href: `/${locale}/notifications`, 
+        icon: Bell,
+        description: "Alertes et notifications",
+        roles: ['admin', 'manager', 'executive', 'member']
+      }
+    ]
+
+    const roleSpecificItems = [
+      {
+        title: "📊 Tableau de bord",
+        href: `/${locale}/dashboard`,
+        icon: BarChart3,
+        description: "Vue d'ensemble des données",
+        roles: ['admin', 'executive', 'manager']
+      },
+      {
+        title: "📄 Rapports PDF",
+        href: `/${locale}/reports`,
+        icon: BarChart3,
+        description: "Générer des rapports",
+        roles: ['admin', 'executive', 'manager']
+      }
+    ]
+
+    const allItems = [...baseItems, ...roleSpecificItems]
+    return allItems.filter(item => item.roles.includes(userRole))
+  }
+
+  const quickAccess = session ? getQuickAccessItems(session.user.role) : []
 
   return (
     <div className="space-y-8 p-6 bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
@@ -160,22 +244,7 @@ export function HomePageClient() {
           Application complète pour la gestion des appartements, des propriétaires, des transactions...
         </p>
         
-        {/* User Welcome */}
-        <div className="flex items-center gap-2 mt-4">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
-            {session.user.full_name?.charAt(0) || session.user.email?.charAt(0) || 'U'}
-          </div>
-          <div>
-            <p className="font-medium">
-              Bienvenue, {session.user.full_name || session.user.email}
-            </p>
-            <p className="text-sm text-gray-600 capitalize">
-              {session.user.role === 'admin' ? 'Administrateur' : 
-               session.user.role === 'manager' ? 'Manager' : 
-               session.user.role === 'executive' ? 'Executive' : 'Membre'}
-            </p>
-          </div>
-        </div>
+
 
         {/* Admin Access Badge */}
         {(session.user.role === 'admin' || session.user.role === 'executive') && (
@@ -189,7 +258,11 @@ export function HomePageClient() {
       {/* Main Sections */}
       <div className="space-y-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Sections principales</h2>
+          <div className="mb-4">
+            <h2 className="text-2xl font-bold text-gray-800">
+              Sections disponibles pour votre profil
+            </h2>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {mainSections.map((section, index) => (
               <Link key={index} href={section.href}>

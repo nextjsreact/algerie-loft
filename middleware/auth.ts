@@ -54,10 +54,10 @@ const AUTH_CONFIG: AuthMiddlewareConfig = {
     '/profile': ['admin', 'manager', 'executive', 'member', 'client', 'partner']
   },
   defaultRedirects: {
-    admin: '/app/dashboard',
-    manager: '/app/dashboard',
-    executive: '/app/dashboard',
-    member: '/app/dashboard',
+    admin: '/home',
+    manager: '/home',
+    executive: '/home',
+    member: '/home',
     client: '/client/dashboard',
     partner: '/partner/dashboard',
     guest: '/public'

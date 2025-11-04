@@ -1,15 +1,15 @@
 import { requireRole } from "@/lib/auth"
 import { ErrorBoundary } from "@/components/error-boundary"
-import { PendingPartnersClient } from "@/components/partner/pending-partners-client"
+import { ManageDisputesClient } from "@/components/disputes/manage-disputes-client"
 
-export default async function PendingPartnersPage() {
+export default async function ManageDisputesPage() {
   // Seuls les admin et executive peuvent accéder à cette page
   const session = await requireRole(['admin', 'executive']);
 
   return (
     <ErrorBoundary>
       <div className="min-h-screen">
-        <PendingPartnersClient />
+        <ManageDisputesClient />
       </div>
     </ErrorBoundary>
   )

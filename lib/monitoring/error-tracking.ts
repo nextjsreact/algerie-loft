@@ -352,6 +352,23 @@ export function setupGlobalErrorHandling() {
   if (typeof window !== 'undefined') {
     window.addEventListener('error', (event) => {
       try {
+        // Filter out known non-critical errors
+        const errorMessage = event.error?.message || event.message || '';
+        const filename = event.filename || '';
+        
+        // Skip Supabase Realtime callback errors (non-critical)
+        if (errorMessage.includes('callback is not a function') && 
+            filename.includes('RealtimeChannel')) {
+          console.warn('Skipping non-critical Supabase Realtime error:', errorMessage);
+          return;
+        }
+        
+        // Skip other known non-critical errors
+        if (errorMessage.includes('ResizeObserver loop limit exceeded') ||
+            errorMessage.includes('Non-Error promise rejection captured')) {
+          return;
+        }
+        
         errorTracker.trackError(event.error || event.message, {
           page: window.location.pathname,
           action: 'unhandled_error',

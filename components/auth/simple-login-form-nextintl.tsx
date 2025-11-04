@@ -84,9 +84,28 @@ export function SimpleLoginFormNextIntl() {
         console.log('✅ Connexion réussie:', signInData.user.email)
         console.log('✅ Session établie - redirection...')
         
+        // Get the user's actual role from the profiles table
+        let actualUserRole = null;
+        try {
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', signInData.user.id)
+            .single();
+          
+          if (!profileError && profile) {
+            actualUserRole = profile.role;
+            console.log('✅ User actual role from database:', actualUserRole)
+          } else {
+            console.log('⚠️ No profile found in database')
+          }
+        } catch (profileErr) {
+          console.error('Exception getting user profile:', profileErr)
+        }
+        
         // Check for role parameter in URL or selected role
         const redirectParam = searchParams.get('redirect')
-        const roleToUse = selectedRole || roleParam
+        const roleToUse = actualUserRole || selectedRole || roleParam
         
         // If we have a return URL, redirect there
         if (returnUrl) {
@@ -95,7 +114,7 @@ export function SimpleLoginFormNextIntl() {
           // If we have a specific redirect, use it
           window.location.href = `/${locale}${redirectParam}`
         } else if (roleToUse) {
-          // Redirect based on selected role or role parameter
+          // Redirect based on actual user role (not selected role)
           switch (roleToUse) {
             case 'client':
               window.location.href = `/${locale}/client/dashboard`
@@ -106,7 +125,8 @@ export function SimpleLoginFormNextIntl() {
             case 'admin':
             case 'manager':
             case 'executive':
-              window.location.href = `/${locale}/app/dashboard`
+            case 'member':
+              window.location.href = `/${locale}/home`
               break
             default:
               window.location.href = `/${locale}/home`

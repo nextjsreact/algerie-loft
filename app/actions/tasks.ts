@@ -21,7 +21,7 @@ type Task = Database['public']['Tables']['tasks']['Row']
 
 export async function getTasks() {
   const session = await requireRole(["admin", "manager", "member"])
-  const supabase = await createClient() // Create client here
+  const supabase = await createClient()
   
   // Get all tasks first (we'll filter them using the data filter service)
   const { data: allTasks, error } = await supabase

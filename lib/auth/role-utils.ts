@@ -66,10 +66,10 @@ export const DEFAULT_REDIRECTS: Record<UserRole, string> = {
   guest: '/public',
   client: '/client/dashboard',
   partner: '/partner/dashboard',
-  member: '/app/dashboard',
-  executive: '/app/dashboard',
-  manager: '/app/dashboard',
-  admin: '/app/dashboard'
+  member: '/home',
+  executive: '/home',
+  manager: '/home',
+  admin: '/home'
 };
 
 /**

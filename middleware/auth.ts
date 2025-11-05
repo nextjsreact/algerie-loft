@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { UserRole } from '@/lib/types';
+import { superuserMiddleware } from './superuser';
 
 export interface AuthMiddlewareConfig {
   publicRoutes: string[];
@@ -44,7 +45,8 @@ const AUTH_CONFIG: AuthMiddlewareConfig = {
     '/app': ['admin', 'manager', 'executive', 'member'],
     '/client': ['client'],
     '/partner': ['partner'],
-    '/admin': ['admin'],
+    '/admin': ['admin', 'superuser'],
+    '/admin/superuser': ['superuser'],
     '/dashboard': ['admin', 'manager', 'executive', 'member'],
     '/lofts': ['admin', 'manager', 'executive', 'member'],
     '/transactions': ['admin', 'manager', 'executive'],
@@ -60,6 +62,7 @@ const AUTH_CONFIG: AuthMiddlewareConfig = {
     member: '/home',
     client: '/client/dashboard',
     partner: '/partner/dashboard',
+    superuser: '/admin/superuser/dashboard',
     guest: '/public'
   }
 };
@@ -70,6 +73,12 @@ export async function authMiddleware(request: NextRequest): Promise<NextResponse
   const pathWithoutLocale = pathname.replace(`/${locale}`, '') || '/';
   
   console.log(`[AUTH MIDDLEWARE] Processing: ${pathname} (without locale: ${pathWithoutLocale})`);
+
+  // Check if this is a superuser route and handle with superuser middleware
+  if (pathWithoutLocale.startsWith('/admin/superuser')) {
+    console.log(`[AUTH MIDDLEWARE] Superuser route detected, delegating to superuser middleware`);
+    return await superuserMiddleware(request);
+  }
 
   // Skip auth for public routes
   if (isPublicRoute(pathWithoutLocale)) {

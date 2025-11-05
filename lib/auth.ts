@@ -14,48 +14,27 @@ export async function getSession(): Promise<AuthSession | null> {
     return null;
   }
 
-  // Try to get user profile from profiles table with RLS fallback
-  let role = 'member';
+  // Use enhanced role detection
+  const { detectUserRole } = await import('@/lib/auth/role-detection');
+  const role = await detectUserRole(user.id, user.email);
+  
+  // Get user profile for display name
   let full_name = user.user_metadata?.full_name || user.email?.split('@')[0] || null;
-
+  
   try {
-    // Try with service role client to bypass RLS issues
     const { createClient } = await import('@/utils/supabase/server');
     const serviceSupabase = await createClient(true);
-    const { data: profile, error: profileError } = await serviceSupabase
+    const { data: profile } = await serviceSupabase
       .from('profiles')
-      .select('full_name, role')
+      .select('full_name')
       .eq('id', user.id)
       .single();
 
-    if (!profileError && profile) {
-      role = profile.role || 'member';
-      full_name = profile.full_name || full_name;
-    } else {
-      console.warn('Profile fetch failed, using email-based fallback:', profileError);
-      // Fallback to email-based role assignment
-      if (user.email) {
-        if (user.email.includes('admin') || user.email === 'admin@dev.local') {
-          role = 'admin';
-        } else if (user.email.includes('manager')) {
-          role = 'manager';
-        } else if (user.email.includes('executive')) {
-          role = 'executive';
-        }
-      }
+    if (profile?.full_name) {
+      full_name = profile.full_name;
     }
   } catch (error) {
-    console.error('Critical error fetching profile:', error);
-    // Use email-based fallback
-    if (user.email) {
-      if (user.email.includes('admin') || user.email === 'admin@dev.local') {
-        role = 'admin';
-      } else if (user.email.includes('manager')) {
-        role = 'manager';
-      } else if (user.email.includes('executive')) {
-        role = 'executive';
-      }
-    }
+    console.warn('Profile name fetch failed:', error);
   }
 
   const { data: { session: supabaseSessionData }, error: sessionError } = await supabase.auth.getSession();
@@ -449,48 +428,27 @@ export async function getSessionReadOnly(): Promise<AuthSession | null> {
     return null;
   }
 
-  // Try to get user profile from profiles table with RLS fallback
-  let role = 'member';
+  // Use enhanced role detection (read-only version)
+  const { detectUserRole } = await import('@/lib/auth/role-detection');
+  const role = await detectUserRole(user.id, user.email);
+  
+  // Get user profile for display name
   let full_name = user.user_metadata?.full_name || user.email?.split('@')[0] || null;
-
+  
   try {
-    // Try with service role client to bypass RLS issues
     const { createClient } = await import('@/utils/supabase/server');
     const serviceSupabase = await createClient(true);
-    const { data: profile, error: profileError } = await serviceSupabase
+    const { data: profile } = await serviceSupabase
       .from('profiles')
-      .select('full_name, role')
+      .select('full_name')
       .eq('id', user.id)
       .single();
 
-    if (!profileError && profile) {
-      role = profile.role || 'member';
-      full_name = profile.full_name || full_name;
-    } else {
-      console.warn('Profile fetch failed in ReadOnly, using email-based fallback:', profileError);
-      // Fallback to email-based role assignment
-      if (user.email) {
-        if (user.email.includes('admin') || user.email === 'admin@dev.local') {
-          role = 'admin';
-        } else if (user.email.includes('manager')) {
-          role = 'manager';
-        } else if (user.email.includes('executive')) {
-          role = 'executive';
-        }
-      }
+    if (profile?.full_name) {
+      full_name = profile.full_name;
     }
   } catch (error) {
-    console.error('Critical error fetching profile in ReadOnly:', error);
-    // Use email-based fallback
-    if (user.email) {
-      if (user.email.includes('admin') || user.email === 'admin@dev.local') {
-        role = 'admin';
-      } else if (user.email.includes('manager')) {
-        role = 'manager';
-      } else if (user.email.includes('executive')) {
-        role = 'executive';
-      }
-    }
+    console.warn('Profile name fetch failed in ReadOnly:', error);
   }
 
   const { data: { session: supabaseSessionData }, error: sessionError } = await supabase.auth.getSession();

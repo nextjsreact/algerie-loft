@@ -48,29 +48,28 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
   useEffect(() => {
     const getUser = async () => {
       try {
-        // Force fresh user data retrieval
-        const { data: { user: authUser }, error } = await supabase.auth.getUser()
+        // Use our enhanced authentication system instead of raw Supabase auth
+        const response = await fetch('/api/auth/session')
+        const sessionData = await response.json()
         
-        if (error || !authUser) {
+        if (!sessionData.user) {
           setIsLoading(false)
           return
         }
 
-        // Always use active_role if available, fallback to role
-        const currentRole = authUser.user_metadata?.active_role || authUser.user_metadata?.role || 'client'
-        
-        console.log('🔄 Avatar: Loading user with role:', currentRole)
+        console.log('🔄 Avatar: Loading user with enhanced auth, role:', sessionData.user.role)
 
         setUser({
-          id: authUser.id,
-          email: authUser.email || '',
-          full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name,
-          role: currentRole,
-          avatar_url: authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture,
-          phone: authUser.user_metadata?.phone
+          id: sessionData.user.id,
+          email: sessionData.user.email || '',
+          full_name: sessionData.user.full_name,
+          role: sessionData.user.role, // Use the role from our enhanced auth system
+          avatar_url: sessionData.user.avatar_url,
+          phone: sessionData.user.phone
         })
       } catch (err) {
-        console.error('Error fetching user:', err)
+        console.error('Error fetching user session:', err)
+        setIsLoading(false)
       } finally {
         setIsLoading(false)
       }
@@ -84,36 +83,16 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
     
     return () => window.removeEventListener('focus', handleFocus)
 
-    // Listen for auth changes
+    // Listen for auth changes and refresh user data
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('🔄 Auth state change:', event, session?.user?.user_metadata?.active_role)
+        console.log('🔄 Auth state change:', event)
         
-        if (event === 'SIGNED_IN' && session?.user) {
-          const currentRole = session.user.user_metadata?.active_role || session.user.user_metadata?.role || 'client'
-          
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            full_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name,
-            role: currentRole,
-            avatar_url: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture,
-            phone: session.user.user_metadata?.phone
-          })
+        if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+          // Refresh user data using our enhanced auth system
+          await getUser()
         } else if (event === 'SIGNED_OUT') {
           setUser(null)
-        } else if (event === 'USER_UPDATED' && session?.user) {
-          // Handle user metadata updates
-          const currentRole = session.user.user_metadata?.active_role || session.user.user_metadata?.role || 'client'
-          
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            full_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name,
-            role: currentRole,
-            avatar_url: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture,
-            phone: session.user.user_metadata?.phone
-          })
         }
       }
     )
@@ -132,6 +111,13 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
 
   const getRoleConfig = (role: string) => {
     switch (role) {
+      case 'superuser':
+        return {
+          label: 'Superuser',
+          color: 'bg-purple-600',
+          icon: Shield,
+          dashboard: `/${locale}/admin/superuser/dashboard`
+        }
       case 'client':
         return {
           label: 'Client',

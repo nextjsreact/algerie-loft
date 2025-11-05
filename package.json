@@ -14,6 +14,8 @@
     "lint": "next lint",
     "env-manager": "tsx lib/environment-management/cli/index.ts",
     "validate:translations": "tsx scripts/validate-translations.ts",
+    "fix-user-role": "tsx scripts/fix-user-role.ts",
+    "list-users": "tsx scripts/fix-user-role.ts list",
     "start": "next start",
     "test": "jest",
     "test:watch": "jest --watch",

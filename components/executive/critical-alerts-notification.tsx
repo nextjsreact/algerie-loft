@@ -47,7 +47,9 @@ export function CriticalAlertsNotification({ userId, userRole }: CriticalAlertsN
   useEffect(() => {
     loadAlerts()
     
-    // Écouter les nouvelles alertes en temps réel
+    // Désactiver temporairement le realtime pour éviter les erreurs de callback
+    // TODO: Réactiver quand la table critical_alerts sera créée
+    /*
     const channel = supabase
       .channel('critical_alerts')
       .on(
@@ -89,19 +91,14 @@ export function CriticalAlertsNotification({ userId, userRole }: CriticalAlertsN
     return () => {
       supabase.removeChannel(channel)
     }
+    */
   }, [userRole, supabase])
 
   const loadAlerts = async () => {
     try {
-      const { data, error } = await supabase
-        .from('critical_alerts')
-        .select('*')
-        .eq('resolved', false)
-        .order('created_at', { ascending: false })
-        .limit(5)
-
-      if (error) throw error
-      setAlerts(data || [])
+      // Désactiver temporairement le chargement des alertes
+      // TODO: Réactiver quand la table critical_alerts sera créée
+      setAlerts([])
     } catch (error) {
       console.error('Erreur lors du chargement des alertes:', error || 'Unknown error')
     } finally {

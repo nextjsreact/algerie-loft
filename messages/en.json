@@ -2919,5 +2919,102 @@
       "finalNoteTitle": "One More Thing",
       "finalNoteDescription": "Don't forget to follow us on social media for travel tips and exclusive offers!"
     }
+  },
+  "superuser": {
+    "navigation": {
+      "title": "Superuser Panel",
+      "dashboard": "Dashboard",
+      "dashboardDesc": "System overview",
+      "userManagement": "User Management",
+      "userManagementDesc": "Manage all users",
+      "security": "Security & Audit",
+      "securityDesc": "Logs and monitoring",
+      "backup": "Backups",
+      "backupDesc": "Backup management",
+      "maintenance": "Maintenance",
+      "maintenanceDesc": "Maintenance tools",
+      "configuration": "Configuration",
+      "configurationDesc": "System settings",
+      "monitoring": "Monitoring",
+      "monitoringDesc": "System monitoring",
+      "archives": "Archives",
+      "archivesDesc": "Archived data",
+      "emergency": "Emergency Actions",
+      "emergencyLockdown": "Emergency Lockdown",
+      "emergencyAlerts": "Critical Alerts"
+    },
+    "status": {
+      "systemStatus": "System Status",
+      "operational": "Operational",
+      "warning": "Warning",
+      "critical": "Critical",
+      "maintenance": "Maintenance"
+    },
+    "stats": {
+      "quickStats": "Quick Stats",
+      "activeUsers": "Active users",
+      "openSessions": "Open sessions",
+      "lastBackup": "Last backup",
+      "systemLoad": "System load"
+    },
+    "user": {
+      "profile": "Superuser",
+      "access": "Full access",
+      "logout": "Logout"
+    },
+    "userManagement": {
+      "title": "User Management",
+      "description": "Manage all users, roles and permissions in the system",
+      "table": {
+        "user": "User",
+        "role": "Role",
+        "status": "Status",
+        "lastLogin": "Last Login",
+        "createdAt": "Created",
+        "actions": "Actions",
+        "active": "Active",
+        "inactive": "Inactive",
+        "never": "Never"
+      },
+      "actions": {
+        "edit": "Edit",
+        "reset": "Reset",
+        "temp": "Temp",
+        "createUser": "New User",
+        "bulkActions": "Bulk Actions",
+        "deselectAll": "Deselect All"
+      }
+    },
+    "dashboard": {
+      "title": "Superuser Dashboard EN",
+      "welcome": "Congratulations! You are now logged in as a superuser.",
+      "successMessage": "Success! The superuser authentication system is working correctly.",
+      "cards": {
+        "userManagement": {
+          "title": "User Management",
+          "description": "Manage user accounts and their permissions"
+        },
+        "security": {
+          "title": "Security",
+          "description": "Security monitoring and alerts"
+        },
+        "audit": {
+          "title": "Audit",
+          "description": "Logs and action history"
+        },
+        "maintenance": {
+          "title": "Maintenance",
+          "description": "System maintenance tools"
+        },
+        "backup": {
+          "title": "Backups",
+          "description": "Backup management"
+        },
+        "configuration": {
+          "title": "Configuration",
+          "description": "System configuration"
+        }
+      }
+    }
   }
 }

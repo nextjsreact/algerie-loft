@@ -14,6 +14,7 @@ import { NotificationProvider } from '@/components/providers/notification-contex
 import { CriticalAlertsNotification } from '@/components/executive/critical-alerts-notification'
 import { InstallPrompt } from '@/components/pwa/install-prompt'
 import { Sidebar } from "@/components/layout/sidebar-nextintl"
+import { SuperuserSidebar } from "@/components/admin/superuser/superuser-sidebar"
 import { Header } from "@/components/layout/header-nextintl"
 import { ErrorBoundary } from "@/components/error-boundary"
 
@@ -72,8 +73,14 @@ export default function ClientProviders({ children, session, unreadCount, locale
                <EnhancedRealtimeProvider userId={session.user.id}>
                  <NotificationProvider userId={session.user.id}>
                    <div className="flex h-screen bg-background" key={`layout-${renderKey}`}>
-                     {/* Only show desktop sidebar if not hidden */}
-                     {!shouldHideSidebar && (
+                     {/* Show appropriate sidebar based on user role */}
+                     {session.user.role === 'superuser' && pathname?.includes('/admin/superuser') ? (
+                       <div className="flex w-72 flex-shrink-0 z-10">
+                         <ErrorBoundary>
+                           <SuperuserSidebar />
+                         </ErrorBoundary>
+                       </div>
+                     ) : !shouldHideSidebar && (
                        <div className="hidden md:flex md:w-72 md:flex-shrink-0 md:z-10">
                          <ErrorBoundary>
                            <Sidebar user={session.user} unreadCount={unreadCount} />

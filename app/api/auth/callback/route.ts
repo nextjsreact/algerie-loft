@@ -16,23 +16,15 @@ export async function GET(request: NextRequest) {
       if (!error && data.user) {
         console.log('OAuth callback successful for:', data.user.email, 'with role:', selectedRole)
         
-        // Get the user's actual role from the profiles table instead of using selected role
+        // Use enhanced role detection system
         let actualUserRole = selectedRole; // Default fallback
         try {
-          const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', data.user.id)
-            .single();
-          
-          if (!profileError && profile) {
-            actualUserRole = profile.role;
-            console.log('✅ User actual role from database:', actualUserRole)
-          } else {
-            console.log('⚠️ No profile found, using selected role as fallback:', selectedRole)
-          }
-        } catch (profileErr) {
-          console.error('Exception getting user profile:', profileErr)
+          const { detectUserRole } = await import('@/lib/auth/role-detection');
+          actualUserRole = await detectUserRole(data.user.id, data.user.email);
+          console.log('✅ User actual role detected:', actualUserRole)
+        } catch (roleDetectionErr) {
+          console.error('Exception in role detection:', roleDetectionErr)
+          console.log('⚠️ Using selected role as fallback:', selectedRole)
         }
         
         // Redirect based on actual user role with forced cache busting
@@ -40,6 +32,8 @@ export async function GET(request: NextRequest) {
         const timestamp = Date.now()
         
         switch (actualUserRole) {
+          case 'superuser':
+            return NextResponse.redirect(`${origin}/${locale}/admin/superuser/dashboard?t=${timestamp}`)
           case 'client':
             return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
           case 'partner':

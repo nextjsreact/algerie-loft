@@ -20,7 +20,8 @@ import {
   UserCircle,
   LogOut,
   ChevronUp,
-  User2
+  User2,
+  Shield
 } from "lucide-react"
 
 import {
@@ -53,8 +54,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter()
   const [session, setSession] = React.useState<AuthSession | null>(null)
 
-  // Don't show sidebar on client or partner pages - they have their own navigation
-  if (pathname.includes('/client/') || pathname.includes('/partner/')) {
+  // Don't show sidebar on client, partner, or superuser pages - they have their own navigation
+  if (pathname.includes('/client/') || pathname.includes('/partner/') || pathname.includes('/admin/superuser/')) {
     return null
   }
 
@@ -146,6 +147,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: `/${locale}/notifications`,
         icon: Bell,
         roles: ["admin", "manager", "executive", "member"]
+      },
+      {
+        title: "Administration Superuser",
+        url: `/${locale}/admin/superuser`,
+        icon: Shield,
+        roles: ["superuser"]
       },
       {
         title: t("settings"),

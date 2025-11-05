@@ -2730,5 +2730,102 @@
     "openMenu": "افتح القائمة",
     "viewDetails": "عرض التفاصيل",
     "copyRecordId": "نسخ معرف السجل"
+  },
+  "superuser": {
+    "navigation": {
+      "title": "لوحة المدير الأعلى",
+      "dashboard": "لوحة التحكم",
+      "dashboardDesc": "نظرة عامة على النظام",
+      "userManagement": "إدارة المستخدمين",
+      "userManagementDesc": "إدارة جميع المستخدمين",
+      "security": "الأمان والمراجعة",
+      "securityDesc": "السجلات والمراقبة",
+      "backup": "النسخ الاحتياطية",
+      "backupDesc": "إدارة النسخ الاحتياطية",
+      "maintenance": "الصيانة",
+      "maintenanceDesc": "أدوات الصيانة",
+      "configuration": "التكوين",
+      "configurationDesc": "إعدادات النظام",
+      "monitoring": "المراقبة",
+      "monitoringDesc": "مراقبة النظام",
+      "archives": "الأرشيف",
+      "archivesDesc": "البيانات المؤرشفة",
+      "emergency": "إجراءات الطوارئ",
+      "emergencyLockdown": "إغلاق الطوارئ",
+      "emergencyAlerts": "تنبيهات حرجة"
+    },
+    "status": {
+      "systemStatus": "حالة النظام",
+      "operational": "تشغيلي",
+      "warning": "تحذير",
+      "critical": "حرج",
+      "maintenance": "صيانة"
+    },
+    "stats": {
+      "quickStats": "إحصائيات سريعة",
+      "activeUsers": "المستخدمون النشطون",
+      "openSessions": "الجلسات المفتوحة",
+      "lastBackup": "آخر نسخة احتياطية",
+      "systemLoad": "حمولة النظام"
+    },
+    "user": {
+      "profile": "المدير الأعلى",
+      "access": "وصول كامل",
+      "logout": "تسجيل الخروج"
+    },
+    "userManagement": {
+      "title": "إدارة المستخدمين",
+      "description": "إدارة جميع المستخدمين والأدوار والصلاحيات في النظام",
+      "table": {
+        "user": "المستخدم",
+        "role": "الدور",
+        "status": "الحالة",
+        "lastLogin": "آخر تسجيل دخول",
+        "createdAt": "تاريخ الإنشاء",
+        "actions": "الإجراءات",
+        "active": "نشط",
+        "inactive": "غير نشط",
+        "never": "أبداً"
+      },
+      "actions": {
+        "edit": "تعديل",
+        "reset": "إعادة تعيين",
+        "temp": "مؤقت",
+        "createUser": "إنشاء مستخدم جديد",
+        "bulkActions": "إجراءات مجمعة",
+        "deselectAll": "إلغاء تحديد الكل"
+      }
+    },
+    "dashboard": {
+      "title": "لوحة تحكم المدير الأعلى AR",
+      "welcome": "تهانينا! أنت الآن متصل كمدير أعلى.",
+      "successMessage": "نجح! نظام المصادقة للمدير الأعلى يعمل بشكل صحيح.",
+      "cards": {
+        "userManagement": {
+          "title": "إدارة المستخدمين",
+          "description": "إدارة حسابات المستخدمين وصلاحياتهم"
+        },
+        "security": {
+          "title": "الأمان",
+          "description": "مراقبة وتنبيهات الأمان"
+        },
+        "audit": {
+          "title": "المراجعة",
+          "description": "السجلات وتاريخ الإجراءات"
+        },
+        "maintenance": {
+          "title": "الصيانة",
+          "description": "أدوات صيانة النظام"
+        },
+        "backup": {
+          "title": "النسخ الاحتياطية",
+          "description": "إدارة النسخ الاحتياطية"
+        },
+        "configuration": {
+          "title": "التكوين",
+          "description": "تكوين النظام"
+        }
+      }
+    }
   }
 }

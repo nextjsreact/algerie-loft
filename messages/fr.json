@@ -2702,5 +2702,102 @@
       "view": "Voir",
       "export": "Exporter"
     }
+  },
+  "superuser": {
+    "navigation": {
+      "title": "Panneau Superuser",
+      "dashboard": "Tableau de bord",
+      "dashboardDesc": "Vue d'ensemble du système",
+      "userManagement": "Gestion Utilisateurs",
+      "userManagementDesc": "Gérer tous les utilisateurs",
+      "security": "Sécurité & Audit",
+      "securityDesc": "Logs et surveillance",
+      "backup": "Sauvegardes",
+      "backupDesc": "Gestion des sauvegardes",
+      "maintenance": "Maintenance",
+      "maintenanceDesc": "Outils de maintenance",
+      "configuration": "Configuration",
+      "configurationDesc": "Paramètres système",
+      "monitoring": "Monitoring",
+      "monitoringDesc": "Surveillance système",
+      "archives": "Archives",
+      "archivesDesc": "Données archivées",
+      "emergency": "Actions d'Urgence",
+      "emergencyLockdown": "Verrouillage d'Urgence",
+      "emergencyAlerts": "Alertes Critiques"
+    },
+    "status": {
+      "systemStatus": "État Système",
+      "operational": "Opérationnel",
+      "warning": "Attention",
+      "critical": "Critique",
+      "maintenance": "Maintenance"
+    },
+    "stats": {
+      "quickStats": "Statistiques Rapides",
+      "activeUsers": "Utilisateurs actifs",
+      "openSessions": "Sessions ouvertes",
+      "lastBackup": "Dernière sauvegarde",
+      "systemLoad": "Charge système"
+    },
+    "user": {
+      "profile": "Superuser",
+      "access": "Accès complet",
+      "logout": "Déconnexion"
+    },
+    "userManagement": {
+      "title": "Gestion des Utilisateurs",
+      "description": "Gérer tous les utilisateurs, rôles et permissions du système",
+      "table": {
+        "user": "Utilisateur",
+        "role": "Rôle",
+        "status": "Statut",
+        "lastLogin": "Dernière connexion",
+        "createdAt": "Créé le",
+        "actions": "Actions",
+        "active": "Actif",
+        "inactive": "Inactif",
+        "never": "Jamais"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "reset": "Reset",
+        "temp": "Temp",
+        "createUser": "Nouvel Utilisateur",
+        "bulkActions": "Actions en lot",
+        "deselectAll": "Désélectionner tout"
+      }
+    },
+    "dashboard": {
+      "title": "Dashboard Superuser FR",
+      "welcome": "Félicitations ! Vous êtes maintenant connecté en tant que superuser.",
+      "successMessage": "Succès ! Le système d'authentification superuser fonctionne correctement.",
+      "cards": {
+        "userManagement": {
+          "title": "Gestion des Utilisateurs",
+          "description": "Gérer les comptes utilisateurs et leurs permissions"
+        },
+        "security": {
+          "title": "Sécurité",
+          "description": "Monitoring et alertes de sécurité"
+        },
+        "audit": {
+          "title": "Audit",
+          "description": "Logs et historique des actions"
+        },
+        "maintenance": {
+          "title": "Maintenance",
+          "description": "Outils de maintenance système"
+        },
+        "backup": {
+          "title": "Sauvegardes",
+          "description": "Gestion des sauvegardes"
+        },
+        "configuration": {
+          "title": "Configuration",
+          "description": "Configuration système"
+        }
+      }
+    }
   }
 }

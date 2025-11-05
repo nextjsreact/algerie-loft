@@ -2,7 +2,8 @@
 
 import { 
   Building2, Calendar, DollarSign, Home, LogOut, Settings, Users, 
-  ClipboardList, UserCheck, ChevronDown, ChevronRight, LayoutDashboard, CreditCard, MessageSquare, Bell, CalendarCheck, Shield
+  ClipboardList, UserCheck, ChevronDown, ChevronRight, LayoutDashboard, CreditCard, MessageSquare, Bell, CalendarCheck, Shield,
+  Database, Wrench, Activity, Archive, Lock, AlertTriangle
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"

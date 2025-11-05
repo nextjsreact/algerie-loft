@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
+import { getEnhancedSession } from '@/lib/auth/enhanced-auth';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { session }, error } = await supabase.auth.getSession();
-
-    if (error) {
-      return NextResponse.json(
-        { error: 'Failed to get session', details: error.message },
-        { status: 401 }
-      );
-    }
+    // Use our enhanced authentication system
+    const session = await getEnhancedSession();
 
     if (!session) {
       return NextResponse.json(
@@ -20,15 +13,22 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    console.log('📡 Session API: Returning user with role:', session.user.role);
+
     return NextResponse.json({
       isAuthenticated: true,
       user: {
         id: session.user.id,
         email: session.user.email,
-        full_name: session.user.user_metadata?.full_name,
-        role: session.user.user_metadata?.role || 'member'
+        full_name: session.user.full_name,
+        role: session.user.role, // This will now be 'superuser' if detected correctly
+        avatar_url: session.user.avatar_url,
+        created_at: session.user.created_at,
+        updated_at: session.user.updated_at
       },
-      expires_at: session.expires_at
+      isSuperuser: session.isSuperuser,
+      permissions: session.permissions,
+      token: session.token
     });
   } catch (error) {
     console.error('Session API error:', error);

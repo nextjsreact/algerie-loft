@@ -4,6 +4,7 @@ import { performanceMiddleware, addResourceHints, addPerformanceMonitoring, addC
 // Temporarily disable auth middleware during build
 // import { authMiddleware } from './middleware/auth';
 // import { partnerAuthMiddleware } from './middleware/partner-auth';
+// import { superuserMiddleware } from './middleware/superuser';
 
 const intlMiddleware = createIntlMiddleware({
   locales: ['fr', 'ar', 'en'],
@@ -28,6 +29,7 @@ export async function middleware(request: NextRequest) {
   // Temporarily disable auth middleware during build
   // const authResponse = await authMiddleware(request);
   // const partnerAuthResponse = await partnerAuthMiddleware(request);
+  // const superuserResponse = await superuserMiddleware(request);
   
   // Apply performance optimizations
   response = performanceMiddleware(request);

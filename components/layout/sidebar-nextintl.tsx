@@ -14,7 +14,7 @@ import { logout } from "@/lib/auth"
 import { useState } from "react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { LanguageSelector } from "@/components/ui/language-selector"
+import { UltraFastLanguageSelector } from "@/components/ui/ultra-fast-language-selector"
 import { NotificationBadge } from "@/components/ui/notification-badge"
 import { useEnhancedRealtime } from "@/components/providers/enhanced-realtime-provider"
 import { useNotifications } from "@/components/providers/notification-context"
@@ -31,10 +31,83 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(pathname?.startsWith('/settings') || false)
   const { unreadMessagesCount } = useEnhancedRealtime()
   const { unreadCount: realtimeUnreadCount } = useNotifications()
-  const locale = useLocale()
-  const t = useTranslations('nav')
-  const tRoles = useTranslations('roles')
-  const tAuth = useTranslations('auth')
+  const locale = useLocale() as 'fr' | 'en' | 'ar'
+  
+  // Traductions pour les 3 langues
+  const navTranslations = {
+    fr: {
+      loftManager: "Gestionnaire d'appartements",
+      executive: "Direction",
+      dashboard: "Tableau de bord",
+      conversations: "Conversations",
+      notifications: "Notifications", 
+      lofts: "Appartements",
+      customers: "Clients",
+      reservations: "Réservations",
+      availability: "Disponibilité",
+      tasks: "Tâches",
+      teams: "Équipes",
+      owners: "Propriétaires", 
+      transactions: "Transactions",
+      reports: "Rapports",
+      reportsNav: "Rapports",
+      settings: "Paramètres",
+      logout: "Déconnexion",
+      signOut: "Déconnexion",
+      admins: "Administrateur",
+      admin: "Administrateur"
+    },
+    en: {
+      loftManager: "Loft Manager",
+      executive: "Executive",
+      dashboard: "Dashboard",
+      conversations: "Conversations",
+      notifications: "Notifications", 
+      lofts: "Lofts",
+      customers: "Customers",
+      reservations: "Reservations",
+      availability: "Availability",
+      tasks: "Tasks",
+      teams: "Teams",
+      owners: "Owners", 
+      transactions: "Transactions",
+      reports: "Reports",
+      reportsNav: "Reports",
+      settings: "Settings",
+      logout: "Sign Out",
+      signOut: "Sign Out",
+      admins: "Administrator",
+      admin: "Administrator"
+    },
+    ar: {
+      loftManager: "مدير الشقق",
+      executive: "تنفيذي",
+      dashboard: "لوحة التحكم",
+      conversations: "المحادثات",
+      notifications: "الإشعارات", 
+      lofts: "الشقق",
+      customers: "العملاء",
+      reservations: "الحجوزات",
+      availability: "التوفر",
+      tasks: "المهام",
+      teams: "الفرق",
+      owners: "الملاك", 
+      transactions: "المعاملات",
+      reports: "التقارير",
+      reportsNav: "التقارير",
+      settings: "الإعدادات",
+      logout: "تسجيل الخروج",
+      signOut: "تسجيل الخروج",
+      admins: "مدير",
+      admin: "مدير"
+    }
+  }
+  
+  const t = (key: string) => navTranslations[locale][key as keyof typeof navTranslations['fr']] || key
+  const tRoles = t
+  const tAuth = t
+  
+  console.log(`[SIDEBAR] Locale utilisée: ${locale}`)
 
   // Ne pas afficher le sidebar d'employé pour les clients et partenaires
   if (user.role === 'client' || user.role === 'partner') {
@@ -90,7 +163,7 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
           </span>
         </Link>
         <div className="flex items-center bg-white/10 backdrop-blur-md rounded-xl p-1 gap-1 flex-shrink-0 border border-white/20">
-          <LanguageSelector />
+          <UltraFastLanguageSelector />
           <ThemeToggle variant="ghost" size="sm" className="text-white hover:text-cyan-300 h-8 w-8 hover:bg-white/10 transition-all duration-300" />
         </div>
       </div>

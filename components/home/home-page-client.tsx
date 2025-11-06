@@ -70,32 +70,32 @@ export function HomePageClient() {
   // Sections communes pour Admin, Manager et Member uniquement
   const commonSections = [
     {
-      title: "🏢 Appartements",
-      description: "Gérer les propriétés",
+      title: t('sections.apartments.title'),
+      description: t('sections.apartments.description'),
       href: `/${locale}/lofts`,
       icon: Building2,
       color: "from-blue-500 to-blue-600",
       roles: ['admin', 'manager', 'member']
     },
     {
-      title: "📅 Réservations", 
-      description: "Gérer les réservations",
+      title: t('sections.reservations.title'),
+      description: t('sections.reservations.description'),
       href: `/${locale}/reservations`,
       icon: Calendar,
       color: "from-green-500 to-green-600",
       roles: ['admin', 'manager', 'member']
     },
     {
-      title: "📋 Disponibilité",
-      description: "Gérer la disponibilité", 
+      title: t('sections.availability.title'),
+      description: t('sections.availability.description'),
       href: `/${locale}/availability`,
       icon: CalendarCheck,
       color: "from-purple-500 to-purple-600",
       roles: ['admin', 'manager', 'member']
     },
     {
-      title: "✅ Tâches",
-      description: "Gérer les tâches",
+      title: t('sections.tasks.title'),
+      description: t('sections.tasks.description'),
       href: `/${locale}/tasks`, 
       icon: ClipboardList,
       color: "from-orange-500 to-orange-600",
@@ -107,16 +107,16 @@ export function HomePageClient() {
   const profileSpecificSections = [
     // Sections pour Admin uniquement
     {
-      title: "👥 Équipes",
-      description: "Gérer les équipes",
+      title: t('sections.teams.title'),
+      description: t('sections.teams.description'),
       href: `/${locale}/teams`,
       icon: Users,
       color: "from-indigo-500 to-indigo-600",
       roles: ['admin']
     },
     {
-      title: "⚙️ Paramètres Plateforme",
-      description: "Configuration de la plateforme",
+      title: t('sections.platformSettings.title'),
+      description: t('sections.platformSettings.description'),
       href: `/${locale}/platform/settings`,
       icon: Cog,
       color: "from-gray-500 to-gray-600",
@@ -125,16 +125,16 @@ export function HomePageClient() {
     
     // Sections pour Admin, Manager et Executive
     {
-      title: "🏠 Propriétaires",
-      description: "Gérer les propriétaires", 
+      title: t('sections.owners.title'),
+      description: t('sections.owners.description'),
       href: `/${locale}/owners`,
       icon: UserCheck,
       color: "from-teal-500 to-teal-600",
       roles: ['admin', 'manager']
     },
     {
-      title: "💰 Transactions",
-      description: "Gestion financière",
+      title: t('sections.transactions.title'),
+      description: t('sections.transactions.description'),
       href: `/${locale}/transactions`,
       icon: DollarSign,
       color: "from-yellow-500 to-yellow-600",
@@ -145,8 +145,8 @@ export function HomePageClient() {
     
     // Sections pour Admin et Manager (gestion opérationnelle)
     {
-      title: "📊 Rapports Détaillés",
-      description: "Rapports opérationnels détaillés",
+      title: t('sections.detailedReports.title'),
+      description: t('sections.detailedReports.description'),
       href: `/${locale}/reports`,
       icon: BarChart3,
       color: "from-red-500 to-red-600",
@@ -155,16 +155,16 @@ export function HomePageClient() {
     
     // Sections partenaires (Admin uniquement)
     {
-      title: "🤝 Partenaires en attente",
-      description: "Gérer les demandes de partenariat",
+      title: t('sections.pendingPartners.title'),
+      description: t('sections.pendingPartners.description'),
       href: `/${locale}/partner/pending`,
       icon: UserPlus,
       color: "from-amber-500 to-amber-600",
       roles: ['admin']
     },
     {
-      title: "✅ Valider partenaires",
-      description: "Validation des partenaires",
+      title: t('sections.validatePartners.title'),
+      description: t('sections.validatePartners.description'),
       href: `/${locale}/partner/validation`,
       icon: CheckCircle,
       color: "from-emerald-500 to-emerald-600",
@@ -173,16 +173,16 @@ export function HomePageClient() {
     
     // Sections litiges (gestion pour Admin et Manager)
     {
-      title: "⚠️ Litiges ouverts",
-      description: "Gérer les litiges en cours",
+      title: t('sections.openDisputes.title'),
+      description: t('sections.openDisputes.description'),
       href: `/${locale}/disputes/open`,
       icon: AlertTriangle,
       color: "from-red-500 to-red-600",
       roles: ['admin', 'manager']
     },
     {
-      title: "⚖️ Gérer litiges",
-      description: "Résolution des litiges",
+      title: t('sections.manageDisputes.title'),
+      description: t('sections.manageDisputes.description'),
       href: `/${locale}/disputes/manage`,
       icon: Gavel,
       color: "from-purple-500 to-purple-600",
@@ -201,37 +201,35 @@ export function HomePageClient() {
   const getQuickAccessItems = (userRole: string) => {
     const baseItems = [
       {
-        title: "💬 Conversations", 
+        title: t('quickAccessItems.conversations.title'),
         href: `/${locale}/conversations`,
         icon: MessageSquare,
-        description: "Messages et communications",
+        description: t('quickAccessItems.conversations.description'),
         roles: ['admin', 'manager', 'member']
       },
       {
-        title: "🔔 Notifications",
+        title: t('quickAccessItems.notifications.title'),
         href: `/${locale}/notifications`, 
         icon: Bell,
-        description: "Alertes et notifications",
+        description: t('quickAccessItems.notifications.description'),
         roles: ['admin', 'manager', 'member']
       }
     ]
 
     const roleSpecificItems = [
-
-      
       // Pour Admin et Manager - Vue opérationnelle
       {
-        title: "📊 Tableau de bord",
+        title: t('quickAccessItems.dashboard.title'),
         href: `/${locale}/dashboard`,
         icon: BarChart3,
-        description: "Vue d'ensemble opérationnelle",
+        description: t('quickAccessItems.dashboard.description'),
         roles: ['admin', 'manager']
       },
       {
-        title: "📄 Rapports Détaillés",
+        title: t('quickAccessItems.detailedReports.title'),
         href: `/${locale}/reports`,
         icon: BarChart3,
-        description: "Rapports opérationnels détaillés",
+        description: t('quickAccessItems.detailedReports.description'),
         roles: ['admin', 'manager']
       }
     ]
@@ -249,11 +247,11 @@ export function HomePageClient() {
         <div className="flex items-center gap-3">
           <Home className="h-8 w-8 text-blue-600" />
           <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Algerie Loft - Gestion d'appartements
+            {t('title')}
           </h1>
         </div>
         <p className="text-lg text-muted-foreground">
-          Application complète pour la gestion des appartements, des propriétaires, des transactions...
+          {t('description')}
         </p>
         
 
@@ -272,7 +270,7 @@ export function HomePageClient() {
         <div>
           <div className="mb-4">
             <h2 className="text-2xl font-bold text-gray-800">
-              Sections disponibles pour votre profil
+              {t('availableSections')}
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -286,7 +284,7 @@ export function HomePageClient() {
                     <h3 className="font-bold text-gray-900 mb-2">{section.title}</h3>
                     <p className="text-sm text-gray-600 mb-3">{section.description}</p>
                     <div className="flex items-center text-blue-600 text-sm font-medium group-hover:text-blue-700">
-                      Accéder <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                      {t('access')} <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </CardContent>
                 </Card>
@@ -297,7 +295,7 @@ export function HomePageClient() {
 
         {/* Quick Access */}
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Accès rapide</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">{t('quickAccess.title')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {quickAccess.map((item, index) => (
               <Link key={index} href={item.href}>
@@ -326,9 +324,9 @@ export function HomePageClient() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="font-medium text-green-800">Tous les systèmes sont opérationnels</span>
+                <span className="font-medium text-green-800">{t('systemStatus.allOperational')}</span>
               </div>
-              <span className="text-sm text-green-600 font-medium">En ligne</span>
+              <span className="text-sm text-green-600 font-medium">{t('systemStatus.online')}</span>
             </div>
           </CardContent>
         </Card>

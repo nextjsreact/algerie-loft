@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Traductions - Diagnostic</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .warning { color: orange; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Diagnostic des Traductions - Test Navigateur</h1>
+    
+    <div class="test-section">
+        <h2>📋 Test de chargement des fichiers de traduction</h2>
+        <div id="file-test-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🧪 Test d'accès aux clés problématiques</h2>
+        <div id="key-test-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🌐 Test de changement de langue</h2>
+        <button onclick="testLocale('fr')">Français</button>
+        <button onclick="testLocale('en')">English</button>
+        <button onclick="testLocale('ar')">العربية</button>
+        <div id="locale-test-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📊 Résultats du diagnostic</h2>
+        <div id="diagnostic-results"></div>
+    </div>
+
+    <script>
+        let translations = {};
+        
+        // Fonction pour charger les traductions
+        async function loadTranslations(locale) {
+            try {
+                const response = await fetch(`/messages/${locale}.json`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                translations[locale] = data;
+                return data;
+            } catch (error) {
+                console.error(`Erreur chargement ${locale}:`, error);
+                return null;
+            }
+        }
+        
+        // Test de chargement des fichiers
+        async function testFileLoading() {
+            const results = document.getElementById('file-test-results');
+            results.innerHTML = '<p>🔄 Chargement en cours...</p>';
+            
+            const locales = ['fr', 'en', 'ar'];
+            let html = '';
+            
+            for (const locale of locales) {
+                const data = await loadTranslations(locale);
+                if (data) {
+                    const namespaces = Object.keys(data).length;
+                    const loftsKeys = data.lofts ? Object.keys(data.lofts).length : 0;
+                    html += `<p class="success">✅ ${locale}.json - ${namespaces} namespaces, lofts: ${loftsKeys} clés</p>`;
+                } else {
+                    html += `<p class="error">❌ ${locale}.json - Échec du chargement</p>`;
+                }
+            }
+            
+            results.innerHTML = html;
+        }
+        
+        // Test des clés problématiques
+        function testProblematicKeys() {
+            const results = document.getElementById('key-test-results');
+            const testKeys = ['editLoft', 'updatePropertyDetails', 'addLoft'];
+            let html = '';
+            
+            Object.keys(translations).forEach(locale => {
+                html += `<h3>${locale.toUpperCase()}</h3>`;
+                
+                if (translations[locale].lofts) {
+                    testKeys.forEach(key => {
+                        const value = translations[locale].lofts[key];
+                        if (value) {
+                            html += `<p class="success">✅ lofts.${key}: "${value}"</p>`;
+                        } else {
+                            html += `<p class="error">❌ lofts.${key}: MANQUANT</p>`;
+                        }
+                    });
+                } else {
+                    html += `<p class="error">❌ Namespace 'lofts' manquant</p>`;
+                }
+            });
+            
+            results.innerHTML = html;
+        }
+        
+        // Test de changement de locale
+        function testLocale(locale) {
+            const results = document.getElementById('locale-test-results');
+            
+            if (translations[locale]) {
+                const t = (namespace, key) => {
+                    if (translations[locale][namespace] && translations[locale][namespace][key]) {
+                        return translations[locale][namespace][key];
+                    }
+                    return `[MISSING: ${namespace}.${key}]`;
+                };
+                
+                const testCases = [
+                    { ns: 'lofts', key: 'editLoft' },
+                    { ns: 'lofts', key: 'updatePropertyDetails' },
+                    { ns: 'common', key: 'loading' },
+                    { ns: 'nav', key: 'dashboard' }
+                ];
+                
+                let html = `<h3>Test pour ${locale}</h3>`;
+                testCases.forEach(({ ns, key }) => {
+                    const result = t(ns, key);
+                    const isError = result.startsWith('[MISSING:');
+                    html += `<p class="${isError ? 'error' : 'success'}">
+                        ${isError ? '❌' : '✅'} ${ns}.${key}: "${result}"
+                    </p>`;
+                });
+                
+                results.innerHTML = html;
+            } else {
+                results.innerHTML = `<p class="error">❌ Traductions pour ${locale} non chargées</p>`;
+            }
+        }
+        
+        // Diagnostic complet
+        function runDiagnostic() {
+            const results = document.getElementById('diagnostic-results');
+            let issues = [];
+            let successes = [];
+            
+            // Vérifier la disponibilité des traductions
+            const locales = ['fr', 'en', 'ar'];
+            locales.forEach(locale => {
+                if (translations[locale]) {
+                    successes.push(`✅ ${locale}: Traductions chargées`);
+                    
+                    // Vérifier les namespaces critiques
+                    const criticalNs = ['lofts', 'common', 'nav', 'auth'];
+                    criticalNs.forEach(ns => {
+                        if (translations[locale][ns]) {
+                            successes.push(`✅ ${locale}.${ns}: Namespace disponible`);
+                        } else {
+                            issues.push(`❌ ${locale}.${ns}: Namespace manquant`);
+                        }
+                    });
+                } else {
+                    issues.push(`❌ ${locale}: Traductions non chargées`);
+                }
+            });
+            
+            let html = '<h3>✅ Succès</h3>';
+            html += successes.map(s => `<p class="success">${s}</p>`).join('');
+            
+            if (issues.length > 0) {
+                html += '<h3>❌ Problèmes détectés</h3>';
+                html += issues.map(i => `<p class="error">${i}</p>`).join('');
+            } else {
+                html += '<h3 class="success">🎉 Aucun problème détecté !</h3>';
+            }
+            
+            results.innerHTML = html;
+        }
+        
+        // Lancer les tests au chargement
+        window.onload = async function() {
+            await testFileLoading();
+            testProblematicKeys();
+            runDiagnostic();
+        };
+    </script>
+</body>
+</html>

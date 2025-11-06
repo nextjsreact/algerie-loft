@@ -143,7 +143,16 @@
     "phone": "Téléphone",
     "status": "Statut",
     "notes": "Notes",
-    "actions": "Actions",
+    "actions": {
+      "backToCustomers": "Retour aux clients",
+      "contact": "Contacter",
+      "edit": "Modifier",
+      "email": "Email",
+      "call": "Appeler",
+      "schedule": "Planifier",
+      "addNote": "Ajouter une note",
+      "delete": "Supprimer"
+    },
     "edit": "Modifier",
     "delete": "Supprimer",
     "deleteConfirm": "Êtes-vous sûr de vouloir supprimer {name} ?",
@@ -207,15 +216,6 @@
       "interactions": "Interactions",
       "reservations": "Réservations",
       "quickActions": "Actions rapides"
-    },
-    "actions": {
-      "backToCustomers": "Retour aux clients",
-      "contact": "Contacter",
-      "edit": "Modifier",
-      "email": "Email",
-      "call": "Appeler",
-      "schedule": "Planifier",
-      "addNote": "Ajouter une note"
     }
   },
   "blog": {
@@ -456,7 +456,23 @@
     "netProfit": "Bénéfice net",
     "trackRevenueExpenses": "Suivez les revenus et les dépenses au fil du temps.",
     "trends": "Tendances",
-    "vsLastMonth": "par rapport au mois dernier"
+    "vsLastMonth": "par rapport au mois dernier",
+    "calendar": {
+      "title": "Titre"
+    },
+    "form": {
+      "guest": "Invité"
+    },
+    "list": {
+      "title": "Titre"
+    },
+    "details": {
+      "title": "Titre",
+      "guest": "Invité"
+    },
+    "statusActions": {
+      "cancel": "Annuler"
+    }
   },
   "auth": {
     "admin": "Admin",
@@ -610,7 +626,22 @@
     "register": {
       "title": "Inscription - Algerie Loft",
       "description": "Créez votre compte pour accéder à nos services de location de lofts en Algérie"
-    }
+    },
+    "employeeAccess": {
+      "title": "Titre",
+      "email": "Email",
+      "password": "Mot de passe"
+    },
+    "error": "Erreur",
+    "auth": {
+      "email": "Email",
+      "password": "Mot de passe",
+      "admin": "Administrateur",
+      "manager": "Manager",
+      "member": "Membre"
+    },
+    "role": "Rôle",
+    "executive": "Exécutif"
   },
   "availability": {
     "activeFilters": "{count} filtre(s) actif(s)",
@@ -697,7 +728,8 @@
     "statusesSelected": "{count} statuts sélectionnés",
     "calendar": {
       "selectDates": "Sélectionner les dates",
-      "selectDatesDescription": "Choisissez vos dates d'arrivée et de départ"
+      "selectDatesDescription": "Choisissez vos dates d'arrivée et de départ",
+      "title": "Titre"
     },
     "errors": {
       "fetchFailed": "Impossible de charger les données de disponibilité",
@@ -721,7 +753,25 @@
       "minimumStay": "Séjour minimum : {nights} nuit(s)",
       "maximumStay": "Séjour maximum : {nights} nuit(s)",
       "pricePerNight": "Prix par nuit : {price} EUR"
-    }
+    },
+    "form": {
+      "guest": "Invité"
+    },
+    "list": {
+      "title": "Titre"
+    },
+    "details": {
+      "title": "Titre",
+      "guest": "Invité"
+    },
+    "statusActions": {
+      "cancel": "Annuler"
+    },
+    "cancel": "Annuler",
+    "upcoming": {
+      "title": "Titre"
+    },
+    "search": "Rechercher"
   },
   "bills": {
     "amount": "Montant",
@@ -761,7 +811,26 @@
       "internet": "Facture d'internet",
       "telephone": "Facture de téléphone",
       "tv": "Facture de télévision"
-    }
+    },
+    "bills": {
+      "title": "Titre",
+      "cancel": "Annuler"
+    },
+    "active": "Actif",
+    "management": {
+      "title": "Gestion des factures",
+      "water": "Eau",
+      "electricity": "Électricité",
+      "gas": "Gaz",
+      "phone": "Téléphone",
+      "internet": "Internet"
+    },
+    "frequency": {
+      "notSet": "Fréquence non définie",
+      "undefined": "Non défini"
+    },
+    "noDueDatesSet": "Aucune date d'échéance définie",
+    "editLoftToAddFrequencies": "Modifiez le loft pour ajouter les fréquences et dates d'échéance"
   },
   "common": {
     "actions": "Actions",
@@ -805,7 +874,53 @@
     "notificationsEnabled": "🔔 Notifications activées !",
     "notificationsEnabledDescription": "Vous recevrez désormais des notifications instantanées pour les tâches et les messages.",
     "transfer": "Transférer",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "add": "Ajouter",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "title": "Titre",
+    "accountSettings": {
+      "title": "Titre",
+      "email": "Email",
+      "role": "Rôle"
+    },
+    "passwordChange": {
+      "title": "Titre"
+    },
+    "appInfo": {
+      "title": "Titre",
+      "status": "Statut"
+    },
+    "admin": {
+      "title": "Titre"
+    },
+    "pricing": {
+      "title": "Titre"
+    },
+    "rules": {
+      "title": "Titre"
+    },
+    "status": "Statut",
+    "common": {
+      "error": "Erreur",
+      "success": "Succès"
+    },
+    "executive": "Exécutif",
+    "calendar": {
+      "title": "Titre"
+    },
+    "upcoming": {
+      "title": "Titre"
+    },
+    "available": "Disponible",
+    "modify": "Modifier",
+    "company": "Société",
+    "individual": "Particulier",
+    "percentages": "Pourcentages",
+    "amenityInfo": "Informations sur les équipements"
   },
   "conversations": {
     "addMembers": "Ajouter des membres",
@@ -882,7 +997,9 @@
     "whatsappWeb": "WhatsApp Web",
     "whatsappWebDescription": "Envoyez et recevez des messages sans avoir à garder votre téléphone connecté.\nUtilisez WhatsApp sur jusqu'à 4 appareils liés et un téléphone en même temps.",
     "yesterday": "Hier",
-    "you": "Vous"
+    "you": "Vous",
+    "cancel": "Annuler",
+    "delete": "Supprimer"
   },
   "dashboard": {
     "actionRequired": "Action requise",
@@ -931,7 +1048,7 @@
     "recentTasks": "Tâches récentes",
     "revenueVsExpenses": "Revenus vs Dépenses",
     "subtitle": "Bienvenue sur votre tableau de bord de gestion immobilière",
-    "systemStatus": "État du système",
+    "systemStatus": "État du Système",
     "tasks": {
       "status": {
         "completed": "Terminée",
@@ -941,7 +1058,7 @@
     },
     "teams": "Équipes",
     "thisMonth": "Ce mois-ci",
-    "title": "Tableau de bord",
+    "title": "Algerie Loft - Gestion d'appartements",
     "toDo": "À faire",
     "today": "Aujourd'hui",
     "tomorrow": "Demain",
@@ -964,7 +1081,92 @@
     "secureViewMessage": "Vue Membre Sécurisée - Affiche uniquement vos tâches assignées et informations pertinentes",
     "tasksVisible": "tâches visibles",
     "loftsAccessible": "appartements accessibles",
-    "dismiss": "Masquer"
+    "dismiss": "Masquer",
+    "description": "Application complète pour la gestion des appartements, des propriétaires, des transactions...",
+    "availableSections": "Sections disponibles pour votre profil",
+    "access": "Accéder",
+    "sections": {
+      "apartments": {
+        "title": "🏢 Appartements",
+        "description": "Gérer les propriétés"
+      },
+      "reservations": {
+        "title": "📅 Réservations",
+        "description": "Gérer les réservations"
+      },
+      "availability": {
+        "title": "📋 Disponibilité",
+        "description": "Gérer la disponibilité"
+      },
+      "tasks": {
+        "title": "✅ Tâches",
+        "description": "Gérer les tâches"
+      },
+      "teams": {
+        "title": "👥 Équipes",
+        "description": "Gérer les équipes"
+      },
+      "platformSettings": {
+        "title": "⚙️ Paramètres Plateforme",
+        "description": "Configuration de la plateforme"
+      },
+      "owners": {
+        "title": "🏠 Propriétaires",
+        "description": "Gérer les propriétaires"
+      },
+      "transactions": {
+        "title": "💰 Transactions",
+        "description": "Gestion financière"
+      },
+      "detailedReports": {
+        "title": "📊 Rapports Détaillés",
+        "description": "Rapports opérationnels détaillés"
+      },
+      "pendingPartners": {
+        "title": "🤝 Partenaires en attente",
+        "description": "Gérer les demandes de partenariat"
+      },
+      "validatePartners": {
+        "title": "✅ Valider partenaires",
+        "description": "Validation des partenaires"
+      },
+      "openDisputes": {
+        "title": "⚠️ Litiges ouverts",
+        "description": "Gérer les litiges en cours"
+      },
+      "manageDisputes": {
+        "title": "⚖️ Gérer litiges",
+        "description": "Résolution des litiges"
+      }
+    },
+    "quickAccessItems": {
+      "conversations": {
+        "title": "💬 Conversations",
+        "description": "Messages et communications"
+      },
+      "notifications": {
+        "title": "🔔 Notifications",
+        "description": "Alertes et notifications"
+      },
+      "dashboard": {
+        "title": "📊 Tableau de bord",
+        "description": "Vue d'ensemble opérationnelle"
+      },
+      "detailedReports": {
+        "title": "📄 Rapports Détaillés",
+        "description": "Rapports opérationnels détaillés"
+      }
+    },
+    "quickAccess": {
+      "title": "Accès rapide"
+    },
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "noData": "Aucune donnée",
+    "dashboard": {
+      "active": "Actif",
+      "title": "Titre"
+    }
   },
   "executive": {
     "alerts": {
@@ -998,7 +1200,7 @@
     "thirdPartyRevenue": "Revenus Tiers",
     "companyDominance": "Dominance Entreprise",
     "automaticOptimizationEnabled": "Optimisation automatique activée",
-    "quantumTimeline": "Chronologie Quantique",
+    "quantumTimeline": "Chronologie quantique",
     "temporalPerformanceEvolution": "Évolution temporelle des performances",
     "currentYear": "Année Courante",
     "evolution": "Évolution",
@@ -1015,33 +1217,12 @@
     "trend": "tendance",
     "margin": "Marge",
     "averageRent": "Loyer moyen",
-    "quantumTimeline": "Chronologie quantique",
-    "temporalPerformanceEvolution": "Évolution temporelle des performances",
     "apartmentManager": "Gestionnaire d'appartements",
     "toggleTheme": "Basculer le thème",
     "chats": "Conversations",
     "logout": "Se déconnecter",
     "executiveDashboard": "Tableau de bord exécutif",
-    "confidential": "Confidentiel",
-    "forExecutivesOnly": "Pour les exécutifs seulement",
-    "realTimePredictiveAnalysis": "Analyse prédictive en temps réel",
-    "totalExpenses": "Dépenses Totales",
-    "cashFlow": "Cash Flow",
-    "aiAnalysisInProgress": "Analyse IA en cours...",
-    "intelligentDistribution": "Distribution intelligente",
-    "companyRevenue": "Revenus Entreprise",
-    "thirdPartyRevenue": "Revenus Tiers",
-    "companyDominance": "Dominance Entreprise",
-    "automaticOptimizationEnabled": "Optimisation automatique activée",
-    "temporalPerformanceEvolution": "Évolution temporelle des performances",
-    "currentYear": "Année Courante",
-    "evolution": "Évolution",
-    "multidimensionalComparison": "Comparaison multidimensionnelle",
-    "expenses": "Dépenses",
-    "profit": "Profit",
-    "occupancy": "Occupation",
-    "thisMonth": "ce mois",
-    "trend": "tendance"
+    "forExecutivesOnly": "Pour les exécutifs seulement"
   },
   "internetConnections": {
     "active": "Actif",
@@ -1102,6 +1283,33 @@
   "lofts": {
     "ar": "Arabe",
     "addFirstLoft": "Ajouter mon premier appartement",
+    "editLoft": "Modifier l'appartement",
+    "linkToAirbnb": "Lier à Airbnb",
+    "loftInfoTitle": "Informations sur l'appartement",
+    "pricePerNight": "Prix par nuit",
+    "owner": "Propriétaire",
+    "description": "Description",
+    "available": "Disponible",
+    "occupied": "Occupé",
+    "maintenance": "Maintenance",
+    "loftNotFound": "Appartement non trouvé",
+    "noLoftFoundForId": "Aucun appartement trouvé pour l'ID",
+    "quarterly": "Trimestriel",
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "weekly": "Hebdomadaire",
+    "bimonthly": "Bimestriel",
+    "fourMonthly": "Quadrimestriel",
+    "photos": {
+      "loadError": "Erreur lors du chargement des photos",
+      "photoDownloaded": "Photo téléchargée",
+      "noPhotos": "Aucune photo disponible",
+      "noPhotosDescription": "Aucune photo n'a été ajoutée pour cet appartement.",
+      "mainPhoto": "Photo principale",
+      "photoViewer": "Visionneuse de photos",
+      "photoGallery": "Galerie de photos",
+      "photosAvailable": "{count} photo(s) disponible(s)"
+    },
     "addLoft": "Ajouter un appartement",
     "addNewPropertyListing": "Ajouter une nouvelle annonce immobilière",
     "cancel": "Annuler",
@@ -1109,6 +1317,11 @@
     "additionalInfo": {
       "airbnbId": "ID Airbnb",
       "company": "Société",
+      "title": "Informations supplémentaires",
+      "percentages": "Pourcentages",
+      "photoGallery": "Galerie de photos",
+      "createdOn": "Créé le",
+      "lastUpdated": "Dernière mise à jour",
       "createdOn": "Créé le",
       "lastUpdated": "Dernière mise à jour",
       "owner": "Propriétaire",
@@ -1123,6 +1336,35 @@
     "billManagement": {
       "billMarkedAsPaid": "Facture {billType} marquée comme payée. Prochaine échéance calculée automatiquement.",
       "cancel": "Annuler",
+      "title": "Gestion des factures",
+      "water": "Eau",
+      "electricity": "Électricité",
+      "gas": "Gaz",
+      "phone": "Téléphone",
+      "internet": "Internet",
+      "nextBills": "Prochaines factures",
+      "notSet": "Non défini",
+      "customerCode": "Code client",
+      "meterNumber": "Numéro de compteur",
+      "correspondent": "Correspondant",
+      "clientNumber": "Numéro client",
+      "pdlRef": "Référence PDL",
+      "frequency": "Fréquence",
+      "noFrequencySet": "Fréquence non définie",
+      "daysOverdue": "jours de retard",
+      "dueToday": "Dû aujourd'hui",
+      "dueTomorrow": "Dû demain",
+      "dueInDays": "Dû dans {days} jours",
+      "due": "Dû",
+      "pleaseEnterPaymentAmount": "Veuillez entrer le montant du paiement",
+      "markAsPaid": "Marquer comme payé",
+      "noBillDueDatesSet": "Aucune date d'échéance définie",
+      "editLoftToAddBillInfo": "Modifiez l'appartement pour ajouter les informations de facturation",
+      "markBillAsPaid": "Marquer la facture {billType} comme payée",
+      "paymentAmount": "Montant du paiement",
+      "enterPaymentAmount": "Entrez le montant du paiement",
+      "processing": "Traitement en cours...",
+      "nextDueDateAutoCalculated": "La prochaine date d'échéance sera calculée automatiquement selon la fréquence {frequency}",
       "currentDueDate": "Date d'échéance actuelle",
       "daysOverdue": "jours de retard",
       "due": "Dû",
@@ -1146,7 +1388,9 @@
       "pleaseEnterPaymentAmount": "Veuillez entrer un montant de paiement",
       "processing": "Traitement en cours...",
       "title": "Gestion des factures",
-      "water": "Eau"
+      "water": "Eau",
+      "electricity": "Électricité",
+      "gas": "Gaz"
     },
     "billingAlerts": "Alertes de facturation",
     "billingAlertsDescription": "Configurez les fréquences et les dates d'échéance pour le suivi automatique des factures",
@@ -1173,12 +1417,12 @@
     "deleteConfirmTitle": "Êtes-vous absolument sûr ?",
     "deleteConfirmationIncorrect": "Le texte de confirmation est incorrect. Suppression annulée.",
     "deleteConfirmationKeyword": "DELETE",
-    "deleteError": "Erreur lors de la suppression",
-    "deleteErrorDescription": "Impossible de supprimer l'appartement",
+    "deleteError": "Erreur lors de la suppression de {name}",
+    "deleteErrorDescription": "Une erreur s'est produite lors de la suppression. Veuillez réessayer.",
     "deleteErrorMessage": "Une erreur s'est produite lors de la tentative de suppression de l'appartement. Veuillez réessayer.",
     "deleteLoft": "Supprimer l'appartement",
-    "deleteSuccess": "{loftName} supprimé avec succès",
-    "deleteSuccessDescription": "L'appartement a été supprimé",
+    "deleteSuccess": "{name} supprimé avec succès",
+    "deleteSuccessDescription": "L'appartement et toutes ses données associées ont été supprimés",
     "deletingDescription": "Suppression de l'appartement en cours",
     "deletingInProgress": "Suppression en cours...",
     "deletingLoftData": "Suppression des données de l'appartement...",
@@ -1301,8 +1545,8 @@
     "statusTitle": "Statut",
     "status": {
       "available": "Disponible",
-      "maintenance": "Maintenance",
-      "occupied": "Occupé"
+      "occupied": "Occupé",
+      "maintenance": "Maintenance"
     },
     "subtitle": "Gérez vos propriétés",
     "systemError": "Erreur système",
@@ -1347,10 +1591,6 @@
     "confirmDeleteTitle": "Confirmer la suppression",
     "confirmDeleteDescription": "Êtes-vous sûr de vouloir supprimer l'appartement \"{name}\" ? Cette action est irréversible et supprimera toutes les données associées.",
     "confirmDeleteButton": "Supprimer définitivement",
-    "deleteSuccess": "{name} supprimé avec succès",
-    "deleteSuccessDescription": "L'appartement et toutes ses données associées ont été supprimés",
-    "deleteError": "Erreur lors de la suppression de {name}",
-    "deleteErrorDescription": "Une erreur s'est produite lors de la suppression. Veuillez réessayer.",
     "deleting": "Suppression...",
     "name": "Nom",
     "namePlaceholder": "Ex: Loft moderne en centre-ville",
@@ -1378,7 +1618,22 @@
     },
     "price": "Prix",
     "rooms": "Pièces",
-    "unavailable": "Indisponible"
+    "unavailable": "Indisponible",
+    "details": {
+      "title": "Détails du Loft",
+      "pricePerNight": "Prix par nuit",
+      "owner": "Propriétaire",
+      "propertyType": "Type de propriété",
+      "description": "Description",
+      "amenities": "Équipements",
+      "gallery": "Galerie photos",
+      "additionalInfo": "Informations supplémentaires",
+      "createdAt": "Créé le",
+      "lastUpdated": "Dernière mise à jour",
+      "edit": "Modifier l'appartement",
+      "auditHistory": "Historique d'audit",
+      "apartmentInfo": "Informations sur l'appartement"
+    }
   },
   "nav": {
     "application": "Application",
@@ -1392,6 +1647,7 @@
     "internetConnections": "Connexions Internet",
     "loftManager": "Gestionnaire d'appartements",
     "lofts": "Appartements",
+    "linkToAirbnb": "Lier à Airbnb",
     "owners": "Propriétaires",
     "customers": "Clients",
     "notifications": "Notifications",
@@ -1405,8 +1661,31 @@
     "teams": "Équipes",
     "toggleTheme": "Basculer le thème",
     "transactions": "Transactions",
-    "userPasswords": "Gestion des mots de passe",
-    "zoneAreas": "Zones géographiques"
+    "userPasswords": {
+      "common": {
+        "loading": "Chargement..."
+      },
+      "title": "Titre",
+      "userSelection": {
+        "title": "Titre"
+      },
+      "passwordForm": {
+        "title": "Titre"
+      },
+      "security": {
+        "title": "Titre"
+      },
+      "roles": {
+        "admin": "Administrateur",
+        "manager": "Manager",
+        "member": "Membre",
+        "executive": "Exécutif"
+      }
+    },
+    "zoneAreas": "Zones géographiques",
+    "clients": "Clients",
+    "bookings": "Réservations",
+    "logout": "Déconnexion"
   },
   "notifications": {
     "title": "Notifications",
@@ -1426,7 +1705,6 @@
     "Task Status Updated": "Statut de la tâche mis à jour",
     "Your Task Status Updated": "Statut de votre tâche mis à jour",
     "Task Due Date Updated": "Date d'échéance de la tâche mise à jour",
-    "Task Reassigned": "Tâche réassignée",
     "Task Deleted": "Tâche supprimée",
     "Task Overdue": "Tâche en retard",
     "newTaskAssignedMessage": "Une nouvelle tâche vous a été assignée : \"{taskTitle}\" (Échéance : {dueDate})",
@@ -1436,18 +1714,16 @@
     "unknownUser": "un utilisateur",
     "task": "tâche",
     "updated": "mis à jour",
-    "viewDetails": "Voir les détails",
     "noNotificationsMessage": "Vous recevrez ici des notifications importantes concernant vos tâches et activités.",
-    "new": "Nouveau",
     "newMessageFrom": "Nouveau message de {sender}",
     "noNotifications": "Aucune notification trouvée.",
-    "info": "Info",
     "Notification Read": "Notification lue",
     "notificationReadMessage": "Votre notification pour la tâche \"{taskTitle}\" a été lue par {userName}.",
     "optimizedBanner": {
       "title": "Version optimisée active",
       "description": "Utilisation des opérations par lots, de la mémoïsation et des techniques d'optimisation React."
-    }
+    },
+    "status": "Statut"
   },
   "owners": {
     "addFirstOwner": "Ajouter un propriétaire",
@@ -1496,7 +1772,8 @@
       "name": "Ex: Jean Dupont",
       "email": "Ex: jean.dupont@email.com",
       "phone": "Ex: +213 555 123 456",
-      "address": "Ex: 123 Rue de la Paix, Alger"
+      "address": "Ex: 123 Rue de la Paix, Alger",
+      "cancel": "Annuler"
     }
   },
   "paymentMethods": {
@@ -1723,10 +2000,14 @@
     "today": "Aujourd'hui",
     "transactionType": "Type de transaction",
     "transactionsCount": "Nombre de transactions",
-    "utilities": "Services publics"
+    "utilities": "Services publics",
+    "name": "Nom",
+    "email": "Email"
   },
   "reservations": {
-    "actions": "Actions rapides",
+    "actions": {
+      "cancel": "Annuler"
+    },
     "activities": {
       "bookingCancelled": "Réservation annulée",
       "checkinCompleted": "Enregistrement terminé",
@@ -1867,7 +2148,17 @@
       "title": "Réservations à venir"
     },
     "vsLastMonth": "par rapport au mois dernier",
-    "allLofts": "Tous les appartements"
+    "allLofts": "Tous les appartements",
+    "reservations": {
+      "form": {
+        "title": "Titre",
+        "guest": "Invité"
+      },
+      "details": {
+        "title": "Titre",
+        "guest": "Invité"
+      }
+    }
   },
   "roles": {
     "admin": "Administrateur",
@@ -2092,7 +2383,9 @@
         "member": "Membre",
         "executive": "Exécutif"
       }
-    }
+    },
+    "email": "Email",
+    "role": "Rôle"
   },
   "tasks": {
     "addTask": "Ajouter une tâche",
@@ -2168,13 +2461,7 @@
     "saving": "Sauvegarde en cours...",
     "search": "Rechercher",
     "searchPlaceholder": "Rechercher par titre ou description...",
-    "status": {
-      "completed": "Terminée",
-      "inProgress": "En cours",
-      "in_progress": "En cours",
-      "todo": "À faire",
-      "unknown": "Inconnu"
-    },
+    "status": "Statut",
     "subtitle": "Gérez vos tâches assignées et suivez leur progression.",
     "table": {
       "actions": "Actions",
@@ -2214,23 +2501,16 @@
     "reassign": "Réassigner",
     "restrictedAccess": "Accès restreint",
     "markAs": "Marquer comme",
-    "fullAccess": "Accès complet",
-    "assignedAccess": "Accès assigné",
-    "viewOnlyAccess": "Accès en lecture seule",
-    "current": "actuel",
-    "viewDetails": "Voir les détails",
-    "yourPermissions": "Vos permissions",
-    "allowed": "Autorisé",
-    "denied": "Refusé",
-    "view": "Voir",
-    "edit": "Modifier",
-    "updateStatus": "Mettre à jour le statut",
-    "reassign": "Réassigner",
-    "restrictedAccess": "Accès restreint",
-    "markAs": "Marquer comme",
     "loftName": "Nom de l'appartement",
     "loftAddress": "Adresse de l'appartement",
-    "viewLoftDetails": "Voir les détails de l'appartement"
+    "viewLoftDetails": "Voir les détails de l'appartement",
+    "bills": {
+      "title": "Titre"
+    },
+    "active": "Actif",
+    "optimizedBanner": {
+      "title": "Titre"
+    }
   },
   "teams": {
     "activeMembers": "Membres actifs",
@@ -2310,9 +2590,88 @@
     "noTeamsFound": "Aucune équipe trouvée",
     "noTeamsDescription": "Commencez par créer votre première équipe pour organiser votre travail et collaborer efficacement.",
     "noSearchResults": "Aucune équipe ne correspond à votre recherche \"{searchTerm}\". Essayez d'autres mots-clés.",
-    "clearSearch": "Effacer la recherche"
+    "clearSearch": "Effacer la recherche",
+    "name": "Nom"
   },
   "admin": {
+    "management": {
+      "title": "Gestion du Système",
+      "description": "Tableau de bord complet pour la gestion des utilisateurs, partenaires et du système"
+    },
+    "stats": {
+      "totalUsers": "Total Utilisateurs",
+      "active": "actif",
+      "clients": "Clients",
+      "ofTotal": "du total",
+      "partners": "Partenaires",
+      "pending": "en attente",
+      "disputes": "Litiges",
+      "needsAttention": "nécessite attention",
+      "inactive": "inactif"
+    },
+    "userDistribution": {
+      "title": "Répartition des Utilisateurs",
+      "description": "Vue d'ensemble de la répartition des types d'utilisateurs dans le système"
+    },
+    "roles": {
+      "client": "Client",
+      "partner": "Partenaire",
+      "employees": "Employés"
+    },
+    "users": {
+      "title": "Gestion des Utilisateurs",
+      "description": "Gérer les utilisateurs du système",
+      "filters": {
+        "title": "Filtres",
+        "search": "Rechercher des utilisateurs...",
+        "searchPlaceholder": "Rechercher des utilisateurs...",
+        "role": "Filtrer par rôle",
+        "allRoles": "Tous les rôles",
+        "status": "Filtrer par statut",
+        "allStatuses": "Tous les statuts",
+        "apply": "Appliquer les filtres"
+      },
+      "usersList": {
+        "title": "Liste des Utilisateurs",
+        "noUsers": "Aucun utilisateur trouvé"
+      },
+      "table": {
+        "name": "Nom",
+        "email": "Email",
+        "role": "Rôle",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "activate": "Activer",
+        "deactivate": "Désactiver"
+      },
+      "status": {
+        "inactive": "Inactif",
+        "active": "Actif"
+      },
+      "roles": {
+        "admin": "Administrateur",
+        "manager": "Manager",
+        "executive": "Exécutif",
+        "member": "Membre",
+        "client": "Client",
+        "partner": "Partenaire",
+        "guest": "Invité"
+      },
+      "deleteDialog": {
+        "title": "Titre",
+        "cancel": "Annuler"
+      }
+    },
+    "tabs": {
+      "userManagement": "Gestion Utilisateurs",
+      "partnerVerification": "Vérification Partenaires",
+      "disputeResolution": "Résolution Litiges",
+      "reports": "Rapports"
+    },
     "editCategory": "Modifier la catégorie",
     "newCategory": "Nouvelle catégorie",
     "categoryName": "Nom de la catégorie",
@@ -2344,6 +2703,23 @@
       "noPendingPartners": "Aucune candidature de partenaire en attente.",
       "noVerifiedPartners": "Aucun partenaire vérifié.",
       "noRejectedPartners": "Aucun partenaire rejeté."
+    },
+    "disputes": {
+      "client": "Client",
+      "partner": "Partenaire",
+      "status": "Statut",
+      "cancel": "Annuler",
+      "title": "Titre"
+    },
+    "cancel": "Annuler",
+    "reports": {
+      "title": "Titre",
+      "filters": {
+        "title": "Titre"
+      },
+      "analytics": {
+        "active": "Actif"
+      }
     }
   },
   "navigation": {
@@ -2362,7 +2738,21 @@
     "reports": "Rapports",
     "settings": "Paramètres",
     "categories": "Catégories",
-    "logout": "Se déconnecter"
+    "logout": "Se déconnecter",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "validation": {
+      "email": "Email"
+    },
+    "actions": {
+      "save": "Enregistrer"
+    }
   },
   "testSound": {
     "browserBlocksAudio": "Les navigateurs nécessitent une interaction de l'utilisateur avant de jouer du son",
@@ -2529,7 +2919,8 @@
       "saving": "Sauvegarde en cours...",
       "update": "Mettre à jour",
       "create": "Créer",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "name": "Nom"
     },
     "nav": {
       "zoneAreas": "Zones"
@@ -2598,7 +2989,7 @@
     "auditHistoryFor": "Historique d'audit pour",
     "actions": {
       "created": "Créé",
-      "updated": "Modifié", 
+      "updated": "Modifié",
       "deleted": "Supprimé"
     },
     "tables": {
@@ -2643,10 +3034,10 @@
     "todayLogs": "Journaux d'aujourd'hui",
     "times": "fois",
     "topActions": "Actions principales",
-    "selectLog": "Sélectionner le journal",
-    "fieldsChanged": "Champs modifiés",
+    "selectLog": "Sélectionner le log",
+    "fieldsChanged": "champs modifiés",
     "viewDetails": "Voir les détails",
-    "copyRecordId": "Copier l'ID de l'enregistrement",
+    "copyRecordId": "Copier l'ID",
     "uniqueUsers": "Utilisateurs uniques",
     "topAction": "Action principale",
     "none": "Aucune",
@@ -2657,25 +3048,11 @@
     "searchDescription": "Rechercher par email utilisateur, action ou nom de table",
     "tableName": "Nom de table",
     "allTables": "Toutes les tables",
-    "allActions": "Toutes les actions",
-    "allUsers": "Tous les utilisateurs",
     "openMenu": "Ouvrir le menu",
     "exportSelected": "Exporter la sélection",
-    "action": "Action",
-    "user": "Utilisateur",
-    "selectLog": "Sélectionner le log",
-    "fieldsChanged": "champs modifiés",
     "newRecord": "Nouvel enregistrement",
     "recordDeleted": "Enregistrement supprimé",
     "noChanges": "Aucun changement",
-    "viewDetails": "Voir les détails",
-    "copyRecordId": "Copier l'ID",
-    "tables": {
-      "transactions": "Transaction",
-      "tasks": "Tâche",
-      "reservations": "Réservation",
-      "lofts": "Loft"
-    },
     "recordId": "ID d'enregistrement",
     "recordIdPlaceholder": "Entrez l'ID de l'enregistrement",
     "dateRangeDescription": "Filtrer par plage de dates",
@@ -2697,7 +3074,7 @@
     "activeFiltersCount": "{count} filtre(s) actif(s)",
     "actionTypes": {
       "created": "Créé",
-      "updated": "Modifié", 
+      "updated": "Modifié",
       "deleted": "Supprimé",
       "view": "Voir",
       "export": "Exporter"
@@ -2766,12 +3143,92 @@
         "createUser": "Nouvel Utilisateur",
         "bulkActions": "Actions en lot",
         "deselectAll": "Désélectionner tout"
+      },
+      "placeholders": {
+        "searchByNameOrEmail": "Rechercher par nom ou email...",
+        "filterByRole": "Filtrer par rôle",
+        "filterByStatus": "Filtrer par statut",
+        "emailVerified": "Email vérifié",
+        "leaveEmptyToKeep": "Laissez vide pour ne pas changer",
+        "fullUserName": "Nom complet de l'utilisateur",
+        "emailExample": "email@exemple.com"
+      },
+      "messages": {
+        "passwordResetSuccess": "Mot de passe réinitialisé avec succès. Un email a été envoyé à l'utilisateur.",
+        "tempPasswordGenerated": "Mot de passe temporaire généré pour l'utilisateur :",
+        "tempPasswordNote": "Ce mot de passe sera affiché une seule fois. L'utilisateur devra le changer à sa prochaine connexion.",
+        "fillAllFields": "Veuillez remplir tous les champs obligatoires",
+        "usersSelected": "utilisateur sélectionné",
+        "usersSelectedPlural": "utilisateurs sélectionnés",
+        "bulkActionSuccess": "Action en lot exécutée avec succès",
+        "bulkActionFailed": "Échec de l'action en lot"
+      },
+      "filters": {
+        "allRoles": "Tous les rôles",
+        "allStatuses": "Tous les statuts",
+        "all": "Tous",
+        "verified": "Vérifié",
+        "unverified": "Non vérifié"
+      },
+      "labels": {
+        "selectAll": "Sélectionner tout",
+        "emailNotVerified": "Email non vérifié",
+        "resetPassword": "Réinitialiser le mot de passe",
+        "generateTempPassword": "Générer un mot de passe temporaire",
+        "role": "Rôle",
+        "activeAccount": "Compte actif",
+        "emailVerified": "Email vérifié"
+      },
+      "dialogs": {
+        "bulkActionsTitle": "Actions en lot",
+        "bulkActionsDesc": "Sélectionnez une action à appliquer aux {count} utilisateurs sélectionnés",
+        "editUserTitle": "Modifier l'utilisateur",
+        "editUserDesc": "Modifiez les informations de l'utilisateur sélectionné",
+        "createUserTitle": "Créer un nouvel utilisateur",
+        "createUserDesc": "Ajoutez un nouvel utilisateur au système",
+        "createUserButton": "Créer l'utilisateur"
+      },
+      "bulkActions": {
+        "activateUsers": "Activer les utilisateurs",
+        "deactivateUsers": "Désactiver les utilisateurs",
+        "deleteUsers": "Supprimer les utilisateurs"
       }
     },
     "dashboard": {
-      "title": "Dashboard Superuser FR",
+      "title": "Tableau de Bord Superuser",
       "welcome": "Félicitations ! Vous êtes maintenant connecté en tant que superuser.",
       "successMessage": "Succès ! Le système d'authentification superuser fonctionne correctement.",
+      "errorLoading": "Erreur lors du chargement du tableau de bord",
+      "noData": "Aucune donnée disponible",
+      "systemStatus": "État du Système",
+      "responseTime": "Temps de réponse",
+      "activeUsers": "Utilisateurs Actifs",
+      "sessions": "Sessions",
+      "reservations": "Réservations",
+      "errorRate": "Taux d'erreur",
+      "backup": "Sauvegarde",
+      "lastBackup": "Dernière sauvegarde",
+      "overview": "Vue d'ensemble",
+      "securityAlerts": "Alertes de Sécurité",
+      "auditLog": "Journal d'Audit",
+      "emergencyActions": "Actions d'Urgence",
+      "systemPerformance": "Performance Système",
+      "database": "Base de données",
+      "avgResponseTime": "Temps de réponse moyen",
+      "quickActions": "Actions Rapides",
+      "recentSecurityAlerts": "Alertes de Sécurité Récentes",
+      "securityAlertsDescription": "Surveillance des activités suspectes et des tentatives d'accès non autorisées",
+      "noRecentAlerts": "Aucune alerte de sécurité récente",
+      "resolve": "Résoudre",
+      "recentAuditLog": "Journal d'Audit Récent",
+      "auditLogDescription": "Historique des actions administratives et modifications système",
+      "noRecentAuditEntries": "Aucune entrée d'audit récente",
+      "emergencyActionsDescription": "Fonctions critiques pour la gestion d'urgence du système",
+      "emergencyWarning": "Ces actions peuvent affecter le fonctionnement du système. Utilisez avec précaution.",
+      "emergencyLockdown": "Verrouillage d'Urgence",
+      "emergencyBackup": "Sauvegarde d'Urgence",
+      "systemRestart": "Redémarrage Système",
+      "massLogout": "Déconnexion Massive",
       "cards": {
         "userManagement": {
           "title": "Gestion des Utilisateurs",
@@ -2799,5 +3256,252 @@
         }
       }
     }
+  },
+  "booking": {
+    "form": {
+      "title": "Titre",
+      "cancel": "Annuler",
+      "email": "Email"
+    },
+    "steps": {
+      "guestInfo": {
+        "title": "Titre"
+      },
+      "additionalGuests": {
+        "title": "Titre"
+      },
+      "preferences": {
+        "title": "Titre"
+      },
+      "review": {
+        "title": "Titre"
+      }
+    },
+    "confirmation": {
+      "title": "Titre",
+      "loading": {
+        "title": "Titre"
+      },
+      "error": {
+        "title": "Titre"
+      }
+    },
+    "success": {
+      "title": "Titre"
+    }
+  },
+  "name": "Nom",
+  "title": "Titre",
+  "role": "Rôle",
+  "status": "Statut",
+  "search": "Rechercher",
+  "email": "Email",
+  "meta": {
+    "title": "Titre"
+  },
+  "contact": {
+    "reasons": {
+      "propertyManagement": {
+        "title": "Titre"
+      },
+      "rentalServices": {
+        "title": "Titre"
+      },
+      "maintenance": {
+        "title": "Titre"
+      },
+      "consultation": {
+        "title": "Titre"
+      },
+      "title": "Titre"
+    },
+    "process": {
+      "step1": {
+        "title": "Titre"
+      },
+      "step2": {
+        "title": "Titre"
+      },
+      "step3": {
+        "title": "Titre"
+      },
+      "title": "Titre"
+    },
+    "page": {
+      "title": "Titre"
+    },
+    "faq": {
+      "title": "Titre"
+    },
+    "info": {
+      "emergency": {
+        "title": "Titre"
+      },
+      "location": {
+        "title": "Titre"
+      }
+    },
+    "form": {
+      "title": "Titre",
+      "name": "Nom",
+      "email": "Email",
+      "contactMethods": {
+        "email": "Email"
+      }
+    }
+  },
+  "register": {
+    "title": "Titre"
+  },
+  "currencies": {
+    "name": "Nom",
+    "status": "Statut"
+  },
+  "loading": "Chargement...",
+  "callbackRequest": {
+    "form": {
+      "title": "Titre",
+      "name": "Nom"
+    }
+  },
+  "propertyInquiry": {
+    "form": {
+      "title": "Titre",
+      "name": "Nom",
+      "email": "Email"
+    }
+  },
+  "serviceInquiry": {
+    "form": {
+      "title": "Titre",
+      "name": "Nom",
+      "email": "Email"
+    }
+  },
+  "partner": {
+    "pricing": {
+      "title": "Titre"
+    },
+    "availability": {
+      "title": "Titre"
+    },
+    "properties": {
+      "name": "Nom",
+      "loading": "Chargement...",
+      "title": "Titre",
+      "edit": "Modifier"
+    },
+    "common": {
+      "cancel": "Annuler"
+    }
+  },
+  "privacy": {
+    "cookies": {
+      "title": "Titre"
+    },
+    "gdpr": {
+      "form": {
+        "title": "Titre",
+        "email": "Email"
+      },
+      "requestTypes": {
+        "${type}": {
+          "name": "Nom"
+        }
+      }
+    },
+    "dashboard": {
+      "stats": {
+        "active": "Actif"
+      },
+      "title": "Titre",
+      "overview": {
+        "rights": {
+          "title": "Titre",
+          "delete": "Supprimer"
+        },
+        "data": {
+          "title": "Titre"
+        }
+      },
+      "cookies": {
+        "title": "Titre"
+      },
+      "payments": {
+        "title": "Titre"
+      },
+      "legal": {
+        "title": "Titre"
+      }
+    },
+    "settings": {
+      "dataProcessing": {
+        "title": "Titre"
+      },
+      "communications": {
+        "title": "Titre",
+        "email": "Email"
+      },
+      "dataRetention": {
+        "title": "Titre"
+      },
+      "dataSharing": {
+        "title": "Titre"
+      }
+    },
+    "payment": {
+      "title": "Titre",
+      "security": {
+        "title": "Titre"
+      },
+      "cancel": "Annuler"
+    }
+  },
+  "bookingHistory": {
+    "loading": "Chargement...",
+    "title": "Titre",
+    "search": "Rechercher",
+    "status": "Statut",
+    "guest": "Invité"
+  },
+  "pricing": {
+    "summary": {
+      "title": "Titre"
+    }
+  },
+  "profileIntegration": {
+    "title": "Titre"
+  },
+  "profileDashboard": {
+    "loading": "Chargement...",
+    "member": "Membre"
+  },
+  "profile": {
+    "loading": "Chargement...",
+    "title": "Titre",
+    "cancel": "Annuler",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "email": "Email"
+  },
+  "forms": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "validation": {
+      "email": "Email"
+    },
+    "actions": {
+      "save": "Enregistrer"
+    }
+  },
+  "ui": {
+    "toggleTheme": "Basculer le thème",
+    "userRole": "Rôle utilisateur"
   }
 }

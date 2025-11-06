@@ -1,6 +1,5 @@
 import { requireRole } from "@/lib/auth"
 import { createClient } from "@/utils/supabase/server"
-import { notFound } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -12,8 +11,6 @@ import { LoftBillManagement } from "@/components/loft/bill-management"
 import { LoftPhotoGallery } from "@/components/lofts/loft-photo-gallery"
 import { RoleBasedAccess } from "@/components/auth/role-based-access"
 import Link from "next/link"
-import { getTranslations } from "next-intl/server"
-import { cookies } from "next/headers"
 import type { LoftStatus } from "@/lib/types"
 import { 
   MapPin, 
@@ -22,7 +19,6 @@ import {
   Building, 
   Calendar,
   Phone,
-  Wifi,
   Zap,
   Droplets,
   Flame,
@@ -31,175 +27,135 @@ import {
   Home
 } from "lucide-react"
 
-// Fonction pour traduire les descriptions des lofts
-const getTranslatedDescription = (originalDescription: string, loftName: string, t: any) => {
-  // Pour l'instant, on retourne la description originale
-  // Les traductions peuvent être ajoutées plus tard si nécessaire
-  return originalDescription
-}
-
-// Fonction pour obtenir les traductions statiques selon la langue
-const getStaticTranslation = (key: string, t: any, locale: string = 'fr') => {
-  // Fallback vers les traductions par défaut selon la langue détectée
-
-  switch (locale) {
-    case 'ar':
-       switch (key) {
-         case 'utilityInfo.title': return 'معلومات المرافق';
-         case 'utilityInfo.nextBills': return 'الفواتير القادمة';
-         case 'photos.photoGallery': return 'معرض الصور';
-         case 'additionalInfo.title': return 'معلومات إضافية';
-         case 'billManagement.title': return 'إدارة الفواتير';
-         case 'additionalInfo.createdOn': return 'تم الإنشاء في';
-         case 'additionalInfo.lastUpdated': return 'آخر تحديث';
-         case 'notSet': return 'غير محدد';
-         case 'percentages': return 'النسب المئوية';
-         case 'photosAvailable': return '{{count}} صورة متاحة';
-         // Noms des services
-         case 'water': return 'المياه';
-         case 'electricity': return 'الكهرباء';
-         case 'gas': return 'الغاز';
-         // Labels des champs
-         case 'customerCode': return 'رمز العميل';
-         case 'meterNumber': return 'رقم العداد';
-         case 'pdlRef': return 'مرجع PDL';
-         case 'clientNumber': return 'رقم العميل';
-         case 'correspondent': return 'المراسل';
-         // Fréquences
-         case 'frequency': return 'التردد';
-         case 'quarterly': return 'ربع سنوي';
-         case 'monthly': return 'شهري';
-         case 'trimestriel': return 'ربع سنوي';
-         case 'mensuel': return 'شهري';
-         case 'phone': return 'الهاتف';
-         case 'internet': return 'الإنترنت';
-         case 'energy': return 'الطاقة';
-         default: return key;
-       }
-    case 'en':
-       switch (key) {
-         case 'utilityInfo.title': return 'Utility Information';
-         case 'utilityInfo.nextBills': return 'Next Bills';
-         case 'photos.photoGallery': return 'Photo Gallery';
-         case 'additionalInfo.title': return 'Additional Information';
-         case 'billManagement.title': return 'Bill Management';
-         case 'additionalInfo.createdOn': return 'Created on';
-         case 'additionalInfo.lastUpdated': return 'Last updated';
-         case 'notSet': return 'Not set';
-         case 'percentages': return 'Percentages';
-         case 'photosAvailable': return '{{count}} photos available';
-         // Service names
-         case 'water': return 'Water';
-         case 'electricity': return 'Electricity';
-         case 'gas': return 'Gas';
-         // Field labels
-         case 'customerCode': return 'Customer Code';
-         case 'meterNumber': return 'Meter Number';
-         case 'pdlRef': return 'PDL Reference';
-         case 'clientNumber': return 'Client Number';
-         case 'correspondent': return 'Correspondent';
-         // Frequencies
-         case 'frequency': return 'Frequency';
-         case 'quarterly': return 'Quarterly';
-         case 'monthly': return 'Monthly';
-         case 'trimestriel': return 'Quarterly';
-         case 'mensuel': return 'Monthly';
-         case 'phone': return 'Phone';
-         case 'internet': return 'Internet';
-         case 'energy': return 'Energy';
-         default: return key;
-       }
-    default: // Français par défaut
-       switch (key) {
-         case 'utilityInfo.title': return 'Informations Utilitaires';
-         case 'utilityInfo.nextBills': return 'Prochaines échéances';
-         case 'photos.photoGallery': return 'Photos du Loft';
-         case 'additionalInfo.title': return 'Informations Complémentaires';
-         case 'billManagement.title': return 'Gestion des Factures';
-         case 'additionalInfo.createdOn': return 'Créé le';
-         case 'additionalInfo.lastUpdated': return 'Dernière mise à jour';
-         case 'notSet': return 'Prix à définir';
-         case 'percentages': return 'Pourcentages';
-         case 'photosAvailable': return '{{count}} photos disponibles';
-         // Noms des services
-         case 'water': return 'Eau';
-         case 'electricity': return 'Électricité';
-         case 'gas': return 'Gaz';
-         // Labels des champs
-         case 'customerCode': return 'Code client';
-         case 'meterNumber': return 'N° compteur';
-         case 'pdlRef': return 'Réf PDL';
-         case 'clientNumber': return 'N° client';
-         case 'correspondent': return 'Correspondant';
-         // Fréquences
-         case 'frequency': return 'Fréquence';
-         case 'quarterly': return 'Trimestriel';
-         case 'monthly': return 'Mensuel';
-         case 'trimestriel': return 'Trimestriel';
-         case 'mensuel': return 'Mensuel';
-         case 'phone': return 'Téléphone';
-         case 'internet': return 'Internet';
-         case 'energy': return 'Énergie';
-         default: return key;
-       }
+// Traductions simples pour les 3 langues
+const getTranslations = (locale: string) => {
+  const translations = {
+    fr: {
+      editLoft: "Modifier l'appartement",
+      linkToAirbnb: "Lier à Airbnb",
+      details: "Détails du Loft",
+      auditHistory: "Historique d'audit",
+      available: "Disponible",
+      occupied: "Occupé",
+      maintenance: "Maintenance",
+      loftInfo: "Informations sur l'appartement",
+      pricePerNight: "Prix par nuit",
+      owner: "Propriétaire",
+      description: "Description",
+      company: "Société",
+      percentages: "Pourcentages",
+      additionalInfo: "Informations supplémentaires",
+      water: "Eau",
+      electricity: "Électricité",
+      gas: "Gaz",
+      nextBills: "Prochaines factures",
+      photoGallery: "Galerie de photos",
+      createdOn: "Créé le",
+      lastUpdated: "Dernière mise à jour",
+      billManagement: "Gestion des factures",
+      notSet: "Non défini",
+      noInfo: "Aucune information disponible",
+      statistics: "Statistiques",
+      totalBookings: "Réservations totales",
+      occupancyRate: "Taux d'occupation",
+      averageRating: "Note moyenne",
+      servicesUtilities: "Services & Utilitaires",
+      equipment: "Équipements"
+    },
+    en: {
+      editLoft: "Edit Apartment",
+      linkToAirbnb: "Link to Airbnb",
+      details: "Loft Details",
+      auditHistory: "Audit History",
+      available: "Available",
+      occupied: "Occupied",
+      maintenance: "Maintenance",
+      loftInfo: "Apartment Information",
+      pricePerNight: "Price per night",
+      owner: "Owner",
+      description: "Description",
+      company: "Company",
+      percentages: "Percentages",
+      additionalInfo: "Additional Information",
+      water: "Water",
+      electricity: "Electricity",
+      gas: "Gas",
+      nextBills: "Upcoming Bills",
+      photoGallery: "Photo Gallery",
+      createdOn: "Created on",
+      lastUpdated: "Last Updated",
+      billManagement: "Bill Management",
+      notSet: "Not Set",
+      noInfo: "No information available",
+      statistics: "Statistics",
+      totalBookings: "Total Bookings",
+      occupancyRate: "Occupancy Rate",
+      averageRating: "Average Rating",
+      servicesUtilities: "Services & Utilities",
+      equipment: "Equipment"
+    },
+    ar: {
+      editLoft: "تعديل الشقة",
+      linkToAirbnb: "ربط بـ Airbnb",
+      details: "تفاصيل الشقة",
+      auditHistory: "سجل المراجعة",
+      available: "متاح",
+      occupied: "مشغول",
+      maintenance: "صيانة",
+      loftInfo: "معلومات الشقة",
+      pricePerNight: "السعر لكل ليلة",
+      owner: "المالك",
+      description: "الوصف",
+      company: "الشركة",
+      percentages: "النسب المئوية",
+      additionalInfo: "معلومات إضافية",
+      water: "المياه",
+      electricity: "الكهرباء",
+      gas: "الغاز",
+      nextBills: "الفواتير القادمة",
+      photoGallery: "معرض الصور",
+      createdOn: "تم الإنشاء في",
+      lastUpdated: "آخر تحديث",
+      billManagement: "إدارة الفواتير",
+      notSet: "غير محدد",
+      noInfo: "لا توجد معلومات متاحة",
+      statistics: "الإحصائيات",
+      totalBookings: "إجمالي الحجوزات",
+      occupancyRate: "معدل الإشغال",
+      averageRating: "التقييم المتوسط",
+      servicesUtilities: "الخدمات والمرافق",
+      equipment: "المعدات"
+    }
   }
+  
+  return translations[locale as keyof typeof translations] || translations.fr
 }
 
 export default async function LoftDetailPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
   const awaitedParams = await params;
+  const locale = awaitedParams.locale as 'fr' | 'en' | 'ar';
+  const t = getTranslations(locale);
 
   try {
-    const session = await requireRole(["admin", "manager"])
+    const session = await requireRole(["admin", "manager"], locale)
     const supabase = await createClient()
 
-    // Récupérer les traductions
-    const t = await getTranslations('lofts')
-    const tCommon = await getTranslations('common')
-    const tOwners = await getTranslations('owners')
-
-    // Extraire la locale des paramètres
-    const locale = awaitedParams.locale || 'fr'
-
-    // Test simple sans jointure d'abord
     const { data: loft, error } = await supabase
       .from("lofts")
       .select("*")
       .eq("id", awaitedParams.id)
       .single()
 
-    // Debug: Log the error and data
-    if (error) {
-      console.error("Erreur récupération loft:", error)
+    if (error || !loft) {
       return (
         <div className="space-y-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-red-600">Erreur</h1>
-            <p className="text-muted-foreground">Erreur lors de la récupération du loft: {error.message}</p>
-            <p className="text-sm text-gray-500">ID recherché: {awaitedParams.id}</p>
+            <p className="text-muted-foreground">Appartement non trouvé</p>
           </div>
         </div>
       )
     }
-    
-    if (!loft) {
-      console.log("Aucun loft trouvé pour l'ID:", awaitedParams.id)
-      return (
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-yellow-600">{t('loftNotFound')}</h1>
-            <p className="text-muted-foreground">{t('noLoftFoundForId')}: {awaitedParams.id}</p>
-          </div>
-        </div>
-      )
-    }
-
-    console.log("Données loft récupérées:", loft)
-
-    const statusTranslationKeys = {
-      available: "available",
-      occupied: "occupied", 
-      maintenance: "maintenance",
-    } as const
 
     const getStatusColor = (status: string) => {
       switch (status) {
@@ -210,7 +166,6 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
       }
     }
 
-    // Check if user can view audit history
     const canViewAudit = AuditPermissionManager.canViewEntityAuditHistory(
       session.user.role, 
       'lofts', 
@@ -219,14 +174,14 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
 
     return (
       <div className="max-w-7xl mx-auto space-y-8 p-6">
-        {/* Header avec titre et actions */}
+        {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
               <Home className="h-8 w-8 text-blue-600" />
               <h1 className="text-4xl font-bold tracking-tight">{loft.name}</h1>
               <Badge className={getStatusColor(loft.status)}>
-                {t(statusTranslationKeys[loft.status as LoftStatus])}
+                {t[loft.status as keyof typeof t] || loft.status}
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
@@ -241,16 +196,16 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
               showFallback={false}
             >
               <Button asChild variant="outline">
-                <Link href={`/lofts/${awaitedParams.id}/edit`}>
+                <Link href={`/${locale}/lofts/${awaitedParams.id}/edit`}>
                   <Edit className="h-4 w-4 mr-2" />
-                  {t('editLoft')}
+                  {t.editLoft}
                 </Link>
               </Button>
               {loft.airbnb_listing_id && (
                 <Button asChild>
-                  <Link href={`/lofts/${awaitedParams.id}/link-airbnb`}>
+                  <Link href={`/${locale}/lofts/${awaitedParams.id}/link-airbnb`}>
                     <ExternalLink className="h-4 w-4 mr-2" />
-                    Lier à Airbnb
+                    {t.linkToAirbnb}
                   </Link>
                 </Button>
               )}
@@ -260,304 +215,443 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
 
         <Tabs defaultValue="details" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="details">Loft Details</TabsTrigger>
+            <TabsTrigger value="details">{t.details}</TabsTrigger>
             {canViewAudit && (
-              <TabsTrigger value="audit">Audit History</TabsTrigger>
+              <TabsTrigger value="audit">{t.auditHistory}</TabsTrigger>
             )}
           </TabsList>
           
           <TabsContent value="details" className="space-y-6">
+            {/* Section principale - Informations de base */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                {/* Informations principales */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Building className="h-5 w-5" />
+                      {t.loftInfo}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <RoleBasedAccess 
+                          userRole={session.user.role}
+                          allowedRoles={['admin', 'manager', 'executive']}
+                          showFallback={false}
+                        >
+                          {loft.price_per_night ? (
+                            <div className="flex items-center gap-3">
+                              <Euro className="h-5 w-5 text-green-600" />
+                              <div>
+                                <p className="text-sm text-muted-foreground">{t.pricePerNight}</p>
+                                <p className="text-2xl font-bold text-green-600">
+                                  {loft.price_per_night.toLocaleString()} DA
+                                </p>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-3">
+                              <Euro className="h-5 w-5 text-yellow-600" />
+                              <div>
+                                <p className="text-sm text-muted-foreground">{t.pricePerNight}</p>
+                                <p className="text-lg font-medium text-yellow-600">{t.notSet}</p>
+                              </div>
+                            </div>
+                          )}
+                        </RoleBasedAccess>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Colonne principale */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Informations principales */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Building className="h-5 w-5" />
-                  {t('loftInfoTitle')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <RoleBasedAccess 
-                      userRole={session.user.role}
-                      allowedRoles={['admin', 'manager', 'executive']}
-                      showFallback={false}
-                    >
-                      {loft.price_per_night ? (
+                        {/* Informations de contact */}
+                        {loft.phone && (
+                          <div className="flex items-center gap-3">
+                            <Phone className="h-5 w-5 text-blue-600" />
+                            <div>
+                              <p className="text-sm text-muted-foreground">Téléphone</p>
+                              <p className="font-medium">{loft.phone}</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="space-y-4">
+                        {/* Statut et disponibilité */}
                         <div className="flex items-center gap-3">
-                          <Euro className="h-5 w-5 text-green-600" />
+                          <div className="h-5 w-5 rounded-full bg-current opacity-20"></div>
                           <div>
-                            <p className="text-sm text-muted-foreground">{t('pricePerNight')}</p>
-                            <p className="text-2xl font-bold text-green-600">
-                              {loft.price_per_night.toLocaleString()} {tCommon('currencies.da')}
-                            </p>
+                            <p className="text-sm text-muted-foreground">Statut</p>
+                            <Badge className={getStatusColor(loft.status)}>
+                              {t[loft.status as keyof typeof t] || loft.status}
+                            </Badge>
                           </div>
                         </div>
-                      ) : (
-                        <div className="flex items-center gap-3">
-                          <Euro className="h-5 w-5 text-yellow-600" />
-                          <div>
-                            <p className="text-sm text-muted-foreground">{t('pricePerNight')}</p>
-                            <p className="text-lg font-medium text-yellow-600">
-                              {getStaticTranslation('notSet', t, locale)}
-                            </p>
+
+                        {/* Capacité */}
+                        {loft.capacity && (
+                          <div className="flex items-center gap-3">
+                            <User className="h-5 w-5 text-purple-600" />
+                            <div>
+                              <p className="text-sm text-muted-foreground">Capacité</p>
+                              <p className="font-medium">{loft.capacity} personnes</p>
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </RoleBasedAccess>
-                    
-                    <div className="flex items-center gap-3">
-                      <User className="h-5 w-5 text-blue-600" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">{t('owner')}</p>
-                        <p className="font-medium">{loft.owner_name || 'Loft Algerie'}</p>
+                        )}
+
+                        {/* Surface */}
+                        {loft.surface && (
+                          <div className="flex items-center gap-3">
+                            <Building className="h-5 w-5 text-orange-600" />
+                            <div>
+                              <p className="text-sm text-muted-foreground">Surface</p>
+                              <p className="font-medium">{loft.surface} m²</p>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
 
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">{tOwners('ownershipType')}</p>
-                      <p className="font-medium capitalize">Société</p>
-                    </div>
-                  </div>
-                </div>
+                    {/* Équipements et caractéristiques */}
+                    {(loft.wifi || loft.parking || loft.balcony || loft.kitchen) && (
+                      <>
+                        <Separator />
+                        <div>
+                          <h4 className="font-semibold mb-3">{t.equipment}</h4>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            {loft.wifi && (
+                              <div className="flex items-center gap-2 text-sm">
+                                <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                                <span>WiFi</span>
+                              </div>
+                            )}
+                            {loft.parking && (
+                              <div className="flex items-center gap-2 text-sm">
+                                <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                                <span>Parking</span>
+                              </div>
+                            )}
+                            {loft.balcony && (
+                              <div className="flex items-center gap-2 text-sm">
+                                <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                                <span>Balcon</span>
+                              </div>
+                            )}
+                            {loft.kitchen && (
+                              <div className="flex items-center gap-2 text-sm">
+                                <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                                <span>Cuisine équipée</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
 
+                {/* Description */}
                 {loft.description && (
                   <>
                     <Separator />
                     <div>
-                      <p className="text-sm text-muted-foreground mb-2">{t('description')}</p>
-                      <p className="text-base leading-relaxed">{getTranslatedDescription(loft.description, loft.name, t)}</p>
+                      <p className="text-sm text-muted-foreground mb-2">{t.description}</p>
+                      <p className="text-base leading-relaxed">{loft.description}</p>
                     </div>
                   </>
                 )}
 
+                {/* Company and Owner Info */}
                 <RoleBasedAccess 
                   userRole={session.user.role}
                   allowedRoles={['admin', 'manager', 'executive']}
                   showFallback={false}
                 >
                   <Separator />
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-3">{getStaticTranslation('percentages', t, locale)}</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="text-center p-3 bg-blue-50 rounded-lg">
-                        <div className="text-xl font-bold text-blue-600">{loft.company_percentage}%</div>
-                        <div className="text-xs text-muted-foreground">Société</div>
+                  <div className="space-y-4">
+                    <p className="text-sm text-muted-foreground font-medium capitalize">{t.company}</p>
+                    <div className="flex items-center gap-3">
+                      <User className="h-5 w-5 text-blue-600" />
+                      <div>
+                        <p className="text-sm text-muted-foreground">{t.owner}</p>
+                        <p className="font-medium">{loft.owner_name || 'Loft Algérie'}</p>
                       </div>
-                      <div className="text-center p-3 bg-green-50 rounded-lg">
-                        <div className="text-xl font-bold text-green-600">{loft.owner_percentage}%</div>
-                        <div className="text-xs text-muted-foreground">Propriétaire</div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <p className="text-sm text-muted-foreground font-medium capitalize">{t.percentages}</p>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="text-center bg-blue-50 p-3 rounded-lg">
+                          <div className="text-xl font-bold text-blue-600">{loft.company_percentage || 50}%</div>
+                          <div className="text-xs text-muted-foreground">{t.company}</div>
+                        </div>
+                        <div className="text-center bg-green-50 p-3 rounded-lg">
+                          <div className="text-xl font-bold text-green-600">{loft.owner_percentage || 50}%</div>
+                          <div className="text-xs text-muted-foreground">{t.owner}</div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </RoleBasedAccess>
 
-                {loft.phone_number && (
-                  <>
-                    <Separator />
-                    <div className="flex items-center gap-3">
-                      <Phone className="h-5 w-5 text-blue-600" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">{getStaticTranslation('phone', t, locale)}</p>
-                        <p className="font-medium">{loft.phone_number}</p>
+                {/* Statistiques et métriques */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      📊 <span>{t.statistics}</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-600">
+                          {loft.total_bookings || 0}
+                        </div>
+                        <div className="text-sm text-blue-700">{t.totalBookings}</div>
+                      </div>
+                      <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg">
+                        <div className="text-2xl font-bold text-green-600">
+                          {loft.occupancy_rate || 0}%
+                        </div>
+                        <div className="text-sm text-green-700">{t.occupancyRate}</div>
+                      </div>
+                      <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
+                        <div className="text-2xl font-bold text-purple-600">
+                          {loft.average_rating || 'N/A'}
+                        </div>
+                        <div className="text-sm text-purple-700">{t.averageRating}</div>
                       </div>
                     </div>
-                  </>
-                )}
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
 
-            {/* Informations utilitaires */}
-            <Card>
-              <CardHeader>
-                <CardTitle>{getStaticTranslation('utilityInfo.title', t, locale)}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Eau */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Droplets className="h-5 w-5 text-blue-500" />
-                      <h4 className="font-semibold">{getStaticTranslation('water', t, locale)}</h4>
-                    </div>
-                    <div className="space-y-2 text-sm">
-                      {loft.water_customer_code && (
-                        <div>
-                          <span className="text-muted-foreground">{getStaticTranslation('customerCode', t, locale)}: </span>
-                          <span className="font-medium">{loft.water_customer_code}</span>
-                        </div>
-                      )}
-                      {loft.water_meter_number && (
-                        <div>
-                          <span className="text-muted-foreground">{getStaticTranslation('meterNumber', t, locale)}: </span>
-                          <span className="font-medium">{loft.water_meter_number}</span>
-                        </div>
-                      )}
-                      {loft.water_correspondent && (
-                        <div>
-                          <span className="text-muted-foreground">{getStaticTranslation('correspondent', t, locale)}: </span>
-                          <span className="font-medium">{loft.water_correspondent}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Électricité */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Zap className="h-5 w-5 text-yellow-500" />
-                      <h4 className="font-semibold">{getStaticTranslation('electricity', t, locale)}</h4>
-                    </div>
-                    <div className="space-y-2 text-sm">
-                      {loft.electricity_customer_number && (
-                        <div>
-                          <span className="text-muted-foreground">{getStaticTranslation('clientNumber', t, locale)}: </span>
-                          <span className="font-medium">{loft.electricity_customer_number}</span>
-                        </div>
-                      )}
-                      {loft.electricity_meter_number && (
-                        <div>
-                          <span className="text-muted-foreground">{getStaticTranslation('meterNumber', t, locale)}: </span>
-                          <span className="font-medium">{loft.electricity_meter_number}</span>
-                        </div>
-                      )}
-                      {loft.electricity_pdl_ref && (
-                        <div>
-                          <span className="text-muted-foreground">{getStaticTranslation('pdlRef', t, locale)}: </span>
-                          <span className="font-medium">{loft.electricity_pdl_ref}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Gaz */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Flame className="h-5 w-5 text-orange-500" />
-                      <h4 className="font-semibold">{getStaticTranslation('gas', t, locale)}</h4>
-                    </div>
-                    <div className="space-y-2 text-sm">
-                      {loft.gas_customer_number && (
-                        <div>
-                          <span className="text-muted-foreground">{getStaticTranslation('clientNumber', t, locale)}: </span>
-                          <span className="font-medium">{loft.gas_customer_number}</span>
-                        </div>
-                      )}
-                      {loft.gas_meter_number && (
-                        <div>
-                          <span className="text-muted-foreground">{getStaticTranslation('meterNumber', t, locale)}: </span>
-                          <span className="font-medium">{loft.gas_meter_number}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Dates d'échéance */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-5 w-5 text-purple-500" />
-                      <h4 className="font-semibold">{getStaticTranslation('utilityInfo.nextBills', t, locale)}</h4>
-                    </div>
-                    <div className="space-y-2 text-sm">
-                      {loft.prochaine_echeance_eau && (
-                        <div>
-                          <span className="text-muted-foreground">{getStaticTranslation('water', t, locale)}: </span>
-                          <span className="font-medium">
-                            {new Date(loft.prochaine_echeance_eau).toLocaleDateString('fr-FR')}
-                          </span>
-                        </div>
-                      )}
-                      {loft.prochaine_echeance_energie && (
-                        <div>
-                          <span className="text-muted-foreground">{getStaticTranslation('electricity', t, locale)}: </span>
-                          <span className="font-medium">
-                            {new Date(loft.prochaine_echeance_energie).toLocaleDateString('fr-FR')}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Colonne latérale */}
-          <div className="space-y-6">
-            {/* Galerie de photos */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <span>📸</span>
-                  {getStaticTranslation('photos.photoGallery', t, locale)}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <LoftPhotoGallery 
-                  loftId={awaitedParams.id} 
-                  loftName={loft.name}
-                />
-              </CardContent>
-            </Card>
-
-            {/* Informations supplémentaires */}
-            <Card>
-              <CardHeader>
-                <CardTitle>{getStaticTranslation('additionalInfo.title', t, locale)}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">{getStaticTranslation('additionalInfo.createdOn', t, locale)}</p>
-                  <p className="font-medium">
-                    {new Date(loft.created_at).toLocaleDateString('fr-FR')}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">{getStaticTranslation('additionalInfo.lastUpdated', t, locale)}</p>
-                  <p className="font-medium">
-                    {new Date(loft.updated_at).toLocaleDateString('fr-FR')}
-                  </p>
-                </div>
+                {/* Informations Airbnb */}
                 {loft.airbnb_listing_id && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">ID Airbnb</p>
-                    <p className="font-medium">{loft.airbnb_listing_id}</p>
-                  </div>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        🏠 <span>Airbnb</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">ID Listing:</span>
+                          <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
+                            {loft.airbnb_listing_id}
+                          </span>
+                        </div>
+                        {loft.airbnb_url && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">Lien:</span>
+                            <Button asChild variant="outline" size="sm">
+                              <Link href={loft.airbnb_url} target="_blank">
+                                <ExternalLink className="h-4 w-4 mr-2" />
+                                Voir sur Airbnb
+                              </Link>
+                            </Button>
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Synchronisation:</span>
+                          <Badge variant={loft.sync_enabled ? "default" : "secondary"}>
+                            {loft.sync_enabled ? "Activée" : "Désactivée"}
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+              </div>
 
-            {/* Gestion des factures */}
+              {/* Colonne droite - Galerie et infos supplémentaires */}
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      📸 <span>{t.photoGallery}</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <LoftPhotoGallery 
+                      loftId={awaitedParams.id} 
+                      loftName={loft.name}
+                    />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{t.additionalInfo}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground">{t.createdOn}</p>
+                      <p className="font-medium">{new Date(loft.created_at).toLocaleDateString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">{t.lastUpdated}</p>
+                      <p className="font-medium">{new Date(loft.updated_at).toLocaleDateString()}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+
+            {/* Section pleine largeur - Gestion des factures */}
             <RoleBasedAccess 
               userRole={session.user.role}
               allowedRoles={['admin', 'manager']}
               showFallback={false}
             >
-              <Card>
+              <Card className="w-full">
                 <CardHeader>
-                  <CardTitle>{getStaticTranslation('billManagement.title', t, locale)}</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    💰 <span>{t.billManagement}</span>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <LoftBillManagement loftId={awaitedParams.id} loftData={loft} />
+                  <LoftBillManagement 
+                    loftId={awaitedParams.id} 
+                    loftData={loft}
+                  />
                 </CardContent>
               </Card>
             </RoleBasedAccess>
-          </TabsContent>
 
+            {/* Section pleine largeur - Services & Utilitaires */}
+            <Card className="w-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="h-5 w-5" />
+                  {t.servicesUtilities}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Eau */}
+                  <div className="border rounded-lg p-6 bg-gradient-to-br from-blue-50 to-blue-100">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 bg-blue-500 rounded-lg">
+                        <Droplets className="h-6 w-6 text-white" />
+                      </div>
+                      <h4 className="text-lg font-semibold text-blue-700">{t.water}</h4>
+                    </div>
+                    <div className="space-y-3">
+                      {loft.water_customer_code ? (
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-blue-600">Code client:</span>
+                            <span className="font-mono text-sm bg-white px-2 py-1 rounded border">
+                              {loft.water_customer_code}
+                            </span>
+                          </div>
+                          {loft.prochaine_echeance_eau && (
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-blue-600">Prochaine échéance:</span>
+                              <span className="font-medium text-blue-700 bg-white px-2 py-1 rounded border">
+                                {new Date(loft.prochaine_echeance_eau).toLocaleDateString()}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="text-blue-600 italic text-center py-4">{t.noInfo}</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Électricité */}
+                  <div className="border rounded-lg p-6 bg-gradient-to-br from-yellow-50 to-yellow-100">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 bg-yellow-500 rounded-lg">
+                        <Zap className="h-6 w-6 text-white" />
+                      </div>
+                      <h4 className="text-lg font-semibold text-yellow-700">{t.electricity}</h4>
+                    </div>
+                    <div className="space-y-3">
+                      {loft.electricity_customer_number ? (
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-yellow-600">Numéro client:</span>
+                            <span className="font-mono text-sm bg-white px-2 py-1 rounded border">
+                              {loft.electricity_customer_number}
+                            </span>
+                          </div>
+                          {loft.prochaine_echeance_electricite && (
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-yellow-600">Prochaine échéance:</span>
+                              <span className="font-medium text-yellow-700 bg-white px-2 py-1 rounded border">
+                                {new Date(loft.prochaine_echeance_electricite).toLocaleDateString()}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="text-yellow-600 italic text-center py-4">{t.noInfo}</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Gaz */}
+                  <div className="border rounded-lg p-6 bg-gradient-to-br from-orange-50 to-orange-100">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 bg-orange-500 rounded-lg">
+                        <Flame className="h-6 w-6 text-white" />
+                      </div>
+                      <h4 className="text-lg font-semibold text-orange-700">{t.gas}</h4>
+                    </div>
+                    <div className="space-y-3">
+                      {loft.gas_customer_number ? (
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-orange-600">Numéro client:</span>
+                            <span className="font-mono text-sm bg-white px-2 py-1 rounded border">
+                              {loft.gas_customer_number}
+                            </span>
+                          </div>
+                          {loft.prochaine_echeance_gaz && (
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-orange-600">Prochaine échéance:</span>
+                              <span className="font-medium text-orange-700 bg-white px-2 py-1 rounded border">
+                                {new Date(loft.prochaine_echeance_gaz).toLocaleDateString()}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="text-orange-600 italic text-center py-4">{t.noInfo}</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Résumé des échéances */}
+                {(loft.prochaine_echeance_eau || loft.prochaine_echeance_electricite || loft.prochaine_echeance_gaz) && (
+                  <div className="mt-6 border-t pt-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 bg-purple-500 rounded-lg">
+                        <Calendar className="h-6 w-6 text-white" />
+                      </div>
+                      <h4 className="text-lg font-semibold text-purple-700">{t.nextBills}</h4>
+                    </div>
+                    <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
+                      <div className="text-purple-700 font-medium">
+                        📅 Prochaines échéances à surveiller pour la gestion des factures
+                      </div>
+                      <div className="text-sm text-purple-600 mt-2">
+                        Assurez-vous de suivre les dates d'échéance pour éviter les coupures de service.
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
           {canViewAudit && (
             <TabsContent value="audit" className="space-y-4">
               <AuditHistory 
-                tableName="lofts" 
+                tableName="lofts"
                 recordId={loft.id}
-                className="w-full"
               />
             </TabsContent>
           )}
@@ -565,15 +659,12 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
       </div>
     )
   } catch (error) {
-    console.error("Erreur générale page loft:", error)
+    console.error("Erreur page loft:", error)
     return (
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-red-600">Erreur système</h1>
           <p className="text-muted-foreground">Une erreur inattendue s'est produite</p>
-          <pre className="text-xs bg-gray-100 p-2 rounded mt-2">
-            {error instanceof Error ? error.message : String(error)}
-          </pre>
         </div>
       </div>
     )

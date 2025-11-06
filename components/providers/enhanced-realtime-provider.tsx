@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 import { useSupabase } from './supabase-provider'
 import { toast } from 'sonner'
 import { useNotificationSound } from '@/lib/hooks/use-notification-sound'
+import { safeCallback } from '@/lib/utils/callback-safety'
 import { useTranslations } from 'next-intl'
 
 interface EnhancedRealtimeContextType {
@@ -94,7 +95,10 @@ export function EnhancedRealtimeProvider({ children, userId }: EnhancedRealtimeP
   }, [supabase])
 
   const playSound = useCallback((type: 'success' | 'info' | 'warning' | 'error') => {
-    playNotificationSound(type)
+    const safePlay = safeCallback(playNotificationSound, () => {
+      console.log('Sound playback not available')
+    })
+    safePlay(type)
   }, [playNotificationSound])
 
   useEffect(() => {
@@ -135,8 +139,14 @@ export function EnhancedRealtimeProvider({ children, userId }: EnhancedRealtimeP
           const notificationType = newNotification.type || 'info'
           const isTaskNotification = newNotification.link?.includes('/tasks/')
           
-          // Play sound based on notification type
-          playNotificationSound(notificationType as any)
+          // Play sound based on notification type (with safety check)
+          if (typeof playNotificationSound === 'function') {
+            try {
+              playNotificationSound(notificationType as any)
+            } catch (soundError) {
+              console.warn('Sound playback failed:', soundError)
+            }
+          }
           
           // Update unread count immediately
           setUnreadNotificationsCount(prev => prev + 1)

@@ -16,8 +16,78 @@ interface HeaderProps {
 }
 
 export function Header({ user }: HeaderProps) {
-  const locale = useLocale()
-  const t = useTranslations('nav')
+  const locale = useLocale() as 'fr' | 'en' | 'ar'
+  
+  // Traductions pour les 3 langues
+  const navTranslations = {
+    fr: {
+      loftManager: "Gestionnaire d'appartements",
+      toggleTheme: "Basculer le thème",
+      dashboard: "Tableau de bord",
+      conversations: "Conversations", 
+      notifications: "Notifications",
+      lofts: "Appartements",
+      customers: "Clients",
+      reservations: "Réservations",
+      availability: "Disponibilité",
+      tasks: "Tâches",
+      teams: "Équipes", 
+      owners: "Propriétaires",
+      transactions: "Transactions",
+      reports: "Rapports",
+      reportsNav: "Rapports",
+      settings: "Paramètres",
+      signOut: "Déconnexion",
+      admins: "Administrateur",
+      admin: "Administrateur"
+    },
+    en: {
+      loftManager: "Loft Manager",
+      toggleTheme: "Toggle theme",
+      dashboard: "Dashboard",
+      conversations: "Conversations", 
+      notifications: "Notifications",
+      lofts: "Lofts",
+      customers: "Customers",
+      reservations: "Reservations",
+      availability: "Availability",
+      tasks: "Tasks",
+      teams: "Teams", 
+      owners: "Owners",
+      transactions: "Transactions",
+      reports: "Reports",
+      reportsNav: "Reports",
+      settings: "Settings",
+      signOut: "Sign Out",
+      admins: "Administrator",
+      admin: "Administrator"
+    },
+    ar: {
+      loftManager: "مدير الشقق",
+      toggleTheme: "تبديل المظهر",
+      dashboard: "لوحة التحكم",
+      conversations: "المحادثات", 
+      notifications: "الإشعارات",
+      lofts: "الشقق",
+      customers: "العملاء",
+      reservations: "الحجوزات",
+      availability: "التوفر",
+      tasks: "المهام",
+      teams: "الفرق", 
+      owners: "الملاك",
+      transactions: "المعاملات",
+      reports: "التقارير",
+      reportsNav: "التقارير",
+      settings: "الإعدادات",
+      signOut: "تسجيل الخروج",
+      admins: "مدير",
+      admin: "مدير"
+    }
+  }
+  
+  const t = (key: string) => navTranslations[locale][key as keyof typeof navTranslations['fr']] || key
+  
+  console.log(`[HEADER] Locale utilisée: ${locale}`)
 
   return (
      <header className="flex h-16 items-center justify-between bg-gray-900 px-4 md:hidden z-50">

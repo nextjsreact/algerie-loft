@@ -23,7 +23,11 @@ export default function SupabaseProvider({
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
+      try {
+        setSession(session)
+      } catch (error) {
+        console.warn('Session update failed:', error)
+      }
     })
 
     return () => {

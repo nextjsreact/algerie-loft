@@ -163,14 +163,17 @@ export function UserManagementInterface() {
       });
 
       if (!response.ok) {
-        throw new Error('Bulk action failed');
+        throw new Error(t('messages.bulkActionFailed'));
       }
 
       await fetchUsers();
       setSelectedUsers([]);
       setShowBulkActions(false);
+      
+      // Show success message
+      alert(t('messages.bulkActionSuccess'));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Bulk action failed');
+      setError(err instanceof Error ? err.message : t('messages.bulkActionFailed'));
     }
   };
 
@@ -184,7 +187,7 @@ export function UserManagementInterface() {
         throw new Error('Password reset failed');
       }
 
-      alert('Mot de passe réinitialisé avec succès. Un email a été envoyé à l\'utilisateur.');
+      alert(t('messages.passwordResetSuccess'));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Password reset failed');
     }
@@ -192,7 +195,7 @@ export function UserManagementInterface() {
 
   const handleGenerateTemporaryPassword = async (userId: string) => {
     try {
-      // Générer un mot de passe temporaire sécurisé
+      // Generate secure temporary password
       const tempPassword = generateSecurePassword();
       
       const response = await fetch(`/api/superuser/users/${userId}/set-temporary-password`, {
@@ -205,8 +208,8 @@ export function UserManagementInterface() {
         throw new Error('Failed to set temporary password');
       }
 
-      // Afficher le mot de passe temporaire une seule fois
-      alert(`Mot de passe temporaire généré pour l'utilisateur :\n\n${tempPassword}\n\nCe mot de passe sera affiché une seule fois. L'utilisateur devra le changer à sa prochaine connexion.`);
+      // Display temporary password only once
+      alert(`${t('messages.tempPasswordGenerated')}\n\n${tempPassword}\n\n${t('messages.tempPasswordNote')}`);
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate temporary password');
@@ -218,18 +221,18 @@ export function UserManagementInterface() {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
     let password = "";
     
-    // Assurer au moins un caractère de chaque type
-    password += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 26)]; // Majuscule
-    password += "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)]; // Minuscule
-    password += "0123456789"[Math.floor(Math.random() * 10)]; // Chiffre
-    password += "!@#$%^&*"[Math.floor(Math.random() * 8)]; // Symbole
+    // Ensure at least one character of each type
+    password += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 26)]; // Uppercase
+    password += "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)]; // Lowercase
+    password += "0123456789"[Math.floor(Math.random() * 10)]; // Number
+    password += "!@#$%^&*"[Math.floor(Math.random() * 8)]; // Symbol
     
-    // Compléter avec des caractères aléatoires
+    // Fill with random characters
     for (let i = password.length; i < length; i++) {
       password += charset[Math.floor(Math.random() * charset.length)];
     }
     
-    // Mélanger les caractères
+    // Shuffle characters
     return password.split('').sort(() => Math.random() - 0.5).join('');
   };
 
@@ -263,7 +266,7 @@ export function UserManagementInterface() {
       await fetchUsers();
       setShowEditDialog(false);
       setEditingUser(null);
-      setNewPassword(''); // Réinitialiser le champ mot de passe
+      setNewPassword(''); // Reset password field
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update user');
     }
@@ -275,7 +278,7 @@ export function UserManagementInterface() {
     const roleSelect = document.querySelector('[id*="create-role"]') as HTMLSelectElement;
 
     if (!nameInput?.value || !emailInput?.value) {
-      setError('Veuillez remplir tous les champs obligatoires');
+      setError(t('messages.fillAllFields'));
       return;
     }
 
@@ -396,7 +399,7 @@ export function UserManagementInterface() {
             <div className="relative">
               <Search className={`absolute left-3 top-3 h-4 w-4 text-muted-foreground ${isSearching ? 'animate-pulse' : ''}`} />
               <Input
-                placeholder="Rechercher par nom ou email..."
+                placeholder={t('placeholders.searchByNameOrEmail')}
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
                 className="pl-10"
@@ -413,10 +416,10 @@ export function UserManagementInterface() {
               onValueChange={(value) => handleFilterChange('role', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Filtrer par rôle" />
+                <SelectValue placeholder={t('placeholders.filterByRole')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les rôles</SelectItem>
+                <SelectItem value="all">{t('filters.allRoles')}</SelectItem>
                 <SelectItem value="superuser">Superuser</SelectItem>
                 <SelectItem value="admin">Admin</SelectItem>
                 <SelectItem value="manager">Manager</SelectItem>
@@ -433,12 +436,12 @@ export function UserManagementInterface() {
               onValueChange={(value) => handleFilterChange('status', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Filtrer par statut" />
+                <SelectValue placeholder={t('placeholders.filterByStatus')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les statuts</SelectItem>
-                <SelectItem value="active">Actif</SelectItem>
-                <SelectItem value="inactive">Inactif</SelectItem>
+                <SelectItem value="all">{t('filters.allStatuses')}</SelectItem>
+                <SelectItem value="active">{t('table.active')}</SelectItem>
+                <SelectItem value="inactive">{t('table.inactive')}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -447,12 +450,12 @@ export function UserManagementInterface() {
               onValueChange={(value) => handleFilterChange('emailVerified', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Email vérifié" />
+                <SelectValue placeholder={t('placeholders.emailVerified')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous</SelectItem>
-                <SelectItem value="verified">Vérifié</SelectItem>
-                <SelectItem value="unverified">Non vérifié</SelectItem>
+                <SelectItem value="all">{t('filters.all')}</SelectItem>
+                <SelectItem value="verified">{t('filters.verified')}</SelectItem>
+                <SelectItem value="unverified">{t('filters.unverified')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -462,7 +465,7 @@ export function UserManagementInterface() {
             <div className="flex items-center justify-between p-4 bg-blue-50 border-t">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium">
-                  {selectedUsers.length} utilisateur{selectedUsers.length > 1 ? 's' : ''} sélectionné{selectedUsers.length > 1 ? 's' : ''}
+                  {selectedUsers.length} {selectedUsers.length > 1 ? t('messages.usersSelectedPlural') : t('messages.usersSelected')}
                 </span>
                 <Button
                   variant="outline"
@@ -496,7 +499,7 @@ export function UserManagementInterface() {
                     checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
                     onChange={(e) => handleSelectAll(e.target.checked)}
                     className="w-4 h-4 cursor-pointer"
-                    title="Sélectionner tout"
+                    title={t('labels.selectAll')}
                   />
                 </TableHead>
                 <TableHead>{t('table.user')}</TableHead>
@@ -538,7 +541,7 @@ export function UserManagementInterface() {
                         {user.is_active ? t('table.active') : t('table.inactive')}
                       </Badge>
                       {!user.email_verified && (
-                        <Badge variant="outline">Email non vérifié</Badge>
+                        <Badge variant="outline">{t('labels.emailNotVerified')}</Badge>
                       )}
                     </div>
                   </TableCell>
@@ -563,14 +566,14 @@ export function UserManagementInterface() {
                       <button
                         onClick={() => handlePasswordReset(user.id)}
                         className="px-2 py-1 bg-orange-100 hover:bg-orange-200 border border-orange-300 rounded text-sm"
-                        title="Réinitialiser le mot de passe"
+                        title={t('labels.resetPassword')}
                       >
                         🔑 {t('actions.reset')}
                       </button>
                       <button
                         onClick={() => handleGenerateTemporaryPassword(user.id)}
                         className="px-2 py-1 bg-yellow-100 hover:bg-yellow-200 border border-yellow-300 rounded text-sm"
-                        title="Générer un mot de passe temporaire"
+                        title={t('labels.generateTempPassword')}
                       >
                         🎲 {t('actions.temp')}
                       </button>
@@ -590,7 +593,7 @@ export function UserManagementInterface() {
             <DialogHeader>
               <DialogTitle>{t('actions.bulkActions')}</DialogTitle>
               <DialogDescription>
-                Sélectionnez une action à appliquer aux {selectedUsers.length} utilisateurs sélectionnés
+                {t('dialogs.bulkActionsDesc', { count: selectedUsers.length })}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
@@ -600,7 +603,7 @@ export function UserManagementInterface() {
                 onClick={() => handleBulkAction({ type: 'activate', userIds: selectedUsers })}
               >
                 <CheckCircle className="h-4 w-4 mr-2" />
-                Activer les utilisateurs
+                {t('bulkActions.activateUsers')}
               </Button>
               <Button 
                 variant="outline" 
@@ -608,7 +611,7 @@ export function UserManagementInterface() {
                 onClick={() => handleBulkAction({ type: 'deactivate', userIds: selectedUsers })}
               >
                 <AlertTriangle className="h-4 w-4 mr-2" />
-                Désactiver les utilisateurs
+{t('bulkActions.deactivateUsers')}
               </Button>
               <Button 
                 variant="destructive" 
@@ -616,7 +619,7 @@ export function UserManagementInterface() {
                 onClick={() => handleBulkAction({ type: 'delete', userIds: selectedUsers })}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Supprimer les utilisateurs
+{t('bulkActions.deleteUsers')}
               </Button>
             </div>
           </DialogContent>
@@ -627,9 +630,9 @@ export function UserManagementInterface() {
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Modifier l'utilisateur</DialogTitle>
+            <DialogTitle>{t('dialogs.editUserTitle')}</DialogTitle>
             <DialogDescription>
-              Modifiez les informations de l'utilisateur sélectionné
+              {t('dialogs.editUserDesc')}
             </DialogDescription>
           </DialogHeader>
           {editingUser && (
@@ -659,7 +662,7 @@ export function UserManagementInterface() {
                 <input
                   id="edit-password"
                   type="password"
-                  placeholder="Laissez vide pour ne pas changer"
+                  placeholder={t('placeholders.leaveEmptyToKeep')}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -669,7 +672,7 @@ export function UserManagementInterface() {
                 </p>
               </div>
               <div className="space-y-2">
-                <label htmlFor="edit-role" className="block text-sm font-medium">Rôle</label>
+                <label htmlFor="edit-role" className="block text-sm font-medium">{t('labels.role')}</label>
                 <select 
                   id="edit-role"
                   value={editingUser.role} 
@@ -694,7 +697,7 @@ export function UserManagementInterface() {
                   onChange={(e) => setEditingUser(prev => prev ? {...prev, is_active: e.target.checked} : null)}
                   className="w-4 h-4"
                 />
-                <label htmlFor="edit-active" className="text-sm">Compte actif</label>
+                <label htmlFor="edit-active" className="text-sm">{t('labels.activeAccount')}</label>
               </div>
               <div className="flex items-center space-x-2">
                 <input
@@ -704,7 +707,7 @@ export function UserManagementInterface() {
                   onChange={(e) => setEditingUser(prev => prev ? {...prev, email_verified: e.target.checked} : null)}
                   className="w-4 h-4"
                 />
-                <label htmlFor="edit-verified" className="text-sm">Email vérifié</label>
+                <label htmlFor="edit-verified" className="text-sm">{t('labels.emailVerified')}</label>
               </div>
             </div>
           )}
@@ -732,9 +735,9 @@ export function UserManagementInterface() {
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Créer un nouvel utilisateur</DialogTitle>
+            <DialogTitle>{t('dialogs.createUserTitle')}</DialogTitle>
             <DialogDescription>
-              Ajoutez un nouvel utilisateur au système
+              {t('dialogs.createUserDesc')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -742,7 +745,7 @@ export function UserManagementInterface() {
               <Label htmlFor="create-name">Nom complet</Label>
               <Input
                 id="create-name"
-                placeholder="Nom complet de l'utilisateur"
+                placeholder={t('placeholders.fullUserName')}
               />
             </div>
             <div className="space-y-2">
@@ -750,11 +753,11 @@ export function UserManagementInterface() {
               <Input
                 id="create-email"
                 type="email"
-                placeholder="email@exemple.com"
+                placeholder={t('placeholders.emailExample')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="create-role">Rôle</Label>
+              <Label htmlFor="create-role">{t('labels.role')}</Label>
               <Select defaultValue="member">
                 <SelectTrigger>
                   <SelectValue />
@@ -776,7 +779,7 @@ export function UserManagementInterface() {
               Annuler
             </Button>
             <Button onClick={handleCreateUser}>
-              Créer l'utilisateur
+              {t('dialogs.createUserButton')}
             </Button>
           </DialogFooter>
         </DialogContent>

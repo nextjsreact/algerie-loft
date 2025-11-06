@@ -18,6 +18,7 @@ import {
   HardDrive,
   Zap
 } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 import type { SystemMetrics, SecurityAlert, AuditLogEntry } from '@/types/superuser';
 
 interface DashboardData {
@@ -27,6 +28,8 @@ interface DashboardData {
 }
 
 export function SuperuserDashboard() {
+  const t = useTranslations('superuser');
+  const locale = useLocale();
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -95,7 +98,7 @@ export function SuperuserDashboard() {
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription>
-          Erreur lors du chargement du tableau de bord: {error}
+          {t('dashboard.errorLoading')}: {error}
         </AlertDescription>
       </Alert>
     );
@@ -105,7 +108,7 @@ export function SuperuserDashboard() {
     return (
       <Alert>
         <AlertDescription>
-          Aucune donnée disponible
+          {t('dashboard.noData')}
         </AlertDescription>
       </Alert>
     );
@@ -119,7 +122,7 @@ export function SuperuserDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">État du Système</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.systemStatus')}</CardTitle>
             {getHealthStatusIcon(systemMetrics.system_health)}
           </CardHeader>
           <CardContent>
@@ -127,40 +130,40 @@ export function SuperuserDashboard() {
               {systemMetrics.system_health}
             </div>
             <p className="text-xs text-muted-foreground">
-              Temps de réponse: {systemMetrics.response_time_avg}ms
+              {t('dashboard.responseTime')}: {systemMetrics.response_time_avg}ms
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Utilisateurs Actifs</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.activeUsers')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{systemMetrics.active_users}</div>
             <p className="text-xs text-muted-foreground">
-              Sessions: {systemMetrics.active_sessions}
+              {t('dashboard.sessions')}: {systemMetrics.active_sessions}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Réservations</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.reservations')}</CardTitle>
             <Database className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{systemMetrics.total_reservations}</div>
             <p className="text-xs text-muted-foreground">
-              Taux d'erreur: {systemMetrics.error_rate}%
+              {t('dashboard.errorRate')}: {systemMetrics.error_rate}%
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Sauvegarde</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('dashboard.backup')}</CardTitle>
             <HardDrive className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -170,7 +173,7 @@ export function SuperuserDashboard() {
               </Badge>
             </div>
             <p className="text-xs text-muted-foreground">
-              Dernière: {new Date(systemMetrics.last_backup).toLocaleDateString()}
+              {t('dashboard.lastBackup')}: {new Date(systemMetrics.last_backup).toLocaleDateString()}
             </p>
           </CardContent>
         </Card>
@@ -179,10 +182,10 @@ export function SuperuserDashboard() {
       {/* Main Dashboard Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
-          <TabsTrigger value="alerts">Alertes de Sécurité</TabsTrigger>
-          <TabsTrigger value="audit">Journal d'Audit</TabsTrigger>
-          <TabsTrigger value="emergency">Actions d'Urgence</TabsTrigger>
+          <TabsTrigger value="overview">{t('dashboard.overview')}</TabsTrigger>
+          <TabsTrigger value="alerts">{t('dashboard.securityAlerts')}</TabsTrigger>
+          <TabsTrigger value="audit">{t('dashboard.auditLog')}</TabsTrigger>
+          <TabsTrigger value="emergency">{t('dashboard.emergencyActions')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -192,24 +195,24 @@ export function SuperuserDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Activity className="h-5 w-5" />
-                  Performance Système
+                  {t('dashboard.systemPerformance')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Base de données</span>
+                  <span className="text-sm font-medium">{t('dashboard.database')}</span>
                   <span className="text-sm text-muted-foreground">
                     {(systemMetrics.database_size / 1024 / 1024).toFixed(2)} MB
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Temps de réponse moyen</span>
+                  <span className="text-sm font-medium">{t('dashboard.avgResponseTime')}</span>
                   <span className="text-sm text-muted-foreground">
                     {systemMetrics.response_time_avg}ms
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Taux d'erreur</span>
+                  <span className="text-sm font-medium">{t('dashboard.errorRate')}</span>
                   <Badge variant={systemMetrics.error_rate > 5 ? 'destructive' : 'secondary'}>
                     {systemMetrics.error_rate}%
                   </Badge>
@@ -222,41 +225,41 @@ export function SuperuserDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Zap className="h-5 w-5" />
-                  Actions Rapides
+                  {t('dashboard.quickActions')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button 
                   variant="outline" 
                   className="w-full justify-start"
-                  onClick={() => window.location.href = '/fr/admin/superuser/users'}
+                  onClick={() => window.location.href = `/${locale}/admin/superuser/users`}
                 >
                   <Users className="h-4 w-4 mr-2" />
-                  Gestion des Utilisateurs
+                  {t('dashboard.cards.userManagement.title')}
                 </Button>
                 <Button 
                   variant="outline" 
                   className="w-full justify-start"
-                  onClick={() => window.location.href = '/fr/admin/superuser/backup'}
+                  onClick={() => window.location.href = `/${locale}/admin/superuser/backup`}
                 >
                   <Database className="h-4 w-4 mr-2" />
-                  Gestion des Sauvegardes
+                  {t('dashboard.cards.backup.title')}
                 </Button>
                 <Button 
                   variant="outline" 
                   className="w-full justify-start"
-                  onClick={() => window.location.href = '/fr/admin/superuser/audit'}
+                  onClick={() => window.location.href = `/${locale}/admin/superuser/audit`}
                 >
                   <Shield className="h-4 w-4 mr-2" />
-                  Journal d'Audit
+                  {t('dashboard.cards.audit.title')}
                 </Button>
                 <Button 
                   variant="outline" 
                   className="w-full justify-start"
-                  onClick={() => window.location.href = '/fr/admin/superuser/maintenance'}
+                  onClick={() => window.location.href = `/${locale}/admin/superuser/maintenance`}
                 >
                   <Server className="h-4 w-4 mr-2" />
-                  Maintenance Système
+                  {t('dashboard.cards.maintenance.title')}
                 </Button>
               </CardContent>
             </Card>
@@ -266,15 +269,15 @@ export function SuperuserDashboard() {
         <TabsContent value="alerts" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Alertes de Sécurité Récentes</CardTitle>
+              <CardTitle>{t('dashboard.recentSecurityAlerts')}</CardTitle>
               <CardDescription>
-                Surveillance des activités suspectes et des tentatives d'accès non autorisées
+                {t('dashboard.securityAlertsDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {recentAlerts.length === 0 ? (
                 <p className="text-muted-foreground text-center py-4">
-                  Aucune alerte de sécurité récente
+                  {t('dashboard.noRecentAlerts')}
                 </p>
               ) : (
                 <div className="space-y-3">
@@ -296,7 +299,7 @@ export function SuperuserDashboard() {
                       </div>
                       {!alert.resolved && (
                         <Button size="sm" variant="outline">
-                          Résoudre
+                          {t('dashboard.resolve')}
                         </Button>
                       )}
                     </div>
@@ -310,15 +313,15 @@ export function SuperuserDashboard() {
         <TabsContent value="audit" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Journal d'Audit Récent</CardTitle>
+              <CardTitle>{t('dashboard.recentAuditLog')}</CardTitle>
               <CardDescription>
-                Historique des actions administratives et modifications système
+                {t('dashboard.auditLogDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {recentAuditLogs.length === 0 ? (
                 <p className="text-muted-foreground text-center py-4">
-                  Aucune entrée d'audit récente
+                  {t('dashboard.noRecentAuditEntries')}
                 </p>
               ) : (
                 <div className="space-y-3">
@@ -349,35 +352,35 @@ export function SuperuserDashboard() {
         <TabsContent value="emergency" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-red-600">Actions d'Urgence</CardTitle>
+              <CardTitle className="text-red-600">{t('dashboard.emergencyActions')}</CardTitle>
               <CardDescription>
-                Fonctions critiques pour la gestion d'urgence du système
+                {t('dashboard.emergencyActionsDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <Alert variant="destructive">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  Ces actions peuvent affecter le fonctionnement du système. Utilisez avec précaution.
+                  {t('dashboard.emergencyWarning')}
                 </AlertDescription>
               </Alert>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Button variant="destructive" className="w-full">
                   <Shield className="h-4 w-4 mr-2" />
-                  Verrouillage d'Urgence
+                  {t('dashboard.emergencyLockdown')}
                 </Button>
                 <Button variant="destructive" className="w-full">
                   <Database className="h-4 w-4 mr-2" />
-                  Sauvegarde d'Urgence
+                  {t('dashboard.emergencyBackup')}
                 </Button>
                 <Button variant="destructive" className="w-full">
                   <Server className="h-4 w-4 mr-2" />
-                  Redémarrage Système
+                  {t('dashboard.systemRestart')}
                 </Button>
                 <Button variant="destructive" className="w-full">
                   <Users className="h-4 w-4 mr-2" />
-                  Déconnexion Massive
+                  {t('dashboard.massLogout')}
                 </Button>
               </div>
             </CardContent>

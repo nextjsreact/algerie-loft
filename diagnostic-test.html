@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Diagnostic</title>
+    <style>
+        /* Test sans CSS - espacement normal */
+        .normal { margin: 10px; padding: 5px; }
+        
+        /* Test avec problème - pas d'espacement */
+        .problematic * { margin: 0; padding: 0; display: inline; }
+    </style>
+</head>
+<body>
+    <h1>Test de Diagnostic du Problème d'Espacement</h1>
+    
+    <h2>Rendu Normal (avec espacement):</h2>
+    <div class="normal">
+        <span>مدير الشقة</span>
+        <span>تبديل المظهر</span>
+        <span>لوحة التحكم</span>
+        <span>Modifier l'appartement</span>
+        <span>Détails du Loft</span>
+    </div>
+    
+    <h2>Rendu Problématique (sans espacement):</h2>
+    <div class="problematic">
+        <span>مدير الشقة</span>
+        <span>تبديل المظهر</span>
+        <span>لوحة التحكم</span>
+        <span>Modifier l'appartement</span>
+        <span>Détails du Loft</span>
+    </div>
+    
+    <p>Si le deuxième exemple ressemble à votre problème, c'est bien un problème CSS !</p>
+</body>
+</html>

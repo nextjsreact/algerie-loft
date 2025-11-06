@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { Moon, Sun, Monitor } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -21,8 +21,32 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ variant = 'ghost', size = 'icon', className = "" }: ThemeToggleProps) {
   const { setTheme, theme } = useTheme()
-  const t = useTranslations('theme')
-  const tNav = useTranslations('nav')
+  const locale = useLocale() as 'fr' | 'en' | 'ar'
+  
+  // Traductions pour les 3 langues
+  const themeTranslations = {
+    fr: {
+      toggleTheme: "Basculer le thème",
+      light: "Clair",
+      dark: "Sombre", 
+      system: "Système"
+    },
+    en: {
+      toggleTheme: "Toggle theme",
+      light: "Light",
+      dark: "Dark", 
+      system: "System"
+    },
+    ar: {
+      toggleTheme: "تبديل المظهر",
+      light: "فاتح",
+      dark: "داكن", 
+      system: "النظام"
+    }
+  }
+  
+  const t = (key: string) => themeTranslations[locale][key as keyof typeof themeTranslations['fr']] || key
+  const tNav = t
 
   return (
     <DropdownMenu>

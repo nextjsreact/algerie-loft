@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getSessionReadOnly } from '@/lib/auth';
 import ClientProviders from '@/components/providers/client-providers-nextintl';
 import { LangSetter } from '@/components/lang-setter';
+// import { NuclearSpacingFix } from '@/components/nuclear-spacing-fix';
 
 export default async function LocaleLayout({
   children,
@@ -38,6 +39,7 @@ export default async function LocaleLayout({
 
   return (
     <>
+      {/* <NuclearSpacingFix /> */}
       <LangSetter locale={locale} />
       <ClientProviders 
         session={session} 

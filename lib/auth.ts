@@ -71,14 +71,18 @@ export async function requireAuthAPI(): Promise<AuthSession | null> {
   return session
 }
 
-export async function requireRole(allowedRoles: UserRole[]): Promise<AuthSession> {
+export async function requireRole(allowedRoles: UserRole[], locale?: string): Promise<AuthSession> {
   const session = await getSession()
+  
+  // Utiliser la locale fournie ou français par défaut
+  const targetLocale = locale || 'fr'
+  
   if (!session) {
-    redirect("/fr/login")
+    redirect(`/${targetLocale}/login`)
   }
 
   if (!allowedRoles.includes(session.user.role)) {
-    redirect("/fr/unauthorized")
+    redirect(`/${targetLocale}/unauthorized`)
   }
 
   return session

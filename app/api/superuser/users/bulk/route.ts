@@ -1,138 +1,138 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifySuperuserAPI, logSuperuserAudit } from '@/lib/superuser/auth';
-import { createClient } from '@/utils/supabase/server';
-import type { UserRole } from '@/lib/types';
+import { createClient } from '@/lib/supabase/server';
+import { requireSuperuserPermissions } from '@/lib/superuser/auth';
+import { logAuditEntry } from '@/lib/superuser/audit';
 
 interface BulkAction {
   type: 'activate' | 'deactivate' | 'delete' | 'change_role';
   userIds: string[];
-  newRole?: UserRole;
+  newRole?: string;
 }
 
 export async function POST(request: NextRequest) {
   try {
-    // Verify superuser access with user management permissions
-    const { authorized, error, superuser } = await verifySuperuserAPI(['USER_MANAGEMENT']);
-    if (!authorized || !superuser) {
-      return NextResponse.json({ error: error || 'Unauthorized' }, { status: 401 });
-    }
+    // Verify superuser permissions
+    await requireSuperuserPermissions(['USER_MANAGEMENT']);
 
     const body: BulkAction = await request.json();
     const { type, userIds, newRole } = body;
 
     if (!type || !userIds || userIds.length === 0) {
       return NextResponse.json(
-        { error: 'Action type and user IDs are required' },
+        { error: 'Missing required fields: type and userIds' },
         { status: 400 }
       );
     }
 
-    const supabase = await createClient(true); // Use service role
+    const supabase = await createClient(true);
 
     let result;
-    let auditDetails: Record<string, any> = {
-      action: type,
-      userIds,
-      affectedCount: userIds.length
+    let auditDetails: any = {
+      action: `bulk_${type}`,
+      user_ids: userIds,
+      affected_count: userIds.length
     };
 
     switch (type) {
       case 'activate':
-        result = await supabase
-          .from('users')
-          .update({ 
-            is_active: true,
-            updated_at: new Date().toISOString()
-          })
+        const { error: activateError } = await supabase
+          .from('profiles')
+          .update({ is_active: true })
           .in('id', userIds);
+
+        if (activateError) {
+          throw new Error(`Failed to activate users: ${activateError.message}`);
+        }
+
+        auditDetails.new_status = 'active';
         break;
 
       case 'deactivate':
-        result = await supabase
-          .from('users')
+        const { error: deactivateError } = await supabase
+          .from('profiles')
+          .update({ is_active: false })
+          .in('id', userIds);
+
+        if (deactivateError) {
+          throw new Error(`Failed to deactivate users: ${deactivateError.message}`);
+        }
+
+        auditDetails.new_status = 'inactive';
+        break;
+
+      case 'delete':
+        // Soft delete - mark as deleted instead of actually deleting
+        const { error: deleteError } = await supabase
+          .from('profiles')
           .update({ 
             is_active: false,
-            updated_at: new Date().toISOString()
+            deleted_at: new Date().toISOString()
           })
           .in('id', userIds);
+
+        if (deleteError) {
+          throw new Error(`Failed to delete users: ${deleteError.message}`);
+        }
+
+        auditDetails.action = 'bulk_soft_delete';
         break;
 
       case 'change_role':
         if (!newRole) {
           return NextResponse.json(
-            { error: 'New role is required for role change action' },
+            { error: 'newRole is required for change_role action' },
             { status: 400 }
           );
         }
-        
-        result = await supabase
-          .from('users')
-          .update({ 
-            role: newRole,
-            updated_at: new Date().toISOString()
-          })
-          .in('id', userIds);
-        
-        auditDetails.newRole = newRole;
-        break;
 
-      case 'delete':
-        // First, get user details for audit
-        const { data: usersToDelete } = await supabase
-          .from('users')
-          .select('id, email, full_name, role')
+        const { error: roleError } = await supabase
+          .from('profiles')
+          .update({ role: newRole })
           .in('id', userIds);
 
-        // Delete from users table
-        result = await supabase
-          .from('users')
-          .delete()
-          .in('id', userIds);
-
-        // Delete from auth.users
-        if (result && !result.error) {
-          for (const userId of userIds) {
-            await supabase.auth.admin.deleteUser(userId);
-          }
+        if (roleError) {
+          throw new Error(`Failed to change user roles: ${roleError.message}`);
         }
 
-        auditDetails.deletedUsers = usersToDelete;
+        auditDetails.new_role = newRole;
         break;
 
       default:
         return NextResponse.json(
-          { error: 'Invalid action type' },
+          { error: `Unknown bulk action type: ${type}` },
           { status: 400 }
         );
     }
 
-    if (result?.error) {
-      throw result.error;
-    }
+    // Log the bulk action in audit
+    await logAuditEntry({
+      superuser_id: 'current-superuser-id', // TODO: Get from session
+      action_type: 'USER_MANAGEMENT',
+      action_details: auditDetails,
+      ip_address: request.headers.get('x-forwarded-for') || 'unknown',
+      user_agent: request.headers.get('user-agent') || 'unknown',
+      timestamp: new Date(),
+      severity: 'MEDIUM'
+    });
 
-    // Log audit entry
-    await logSuperuserAudit(
-      'USER_MANAGEMENT',
-      auditDetails,
-      {
-        severity: type === 'delete' ? 'HIGH' : 'MEDIUM',
-        metadata: {
-          bulkAction: true,
-          actionType: type
-        }
-      }
-    );
-
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: `Bulk ${type} completed successfully`,
-      affectedCount: userIds.length
+      affected_users: userIds.length
     });
 
   } catch (error) {
-    console.error('Error performing bulk action:', error);
+    console.error('Bulk action error:', error);
+    
+    if (error.message?.includes('Insufficient permissions')) {
+      return NextResponse.json(
+        { error: 'Insufficient permissions for bulk user operations' },
+        { status: 403 }
+      );
+    }
+
     return NextResponse.json(
-      { error: 'Bulk action failed' },
+      { error: error instanceof Error ? error.message : 'Bulk action failed' },
       { status: 500 }
     );
   }

@@ -1,46 +1,59 @@
-'use client';
+"use client";
 
 import { useTranslations } from 'next-intl';
-import { useLocale } from 'next-intl';
 
 interface SafeTranslationProps {
-  namespace: string;
-  key: string;
-  fallback: string;
+  namespace?: string;
+  keyPath: string;
+  fallback?: string;
   values?: Record<string, any>;
 }
 
-export function SafeTranslation({ namespace, key, fallback, values }: SafeTranslationProps) {
+/**
+ * Composant de traduction sécurisé qui affiche un fallback au lieu de la clé brute
+ * quand une traduction n'existe pas
+ */
+export function SafeTranslation({ 
+  namespace = 'common', 
+  keyPath, 
+  fallback, 
+  values 
+}: SafeTranslationProps) {
+  const t = useTranslations(namespace);
+  
   try {
-    const t = useTranslations(namespace);
-    return t(key, values) || fallback;
+    const translation = t(keyPath, values);
+    
+    // Si la traduction retourne la clé elle-même, c'est qu'elle n'existe pas
+    if (translation === keyPath || translation === `${namespace}.${keyPath}`) {
+      return fallback || keyPath.split('.').pop() || keyPath;
+    }
+    
+    return translation;
   } catch (error) {
-    return fallback;
+    // En cas d'erreur, retourner le fallback ou la dernière partie de la clé
+    return fallback || keyPath.split('.').pop() || keyPath;
   }
 }
 
-// Hook pour utilisation directe avec fallback robuste
-export function useSafeTranslations(namespace: string) {
-  const locale = useLocale();
+/**
+ * Hook personnalisé pour les traductions sécurisées
+ */
+export function useSafeTranslation(namespace: string = 'common') {
+  const t = useTranslations(namespace);
   
-  let t: any;
-  try {
-    t = useTranslations(namespace);
-  } catch (error) {
-    // Si useTranslations échoue, retourner directement le fallback
-    return (key: string, fallback: string, values?: Record<string, any>) => fallback;
-  }
-  
-  return (key: string, fallback: string, values?: Record<string, any>) => {
+  return (keyPath: string, fallback?: string, values?: Record<string, any>) => {
     try {
-      const result = t(key, values);
-      // Si la traduction retourne la clé elle-même (pas trouvée), utiliser le fallback
-      if (result === `${namespace}.${key}` || !result) {
-        return fallback;
+      const translation = t(keyPath, values);
+      
+      // Si la traduction retourne la clé elle-même, c'est qu'elle n'existe pas
+      if (translation === keyPath || translation === `${namespace}.${keyPath}`) {
+        return fallback || keyPath.split('.').pop() || keyPath;
       }
-      return result;
+      
+      return translation;
     } catch (error) {
-      return fallback;
+      return fallback || keyPath.split('.').pop() || keyPath;
     }
   };
 }

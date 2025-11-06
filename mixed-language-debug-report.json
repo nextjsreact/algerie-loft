@@ -1,0 +1,972 @@
+{
+  "timestamp": "2025-11-06T12:20:45.264Z",
+  "originalText": "مدير الشقةتبديل المظهرلوحة التحكمالمحادثاتالإشعاراتالشققالعملاءالحجوزاتالتوفرالمهامالفرقالملاكالمعاملاتالتقاريرالإعداداتHAHabibo Adminمسؤولتسجيل الخروجStudio Cosy HydraDisponible42 Chemin des Glycines, Hydra, AlgerModifier l'appartementDétails du LoftHistorique d'auditInformations sur l'appartementPrix par nuit6 000 DAPropriétaireLoft AlgerieType de propriétéSociétéDescriptionStudio élégant dans le quartier résidentiel d'HydraPourcentages50%Société50%PropriétaireInformations supplémentairesEauÉlectricitéGazProchaines factures📸Galerie de photosلا توجد صور متاحةلم تتم إضافة صور لهذه الشقة بعد.Informations supplémentairesCréé le29/10/2025Dernière mise à jour29/10/2025Gestion des facturesإدارة الفواتيرالمياهلم يتم تعيين ترددغير محددالطاقةلم يتم تعيين ترددغير محددالهاتفلم يتم تعيين ترددغير محددالإنترنتلم يتم تعيين ترددغير محددلم يتم تعيين تواريخ استحقاق الفواتيرقم بتعديل الشقة لإضافة ترددات الفواتير وتواريخ الاستحقاق",
+  "segments": [
+    {
+      "text": "مدير",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "الشقةتبديل",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "المظهرلوحة",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "التحكمالمحادثاتالإشعاراتالشققالعملاءالحجوزاتالتوفرالمهامالفرقالملاكالمعاملاتالتقاريرالإعدادات",
+      "lang": "arabic"
+    },
+    {
+      "text": "HAHabibo",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "Admin",
+      "lang": "latin"
+    },
+    {
+      "text": "مسؤولتسجيل",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "الخروج",
+      "lang": "arabic"
+    },
+    {
+      "text": "Studio",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "Cosy",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "HydraDisponible",
+      "lang": "latin"
+    },
+    {
+      "text": "42",
+      "lang": "number"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "Chemin",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "des",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "Glycines",
+      "lang": "latin"
+    },
+    {
+      "text": ", ",
+      "lang": "other"
+    },
+    {
+      "text": "Hydra",
+      "lang": "latin"
+    },
+    {
+      "text": ", ",
+      "lang": "other"
+    },
+    {
+      "text": "AlgerModifier",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "l",
+      "lang": "latin"
+    },
+    {
+      "text": "'",
+      "lang": "other"
+    },
+    {
+      "text": "appartementD",
+      "lang": "latin"
+    },
+    {
+      "text": "é",
+      "lang": "other"
+    },
+    {
+      "text": "tails",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "du",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "LoftHistorique",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "d",
+      "lang": "latin"
+    },
+    {
+      "text": "'",
+      "lang": "other"
+    },
+    {
+      "text": "auditInformations",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "sur",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "l",
+      "lang": "latin"
+    },
+    {
+      "text": "'",
+      "lang": "other"
+    },
+    {
+      "text": "appartementPrix",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "par",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "nuit",
+      "lang": "latin"
+    },
+    {
+      "text": "6",
+      "lang": "number"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "000",
+      "lang": "number"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "DAPropri",
+      "lang": "latin"
+    },
+    {
+      "text": "é",
+      "lang": "other"
+    },
+    {
+      "text": "taireLoft",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "AlgerieType",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "de",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "propri",
+      "lang": "latin"
+    },
+    {
+      "text": "é",
+      "lang": "other"
+    },
+    {
+      "text": "t",
+      "lang": "latin"
+    },
+    {
+      "text": "é",
+      "lang": "other"
+    },
+    {
+      "text": "Soci",
+      "lang": "latin"
+    },
+    {
+      "text": "é",
+      "lang": "other"
+    },
+    {
+      "text": "t",
+      "lang": "latin"
+    },
+    {
+      "text": "é",
+      "lang": "other"
+    },
+    {
+      "text": "DescriptionStudio",
+      "lang": "latin"
+    },
+    {
+      "text": " é",
+      "lang": "other"
+    },
+    {
+      "text": "l",
+      "lang": "latin"
+    },
+    {
+      "text": "é",
+      "lang": "other"
+    },
+    {
+      "text": "gant",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "dans",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "le",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "quartier",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "r",
+      "lang": "latin"
+    },
+    {
+      "text": "é",
+      "lang": "other"
+    },
+    {
+      "text": "sidentiel",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "d",
+      "lang": "latin"
+    },
+    {
+      "text": "'",
+      "lang": "other"
+    },
+    {
+      "text": "HydraPourcentages",
+      "lang": "latin"
+    },
+    {
+      "text": "50",
+      "lang": "number"
+    },
+    {
+      "text": "%",
+      "lang": "other"
+    },
+    {
+      "text": "Soci",
+      "lang": "latin"
+    },
+    {
+      "text": "é",
+      "lang": "other"
+    },
+    {
+      "text": "t",
+      "lang": "latin"
+    },
+    {
+      "text": "é",
+      "lang": "other"
+    },
+    {
+      "text": "50",
+      "lang": "number"
+    },
+    {
+      "text": "%",
+      "lang": "other"
+    },
+    {
+      "text": "Propri",
+      "lang": "latin"
+    },
+    {
+      "text": "é",
+      "lang": "other"
+    },
+    {
+      "text": "taireInformations",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "suppl",
+      "lang": "latin"
+    },
+    {
+      "text": "é",
+      "lang": "other"
+    },
+    {
+      "text": "mentairesEau",
+      "lang": "latin"
+    },
+    {
+      "text": "É",
+      "lang": "other"
+    },
+    {
+      "text": "lectricit",
+      "lang": "latin"
+    },
+    {
+      "text": "é",
+      "lang": "other"
+    },
+    {
+      "text": "GazProchaines",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "factures",
+      "lang": "latin"
+    },
+    {
+      "text": "📸",
+      "lang": "other"
+    },
+    {
+      "text": "Galerie",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "de",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "photos",
+      "lang": "latin"
+    },
+    {
+      "text": "لا",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "توجد",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "صور",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "متاحةلم",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "تتم",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "إضافة",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "صور",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "لهذه",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "الشقة",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "بعد",
+      "lang": "arabic"
+    },
+    {
+      "text": ".",
+      "lang": "other"
+    },
+    {
+      "text": "Informations",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "suppl",
+      "lang": "latin"
+    },
+    {
+      "text": "é",
+      "lang": "other"
+    },
+    {
+      "text": "mentairesCr",
+      "lang": "latin"
+    },
+    {
+      "text": "éé ",
+      "lang": "other"
+    },
+    {
+      "text": "le",
+      "lang": "latin"
+    },
+    {
+      "text": "29",
+      "lang": "number"
+    },
+    {
+      "text": "/",
+      "lang": "other"
+    },
+    {
+      "text": "10",
+      "lang": "number"
+    },
+    {
+      "text": "/",
+      "lang": "other"
+    },
+    {
+      "text": "2025",
+      "lang": "number"
+    },
+    {
+      "text": "Derni",
+      "lang": "latin"
+    },
+    {
+      "text": "è",
+      "lang": "other"
+    },
+    {
+      "text": "re",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "mise",
+      "lang": "latin"
+    },
+    {
+      "text": " à ",
+      "lang": "other"
+    },
+    {
+      "text": "jour",
+      "lang": "latin"
+    },
+    {
+      "text": "29",
+      "lang": "number"
+    },
+    {
+      "text": "/",
+      "lang": "other"
+    },
+    {
+      "text": "10",
+      "lang": "number"
+    },
+    {
+      "text": "/",
+      "lang": "other"
+    },
+    {
+      "text": "2025",
+      "lang": "number"
+    },
+    {
+      "text": "Gestion",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "des",
+      "lang": "latin"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "factures",
+      "lang": "latin"
+    },
+    {
+      "text": "إدارة",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "الفواتيرالمياهلم",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "يتم",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "تعيين",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "ترددغير",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "محددالطاقةلم",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "يتم",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "تعيين",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "ترددغير",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "محددالهاتفلم",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "يتم",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "تعيين",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "ترددغير",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "محددالإنترنتلم",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "يتم",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "تعيين",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "ترددغير",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "محددلم",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "يتم",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "تعيين",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "تواريخ",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "استحقاق",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "الفواتيرقم",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "بتعديل",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "الشقة",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "لإضافة",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "ترددات",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "الفواتير",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "وتواريخ",
+      "lang": "arabic"
+    },
+    {
+      "text": " ",
+      "lang": "other"
+    },
+    {
+      "text": "الاستحقاق",
+      "lang": "arabic"
+    }
+  ],
+  "arabicSegments": [
+    "مدير",
+    "الشقةتبديل",
+    "المظهرلوحة",
+    "التحكمالمحادثاتالإشعاراتالشققالعملاءالحجوزاتالتوفرالمهامالفرقالملاكالمعاملاتالتقاريرالإعدادات",
+    "مسؤولتسجيل",
+    "الخروج",
+    "لا",
+    "توجد",
+    "صور",
+    "متاحةلم",
+    "تتم",
+    "إضافة",
+    "صور",
+    "لهذه",
+    "الشقة",
+    "بعد",
+    "إدارة",
+    "الفواتيرالمياهلم",
+    "يتم",
+    "تعيين",
+    "ترددغير",
+    "محددالطاقةلم",
+    "يتم",
+    "تعيين",
+    "ترددغير",
+    "محددالهاتفلم",
+    "يتم",
+    "تعيين",
+    "ترددغير",
+    "محددالإنترنتلم",
+    "يتم",
+    "تعيين",
+    "ترددغير",
+    "محددلم",
+    "يتم",
+    "تعيين",
+    "تواريخ",
+    "استحقاق",
+    "الفواتيرقم",
+    "بتعديل",
+    "الشقة",
+    "لإضافة",
+    "ترددات",
+    "الفواتير",
+    "وتواريخ",
+    "الاستحقاق"
+  ],
+  "frenchSegments": [
+    "AlgerModifier",
+    "auditInformations",
+    "taireInformations",
+    "Galerie",
+    "Informations",
+    "Gestion"
+  ],
+  "totalLength": 926,
+  "segmentCount": 227
+}

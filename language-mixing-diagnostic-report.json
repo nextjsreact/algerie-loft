@@ -1,0 +1,1919 @@
+{
+  "timestamp": "2025-11-06T08:18:33.152Z",
+  "totalUniqueKeys": 2874,
+  "keysByLanguage": {
+    "fr": 2669,
+    "en": 2841,
+    "ar": 2694
+  },
+  "missingByLanguage": {
+    "fr": [
+      "lofts.deleteConfirmationPrompt",
+      "lofts.photos.photoCount_many",
+      "lofts.photos.photoCount_one",
+      "lofts.photos.photoCount_other",
+      "lofts.status",
+      "notifications.notifications.newTaskAssigned",
+      "notifications.notifications.newTaskAssignedMessage",
+      "notifications.notifications.taskDueDateUpdatedMessage",
+      "notifications.notifications.taskStatusUpdatedMessage",
+      "notifications.notifications.taskReassignedMessage",
+      "notifications.notifications.notificationReadMessage",
+      "reports.downloadReports",
+      "audit.actionLabels.created",
+      "audit.actionLabels.updated",
+      "audit.actionLabels.deleted",
+      "booking.form.description",
+      "booking.form.step",
+      "booking.form.previous",
+      "booking.form.next",
+      "booking.form.confirmBooking",
+      "booking.form.submitting",
+      "booking.form.successMessage",
+      "booking.form.submitError",
+      "booking.form.firstName",
+      "booking.form.firstNamePlaceholder",
+      "booking.form.lastName",
+      "booking.form.lastNamePlaceholder",
+      "booking.form.emailPlaceholder",
+      "booking.form.phone",
+      "booking.form.phonePlaceholder",
+      "booking.form.nationality",
+      "booking.form.nationalityPlaceholder",
+      "booking.form.dateOfBirth",
+      "booking.form.idNumber",
+      "booking.form.idNumberPlaceholder",
+      "booking.form.idNumberDescription",
+      "booking.form.emergencyContact",
+      "booking.form.emergencyContactName",
+      "booking.form.emergencyContactNamePlaceholder",
+      "booking.form.emergencyContactPhone",
+      "booking.form.emergencyContactPhonePlaceholder",
+      "booking.form.emergencyContactRelationship",
+      "booking.form.emergencyContactRelationshipPlaceholder",
+      "booking.form.age",
+      "booking.form.agePlaceholder",
+      "booking.form.remove",
+      "booking.form.arrivalTime",
+      "booking.form.arrivalTimePlaceholder",
+      "booking.form.specialRequests",
+      "booking.form.specialRequestsPlaceholder",
+      "booking.form.specialRequestsDescription",
+      "booking.form.accessibilityNeeds",
+      "booking.form.accessibilityNeedsPlaceholder",
+      "booking.form.accessibilityNeedsDescription",
+      "booking.form.dietaryRestrictions",
+      "booking.form.dietaryRestrictionsPlaceholder",
+      "booking.form.dietaryRestrictionsDescription",
+      "booking.form.termsAcceptance",
+      "booking.form.termsDescription",
+      "booking.form.privacyAcceptance",
+      "booking.form.privacyDescription",
+      "booking.form.marketingConsent",
+      "booking.form.marketingDescription",
+      "booking.steps.guestInfo.description",
+      "booking.steps.additionalGuests.description",
+      "booking.steps.additionalGuests.noGuests",
+      "booking.steps.additionalGuests.addGuest",
+      "booking.steps.additionalGuests.guest",
+      "booking.steps.preferences.description",
+      "booking.steps.review.description",
+      "booking.review.bookingSummary",
+      "booking.review.property",
+      "booking.review.dates",
+      "booking.review.guests",
+      "booking.review.guestInformation",
+      "booking.review.primaryGuest",
+      "booking.review.additionalGuests",
+      "booking.review.pricingBreakdown",
+      "booking.pricing.cleaningFee",
+      "booking.pricing.serviceFee",
+      "booking.pricing.taxes",
+      "booking.pricing.total",
+      "booking.confirmation.subtitle",
+      "booking.confirmation.emailSent",
+      "booking.confirmation.emailError",
+      "booking.confirmation.emailConfirmation",
+      "booking.confirmation.referencecopied",
+      "booking.confirmation.copyError",
+      "booking.confirmation.reservationDetails",
+      "booking.confirmation.checkIn",
+      "booking.confirmation.checkOut",
+      "booking.confirmation.guest",
+      "booking.confirmation.guests",
+      "booking.confirmation.night",
+      "booking.confirmation.nights",
+      "booking.confirmation.primaryGuest",
+      "booking.confirmation.additionalGuests",
+      "booking.confirmation.yearsOld",
+      "booking.confirmation.pricingBreakdown",
+      "booking.confirmation.cleaningFee",
+      "booking.confirmation.serviceFee",
+      "booking.confirmation.taxes",
+      "booking.confirmation.total",
+      "booking.confirmation.specialRequests",
+      "booking.confirmation.nextSteps",
+      "booking.confirmation.nextStepsDescription",
+      "booking.confirmation.step1Title",
+      "booking.confirmation.step1Description",
+      "booking.confirmation.step2Title",
+      "booking.confirmation.step2Description",
+      "booking.confirmation.step3Title",
+      "booking.confirmation.step3Description",
+      "booking.confirmation.downloadConfirmation",
+      "booking.confirmation.shareReservation",
+      "booking.confirmation.contactSupport",
+      "booking.confirmation.continueBrowsing",
+      "booking.confirmation.importantNote",
+      "booking.confirmation.importantNoteDescription",
+      "booking.confirmation.shareTitle",
+      "booking.confirmation.shareText",
+      "booking.confirmation.downloadSuccess",
+      "booking.confirmation.downloadError",
+      "booking.confirmation.shareSuccess",
+      "booking.confirmation.shareError",
+      "booking.confirmation.linkCopied",
+      "booking.confirmation.loading.description",
+      "booking.confirmation.error.description",
+      "booking.confirmation.error.retry",
+      "booking.confirmation.error.goHome",
+      "booking.confirmation.errors.reservationNotFound",
+      "booking.confirmation.errors.accessDenied",
+      "booking.confirmation.errors.loadingFailed",
+      "booking.confirmation.errors.unknownError",
+      "booking.confirmation.additionalInfo",
+      "booking.success.subtitle",
+      "booking.success.bookingReference",
+      "booking.success.confirmationCode",
+      "booking.success.emailSent",
+      "booking.success.reservationSummary",
+      "booking.success.dates",
+      "booking.success.totalPaid",
+      "booking.success.whatHappensNext",
+      "booking.success.whatHappensNextDescription",
+      "booking.success.step1Title",
+      "booking.success.step1Description",
+      "booking.success.step2Title",
+      "booking.success.step2Description",
+      "booking.success.step3Title",
+      "booking.success.step3Description",
+      "booking.success.step4Title",
+      "booking.success.step4Description",
+      "booking.success.immediate",
+      "booking.success.within24Hours",
+      "booking.success.beforeCheckIn",
+      "booking.success.protectionTitle",
+      "booking.success.protectionDescription",
+      "booking.success.protection1",
+      "booking.success.protection2",
+      "booking.success.protection3",
+      "booking.success.notificationsTitle",
+      "booking.success.notificationsDescription",
+      "booking.success.enableNotifications",
+      "booking.success.notificationsEnabled",
+      "booking.success.notificationsError",
+      "booking.success.notificationsEnabledMessage",
+      "booking.success.needHelp",
+      "booking.success.callUs",
+      "booking.success.emailUs",
+      "booking.success.liveChat",
+      "booking.success.available24_7",
+      "booking.success.responseWithin2Hours",
+      "booking.success.instantSupport",
+      "booking.success.available9to21",
+      "booking.success.viewReservation",
+      "booking.success.bookAnother",
+      "booking.success.goHome",
+      "booking.success.finalNoteTitle",
+      "booking.success.finalNoteDescription",
+      "availability.statusTitle",
+      "conversations.findUserToMessage",
+      "dashboard.noOverdueBillsMessage",
+      "nav.userPasswords.subtitle",
+      "nav.userPasswords.userSelection.description",
+      "nav.userPasswords.userSelection.searchLabel",
+      "nav.userPasswords.userSelection.searchPlaceholder",
+      "nav.userPasswords.userSelection.selectLabel",
+      "nav.userPasswords.userSelection.noResults",
+      "nav.userPasswords.userSelection.selectedUser",
+      "nav.userPasswords.passwordForm.description",
+      "nav.userPasswords.passwordForm.newPassword",
+      "nav.userPasswords.passwordForm.newPasswordPlaceholder",
+      "nav.userPasswords.passwordForm.confirmPassword",
+      "nav.userPasswords.passwordForm.confirmPasswordPlaceholder",
+      "nav.userPasswords.passwordForm.button",
+      "nav.userPasswords.passwordForm.buttonProgress",
+      "nav.userPasswords.passwordForm.selectedUser",
+      "nav.userPasswords.security.description",
+      "nav.userPasswords.security.warning1",
+      "nav.userPasswords.security.warning2",
+      "nav.userPasswords.security.warning3",
+      "nav.userPasswords.selectUserError",
+      "nav.userPasswords.passwordMismatchError",
+      "nav.userPasswords.passwordLengthError",
+      "nav.userPasswords.passwordUpdateSuccess",
+      "nav.userPasswords.passwordUpdateError"
+    ],
+    "en": [
+      "auth.register.description",
+      "dashboard.dueTomorrow",
+      "lofts.status.available",
+      "lofts.status.maintenance",
+      "lofts.status.occupied",
+      "reports.deleteReports",
+      "availability.statusTitle",
+      "conversations.findUserToMessage",
+      "dashboard.noOverdueBillsMessage",
+      "nav.userPasswords.subtitle",
+      "nav.userPasswords.userSelection.description",
+      "nav.userPasswords.userSelection.searchLabel",
+      "nav.userPasswords.userSelection.searchPlaceholder",
+      "nav.userPasswords.userSelection.selectLabel",
+      "nav.userPasswords.userSelection.noResults",
+      "nav.userPasswords.userSelection.selectedUser",
+      "nav.userPasswords.passwordForm.description",
+      "nav.userPasswords.passwordForm.newPassword",
+      "nav.userPasswords.passwordForm.newPasswordPlaceholder",
+      "nav.userPasswords.passwordForm.confirmPassword",
+      "nav.userPasswords.passwordForm.confirmPasswordPlaceholder",
+      "nav.userPasswords.passwordForm.button",
+      "nav.userPasswords.passwordForm.buttonProgress",
+      "nav.userPasswords.passwordForm.selectedUser",
+      "nav.userPasswords.security.description",
+      "nav.userPasswords.security.warning1",
+      "nav.userPasswords.security.warning2",
+      "nav.userPasswords.security.warning3",
+      "nav.userPasswords.selectUserError",
+      "nav.userPasswords.passwordMismatchError",
+      "nav.userPasswords.passwordLengthError",
+      "nav.userPasswords.passwordUpdateSuccess",
+      "nav.userPasswords.passwordUpdateError"
+    ],
+    "ar": [
+      "auth.register.description",
+      "photos.photoCount_many",
+      "photos.photoCount_one",
+      "photos.photoCount_other",
+      "reports.deleteReports",
+      "reservations.form.nationalityPlaceholder",
+      "lofts.deleteConfirmationPrompt",
+      "lofts.photos.photoCount_many",
+      "lofts.photos.photoCount_one",
+      "lofts.photos.photoCount_other",
+      "lofts.status",
+      "notifications.notifications.newTaskAssigned",
+      "notifications.notifications.newTaskAssignedMessage",
+      "notifications.notifications.taskDueDateUpdatedMessage",
+      "notifications.notifications.taskStatusUpdatedMessage",
+      "notifications.notifications.taskReassignedMessage",
+      "notifications.notifications.notificationReadMessage",
+      "booking.form.description",
+      "booking.form.step",
+      "booking.form.previous",
+      "booking.form.next",
+      "booking.form.confirmBooking",
+      "booking.form.submitting",
+      "booking.form.successMessage",
+      "booking.form.submitError",
+      "booking.form.firstName",
+      "booking.form.firstNamePlaceholder",
+      "booking.form.lastName",
+      "booking.form.lastNamePlaceholder",
+      "booking.form.emailPlaceholder",
+      "booking.form.phone",
+      "booking.form.phonePlaceholder",
+      "booking.form.nationality",
+      "booking.form.nationalityPlaceholder",
+      "booking.form.dateOfBirth",
+      "booking.form.idNumber",
+      "booking.form.idNumberPlaceholder",
+      "booking.form.idNumberDescription",
+      "booking.form.emergencyContact",
+      "booking.form.emergencyContactName",
+      "booking.form.emergencyContactNamePlaceholder",
+      "booking.form.emergencyContactPhone",
+      "booking.form.emergencyContactPhonePlaceholder",
+      "booking.form.emergencyContactRelationship",
+      "booking.form.emergencyContactRelationshipPlaceholder",
+      "booking.form.age",
+      "booking.form.agePlaceholder",
+      "booking.form.remove",
+      "booking.form.arrivalTime",
+      "booking.form.arrivalTimePlaceholder",
+      "booking.form.specialRequests",
+      "booking.form.specialRequestsPlaceholder",
+      "booking.form.specialRequestsDescription",
+      "booking.form.accessibilityNeeds",
+      "booking.form.accessibilityNeedsPlaceholder",
+      "booking.form.accessibilityNeedsDescription",
+      "booking.form.dietaryRestrictions",
+      "booking.form.dietaryRestrictionsPlaceholder",
+      "booking.form.dietaryRestrictionsDescription",
+      "booking.form.termsAcceptance",
+      "booking.form.termsDescription",
+      "booking.form.privacyAcceptance",
+      "booking.form.privacyDescription",
+      "booking.form.marketingConsent",
+      "booking.form.marketingDescription",
+      "booking.steps.guestInfo.description",
+      "booking.steps.additionalGuests.description",
+      "booking.steps.additionalGuests.noGuests",
+      "booking.steps.additionalGuests.addGuest",
+      "booking.steps.additionalGuests.guest",
+      "booking.steps.preferences.description",
+      "booking.steps.review.description",
+      "booking.review.bookingSummary",
+      "booking.review.property",
+      "booking.review.dates",
+      "booking.review.guests",
+      "booking.review.guestInformation",
+      "booking.review.primaryGuest",
+      "booking.review.additionalGuests",
+      "booking.review.pricingBreakdown",
+      "booking.pricing.cleaningFee",
+      "booking.pricing.serviceFee",
+      "booking.pricing.taxes",
+      "booking.pricing.total",
+      "booking.confirmation.subtitle",
+      "booking.confirmation.emailSent",
+      "booking.confirmation.emailError",
+      "booking.confirmation.emailConfirmation",
+      "booking.confirmation.referencecopied",
+      "booking.confirmation.copyError",
+      "booking.confirmation.reservationDetails",
+      "booking.confirmation.checkIn",
+      "booking.confirmation.checkOut",
+      "booking.confirmation.guest",
+      "booking.confirmation.guests",
+      "booking.confirmation.night",
+      "booking.confirmation.nights",
+      "booking.confirmation.primaryGuest",
+      "booking.confirmation.additionalGuests",
+      "booking.confirmation.yearsOld",
+      "booking.confirmation.pricingBreakdown",
+      "booking.confirmation.cleaningFee",
+      "booking.confirmation.serviceFee",
+      "booking.confirmation.taxes",
+      "booking.confirmation.total",
+      "booking.confirmation.specialRequests",
+      "booking.confirmation.nextSteps",
+      "booking.confirmation.nextStepsDescription",
+      "booking.confirmation.step1Title",
+      "booking.confirmation.step1Description",
+      "booking.confirmation.step2Title",
+      "booking.confirmation.step2Description",
+      "booking.confirmation.step3Title",
+      "booking.confirmation.step3Description",
+      "booking.confirmation.downloadConfirmation",
+      "booking.confirmation.shareReservation",
+      "booking.confirmation.contactSupport",
+      "booking.confirmation.continueBrowsing",
+      "booking.confirmation.importantNote",
+      "booking.confirmation.importantNoteDescription",
+      "booking.confirmation.shareTitle",
+      "booking.confirmation.shareText",
+      "booking.confirmation.downloadSuccess",
+      "booking.confirmation.downloadError",
+      "booking.confirmation.shareSuccess",
+      "booking.confirmation.shareError",
+      "booking.confirmation.linkCopied",
+      "booking.confirmation.loading.description",
+      "booking.confirmation.error.description",
+      "booking.confirmation.error.retry",
+      "booking.confirmation.error.goHome",
+      "booking.confirmation.errors.reservationNotFound",
+      "booking.confirmation.errors.accessDenied",
+      "booking.confirmation.errors.loadingFailed",
+      "booking.confirmation.errors.unknownError",
+      "booking.confirmation.additionalInfo",
+      "booking.success.subtitle",
+      "booking.success.bookingReference",
+      "booking.success.confirmationCode",
+      "booking.success.emailSent",
+      "booking.success.reservationSummary",
+      "booking.success.dates",
+      "booking.success.totalPaid",
+      "booking.success.whatHappensNext",
+      "booking.success.whatHappensNextDescription",
+      "booking.success.step1Title",
+      "booking.success.step1Description",
+      "booking.success.step2Title",
+      "booking.success.step2Description",
+      "booking.success.step3Title",
+      "booking.success.step3Description",
+      "booking.success.step4Title",
+      "booking.success.step4Description",
+      "booking.success.immediate",
+      "booking.success.within24Hours",
+      "booking.success.beforeCheckIn",
+      "booking.success.protectionTitle",
+      "booking.success.protectionDescription",
+      "booking.success.protection1",
+      "booking.success.protection2",
+      "booking.success.protection3",
+      "booking.success.notificationsTitle",
+      "booking.success.notificationsDescription",
+      "booking.success.enableNotifications",
+      "booking.success.notificationsEnabled",
+      "booking.success.notificationsError",
+      "booking.success.notificationsEnabledMessage",
+      "booking.success.needHelp",
+      "booking.success.callUs",
+      "booking.success.emailUs",
+      "booking.success.liveChat",
+      "booking.success.available24_7",
+      "booking.success.responseWithin2Hours",
+      "booking.success.instantSupport",
+      "booking.success.available9to21",
+      "booking.success.viewReservation",
+      "booking.success.bookAnother",
+      "booking.success.goHome",
+      "booking.success.finalNoteTitle",
+      "booking.success.finalNoteDescription"
+    ]
+  },
+  "commonMissingKeys": [
+    {
+      "key": "auth.register.description",
+      "missingIn": [
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "reports.deleteReports",
+      "missingIn": [
+        "en",
+        "ar"
+      ]
+    },
+    {
+      "key": "lofts.deleteConfirmationPrompt",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "lofts.photos.photoCount_many",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "lofts.photos.photoCount_one",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "lofts.photos.photoCount_other",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "lofts.status",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "notifications.notifications.newTaskAssigned",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "notifications.notifications.newTaskAssignedMessage",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "notifications.notifications.taskDueDateUpdatedMessage",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "notifications.notifications.taskStatusUpdatedMessage",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "notifications.notifications.taskReassignedMessage",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "notifications.notifications.notificationReadMessage",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.description",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.step",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.previous",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.next",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.confirmBooking",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.submitting",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.successMessage",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.submitError",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.firstName",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.firstNamePlaceholder",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.lastName",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.lastNamePlaceholder",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.emailPlaceholder",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.phone",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.phonePlaceholder",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.nationality",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.nationalityPlaceholder",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.dateOfBirth",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.idNumber",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.idNumberPlaceholder",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.idNumberDescription",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.emergencyContact",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.emergencyContactName",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.emergencyContactNamePlaceholder",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.emergencyContactPhone",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.emergencyContactPhonePlaceholder",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.emergencyContactRelationship",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.emergencyContactRelationshipPlaceholder",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.age",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.agePlaceholder",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.remove",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.arrivalTime",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.arrivalTimePlaceholder",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.specialRequests",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.specialRequestsPlaceholder",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.specialRequestsDescription",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.accessibilityNeeds",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.accessibilityNeedsPlaceholder",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.accessibilityNeedsDescription",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.dietaryRestrictions",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.dietaryRestrictionsPlaceholder",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.dietaryRestrictionsDescription",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.termsAcceptance",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.termsDescription",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.privacyAcceptance",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.privacyDescription",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.marketingConsent",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.form.marketingDescription",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.steps.guestInfo.description",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.steps.additionalGuests.description",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.steps.additionalGuests.noGuests",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.steps.additionalGuests.addGuest",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.steps.additionalGuests.guest",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.steps.preferences.description",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.steps.review.description",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.review.bookingSummary",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.review.property",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.review.dates",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.review.guests",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.review.guestInformation",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.review.primaryGuest",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.review.additionalGuests",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.review.pricingBreakdown",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.pricing.cleaningFee",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.pricing.serviceFee",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.pricing.taxes",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.pricing.total",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.subtitle",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.emailSent",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.emailError",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.emailConfirmation",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.referencecopied",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.copyError",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.reservationDetails",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.checkIn",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.checkOut",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.guest",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.guests",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.night",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.nights",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.primaryGuest",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.additionalGuests",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.yearsOld",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.pricingBreakdown",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.cleaningFee",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.serviceFee",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.taxes",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.total",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.specialRequests",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.nextSteps",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.nextStepsDescription",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.step1Title",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.step1Description",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.step2Title",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.step2Description",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.step3Title",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.step3Description",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.downloadConfirmation",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.shareReservation",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.contactSupport",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.continueBrowsing",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.importantNote",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.importantNoteDescription",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.shareTitle",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.shareText",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.downloadSuccess",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.downloadError",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.shareSuccess",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.shareError",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.linkCopied",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.loading.description",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.error.description",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.error.retry",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.error.goHome",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.errors.reservationNotFound",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.errors.accessDenied",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.errors.loadingFailed",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.errors.unknownError",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.confirmation.additionalInfo",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.subtitle",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.bookingReference",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.confirmationCode",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.emailSent",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.reservationSummary",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.dates",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.totalPaid",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.whatHappensNext",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.whatHappensNextDescription",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.step1Title",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.step1Description",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.step2Title",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.step2Description",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.step3Title",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.step3Description",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.step4Title",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.step4Description",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.immediate",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.within24Hours",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.beforeCheckIn",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.protectionTitle",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.protectionDescription",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.protection1",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.protection2",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.protection3",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.notificationsTitle",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.notificationsDescription",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.enableNotifications",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.notificationsEnabled",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.notificationsError",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.notificationsEnabledMessage",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.needHelp",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.callUs",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.emailUs",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.liveChat",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.available24_7",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.responseWithin2Hours",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.instantSupport",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.available9to21",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.viewReservation",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.bookAnother",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.goHome",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.finalNoteTitle",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "booking.success.finalNoteDescription",
+      "missingIn": [
+        "fr",
+        "ar"
+      ]
+    },
+    {
+      "key": "availability.statusTitle",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "conversations.findUserToMessage",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "dashboard.noOverdueBillsMessage",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.subtitle",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.userSelection.description",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.userSelection.searchLabel",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.userSelection.searchPlaceholder",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.userSelection.selectLabel",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.userSelection.noResults",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.userSelection.selectedUser",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.passwordForm.description",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.passwordForm.newPassword",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.passwordForm.newPasswordPlaceholder",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.passwordForm.confirmPassword",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.passwordForm.confirmPasswordPlaceholder",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.passwordForm.button",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.passwordForm.buttonProgress",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.passwordForm.selectedUser",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.security.description",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.security.warning1",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.security.warning2",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.security.warning3",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.selectUserError",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.passwordMismatchError",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.passwordLengthError",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.passwordUpdateSuccess",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    },
+    {
+      "key": "nav.userPasswords.passwordUpdateError",
+      "missingIn": [
+        "fr",
+        "en"
+      ]
+    }
+  ],
+  "languageIssues": [
+    {
+      "key": "blog.comments.form.emailPlaceholder",
+      "lang": "ar",
+      "value": "your@email.com",
+      "issue": "Texte arabe attendu mais contient du latin"
+    },
+    {
+      "key": "auth.passwordReset.emailPlaceholder",
+      "lang": "ar",
+      "value": "your@email.com",
+      "issue": "Texte arabe attendu mais contient du latin"
+    },
+    {
+      "key": "auth.clientRegistration.emailPlaceholder",
+      "lang": "ar",
+      "value": "your@email.com",
+      "issue": "Texte arabe attendu mais contient du latin"
+    },
+    {
+      "key": "auth.partnerRegistration.emailPlaceholder",
+      "lang": "ar",
+      "value": "your@email.com",
+      "issue": "Texte arabe attendu mais contient du latin"
+    },
+    {
+      "key": "auth.partnerRegistration.phonePlaceholder",
+      "lang": "ar",
+      "value": "+213 XX XX XX XX",
+      "issue": "Texte arabe attendu mais contient du latin"
+    },
+    {
+      "key": "lofts.deleteConfirmationKeyword",
+      "lang": "ar",
+      "value": "DELETE",
+      "issue": "Texte arabe attendu mais contient du latin"
+    },
+    {
+      "key": "paymentMethods.paypal",
+      "lang": "ar",
+      "value": "PayPal",
+      "issue": "Texte arabe attendu mais contient du latin"
+    },
+    {
+      "key": "paymentMethods.stripe",
+      "lang": "ar",
+      "value": "Stripe",
+      "issue": "Texte arabe attendu mais contient du latin"
+    },
+    {
+      "key": "superuser.userManagement.placeholders.emailExample",
+      "lang": "ar",
+      "value": "email@example.com",
+      "issue": "Texte arabe attendu mais contient du latin"
+    }
+  ],
+  "completeness": {
+    "fr": 86,
+    "en": 98,
+    "ar": 87
+  }
+}

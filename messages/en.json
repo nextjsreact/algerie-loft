@@ -210,7 +210,16 @@
     "phone": "Phone",
     "status": "Status",
     "notes": "Notes",
-    "actions": "Actions",
+    "actions": {
+      "backToCustomers": "Back to Customers",
+      "contact": "Contact",
+      "edit": "Edit",
+      "email": "Email",
+      "call": "Call",
+      "schedule": "Schedule",
+      "addNote": "Add Note",
+      "delete": "Delete"
+    },
     "edit": "Edit",
     "delete": "Delete",
     "deleteConfirm": "Are you sure you want to delete {name}?",
@@ -274,15 +283,6 @@
       "interactions": "Interactions",
       "reservations": "Reservations",
       "quickActions": "Quick Actions"
-    },
-    "actions": {
-      "backToCustomers": "Back to Customers",
-      "contact": "Contact",
-      "edit": "Edit",
-      "email": "Email",
-      "call": "Call",
-      "schedule": "Schedule",
-      "addNote": "Add Note"
     }
   },
   "landing": {
@@ -456,7 +456,23 @@
     "netProfit": "Net Profit",
     "trackRevenueExpenses": "Track revenue and expenses over time.",
     "trends": "Trends",
-    "vsLastMonth": "vs last month"
+    "vsLastMonth": "vs last month",
+    "calendar": {
+      "title": "Title"
+    },
+    "form": {
+      "guest": "Guest"
+    },
+    "list": {
+      "title": "Title"
+    },
+    "details": {
+      "title": "Title",
+      "guest": "Guest"
+    },
+    "statusActions": {
+      "cancel": "Cancel"
+    }
   },
   "auth": {
     "admin": "Admin",
@@ -606,7 +622,25 @@
       "continueToLogin": "Sign In",
       "browseProperties": "Browse Properties",
       "supportText": "Need help? Contact our customer support"
-    }
+    },
+    "register": {
+      "title": "Title"
+    },
+    "employeeAccess": {
+      "title": "Title",
+      "email": "Email",
+      "password": "Password"
+    },
+    "error": "Error",
+    "auth": {
+      "email": "Email",
+      "password": "Password",
+      "admin": "Administrator",
+      "manager": "Manager",
+      "member": "Member"
+    },
+    "role": "Role",
+    "executive": "Executive"
   },
   "availability": {
     "activeFilters": "{count} active filter(s)",
@@ -691,10 +725,10 @@
     "selectStatuses": "Select Statuses",
     "allStatuses": "All Statuses",
     "statusesSelected": "{count} statuses selected",
-    "personal_use": "Personal Use",
     "calendar": {
       "selectDates": "Select Dates",
-      "selectDatesDescription": "Choose your check-in and check-out dates"
+      "selectDatesDescription": "Choose your check-in and check-out dates",
+      "title": "Title"
     },
     "errors": {
       "fetchFailed": "Failed to load availability data",
@@ -718,7 +752,25 @@
       "minimumStay": "Minimum stay: {nights} night(s)",
       "maximumStay": "Maximum stay: {nights} night(s)",
       "pricePerNight": "Price per night: {price} EUR"
-    }
+    },
+    "form": {
+      "guest": "Guest"
+    },
+    "list": {
+      "title": "Title"
+    },
+    "details": {
+      "title": "Title",
+      "guest": "Guest"
+    },
+    "statusActions": {
+      "cancel": "Cancel"
+    },
+    "cancel": "Cancel",
+    "upcoming": {
+      "title": "Title"
+    },
+    "search": "Search"
   },
   "bills": {
     "amount": "Amount",
@@ -758,7 +810,26 @@
       "internet": "Internet Bill",
       "telephone": "Telephone Bill",
       "tv": "TV Bill"
-    }
+    },
+    "bills": {
+      "title": "Title",
+      "cancel": "Cancel"
+    },
+    "active": "Active",
+    "management": {
+      "title": "Bill Management",
+      "water": "Water",
+      "electricity": "Electricity",
+      "gas": "Gas",
+      "phone": "Phone",
+      "internet": "Internet"
+    },
+    "frequency": {
+      "notSet": "Frequency not set",
+      "undefined": "Undefined"
+    },
+    "noDueDatesSet": "No due dates set",
+    "editLoftToAddFrequencies": "Edit the loft to add frequencies and due dates"
   },
   "common": {
     "actions": "Actions",
@@ -780,7 +851,6 @@
     "error": "Error",
     "success": "Success",
     "loading": "Loading...",
-    "actions": "Actions",
     "name": "Name",
     "next": "Next",
     "none": "None",
@@ -789,7 +859,7 @@
       "ownershipType": "Ownership Type"
     },
     "page": "Page",
-    "pickDateRange": "Pick date range",
+    "pickDateRange": "Pick a date range",
     "previous": "Previous",
     "results": "results",
     "selectOption": "Select an option",
@@ -803,9 +873,53 @@
     "notificationsEnabled": "🔔 Notifications enabled!",
     "notificationsEnabledDescription": "You will now receive instant notifications for tasks and messages.",
     "transfer": "Transfer",
-    "edit": "Edit",
     "delete": "Delete",
-    "pickDateRange": "Pick a date range"
+    "save": "Save",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "active": "Active",
+    "inactive": "Inactive",
+    "title": "Title",
+    "accountSettings": {
+      "title": "Title",
+      "email": "Email",
+      "role": "Role"
+    },
+    "passwordChange": {
+      "title": "Title"
+    },
+    "appInfo": {
+      "title": "Title",
+      "status": "Status"
+    },
+    "admin": {
+      "title": "Title"
+    },
+    "pricing": {
+      "title": "Title"
+    },
+    "rules": {
+      "title": "Title"
+    },
+    "status": "Status",
+    "common": {
+      "error": "Error",
+      "success": "Success"
+    },
+    "executive": "Executive",
+    "calendar": {
+      "title": "Title"
+    },
+    "upcoming": {
+      "title": "Title"
+    },
+    "available": "Available",
+    "modify": "Modify",
+    "company": "Company",
+    "individual": "Individual",
+    "percentages": "Percentages",
+    "amenityInfo": "Amenity Information"
   },
   "conversations": {
     "addMembers": "Add Members",
@@ -882,7 +996,9 @@
     "whatsappWeb": "WhatsApp Web",
     "whatsappWebDescription": "Send and receive messages without keeping your phone connected.\nUse WhatsApp on up to 4 linked devices and 1 phone at the same time.",
     "yesterday": "Yesterday",
-    "you": "You"
+    "you": "You",
+    "cancel": "Cancel",
+    "delete": "Delete"
   },
   "dashboard": {
     "actionRequired": "Action Required",
@@ -940,7 +1056,7 @@
     },
     "teams": "Teams",
     "thisMonth": "This Month",
-    "title": "Dashboard",
+    "title": "Algeria Loft - Apartment Management",
     "toDo": "To Do",
     "today": "Today",
     "tomorrow": "Tomorrow",
@@ -963,7 +1079,92 @@
     "secureViewMessage": "Secure Member View - Showing only your assigned tasks and relevant information",
     "tasksVisible": "tasks visible",
     "loftsAccessible": "lofts accessible",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "description": "Complete application for managing apartments, owners, transactions...",
+    "availableSections": "Available sections for your profile",
+    "access": "Access",
+    "sections": {
+      "apartments": {
+        "title": "🏢 Apartments",
+        "description": "Manage properties"
+      },
+      "reservations": {
+        "title": "📅 Reservations",
+        "description": "Manage reservations"
+      },
+      "availability": {
+        "title": "📋 Availability",
+        "description": "Manage availability"
+      },
+      "tasks": {
+        "title": "✅ Tasks",
+        "description": "Manage tasks"
+      },
+      "teams": {
+        "title": "👥 Teams",
+        "description": "Manage teams"
+      },
+      "platformSettings": {
+        "title": "⚙️ Platform Settings",
+        "description": "Platform configuration"
+      },
+      "owners": {
+        "title": "🏠 Owners",
+        "description": "Manage owners"
+      },
+      "transactions": {
+        "title": "💰 Transactions",
+        "description": "Financial management"
+      },
+      "detailedReports": {
+        "title": "📊 Detailed Reports",
+        "description": "Detailed operational reports"
+      },
+      "pendingPartners": {
+        "title": "🤝 Pending Partners",
+        "description": "Manage partnership requests"
+      },
+      "validatePartners": {
+        "title": "✅ Validate Partners",
+        "description": "Partner validation"
+      },
+      "openDisputes": {
+        "title": "⚠️ Open Disputes",
+        "description": "Manage ongoing disputes"
+      },
+      "manageDisputes": {
+        "title": "⚖️ Manage Disputes",
+        "description": "Dispute resolution"
+      }
+    },
+    "quickAccessItems": {
+      "conversations": {
+        "title": "💬 Conversations",
+        "description": "Messages and communications"
+      },
+      "notifications": {
+        "title": "🔔 Notifications",
+        "description": "Alerts and notifications"
+      },
+      "dashboard": {
+        "title": "📊 Dashboard",
+        "description": "Operational overview"
+      },
+      "detailedReports": {
+        "title": "📄 Detailed Reports",
+        "description": "Detailed operational reports"
+      }
+    },
+    "quickAccess": {
+      "title": "Quick Access"
+    },
+    "loading": "Loading...",
+    "error": "Error",
+    "noData": "No data",
+    "dashboard": {
+      "active": "Active",
+      "title": "Title"
+    }
   },
   "executive": {
     "alerts": {
@@ -990,7 +1191,7 @@
     "totalExpenses": "Total Expenses",
     "cashFlow": "Cash Flow",
     "maintenance": "Maintenance",
-    "aiAnalysisInProgress": "AI analysis in progress...",
+    "aiAnalysisInProgress": "AI Analysis in progress...",
     "revenueMatrix": "Revenue Matrix",
     "intelligentDistribution": "Intelligent Distribution",
     "companyRevenue": "Company Revenue",
@@ -1010,39 +1211,16 @@
     "profit": "Profit",
     "occupancy": "Occupancy",
     "resolve": "Resolve",
-    "revenue": "Revenue",
-    "expenses": "Expenses",
     "thisMonth": "this month",
     "trend": "trend",
     "margin": "Margin",
     "averageRent": "Average Rent",
-    "quantumTimeline": "Quantum Timeline",
-    "temporalPerformanceEvolution": "Temporal performance evolution",
     "apartmentManager": "Apartment Manager",
     "toggleTheme": "Toggle Theme",
     "chats": "Chats",
     "logout": "Logout",
     "executiveDashboard": "Executive Dashboard",
-    "confidential": "Confidential",
-    "forExecutivesOnly": "For Executives Only",
-    "realTimePredictiveAnalysis": "Real-time predictive analysis",
-    "totalExpenses": "Total Expenses",
-    "cashFlow": "Cash Flow",
-    "aiAnalysisInProgress": "AI Analysis in progress...",
-    "intelligentDistribution": "Intelligent Distribution",
-    "companyRevenue": "Company Revenue",
-    "thirdPartyRevenue": "Third Party Revenue",
-    "companyDominance": "Company Dominance",
-    "automaticOptimizationEnabled": "Automatic optimization enabled",
-    "temporalPerformanceEvolution": "Temporal performance evolution",
-    "currentYear": "Current Year",
-    "evolution": "Evolution",
-    "multidimensionalComparison": "Multidimensional comparison",
-    "expenses": "Expenses",
-    "profit": "Profit",
-    "occupancy": "Occupancy",
-    "thisMonth": "this month",
-    "trend": "trend"
+    "forExecutivesOnly": "For Executives Only"
   },
   "internetConnections": {
     "active": "Active",
@@ -1103,6 +1281,33 @@
   "lofts": {
     "ar": "Arabic",
     "addFirstLoft": "Add my first loft",
+    "editLoft": "Edit Apartment",
+    "linkToAirbnb": "Link to Airbnb",
+    "loftInfoTitle": "Apartment Information",
+    "pricePerNight": "Price per night",
+    "owner": "Owner",
+    "description": "Description",
+    "available": "Available",
+    "occupied": "Occupied",
+    "maintenance": "Maintenance",
+    "loftNotFound": "Apartment not found",
+    "noLoftFoundForId": "No apartment found for ID",
+    "quarterly": "Quarterly",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "weekly": "Weekly",
+    "bimonthly": "Bimonthly",
+    "fourMonthly": "Four Monthly",
+    "photos": {
+      "loadError": "Error loading photos",
+      "photoDownloaded": "Photo downloaded",
+      "noPhotos": "No photos available",
+      "noPhotosDescription": "No photos have been added for this apartment.",
+      "mainPhoto": "Main photo",
+      "photoViewer": "Photo Viewer",
+      "photoGallery": "Photo Gallery",
+      "photosAvailable": "{count} photo(s) available"
+    },
     "addLoft": "Add loft",
     "addNewPropertyListing": "Add a new property listing",
     "cancel": "Cancel",
@@ -1110,6 +1315,11 @@
     "additionalInfo": {
       "airbnbId": "Airbnb ID",
       "company": "Company",
+      "title": "Additional Information",
+      "percentages": "Percentages",
+      "photoGallery": "Photo Gallery",
+      "createdOn": "Created on",
+      "lastUpdated": "Last updated",
       "createdOn": "Created on",
       "lastUpdated": "Last updated",
       "owner": "Owner",
@@ -1124,6 +1334,35 @@
     "billManagement": {
       "billMarkedAsPaid": "{billType} bill marked as paid. Next due date calculated automatically.",
       "cancel": "Cancel",
+      "title": "Bill Management",
+      "water": "Water",
+      "electricity": "Electricity",
+      "gas": "Gas",
+      "phone": "Phone",
+      "internet": "Internet",
+      "nextBills": "Next Bills",
+      "notSet": "Not Set",
+      "customerCode": "Customer Code",
+      "meterNumber": "Meter Number",
+      "correspondent": "Correspondent",
+      "clientNumber": "Client Number",
+      "pdlRef": "PDL Reference",
+      "frequency": "Frequency",
+      "noFrequencySet": "Frequency not set",
+      "daysOverdue": "days overdue",
+      "dueToday": "Due today",
+      "dueTomorrow": "Due tomorrow",
+      "dueInDays": "Due in {days} days",
+      "due": "Due",
+      "pleaseEnterPaymentAmount": "Please enter payment amount",
+      "markAsPaid": "Mark as Paid",
+      "noBillDueDatesSet": "No bill due dates set",
+      "editLoftToAddBillInfo": "Edit the apartment to add billing information",
+      "markBillAsPaid": "Mark {billType} bill as paid",
+      "paymentAmount": "Payment Amount",
+      "enterPaymentAmount": "Enter payment amount",
+      "processing": "Processing...",
+      "nextDueDateAutoCalculated": "Next due date will be calculated automatically based on {frequency} frequency",
       "currentDueDate": "Current Due Date",
       "daysOverdue": "days overdue",
       "due": "Due",
@@ -1147,7 +1386,9 @@
       "pleaseEnterPaymentAmount": "Please enter a payment amount",
       "processing": "Processing...",
       "title": "Bill Management",
-      "water": "Water"
+      "water": "Water",
+      "electricity": "Electricity",
+      "gas": "Gas"
     },
     "billingAlerts": "Billing Alerts",
     "billingAlertsDescription": "Configure frequencies and due dates for automatic bill tracking",
@@ -1175,12 +1416,12 @@
     "deleteConfirmationIncorrect": "The confirmation text is incorrect. Deletion aborted.",
     "deleteConfirmationKeyword": "DELETE",
     "deleteConfirmationPrompt": "Type 'DELETE' to confirm",
-    "deleteError": "Error deleting",
-    "deleteErrorDescription": "Unable to delete loft",
+    "deleteError": "Error deleting {name}",
+    "deleteErrorDescription": "An error occurred during deletion. Please try again.",
     "deleteErrorMessage": "An error occurred while trying to delete the loft. Please try again.",
     "deleteLoft": "Delete loft",
-    "deleteSuccess": "{loftName} deleted successfully",
-    "deleteSuccessDescription": "The loft has been deleted",
+    "deleteSuccess": "{name} deleted successfully",
+    "deleteSuccessDescription": "The loft and all its associated data have been deleted",
     "deletingDescription": "Deleting loft in progress",
     "deletingInProgress": "Deleting...",
     "deletingLoftData": "Deleting loft data...",
@@ -1306,8 +1547,8 @@
     "statusTitle": "Status",
     "status": {
       "available": "Available",
-      "maintenance": "Maintenance",
-      "occupied": "Occupied"
+      "occupied": "Occupied",
+      "maintenance": "Maintenance"
     },
     "subtitle": "Manage your properties",
     "systemError": "System Error",
@@ -1352,16 +1593,11 @@
     "confirmDeleteTitle": "Confirm Deletion",
     "confirmDeleteDescription": "Are you sure you want to delete the loft \"{name}\"? This action is irreversible and will delete all associated data.",
     "confirmDeleteButton": "Delete Permanently",
-    "deleteSuccess": "{name} deleted successfully",
-    "deleteSuccessDescription": "The loft and all its associated data have been deleted",
-    "deleteError": "Error deleting {name}",
-    "deleteErrorDescription": "An error occurred during deletion. Please try again.",
     "deleting": "Deleting...",
     "name": "Name",
     "namePlaceholder": "Ex: Modern downtown loft",
     "address": "Address",
     "addressPlaceholder": "Ex: 123 Independence Street, Algiers",
-    "status": "Status",
     "zone": "Zone",
     "member": {
       "myAssignedLofts": "My Assigned Lofts",
@@ -1384,7 +1620,22 @@
     },
     "price": "Price",
     "rooms": "Rooms",
-    "unavailable": "Unavailable"
+    "unavailable": "Unavailable",
+    "details": {
+      "title": "Loft Details",
+      "pricePerNight": "Price per night",
+      "owner": "Owner",
+      "propertyType": "Property Type",
+      "description": "Description",
+      "amenities": "Amenities",
+      "gallery": "Photo Gallery",
+      "additionalInfo": "Additional Information",
+      "createdAt": "Created on",
+      "lastUpdated": "Last updated",
+      "edit": "Edit Apartment",
+      "auditHistory": "Audit History",
+      "apartmentInfo": "Apartment Information"
+    }
   },
   "nav": {
     "application": "Application",
@@ -1411,8 +1662,31 @@
     "teams": "Teams",
     "toggleTheme": "Toggle theme",
     "transactions": "Transactions",
-    "userPasswords": "User Passwords",
-    "zoneAreas": "Geographic Zones"
+    "userPasswords": {
+      "common": {
+        "loading": "Loading..."
+      },
+      "title": "Title",
+      "userSelection": {
+        "title": "Title"
+      },
+      "passwordForm": {
+        "title": "Title"
+      },
+      "security": {
+        "title": "Title"
+      },
+      "roles": {
+        "admin": "Administrator",
+        "manager": "Manager",
+        "member": "Member",
+        "executive": "Executive"
+      }
+    },
+    "zoneAreas": "Geographic Zones",
+    "clients": "Clients",
+    "bookings": "Bookings",
+    "logout": "Logout"
   },
   "notifications": {
     "title": "Notifications",
@@ -1425,14 +1699,13 @@
     "warning": "Warning",
     "error": "Error",
     "info": "Info",
-    "viewDetails": "View Details",
+    "viewDetails": "View details",
     "newTaskAssigned": "New Task Assigned",
     "Task Assigned to You": "Task Assigned to You",
     "Task Reassigned": "Task Reassigned",
     "Task Status Updated": "Task Status Updated",
     "Your Task Status Updated": "Your Task Status Updated",
     "Task Due Date Updated": "Task Due Date Updated",
-    "Task Reassigned": "Task Reassigned",
     "Task Deleted": "Task Deleted",
     "Task Overdue": "Task Overdue",
     "newTaskAssignedMessage": "You have been assigned a new task: \"{taskTitle}\" (Due: {dueDate})",
@@ -1442,12 +1715,9 @@
     "unknownUser": "a user",
     "task": "task",
     "updated": "updated",
-    "viewDetails": "View details",
     "noNotificationsMessage": "You will receive important notifications about your tasks and activities here.",
-    "new": "New",
     "newMessageFrom": "New message from {sender}",
     "noNotifications": "No notifications found.",
-    "info": "Info",
     "Notification Read": "Notification Read",
     "notificationReadMessage": "Your notification for task \"{taskTitle}\" has been read by {userName}.",
     "notifications": {
@@ -1461,7 +1731,8 @@
     "optimizedBanner": {
       "title": "Optimized Version Active",
       "description": "Using batch operations, memoization, and React optimization techniques."
-    }
+    },
+    "status": "Status"
   },
   "owners": {
     "addFirstOwner": "Add Owner",
@@ -1510,7 +1781,8 @@
       "name": "Ex: John Smith",
       "email": "Ex: john.smith@email.com",
       "phone": "Ex: +213 555 123 456",
-      "address": "Ex: 123 Peace Street, Algiers"
+      "address": "Ex: 123 Peace Street, Algiers",
+      "cancel": "Cancel"
     }
   },
   "paymentMethods": {
@@ -1555,7 +1827,6 @@
     "methodName": "Method name",
     "methodsActive": "payment methods active on your platform",
     "mobilePayment": "Mobile Payment",
-    "mobilePayment": "Mobile Payment",
     "modify": "Modify",
     "name": "Name",
     "newMethod": "New Method",
@@ -1565,7 +1836,6 @@
     "noMethodsConfigured": "No payment methods configured at the moment",
     "notificationSettingsForPayments": "Notification settings for payments",
     "notifications": "Notifications",
-    "notificationsEnabled": "Notifications enabled",
     "notificationsEnabled": "Notifications enabled",
     "other": "Other",
     "paymentDetails": "Payment Details",
@@ -1739,10 +2009,14 @@
     "today": "Today",
     "transactionType": "Transaction Type",
     "transactionsCount": "Transactions Count",
-    "utilities": "Utilities"
+    "utilities": "Utilities",
+    "name": "Name",
+    "email": "Email"
   },
   "reservations": {
-    "actions": "Quick Actions",
+    "actions": {
+      "cancel": "Cancel"
+    },
     "activities": {
       "bookingCancelled": "Booking Cancelled",
       "checkinCompleted": "Check-in Completed",
@@ -1786,9 +2060,7 @@
       "tomorrow": "Tomorrow",
       "week": "Week",
       "work_week": "Work Week",
-      "yesterday": "Yesterday",
-      "tomorrow": "Tomorrow",
-      "showMore": "Show more ({count})"
+      "yesterday": "Yesterday"
     },
     "comingSoon": "Coming Soon",
     "common": {
@@ -1863,13 +2135,10 @@
     "proTag": "Pro",
     "reportsLabel": "Reports",
     "status": {
-      "cancelled": "Cancelled",
-      "completed": "Completed",
-      "confirmed": "Confirmed",
-      "pending": "En attente",
-      "confirmed": "Confirmée",
       "cancelled": "Annulée",
-      "completed": "Terminée"
+      "completed": "Terminée",
+      "confirmed": "Confirmée",
+      "pending": "En attente"
     },
     "statusActions": {
       "confirm": "Confirmer",
@@ -1888,7 +2157,17 @@
       "title": "Upcoming Reservations"
     },
     "vsLastMonth": "vs last month",
-    "allLofts": "All Lofts"
+    "allLofts": "All Lofts",
+    "reservations": {
+      "form": {
+        "title": "Title",
+        "guest": "Guest"
+      },
+      "details": {
+        "title": "Title",
+        "guest": "Guest"
+      }
+    }
   },
   "roles": {
     "admin": "Administrator",
@@ -2113,7 +2392,9 @@
         "member": "Member",
         "executive": "Executive"
       }
-    }
+    },
+    "email": "Email",
+    "role": "Role"
   },
   "tasks": {
     "addTask": "Add Task",
@@ -2189,13 +2470,7 @@
     "saving": "Saving...",
     "search": "Search",
     "searchPlaceholder": "Search by title or description...",
-    "status": {
-      "completed": "Completed",
-      "inProgress": "In Progress",
-      "in_progress": "In Progress",
-      "todo": "To Do",
-      "unknown": "Unknown"
-    },
+    "status": "Status",
     "subtitle": "Manage your assigned tasks and track their progress.",
     "table": {
       "actions": "Actions",
@@ -2232,13 +2507,19 @@
     "denied": "Denied",
     "view": "View",
     "edit": "Edit",
-    "updateStatus": "Update Status",
     "reassign": "Reassign",
     "restrictedAccess": "Restricted Access",
     "markAs": "Mark as",
     "loftName": "Loft Name",
     "loftAddress": "Loft Address",
-    "viewLoftDetails": "View Loft Details"
+    "viewLoftDetails": "View Loft Details",
+    "bills": {
+      "title": "Title"
+    },
+    "active": "Active",
+    "optimizedBanner": {
+      "title": "Title"
+    }
   },
   "teams": {
     "activeMembers": "Active Members",
@@ -2250,7 +2531,7 @@
     "basicInformation": "Basic information about the team",
     "cancel": "Cancel",
     "couldNotFindTeam": "Could not find team with ID",
-    "createTeam": "Create Team",
+    "createTeam": "Create team",
     "createNewTeam": "Create New Team",
     "addNewTeamDescription": "Add a new team to your organization",
     "createdAt": "Created At",
@@ -2310,7 +2591,6 @@
     "activeTaskCountPlural": "{count} active tasks",
     "collaborators": "Collaborators",
     "inProgress": "In Progress",
-    "createdBy": "Created by",
     "searchPlaceholder": "Search for a team...",
     "teamCount": "{count} team",
     "teamCountPlural": "{count} teams",
@@ -2318,11 +2598,89 @@
     "teamFoundCountPlural": "{count} teams found",
     "noTeamsFound": "No teams found",
     "noTeamsDescription": "Start by creating your first team to organize your work and collaborate effectively.",
-    "createTeam": "Create team",
     "noSearchResults": "No teams match your search \"{searchTerm}\". Try different keywords.",
-    "clearSearch": "Clear search"
+    "clearSearch": "Clear search",
+    "name": "Name"
   },
   "admin": {
+    "management": {
+      "title": "System Management",
+      "description": "Comprehensive dashboard for managing users, partners, and system operations"
+    },
+    "stats": {
+      "totalUsers": "Total Users",
+      "active": "active",
+      "clients": "Clients",
+      "ofTotal": "of total",
+      "partners": "Partners",
+      "pending": "pending",
+      "disputes": "Disputes",
+      "needsAttention": "needs attention",
+      "inactive": "inactive"
+    },
+    "userDistribution": {
+      "title": "User Distribution",
+      "description": "Overview of user type distribution across the system"
+    },
+    "roles": {
+      "client": "Client",
+      "partner": "Partner",
+      "employees": "Employees"
+    },
+    "users": {
+      "title": "User Management",
+      "description": "Manage system users",
+      "filters": {
+        "title": "Filters",
+        "search": "Search users...",
+        "searchPlaceholder": "Search users...",
+        "role": "Filter by role",
+        "allRoles": "All roles",
+        "status": "Filter by status",
+        "allStatuses": "All statuses",
+        "apply": "Apply filters"
+      },
+      "usersList": {
+        "title": "Users List",
+        "noUsers": "No users found"
+      },
+      "table": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "activate": "Activate",
+        "deactivate": "Deactivate"
+      },
+      "status": {
+        "inactive": "Inactive",
+        "active": "Active"
+      },
+      "roles": {
+        "admin": "Administrator",
+        "manager": "Manager",
+        "executive": "Executive",
+        "member": "Member",
+        "client": "Client",
+        "partner": "Partner",
+        "guest": "Guest"
+      },
+      "deleteDialog": {
+        "title": "Title",
+        "cancel": "Cancel"
+      }
+    },
+    "tabs": {
+      "userManagement": "User Management",
+      "partnerVerification": "Partner Verification",
+      "disputeResolution": "Dispute Resolution",
+      "reports": "Reports"
+    },
     "editCategory": "Edit Category",
     "newCategory": "New Category",
     "categoryName": "Category Name",
@@ -2354,6 +2712,23 @@
       "noPendingPartners": "No pending partner applications.",
       "noVerifiedPartners": "No verified partners.",
       "noRejectedPartners": "No rejected partners."
+    },
+    "disputes": {
+      "client": "Client",
+      "partner": "Partner",
+      "status": "Status",
+      "cancel": "Cancel",
+      "title": "Title"
+    },
+    "cancel": "Cancel",
+    "reports": {
+      "title": "Title",
+      "filters": {
+        "title": "Title"
+      },
+      "analytics": {
+        "active": "Active"
+      }
     }
   },
   "navigation": {
@@ -2372,7 +2747,21 @@
     "reports": "Reports",
     "settings": "Settings",
     "categories": "Categories",
-    "logout": "Logout"
+    "logout": "Logout",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "validation": {
+      "email": "Email"
+    },
+    "actions": {
+      "save": "Save"
+    }
   },
   "testSound": {
     "browserBlocksAudio": "Browsers require user interaction before playing audio",
@@ -2539,7 +2928,8 @@
       "saving": "Saving...",
       "update": "Update",
       "create": "Create",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "name": "Name"
     },
     "nav": {
       "zoneAreas": "Zone Areas"
@@ -2608,7 +2998,7 @@
     "auditHistoryFor": "Audit History for",
     "actions": {
       "created": "Created",
-      "updated": "Updated", 
+      "updated": "Updated",
       "deleted": "Deleted"
     },
     "tables": {
@@ -2661,8 +3051,6 @@
     "searchDescription": "Search by user email, action, or table name",
     "tableName": "Table Name",
     "allTables": "All Tables",
-    "allActions": "All Actions",
-    "allUsers": "All Users",
     "recordId": "Record ID",
     "recordIdPlaceholder": "Enter record ID",
     "dateRangeDescription": "Filter by date range",
@@ -2684,39 +3072,27 @@
     "activeFiltersCount": "{count} active filter(s)",
     "openMenu": "Open menu",
     "exportSelected": "Export Selected",
-    "action": "Action",
-    "user": "User",
     "selectLog": "Select log",
-    "fieldsChanged": "fields changed",
+    "fieldsChanged": "Fields Changed",
     "newRecord": "New record",
     "recordDeleted": "Record deleted",
     "noChanges": "No changes",
     "viewDetails": "View Details",
-    "copyRecordId": "Copy ID",
-    "tables": {
-      "transactions": "Transaction",
-      "tasks": "Task",
-      "reservations": "Reservation",
-      "lofts": "Loft"
-    },
+    "copyRecordId": "Copy Record ID",
     "actionLabels": {
       "created": "Created",
-      "updated": "Updated", 
+      "updated": "Updated",
       "deleted": "Deleted"
     },
     "actionTypes": {
       "created": "Created",
-      "updated": "Updated", 
+      "updated": "Updated",
       "deleted": "Deleted",
       "view": "View",
       "export": "Export"
     },
     "times": "times",
-    "topActions": "Top Actions",
-    "selectLog": "Select log",
-    "fieldsChanged": "Fields Changed",
-    "viewDetails": "View Details",
-    "copyRecordId": "Copy Record ID"
+    "topActions": "Top Actions"
   },
   "booking": {
     "form": {
@@ -2983,12 +3359,92 @@
         "createUser": "New User",
         "bulkActions": "Bulk Actions",
         "deselectAll": "Deselect All"
+      },
+      "placeholders": {
+        "searchByNameOrEmail": "Search by name or email...",
+        "filterByRole": "Filter by role",
+        "filterByStatus": "Filter by status",
+        "emailVerified": "Email verified",
+        "leaveEmptyToKeep": "Leave empty to keep unchanged",
+        "fullUserName": "Full user name",
+        "emailExample": "email@example.com"
+      },
+      "messages": {
+        "passwordResetSuccess": "Password reset successfully. An email has been sent to the user.",
+        "tempPasswordGenerated": "Temporary password generated for user:",
+        "tempPasswordNote": "This password will be displayed only once. The user must change it on next login.",
+        "fillAllFields": "Please fill in all required fields",
+        "usersSelected": "user selected",
+        "usersSelectedPlural": "users selected",
+        "bulkActionSuccess": "Bulk action completed successfully",
+        "bulkActionFailed": "Bulk action failed"
+      },
+      "filters": {
+        "allRoles": "All roles",
+        "allStatuses": "All statuses",
+        "all": "All",
+        "verified": "Verified",
+        "unverified": "Unverified"
+      },
+      "labels": {
+        "selectAll": "Select all",
+        "emailNotVerified": "Email not verified",
+        "resetPassword": "Reset password",
+        "generateTempPassword": "Generate temporary password",
+        "role": "Role",
+        "activeAccount": "Active account",
+        "emailVerified": "Email verified"
+      },
+      "dialogs": {
+        "bulkActionsTitle": "Bulk Actions",
+        "bulkActionsDesc": "Select an action to apply to {count} selected users",
+        "editUserTitle": "Edit User",
+        "editUserDesc": "Edit the selected user's information",
+        "createUserTitle": "Create New User",
+        "createUserDesc": "Add a new user to the system",
+        "createUserButton": "Create User"
+      },
+      "bulkActions": {
+        "activateUsers": "Activate Users",
+        "deactivateUsers": "Deactivate Users",
+        "deleteUsers": "Delete Users"
       }
     },
     "dashboard": {
-      "title": "Superuser Dashboard EN",
+      "title": "Superuser Dashboard",
       "welcome": "Congratulations! You are now logged in as a superuser.",
       "successMessage": "Success! The superuser authentication system is working correctly.",
+      "errorLoading": "Error loading dashboard",
+      "noData": "No data available",
+      "systemStatus": "System Status",
+      "responseTime": "Response time",
+      "activeUsers": "Active Users",
+      "sessions": "Sessions",
+      "reservations": "Reservations",
+      "errorRate": "Error rate",
+      "backup": "Backup",
+      "lastBackup": "Last backup",
+      "overview": "Overview",
+      "securityAlerts": "Security Alerts",
+      "auditLog": "Audit Log",
+      "emergencyActions": "Emergency Actions",
+      "systemPerformance": "System Performance",
+      "database": "Database",
+      "avgResponseTime": "Average response time",
+      "quickActions": "Quick Actions",
+      "recentSecurityAlerts": "Recent Security Alerts",
+      "securityAlertsDescription": "Monitoring suspicious activities and unauthorized access attempts",
+      "noRecentAlerts": "No recent security alerts",
+      "resolve": "Resolve",
+      "recentAuditLog": "Recent Audit Log",
+      "auditLogDescription": "History of administrative actions and system modifications",
+      "noRecentAuditEntries": "No recent audit entries",
+      "emergencyActionsDescription": "Critical functions for system emergency management",
+      "emergencyWarning": "These actions may affect system operation. Use with caution.",
+      "emergencyLockdown": "Emergency Lockdown",
+      "emergencyBackup": "Emergency Backup",
+      "systemRestart": "System Restart",
+      "massLogout": "Mass Logout",
       "cards": {
         "userManagement": {
           "title": "User Management",
@@ -3016,5 +3472,219 @@
         }
       }
     }
+  },
+  "name": "Name",
+  "title": "Title",
+  "role": "Role",
+  "status": "Status",
+  "search": "Search",
+  "email": "Email",
+  "meta": {
+    "title": "Title"
+  },
+  "contact": {
+    "reasons": {
+      "propertyManagement": {
+        "title": "Title"
+      },
+      "rentalServices": {
+        "title": "Title"
+      },
+      "maintenance": {
+        "title": "Title"
+      },
+      "consultation": {
+        "title": "Title"
+      },
+      "title": "Title"
+    },
+    "process": {
+      "step1": {
+        "title": "Title"
+      },
+      "step2": {
+        "title": "Title"
+      },
+      "step3": {
+        "title": "Title"
+      },
+      "title": "Title"
+    },
+    "page": {
+      "title": "Title"
+    },
+    "faq": {
+      "title": "Title"
+    },
+    "info": {
+      "emergency": {
+        "title": "Title"
+      },
+      "location": {
+        "title": "Title"
+      }
+    },
+    "form": {
+      "title": "Title",
+      "name": "Name",
+      "email": "Email",
+      "contactMethods": {
+        "email": "Email"
+      }
+    }
+  },
+  "register": {
+    "title": "Title"
+  },
+  "currencies": {
+    "name": "Name",
+    "status": "Status"
+  },
+  "loading": "Loading...",
+  "callbackRequest": {
+    "form": {
+      "title": "Title",
+      "name": "Name"
+    }
+  },
+  "propertyInquiry": {
+    "form": {
+      "title": "Title",
+      "name": "Name",
+      "email": "Email"
+    }
+  },
+  "serviceInquiry": {
+    "form": {
+      "title": "Title",
+      "name": "Name",
+      "email": "Email"
+    }
+  },
+  "partner": {
+    "pricing": {
+      "title": "Title"
+    },
+    "availability": {
+      "title": "Title"
+    },
+    "properties": {
+      "name": "Name",
+      "loading": "Loading...",
+      "title": "Title",
+      "edit": "Edit"
+    },
+    "common": {
+      "cancel": "Cancel"
+    }
+  },
+  "privacy": {
+    "cookies": {
+      "title": "Title"
+    },
+    "gdpr": {
+      "form": {
+        "title": "Title",
+        "email": "Email"
+      },
+      "requestTypes": {
+        "${type}": {
+          "name": "Name"
+        }
+      }
+    },
+    "dashboard": {
+      "stats": {
+        "active": "Active"
+      },
+      "title": "Title",
+      "overview": {
+        "rights": {
+          "title": "Title",
+          "delete": "Delete"
+        },
+        "data": {
+          "title": "Title"
+        }
+      },
+      "cookies": {
+        "title": "Title"
+      },
+      "payments": {
+        "title": "Title"
+      },
+      "legal": {
+        "title": "Title"
+      }
+    },
+    "settings": {
+      "dataProcessing": {
+        "title": "Title"
+      },
+      "communications": {
+        "title": "Title",
+        "email": "Email"
+      },
+      "dataRetention": {
+        "title": "Title"
+      },
+      "dataSharing": {
+        "title": "Title"
+      }
+    },
+    "payment": {
+      "title": "Title",
+      "security": {
+        "title": "Title"
+      },
+      "cancel": "Cancel"
+    }
+  },
+  "bookingHistory": {
+    "loading": "Loading...",
+    "title": "Title",
+    "search": "Search",
+    "status": "Status",
+    "guest": "Guest"
+  },
+  "pricing": {
+    "summary": {
+      "title": "Title"
+    }
+  },
+  "profileIntegration": {
+    "title": "Title"
+  },
+  "profileDashboard": {
+    "loading": "Loading...",
+    "member": "Member"
+  },
+  "profile": {
+    "loading": "Loading...",
+    "title": "Title",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "save": "Save",
+    "email": "Email"
+  },
+  "forms": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "validation": {
+      "email": "Email"
+    },
+    "actions": {
+      "save": "Save"
+    }
+  },
+  "ui": {
+    "toggleTheme": "Toggle Theme",
+    "userRole": "User Role"
   }
 }

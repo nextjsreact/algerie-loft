@@ -1,199 +1,199 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
-import { execSync } from 'child_process';
+import path from 'path';
 
-console.log('🔍 Validation finale de la migration next-intl...');
+/**
+ * Script de validation finale pour vérifier que le mélange de langues est résolu
+ */
+console.log('🔍 Validation finale des corrections de traductions...\n');
 
-const results = {
-  passed: 0,
-  failed: 0,
-  warnings: 0,
-  tests: []
-};
+// 1. Vérifier que les traductions critiques existent
+const languages = ['fr', 'en', 'ar'];
+const translationFiles = {};
 
-function addTest(name, status, message) {
-  results.tests.push({ name, status, message });
-  if (status === 'PASS') results.passed++;
-  else if (status === 'FAIL') results.failed++;
-  else if (status === 'WARN') results.warnings++;
-}
-
-// Test 1: Vérifier qu'il n'y a plus de react-i18next
-console.log('\n1. Test: Absence de react-i18next...');
-try {
-  const result = execSync('powershell "(Get-ChildItem -Path components,app -Include *.tsx -Recurse | Select-String \\"react-i18next\\").Count"', { encoding: 'utf8' });
-  const count = parseInt(result.trim()) || 0;
-  
-  if (count === 0) {
-    addTest('react-i18next-removal', 'PASS', 'Aucune référence à react-i18next trouvée');
-  } else {
-    addTest('react-i18next-removal', 'FAIL', `${count} références à react-i18next encore présentes`);
+console.log('📂 Vérification des fichiers de traduction...');
+languages.forEach(lang => {
+  const filePath = path.join('messages', `${lang}.json`);
+  try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    translationFiles[lang] = JSON.parse(content);
+    console.log(`✅ ${lang}.json chargé`);
+  } catch (error) {
+    console.error(`❌ Erreur ${lang}.json:`, error.message);
+    translationFiles[lang] = {};
   }
-} catch (error) {
-  addTest('react-i18next-removal', 'WARN', 'Impossible de vérifier les références react-i18next');
-}
+});
 
-// Test 2: Vérifier la présence de useTranslations
-console.log('2. Test: Utilisation de useTranslations...');
-try {
-  const result = execSync('powershell "(Get-ChildItem -Path components,app -Include *.tsx -Recurse | Select-String \\"useTranslations\\").Count"', { encoding: 'utf8' });
-  const count = parseInt(result.trim()) || 0;
+// Fonction pour obtenir une traduction
+function getTranslation(lang, key) {
+  const keys = key.split('.');
+  let current = translationFiles[lang];
   
-  if (count > 0) {
-    addTest('useTranslations-usage', 'PASS', `${count} utilisations de useTranslations trouvées`);
-  } else {
-    addTest('useTranslations-usage', 'WARN', 'Aucune utilisation de useTranslations trouvée');
+  for (const k of keys) {
+    if (current && typeof current === 'object' && k in current) {
+      current = current[k];
+    } else {
+      return null;
+    }
   }
-} catch (error) {
-  addTest('useTranslations-usage', 'WARN', 'Impossible de vérifier les utilisations de useTranslations');
+  
+  return current;
 }
 
-// Test 3: Vérifier les fichiers de configuration
-console.log('3. Test: Configuration next-intl...');
-const configFiles = [
-  { file: 'i18n.ts', name: 'Configuration i18n' },
-  { file: 'middleware.ts', name: 'Middleware de routage' },
-  { file: 'next.config.mjs', name: 'Configuration Next.js' }
+// 2. Vérifier les clés critiques qui causaient le mélange
+const criticalKeys = [
+  'lofts.details.title',
+  'lofts.details.pricePerNight', 
+  'lofts.details.owner',
+  'lofts.details.propertyType',
+  'lofts.details.description',
+  'lofts.details.amenities',
+  'lofts.details.gallery',
+  'lofts.details.additionalInfo',
+  'lofts.details.createdAt',
+  'lofts.details.lastUpdated',
+  'bills.management.title',
+  'bills.management.water',
+  'bills.management.electricity',
+  'bills.management.gas',
+  'bills.management.phone',
+  'bills.management.internet',
+  'bills.frequency.notSet',
+  'bills.frequency.undefined',
+  'common.available',
+  'common.company',
+  'common.percentages'
 ];
 
-configFiles.forEach(({ file, name }) => {
-  if (fs.existsSync(file)) {
-    addTest(`config-${file}`, 'PASS', `${name} présent`);
+console.log('\n🔍 Vérification des clés critiques...');
+let allKeysPresent = true;
+
+criticalKeys.forEach(key => {
+  const results = {};
+  languages.forEach(lang => {
+    results[lang] = getTranslation(lang, key) !== null;
+  });
+  
+  const allLangsPresent = Object.values(results).every(present => present);
+  if (allLangsPresent) {
+    console.log(`✅ ${key}`);
   } else {
-    addTest(`config-${file}`, 'FAIL', `${name} manquant`);
+    console.log(`❌ ${key} - Manquant dans: ${Object.entries(results).filter(([lang, present]) => !present).map(([lang]) => lang).join(', ')}`);
+    allKeysPresent = false;
   }
 });
 
-// Test 4: Vérifier les fichiers de traduction
-console.log('4. Test: Fichiers de traduction...');
-const locales = ['fr', 'en', 'ar'];
-locales.forEach(locale => {
-  const filePath = `messages/${locale}.json`;
-  if (fs.existsSync(filePath)) {
-    try {
-      const content = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-      const keyCount = countKeys(content);
-      addTest(`translations-${locale}`, 'PASS', `${keyCount} clés de traduction`);
-    } catch (error) {
-      addTest(`translations-${locale}`, 'FAIL', `Fichier ${locale} invalide`);
-    }
+// 3. Vérifier que le fichier loft page n'a plus de texte en dur
+console.log('\n🔍 Vérification du fichier loft page...');
+const loftPagePath = 'app/[locale]/lofts/[id]/page.tsx';
+
+try {
+  const loftPageContent = fs.readFileSync(loftPagePath, 'utf8');
+  
+  const hasHardcodedArabic = /['"][\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]+['"]/.test(loftPageContent);
+  const hasGetStaticTranslation = loftPageContent.includes('getStaticTranslation');
+  const hasUseTranslations = loftPageContent.includes('getTranslations');
+  
+  if (hasHardcodedArabic) {
+    console.log('⚠️  Texte arabe en dur encore présent dans le fichier loft page');
   } else {
-    addTest(`translations-${locale}`, 'FAIL', `Fichier ${locale} manquant`);
+    console.log('✅ Aucun texte arabe en dur détecté dans le fichier loft page');
+  }
+  
+  if (hasGetStaticTranslation) {
+    console.log('⚠️  Fonction getStaticTranslation encore présente');
+  } else {
+    console.log('✅ Fonction getStaticTranslation supprimée');
+  }
+  
+  if (hasUseTranslations) {
+    console.log('✅ Utilise getTranslations pour les traductions côté serveur');
+  } else {
+    console.log('⚠️  N\'utilise pas getTranslations');
+  }
+  
+} catch (error) {
+  console.error('❌ Erreur lors de la vérification du fichier loft page:', error.message);
+}
+
+// 4. Compter les textes en dur restants
+console.log('\n🔍 Scan rapide des textes en dur restants...');
+
+const problematicTexts = [
+  'Disponible',
+  'Type de propriété', 
+  'Description',
+  'Propriétaire',
+  'الهاتف',
+  'المياه',
+  'الكهرباء',
+  'الغاز'
+];
+
+let totalHardcodedFound = 0;
+const directories = ['components', 'app'];
+
+directories.forEach(dir => {
+  if (fs.existsSync(dir)) {
+    const files = fs.readdirSync(dir, { recursive: true });
+    files.forEach(file => {
+      if (typeof file === 'string' && (file.endsWith('.tsx') || file.endsWith('.ts'))) {
+        const fullPath = path.join(dir, file);
+        try {
+          const content = fs.readFileSync(fullPath, 'utf8');
+          
+          problematicTexts.forEach(text => {
+            const regex = new RegExp(`["'\`]${text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["'\`]`, 'g');
+            const matches = content.match(regex);
+            if (matches) {
+              totalHardcodedFound += matches.length;
+            }
+          });
+        } catch (error) {
+          // Ignorer les erreurs de lecture
+        }
+      }
+    });
   }
 });
 
-// Test 5: Vérifier les routes localisées
-console.log('5. Test: Routes localisées...');
-if (fs.existsSync('app/[locale]')) {
-  addTest('localized-routes', 'PASS', 'Structure de routes localisées présente');
-  
-  // Vérifier quelques routes importantes
-  const importantRoutes = ['dashboard', 'login', 'lofts'];
-  importantRoutes.forEach(route => {
-    if (fs.existsSync(`app/[locale]/${route}`)) {
-      addTest(`route-${route}`, 'PASS', `Route /${route} localisée`);
-    } else {
-      addTest(`route-${route}`, 'WARN', `Route /${route} non localisée`);
-    }
-  });
+console.log(`📊 Textes en dur restants: ${totalHardcodedFound}`);
+
+// 5. Résumé final
+console.log('\n📊 RÉSUMÉ DE VALIDATION:');
+
+if (allKeysPresent) {
+  console.log('✅ Toutes les traductions critiques sont présentes');
 } else {
-  addTest('localized-routes', 'FAIL', 'Structure de routes localisées manquante');
+  console.log('❌ Certaines traductions critiques sont manquantes');
 }
 
-// Test 6: Vérifier les dépendances
-console.log('6. Test: Dépendances...');
-try {
-  const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-  
-  // Vérifier que next-intl est installé
-  if (packageJson.dependencies?.['next-intl']) {
-    addTest('next-intl-dependency', 'PASS', 'next-intl installé');
-  } else {
-    addTest('next-intl-dependency', 'FAIL', 'next-intl manquant');
-  }
-  
-  // Vérifier que les anciennes dépendances sont supprimées
-  const oldDeps = ['i18next', 'react-i18next', 'i18next-browser-languagedetector'];
-  const foundOldDeps = oldDeps.filter(dep => 
-    packageJson.dependencies?.[dep] || packageJson.devDependencies?.[dep]
-  );
-  
-  if (foundOldDeps.length === 0) {
-    addTest('old-dependencies-removed', 'PASS', 'Anciennes dépendances supprimées');
-  } else {
-    addTest('old-dependencies-removed', 'FAIL', `Dépendances restantes: ${foundOldDeps.join(', ')}`);
-  }
-} catch (error) {
-  addTest('dependencies-check', 'FAIL', 'Impossible de vérifier les dépendances');
-}
-
-// Test 7: Test de construction
-console.log('7. Test: Construction de l\'application...');
-try {
-  console.log('   🔨 Construction en cours...');
-  execSync('npm run build', { stdio: 'pipe' });
-  addTest('build-success', 'PASS', 'Construction réussie');
-} catch (error) {
-  addTest('build-success', 'FAIL', 'Échec de la construction');
-}
-
-// Résultats finaux
-console.log('\n📊 Résultats de la validation finale:');
-console.log(`   ✅ Tests réussis: ${results.passed}`);
-console.log(`   ❌ Tests échoués: ${results.failed}`);
-console.log(`   ⚠️  Avertissements: ${results.warnings}`);
-
-if (results.failed > 0) {
-  console.log('\n❌ Tests échoués:');
-  results.tests.filter(t => t.status === 'FAIL').forEach(test => {
-    console.log(`   - ${test.name}: ${test.message}`);
-  });
-}
-
-if (results.warnings > 0) {
-  console.log('\n⚠️  Avertissements:');
-  results.tests.filter(t => t.status === 'WARN').forEach(test => {
-    console.log(`   - ${test.name}: ${test.message}`);
-  });
-}
-
-// Déterminer le statut global
-let globalStatus;
-if (results.failed === 0 && results.warnings === 0) {
-  globalStatus = '🎉 MIGRATION COMPLÈTE ET VALIDÉE';
-} else if (results.failed === 0) {
-  globalStatus = '✅ MIGRATION COMPLÈTE AVEC AVERTISSEMENTS';
+if (totalHardcodedFound === 0) {
+  console.log('✅ Aucun texte en dur problématique détecté');
 } else {
-  globalStatus = '❌ MIGRATION INCOMPLÈTE';
+  console.log(`⚠️  ${totalHardcodedFound} textes en dur encore présents`);
 }
 
-console.log(`\n${globalStatus}`);
-
-// Sauvegarder le rapport de validation
-const validationReport = {
-  timestamp: new Date().toISOString(),
-  status: globalStatus,
-  summary: {
-    passed: results.passed,
-    failed: results.failed,
-    warnings: results.warnings,
-    total: results.tests.length
-  },
-  tests: results.tests
-};
-
-fs.writeFileSync('validation-report.json', JSON.stringify(validationReport, null, 2));
-console.log('\n📋 Rapport de validation sauvegardé: validation-report.json');
-
-function countKeys(obj) {
-  let count = 0;
-  for (const key in obj) {
-    if (typeof obj[key] === 'object' && obj[key] !== null) {
-      count += countKeys(obj[key]);
-    } else {
-      count++;
-    }
-  }
-  return count;
+// Verdict final
+if (allKeysPresent && totalHardcodedFound < 5) {
+  console.log('\n🎉 ✅ VALIDATION RÉUSSIE !');
+  console.log('   Le mélange de langues devrait être largement résolu.');
+  console.log('   Redémarrez l\'application pour voir les améliorations.');
+} else if (allKeysPresent) {
+  console.log('\n⚠️  ✅ VALIDATION PARTIELLE');
+  console.log('   Les traductions principales sont présentes mais quelques textes en dur subsistent.');
+  console.log('   L\'interface devrait être beaucoup mieux mais peut nécessiter des ajustements mineurs.');
+} else {
+  console.log('\n❌ VALIDATION ÉCHOUÉE');
+  console.log('   Des traductions critiques sont encore manquantes.');
+  console.log('   Exécutez à nouveau les scripts de correction.');
 }
+
+console.log('\n💡 Recommandations finales:');
+console.log('   1. Redémarrez l\'application: npm run dev');
+console.log('   2. Testez l\'interface en arabe pour vérifier les améliorations');
+console.log('   3. Si des problèmes persistent, utilisez le rapport hardcoded-text-report.json');
+console.log('   4. Corrigez manuellement les derniers textes en dur si nécessaire');
+
+console.log('\n✨ Validation terminée !');

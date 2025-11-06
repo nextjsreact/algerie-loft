@@ -6,6 +6,9 @@ export function useNotificationSound() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   const playNotificationSound = useCallback(async (type: 'success' | 'info' | 'warning' | 'error' = 'info') => {
+    // Safety check for browser environment
+    if (typeof window === 'undefined') return
+    
     try {
       // Try to play custom sound first
       if (!audioRef.current) {

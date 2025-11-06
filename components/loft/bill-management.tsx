@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertTriangle, Calendar, CheckCircle, Clock, DollarSign, Zap, Droplets, Phone, Wifi } from 'lucide-react'
 import { toast } from 'sonner'
 import { markBillAsPaid } from '@/app/actions/bill-notifications'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 
 interface BillInfo {
   type: 'eau' | 'energie' | 'telephone' | 'internet'
@@ -36,7 +36,72 @@ const UTILITY_CONFIG = {
 }
 
 export function LoftBillManagement({ loftId, loftData }: LoftBillManagementProps) {
-  const t = useTranslations('lofts')
+  const locale = useLocale() as 'fr' | 'en' | 'ar'
+  
+  // Traductions pour les 3 langues
+  const translations = {
+    fr: {
+      title: "Gestion des factures",
+      water: "Eau",
+      energy: "Énergie", 
+      phone: "Téléphone",
+      internet: "Internet",
+      noFrequencySet: "Fréquence non définie",
+      notSet: "Non défini",
+      noDueDatesSet: "Aucune date d'échéance définie",
+      editLoftToAddBillInfo: "Modifiez l'appartement pour ajouter les fréquences et dates d'échéance des factures",
+      frequency: "Fréquence",
+      markAsPaid: "Marquer comme payé",
+      cancel: "Annuler",
+      processing: "Traitement...",
+      paymentAmount: "Montant du paiement",
+      enterPaymentAmount: "Entrez le montant du paiement"
+    },
+    en: {
+      title: "Bill Management",
+      water: "Water",
+      energy: "Energy",
+      phone: "Phone", 
+      internet: "Internet",
+      noFrequencySet: "No frequency set",
+      notSet: "Not Set",
+      noDueDatesSet: "No bill due dates set",
+      editLoftToAddBillInfo: "Edit the loft to add bill frequencies and due dates",
+      frequency: "Frequency",
+      markAsPaid: "Mark as Paid",
+      cancel: "Cancel",
+      processing: "Processing...",
+      paymentAmount: "Payment Amount",
+      enterPaymentAmount: "Enter payment amount"
+    },
+    ar: {
+      title: "إدارة الفواتير",
+      water: "المياه",
+      energy: "الطاقة",
+      phone: "الهاتف",
+      internet: "الإنترنت", 
+      noFrequencySet: "لم يتم تعيين تردد",
+      notSet: "غير محدد",
+      noDueDatesSet: "لم يتم تعيين تواريخ استحقاق الفواتير",
+      editLoftToAddBillInfo: "قم بتعديل الشقة لإضافة ترددات الفواتير وتواريخ الاستحقاق",
+      frequency: "التكرار",
+      markAsPaid: "تحديد كمدفوع",
+      cancel: "إلغاء",
+      processing: "جاري المعالجة...",
+      paymentAmount: "مبلغ الدفع",
+      enterPaymentAmount: "أدخل مبلغ الدفع",
+      noBillDueDatesSet: "لم يتم تعيين تواريخ استحقاق الفواتير"
+    }
+  }
+  
+  const t = (key: string) => {
+    // Gérer les clés avec préfixe billManagement.
+    if (key.startsWith('billManagement.')) {
+      const simpleKey = key.replace('billManagement.', '')
+      return translations[locale][simpleKey as keyof typeof translations['fr']] || key
+    }
+    return translations[locale][key as keyof typeof translations['fr']] || key
+  }
   const [bills, setBills] = useState<BillInfo[]>([])
   const [loading, setLoading] = useState(false)
   const [paymentDialog, setPaymentDialog] = useState<{ open: boolean; bill: BillInfo | null }>({ open: false, bill: null })

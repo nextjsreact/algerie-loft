@@ -1,0 +1,548 @@
+{
+  "timestamp": "2025-11-06T12:18:12.808Z",
+  "requiredKeys": [
+    "lofts.editLoft",
+    "lofts.linkToAirbnb",
+    "lofts.loftInfoTitle",
+    "lofts.pricePerNight",
+    "lofts.owner",
+    "lofts.description",
+    "lofts.available",
+    "lofts.occupied",
+    "lofts.maintenance",
+    "lofts.details.title",
+    "lofts.details.auditHistory",
+    "lofts.details.owner",
+    "common.currencies.da",
+    "common.company",
+    "owners.ownershipType",
+    "lofts.additionalInfo.percentages",
+    "lofts.additionalInfo.title",
+    "lofts.additionalInfo.photoGallery",
+    "lofts.additionalInfo.createdOn",
+    "lofts.additionalInfo.lastUpdated",
+    "lofts.billManagement.title",
+    "lofts.billManagement.water",
+    "lofts.billManagement.electricity",
+    "lofts.billManagement.gas",
+    "lofts.billManagement.phone",
+    "lofts.billManagement.internet",
+    "lofts.billManagement.nextBills",
+    "lofts.billManagement.notSet",
+    "lofts.billManagement.customerCode",
+    "lofts.billManagement.meterNumber",
+    "lofts.billManagement.correspondent",
+    "lofts.billManagement.clientNumber",
+    "lofts.billManagement.pdlRef"
+  ],
+  "results": {
+    "fr": [
+      {
+        "key": "lofts.editLoft",
+        "value": "Modifier l'appartement",
+        "exists": true
+      },
+      {
+        "key": "lofts.linkToAirbnb",
+        "value": "Lier à Airbnb",
+        "exists": true
+      },
+      {
+        "key": "lofts.loftInfoTitle",
+        "value": "Informations sur l'appartement",
+        "exists": true
+      },
+      {
+        "key": "lofts.pricePerNight",
+        "value": "Prix par nuit",
+        "exists": true
+      },
+      {
+        "key": "lofts.owner",
+        "value": "Propriétaire",
+        "exists": true
+      },
+      {
+        "key": "lofts.description",
+        "value": "Description",
+        "exists": true
+      },
+      {
+        "key": "lofts.available",
+        "value": "Disponible",
+        "exists": true
+      },
+      {
+        "key": "lofts.occupied",
+        "value": "Occupé",
+        "exists": true
+      },
+      {
+        "key": "lofts.maintenance",
+        "value": "Maintenance",
+        "exists": true
+      },
+      {
+        "key": "lofts.details.title",
+        "value": "Détails du Loft",
+        "exists": true
+      },
+      {
+        "key": "lofts.details.auditHistory",
+        "value": "Historique d'audit",
+        "exists": true
+      },
+      {
+        "key": "lofts.details.owner",
+        "value": "Propriétaire",
+        "exists": true
+      },
+      {
+        "key": "common.currencies.da",
+        "value": "DA",
+        "exists": true
+      },
+      {
+        "key": "common.company",
+        "value": "Société",
+        "exists": true
+      },
+      {
+        "key": "owners.ownershipType",
+        "value": "Type de propriété",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.percentages",
+        "value": "Pourcentages",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.title",
+        "value": "Informations supplémentaires",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.photoGallery",
+        "value": "Galerie de photos",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.createdOn",
+        "value": "Créé le",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.lastUpdated",
+        "value": "Dernière mise à jour",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.title",
+        "value": "Gestion des factures",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.water",
+        "value": "Eau",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.electricity",
+        "value": "Électricité",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.gas",
+        "value": "Gaz",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.phone",
+        "value": "Téléphone",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.internet",
+        "value": "Internet",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.nextBills",
+        "value": "Prochaines factures",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.notSet",
+        "value": "Non défini",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.customerCode",
+        "value": "Code client",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.meterNumber",
+        "value": "Numéro de compteur",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.correspondent",
+        "value": "Correspondant",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.clientNumber",
+        "value": "Numéro client",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.pdlRef",
+        "value": "Référence PDL",
+        "exists": true
+      }
+    ],
+    "en": [
+      {
+        "key": "lofts.editLoft",
+        "value": "Edit loft",
+        "exists": true
+      },
+      {
+        "key": "lofts.linkToAirbnb",
+        "value": "Link to Airbnb",
+        "exists": true
+      },
+      {
+        "key": "lofts.loftInfoTitle",
+        "value": "Loft Information",
+        "exists": true
+      },
+      {
+        "key": "lofts.pricePerNight",
+        "value": "Price per Night",
+        "exists": true
+      },
+      {
+        "key": "lofts.owner",
+        "value": "Owner",
+        "exists": true
+      },
+      {
+        "key": "lofts.description",
+        "value": "Description",
+        "exists": true
+      },
+      {
+        "key": "lofts.available",
+        "value": "Available",
+        "exists": true
+      },
+      {
+        "key": "lofts.occupied",
+        "value": "Occupied",
+        "exists": true
+      },
+      {
+        "key": "lofts.maintenance",
+        "value": "Maintenance",
+        "exists": true
+      },
+      {
+        "key": "lofts.details.title",
+        "value": "Loft Details",
+        "exists": true
+      },
+      {
+        "key": "lofts.details.auditHistory",
+        "value": "Audit History",
+        "exists": true
+      },
+      {
+        "key": "lofts.details.owner",
+        "value": "Owner",
+        "exists": true
+      },
+      {
+        "key": "common.currencies.da",
+        "value": "DA",
+        "exists": true
+      },
+      {
+        "key": "common.company",
+        "value": "Company",
+        "exists": true
+      },
+      {
+        "key": "owners.ownershipType",
+        "value": "Ownership Type",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.percentages",
+        "value": "Percentages",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.title",
+        "value": "Additional Information",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.photoGallery",
+        "value": "Photo Gallery",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.createdOn",
+        "value": "Created on",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.lastUpdated",
+        "value": "Last updated",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.title",
+        "value": "Bill Management",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.water",
+        "value": "Water",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.electricity",
+        "value": "Electricity",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.gas",
+        "value": "Gas",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.phone",
+        "value": "Phone",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.internet",
+        "value": "Internet",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.nextBills",
+        "value": "Next Bills",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.notSet",
+        "value": "Not Set",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.customerCode",
+        "value": "Customer Code",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.meterNumber",
+        "value": "Meter Number",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.correspondent",
+        "value": "Correspondent",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.clientNumber",
+        "value": "Client Number",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.pdlRef",
+        "value": "PDL Reference",
+        "exists": true
+      }
+    ],
+    "ar": [
+      {
+        "key": "lofts.editLoft",
+        "value": "تعديل الشقة",
+        "exists": true
+      },
+      {
+        "key": "lofts.linkToAirbnb",
+        "value": "ربط بـ Airbnb",
+        "exists": true
+      },
+      {
+        "key": "lofts.loftInfoTitle",
+        "value": "معلومات الشقة",
+        "exists": true
+      },
+      {
+        "key": "lofts.pricePerNight",
+        "value": "السعر لليلة",
+        "exists": true
+      },
+      {
+        "key": "lofts.owner",
+        "value": "المالك",
+        "exists": true
+      },
+      {
+        "key": "lofts.description",
+        "value": "الوصف",
+        "exists": true
+      },
+      {
+        "key": "lofts.available",
+        "value": "متاح",
+        "exists": true
+      },
+      {
+        "key": "lofts.occupied",
+        "value": "مشغولة",
+        "exists": true
+      },
+      {
+        "key": "lofts.maintenance",
+        "value": "صيانة",
+        "exists": true
+      },
+      {
+        "key": "lofts.details.title",
+        "value": "تفاصيل الشقة",
+        "exists": true
+      },
+      {
+        "key": "lofts.details.auditHistory",
+        "value": "سجل التدقيق",
+        "exists": true
+      },
+      {
+        "key": "lofts.details.owner",
+        "value": "المالك",
+        "exists": true
+      },
+      {
+        "key": "common.currencies.da",
+        "value": "دج",
+        "exists": true
+      },
+      {
+        "key": "common.company",
+        "value": "شركة",
+        "exists": true
+      },
+      {
+        "key": "owners.ownershipType",
+        "value": "نوع الملكية",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.percentages",
+        "value": "النسب المئوية",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.title",
+        "value": "معلومات إضافية",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.photoGallery",
+        "value": "معرض الصور",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.createdOn",
+        "value": "تم الإنشاء في",
+        "exists": true
+      },
+      {
+        "key": "lofts.additionalInfo.lastUpdated",
+        "value": "آخر تحديث",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.title",
+        "value": "إدارة الفواتير",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.water",
+        "value": "المياه",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.electricity",
+        "value": "الكهرباء",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.gas",
+        "value": "الغاز",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.phone",
+        "value": "الهاتف",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.internet",
+        "value": "الإنترنت",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.nextBills",
+        "value": "الفواتير القادمة",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.notSet",
+        "value": "غير محدد",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.customerCode",
+        "value": "رمز العميل",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.meterNumber",
+        "value": "رقم العداد",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.correspondent",
+        "value": "المراسل",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.clientNumber",
+        "value": "رقم العميل",
+        "exists": true
+      },
+      {
+        "key": "lofts.billManagement.pdlRef",
+        "value": "مرجع PDL",
+        "exists": true
+      }
+    ]
+  },
+  "summary": {
+    "fr": 33,
+    "en": 33,
+    "ar": 33,
+    "total": 33,
+    "allPresent": true
+  }
+}

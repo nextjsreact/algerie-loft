@@ -10,7 +10,7 @@ const intlMiddleware = createIntlMiddleware({
   locales: ['fr', 'ar', 'en'],
   defaultLocale: 'fr',
   localePrefix: 'always',
-  localeDetection: true,
+  localeDetection: false, // Désactiver la détection automatique pour éviter les mélanges
 });
 
 export async function middleware(request: NextRequest) {

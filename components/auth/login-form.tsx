@@ -44,8 +44,20 @@ export function LoginForm() {
 
     try {
       const result = await login(data.email, data.password)
-      if (result.success) {
-        router.push("/fr/home")
+      if (result.success && result.user) {
+        // Redirection basée sur le rôle de l'employé
+        const role = result.user.role
+        let redirectPath = "/fr/home" // Par défaut
+        
+        if (role === 'superuser') {
+          redirectPath = "/fr/admin/superuser/dashboard"
+        } else if (role === 'executive') {
+          redirectPath = "/fr/executive"
+        } else if (role === 'admin' || role === 'manager' || role === 'member') {
+          redirectPath = "/fr/home"
+        }
+        
+        router.push(redirectPath)
         router.refresh()
       } else {
         setError(result.error || "Login failed")

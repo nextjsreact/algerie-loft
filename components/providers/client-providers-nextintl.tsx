@@ -91,7 +91,7 @@ export default function ClientProviders({ children, session, unreadCount, locale
                      )}
                      <div className="flex flex-1 flex-col min-w-0 relative">
                        {/* Desktop header - always visible on desktop */}
-                       <div className="hidden md:block">
+                       <div className="hidden md:block fixed top-0 right-0 left-0 md:left-72 z-20">
                          <ErrorBoundary>
                            <DesktopHeader />
                          </ErrorBoundary>
@@ -105,7 +105,7 @@ export default function ClientProviders({ children, session, unreadCount, locale
                          />
                        </ErrorBoundary>
                        
-                       <main className="flex-1 overflow-y-auto relative z-0 p-6 md:p-8 lg:p-12">
+                       <main className="flex-1 overflow-y-auto relative z-0 p-6 md:p-8 lg:p-12 md:pt-24">
                          {children}
                        </main>
                      </div>

@@ -3197,6 +3197,55 @@
       "emergencyLockdown": "Verrouillage d'Urgence",
       "emergencyAlerts": "Alertes Critiques"
     },
+    "dashboard": {
+      "systemStatus": {
+        "title": "État du Système"
+      },
+      "responseTime": "Temps de réponse",
+      "activeUsers": "Utilisateurs Actifs",
+      "sessions": "Sessions",
+      "reservations": "Réservations",
+      "errorRate": "Taux d'erreur",
+      "backup": "Sauvegarde",
+      "lastBackup": "Dernière sauvegarde",
+      "overview": "Vue d'ensemble",
+      "securityAlerts": "Alertes de Sécurité",
+      "auditLog": "Journal d'Audit",
+      "emergencyActions": "Actions d'Urgence",
+      "systemPerformance": "Performance Système",
+      "database": "Base de données",
+      "avgResponseTime": "Temps de réponse moyen",
+      "quickActions": "Actions Rapides",
+      "cards": {
+        "userManagement": {
+          "title": "Gestion Utilisateurs"
+        },
+        "backup": {
+          "title": "Sauvegardes"
+        },
+        "audit": {
+          "title": "Audit"
+        },
+        "maintenance": {
+          "title": "Maintenance"
+        }
+      },
+      "recentSecurityAlerts": "Alertes de Sécurité Récentes",
+      "securityAlertsDescription": "Dernières alertes de sécurité du système",
+      "noRecentAlerts": "Aucune alerte récente",
+      "resolve": "Résoudre",
+      "recentAuditLog": "Journal d'Audit Récent",
+      "auditLogDescription": "Dernières entrées du journal d'audit",
+      "noRecentAuditEntries": "Aucune entrée récente",
+      "emergencyActionsDescription": "Actions critiques pour situations d'urgence",
+      "emergencyWarning": "Ces actions sont irréversibles et doivent être utilisées uniquement en cas d'urgence absolue",
+      "emergencyLockdown": "Verrouillage d'Urgence",
+      "emergencyBackup": "Sauvegarde d'Urgence",
+      "systemRestart": "Redémarrage Système",
+      "massLogout": "Déconnexion Massive",
+      "errorLoading": "Erreur de chargement",
+      "noData": "Aucune donnée disponible"
+    },
     "status": {
       "systemStatus": "État Système",
       "operational": "Opérationnel",
@@ -3286,68 +3335,6 @@
         "activateUsers": "Activer les utilisateurs",
         "deactivateUsers": "Désactiver les utilisateurs",
         "deleteUsers": "Supprimer les utilisateurs"
-      }
-    },
-    "dashboard": {
-      "title": "Tableau de Bord Superuser",
-      "welcome": "Félicitations ! Vous êtes maintenant connecté en tant que superuser.",
-      "successMessage": "Succès ! Le système d'authentification superuser fonctionne correctement.",
-      "errorLoading": "Erreur lors du chargement du tableau de bord",
-      "noData": "Aucune donnée disponible",
-      "systemStatus": "État du Système",
-      "responseTime": "Temps de réponse",
-      "activeUsers": "Utilisateurs Actifs",
-      "sessions": "Sessions",
-      "reservations": "Réservations",
-      "errorRate": "Taux d'erreur",
-      "backup": "Sauvegarde",
-      "lastBackup": "Dernière sauvegarde",
-      "overview": "Vue d'ensemble",
-      "securityAlerts": "Alertes de Sécurité",
-      "auditLog": "Journal d'Audit",
-      "emergencyActions": "Actions d'Urgence",
-      "systemPerformance": "Performance Système",
-      "database": "Base de données",
-      "avgResponseTime": "Temps de réponse moyen",
-      "quickActions": "Actions Rapides",
-      "recentSecurityAlerts": "Alertes de Sécurité Récentes",
-      "securityAlertsDescription": "Surveillance des activités suspectes et des tentatives d'accès non autorisées",
-      "noRecentAlerts": "Aucune alerte de sécurité récente",
-      "resolve": "Résoudre",
-      "recentAuditLog": "Journal d'Audit Récent",
-      "auditLogDescription": "Historique des actions administratives et modifications système",
-      "noRecentAuditEntries": "Aucune entrée d'audit récente",
-      "emergencyActionsDescription": "Fonctions critiques pour la gestion d'urgence du système",
-      "emergencyWarning": "Ces actions peuvent affecter le fonctionnement du système. Utilisez avec précaution.",
-      "emergencyLockdown": "Verrouillage d'Urgence",
-      "emergencyBackup": "Sauvegarde d'Urgence",
-      "systemRestart": "Redémarrage Système",
-      "massLogout": "Déconnexion Massive",
-      "cards": {
-        "userManagement": {
-          "title": "Gestion des Utilisateurs",
-          "description": "Gérer les comptes utilisateurs et leurs permissions"
-        },
-        "security": {
-          "title": "Sécurité",
-          "description": "Monitoring et alertes de sécurité"
-        },
-        "audit": {
-          "title": "Audit",
-          "description": "Logs et historique des actions"
-        },
-        "maintenance": {
-          "title": "Maintenance",
-          "description": "Outils de maintenance système"
-        },
-        "backup": {
-          "title": "Sauvegardes",
-          "description": "Gestion des sauvegardes"
-        },
-        "configuration": {
-          "title": "Configuration",
-          "description": "Configuration système"
-        }
       }
     }
   },

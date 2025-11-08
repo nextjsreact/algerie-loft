@@ -63,10 +63,10 @@ export function ClientLoginForm() {
 
       if (signInData.user && signInData.session) {
         console.log('✅ Connexion réussie:', signInData.user.email)
-        console.log('✅ Session établie - redirection...')
+        console.log('✅ Session établie - redirection vers client dashboard...')
         
-        // Redirection avec locale - important pour next-intl
-        router.push("/fr/home")
+        // Redirection vers le dashboard client - important pour next-intl
+        router.push("/fr/client/dashboard")
         // Ne pas appeler setIsLoading(false) ici car on redirige
       } else {
         console.warn('⚠️ Pas de session dans la réponse')

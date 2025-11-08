@@ -3413,6 +3413,55 @@
       "emergencyLockdown": "Emergency Lockdown",
       "emergencyAlerts": "Critical Alerts"
     },
+    "dashboard": {
+      "systemStatus": {
+        "title": "System Status"
+      },
+      "responseTime": "Response time",
+      "activeUsers": "Active Users",
+      "sessions": "Sessions",
+      "reservations": "Reservations",
+      "errorRate": "Error rate",
+      "backup": "Backup",
+      "lastBackup": "Last backup",
+      "overview": "Overview",
+      "securityAlerts": "Security Alerts",
+      "auditLog": "Audit Log",
+      "emergencyActions": "Emergency Actions",
+      "systemPerformance": "System Performance",
+      "database": "Database",
+      "avgResponseTime": "Average response time",
+      "quickActions": "Quick Actions",
+      "cards": {
+        "userManagement": {
+          "title": "User Management"
+        },
+        "backup": {
+          "title": "Backups"
+        },
+        "audit": {
+          "title": "Audit"
+        },
+        "maintenance": {
+          "title": "Maintenance"
+        }
+      },
+      "recentSecurityAlerts": "Recent Security Alerts",
+      "securityAlertsDescription": "Latest system security alerts",
+      "noRecentAlerts": "No recent alerts",
+      "resolve": "Resolve",
+      "recentAuditLog": "Recent Audit Log",
+      "auditLogDescription": "Latest audit log entries",
+      "noRecentAuditEntries": "No recent entries",
+      "emergencyActionsDescription": "Critical actions for emergency situations",
+      "emergencyWarning": "These actions are irreversible and should only be used in absolute emergencies",
+      "emergencyLockdown": "Emergency Lockdown",
+      "emergencyBackup": "Emergency Backup",
+      "systemRestart": "System Restart",
+      "massLogout": "Mass Logout",
+      "errorLoading": "Error loading",
+      "noData": "No data available"
+    },
     "status": {
       "systemStatus": "System Status",
       "operational": "Operational",

@@ -3224,6 +3224,55 @@
       "emergencyLockdown": "إغلاق الطوارئ",
       "emergencyAlerts": "تنبيهات حرجة"
     },
+    "dashboard": {
+      "systemStatus": {
+        "title": "حالة النظام"
+      },
+      "responseTime": "وقت الاستجابة",
+      "activeUsers": "المستخدمون النشطون",
+      "sessions": "الجلسات",
+      "reservations": "الحجوزات",
+      "errorRate": "معدل الخطأ",
+      "backup": "النسخ الاحتياطي",
+      "lastBackup": "آخر نسخة احتياطية",
+      "overview": "نظرة عامة",
+      "securityAlerts": "تنبيهات الأمان",
+      "auditLog": "سجل المراجعة",
+      "emergencyActions": "إجراءات الطوارئ",
+      "systemPerformance": "أداء النظام",
+      "database": "قاعدة البيانات",
+      "avgResponseTime": "متوسط وقت الاستجابة",
+      "quickActions": "إجراءات سريعة",
+      "cards": {
+        "userManagement": {
+          "title": "إدارة المستخدمين"
+        },
+        "backup": {
+          "title": "النسخ الاحتياطية"
+        },
+        "audit": {
+          "title": "المراجعة"
+        },
+        "maintenance": {
+          "title": "الصيانة"
+        }
+      },
+      "recentSecurityAlerts": "تنبيهات الأمان الأخيرة",
+      "securityAlertsDescription": "أحدث تنبيهات أمان النظام",
+      "noRecentAlerts": "لا توجد تنبيهات حديثة",
+      "resolve": "حل",
+      "recentAuditLog": "سجل المراجعة الأخير",
+      "auditLogDescription": "أحدث إدخالات سجل المراجعة",
+      "noRecentAuditEntries": "لا توجد إدخالات حديثة",
+      "emergencyActionsDescription": "إجراءات حرجة لحالات الطوارئ",
+      "emergencyWarning": "هذه الإجراءات لا رجعة فيها ويجب استخدامها فقط في حالات الطوارئ المطلقة",
+      "emergencyLockdown": "إغلاق الطوارئ",
+      "emergencyBackup": "نسخة احتياطية طارئة",
+      "systemRestart": "إعادة تشغيل النظام",
+      "massLogout": "تسجيل خروج جماعي",
+      "errorLoading": "خطأ في التحميل",
+      "noData": "لا توجد بيانات متاحة"
+    },
     "status": {
       "systemStatus": "حالة النظام",
       "operational": "تشغيلي",

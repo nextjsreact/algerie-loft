@@ -1048,7 +1048,90 @@
     "recentTasks": "Tâches récentes",
     "revenueVsExpenses": "Revenus vs Dépenses",
     "subtitle": "Bienvenue sur votre tableau de bord de gestion immobilière",
-    "systemStatus": "État du Système",
+    "systemStatus": {
+      "title": "État du système",
+      "allOperational": "Tous les systèmes sont opérationnels",
+      "online": "En ligne"
+    },
+    "title": "Tableau de bord",
+    "description": "Gérez vos appartements et suivez vos activités",
+    "availableSections": "Sections disponibles",
+    "access": "Accéder",
+    "sections": {
+      "apartments": {
+        "title": "Appartements",
+        "description": "Gérer vos lofts et propriétés"
+      },
+      "reservations": {
+        "title": "Réservations",
+        "description": "Suivre les réservations et bookings"
+      },
+      "availability": {
+        "title": "Disponibilité",
+        "description": "Gérer les calendriers de disponibilité"
+      },
+      "tasks": {
+        "title": "Tâches",
+        "description": "Suivre et gérer les tâches"
+      },
+      "teams": {
+        "title": "Équipes",
+        "description": "Gérer les équipes et membres"
+      },
+      "platformSettings": {
+        "title": "Paramètres plateforme",
+        "description": "Configuration de la plateforme"
+      },
+      "owners": {
+        "title": "Propriétaires",
+        "description": "Gérer les propriétaires"
+      },
+      "transactions": {
+        "title": "Transactions",
+        "description": "Suivre les transactions financières"
+      },
+      "detailedReports": {
+        "title": "Rapports détaillés",
+        "description": "Générer et consulter les rapports"
+      },
+      "pendingPartners": {
+        "title": "Partenaires en attente",
+        "description": "Gérer les demandes de partenariat"
+      },
+      "validatePartners": {
+        "title": "Valider partenaires",
+        "description": "Valider les nouveaux partenaires"
+      },
+      "openDisputes": {
+        "title": "Litiges ouverts",
+        "description": "Gérer les litiges en cours"
+      },
+      "manageDisputes": {
+        "title": "Gérer litiges",
+        "description": "Administration des litiges"
+      }
+    },
+    "quickAccess": {
+      "title": "Accès rapide"
+    },
+    "quickAccessItems": {
+      "conversations": {
+        "title": "Conversations",
+        "description": "Messages et communications"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Alertes et notifications"
+      },
+      "dashboard": {
+        "title": "Tableau de bord",
+        "description": "Vue d'ensemble des activités"
+      },
+      "detailedReports": {
+        "title": "Rapports détaillés",
+        "description": "Analyses et statistiques"
+      }
+    },
     "tasks": {
       "status": {
         "completed": "Terminée",
@@ -2167,7 +2250,18 @@
     "manager": "Manager",
     "member": "Membre",
     "owner": "Propriétaire",
-    "user": "Utilisateur"
+    "user": "Utilisateur",
+    "client": "Client",
+    "partner": "Partenaire",
+    "superuser": "Super utilisateur"
+  },
+  "userMenu": {
+    "user": "Utilisateur",
+    "myDashboard": "Mon Dashboard",
+    "myProfile": "Mon Profil",
+    "editProfile": "Modifier le Profil",
+    "settings": "Paramètres",
+    "logout": "Se déconnecter"
   },
   "settings": {
     "profileInfo": "Informations du profil",

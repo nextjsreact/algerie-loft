@@ -1,314 +1,433 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { getCacheStats } from '@/hooks/useOptimizedQuery';
-import { cacheManager } from '@/lib/cache-manager';
+import React, { useState, useEffect, useCallback } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
+import { 
+  Activity, 
+  Zap, 
+  Database, 
+  Image as ImageIcon, 
+  Wifi,
+  Clock,
+  TrendingUp,
+  TrendingDown,
+  AlertTriangle,
+  CheckCircle
+} from 'lucide-react'
 
 interface PerformanceMetrics {
   // Core Web Vitals
-  lcp?: number; // Largest Contentful Paint
-  fid?: number; // First Input Delay
-  cls?: number; // Cumulative Layout Shift
-  
-  // Other metrics
-  ttfb?: number; // Time to First Byte
-  fcp?: number; // First Contentful Paint
-  tti?: number; // Time to Interactive
-  
-  // Memory
-  usedJSHeapSize?: number;
-  totalJSHeapSize?: number;
-  jsHeapSizeLimit?: number;
-  
-  // Network
-  connectionType?: string;
-  effectiveType?: string;
-  downlink?: number;
-  rtt?: number;
+  lcp: number | null // Largest Contentful Paint
+  fid: number | null // First Input Delay
+  cls: number | null // Cumulative Layout Shift
+  fcp: number | null // First Contentful Paint
+  ttfb: number | null // Time to First Byte
+
+  // Métriques personnalisées
+  memoryUsage: number
+  cacheHitRate: number
+  apiResponseTime: number
+  imageLoadTime: number
+  jsLoadTime: number
+  cssLoadTime: number
+
+  // Métriques réseau
+  connectionType: string
+  effectiveType: string
+  rtt: number
+  downlink: number
+}
+
+interface PerformanceAlert {
+  id: string
+  type: 'warning' | 'error' | 'info'
+  metric: string
+  value: number
+  threshold: number
+  message: string
+  timestamp: number
 }
 
 export function PerformanceMonitor() {
-  const [metrics, setMetrics] = useState<PerformanceMetrics>({});
-  const [isVisible, setIsVisible] = useState(false);
-  const [cacheStats, setCacheStats] = useState<any>({});
-  const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(null);
+  const [metrics, setMetrics] = useState<PerformanceMetrics>({
+    lcp: null,
+    fid: null,
+    cls: null,
+    fcp: null,
+    ttfb: null,
+    memoryUsage: 0,
+    cacheHitRate: 0,
+    apiResponseTime: 0,
+    imageLoadTime: 0,
+    jsLoadTime: 0,
+    cssLoadTime: 0,
+    connectionType: 'unknown',
+    effectiveType: 'unknown',
+    rtt: 0,
+    downlink: 0
+  })
 
-  // Collect performance metrics
-  const collectMetrics = () => {
-    const newMetrics: PerformanceMetrics = {};
+  const [alerts, setAlerts] = useState<PerformanceAlert[]>([])
+  const [isMonitoring, setIsMonitoring] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
 
-    // Performance Navigation Timing
-    if (performance.getEntriesByType) {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-      if (navigation) {
-        newMetrics.ttfb = navigation.responseStart - navigation.requestStart;
-        newMetrics.fcp = navigation.loadEventEnd - navigation.navigationStart;
+  // Seuils de performance
+  const thresholds = {
+    lcp: 2500, // 2.5s
+    fid: 100,  // 100ms
+    cls: 0.1,  // 0.1
+    fcp: 1800, // 1.8s
+    ttfb: 600, // 600ms
+    memoryUsage: 50, // 50MB
+    apiResponseTime: 1000, // 1s
+    cacheHitRate: 80 // 80%
+  }
+
+  // Collecter les métriques Core Web Vitals
+  const collectWebVitals = useCallback(() => {
+    if (typeof window === 'undefined') return
+
+    // Observer pour LCP
+    if ('PerformanceObserver' in window) {
+      try {
+        const lcpObserver = new PerformanceObserver((list) => {
+          const entries = list.getEntries()
+          const lastEntry = entries[entries.length - 1] as any
+          if (lastEntry) {
+            setMetrics(prev => ({ ...prev, lcp: lastEntry.startTime }))
+          }
+        })
+        lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] })
+
+        // Observer pour FID
+        const fidObserver = new PerformanceObserver((list) => {
+          const entries = list.getEntries()
+          entries.forEach((entry: any) => {
+            setMetrics(prev => ({ ...prev, fid: entry.processingStart - entry.startTime }))
+          })
+        })
+        fidObserver.observe({ entryTypes: ['first-input'] })
+
+        // Observer pour CLS
+        const clsObserver = new PerformanceObserver((list) => {
+          let clsValue = 0
+          const entries = list.getEntries()
+          entries.forEach((entry: any) => {
+            if (!entry.hadRecentInput) {
+              clsValue += entry.value
+            }
+          })
+          setMetrics(prev => ({ ...prev, cls: clsValue }))
+        })
+        clsObserver.observe({ entryTypes: ['layout-shift'] })
+
+        // Navigation Timing pour FCP et TTFB
+        const navigationEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[]
+        if (navigationEntries.length > 0) {
+          const nav = navigationEntries[0]
+          setMetrics(prev => ({
+            ...prev,
+            ttfb: nav.responseStart - nav.requestStart,
+            fcp: nav.loadEventEnd - nav.navigationStart
+          }))
+        }
+      } catch (error) {
+        console.warn('Performance Observer not fully supported:', error)
       }
     }
+  }, [])
 
-    // Memory usage (Chrome only)
+  // Collecter les métriques de mémoire
+  const collectMemoryMetrics = useCallback(() => {
+    if (typeof window === 'undefined') return
+
     if ('memory' in performance) {
-      const memory = (performance as any).memory;
-      newMetrics.usedJSHeapSize = memory.usedJSHeapSize;
-      newMetrics.totalJSHeapSize = memory.totalJSHeapSize;
-      newMetrics.jsHeapSizeLimit = memory.jsHeapSizeLimit;
+      const memory = (performance as any).memory
+      const memoryUsage = memory.usedJSHeapSize / (1024 * 1024) // MB
+      setMetrics(prev => ({ ...prev, memoryUsage }))
     }
+  }, [])
 
-    // Network information
+  // Collecter les métriques réseau
+  const collectNetworkMetrics = useCallback(() => {
+    if (typeof window === 'undefined') return
+
     if ('connection' in navigator) {
-      const connection = (navigator as any).connection;
-      newMetrics.connectionType = connection.type;
-      newMetrics.effectiveType = connection.effectiveType;
-      newMetrics.downlink = connection.downlink;
-      newMetrics.rtt = connection.rtt;
+      const connection = (navigator as any).connection
+      setMetrics(prev => ({
+        ...prev,
+        connectionType: connection.type || 'unknown',
+        effectiveType: connection.effectiveType || 'unknown',
+        rtt: connection.rtt || 0,
+        downlink: connection.downlink || 0
+      }))
     }
+  }, [])
 
-    setMetrics(newMetrics);
-  };
+  // Surveiller les temps de réponse API
+  const monitorApiResponses = useCallback(() => {
+    if (typeof window === 'undefined') return
 
-  // Collect cache statistics
-  const collectCacheStats = () => {
-    const queryStats = getCacheStats();
-    const cacheManagerStats = cacheManager.getStats();
-    
-    setCacheStats({
-      queryCache: queryStats,
-      cacheManager: cacheManagerStats
-    });
-  };
+    const originalFetch = window.fetch
+    window.fetch = async (...args) => {
+      const startTime = performance.now()
+      try {
+        const response = await originalFetch(...args)
+        const endTime = performance.now()
+        const responseTime = endTime - startTime
+        
+        setMetrics(prev => ({
+          ...prev,
+          apiResponseTime: (prev.apiResponseTime + responseTime) / 2 // Moyenne mobile
+        }))
 
-  // Format bytes
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
-  // Format milliseconds
-  const formatMs = (ms: number) => {
-    return `${ms.toFixed(2)}ms`;
-  };
-
-  // Get performance score color
-  const getScoreColor = (value: number, thresholds: { good: number; needs: number }) => {
-    if (value <= thresholds.good) return 'bg-green-500';
-    if (value <= thresholds.needs) return 'bg-yellow-500';
-    return 'bg-red-500';
-  };
-
-  // Toggle visibility
-  const toggleVisibility = () => {
-    setIsVisible(!isVisible);
-  };
-
-  // Start/stop auto refresh
-  const toggleAutoRefresh = () => {
-    if (refreshInterval) {
-      clearInterval(refreshInterval);
-      setRefreshInterval(null);
-    } else {
-      const interval = setInterval(() => {
-        collectMetrics();
-        collectCacheStats();
-      }, 5000); // Refresh every 5 seconds
-      setRefreshInterval(interval);
-    }
-  };
-
-  // Manual refresh
-  const refresh = () => {
-    collectMetrics();
-    collectCacheStats();
-  };
-
-  // Clear all caches
-  const clearAllCaches = () => {
-    cacheManager.clear();
-    collectCacheStats();
-  };
-
-  useEffect(() => {
-    collectMetrics();
-    collectCacheStats();
-
-    // Cleanup interval on unmount
-    return () => {
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
+        return response
+      } catch (error) {
+        const endTime = performance.now()
+        const responseTime = endTime - startTime
+        setMetrics(prev => ({
+          ...prev,
+          apiResponseTime: Math.max(prev.apiResponseTime, responseTime)
+        }))
+        throw error
       }
-    };
-  }, []);
+    }
+
+    return () => {
+      window.fetch = originalFetch
+    }
+  }, [])
+
+  // Vérifier les seuils et créer des alertes
+  const checkThresholds = useCallback(() => {
+    const newAlerts: PerformanceAlert[] = []
+
+    Object.entries(thresholds).forEach(([metric, threshold]) => {
+      const value = metrics[metric as keyof PerformanceMetrics] as number
+      if (value && value > threshold) {
+        newAlerts.push({
+          id: `${metric}-${Date.now()}`,
+          type: value > threshold * 1.5 ? 'error' : 'warning',
+          metric,
+          value,
+          threshold,
+          message: `${metric.toUpperCase()} dépasse le seuil (${value.toFixed(2)} > ${threshold})`,
+          timestamp: Date.now()
+        })
+      }
+    })
+
+    if (newAlerts.length > 0) {
+      setAlerts(prev => [...prev.slice(-10), ...newAlerts]) // Garder les 10 dernières alertes
+    }
+  }, [metrics])
+
+  // Démarrer/arrêter le monitoring
+  const toggleMonitoring = useCallback(() => {
+    setIsMonitoring(prev => !prev)
+  }, [])
+
+  // Effets pour collecter les métriques
+  useEffect(() => {
+    if (!isMonitoring) return
+
+    collectWebVitals()
+    collectNetworkMetrics()
+    
+    const cleanup = monitorApiResponses()
+
+    const interval = setInterval(() => {
+      collectMemoryMetrics()
+      collectNetworkMetrics()
+      checkThresholds()
+    }, 2000)
+
+    return () => {
+      clearInterval(interval)
+      cleanup?.()
+    }
+  }, [isMonitoring, collectWebVitals, collectMemoryMetrics, collectNetworkMetrics, monitorApiResponses, checkThresholds])
+
+  // Formater les valeurs
+  const formatValue = (value: number | null, unit: string = 'ms') => {
+    if (value === null) return 'N/A'
+    if (unit === 'ms') return `${Math.round(value)}ms`
+    if (unit === 'MB') return `${value.toFixed(1)}MB`
+    if (unit === '%') return `${Math.round(value)}%`
+    return value.toString()
+  }
+
+  // Obtenir la couleur selon la performance
+  const getPerformanceColor = (value: number | null, threshold: number) => {
+    if (value === null) return 'gray'
+    if (value <= threshold) return 'green'
+    if (value <= threshold * 1.5) return 'yellow'
+    return 'red'
+  }
 
   if (!isVisible) {
     return (
-      <div className="fixed bottom-4 right-4 z-50">
-        <Button
-          onClick={toggleVisibility}
-          variant="outline"
-          size="sm"
-          className="bg-white shadow-lg"
-        >
-          📊 Performance
-        </Button>
-      </div>
-    );
+      <Button
+        onClick={() => setIsVisible(true)}
+        className="fixed bottom-4 right-4 z-50"
+        size="sm"
+        variant="outline"
+      >
+        <Activity className="h-4 w-4 mr-2" />
+        Performance
+      </Button>
+    )
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-96 max-h-96 overflow-y-auto">
-      <Card className="shadow-2xl">
+    <div className="fixed bottom-4 right-4 z-50 w-96 max-h-[80vh] overflow-auto">
+      <Card>
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm">Performance Monitor</CardTitle>
-            <div className="flex space-x-1">
+            <CardTitle className="text-sm flex items-center">
+              <Activity className="h-4 w-4 mr-2" />
+              Performance Monitor
+            </CardTitle>
+            <div className="flex items-center gap-2">
               <Button
-                onClick={toggleAutoRefresh}
-                variant="outline"
+                onClick={toggleMonitoring}
                 size="sm"
-                className={refreshInterval ? 'bg-green-100' : ''}
+                variant={isMonitoring ? "destructive" : "default"}
               >
-                {refreshInterval ? '⏸️' : '▶️'}
+                {isMonitoring ? 'Stop' : 'Start'}
               </Button>
-              <Button onClick={refresh} variant="outline" size="sm">
-                🔄
-              </Button>
-              <Button onClick={toggleVisibility} variant="outline" size="sm">
-                ❌
+              <Button
+                onClick={() => setIsVisible(false)}
+                size="sm"
+                variant="ghost"
+              >
+                ×
               </Button>
             </div>
           </div>
         </CardHeader>
-        
-        <CardContent className="space-y-4 text-xs">
-          {/* Loading Metrics */}
+
+        <CardContent className="space-y-4">
+          {/* Core Web Vitals */}
           <div>
-            <h4 className="font-semibold mb-2">Loading</h4>
-            <div className="space-y-1">
-              {metrics.ttfb && (
-                <div className="flex justify-between">
-                  <span>TTFB:</span>
-                  <Badge variant="outline">{formatMs(metrics.ttfb)}</Badge>
-                </div>
-              )}
-              {metrics.fcp && (
-                <div className="flex justify-between">
-                  <span>FCP:</span>
-                  <Badge variant="outline">{formatMs(metrics.fcp)}</Badge>
-                </div>
-              )}
+            <h4 className="text-sm font-medium mb-2">Core Web Vitals</h4>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span>LCP:</span>
+                <Badge variant={getPerformanceColor(metrics.lcp, thresholds.lcp) as any}>
+                  {formatValue(metrics.lcp)}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>FID:</span>
+                <Badge variant={getPerformanceColor(metrics.fid, thresholds.fid) as any}>
+                  {formatValue(metrics.fid)}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>CLS:</span>
+                <Badge variant={getPerformanceColor(metrics.cls, thresholds.cls) as any}>
+                  {metrics.cls?.toFixed(3) || 'N/A'}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>TTFB:</span>
+                <Badge variant={getPerformanceColor(metrics.ttfb, thresholds.ttfb) as any}>
+                  {formatValue(metrics.ttfb)}
+                </Badge>
+              </div>
             </div>
           </div>
 
-          {/* Memory Usage */}
-          {metrics.usedJSHeapSize && (
+          {/* Métriques système */}
+          <div>
+            <h4 className="text-sm font-medium mb-2">Système</h4>
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="flex items-center">
+                  <Database className="h-3 w-3 mr-1" />
+                  Mémoire:
+                </span>
+                <span>{formatValue(metrics.memoryUsage, 'MB')}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="flex items-center">
+                  <Zap className="h-3 w-3 mr-1" />
+                  API:
+                </span>
+                <span>{formatValue(metrics.apiResponseTime)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="flex items-center">
+                  <Wifi className="h-3 w-3 mr-1" />
+                  Réseau:
+                </span>
+                <span>{metrics.effectiveType}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Alertes récentes */}
+          {alerts.length > 0 && (
             <div>
-              <h4 className="font-semibold mb-2">Memory</h4>
-              <div className="space-y-1">
-                <div className="flex justify-between">
-                  <span>Used:</span>
-                  <Badge variant="outline">{formatBytes(metrics.usedJSHeapSize)}</Badge>
-                </div>
-                <div className="flex justify-between">
-                  <span>Total:</span>
-                  <Badge variant="outline">{formatBytes(metrics.totalJSHeapSize || 0)}</Badge>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-blue-600 h-2 rounded-full" 
-                    style={{ 
-                      width: `${((metrics.usedJSHeapSize / (metrics.totalJSHeapSize || 1)) * 100)}%` 
-                    }}
-                  />
-                </div>
+              <h4 className="text-sm font-medium mb-2">Alertes</h4>
+              <div className="space-y-1 max-h-32 overflow-auto">
+                {alerts.slice(-3).map((alert) => (
+                  <div
+                    key={alert.id}
+                    className={`text-xs p-2 rounded flex items-start gap-2 ${
+                      alert.type === 'error' 
+                        ? 'bg-red-50 text-red-700' 
+                        : alert.type === 'warning'
+                        ? 'bg-yellow-50 text-yellow-700'
+                        : 'bg-blue-50 text-blue-700'
+                    }`}
+                  >
+                    {alert.type === 'error' ? (
+                      <AlertTriangle className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                    ) : (
+                      <Clock className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                    )}
+                    <span>{alert.message}</span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
 
-          {/* Network */}
-          {metrics.connectionType && (
-            <div>
-              <h4 className="font-semibold mb-2">Network</h4>
-              <div className="space-y-1">
-                <div className="flex justify-between">
-                  <span>Type:</span>
-                  <Badge variant="outline">{metrics.effectiveType}</Badge>
-                </div>
-                {metrics.downlink && (
-                  <div className="flex justify-between">
-                    <span>Speed:</span>
-                    <Badge variant="outline">{metrics.downlink} Mbps</Badge>
-                  </div>
-                )}
-                {metrics.rtt && (
-                  <div className="flex justify-between">
-                    <span>RTT:</span>
-                    <Badge variant="outline">{metrics.rtt}ms</Badge>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Cache Statistics */}
-          <div>
-            <h4 className="font-semibold mb-2">Cache</h4>
-            <div className="space-y-1">
-              {cacheStats.queryCache && (
-                <div className="flex justify-between">
-                  <span>Query Cache:</span>
-                  <Badge variant="outline">{cacheStats.queryCache.size} entries</Badge>
-                </div>
-              )}
-              {cacheStats.cacheManager && (
-                <>
-                  <div className="flex justify-between">
-                    <span>Memory Cache:</span>
-                    <Badge variant="outline">{cacheStats.cacheManager.memoryEntries} entries</Badge>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Persistent:</span>
-                    <Badge variant="outline">{cacheStats.cacheManager.persistentEntries} entries</Badge>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Memory Usage:</span>
-                    <Badge variant="outline">{formatBytes(cacheStats.cacheManager.totalMemoryUsage)}</Badge>
-                  </div>
-                </>
-              )}
-              <Button 
-                onClick={clearAllCaches} 
-                variant="destructive" 
-                size="sm" 
-                className="w-full mt-2"
-              >
-                Clear All Caches
-              </Button>
-            </div>
-          </div>
-
-          {/* Performance Tips */}
-          <div>
-            <h4 className="font-semibold mb-2">Tips</h4>
-            <div className="text-xs text-gray-600 space-y-1">
-              {metrics.usedJSHeapSize && metrics.totalJSHeapSize && 
-               (metrics.usedJSHeapSize / metrics.totalJSHeapSize) > 0.8 && (
-                <div className="text-red-600">⚠️ High memory usage detected</div>
-              )}
-              {metrics.ttfb && metrics.ttfb > 600 && (
-                <div className="text-yellow-600">⚠️ Slow server response time</div>
-              )}
-              {cacheStats.cacheManager?.memoryEntries > 800 && (
-                <div className="text-yellow-600">⚠️ Consider clearing cache</div>
-              )}
-            </div>
+          {/* Actions rapides */}
+          <div className="flex gap-2">
+            <Button
+              onClick={() => window.location.reload()}
+              size="sm"
+              variant="outline"
+              className="text-xs"
+            >
+              Reload
+            </Button>
+            <Button
+              onClick={() => {
+                if ('caches' in window) {
+                  caches.keys().then(names => {
+                    names.forEach(name => caches.delete(name))
+                  })
+                }
+                localStorage.clear()
+              }}
+              size="sm"
+              variant="outline"
+              className="text-xs"
+            >
+              Clear Cache
+            </Button>
           </div>
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
+
+export default PerformanceMonitor

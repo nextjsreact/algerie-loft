@@ -248,7 +248,7 @@ export function HomePage() {
             <div className="flex items-center justify-center gap-2">
               <CheckCircle className="h-5 w-5 text-green-600" />
               <span className="text-green-800 font-medium">
-                {t('systemStatus')}
+                {t('systemStatus.title')}
               </span>
               <Badge variant="secondary" className="bg-green-100 text-green-800">
                 {t('online')}

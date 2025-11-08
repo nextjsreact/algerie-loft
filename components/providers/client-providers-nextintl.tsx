@@ -16,6 +16,8 @@ import { InstallPrompt } from '@/components/pwa/install-prompt'
 import { Sidebar } from "@/components/layout/sidebar-nextintl"
 import { SuperuserSidebar } from "@/components/admin/superuser/superuser-sidebar"
 import { Header } from "@/components/layout/header-nextintl"
+import { AdaptiveHeader } from "@/components/layout/adaptive-header"
+import { MobileHeader } from "@/components/layout/mobile-header"
 import { ErrorBoundary } from "@/components/error-boundary"
 
 interface ClientProvidersProps {
@@ -88,16 +90,19 @@ export default function ClientProviders({ children, session, unreadCount, locale
                        </div>
                      )}
                      <div className="flex flex-1 flex-col min-w-0 relative">
-                       {/* Desktop header when sidebar is hidden */}
-                       {shouldHideSidebar && (
+                       {/* Desktop header - always visible on desktop */}
+                       <div className="hidden md:block">
                          <ErrorBoundary>
                            <DesktopHeader />
                          </ErrorBoundary>
-                       )}
+                       </div>
                        
-                       {/* Mobile header - always show */}
+                       {/* Mobile header - always shows burger menu */}
                        <ErrorBoundary>
-                         <Header user={session.user} />
+                         <MobileHeader 
+                           user={session.user} 
+                           showLogo={shouldHideSidebar} 
+                         />
                        </ErrorBoundary>
                        
                        <main className="flex-1 overflow-y-auto relative z-0 p-6 md:p-8 lg:p-12">

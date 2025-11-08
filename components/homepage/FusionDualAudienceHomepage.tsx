@@ -553,8 +553,8 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
               </motion.button>
             </div>
 
-            {/* Bouton pause/play - Toujours visible en haut à droite */}
-            <div className="absolute top-4 right-4 z-50">
+            {/* Bouton pause/play - Toujours visible en haut à gauche */}
+            <div className="absolute top-4 left-4 z-50">
               <motion.button
                 onClick={toggleAutoPlay}
                 whileHover={{ scale: 1.05 }}

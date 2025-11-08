@@ -1046,7 +1046,90 @@
     "recentTasks": "Recent Tasks",
     "revenueVsExpenses": "Revenue vs Expenses",
     "subtitle": "Welcome to your property management dashboard",
-    "systemStatus": "System Status",
+    "systemStatus": {
+      "title": "System Status",
+      "allOperational": "All systems operational",
+      "online": "Online"
+    },
+    "title": "Dashboard",
+    "description": "Manage your apartments and track your activities",
+    "availableSections": "Available sections",
+    "access": "Access",
+    "sections": {
+      "apartments": {
+        "title": "Apartments",
+        "description": "Manage your lofts and properties"
+      },
+      "reservations": {
+        "title": "Reservations",
+        "description": "Track reservations and bookings"
+      },
+      "availability": {
+        "title": "Availability",
+        "description": "Manage availability calendars"
+      },
+      "tasks": {
+        "title": "Tasks",
+        "description": "Track and manage tasks"
+      },
+      "teams": {
+        "title": "Teams",
+        "description": "Manage teams and members"
+      },
+      "platformSettings": {
+        "title": "Platform settings",
+        "description": "Platform configuration"
+      },
+      "owners": {
+        "title": "Owners",
+        "description": "Manage owners"
+      },
+      "transactions": {
+        "title": "Transactions",
+        "description": "Track financial transactions"
+      },
+      "detailedReports": {
+        "title": "Detailed reports",
+        "description": "Generate and view reports"
+      },
+      "pendingPartners": {
+        "title": "Pending partners",
+        "description": "Manage partnership requests"
+      },
+      "validatePartners": {
+        "title": "Validate partners",
+        "description": "Validate new partners"
+      },
+      "openDisputes": {
+        "title": "Open disputes",
+        "description": "Manage ongoing disputes"
+      },
+      "manageDisputes": {
+        "title": "Manage disputes",
+        "description": "Dispute administration"
+      }
+    },
+    "quickAccess": {
+      "title": "Quick access"
+    },
+    "quickAccessItems": {
+      "conversations": {
+        "title": "Conversations",
+        "description": "Messages and communications"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Alerts and notifications"
+      },
+      "dashboard": {
+        "title": "Dashboard",
+        "description": "Activity overview"
+      },
+      "detailedReports": {
+        "title": "Detailed reports",
+        "description": "Analytics and statistics"
+      }
+    },
     "tasks": {
       "status": {
         "completed": "Completed",
@@ -2176,7 +2259,18 @@
     "manager": "Manager",
     "member": "Member",
     "owner": "Owner",
-    "user": "User"
+    "user": "User",
+    "client": "Client",
+    "partner": "Partner",
+    "superuser": "Superuser"
+  },
+  "userMenu": {
+    "user": "User",
+    "myDashboard": "My Dashboard",
+    "myProfile": "My Profile",
+    "editProfile": "Edit Profile",
+    "settings": "Settings",
+    "logout": "Logout"
   },
   "settings": {
     "profileInfo": "Profile Information",

@@ -8,9 +8,9 @@ interface PublicLanguageSelectorProps {
 }
 
 const languages = [
-  { code: 'fr', name: 'Français', flagCode: 'FR' as const },
-  { code: 'en', name: 'English', flagCode: 'GB' as const },
-  { code: 'ar', name: 'العربية', flagCode: 'DZ' as const }
+  { code: 'fr', name: 'Français', flagCode: 'FR' as const, displayCode: 'FR' },
+  { code: 'en', name: 'English', flagCode: 'GB' as const, displayCode: 'EN' },
+  { code: 'ar', name: 'العربية', flagCode: 'DZ' as const, displayCode: 'عر' }
 ];
 
 export default function PublicLanguageSelector({ locale }: PublicLanguageSelectorProps) {
@@ -59,6 +59,43 @@ export default function PublicLanguageSelector({ locale }: PublicLanguageSelecto
     // Set cookie for persistence
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
     
+    // Show loading message in the target language
+    const loadingMessages = {
+      fr: 'Chargement...',
+      en: 'Loading...',
+      ar: 'جاري التحميل...'
+    };
+    
+    // Create loading overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    `;
+    
+    const loadingDiv = document.createElement('div');
+    loadingDiv.style.cssText = `
+      background: white;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      font-size: 1.125rem;
+      font-weight: 600;
+    `;
+    loadingDiv.textContent = loadingMessages[newLocale as keyof typeof loadingMessages] || loadingMessages.fr;
+    
+    overlay.appendChild(loadingDiv);
+    document.body.appendChild(overlay);
+    
     // Navigate to new locale
     window.location.href = `/${newLocale}`;
   };
@@ -89,8 +126,8 @@ export default function PublicLanguageSelector({ locale }: PublicLanguageSelecto
         type="button"
       >
         <FlagIcon country={currentLanguage.flagCode} className="w-5 h-4 flex-shrink-0" />
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[24px]">
-          {currentLanguage.code.toUpperCase()}
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          {currentLanguage.name}
         </span>
         <svg 
           className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'}`}

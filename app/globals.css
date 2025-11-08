@@ -741,3 +741,56 @@ rabic) Specific Styles */
   color: #cbd5e1;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
+
+
+/* ========================================
+   CORRECTION SCROLL HORIZONTAL - UX
+   ======================================== */
+
+/* Empêcher le scroll horizontal sur toute la page */
+html {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Les conteneurs principaux doivent respecter la largeur */
+.container,
+main,
+section,
+article,
+div:not([role="menu"]):not([role="listbox"]):not(.dropdown):not(.menu) {
+  max-width: 100vw;
+}
+
+/* Images et médias responsive */
+img:not([role="menu"] img):not(.dropdown img),
+video,
+iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Tableaux responsive */
+table {
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+
+/* S'assurer que les menus déroulants ne sont PAS affectés */
+[role="menu"],
+[role="listbox"],
+.dropdown,
+.dropdown-menu,
+.menu,
+nav ul,
+nav ol,
+header > div > div {
+  max-width: none !important;
+  overflow: visible !important;
+}

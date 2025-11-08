@@ -208,7 +208,7 @@ export function BillMonitoringStats() {
         {/* Status Summary */}
         <div className="mt-4 pt-4 border-t">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">{t('dashboard.systemStatus')}</span>
+            <span className="text-sm text-gray-600">{t('dashboard.systemStatus.title')}</span>
             <div className="flex items-center gap-2">
               {stats.overdueBills === 0 && stats.dueToday === 0 ? (
                 <Badge variant="default" className="bg-green-100 text-green-800">

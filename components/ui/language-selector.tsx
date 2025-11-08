@@ -37,6 +37,43 @@ export function LanguageSelector({ showText = false }: LanguageSelectorProps) {
     // Set locale cookie for persistence
     document.cookie = `NEXT_LOCALE=${langCode}; path=/; max-age=31536000; SameSite=Lax`
     
+    // Show loading message in the target language
+    const loadingMessages = {
+      fr: 'Chargement...',
+      en: 'Loading...',
+      ar: 'جاري التحميل...'
+    };
+    
+    // Create loading overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    `;
+    
+    const loadingDiv = document.createElement('div');
+    loadingDiv.style.cssText = `
+      background: white;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      font-size: 1.125rem;
+      font-weight: 600;
+    `;
+    loadingDiv.textContent = loadingMessages[langCode as keyof typeof loadingMessages] || loadingMessages.fr;
+    
+    overlay.appendChild(loadingDiv);
+    document.body.appendChild(overlay);
+    
     // Get current path without locale
     const pathWithoutLocale = pathname.replace(`/${currentLocale}`, '') || '/'
     
@@ -55,7 +92,7 @@ export function LanguageSelector({ showText = false }: LanguageSelectorProps) {
       <Button 
         variant="ghost" 
         size="sm" 
-        className={`flex items-center gap-2 ${showText ? 'h-8 px-3' : 'h-8 w-8 p-0'} text-white hover:text-white hover:bg-gray-600`}
+        className={`flex items-center gap-2 ${showText ? 'h-8 px-3' : 'h-8 w-8 p-0'} hover:bg-gray-200 dark:hover:bg-gray-600`}
         disabled
       >
         <FlagIcon country="FR" className="w-5 h-4" />
@@ -70,7 +107,7 @@ export function LanguageSelector({ showText = false }: LanguageSelectorProps) {
         <Button 
           variant="ghost" 
           size="sm" 
-          className={`flex items-center gap-2 ${showText ? 'h-8 px-3' : 'h-8 w-8 p-0'} text-white hover:text-white hover:bg-gray-600`}
+          className={`flex items-center gap-2 ${showText ? 'h-8 px-3' : 'h-8 w-8 p-0'} hover:bg-gray-200 dark:hover:bg-gray-600`}
         >
           <FlagIcon country={currentLanguage.flagCode} className="w-5 h-4" />
           {showText && <span className="text-sm font-medium">{currentLanguage.name}</span>}

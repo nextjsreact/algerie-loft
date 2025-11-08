@@ -60,7 +60,8 @@ const getTranslations = (locale: string) => {
       occupancyRate: "Taux d'occupation",
       averageRating: "Note moyenne",
       servicesUtilities: "Services & Utilitaires",
-      equipment: "Équipements"
+      equipment: "Équipements",
+      status: "Statut"
     },
     en: {
       editLoft: "Edit Apartment",
@@ -92,7 +93,8 @@ const getTranslations = (locale: string) => {
       occupancyRate: "Occupancy Rate",
       averageRating: "Average Rating",
       servicesUtilities: "Services & Utilities",
-      equipment: "Equipment"
+      equipment: "Equipment",
+      status: "Status"
     },
     ar: {
       editLoft: "تعديل الشقة",
@@ -124,7 +126,8 @@ const getTranslations = (locale: string) => {
       occupancyRate: "معدل الإشغال",
       averageRating: "التقييم المتوسط",
       servicesUtilities: "الخدمات والمرافق",
-      equipment: "المعدات"
+      equipment: "المعدات",
+      status: "الحالة"
     }
   }
   
@@ -279,7 +282,7 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                         <div className="flex items-center gap-3">
                           <div className="h-5 w-5 rounded-full bg-current opacity-20"></div>
                           <div>
-                            <p className="text-sm text-muted-foreground">Statut</p>
+                            <p className="text-sm text-muted-foreground">{t.status}</p>
                             <Badge className={getStatusColor(loft.status)}>
                               {t[loft.status as keyof typeof t] || loft.status}
                             </Badge>

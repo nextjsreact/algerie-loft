@@ -1056,6 +1056,85 @@
       "online": "متصل",
       "operational": "تشغيلي"
     },
+    "title": "لوحة التحكم",
+    "description": "إدارة شققك ومتابعة أنشطتك",
+    "availableSections": "الأقسام المتاحة",
+    "access": "الوصول",
+    "sections": {
+      "apartments": {
+        "title": "الشقق",
+        "description": "إدارة الشقق والممتلكات"
+      },
+      "reservations": {
+        "title": "الحجوزات",
+        "description": "متابعة الحجوزات والطلبات"
+      },
+      "availability": {
+        "title": "التوفر",
+        "description": "إدارة جداول التوفر"
+      },
+      "tasks": {
+        "title": "المهام",
+        "description": "متابعة وإدارة المهام"
+      },
+      "teams": {
+        "title": "الفرق",
+        "description": "إدارة الفرق والأعضاء"
+      },
+      "platformSettings": {
+        "title": "إعدادات المنصة",
+        "description": "تكوين المنصة"
+      },
+      "owners": {
+        "title": "الملاك",
+        "description": "إدارة الملاك"
+      },
+      "transactions": {
+        "title": "المعاملات",
+        "description": "متابعة المعاملات المالية"
+      },
+      "detailedReports": {
+        "title": "التقارير المفصلة",
+        "description": "إنشاء واستعراض التقارير"
+      },
+      "pendingPartners": {
+        "title": "الشركاء المعلقون",
+        "description": "إدارة طلبات الشراكة"
+      },
+      "validatePartners": {
+        "title": "التحقق من الشركاء",
+        "description": "التحقق من الشركاء الجدد"
+      },
+      "openDisputes": {
+        "title": "النزاعات المفتوحة",
+        "description": "إدارة النزاعات الجارية"
+      },
+      "manageDisputes": {
+        "title": "إدارة النزاعات",
+        "description": "إدارة النزاعات"
+      }
+    },
+    "quickAccess": {
+      "title": "الوصول السريع"
+    },
+    "quickAccessItems": {
+      "conversations": {
+        "title": "المحادثات",
+        "description": "الرسائل والاتصالات"
+      },
+      "notifications": {
+        "title": "الإشعارات",
+        "description": "التنبيهات والإشعارات"
+      },
+      "dashboard": {
+        "title": "لوحة التحكم",
+        "description": "نظرة عامة على الأنشطة"
+      },
+      "detailedReports": {
+        "title": "التقارير المفصلة",
+        "description": "التحليلات والإحصائيات"
+      }
+    },
     "tasks": {
       "status": {
         "completed": "مكتملة",
@@ -2193,7 +2272,18 @@
     "manager": "مدير",
     "member": "عضو",
     "owner": "مالك",
-    "user": "مستخدم"
+    "user": "مستخدم",
+    "client": "عميل",
+    "partner": "شريك",
+    "superuser": "مستخدم متميز"
+  },
+  "userMenu": {
+    "user": "مستخدم",
+    "myDashboard": "لوحة التحكم الخاصة بي",
+    "myProfile": "ملفي الشخصي",
+    "editProfile": "تعديل الملف الشخصي",
+    "settings": "الإعدادات",
+    "logout": "تسجيل الخروج"
   },
   "settings": {
     "profileInfo": "معلومات الملف الشخصي",

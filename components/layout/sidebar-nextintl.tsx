@@ -1,7 +1,7 @@
 "use client"
 
 import { 
-  Building2, Calendar, DollarSign, Home, LogOut, Settings, Users, 
+  Building2, Calendar, DollarSign, Home, Settings, Users, 
   ClipboardList, UserCheck, ChevronDown, ChevronRight, LayoutDashboard, CreditCard, MessageSquare, Bell, CalendarCheck, Shield,
   Database, Wrench, Activity, Archive, Lock, AlertTriangle
 } from "lucide-react"
@@ -10,16 +10,12 @@ import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { User } from "@/lib/types"
-import { logout } from "@/lib/auth"
 import { useState } from "react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { UltraFastLanguageSelector } from "@/components/ui/ultra-fast-language-selector"
 import { NotificationBadge } from "@/components/ui/notification-badge"
 import { useEnhancedRealtime } from "@/components/providers/enhanced-realtime-provider"
 import { useNotifications } from "@/components/providers/notification-context"
 import { useTranslations, useLocale, useMessages } from "next-intl"
-import { UserAvatarDropdown } from "@/components/auth/user-avatar-dropdown"
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   user: User;
@@ -150,22 +146,18 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
 
   return (
      <div className={cn("flex h-full w-full max-w-72 flex-col bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 backdrop-blur-xl border-r border-white/10", className)}>
-      <div className="flex h-16 shrink-0 items-center justify-between px-3 border-b border-white/20 bg-white/5 backdrop-blur-md">
-        <Link href={`/${locale}/dashboard`} className="flex items-center group min-w-0 flex-1">
+      <div className="flex h-16 shrink-0 items-center px-4 border-b border-white/20 bg-white/5 backdrop-blur-md">
+        <Link href={`/${locale}/dashboard`} className="flex items-center group min-w-0 overflow-hidden">
           <div className="relative flex-shrink-0">
             <div className="p-1.5 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 shadow-lg group-hover:shadow-cyan-500/25 transition-all duration-300 group-hover:scale-110">
               <Building2 className="h-5 w-5 text-white" />
             </div>
             <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-indigo-900 bg-gradient-to-r from-green-400 to-emerald-500 animate-pulse"></div>
           </div>
-          <span className="ml-2 text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-300 truncate group-hover:from-cyan-200 group-hover:to-pink-200 transition-all duration-300">
+          <span className="ml-2 text-base font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-300 truncate group-hover:from-cyan-200 group-hover:to-pink-200 transition-all duration-300">
             {t('loftManager')}
           </span>
         </Link>
-        <div className="flex items-center bg-white/10 backdrop-blur-md rounded-xl p-1 gap-1 flex-shrink-0 border border-white/20">
-          <UltraFastLanguageSelector />
-          <ThemeToggle variant="ghost" size="sm" className="text-white hover:text-cyan-300 h-8 w-8 hover:bg-white/10 transition-all duration-300" />
-        </div>
       </div>
 
       <nav className="flex-1 space-y-2 px-3 py-6 overflow-y-auto">
@@ -270,29 +262,7 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
         })}
       </nav>
 
-      <div className="flex-shrink-0 p-4 border-t border-white/20 bg-white/5 backdrop-blur-md">
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-white/10 backdrop-blur-md hover:bg-white/15 transition-all duration-300 border border-white/10 hover:border-white/20 hover:shadow-lg hover:shadow-cyan-500/10">
-          {/* Interactive User Avatar */}
-          <div className="flex-shrink-0">
-            <UserAvatarDropdown locale={locale} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-white truncate">
-              {user.full_name === 'member1' ? t('conversations.member1') : user.full_name}
-            </p>
-            <p className="text-xs text-cyan-200 capitalize font-medium">{tRoles(user.role)}</p>
-          </div>
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="mt-3 w-full justify-start text-gray-200 hover:text-white hover:bg-gradient-to-r hover:from-red-500/20 hover:to-pink-500/20 transition-all duration-300 rounded-xl border border-white/10 hover:border-red-400/30 hover:shadow-lg hover:shadow-red-500/10"
-          onClick={() => logout()}
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          {tAuth('signOut')}
-        </Button>
-      </div>
+
     </div>
   )
 }

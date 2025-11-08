@@ -30,6 +30,7 @@ interface LoftPhotoGalleryProps {
 
 export function LoftPhotoGallery({ loftId, loftName }: LoftPhotoGalleryProps) {
   const locale = useLocale() as 'fr' | 'en' | 'ar'
+  const tCommon = useTranslations('common')
   
   // Traductions pour les 3 langues
   const translations = {

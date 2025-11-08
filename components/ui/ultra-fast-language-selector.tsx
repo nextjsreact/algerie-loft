@@ -14,9 +14,9 @@ import { useRouter, usePathname } from "next/navigation"
 import { useLocale } from "next-intl"
 
 const languages = [
-  { code: 'fr', name: 'FR', flagCode: 'FR' as const },
-  { code: 'en', name: 'EN', flagCode: 'GB' as const },
-  { code: 'ar', name: 'AR', flagCode: 'DZ' as const }
+  { code: 'fr', name: 'Français', flagCode: 'FR' as const },
+  { code: 'en', name: 'English', flagCode: 'GB' as const },
+  { code: 'ar', name: 'العربية', flagCode: 'DZ' as const }
 ]
 
 interface UltraFastLanguageSelectorProps {

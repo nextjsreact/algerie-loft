@@ -10,6 +10,7 @@ import { UserAvatarDropdown } from "@/components/auth/user-avatar-dropdown"
 import type { User } from "@/lib/types"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useTranslations, useLocale } from "next-intl"
+import { useSidebarVisibility } from "@/hooks/use-sidebar-visibility"
 
 interface HeaderProps {
   user: User
@@ -17,6 +18,7 @@ interface HeaderProps {
 
 export function Header({ user }: HeaderProps) {
   const locale = useLocale() as 'fr' | 'en' | 'ar'
+  const { shouldHideSidebar } = useSidebarVisibility({ userRole: user?.role })
   
   // Traductions pour les 3 langues
   const navTranslations = {
@@ -89,6 +91,25 @@ export function Header({ user }: HeaderProps) {
   
   console.log(`[HEADER] Locale utilisée: ${locale}`)
 
+  // Si la sidebar est visible (pour les utilisateurs avec accès admin), afficher seulement les contrôles essentiels
+  const hasSidebarAccess = user?.role && ['admin', 'manager', 'executive', 'member'].includes(user.role)
+  
+  if (!shouldHideSidebar && hasSidebarAccess) {
+    return (
+      <header className="flex h-16 items-center justify-end bg-gray-900 px-4 md:hidden z-50">
+        <div className="flex items-center gap-2">
+          {/* Seulement les contrôles essentiels quand la sidebar est visible */}
+          <div className="flex items-center bg-white/20 dark:bg-gray-800 rounded-md p-1 gap-1">
+            <LanguageSelector showText={true} />
+            <ThemeToggle variant="ghost" size="sm" className="text-white hover:text-white" />
+          </div>
+          <UserAvatarDropdown locale={locale} />
+        </div>
+      </header>
+    )
+  }
+
+  // Header complet quand la sidebar est cachée
   return (
      <header className="flex h-16 items-center justify-between bg-gray-900 px-4 md:hidden z-50">
        <Link href={`/${locale}/dashboard`} className="flex items-center">
@@ -100,7 +121,7 @@ export function Header({ user }: HeaderProps) {
          <UserAvatarDropdown locale={locale} />
          
          <div className="flex items-center bg-white/20 dark:bg-gray-800 rounded-md p-1 gap-1">
-           <LanguageSelector />
+           <LanguageSelector showText={true} />
            <ThemeToggle variant="ghost" size="sm" className="text-white hover:text-white" />
          </div>
          <Sheet>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Diagnostic Menus</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-header { background: #f0f0f0; padding: 20px; margin: 20px 0; }
+        .menu-container { position: relative; display: inline-block; margin: 10px; }
+        .menu-button { 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            cursor: pointer; 
+            border-radius: 5px;
+        }
+        .menu-dropdown { 
+            position: absolute; 
+            top: 100%; 
+            left: 0; 
+            background: white; 
+            border: 2px solid red; 
+            border-radius: 5px; 
+            min-width: 150px; 
+            z-index: 9999;
+            display: none;
+        }
+        .menu-dropdown.show { display: block; }
+        .menu-item { 
+            display: block; 
+            padding: 10px; 
+            text-decoration: none; 
+            color: black; 
+            border-bottom: 1px solid #eee;
+        }
+        .menu-item:hover { background: #f0f0f0; }
+        .diagnostic { background: #ffffcc; padding: 15px; margin: 10px 0; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test Diagnostic Complet - Menus Déroulants</h1>
+    
+    <div class="diagnostic">
+        <h3>📊 Diagnostic Automatique</h3>
+        <div id="diagnostic-results">Chargement...</div>
+    </div>
+
+    <div class="test-header">
+        <h2>Test 1: Menu Simple HTML/CSS/JS</h2>
+        <div class="menu-container">
+            <button class="menu-button" onclick="toggleMenu('menu1')">🌐 Langues ▼</button>
+            <div class="menu-dropdown" id="menu1">
+                <a href="/fr/public" class="menu-item">🇫🇷 Français</a>
+                <a href="/en/public" class="menu-item">🇺🇸 English</a>
+                <a href="/ar/public" class="menu-item">🇩🇿 العربية</a>
+            </div>
+        </div>
+
+        <div class="menu-container">
+            <button class="menu-button" onclick="toggleMenu('menu2')">👤 Connexion ▼</button>
+            <div class="menu-dropdown" id="menu2">
+                <a href="/fr/login" class="menu-item">👤 Client</a>
+                <a href="/fr/partner/login" class="menu-item">🏠 Propriétaire</a>
+                <a href="/fr/register" class="menu-item">➕ Créer un compte</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-header">
+        <h2>Test 2: Menu avec Z-Index Extrême</h2>
+        <div class="menu-container">
+            <button class="menu-button" onclick="showExtremeMenu()">🚨 Menu Z-Index Max</button>
+            <div id="extreme-menu" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="diagnostic">
+        <h3>🎯 Instructions</h3>
+        <ol>
+            <li><strong>Cliquez sur "🌐 Langues ▼"</strong> - Un menu avec bordure rouge devrait apparaître</li>
+            <li><strong>Cliquez sur "👤 Connexion ▼"</strong> - Un autre menu devrait apparaître</li>
+            <li><strong>Si vous ne voyez rien</strong> - Le problème est dans votre navigateur/CSS global</li>
+            <li><strong>Si vous voyez les menus</strong> - Le problème est spécifique à React/Next.js</li>
+        </ol>
+    </div>
+
+    <script>
+        // Diagnostic automatique
+        function runDiagnostic() {
+            const results = [];
+            
+            // Test 1: Support JavaScript
+            results.push(`✅ JavaScript: ${typeof window !== 'undefined' ? 'OK' : 'ERREUR'}`);
+            
+            // Test 2: Support CSS
+            const testDiv = document.createElement('div');
+            testDiv.style.position = 'absolute';
+            testDiv.style.zIndex = '9999';
+            results.push(`✅ CSS Position/Z-Index: ${testDiv.style.position === 'absolute' ? 'OK' : 'ERREUR'}`);
+            
+            // Test 3: Viewport
+            results.push(`✅ Viewport: ${window.innerWidth}x${window.innerHeight}`);
+            
+            // Test 4: User Agent
+            results.push(`✅ Navigateur: ${navigator.userAgent.split(' ')[0]}`);
+            
+            // Test 5: CSS Overflow
+            const bodyOverflow = getComputedStyle(document.body).overflowX;
+            results.push(`⚠️ Body Overflow-X: ${bodyOverflow}`);
+            
+            document.getElementById('diagnostic-results').innerHTML = results.join('<br>');
+        }
+
+        // Fonction pour toggle les menus
+        function toggleMenu(menuId) {
+            // Fermer tous les autres menus
+            document.querySelectorAll('.menu-dropdown').forEach(menu => {
+                if (menu.id !== menuId) {
+                    menu.classList.remove('show');
+                }
+            });
+            
+            // Toggle le menu demandé
+            const menu = document.getElementById(menuId);
+            menu.classList.toggle('show');
+            
+            console.log(`Menu ${menuId} ${menu.classList.contains('show') ? 'ouvert' : 'fermé'}`);
+        }
+
+        // Menu avec z-index extrême
+        function showExtremeMenu() {
+            const menu = document.getElementById('extreme-menu');
+            menu.innerHTML = `
+                <div style="
+                    position: fixed !important;
+                    top: 200px !important;
+                    left: 50% !important;
+                    transform: translateX(-50%) !important;
+                    z-index: 2147483647 !important;
+                    background: yellow !important;
+                    border: 5px solid red !important;
+                    padding: 20px !important;
+                    border-radius: 10px !important;
+                    font-size: 18px !important;
+                    font-weight: bold !important;
+                ">
+                    🎯 MENU AVEC Z-INDEX MAXIMUM<br>
+                    Si vous voyez ceci, les menus peuvent fonctionner !<br>
+                    <button onclick="document.getElementById('extreme-menu').style.display='none'" 
+                            style="margin-top: 10px; padding: 5px 10px;">
+                        Fermer
+                    </button>
+                </div>
+            `;
+            menu.style.display = 'block';
+        }
+
+        // Fermer les menus en cliquant ailleurs
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.menu-container')) {
+                document.querySelectorAll('.menu-dropdown').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+            }
+        });
+
+        // Lancer le diagnostic au chargement
+        window.onload = runDiagnostic;
+    </script>
+</body>
+</html>

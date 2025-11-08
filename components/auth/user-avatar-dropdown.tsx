@@ -25,6 +25,7 @@ import {
   Edit
 } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
+import { useTranslations } from 'next-intl'
 
 interface UserAvatarDropdownProps {
   locale: string
@@ -44,6 +45,8 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
   const supabase = createClient()
+  const t = useTranslations('userMenu')
+  const tRoles = useTranslations('roles')
 
   useEffect(() => {
     const getUser = async () => {
@@ -113,21 +116,21 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
     switch (role) {
       case 'superuser':
         return {
-          label: 'Superuser',
+          label: tRoles('superuser'),
           color: 'bg-purple-600',
           icon: Shield,
           dashboard: `/${locale}/admin/superuser/dashboard`
         }
       case 'client':
         return {
-          label: 'Client',
+          label: tRoles('client'),
           color: 'bg-blue-500',
           icon: Home,
           dashboard: `/${locale}/client/dashboard`
         }
       case 'partner':
         return {
-          label: 'Partenaire',
+          label: tRoles('partner'),
           color: 'bg-green-500',
           icon: Building2,
           dashboard: `/${locale}/partner/dashboard`
@@ -136,7 +139,7 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
       case 'manager':
       case 'executive':
         return {
-          label: 'Admin',
+          label: tRoles('admin'),
           color: 'bg-red-500',
           icon: Shield,
           dashboard: `/${locale}/app/dashboard`
@@ -146,7 +149,7 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
         if (typeof window !== 'undefined') {
           if (window.location.pathname.includes('/client/')) {
             return {
-              label: 'Client',
+              label: tRoles('client'),
               color: 'bg-blue-500',
               icon: Home,
               dashboard: `/${locale}/client/dashboard`
@@ -154,7 +157,7 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
           }
           if (window.location.pathname.includes('/partner/')) {
             return {
-              label: 'Partenaire',
+              label: tRoles('partner'),
               color: 'bg-green-500',
               icon: Building2,
               dashboard: `/${locale}/partner/dashboard`
@@ -163,14 +166,14 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
         }
         // Default to client for members
         return {
-          label: 'Client',
+          label: tRoles('client'),
           color: 'bg-blue-500',
           icon: Home,
           dashboard: `/${locale}/client/dashboard`
         }
       default:
         return {
-          label: 'Client',
+          label: tRoles('client'),
           color: 'bg-blue-500',
           icon: Home,
           dashboard: `/${locale}/client/dashboard`
@@ -230,7 +233,7 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
               </Avatar>
               <div className="flex-1">
                 <p className="text-sm font-medium leading-none">
-                  {user.full_name || 'Utilisateur'}
+                  {user.full_name || t('user')}
                 </p>
                 <div className="flex items-center gap-2 mt-1">
                   <Mail className="h-3 w-3 text-muted-foreground" />
@@ -260,29 +263,29 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
         {/* Navigation Items */}
         <DropdownMenuItem onClick={() => router.push(roleConfig.dashboard)}>
           <RoleIcon className="mr-2 h-4 w-4" />
-          <span>Mon Dashboard</span>
+          <span>{t('myDashboard')}</span>
         </DropdownMenuItem>
         
         <DropdownMenuItem onClick={() => router.push(`/${locale}/profile`)}>
           <User className="mr-2 h-4 w-4" />
-          <span>Mon Profil</span>
+          <span>{t('myProfile')}</span>
         </DropdownMenuItem>
         
         <DropdownMenuItem onClick={() => router.push(`/${locale}/profile/edit`)}>
           <Edit className="mr-2 h-4 w-4" />
-          <span>Modifier le Profil</span>
+          <span>{t('editProfile')}</span>
         </DropdownMenuItem>
         
         <DropdownMenuItem onClick={() => router.push(`/${locale}/settings`)}>
           <Settings className="mr-2 h-4 w-4" />
-          <span>Paramètres</span>
+          <span>{t('settings')}</span>
         </DropdownMenuItem>
         
         <DropdownMenuSeparator />
         
         <DropdownMenuItem onClick={handleLogout} className="text-red-600 dark:text-red-400">
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Se déconnecter</span>
+          <span>{t('logout')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -28,10 +28,9 @@ export function useSidebarVisibility({ userRole, hideSidebar = false }: UseSideb
     // Pages client - ne doivent pas avoir la sidebar admin
     const isClientPage = pathname?.includes('/client') || 
                          pathname?.includes('/partner') ||
-                         pathname?.includes('/admin/superuser') ||
-                         userRole === 'client' || 
-                         userRole === 'partner' ||
-                         userRole === 'superuser'
+                         (pathname?.includes('/admin/superuser') && userRole === 'superuser') ||
+                         (userRole === 'client' && !pathname?.includes('/admin')) || 
+                         (userRole === 'partner' && !pathname?.includes('/admin'))
     
     // Pages qui forcent la sidebar cachée
     const isHiddenPage = hideSidebar

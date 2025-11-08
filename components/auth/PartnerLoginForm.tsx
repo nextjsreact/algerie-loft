@@ -79,9 +79,9 @@ export function PartnerLoginForm({
     setErrors({});
 
     try {
-      // Use the existing login function from auth.ts
+      // Use the existing login function from auth.ts - PARTNER context
       const { login } = await import('@/lib/auth');
-      const loginResult = await login(formData.email, formData.password, locale);
+      const loginResult = await login(formData.email, formData.password, locale, 'partner');
 
       if (!loginResult.success) {
         setErrors({ general: loginResult.error || 'Login failed' });

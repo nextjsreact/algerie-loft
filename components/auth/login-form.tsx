@@ -43,7 +43,8 @@ export function LoginForm() {
     setError("")
 
     try {
-      const result = await login(data.email, data.password)
+      // Connexion en tant qu'EMPLOYÉ
+      const result = await login(data.email, data.password, 'fr', 'employee')
       if (result.success && result.user) {
         // Redirection basée sur le rôle de l'employé
         const role = result.user.role

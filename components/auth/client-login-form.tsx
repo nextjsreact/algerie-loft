@@ -62,10 +62,11 @@ export function ClientLoginForm() {
       }
 
       if (signInData.user && signInData.session) {
-        console.log('✅ Connexion réussie:', signInData.user.email)
+        console.log('✅ Connexion CLIENT réussie:', signInData.user.email)
         console.log('✅ Session établie - redirection vers client dashboard...')
         
-        // Redirection vers le dashboard client - important pour next-intl
+        // TOUJOURS rediriger vers le dashboard client, peu importe le rôle dans la DB
+        // Car l'utilisateur s'est connecté via le formulaire CLIENT
         router.push("/fr/client/dashboard")
         // Ne pas appeler setIsLoading(false) ici car on redirige
       } else {

@@ -101,7 +101,7 @@ export async function requireRoleAPI(allowedRoles: UserRole[]): Promise<AuthSess
   return session
 }
 
-export async function login(email: string, password: string, locale?: string): Promise<{ success: boolean; error?: string }> {
+export async function login(email: string, password: string, locale?: string, loginContext?: 'employee' | 'client' | 'partner'): Promise<{ success: boolean; error?: string; user?: { id: string; email: string; role: UserRole }; loginContext?: string }> {
   // Check account lockout status
   const { AccountLockout } = await import('./security/password-security');
   const lockoutStatus = await AccountLockout.isAccountLocked(email);
@@ -139,6 +139,10 @@ export async function login(email: string, password: string, locale?: string): P
       // Clear any failed login attempts on successful login
       await AccountLockout.clearFailedAttempts(email);
       
+      // Detect user role
+      const { detectUserRole } = await import('@/lib/auth/role-detection');
+      const role = await detectUserRole(data.user.id, data.user.email);
+      
       // Record successful login for audit
       try {
         const { DataLifecycleTracker } = await import('./security/data-retention');
@@ -152,7 +156,15 @@ export async function login(email: string, password: string, locale?: string): P
         console.error('Failed to record login audit:', auditError);
       }
       
-      return { success: true }
+      return { 
+        success: true,
+        user: {
+          id: data.user.id,
+          email: data.user.email || email,
+          role: role
+        },
+        loginContext: loginContext
+      }
     }
 
     return { success: false, error: "No user data returned" }

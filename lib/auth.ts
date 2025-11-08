@@ -135,6 +135,7 @@ export async function login(email: string, password: string, locale?: string, lo
 
     if (data.user) {
       console.log("Login successful for user:", data.user.email);
+      console.log("Login context:", loginContext);
       
       // Clear any failed login attempts on successful login
       await AccountLockout.clearFailedAttempts(email);
@@ -143,6 +144,19 @@ export async function login(email: string, password: string, locale?: string, lo
       const { detectUserRole } = await import('@/lib/auth/role-detection');
       const role = await detectUserRole(data.user.id, data.user.email);
       
+      // Store login context in a cookie for session persistence
+      if (loginContext) {
+        const { cookies } = await import('next/headers');
+        const cookieStore = await cookies();
+        cookieStore.set('login_context', loginContext, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24 * 7 // 7 days
+        });
+        console.log(`Set login_context cookie to: ${loginContext}`);
+      }
+      
       // Record successful login for audit
       try {
         const { DataLifecycleTracker } = await import('./security/data-retention');
@@ -150,7 +164,7 @@ export async function login(email: string, password: string, locale?: string, lo
           userId: data.user.id,
           dataType: 'user_profile',
           action: 'accessed',
-          metadata: { action: 'login', timestamp: new Date().toISOString() }
+          metadata: { action: 'login', timestamp: new Date().toISOString(), context: loginContext }
         });
       } catch (auditError) {
         console.error('Failed to record login audit:', auditError);
@@ -390,6 +404,17 @@ export async function registerWithRole(
 export async function logout() {
   const supabase = await createClient()
   await supabase.auth.signOut();
+  
+  // Clear login context cookie
+  try {
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    cookieStore.delete('login_context');
+    console.log('Cleared login_context cookie');
+  } catch (error) {
+    console.error('Failed to clear login_context cookie:', error);
+  }
+  
   redirect("/fr");
 }
 

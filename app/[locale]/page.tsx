@@ -81,37 +81,58 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
 export default async function LocalePage({ params }: LocalePageProps) {
   const { locale } = await params;
   
-  // Vérifier si l'utilisateur est connecté et rediriger selon son rôle
+  // Vérifier si l'utilisateur est connecté
   const session = await getSession();
   
   if (session) {
-    // Rediriger les employés vers leur dashboard approprié
-    switch (session.user.role) {
-      case 'admin':
-        redirect(`/${locale}/home`);
-        break;
-      case 'manager':
-        redirect(`/${locale}/home`);
-        break;
-      case 'executive':
-        redirect(`/${locale}/executive`);
-        break;
-      case 'member':
-        redirect(`/${locale}/home`);
-        break;
-      case 'client':
-        // Les clients restent sur la page publique mais avec accès client
-        redirect(`/${locale}/client/dashboard`);
-        break;
-      case 'partner':
-        redirect(`/${locale}/partner/dashboard`);
-        break;
-      default:
-        // Rôle inconnu, rester sur la page publique
-        break;
+    // Vérifier le contexte de connexion (plus important que le rôle DB)
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    const loginContext = cookieStore.get('login_context')?.value;
+    
+    console.log('[ROOT PAGE] User logged in with context:', loginContext, 'role:', session.user.role);
+    
+    // Rediriger selon le CONTEXTE DE CONNEXION, pas le rôle DB
+    if (loginContext === 'client') {
+      redirect(`/${locale}/client/dashboard`);
+    } else if (loginContext === 'partner') {
+      redirect(`/${locale}/partner/dashboard`);
+    } else if (loginContext === 'employee') {
+      // Pour les employés, utiliser le rôle pour déterminer l'interface
+      switch (session.user.role) {
+        case 'superuser':
+          redirect(`/${locale}/admin/superuser/dashboard`);
+        case 'executive':
+          redirect(`/${locale}/executive`);
+        case 'admin':
+        case 'manager':
+        case 'member':
+        default:
+          redirect(`/${locale}/home`);
+      }
+    } else {
+      // Pas de contexte de connexion, utiliser le rôle DB (fallback)
+      console.log('[ROOT PAGE] No login context, using role fallback');
+      switch (session.user.role) {
+        case 'admin':
+        case 'manager':
+        case 'member':
+          redirect(`/${locale}/home`);
+        case 'executive':
+          redirect(`/${locale}/executive`);
+        case 'superuser':
+          redirect(`/${locale}/admin/superuser/dashboard`);
+        case 'client':
+          redirect(`/${locale}/client/dashboard`);
+        case 'partner':
+          redirect(`/${locale}/partner/dashboard`);
+        default:
+          // Rôle inconnu, rester sur la page publique
+          break;
+      }
     }
   }
   
-  // Utilisateurs non connectés ou rôles non reconnus voient la page publique
+  // Utilisateurs non connectés voient la page publique
   return <FusionDualAudienceHomepage locale={locale} />;
 }

@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
-import { createClient } from "@/utils/supabase/client"
 import { loginSchema, type LoginFormData } from "@/lib/validations"
 
 export function ClientLoginForm() {
@@ -18,7 +17,6 @@ export function ClientLoginForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
-  const supabase = createClient()
 
   const {
     register,
@@ -37,43 +35,27 @@ export function ClientLoginForm() {
     setError("")
 
     try {
-      console.log('🔐 Tentative de connexion avec:', data.email)
+      console.log('🔐 Tentative de connexion CLIENT avec:', data.email)
       
-      // Timeout pour éviter les blocages
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Timeout de connexion (10s)')), 10000)
-      )
-      
-      const loginPromise = supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
-      })
+      // Utiliser la fonction login avec le contexte CLIENT
+      const { login } = await import('@/lib/auth')
+      const result = await login(data.email, data.password, 'fr', 'client')
 
-      const { data: signInData, error: signInError } = await Promise.race([
-        loginPromise,
-        timeoutPromise
-      ]) as any
-
-      if (signInError) {
-        console.error("Erreur connexion:", signInError)
-        setError(signInError.message)
+      if (!result.success) {
+        console.error("Erreur connexion:", result.error)
+        setError(result.error || "Échec de la connexion")
         setIsLoading(false)
         return
       }
 
-      if (signInData.user && signInData.session) {
-        console.log('✅ Connexion CLIENT réussie:', signInData.user.email)
-        console.log('✅ Session établie - redirection vers client dashboard...')
-        
-        // TOUJOURS rediriger vers le dashboard client, peu importe le rôle dans la DB
-        // Car l'utilisateur s'est connecté via le formulaire CLIENT
-        router.push("/fr/client/dashboard")
-        // Ne pas appeler setIsLoading(false) ici car on redirige
-      } else {
-        console.warn('⚠️ Pas de session dans la réponse')
-        setError("Erreur d'authentification - session non établie")
-        setIsLoading(false)
-      }
+      console.log('✅ Connexion CLIENT réussie:', data.email)
+      console.log('✅ Redirection vers client dashboard...')
+      
+      // TOUJOURS rediriger vers le dashboard client
+      // Car l'utilisateur s'est connecté via le formulaire CLIENT
+      router.push("/fr/client/dashboard")
+      // Ne pas appeler setIsLoading(false) ici car on redirige
+      
     } catch (err: any) {
       console.error("Erreur inattendue:", err)
       setError(err.message || "Une erreur inattendue s'est produite")

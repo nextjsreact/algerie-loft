@@ -144,18 +144,8 @@ export async function login(email: string, password: string, locale?: string, lo
       const { detectUserRole } = await import('@/lib/auth/role-detection');
       const role = await detectUserRole(data.user.id, data.user.email);
       
-      // Store login context in a cookie for session persistence
-      if (loginContext) {
-        const { cookies } = await import('next/headers');
-        const cookieStore = await cookies();
-        cookieStore.set('login_context', loginContext, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          maxAge: 60 * 60 * 24 * 7 // 7 days
-        });
-        console.log(`Set login_context cookie to: ${loginContext}`);
-      }
+      // Note: login_context cookie is created client-side in the login forms
+      // because server-side cookie creation doesn't work when called from client components
       
       // Record successful login for audit
       try {

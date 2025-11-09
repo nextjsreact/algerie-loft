@@ -89,6 +89,10 @@ export function PartnerLoginForm({
         return;
       }
 
+      // Créer le cookie de contexte côté client
+      document.cookie = `login_context=partner; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+      console.log('✅ Cookie login_context=partner créé');
+
       // After successful login, get partner session to validate status
       const partnerSession = await PartnerAuthService.getPartnerSession();
       

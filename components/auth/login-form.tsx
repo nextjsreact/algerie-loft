@@ -46,6 +46,10 @@ export function LoginForm() {
       // Connexion en tant qu'EMPLOYÉ
       const result = await login(data.email, data.password, 'fr', 'employee')
       if (result.success && result.user) {
+        // Créer le cookie de contexte côté client
+        document.cookie = `login_context=employee; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+        console.log('✅ Cookie login_context=employee créé')
+        
         // Redirection basée sur le rôle de l'employé
         const role = result.user.role
         let redirectPath = "/fr/home" // Par défaut

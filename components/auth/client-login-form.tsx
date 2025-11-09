@@ -49,6 +49,11 @@ export function ClientLoginForm() {
       }
 
       console.log('✅ Connexion CLIENT réussie:', data.email)
+      
+      // Créer le cookie de contexte côté client
+      document.cookie = `login_context=client; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+      console.log('✅ Cookie login_context=client créé')
+      
       console.log('✅ Redirection vers client dashboard...')
       
       // TOUJOURS rediriger vers le dashboard client

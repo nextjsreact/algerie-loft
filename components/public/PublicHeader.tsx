@@ -144,29 +144,22 @@ export default function PublicHeader({ locale, text }: PublicHeaderProps) {
               <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div className="py-1">
                   <a 
-                    href={`/${locale}/login?role=client`}
+                    href={`/${locale}/client/login`}
                     className="block px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors font-medium"
                   >
                     🏠 Client - Réserver
                   </a>
                   <a 
-                    href={`/${locale}/login?role=partner`}
+                    href={`/${locale}/partner/login`}
                     className="block px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors font-medium"
                   >
                     🏢 Partenaire - Gérer
                   </a>
                   <a 
-                    href={`/${locale}/login?role=admin`}
+                    href={`/${locale}/login`}
                     className="block px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-medium"
                   >
                     ⚙️ Employé - Admin
-                  </a>
-                  <div className="border-t border-gray-200 dark:border-gray-600 my-1"></div>
-                  <a 
-                    href={`/${locale}/login`}
-                    className="block px-3 py-2 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
-                  >
-                    🔑 Connexion générale
                   </a>
                 </div>
               </div>
@@ -294,32 +287,25 @@ export default function PublicHeader({ locale, text }: PublicHeaderProps) {
                 </p>
                 <div className="space-y-2">
                   <a 
-                    href={`/${locale}/login?role=client`}
+                    href={`/${locale}/client/login`}
                     className="block w-full bg-blue-600 dark:bg-blue-700 text-white text-center px-6 py-3 rounded-lg font-bold hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors text-lg"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     🏠 Client - Réserver
                   </a>
                   <a 
-                    href={`/${locale}/login?role=partner`}
+                    href={`/${locale}/partner/login`}
                     className="block w-full bg-green-600 dark:bg-green-700 text-white text-center px-6 py-3 rounded-lg font-bold hover:bg-green-700 dark:hover:bg-green-600 transition-colors text-lg"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     🏢 Partenaire - Gérer
                   </a>
                   <a 
-                    href={`/${locale}/login?role=admin`}
+                    href={`/${locale}/login`}
                     className="block w-full bg-red-600 dark:bg-red-700 text-white text-center px-6 py-3 rounded-lg font-bold hover:bg-red-700 dark:hover:bg-red-600 transition-colors text-lg"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     ⚙️ Employé - Admin
-                  </a>
-                  <a 
-                    href={`/${locale}/login`}
-                    className="block w-full bg-gray-600 dark:bg-gray-700 text-white text-center px-6 py-3 rounded-lg font-bold hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors text-lg"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    🔑 Connexion générale
                   </a>
                 </div>
               </div>

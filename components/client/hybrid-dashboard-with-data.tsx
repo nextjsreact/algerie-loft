@@ -70,7 +70,7 @@ export default function HybridDashboardWithData() {
   const nextBooking = data.upcomingBookings[0]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 pt-16">
       <DashboardHeader 
         userName={data.userName}
         userAvatar={data.userAvatar}

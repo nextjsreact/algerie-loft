@@ -17,7 +17,7 @@ export default function DashboardHeader({
   setShowNotifications 
 }: DashboardHeaderProps) {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500">
+    <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 mt-16">
       <div className="absolute inset-0 bg-black/10"></div>
       
       {/* Decorative Blobs */}
@@ -25,47 +25,22 @@ export default function DashboardHeader({
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl translate-y-48 -translate-x-48"></div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Top Bar */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            {userAvatar ? (
-              <img 
-                src={userAvatar} 
-                alt={userName} 
-                className="w-12 h-12 rounded-full border-2 border-white/30 object-cover"
-              />
-            ) : (
-              <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white font-bold text-lg">
-                {userName.charAt(0).toUpperCase()}
-              </div>
-            )}
-            <div>
-              <div className="text-white/80 text-sm">Bienvenue,</div>
-              <div className="text-white font-bold text-lg">{userName}</div>
+        {/* Welcome Section - Simplified without duplicate buttons */}
+        <div className="flex items-center gap-4 mb-8">
+          {userAvatar ? (
+            <img 
+              src={userAvatar} 
+              alt={userName} 
+              className="w-16 h-16 rounded-full border-2 border-white/30 object-cover"
+            />
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white font-bold text-2xl">
+              {userName.charAt(0).toUpperCase()}
             </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                setShowNotifications(!showNotifications)
-                // TODO: Implement notifications panel
-                alert('Notifications à venir !')
-              }}
-              className="relative w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center hover:bg-white/30 transition-all"
-            >
-              <Bell className="w-5 h-5 text-white" />
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 rounded-full text-white text-xs flex items-center justify-center font-bold">
-                3
-              </span>
-            </button>
-
-            <button 
-              onClick={() => window.location.href = '/fr/settings'}
-              className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center hover:bg-white/30 transition-all"
-            >
-              <Settings className="w-5 h-5 text-white" />
-            </button>
+          )}
+          <div>
+            <div className="text-white/80 text-sm">Bienvenue,</div>
+            <div className="text-white font-bold text-2xl">{userName}</div>
           </div>
         </div>
 

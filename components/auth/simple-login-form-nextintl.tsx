@@ -84,6 +84,10 @@ export function SimpleLoginFormNextIntl() {
         console.log('✅ Connexion réussie:', signInData.user.email)
         console.log('✅ Session établie - redirection...')
         
+        // Créer le cookie de contexte EMPLOYÉ
+        document.cookie = `login_context=employee; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+        console.log('✅ Cookie login_context=employee créé')
+        
         // Get the user's actual role from the profiles table
         let actualUserRole = null;
         try {

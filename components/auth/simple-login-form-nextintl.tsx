@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -36,12 +36,26 @@ export function SimpleLoginFormNextIntl() {
   // Utilisation de next-intl au lieu de useSimpleTranslation
   const t = useTranslations('auth')
 
-  // Initialize selected role from URL parameter
-  useState(() => {
-    if (roleParam) {
-      setSelectedRole(roleParam)
+  // Initialize selected role from URL parameter or cookie
+  useEffect(() => {
+    // Vérifier d'abord le cookie login_context (côté client uniquement)
+    if (typeof window !== 'undefined') {
+      const loginContext = document.cookie.split('; ').find(row => row.startsWith('login_context='))?.split('=')[1]
+      if (loginContext) {
+        // Mapper le contexte au rôle du sélecteur
+        const roleMap: Record<string, string> = {
+          'client': 'client',
+          'partner': 'partner',
+          'employee': 'admin'
+        }
+        setSelectedRole(roleMap[loginContext] || null)
+        console.log(`🎯 Rôle pré-sélectionné depuis cookie: ${loginContext} -> ${roleMap[loginContext]}`)
+      } else if (roleParam) {
+        setSelectedRole(roleParam)
+        console.log(`🎯 Rôle pré-sélectionné depuis URL: ${roleParam}`)
+      }
     }
-  })
+  }, [roleParam])
 
   const {
     register,
@@ -58,7 +72,48 @@ export function SimpleLoginFormNextIntl() {
     try {
       console.log('🔐 Tentative de connexion avec:', data.email)
       
-      // Timeout pour éviter les blocages
+      // ÉTAPE 1: Déterminer le contexte de connexion AVANT la connexion
+      let loginContext: string | undefined
+      if (typeof window !== 'undefined') {
+        loginContext = document.cookie.split('; ').find(row => row.startsWith('login_context='))?.split('=')[1]
+      }
+      
+      // Si pas de cookie existant, utiliser le rôle sélectionné dans le formulaire
+      if (!loginContext && selectedRole) {
+        const contextMap: Record<string, string> = {
+          'client': 'client',
+          'partner': 'partner',
+          'admin': 'employee'
+        }
+        loginContext = contextMap[selectedRole] || 'employee'
+        console.log(`🎯 Contexte déterminé depuis sélection: ${selectedRole} -> ${loginContext}`)
+      } else if (loginContext) {
+        console.log(`🎯 Contexte existant depuis cookie: ${loginContext}`)
+      } else {
+        loginContext = 'employee'
+        console.log('🎯 Contexte par défaut: employee')
+      }
+      
+      // ÉTAPE 2: Créer le cookie côté SERVEUR via API
+      try {
+        const contextResponse = await fetch('/api/auth/set-login-context', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ context: loginContext })
+        })
+        
+        if (contextResponse.ok) {
+          console.log(`✅ Cookie login_context=${loginContext} créé côté SERVEUR`)
+        } else {
+          console.warn('⚠️ Échec création cookie serveur, utilisation client fallback')
+          document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+        }
+      } catch (apiError) {
+        console.warn('⚠️ API cookie indisponible, utilisation client fallback:', apiError)
+        document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+      }
+      
+      // ÉTAPE 3: Connexion Supabase
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('Timeout de connexion (10s)')), 10000)
       )
@@ -84,10 +139,6 @@ export function SimpleLoginFormNextIntl() {
         console.log('✅ Connexion réussie:', signInData.user.email)
         console.log('✅ Session établie - redirection...')
         
-        // Créer le cookie de contexte EMPLOYÉ
-        document.cookie = `login_context=employee; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
-        console.log('✅ Cookie login_context=employee créé')
-        
         // Get the user's actual role from the profiles table
         let actualUserRole = null;
         try {
@@ -107,9 +158,7 @@ export function SimpleLoginFormNextIntl() {
           console.error('Exception getting user profile:', profileErr)
         }
         
-        // Vérifier le cookie login_context pour déterminer la redirection
-        const loginContext = document.cookie.split('; ').find(row => row.startsWith('login_context='))?.split('=')[1]
-        console.log('🍪 Login context from cookie:', loginContext)
+        console.log('🍪 Login context final:', loginContext)
         
         const redirectParam = searchParams.get('redirect')
         

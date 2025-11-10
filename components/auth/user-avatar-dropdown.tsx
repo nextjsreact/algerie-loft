@@ -113,6 +113,33 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
   }
 
   const getRoleConfig = (role: string) => {
+    // Vérifier d'abord le contexte de connexion depuis le cookie
+    let loginContext: string | undefined
+    if (typeof window !== 'undefined') {
+      loginContext = document.cookie.split('; ').find(row => row.startsWith('login_context='))?.split('=')[1]
+      console.log('🎯 Avatar: login_context from cookie:', loginContext, 'DB role:', role)
+    }
+    
+    // Utiliser le contexte de connexion en priorité
+    if (loginContext === 'client') {
+      return {
+        label: tRoles('client'),
+        color: 'bg-blue-500',
+        icon: Home,
+        dashboard: `/${locale}/client/dashboard`
+      }
+    }
+    
+    if (loginContext === 'partner') {
+      return {
+        label: tRoles('partner'),
+        color: 'bg-green-500',
+        icon: Building2,
+        dashboard: `/${locale}/partner/dashboard`
+      }
+    }
+    
+    // Si contexte = employee ou pas de contexte, utiliser le rôle DB
     switch (role) {
       case 'superuser':
         return {
@@ -142,10 +169,11 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
           label: tRoles('admin'),
           color: 'bg-red-500',
           icon: Shield,
-          dashboard: `/${locale}/app/dashboard`
+          dashboard: `/${locale}/home`
         }
       case 'member':
-        // If role is 'member', check URL to determine actual role
+      default:
+        // Fallback: vérifier l'URL
         if (typeof window !== 'undefined') {
           if (window.location.pathname.includes('/client/')) {
             return {
@@ -164,19 +192,12 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
             }
           }
         }
-        // Default to client for members
+        // Default final
         return {
-          label: tRoles('client'),
-          color: 'bg-blue-500',
-          icon: Home,
-          dashboard: `/${locale}/client/dashboard`
-        }
-      default:
-        return {
-          label: tRoles('client'),
-          color: 'bg-blue-500',
-          icon: Home,
-          dashboard: `/${locale}/client/dashboard`
+          label: tRoles('member'),
+          color: 'bg-gray-500',
+          icon: User,
+          dashboard: `/${locale}/home`
         }
     }
   }

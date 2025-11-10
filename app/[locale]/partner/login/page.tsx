@@ -5,9 +5,30 @@ import { useEffect } from 'react'
 
 export default function PartnerLoginPage() {
   useEffect(() => {
-    // Créer le cookie de contexte PARTENAIRE dès l'arrivée sur la page
-    document.cookie = `login_context=partner; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
-    console.log('✅ Cookie login_context=partner pré-créé')
+    // Créer le cookie de contexte PARTENAIRE côté serveur via API
+    const setContext = async () => {
+      try {
+        const response = await fetch('/api/auth/set-login-context', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ context: 'partner' })
+        })
+        
+        if (response.ok) {
+          console.log('✅ Cookie login_context=partner créé côté SERVEUR')
+        } else {
+          // Fallback client-side
+          document.cookie = `login_context=partner; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+          console.log('✅ Cookie login_context=partner créé côté CLIENT (fallback)')
+        }
+      } catch (error) {
+        // Fallback client-side
+        document.cookie = `login_context=partner; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+        console.log('✅ Cookie login_context=partner créé côté CLIENT (fallback)')
+      }
+    }
+    
+    setContext()
   }, [])
 
   return (

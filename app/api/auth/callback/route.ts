@@ -16,33 +16,62 @@ export async function GET(request: NextRequest) {
       if (!error && data.user) {
         console.log('OAuth callback successful for:', data.user.email, 'with role:', selectedRole)
         
-        // Use enhanced role detection system
-        let actualUserRole = selectedRole; // Default fallback
-        try {
-          const { detectUserRole } = await import('@/lib/auth/role-detection');
-          actualUserRole = await detectUserRole(data.user.id, data.user.email);
-          console.log('✅ User actual role detected:', actualUserRole)
-        } catch (roleDetectionErr) {
-          console.error('Exception in role detection:', roleDetectionErr)
-          console.log('⚠️ Using selected role as fallback:', selectedRole)
+        // Créer le cookie login_context selon le rôle sélectionné
+        const { cookies } = await import('next/headers')
+        const cookieStore = await cookies()
+        
+        // Mapper le rôle sélectionné au contexte
+        const contextMap: Record<string, string> = {
+          'client': 'client',
+          'partner': 'partner',
+          'admin': 'employee',
+          'employee': 'employee'
+        }
+        const loginContext = contextMap[selectedRole] || 'employee'
+        
+        // Créer le cookie côté serveur
+        cookieStore.set('login_context', loginContext, {
+          path: '/',
+          maxAge: 60 * 60 * 24 * 7, // 7 jours
+          sameSite: 'lax',
+          httpOnly: false,
+          secure: process.env.NODE_ENV === 'production'
+        })
+        
+        console.log(`✅ [OAuth Callback] Cookie login_context=${loginContext} créé pour role=${selectedRole}`)
+        
+        // Détecter le rôle DB pour les employés uniquement
+        let actualUserRole = selectedRole;
+        if (loginContext === 'employee') {
+          try {
+            const { detectUserRole } = await import('@/lib/auth/role-detection');
+            actualUserRole = await detectUserRole(data.user.id, data.user.email);
+            console.log('✅ User actual role detected:', actualUserRole)
+          } catch (roleDetectionErr) {
+            console.error('Exception in role detection:', roleDetectionErr)
+            actualUserRole = 'member' // Fallback sécurisé
+          }
         }
         
-        // Redirect based on actual user role with forced cache busting
+        // Rediriger selon le CONTEXTE DE CONNEXION
         const locale = next.replace('/', '') || 'fr'
         const timestamp = Date.now()
         
-        switch (actualUserRole) {
-          case 'superuser':
-            return NextResponse.redirect(`${origin}/${locale}/admin/superuser/dashboard?t=${timestamp}`)
+        switch (loginContext) {
           case 'client':
             return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
           case 'partner':
             return NextResponse.redirect(`${origin}/${locale}/partner/dashboard?t=${timestamp}`)
-          case 'admin':
-          case 'manager':
-          case 'executive':
-          case 'member':
-            return NextResponse.redirect(`${origin}/${locale}/home?t=${timestamp}`)
+          case 'employee':
+            // Pour les employés, utiliser le rôle DB
+            switch (actualUserRole) {
+              case 'superuser':
+                return NextResponse.redirect(`${origin}/${locale}/admin/superuser/dashboard?t=${timestamp}`)
+              case 'executive':
+                return NextResponse.redirect(`${origin}/${locale}/executive?t=${timestamp}`)
+              default:
+                return NextResponse.redirect(`${origin}/${locale}/home?t=${timestamp}`)
+            }
           default:
             return NextResponse.redirect(`${origin}${next}?t=${timestamp}`)
         }

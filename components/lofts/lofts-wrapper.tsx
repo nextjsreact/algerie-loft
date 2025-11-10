@@ -26,6 +26,7 @@ export function LoftsWrapper({
   canManage,
   userRole
 }: LoftsWrapperProps) {
+  // All hooks must be called before any conditional logic
   const locale = useLocale()
   const t = useTranslations('lofts')
   
@@ -35,6 +36,9 @@ export function LoftsWrapper({
     subtitle: t('subtitle'),
     addLoft: t('addLoft')
   };
+
+  // Check permissions once at the top level
+  const canViewFinancialData = ['admin', 'manager', 'executive'].includes(userRole)
 
   // Statistiques rapides
   const availableLofts = lofts.filter(loft => loft.status === 'available').length
@@ -122,11 +126,7 @@ export function LoftsWrapper({
           </div>
         </div>
 
-        <RoleBasedAccess 
-          userRole={userRole} 
-          allowedRoles={['admin', 'manager', 'executive']}
-          showFallback={false}
-        >
+        {canViewFinancialData && (
           <div className="bg-gradient-to-br from-purple-50 to-violet-100 p-6 rounded-2xl border border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
@@ -138,7 +138,7 @@ export function LoftsWrapper({
               </div>
             </div>
           </div>
-        </RoleBasedAccess>
+        )}
       </div>
 
       {/* Message d'accueil si aucun loft */}

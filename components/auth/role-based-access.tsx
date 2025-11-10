@@ -59,6 +59,7 @@ export function RoleBasedAccess({
   showFallback = true,
   className
 }: RoleBasedAccessProps) {
+  // IMPORTANT: All hooks must be called before any conditional logic
   const permissions = usePermissions(userRole);
 
   // Determine if user has access

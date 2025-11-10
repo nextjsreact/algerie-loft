@@ -65,6 +65,7 @@ export function LoftsList({
   isAdmin,
   userRole = 'admin'
 }: LoftsListProps) {
+  // All hooks must be called before any conditional logic
   const locale = useLocale()
   const t = useTranslations('lofts')
   const tCommon = useTranslations('common')
@@ -75,8 +76,12 @@ export function LoftsList({
   const [ownerFilter, setOwnerFilter] = useState("all")
   const [zoneFilter, setZoneFilter] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 10
   const [deletingLoftId, setDeletingLoftId] = useState<string | null>(null)
+  
+  const itemsPerPage = 10
+
+  // Check permissions once at the top level to avoid hook issues
+  const canViewFinancialData = ['admin', 'manager', 'executive'].includes(userRole)
 
   // Filtrage des lofts
   const filteredLofts = lofts.filter((loft) => {
@@ -254,21 +259,13 @@ export function LoftsList({
               <TableHead className="font-semibold">{t('name')}</TableHead>
               <TableHead className="font-semibold">{t('address')}</TableHead>
               <TableHead className="font-semibold">{t('statusTitle')}</TableHead>
-              <RoleBasedAccess 
-                userRole={userRole} 
-                allowedRoles={['admin', 'manager', 'executive']}
-                showFallback={false}
-              >
+              {canViewFinancialData && (
                 <TableHead className="font-semibold">{t('owner')}</TableHead>
-              </RoleBasedAccess>
+              )}
               <TableHead className="font-semibold">{t('zone')}</TableHead>
-              <RoleBasedAccess 
-                userRole={userRole} 
-                allowedRoles={['admin', 'manager', 'executive']}
-                showFallback={false}
-              >
+              {canViewFinancialData && (
                 <TableHead className="font-semibold">{t('price')}</TableHead>
-              </RoleBasedAccess>
+              )}
               <TableHead className="font-semibold">{t('rooms')}</TableHead>
               <TableHead className="font-semibold text-right">{tCommon('actions')}</TableHead>
             </TableRow>
@@ -301,33 +298,25 @@ export function LoftsList({
                   <TableCell>
                     {getStatusBadge(loft.status)}
                   </TableCell>
-                  <RoleBasedAccess 
-                    userRole={userRole} 
-                    allowedRoles={['admin', 'manager', 'executive']}
-                    showFallback={false}
-                  >
+                  {canViewFinancialData && (
                     <TableCell>
                       <div className="flex items-center gap-2 text-gray-600">
                         <User className="h-4 w-4" />
                         {loft.owner_name || "N/A"}
                       </div>
                     </TableCell>
-                  </RoleBasedAccess>
+                  )}
                   <TableCell>
                     {loft.zone_area_name || "N/A"}
                   </TableCell>
-                  <RoleBasedAccess 
-                    userRole={userRole} 
-                    allowedRoles={['admin', 'manager', 'executive']}
-                    showFallback={false}
-                  >
+                  {canViewFinancialData && (
                     <TableCell>
                       <div className="flex items-center gap-2 text-gray-600">
                         <DollarSign className="h-4 w-4" />
                         {formatPrice(loft.price_per_night)}
                       </div>
                     </TableCell>
-                  </RoleBasedAccess>
+                  )}
                   <TableCell>
                     {"N/A"}
                   </TableCell>

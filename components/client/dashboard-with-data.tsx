@@ -70,20 +70,40 @@ export function useDashboardData() {
         let bookings: Booking[] = []
         
         try {
-          const response = await fetch('/api/client/bookings')
+          console.log('🔄 Fetching bookings from API...')
+          const response = await fetch('/api/client/bookings', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include'
+          })
+          
+          console.log('📡 API Response status:', response.status)
           
           if (response.ok) {
             const result = await response.json()
             bookings = result.bookings || []
-            console.log('✅ Bookings loaded:', bookings.length)
+            console.log('✅ Bookings loaded:', bookings.length, bookings)
           } else {
             console.error('❌ Failed to load bookings:', response.status)
-            const errorData = await response.json()
-            console.error('Error details:', errorData)
+            try {
+              const errorData = await response.json()
+              console.error('Error details:', errorData)
+            } catch (e) {
+              console.error('Could not parse error response')
+            }
           }
         } catch (fetchError) {
-          console.error('❌ Error fetching bookings:', fetchError)
-          // Continue with empty bookings array
+          console.error('❌ Network error fetching bookings:', fetchError)
+          
+          // Use mock data in development if API fails
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🔧 Loading mock bookings for development...')
+            const { getMockBookings } = await import('@/lib/mock-bookings')
+            bookings = getMockBookings() as any
+          }
+          // Continue with empty bookings array in production
         }
 
         // Calculate stats

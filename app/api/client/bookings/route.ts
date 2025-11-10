@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch bookings with loft details
+    // Using only columns that definitely exist in the lofts table
     const { data: bookings, error: bookingsError } = await supabase
       .from('bookings')
       .select(`
@@ -32,8 +33,7 @@ export async function GET(request: NextRequest) {
           id,
           name,
           description,
-          address,
-          price_per_month
+          address
         )
       `)
       .eq('client_id', user.id)
@@ -64,10 +64,15 @@ export async function GET(request: NextRequest) {
         id: booking.loft?.id || '',
         name: booking.loft?.name || 'Loft',
         address: booking.loft?.address || 'Adresse non disponible',
-        price_per_night: booking.loft?.price_per_month || 0,
+        price_per_night: Math.round((booking.total_price || 0) / Math.max(1, calculateNights(booking.check_in, booking.check_out))),
         images: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&h=800&fit=crop']
       }
     }))
+    
+    function calculateNights(checkIn: string, checkOut: string): number {
+      const diff = new Date(checkOut).getTime() - new Date(checkIn).getTime()
+      return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)))
+    }
 
     return NextResponse.json({
       success: true,

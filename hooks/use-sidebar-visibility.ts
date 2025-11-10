@@ -18,12 +18,15 @@ export function useSidebarVisibility({ userRole, hideSidebar = false }: UseSideb
                        pathname?.includes('/forgot-password') || 
                        pathname?.includes('/reset-password')
     
-    // Pages publiques
+    // Pages publiques (seulement les pages racines de locale, pas les sous-pages)
     const isPublicPage = pathname?.includes('/public') || 
                          pathname?.includes('/site-public') ||
                          pathname === '/fr' || 
                          pathname === '/en' || 
-                         pathname === '/ar'
+                         pathname === '/ar' ||
+                         pathname === '/fr/' || 
+                         pathname === '/en/' || 
+                         pathname === '/ar/'
     
     // Pages client - ne doivent pas avoir la sidebar admin
     const isClientPage = pathname?.includes('/client') || 
@@ -41,7 +44,7 @@ export function useSidebarVisibility({ userRole, hideSidebar = false }: UseSideb
   return {
     shouldHideSidebar,
     isAuthPage: pathname?.includes('/login') || pathname?.includes('/register') || pathname?.includes('/forgot-password') || pathname?.includes('/reset-password'),
-    isPublicPage: pathname?.includes('/public') || pathname?.includes('/site-public') || pathname === '/fr' || pathname === '/en' || pathname === '/ar',
+    isPublicPage: pathname?.includes('/public') || pathname?.includes('/site-public') || pathname === '/fr' || pathname === '/en' || pathname === '/ar' || pathname === '/fr/' || pathname === '/en/' || pathname === '/ar/',
     isClientPage: pathname?.includes('/client') || (userRole === 'client' && !pathname?.includes('/admin')),
     pathname
   }

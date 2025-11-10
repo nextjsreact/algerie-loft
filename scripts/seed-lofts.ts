@@ -1,8 +1,16 @@
+import 'dotenv/config'
 import { createClient } from '@supabase/supabase-js'
 
 // You'll need to set these environment variables
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('❌ Variables d\'environnement manquantes')
+  console.error('NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? '✓' : '✗')
+  console.error('SUPABASE_SERVICE_ROLE_KEY:', supabaseServiceKey ? '✓' : '✗')
+  process.exit(1)
+}
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
@@ -13,14 +21,14 @@ async function seedLofts() {
     // First, let's create some zone areas
     const { data: zoneAreas, error: zoneError } = await supabase
       .from('zone_areas')
-      .upsert([
+      .insert([
         { name: 'Hydra' },
         { name: 'Centre-Ville' },
         { name: 'Bab Ezzouar' },
         { name: 'Oran' },
         { name: 'Constantine' },
         { name: 'Bainem' }
-      ], { onConflict: 'name' })
+      ])
       .select()
 
     if (zoneError) {
@@ -33,7 +41,7 @@ async function seedLofts() {
     // Create some loft owners
     const { data: owners, error: ownersError } = await supabase
       .from('loft_owners')
-      .upsert([
+      .insert([
         { 
           name: 'Ahmed Benali',
           email: 'ahmed.benali@example.com',
@@ -58,7 +66,7 @@ async function seedLofts() {
           phone: '+213 555 901 234',
           ownership_type: 'third_party'
         }
-      ], { onConflict: 'email' })
+      ])
       .select()
 
     if (ownersError) {
@@ -74,7 +82,7 @@ async function seedLofts() {
         name: 'Loft Artistique Hydra',
         address: '15 Rue Didouche Mourad, Hydra, Alger',
         description: 'Profitez avec toute la famille dans cet appartement confortable, calme, avec une magnifique vue panoramique',
-        price_per_month: 45000,
+        price_per_night: 4500,
         status: 'available',
         owner_id: owners?.[0]?.id,
         zone_area_id: zoneAreas?.find(z => z.name === 'Hydra')?.id,
@@ -85,7 +93,7 @@ async function seedLofts() {
         name: 'Loft Moderne Centre-Ville',
         address: '8 Boulevard Zighout Youcef, Centre-Ville, Alger',
         description: 'Loft moderne avec vue sur la baie d\'Alger',
-        price_per_month: 55000,
+        price_per_night: 5500,
         status: 'available',
         owner_id: owners?.[1]?.id,
         zone_area_id: zoneAreas?.find(z => z.name === 'Centre-Ville')?.id,
@@ -96,7 +104,7 @@ async function seedLofts() {
         name: 'Studio Haut de Gamme Hydra',
         address: '22 Chemin Mackley, Hydra, Alger',
         description: 'Studio haut de gamme dans le quartier d\'Hydra',
-        price_per_month: 38000,
+        price_per_night: 3800,
         status: 'occupied',
         owner_id: owners?.[0]?.id,
         zone_area_id: zoneAreas?.find(z => z.name === 'Hydra')?.id,
@@ -107,7 +115,7 @@ async function seedLofts() {
         name: 'Loft Étudiant Bab Ezzouar',
         address: '5 Cité AADL, Bab Ezzouar, Alger',
         description: 'Loft adapté aux étudiants, proche de l\'université',
-        price_per_month: 28000,
+        price_per_night: 2800,
         status: 'available',
         owner_id: owners?.[2]?.id,
         zone_area_id: zoneAreas?.find(z => z.name === 'Bab Ezzouar')?.id,
@@ -118,7 +126,7 @@ async function seedLofts() {
         name: 'Penthouse Vue Mer Oran',
         address: '12 Front de Mer, Oran',
         description: 'Penthouse avec vue panoramique sur la mer',
-        price_per_month: 75000,
+        price_per_night: 7500,
         status: 'available',
         owner_id: owners?.[3]?.id,
         zone_area_id: zoneAreas?.find(z => z.name === 'Oran')?.id,
@@ -129,7 +137,7 @@ async function seedLofts() {
         name: 'Loft Familial Constantine',
         address: '18 Rue Larbi Ben M\'hidi, Constantine',
         description: 'Loft spacieux pour famille, quartier calme',
-        price_per_month: 42000,
+        price_per_night: 4200,
         status: 'maintenance',
         owner_id: owners?.[2]?.id,
         zone_area_id: zoneAreas?.find(z => z.name === 'Constantine')?.id,

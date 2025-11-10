@@ -71,8 +71,8 @@ export default function HybridDashboardWithData() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
-      {/* Hero starts right below fixed header */}
-      <div className="pt-16">
+      {/* Hero positioned to start scroll at its level */}
+      <div className="mt-16">
         <DashboardHeader 
           userName={data.userName}
           userAvatar={data.userAvatar}

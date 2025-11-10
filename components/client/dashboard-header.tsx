@@ -17,7 +17,7 @@ export default function DashboardHeader({
   setShowNotifications 
 }: DashboardHeaderProps) {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500">
+    <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 mt-4">
       <div className="absolute inset-0 bg-black/10"></div>
       
       {/* Decorative Blobs */}

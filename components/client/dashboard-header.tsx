@@ -17,14 +17,14 @@ export default function DashboardHeader({
   setShowNotifications 
 }: DashboardHeaderProps) {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 mt-16">
+    <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500">
       <div className="absolute inset-0 bg-black/10"></div>
       
       {/* Decorative Blobs */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-48 translate-x-48"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl translate-y-48 -translate-x-48"></div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 pb-20">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20">
         {/* Welcome Section - Ultra Compact */}
         <div className="flex items-center gap-3 mb-2">
           {userAvatar ? (

@@ -3,6 +3,7 @@
 import { LanguageSelector } from "@/components/ui/language-selector"
 import { UserAvatarDropdown } from "@/components/auth/user-avatar-dropdown"
 import { ThemeToggle } from "@/components/theme-toggle"
+import RobustLogo from "@/components/futuristic/RobustLogo"
 import { useLocale } from "next-intl"
 
 export function DesktopHeader() {
@@ -11,10 +12,8 @@ export function DesktopHeader() {
   return (
     <header className="hidden md:flex h-16 items-center justify-between bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 shadow-sm fixed top-0 left-0 right-0 z-50">
       {/* Left side - Logo */}
-      <div className="flex items-center gap-2">
-        <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-          🏠 Loft Algérie
-        </div>
+      <div className="flex items-center">
+        <RobustLogo variant="header" />
       </div>
 
       {/* Right side controls */}

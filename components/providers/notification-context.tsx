@@ -143,8 +143,11 @@ export function NotificationProvider({ children, userId }: { children: React.Rea
           }
         }
       )
-      .subscribe({
-        error: (error) => {
+      .subscribe((status, error) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Notification subscription active')
+        }
+        if (error) {
           console.warn('WebSocket subscription error (non-critical):', error)
         }
       })
@@ -155,7 +158,8 @@ export function NotificationProvider({ children, userId }: { children: React.Rea
     return () => {
       if (subscription) {
         try {
-          subscription.unsubscribe()
+          // Supabase realtime unsubscribe
+          supabase.removeChannel(subscription)
         } catch (error) {
           console.warn('WebSocket unsubscribe error (non-critical):', error)
         }

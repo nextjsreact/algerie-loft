@@ -67,27 +67,46 @@ export default function PartnerDashboardPage() {
       setLoading(true)
       
       // Fetch partner stats
-      const statsResponse = await fetch('/api/partner/dashboard/stats')
-      if (statsResponse.ok) {
-        const statsData = await statsResponse.json()
-        setStats(statsData)
+      try {
+        const statsResponse = await fetch('/api/partner/dashboard/stats')
+        if (statsResponse.ok) {
+          const statsData = await statsResponse.json()
+          setStats(statsData)
+        } else {
+          console.log('Stats API not available, using default values')
+        }
+      } catch (statsErr) {
+        console.log('Stats API error:', statsErr)
       }
 
       // Fetch properties
-      const propertiesResponse = await fetch('/api/partner/properties?summary=true')
-      if (propertiesResponse.ok) {
-        const propertiesData = await propertiesResponse.json()
-        setProperties(propertiesData.properties || [])
+      try {
+        const propertiesResponse = await fetch('/api/partner/properties?summary=true')
+        if (propertiesResponse.ok) {
+          const propertiesData = await propertiesResponse.json()
+          setProperties(propertiesData.properties || [])
+        } else {
+          console.log('Properties API not available, using empty array')
+        }
+      } catch (propsErr) {
+        console.log('Properties API error:', propsErr)
       }
 
       // Fetch recent bookings
-      const bookingsResponse = await fetch('/api/bookings?limit=5')
-      if (bookingsResponse.ok) {
-        const bookingsData = await bookingsResponse.json()
-        setRecentBookings(bookingsData.bookings || [])
+      try {
+        const bookingsResponse = await fetch('/api/bookings?limit=5')
+        if (bookingsResponse.ok) {
+          const bookingsData = await bookingsResponse.json()
+          setRecentBookings(bookingsData.bookings || [])
+        } else {
+          console.log('Bookings API not available, using empty array')
+        }
+      } catch (bookingsErr) {
+        console.log('Bookings API error:', bookingsErr)
       }
       
     } catch (err) {
+      console.error('Dashboard data fetch error:', err)
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement')
     } finally {
       setLoading(false)

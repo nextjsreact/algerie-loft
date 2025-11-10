@@ -81,8 +81,36 @@ export async function requireRole(allowedRoles: UserRole[], locale?: string): Pr
     redirect(`/${targetLocale}/login`)
   }
 
-  if (!allowedRoles.includes(session.user.role)) {
-    redirect(`/${targetLocale}/unauthorized`)
+  // Vérifier le contexte de connexion en priorité
+  const { cookies } = await import('next/headers')
+  const cookieStore = await cookies()
+  const loginContext = cookieStore.get('login_context')?.value
+  
+  console.log('[requireRole] Checking access - DB role:', session.user.role, 'login_context:', loginContext, 'allowed:', allowedRoles)
+  
+  // Si le contexte de connexion existe, l'utiliser pour la vérification
+  if (loginContext) {
+    // Mapper le contexte aux rôles autorisés
+    const contextRoleMap: Record<string, UserRole> = {
+      'client': 'client',
+      'partner': 'partner',
+      'employee': session.user.role // Pour les employés, utiliser le rôle DB
+    }
+    
+    const effectiveRole = contextRoleMap[loginContext] || session.user.role
+    console.log('[requireRole] Effective role from context:', effectiveRole)
+    
+    if (!allowedRoles.includes(effectiveRole)) {
+      console.log('[requireRole] Access denied - effective role not in allowed roles')
+      redirect(`/${targetLocale}/unauthorized`)
+    }
+  } else {
+    // Fallback: utiliser le rôle DB si pas de contexte
+    console.log('[requireRole] No login context, using DB role')
+    if (!allowedRoles.includes(session.user.role)) {
+      console.log('[requireRole] Access denied - DB role not in allowed roles')
+      redirect(`/${targetLocale}/unauthorized`)
+    }
   }
 
   return session

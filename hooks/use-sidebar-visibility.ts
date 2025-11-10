@@ -41,11 +41,27 @@ export function useSidebarVisibility({ userRole, hideSidebar = false }: UseSideb
     return isAuthPage || isPublicPage || isClientPage || isHiddenPage
   }, [pathname, userRole, hideSidebar])
   
+  const isAuthPage = pathname?.includes('/login') || 
+                     pathname?.includes('/register') || 
+                     pathname?.includes('/forgot-password') || 
+                     pathname?.includes('/reset-password')
+  
+  const isPublicPage = pathname?.includes('/public') || 
+                       pathname?.includes('/site-public') ||
+                       pathname === '/fr' || 
+                       pathname === '/en' || 
+                       pathname === '/ar' ||
+                       pathname === '/fr/' || 
+                       pathname === '/en/' || 
+                       pathname === '/ar/'
+  
+  const isClientPage = pathname?.includes('/client') || (userRole === 'client' && !pathname?.includes('/admin'))
+  
   return {
     shouldHideSidebar,
-    isAuthPage: pathname?.includes('/login') || pathname?.includes('/register') || pathname?.includes('/forgot-password') || pathname?.includes('/reset-password'),
-    isPublicPage: pathname?.includes('/public') || pathname?.includes('/site-public') || pathname === '/fr' || pathname === '/en' || pathname === '/ar' || pathname === '/fr/' || pathname === '/en/' || pathname === '/ar/',
-    isClientPage: pathname?.includes('/client') || (userRole === 'client' && !pathname?.includes('/admin')),
+    isAuthPage,
+    isPublicPage,
+    isClientPage,
     pathname
   }
 }

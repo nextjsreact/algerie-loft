@@ -78,7 +78,7 @@ export default function HybridDashboardWithData() {
         setShowNotifications={setShowNotifications}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 relative z-10 pb-12">
         {/* Tabs */}
         <div className="flex items-center gap-3 mb-8 overflow-x-auto pb-2">
           {[

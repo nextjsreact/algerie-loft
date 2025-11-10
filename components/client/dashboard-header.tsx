@@ -24,7 +24,7 @@ export default function DashboardHeader({
       <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-48 translate-x-48"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl translate-y-48 -translate-x-48"></div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 pb-5">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 pb-20">
         {/* Welcome Section - Ultra Compact */}
         <div className="flex items-center gap-3 mb-2">
           {userAvatar ? (
@@ -115,10 +115,10 @@ export default function DashboardHeader({
         </motion.div>
       </div>
 
-      {/* Wave Separator */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="white"/>
+      {/* Wave Separator - Taller to not hide content */}
+      <div className="absolute bottom-0 left-0 right-0 pointer-events-none">
+        <svg viewBox="0 0 1440 180" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+          <path d="M0 180L60 165C120 150 240 120 360 105C480 90 600 90 720 97.5C840 105 960 120 1080 127.5C1200 135 1320 135 1380 135L1440 135V180H1380C1320 180 1200 180 1080 180C960 180 840 180 720 180C600 180 480 180 360 180C240 180 120 180 60 180H0Z" fill="white"/>
         </svg>
       </div>
     </div>

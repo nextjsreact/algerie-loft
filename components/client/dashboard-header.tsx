@@ -24,23 +24,23 @@ export default function DashboardHeader({
       <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-48 translate-x-48"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl translate-y-48 -translate-x-48"></div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Welcome Section - Simplified without duplicate buttons */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-4">
           {userAvatar ? (
             <img 
               src={userAvatar} 
               alt={userName} 
-              className="w-16 h-16 rounded-full border-2 border-white/30 object-cover"
+              className="w-14 h-14 rounded-full border-2 border-white/30 object-cover"
             />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white font-bold text-2xl">
+            <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white font-bold text-xl">
               {userName.charAt(0).toUpperCase()}
             </div>
           )}
           <div>
             <div className="text-white/80 text-sm">Bienvenue,</div>
-            <div className="text-white font-bold text-2xl">{userName}</div>
+            <div className="text-white font-bold text-xl">{userName}</div>
           </div>
         </div>
 
@@ -49,17 +49,17 @@ export default function DashboardHeader({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-8"
+          className="mb-4"
         >
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 mb-4">
-            <Sparkles className="w-4 h-4 text-yellow-300" />
-            <span className="text-white text-sm font-medium">Membre Premium</span>
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 mb-3">
+            <Sparkles className="w-3 h-3 text-yellow-300" />
+            <span className="text-white text-xs font-medium">Membre Premium</span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
             Votre prochaine aventure 🌟
           </h1>
-          <p className="text-xl text-white/90 max-w-2xl">
+          <p className="text-lg text-white/90 max-w-2xl">
             Découvrez des lofts exceptionnels à travers l'Algérie
           </p>
         </motion.div>

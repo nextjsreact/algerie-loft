@@ -15,7 +15,7 @@ import { Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { login } from "@/lib/auth"
 import { loginSchema, type LoginFormData } from "@/lib/validations"
-import { useTranslation } from "@/lib/i18n/context"
+import { useTranslations } from "next-intl"
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)

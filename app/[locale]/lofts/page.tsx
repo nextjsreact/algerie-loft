@@ -9,7 +9,7 @@ type LoftOwner = Database['public']['Tables']['loft_owners']['Row']
 type ZoneArea = Database['public']['Tables']['zone_areas']['Row']
 
 export default async function LoftsPage() {
-  const session = await requireRole(["admin", "manager", "member"]);
+  const session = await requireRole(["admin", "manager", "member", "executive"]);
   
   // Si l'utilisateur est un membre, afficher la vue spéciale membre
   if (session.user.role === 'member') {
@@ -76,6 +76,7 @@ export default async function LoftsPage() {
     const zoneAreas = zoneAreasData || []
     const isAdmin = session.user.role === "admin"
     const canManage = ["admin", "manager"].includes(session.user.role)
+    const canViewFinancial = ["admin", "manager", "executive"].includes(session.user.role)
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">

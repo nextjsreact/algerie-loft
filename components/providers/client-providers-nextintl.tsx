@@ -39,19 +39,6 @@ export default function ClientProviders({ children, session, unreadCount, locale
     hideSidebar
   })
   
-  // Debug logs
-  useEffect(() => {
-    console.log('🔍 ClientProviders Debug:', {
-      pathname,
-      hasSession: !!session,
-      userRole: session?.user?.role,
-      isAuthPage,
-      isPublicPage,
-      shouldHideSidebar,
-      willShowFullLayout: !(!session || isAuthPage || isPublicPage)
-    })
-  }, [pathname, session, isAuthPage, isPublicPage, shouldHideSidebar])
-  
   // Force re-render when pathname or user role changes
   useEffect(() => {
     setRenderKey(prev => prev + 1)

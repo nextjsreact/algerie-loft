@@ -1,62 +1,76 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { ReservationService } from '@/lib/services/reservation-service';
-
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const customerId = searchParams.get('customer_id');
-    
-    // Initialize reservation service
-    const reservationService = new ReservationService();
-    
-    let reservations;
-    if (customerId) {
-      // Get reservations for specific customer
-      reservations = await reservationService.getUserReservations(customerId);
-    } else {
-      // For development: return all reservations
-      // In production, this would require admin authentication
-      reservations = reservationService['getStoredReservations']();
-    }
-    
-    return NextResponse.json({
-      success: true,
-      reservations,
-      count: reservations.length
-    });
-    
-  } catch (error) {
-    console.error('Error fetching reservations:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch reservations' },
-      { status: 500 }
-    );
-  }
-}
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/utils/supabase/server'
+import { getSession } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const reservationRequest = await request.json();
+    const session = await getSession()
     
-    // Initialize reservation service
-    const reservationService = new ReservationService();
-    
-    // Create new reservation
-    const reservation = await reservationService.createReservation(
-      reservationRequest,
-      reservationRequest.customer_id
-    );
-    
-    return NextResponse.json({
-      success: true,
-      reservation
-    }, { status: 201 });
-    
+    if (!session || session.user.role !== 'client') {
+      return NextResponse.json(
+        { error: 'Non autorisé' },
+        { status: 401 }
+      )
+    }
+
+    const body = await request.json()
+    const { loft_id, check_in, check_out, guests, message, total_price } = body
+
+    // Validation
+    if (!loft_id || !check_in || !check_out || !guests) {
+      return NextResponse.json(
+        { error: 'Données manquantes' },
+        { status: 400 }
+      )
+    }
+
+    const supabase = await createClient()
+
+    // Vérifier que le loft existe et est disponible
+    const { data: loft } = await supabase
+      .from('lofts')
+      .select('*')
+      .eq('id', loft_id)
+      .single()
+
+    if (!loft || loft.status !== 'available') {
+      return NextResponse.json(
+        { error: 'Loft non disponible' },
+        { status: 400 }
+      )
+    }
+
+    // Créer la réservation
+    const { data: booking, error } = await supabase
+      .from('bookings')
+      .insert({
+        loft_id,
+        client_id: session.user.id,
+        check_in_date: check_in,
+        check_out_date: check_out,
+        number_of_guests: guests,
+        special_requests: message,
+        total_price,
+        status: 'pending',
+        created_at: new Date().toISOString()
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Booking creation error:', error)
+      return NextResponse.json(
+        { error: 'Erreur lors de la création de la réservation' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ booking }, { status: 201 })
   } catch (error) {
-    console.error('Error creating reservation:', error);
+    console.error('Booking API error:', error)
     return NextResponse.json(
-      { error: 'Failed to create reservation' },
+      { error: 'Erreur serveur' },
       { status: 500 }
-    );
+    )
   }
 }

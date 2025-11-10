@@ -140,7 +140,7 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
   const t = getTranslations(locale);
 
   try {
-    const session = await requireRole(["admin", "manager"], locale)
+    const session = await requireRole(["admin", "manager", "executive", "client"], locale)
     const supabase = await createClient()
 
     const { data: loft, error } = await supabase

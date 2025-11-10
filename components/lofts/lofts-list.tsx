@@ -334,21 +334,32 @@ export function LoftsList({
                             {tCommon('view')}
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href={`/${locale}/lofts/${loft.id}/edit`} className="flex items-center gap-2">
-                            <Edit className="h-4 w-4" />
-                            {tCommon('edit')}
-                          </Link>
-                        </DropdownMenuItem>
-                        {isAdmin && (
-                          <DropdownMenuItem 
-                            className="flex items-center gap-2 text-red-600 cursor-pointer"
-                            onClick={() => handleDeleteLoft(loft.id, loft.name)}
-                            disabled={deletingLoftId === loft.id}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            {deletingLoftId === loft.id ? t('deleting') : tCommon('delete')}
+                        {userRole === 'client' && loft.status === 'available' ? (
+                          <DropdownMenuItem asChild>
+                            <Link href={`/${locale}/lofts/${loft.id}/book`} className="flex items-center gap-2 text-green-600">
+                              <Calendar className="h-4 w-4" />
+                              Réserver
+                            </Link>
                           </DropdownMenuItem>
+                        ) : (
+                          <>
+                            <DropdownMenuItem asChild>
+                              <Link href={`/${locale}/lofts/${loft.id}/edit`} className="flex items-center gap-2">
+                                <Edit className="h-4 w-4" />
+                                {tCommon('edit')}
+                              </Link>
+                            </DropdownMenuItem>
+                            {isAdmin && (
+                              <DropdownMenuItem 
+                                className="flex items-center gap-2 text-red-600 cursor-pointer"
+                                onClick={() => handleDeleteLoft(loft.id, loft.name)}
+                                disabled={deletingLoftId === loft.id}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                                {deletingLoftId === loft.id ? t('deleting') : tCommon('delete')}
+                              </DropdownMenuItem>
+                            )}
+                          </>
                         )}
                       </DropdownMenuContent>
                     </DropdownMenu>

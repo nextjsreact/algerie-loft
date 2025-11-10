@@ -9,7 +9,7 @@ type LoftOwner = Database['public']['Tables']['loft_owners']['Row']
 type ZoneArea = Database['public']['Tables']['zone_areas']['Row']
 
 export default async function LoftsPage() {
-  const session = await requireRole(["admin", "manager", "member", "executive"]);
+  const session = await requireRole(["admin", "manager", "member", "executive", "client"]);
   
   // Si l'utilisateur est un membre, afficher la vue spéciale membre
   if (session.user.role === 'member') {
@@ -18,6 +18,47 @@ export default async function LoftsPage() {
         <MemberLoftsClientWrapper />
       </div>
     );
+  }
+  
+  // Si l'utilisateur est un client, afficher seulement les lofts disponibles
+  if (session.user.role === 'client') {
+    const supabase = await createClient()
+    
+    const { data: loftsData } = await supabase
+      .from("lofts")
+      .select("*")
+      .eq("status", "available")
+      .eq("is_published", true)
+      .order("created_at", { ascending: false })
+    
+    const { data: zoneAreasData } = await supabase
+      .from("zone_areas")
+      .select("*")
+      .order("name")
+    
+    const ownersMap = new Map()
+    const zonesMap = new Map((zoneAreasData || []).map(zone => [zone.id, zone.name]))
+    
+    const lofts = (loftsData || []).map(loft => ({
+      ...loft,
+      owner_name: null, // Les clients ne voient pas les propriétaires
+      zone_area_name: zonesMap.get(loft.zone_area_id) || null
+    })) as LoftWithRelations[]
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <div className="container mx-auto px-4 py-8">
+          <LoftsWrapper
+            lofts={lofts}
+            owners={[]}
+            zoneAreas={zoneAreasData || []}
+            isAdmin={false}
+            canManage={false}
+            userRole={session.user.role}
+          />
+        </div>
+      </div>
+    )
   }
 
   // Pour admin et manager, continuer avec la vue complète

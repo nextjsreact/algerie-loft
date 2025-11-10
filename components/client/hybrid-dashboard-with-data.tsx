@@ -134,7 +134,7 @@ export default function HybridDashboardWithData() {
                    'Sauvegardez vos lofts préférés'}
                 </p>
                 <button
-                  onClick={() => router.push('/fr/lofts')}
+                  onClick={() => router.push('/fr/public')}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-xl transition-all inline-flex items-center gap-2"
                 >
                   <Search className="w-5 h-5" />

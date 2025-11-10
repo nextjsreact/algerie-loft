@@ -7,7 +7,7 @@ export default function QuickActions() {
   const router = useRouter()
 
   const actions = [
-    { icon: Search, label: 'Rechercher un loft', color: 'from-blue-500 to-cyan-500', path: '/fr/lofts' },
+    { icon: Search, label: 'Rechercher un loft', color: 'from-blue-500 to-cyan-500', path: '/fr/public' },
     { icon: Heart, label: 'Mes favoris', color: 'from-rose-500 to-pink-500', path: '/fr/client/favorites' },
     { icon: MessageSquare, label: 'Messages', color: 'from-purple-500 to-indigo-500', path: '/fr/client/messages' }
   ]

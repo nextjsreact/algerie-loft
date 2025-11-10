@@ -72,7 +72,7 @@ export default function DashboardHeader({
         >
           <div className="flex flex-col md:flex-row gap-1.5">
             <div 
-              onClick={() => window.location.href = '/fr/lofts'}
+              onClick={() => window.location.href = '/fr/public'}
               className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-all flex-1"
             >
               <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
@@ -83,7 +83,7 @@ export default function DashboardHeader({
             </div>
             
             <div 
-              onClick={() => window.location.href = '/fr/lofts'}
+              onClick={() => window.location.href = '/fr/public'}
               className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-all flex-1"
             >
               <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
@@ -94,7 +94,7 @@ export default function DashboardHeader({
             </div>
             
             <div 
-              onClick={() => window.location.href = '/fr/lofts'}
+              onClick={() => window.location.href = '/fr/public'}
               className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-all flex-1"
             >
               <Users className="w-4 h-4 text-gray-400 flex-shrink-0" />
@@ -105,7 +105,7 @@ export default function DashboardHeader({
             </div>
             
             <button 
-              onClick={() => window.location.href = '/fr/lofts'}
+              onClick={() => window.location.href = '/fr/public'}
               className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-lg px-6 py-2 font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 flex-shrink-0"
             >
               <Search className="w-4 h-4" />

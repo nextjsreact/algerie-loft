@@ -26,7 +26,7 @@ export default function DestinationsSection() {
           </div>
         </div>
         <button 
-          onClick={() => router.push('/fr/lofts')}
+          onClick={() => router.push('/fr/public')}
           className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold"
         >
           Voir tout
@@ -42,7 +42,7 @@ export default function DestinationsSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
             whileHover={{ y: -8 }}
-            onClick={() => router.push(`/fr/lofts?city=${destination.city}`)}
+            onClick={() => router.push(`/fr/public`)}
             className="relative h-96 rounded-3xl overflow-hidden cursor-pointer group"
           >
             <img

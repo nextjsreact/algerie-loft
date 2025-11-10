@@ -107,9 +107,11 @@ export function SimpleLoginFormNextIntl() {
           console.error('Exception getting user profile:', profileErr)
         }
         
-        // Check for role parameter in URL or selected role
+        // Vérifier le cookie login_context pour déterminer la redirection
+        const loginContext = document.cookie.split('; ').find(row => row.startsWith('login_context='))?.split('=')[1]
+        console.log('🍪 Login context from cookie:', loginContext)
+        
         const redirectParam = searchParams.get('redirect')
-        const roleToUse = actualUserRole || selectedRole || roleParam
         
         // If we have a return URL, redirect there
         if (returnUrl) {
@@ -117,28 +119,43 @@ export function SimpleLoginFormNextIntl() {
         } else if (redirectParam) {
           // If we have a specific redirect, use it
           window.location.href = `/${locale}${redirectParam}`
-        } else if (roleToUse) {
-          // Redirect based on actual user role (not selected role)
-          switch (roleToUse) {
+        } else if (loginContext) {
+          // Rediriger selon le CONTEXTE DE CONNEXION (priorité)
+          switch (loginContext) {
             case 'client':
               window.location.href = `/${locale}/client/dashboard`
               break
             case 'partner':
               window.location.href = `/${locale}/partner/dashboard`
               break
-            case 'admin':
-            case 'manager':
-            case 'executive':
-            case 'member':
-              window.location.href = `/${locale}/home`
+            case 'employee':
+              // Pour les employés, utiliser le rôle DB
+              switch (actualUserRole) {
+                case 'superuser':
+                  window.location.href = `/${locale}/admin/superuser/dashboard`
+                  break
+                case 'executive':
+                  window.location.href = `/${locale}/executive`
+                  break
+                default:
+                  window.location.href = `/${locale}/home`
+              }
               break
             default:
               window.location.href = `/${locale}/home`
           }
         } else {
-          // Default redirect
-          const validLocale = locale && ['fr', 'en', 'ar'].includes(locale) ? locale : 'fr'
-          window.location.href = `/${validLocale}/home`
+          // Fallback: utiliser le rôle DB
+          switch (actualUserRole) {
+            case 'client':
+              window.location.href = `/${locale}/client/dashboard`
+              break
+            case 'partner':
+              window.location.href = `/${locale}/partner/dashboard`
+              break
+            default:
+              window.location.href = `/${locale}/home`
+          }
         }
         // Ne pas appeler setIsLoading(false) ici car on redirige
       } else {

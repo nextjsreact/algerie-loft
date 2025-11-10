@@ -52,7 +52,16 @@ export default function BookingCard({ booking }: BookingCardProps) {
   const nights = calculateNights()
   const daysUntil = getDaysUntil()
   const status = getStatusBadge()
-  const imageUrl = booking.loft.images?.[0] || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&h=800&fit=crop'
+  
+  // Get image URL - handle both array and string formats
+  let imageUrl = 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&h=800&fit=crop'
+  if (booking.loft.images) {
+    if (Array.isArray(booking.loft.images) && booking.loft.images.length > 0) {
+      imageUrl = booking.loft.images[0]
+    } else if (typeof booking.loft.images === 'string') {
+      imageUrl = booking.loft.images
+    }
+  }
 
   return (
     <motion.div

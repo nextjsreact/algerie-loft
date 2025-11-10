@@ -66,13 +66,16 @@ export function useDashboardData() {
         const userName = profile?.full_name?.split(' ')[0] || 'Client'
         const userAvatar = profile?.avatar_url
 
-        // Fetch bookings
-        const response = await fetch(`/api/bookings?customer_id=${user.id}`)
+        // Fetch bookings from new API with loft details
+        const response = await fetch('/api/client/bookings')
         let bookings: Booking[] = []
         
         if (response.ok) {
           const result = await response.json()
-          bookings = result.reservations || []
+          bookings = result.bookings || []
+          console.log('✅ Bookings loaded:', bookings.length)
+        } else {
+          console.error('❌ Failed to load bookings:', response.status)
         }
 
         // Calculate stats

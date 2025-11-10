@@ -28,13 +28,17 @@ export default function DashboardHeader({
         {/* Top Bar */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white font-bold text-lg overflow-hidden">
-              {userAvatar ? (
-                <img src={userAvatar} alt={userName} className="w-full h-full object-cover" />
-              ) : (
-                userName.charAt(0).toUpperCase()
-              )}
-            </div>
+            {userAvatar ? (
+              <img 
+                src={userAvatar} 
+                alt={userName} 
+                className="w-12 h-12 rounded-full border-2 border-white/30 object-cover"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white font-bold text-lg">
+                {userName.charAt(0).toUpperCase()}
+              </div>
+            )}
             <div>
               <div className="text-white/80 text-sm">Bienvenue,</div>
               <div className="text-white font-bold text-lg">{userName}</div>
@@ -43,7 +47,11 @@ export default function DashboardHeader({
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setShowNotifications(!showNotifications)}
+              onClick={() => {
+                setShowNotifications(!showNotifications)
+                // TODO: Implement notifications panel
+                alert('Notifications à venir !')
+              }}
               className="relative w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center hover:bg-white/30 transition-all"
             >
               <Bell className="w-5 h-5 text-white" />
@@ -52,7 +60,10 @@ export default function DashboardHeader({
               </span>
             </button>
 
-            <button className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center hover:bg-white/30 transition-all">
+            <button 
+              onClick={() => window.location.href = '/fr/settings'}
+              className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center hover:bg-white/30 transition-all"
+            >
               <Settings className="w-5 h-5 text-white" />
             </button>
           </div>
@@ -86,7 +97,10 @@ export default function DashboardHeader({
           className="bg-white rounded-2xl shadow-2xl p-2"
         >
           <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-            <div className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-all">
+            <div 
+              onClick={() => window.location.href = '/fr/lofts'}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-all"
+            >
               <MapPin className="w-5 h-5 text-gray-400" />
               <div>
                 <div className="text-xs font-semibold text-gray-900">Destination</div>
@@ -94,7 +108,10 @@ export default function DashboardHeader({
               </div>
             </div>
             
-            <div className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-all">
+            <div 
+              onClick={() => window.location.href = '/fr/lofts'}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-all"
+            >
               <Calendar className="w-5 h-5 text-gray-400" />
               <div>
                 <div className="text-xs font-semibold text-gray-900">Dates</div>
@@ -102,7 +119,10 @@ export default function DashboardHeader({
               </div>
             </div>
             
-            <div className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-all">
+            <div 
+              onClick={() => window.location.href = '/fr/lofts'}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-all"
+            >
               <Users className="w-5 h-5 text-gray-400" />
               <div>
                 <div className="text-xs font-semibold text-gray-900">Voyageurs</div>
@@ -110,7 +130,10 @@ export default function DashboardHeader({
               </div>
             </div>
             
-            <button className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-xl px-6 py-3 font-semibold hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2">
+            <button 
+              onClick={() => window.location.href = '/fr/lofts'}
+              className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-xl px-6 py-3 font-semibold hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2"
+            >
               <Search className="w-5 h-5" />
               Rechercher
             </button>

@@ -24,93 +24,92 @@ export default function DashboardHeader({
       <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-48 translate-x-48"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl translate-y-48 -translate-x-48"></div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pb-6">
-        {/* Welcome Section - Compact */}
-        <div className="flex items-center gap-3 mb-3">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 pb-5">
+        {/* Welcome Section - Ultra Compact */}
+        <div className="flex items-center gap-3 mb-2">
           {userAvatar ? (
             <img 
               src={userAvatar} 
               alt={userName} 
-              className="w-12 h-12 rounded-full border-2 border-white/30 object-cover"
+              className="w-10 h-10 rounded-full border-2 border-white/30 object-cover"
             />
           ) : (
-            <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border-2 border-white/30 flex items-center justify-center text-white font-bold text-base">
               {userName.charAt(0).toUpperCase()}
             </div>
           )}
           <div>
             <div className="text-white/80 text-xs">Bienvenue,</div>
-            <div className="text-white font-bold text-lg">{userName}</div>
+            <div className="text-white font-bold text-base">{userName}</div>
           </div>
-          <div className="ml-auto inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 py-1">
+          <div className="ml-auto inline-flex items-center gap-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-2 py-1">
             <Sparkles className="w-3 h-3 text-yellow-300" />
             <span className="text-white text-xs font-medium">Premium</span>
           </div>
         </div>
 
-        {/* Title Section - Compact */}
+        {/* Title Section - Ultra Compact */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-3"
+          className="mb-2"
         >
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">
+          <h1 className="text-xl md:text-2xl font-bold text-white mb-1">
             Votre prochaine aventure 🌟
           </h1>
-          <p className="text-sm text-white/90">
+          <p className="text-xs text-white/90">
             Découvrez des lofts exceptionnels à travers l'Algérie
           </p>
         </motion.div>
 
-        {/* Search Bar - Full width, no truncation */}
+        {/* Search Bar - Responsive, no truncation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-2xl shadow-2xl p-2 w-full"
+          className="bg-white rounded-xl shadow-2xl p-1.5 overflow-hidden"
         >
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 w-full">
+          <div className="flex flex-col md:flex-row gap-1.5">
             <div 
               onClick={() => window.location.href = '/fr/lofts'}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-gray-50 cursor-pointer transition-all min-w-0"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-all flex-1"
             >
               <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
-              <div className="min-w-0 flex-1">
-                <div className="text-xs font-semibold text-gray-900 truncate">Destination</div>
-                <div className="text-xs text-gray-500 truncate">Où allez-vous ?</div>
+              <div className="overflow-hidden">
+                <div className="text-xs font-semibold text-gray-900">Destination</div>
+                <div className="text-xs text-gray-500">Où ?</div>
               </div>
             </div>
             
             <div 
               onClick={() => window.location.href = '/fr/lofts'}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-gray-50 cursor-pointer transition-all min-w-0"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-all flex-1"
             >
               <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
-              <div className="min-w-0 flex-1">
-                <div className="text-xs font-semibold text-gray-900 truncate">Dates</div>
-                <div className="text-xs text-gray-500 truncate">Quand ?</div>
+              <div className="overflow-hidden">
+                <div className="text-xs font-semibold text-gray-900">Dates</div>
+                <div className="text-xs text-gray-500">Quand ?</div>
               </div>
             </div>
             
             <div 
               onClick={() => window.location.href = '/fr/lofts'}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-gray-50 cursor-pointer transition-all min-w-0"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-all flex-1"
             >
               <Users className="w-4 h-4 text-gray-400 flex-shrink-0" />
-              <div className="min-w-0 flex-1">
-                <div className="text-xs font-semibold text-gray-900 truncate">Voyageurs</div>
-                <div className="text-xs text-gray-500 truncate">Combien ?</div>
+              <div className="overflow-hidden">
+                <div className="text-xs font-semibold text-gray-900">Invités</div>
+                <div className="text-xs text-gray-500">Combien ?</div>
               </div>
             </div>
             
             <button 
               onClick={() => window.location.href = '/fr/lofts'}
-              className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-xl px-4 py-2 font-semibold hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+              className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-lg px-6 py-2 font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 flex-shrink-0"
             >
               <Search className="w-4 h-4" />
-              <span className="hidden sm:inline">Rechercher</span>
-              <span className="sm:hidden">🔍</span>
+              <span>Rechercher</span>
             </button>
           </div>
         </motion.div>

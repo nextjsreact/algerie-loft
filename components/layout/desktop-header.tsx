@@ -3,7 +3,7 @@
 import { LanguageSelector } from "@/components/ui/language-selector"
 import { UserAvatarDropdown } from "@/components/auth/user-avatar-dropdown"
 import { ThemeToggle } from "@/components/theme-toggle"
-import RobustLogo from "@/components/futuristic/RobustLogo"
+import Image from "next/image"
 import { useLocale } from "next-intl"
 
 export function DesktopHeader() {
@@ -13,7 +13,14 @@ export function DesktopHeader() {
     <header className="hidden md:flex h-16 items-center justify-between bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 shadow-sm fixed top-0 left-0 right-0 z-50">
       {/* Left side - Logo with more padding */}
       <div className="flex items-center pl-16">
-        <RobustLogo variant="header" />
+        <Image 
+          src="/logo.jpg" 
+          alt="Loft Algérie" 
+          width={140} 
+          height={48} 
+          priority
+          className="h-12 w-auto object-contain max-h-12"
+        />
       </div>
 
       {/* Right side controls */}

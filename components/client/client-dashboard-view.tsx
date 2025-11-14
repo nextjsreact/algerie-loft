@@ -222,7 +222,7 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
               <h2 className="text-3xl font-bold text-gray-900">Lofts disponibles</h2>
               <p className="text-gray-600">Découvrez nos meilleures offres</p>
             </div>
-            <Link href={`/${locale}/lofts`}>
+            <Link href={`/${locale}/client/lofts`}>
               <Button variant="outline">
                 Voir tout
                 <ArrowRight className="h-4 w-4 ml-2" />
@@ -285,7 +285,7 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
             <Calendar className="h-16 w-16 mx-auto mb-4 text-gray-400" />
             <h3 className="text-2xl font-bold mb-2">Aucune réservation pour le moment</h3>
             <p className="text-gray-600 mb-6">Commencez à explorer nos lofts et réservez votre séjour idéal !</p>
-            <Link href={`/${locale}/lofts`}>
+            <Link href={`/${locale}/client/lofts`}>
               <Button className="bg-gradient-to-r from-blue-600 to-purple-600">
                 Découvrir les lofts
                 <ArrowRight className="h-4 w-4 ml-2" />

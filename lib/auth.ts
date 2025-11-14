@@ -489,7 +489,23 @@ export async function getSessionReadOnly(): Promise<AuthSession | null> {
 
   // Use enhanced role detection (read-only version)
   const { detectUserRole } = await import('@/lib/auth/role-detection');
-  const role = await detectUserRole(user.id, user.email);
+  const dbRole = await detectUserRole(user.id, user.email);
+  
+  // Check login context to determine effective role
+  const { cookies } = await import('next/headers');
+  const cookieStore = await cookies();
+  const loginContext = cookieStore.get('login_context')?.value;
+  
+  // Determine effective role based on login context
+  let effectiveRole = dbRole;
+  if (loginContext) {
+    const contextRoleMap: Record<string, UserRole> = {
+      'client': 'client',
+      'partner': 'partner',
+      'employee': dbRole // For employees, use DB role
+    };
+    effectiveRole = contextRoleMap[loginContext] || dbRole;
+  }
   
   // Get user profile for display name
   let full_name = user.user_metadata?.full_name || user.email?.split('@')[0] || null;
@@ -521,7 +537,7 @@ export async function getSessionReadOnly(): Promise<AuthSession | null> {
       id: user.id,
       email: user.email ?? null,
       full_name: full_name,
-      role: role,
+      role: effectiveRole, // Use effective role instead of DB role
       created_at: user.created_at,
       updated_at: user.updated_at ?? null
     },

@@ -32,6 +32,7 @@ import { createClient } from '@/utils/supabase/client';
 import { getRecentReservations, getReservationStats, updateReservationStatus } from '@/lib/actions/reservations';
 import { format } from 'date-fns';
 import { enUS, fr, ar } from 'date-fns/locale';
+import { toast } from 'sonner';
 
 function ReservationsPageContent() {
   const t = useTranslations('reservations');
@@ -152,12 +153,37 @@ function ReservationsPageContent() {
     }
   }, [searchParams]);
 
-  const handleStatusUpdate = useCallback(async (reservationId: string, status: 'confirmed' | 'cancelled' | 'completed') => {
-    const { success, error } = await updateReservationStatus(reservationId, status);
+  const handleStatusUpdate = useCallback(async (reservationId: string, status: 'pending' | 'confirmed' | 'cancelled' | 'completed') => {
+    try {
+      const { success, error } = await updateReservationStatus(reservationId, status);
 
-    if (success) {
-      setSelectedReservation(null);
-      window.location.reload();
+      if (success) {
+        // Afficher un toast de succès
+        const messages = {
+          pending: 'Réservation réactivée',
+          confirmed: 'Réservation confirmée avec succès',
+          cancelled: 'Réservation annulée',
+          completed: 'Réservation marquée comme terminée'
+        };
+        
+        toast.success(messages[status], {
+          description: 'Le statut a été mis à jour'
+        });
+
+        // Fermer le dialog
+        setSelectedReservation(null);
+        
+        // Rafraîchir les données sans recharger la page
+        setRefreshKey(prev => prev + 1);
+      } else {
+        toast.error('Erreur', {
+          description: error || 'Impossible de mettre à jour le statut'
+        });
+      }
+    } catch (err) {
+      toast.error('Erreur', {
+        description: 'Une erreur inattendue s\'est produite'
+      });
     }
   }, []);
 
@@ -354,7 +380,7 @@ function ReservationsPageContent() {
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Sparkles className="h-5 w-5 text-blue-600" />
-                      {t('actions')}
+                      Actions rapides
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
@@ -653,6 +679,16 @@ function ReservationsPageContent() {
                         {t('statusActions.cancel')}
                       </Button>
                     </>
+                  )}
+                  {selectedReservation.status === 'cancelled' && (
+                    <Button onClick={() => handleStatusUpdate(selectedReservation.id, 'pending')} variant="outline">
+                      Réactiver la réservation
+                    </Button>
+                  )}
+                  {selectedReservation.status === 'completed' && (
+                    <div className="text-sm text-gray-600">
+                      Cette réservation est terminée
+                    </div>
                   )}
                 </div>
               </div>

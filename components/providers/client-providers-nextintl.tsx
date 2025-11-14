@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import { useSidebarVisibility } from "@/hooks/use-sidebar-visibility"
+import { cn } from "@/lib/utils"
 
 import { DesktopHeader } from "@/components/layout/desktop-header"
 import { NextIntlClientProvider } from 'next-intl'
@@ -38,6 +39,17 @@ export default function ClientProviders({ children, session, unreadCount, locale
     userRole: session?.user?.role,
     hideSidebar
   })
+  
+  // Debug logs
+  useEffect(() => {
+    console.log('[ClientProviders] Debug:', {
+      userRole: session?.user?.role,
+      pathname,
+      shouldHideSidebar,
+      isAuthPage,
+      isPublicPage
+    })
+  }, [session?.user?.role, pathname, shouldHideSidebar, isAuthPage, isPublicPage])
   
   // Force re-render when pathname or user role changes
   useEffect(() => {
@@ -91,7 +103,10 @@ export default function ClientProviders({ children, session, unreadCount, locale
                      )}
                      <div className="flex flex-1 flex-col min-w-0 relative">
                        {/* Desktop header - always visible on desktop */}
-                       <div className="hidden md:block fixed top-0 right-0 left-0 md:left-72 z-20">
+                       <div className={cn(
+                         "hidden md:block fixed top-0 right-0 left-0 z-20",
+                         !shouldHideSidebar && "md:left-72"
+                       )}>
                          <ErrorBoundary>
                            <DesktopHeader />
                          </ErrorBoundary>

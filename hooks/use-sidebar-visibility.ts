@@ -28,12 +28,11 @@ export function useSidebarVisibility({ userRole, hideSidebar = false }: UseSideb
                          pathname === '/en/' || 
                          pathname === '/ar/'
     
-    // Pages client - ne doivent pas avoir la sidebar admin
-    const isClientPage = pathname?.includes('/client') || 
-                         pathname?.includes('/partner') ||
-                         (pathname?.includes('/admin/superuser') && userRole === 'superuser') ||
-                         (userRole === 'client' && !pathname?.includes('/admin')) || 
-                         (userRole === 'partner' && !pathname?.includes('/admin'))
+    // Pages client - ne doivent pas avoir la sidebar admin/employé
+    // Les clients et partenaires ne doivent JAMAIS voir la sidebar employé
+    const isClientPage = userRole === 'client' || 
+                         userRole === 'partner' ||
+                         (pathname?.includes('/admin/superuser') && userRole === 'superuser')
     
     // Pages qui forcent la sidebar cachée
     const isHiddenPage = hideSidebar
@@ -55,7 +54,7 @@ export function useSidebarVisibility({ userRole, hideSidebar = false }: UseSideb
                        pathname === '/en/' || 
                        pathname === '/ar/'
   
-  const isClientPage = pathname?.includes('/client') || (userRole === 'client' && !pathname?.includes('/admin'))
+  const isClientPage = userRole === 'client' || userRole === 'partner'
   
   return {
     shouldHideSidebar,

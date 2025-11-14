@@ -251,21 +251,33 @@ export async function updateReservationStatus(
   cancellationReason?: string
 ): Promise<ActionResult> {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient(true);
     
     const updateData: any = {
       status,
       updated_at: new Date().toISOString(),
     };
 
-    if (status === 'cancelled') {
-      updateData.cancelled_at = new Date().toISOString();
-      if (cancellationReason) {
-        updateData.cancellation_reason = cancellationReason;
-      }
+    if (status === 'cancelled' && cancellationReason) {
+      updateData.special_requests = (updateData.special_requests || '') + `\n[Annulation: ${cancellationReason}]`;
     }
 
-    const { data: reservation, error } = await supabase
+    // Essayer d'abord la table bookings
+    const { data: booking, error: bookingError } = await supabase
+      .from('bookings')
+      .update(updateData)
+      .eq('id', reservationId)
+      .select()
+      .single();
+
+    if (!bookingError && booking) {
+      revalidatePath('/reservations');
+      revalidatePath(`/reservations/${reservationId}`);
+      return { success: true, data: booking };
+    }
+
+    // Si pas trouvé dans bookings, essayer reservations (pour compatibilité)
+    const { data: reservation, error: reservationError } = await supabase
       .from('reservations')
       .update(updateData)
       .eq('id', reservationId)
@@ -280,8 +292,8 @@ export async function updateReservationStatus(
       `)
       .single();
 
-    if (error) {
-      console.error('Error updating reservation:', error);
+    if (reservationError) {
+      console.error('Error updating reservation:', reservationError);
       return { error: 'Failed to update reservation' };
     }
 

@@ -20,45 +20,11 @@ export default async function LoftsPage() {
     );
   }
   
-  // Si l'utilisateur est un client, afficher seulement les lofts disponibles
+  // Si l'utilisateur est un client, rediriger vers la page client
   if (session.user.role === 'client') {
-    const supabase = await createClient()
-    
-    const { data: loftsData } = await supabase
-      .from("lofts")
-      .select("*")
-      .eq("status", "available")
-      .eq("is_published", true)
-      .order("created_at", { ascending: false })
-    
-    const { data: zoneAreasData } = await supabase
-      .from("zone_areas")
-      .select("*")
-      .order("name")
-    
-    const ownersMap = new Map()
-    const zonesMap = new Map((zoneAreasData || []).map(zone => [zone.id, zone.name]))
-    
-    const lofts = (loftsData || []).map(loft => ({
-      ...loft,
-      owner_name: null, // Les clients ne voient pas les propriétaires
-      zone_area_name: zonesMap.get(loft.zone_area_id) || null
-    })) as LoftWithRelations[]
-    
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <div className="container mx-auto px-4 py-8">
-          <LoftsWrapper
-            lofts={lofts}
-            owners={[]}
-            zoneAreas={zoneAreasData || []}
-            isAdmin={false}
-            canManage={false}
-            userRole={session.user.role}
-          />
-        </div>
-      </div>
-    )
+    const { redirect } = await import('next/navigation')
+    const locale = session.user.email?.includes('@') ? 'fr' : 'fr' // Default to fr
+    redirect(`/${locale}/client/lofts`)
   }
 
   // Pour admin et manager, continuer avec la vue complète

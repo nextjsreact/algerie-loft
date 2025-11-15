@@ -25,7 +25,16 @@ interface UserSession {
 
 export async function POST(request: NextRequest) {
   try {
-    const session: UserSession = await request.json();
+    // Parse JSON with error handling for empty body
+    let session: UserSession;
+    try {
+      session = await request.json();
+    } catch (jsonError) {
+      return NextResponse.json(
+        { error: 'Invalid JSON body' },
+        { status: 400 }
+      );
+    }
     
     // Validate the session data
     if (!session.sessionId || !session.startTime || !Array.isArray(session.events)) {

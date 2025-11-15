@@ -6,7 +6,7 @@ import { Star, MapPin, Wifi, Car, Coffee, Tv, Users, Phone, Mail, Calendar, Sear
 import PublicHeader from '@/components/public/PublicHeader';
 import SmoothScroll from '@/components/ui/SmoothScroll';
 import BackToTop from '@/components/ui/BackToTop';
-import RobustLogo from '@/components/futuristic/RobustLogo';
+import Image from 'next/image';
 import { useResponsiveAnimations } from '@/hooks/useResponsiveAnimations';
 import { usePerformanceOptimization } from '@/hooks/usePerformanceOptimization';
 
@@ -386,15 +386,14 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                       transition: 'left 1.2s cubic-bezier(0.25, 0.1, 0.25, 1)',
                     }}
                   >
-                    <div 
-                      className="w-full h-full bg-cover bg-center bg-no-repeat"
-                      style={{ 
-                        backgroundImage: `url(${slide.image})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat'
-                      }}
-                    />
+                    <div className="w-full h-full relative">
+                      <img 
+                        src={slide.image}
+                        alt={getLocalizedText(slide.title)}
+                        className="w-full h-full object-cover"
+                        loading={index === 0 ? "eager" : "lazy"}
+                      />
+                    </div>
                     <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-black/70"></div>
                     <div className="absolute inset-0 opacity-20">
                       <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full animate-pulse"></div>
@@ -1404,9 +1403,16 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
             </div>
             
             <div className="border-t border-gray-800 mt-12 pt-8 text-center">
-              {/* Logo Footer - Comme dans la page futuriste */}
+              {/* Logo Footer */}
               <div className="mb-6">
-                <RobustLogo variant="footer" />
+                <Image 
+                  src="/logo.jpg" 
+                  alt="Loft Algérie" 
+                  width={160} 
+                  height={56} 
+                  className="w-auto object-contain"
+                  style={{ maxHeight: '48px' }}
+                />
               </div>
               
               <p className="text-gray-400 mb-4">

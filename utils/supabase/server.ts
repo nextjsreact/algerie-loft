@@ -1,3 +1,4 @@
+import '@/lib/suppress-auth-errors';
 import { createServerClient } from '@supabase/ssr'
 import { Database } from '@/lib/types'
 import { createClient as createBrowserClient } from './client'
@@ -28,13 +29,13 @@ export const createClient = async (useServiceRole?: boolean) => {
         }
       },
     },
+    auth: {
+      ...(useServiceRole ? { persistSession: false } : {}),
+      // Suppress auth errors for unauthenticated users
+      debug: false,
+      detectSessionInUrl: false,
+    },
   };
-
-  if (useServiceRole) {
-    options.auth = {
-      persistSession: false,
-    };
-  }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = useServiceRole ? process.env.SUPABASE_SERVICE_ROLE_KEY : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -70,13 +71,13 @@ export const createReadOnlyClient = async (useServiceRole?: boolean) => {
         // No-op for read-only contexts
       },
     },
+    auth: {
+      ...(useServiceRole ? { persistSession: false } : {}),
+      // Suppress auth errors for unauthenticated users
+      debug: false,
+      detectSessionInUrl: false,
+    },
   };
-
-  if (useServiceRole) {
-    options.auth = {
-      persistSession: false,
-    };
-  }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = useServiceRole ? process.env.SUPABASE_SERVICE_ROLE_KEY : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY

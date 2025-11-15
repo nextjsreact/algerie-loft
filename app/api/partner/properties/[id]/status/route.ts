@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth';
 import { createClient } from '@/utils/supabase/server';
+import { PartnerDataIsolation } from '@/lib/security/partner-data-isolation';
 
 // PATCH /api/partner/properties/[id]/status - Update property status
 export async function PATCH(
@@ -23,12 +24,41 @@ export async function PATCH(
 
     const supabase = await createClient();
 
-    // Verify ownership first
+    // Get partner profile
+    const { data: partnerProfile, error: profileError } = await supabase
+      .from('partners')
+      .select('id')
+      .eq('user_id', session.user.id)
+      .single();
+
+    if (profileError || !partnerProfile) {
+      return NextResponse.json(
+        { error: 'Partner profile not found' },
+        { status: 404 }
+      );
+    }
+
+    const partnerId = partnerProfile.id;
+
+    // Verify ownership using data isolation service
+    const ownershipResult = await PartnerDataIsolation.verifyPropertyOwnership(
+      id,
+      partnerId,
+      supabase
+    );
+
+    if (!ownershipResult.success) {
+      return NextResponse.json(
+        { error: ownershipResult.error || 'Access denied' },
+        { status: ownershipResult.accessDenied ? 403 : 404 }
+      );
+    }
+
+    // Get existing property data
     const { data: existingProperty, error: fetchError } = await supabase
       .from('lofts')
       .select('id, partner_id, status')
       .eq('id', id)
-      .eq('partner_id', session.user.id)
       .single();
 
     if (fetchError || !existingProperty) {

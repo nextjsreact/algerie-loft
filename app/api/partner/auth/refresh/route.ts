@@ -1,89 +1,81 @@
+/**
+ * Partner Session Refresh API
+ * Refreshes the partner's authentication session
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
-import { PartnerAuthService } from '@/lib/services/partner-auth-service';
 import { createClient } from '@/utils/supabase/server';
+import { getSession } from '@/lib/auth';
 
-interface TokenRefreshResponse {
-  success: boolean;
-  data?: {
-    token: string;
-    expires_at: string;
-    partner_id: string;
-  };
-  error?: string;
-  code?: string;
-}
-
-export async function POST(request: NextRequest): Promise<NextResponse<TokenRefreshResponse>> {
+export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    // Check if user has a valid session
+    const session = await getSession();
     
+    if (!session) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'No active session'
+        },
+        { status: 401 }
+      );
+    }
+
+    // Verify user is a partner, admin, or client (multi-role support)
+    const allowedRoles = ['partner', 'admin', 'client'];
+    if (!allowedRoles.includes(session.user.role)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Access denied - partner, admin, or client role required'
+        },
+        { status: 403 }
+      );
+    }
+
     // Refresh the Supabase session
-    const { data: sessionData, error: refreshError } = await supabase.auth.refreshSession();
-    
-    if (refreshError || !sessionData.session) {
-      return NextResponse.json({
-        success: false,
-        error: 'Failed to refresh session',
-        code: 'REFRESH_FAILED'
-      }, { status: 401 });
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.refreshSession();
+
+    if (error) {
+      console.error('[Partner Auth Refresh API] Error refreshing session:', error);
+      
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Failed to refresh session'
+        },
+        { status: 500 }
+      );
     }
 
-    // Get partner session with refreshed auth
-    const partnerSession = await PartnerAuthService.getPartnerSession();
-    
-    if (!partnerSession) {
-      return NextResponse.json({
-        success: false,
-        error: 'Partner session not found',
-        code: 'PARTNER_NOT_FOUND'
-      }, { status: 404 });
+    if (!data.session) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Session refresh returned no session'
+        },
+        { status: 500 }
+      );
     }
 
-    // Validate partner status
-    const statusError = PartnerAuthService.validatePartnerStatus(partnerSession.partner_status);
-    
-    if (statusError && partnerSession.partner_status !== 'active') {
-      return NextResponse.json({
-        success: false,
-        error: statusError.message,
-        code: statusError.code
-      }, { status: 403 });
-    }
-
-    // Generate new partner token
-    const newPartnerToken = PartnerAuthService.generatePartnerToken(partnerSession);
-    
-    // Update last login timestamp
-    await PartnerAuthService.updateLastLogin(partnerSession.partner_profile.id);
+    console.log('[Partner Auth Refresh API] Session refreshed successfully for user:', session.user.id);
 
     return NextResponse.json({
       success: true,
-      data: {
-        token: newPartnerToken,
-        expires_at: sessionData.session.expires_at ? new Date(sessionData.session.expires_at * 1000).toISOString() : '',
-        partner_id: partnerSession.partner_profile.id
-      }
+      message: 'Session refreshed successfully'
     });
 
   } catch (error) {
-    console.error('Partner token refresh API error:', error);
+    console.error('[Partner Auth Refresh API] Error:', error);
     
-    return NextResponse.json({
-      success: false,
-      error: 'Internal server error',
-      code: 'INTERNAL_ERROR'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Internal server error'
+      },
+      { status: 500 }
+    );
   }
-}
-
-// Handle OPTIONS request for CORS
-export async function OPTIONS(request: NextRequest) {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
 }

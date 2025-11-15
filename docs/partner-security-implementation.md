@@ -1,458 +1,402 @@
-# Partner Dashboard Security Implementation
-
-This document provides a comprehensive guide to the security implementation for the Partner Dashboard System, including Row Level Security (RLS) policies, audit logging, and security middleware.
+# Partner Security Implementation Guide
 
 ## Overview
 
-The Partner Dashboard Security System implements multiple layers of security:
+This document describes the comprehensive security implementation for the partner dashboard, including data isolation, authentication checks, and audit logging.
 
-1. **Row Level Security (RLS)** - Database-level access control
-2. **Audit Logging** - Comprehensive activity tracking
-3. **Security Middleware** - API-level validation and protection
-4. **Input Sanitization** - Protection against malicious input
+## Components
 
-## 1. Row Level Security (RLS) Policies
+### 1. Partner Data Isolation Service
 
-### Implementation Files
-- `database/partner-rls-security-policies.sql` - Complete RLS policy setup
+**Location:** `lib/security/partner-data-isolation.ts`
 
-### Key Features
+The `PartnerDataIsolation` class provides methods to ensure partners can only access their own data.
 
-#### Partner Data Isolation
-- Partners can only access their own data
-- Complete isolation between different partners
-- Admin override capabilities for management
+#### Key Features:
 
-#### Table-Level Policies
+- **Property Ownership Verification**: Verifies that a property belongs to a specific partner
+- **Reservation Access Verification**: Ensures partners can only access reservations for their properties
+- **Data Fetching with Isolation**: Provides methods to fetch properties and reservations with automatic filtering
+- **RLS Policy Verification**: Tests that Row Level Security policies are correctly applied
+- **Audit Logging**: Logs all data access attempts for security monitoring
 
-**Partners Table:**
-```sql
--- Partners can view their own profile only
-CREATE POLICY "partners_view_own_profile" ON partners
-    FOR SELECT USING (user_id = auth.uid());
+#### Usage Example:
 
--- Partners can update their own profile (limited fields)
-CREATE POLICY "partners_update_own_profile" ON partners
-    FOR UPDATE USING (user_id = auth.uid())
-    WITH CHECK (verification_status = OLD.verification_status);
-```
+```typescript
+import { PartnerDataIsolation } from '@/lib/security/partner-data-isolation';
 
-**Lofts Table:**
-```sql
--- Partners can only view their own properties
-CREATE POLICY "lofts_partner_view_own_properties" ON lofts
-    FOR SELECT USING (
-        partner_id IN (
-            SELECT id FROM partners 
-            WHERE user_id = auth.uid() 
-            AND verification_status = 'approved'
-        )
-    );
-```
+// Verify property ownership
+const ownershipResult = await PartnerDataIsolation.verifyPropertyOwnership(
+  propertyId,
+  partnerId,
+  supabase
+);
 
-**Reservations Table:**
-```sql
--- Partners can only view reservations for their properties
-CREATE POLICY "reservations_partner_view_own_property_bookings" ON reservations
-    FOR SELECT USING (
-        loft_id IN (
-            SELECT l.id FROM lofts l
-            JOIN partners p ON l.partner_id = p.id
-            WHERE p.user_id = auth.uid() 
-            AND p.verification_status = 'approved'
-        )
-    );
-```
+if (!ownershipResult.success) {
+  // Handle access denied
+  return { error: ownershipResult.error };
+}
 
-### Security Validation Functions
-
-```sql
--- Function to validate partner ownership of a loft
-CREATE OR REPLACE FUNCTION partner_owns_loft(loft_id UUID, partner_user_id UUID DEFAULT auth.uid())
-RETURNS BOOLEAN;
-
--- Function to check if user is an admin
-CREATE OR REPLACE FUNCTION is_admin(user_id UUID DEFAULT auth.uid())
-RETURNS BOOLEAN;
-
--- Function to check if user is an approved partner
-CREATE OR REPLACE FUNCTION is_approved_partner(user_id UUID DEFAULT auth.uid())
-RETURNS BOOLEAN;
-```
-
-## 2. Audit Logging System
-
-### Implementation Files
-- `database/partner-audit-logging-system.sql` - Complete audit system
-
-### Audit Tables
-
-#### Main Audit Log
-```sql
-CREATE TABLE partner_audit_log (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES auth.users(id),
-    partner_id UUID REFERENCES partners(id),
-    admin_user_id UUID REFERENCES auth.users(id),
-    action TEXT NOT NULL,
-    table_name TEXT NOT NULL,
-    record_id UUID,
-    old_values JSONB,
-    new_values JSONB,
-    changed_fields TEXT[],
-    ip_address INET,
-    user_agent TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW()
+// Get partner properties with isolation
+const propertiesResult = await PartnerDataIsolation.getPartnerProperties(
+  partnerId,
+  { status: 'available', limit: 10 },
+  supabase
 );
 ```
 
-#### Property Access Log
-```sql
-CREATE TABLE partner_property_access_log (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES auth.users(id),
-    partner_id UUID REFERENCES partners(id),
-    loft_id UUID REFERENCES lofts(id),
-    access_type TEXT NOT NULL,
-    access_granted BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
+### 2. Partner Authentication Guard
 
-#### Admin Action Log
-```sql
-CREATE TABLE partner_admin_action_log (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    admin_user_id UUID REFERENCES auth.users(id),
-    target_partner_id UUID REFERENCES partners(id),
-    action_type TEXT NOT NULL,
-    action_result TEXT NOT NULL,
-    reason TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
+**Location:** `lib/security/partner-auth-guard.ts`
 
-### Automatic Triggers
+The `PartnerAuthGuard` class provides comprehensive authentication and authorization checks.
 
-The system includes automatic triggers that log all changes to partner-related data:
+#### Key Features:
 
-```sql
--- Audit trigger for partners table
-CREATE TRIGGER partners_audit_trigger
-    AFTER INSERT OR UPDATE OR DELETE ON partners
-    FOR EACH ROW EXECUTE FUNCTION audit_trigger_function();
+- **Session Verification**: Checks if user has a valid session
+- **Role Verification**: Ensures user has partner role
+- **Status Verification**: Checks partner verification status (active, pending, etc.)
+- **Session Expiration Handling**: Detects and handles expired sessions
+- **Session Refresh**: Automatically refreshes sessions that are about to expire
+- **Secure Logout**: Clears sensitive data on logout
 
--- Audit trigger for partner validation requests
-CREATE TRIGGER partner_validation_requests_audit_trigger
-    AFTER INSERT OR UPDATE OR DELETE ON partner_validation_requests
-    FOR EACH ROW EXECUTE FUNCTION audit_trigger_function();
-```
-
-### Enhanced Management Functions
-
-```sql
--- Enhanced approve partner function with audit logging
-CREATE OR REPLACE FUNCTION approve_partner_with_audit(
-    partner_id UUID,
-    admin_user_id UUID,
-    admin_notes TEXT DEFAULT NULL,
-    ip_address INET DEFAULT NULL,
-    user_agent TEXT DEFAULT NULL
-) RETURNS BOOLEAN;
-
--- Enhanced reject partner function with audit logging
-CREATE OR REPLACE FUNCTION reject_partner_with_audit(
-    partner_id UUID,
-    admin_user_id UUID,
-    rejection_reason TEXT,
-    admin_notes TEXT DEFAULT NULL,
-    ip_address INET DEFAULT NULL,
-    user_agent TEXT DEFAULT NULL
-) RETURNS BOOLEAN;
-```
-
-## 3. Security Middleware
-
-### Implementation Files
-- `lib/middleware/partner-security.ts` - Core security middleware
-- `lib/middleware/api-security-helpers.ts` - API route helpers
-
-### Rate Limiting
-
-The system implements comprehensive rate limiting:
+#### Usage Example:
 
 ```typescript
-const rateLimitConfigs: Record<string, RateLimitConfig> = {
-  'partner-login': {
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5, // 5 attempts per window
-    message: 'Too many login attempts, please try again later'
-  },
-  'partner-dashboard': {
-    windowMs: 60 * 1000, // 1 minute
-    max: 30, // 30 requests per minute
-    message: 'Too many dashboard requests, please slow down'
-  }
-};
-```
+import { requirePartner } from '@/lib/security/partner-auth-guard';
 
-### Input Validation
-
-Comprehensive input validation using Zod schemas:
-
-```typescript
-export const partnerRegistrationSchema = z.object({
-  personal_info: z.object({
-    full_name: z.string()
-      .min(2, 'Full name must be at least 2 characters')
-      .max(100, 'Full name is too long')
-      .regex(/^[a-zA-ZÀ-ÿ\s'-]+$/, 'Full name contains invalid characters'),
-    email: z.string().email('Invalid email format'),
-    phone: z.string().regex(/^[\+]?[0-9\s\-\(\)]{8,20}$/, 'Invalid phone number format'),
-    address: z.string().min(10, 'Address must be at least 10 characters')
-  }),
-  // ... more validation rules
-});
-```
-
-### Security Validation
-
-Multi-level security validation:
-
-```typescript
-export function validateAndSanitizeInput<T>(
-  data: unknown,
-  schema: z.ZodSchema<T>,
-  securityLevel: 'low' | 'medium' | 'high' | 'critical' = 'medium'
-): SecurityValidationResult {
-  // Zod validation
-  const validatedData = schema.parse(data);
-  
-  // Additional security checks based on level
-  if (securityLevel === 'high' || securityLevel === 'critical') {
-    // Check for XSS patterns
-    if (containsXSSPatterns(dataString)) {
-      additionalErrors.push('Input contains potentially malicious content');
+// In a server component
+export default async function PartnerDashboardPage({ params }) {
+  // This will redirect if authentication fails
+  const { session, partnerId, partnerStatus } = await requirePartner(
+    params.locale,
+    {
+      requireActive: true,
+      allowedStatuses: ['active']
     }
-    
-    // Check for SQL injection patterns
-    if (containsSQLInjectionPatterns(dataString)) {
-      additionalErrors.push('Input contains potentially malicious SQL patterns');
-    }
-  }
+  );
+
+  // Continue with authenticated partner
 }
 ```
 
-## 4. API Route Security Helpers
+### 3. Client-Side Authentication Hook
 
-### Usage Examples
+**Location:** `hooks/use-partner-auth.ts`
 
-#### Partner Dashboard Endpoint
-```typescript
-import { withPartnerDashboardSecurity } from '@/lib/middleware/api-security-helpers';
+The `usePartnerAuth` hook provides client-side authentication state management.
 
-export const GET = withPartnerDashboardSecurity(async (request, context) => {
-  const { partnerId, supabase } = getPartnerContext(context);
-  
-  // Your endpoint logic here
-  const dashboardData = await getDashboardData(supabase, partnerId);
-  
-  return createSuccessResponse(dashboardData);
-});
-```
+#### Key Features:
 
-#### Partner Property Details Endpoint
-```typescript
-import { withPartnerPropertyDetailsSecurity } from '@/lib/middleware/api-security-helpers';
+- **Authentication State**: Tracks authentication status, session, and partner info
+- **Automatic Session Refresh**: Refreshes session every 15 minutes
+- **Expiration Detection**: Detects sessions about to expire and refreshes them
+- **Logout Handling**: Provides logout functionality with cleanup
 
-export const GET = withPartnerPropertyDetailsSecurity(async (request, context) => {
-  const { partnerId, supabase } = getPartnerContext(context);
-  const { loftId } = context.params;
-  
-  // Ownership is automatically validated by the middleware
-  const propertyDetails = await getPropertyDetails(supabase, loftId);
-  
-  return createSuccessResponse(propertyDetails);
-});
-```
-
-#### Admin Partner Validation Endpoint
-```typescript
-import { withAdminPartnerValidationSecurity } from '@/lib/middleware/api-security-helpers';
-
-export const POST = withAdminPartnerValidationSecurity(async (request, context) => {
-  const { userId, supabase } = getPartnerContext(context);
-  const body = await request.json();
-  
-  // Input is automatically validated by the middleware
-  const result = await processPartnerValidation(supabase, body, userId);
-  
-  return createSuccessResponse(result);
-});
-```
-
-## 5. Input Sanitization
-
-### Implementation File
-- `lib/utils/input-sanitization.ts` - Comprehensive sanitization utilities
-
-### Sanitization Functions
+#### Usage Example:
 
 ```typescript
-// HTML sanitization
-export function sanitizeHtml(input: string, options?: {
-  allowedTags?: string[];
-  allowedAttributes?: string[];
-  stripTags?: boolean;
-}): string;
+'use client';
 
-// Text sanitization
-export function sanitizeText(input: string, options?: {
-  maxLength?: number;
-  allowSpecialChars?: boolean;
-  allowNumbers?: boolean;
-  allowSpaces?: boolean;
-}): string;
+import { usePartnerAuth } from '@/hooks/use-partner-auth';
 
-// Email sanitization
-export function sanitizeEmail(input: string): string;
-
-// Phone number sanitization
-export function sanitizePhoneNumber(input: string): string;
-```
-
-### Partner-Specific Sanitization
-
-```typescript
-// Sanitize partner registration data
-export function sanitizePartnerRegistrationData(data: any): any {
-  return {
-    personal_info: {
-      full_name: sanitizeText(data.personal_info?.full_name, {
-        allowSpaces: true,
-        allowSpecialChars: false,
-        maxLength: 100
-      }),
-      email: sanitizeEmail(data.personal_info?.email),
-      phone: sanitizePhoneNumber(data.personal_info?.phone),
-      // ... more sanitization
-    }
-  };
-}
-```
-
-## 6. Security Best Practices
-
-### Database Security
-1. **Always use RLS policies** - Never rely solely on application-level security
-2. **Principle of least privilege** - Grant only necessary permissions
-3. **Audit everything** - Log all data access and modifications
-4. **Regular security reviews** - Periodically review and update policies
-
-### API Security
-1. **Rate limiting** - Implement appropriate rate limits for all endpoints
-2. **Input validation** - Validate and sanitize all input data
-3. **Authentication verification** - Always verify user authentication and authorization
-4. **Error handling** - Don't expose sensitive information in error messages
-
-### Middleware Security
-1. **Defense in depth** - Implement multiple security layers
-2. **Fail securely** - Default to denying access when in doubt
-3. **Log security events** - Track all security-related activities
-4. **Regular updates** - Keep security libraries and dependencies updated
-
-## 7. Deployment and Monitoring
-
-### Database Setup
-1. Run the RLS policies script: `database/partner-rls-security-policies.sql`
-2. Run the audit logging script: `database/partner-audit-logging-system.sql`
-3. Verify all policies are active and working correctly
-
-### Application Setup
-1. Ensure all API routes use appropriate security middleware
-2. Configure rate limiting parameters for your environment
-3. Set up monitoring for security events and audit logs
-
-### Monitoring
-1. **Monitor audit logs** - Regularly review audit logs for suspicious activity
-2. **Track rate limiting** - Monitor rate limit violations
-3. **Security alerts** - Set up alerts for critical security events
-4. **Performance monitoring** - Ensure security measures don't impact performance
-
-## 8. Testing Security Implementation
-
-### RLS Policy Testing
-```sql
--- Test partner data isolation
-SET ROLE authenticated;
-SET request.jwt.claims TO '{"sub": "partner-user-id"}';
-
--- Should only return partner's own data
-SELECT * FROM partners;
-SELECT * FROM lofts;
-SELECT * FROM reservations;
-```
-
-### API Security Testing
-```typescript
-// Test rate limiting
-for (let i = 0; i < 10; i++) {
-  await fetch('/api/partner/login', {
-    method: 'POST',
-    body: JSON.stringify({ email: 'test@example.com', password: 'wrong' })
+export function PartnerDashboard() {
+  const {
+    isAuthenticated,
+    isLoading,
+    session,
+    partnerId,
+    partnerStatus,
+    logout
+  } = usePartnerAuth({
+    locale: 'fr',
+    requireActive: true
   });
-}
-// Should return 429 after 5 attempts
 
-// Test input validation
-await fetch('/api/partner/register', {
-  method: 'POST',
-  body: JSON.stringify({
-    personal_info: {
-      full_name: '<script>alert("xss")</script>',
-      email: 'invalid-email'
-    }
-  })
-});
-// Should return validation errors
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (!isAuthenticated) {
+    return null; // Will redirect automatically
+  }
+
+  return <DashboardContent />;
+}
 ```
 
-## 9. Troubleshooting
+### 4. Authentication API Endpoints
 
-### Common Issues
+#### Verify Endpoint
+**Location:** `app/api/partner/auth/verify/route.ts`
 
-1. **RLS policies not working**
-   - Verify policies are enabled: `ALTER TABLE table_name ENABLE ROW LEVEL SECURITY;`
-   - Check policy conditions and user context
+Verifies partner authentication and returns session information.
 
-2. **Rate limiting too restrictive**
-   - Adjust rate limit configurations in `partner-security.ts`
-   - Consider different limits for different user types
+```typescript
+GET /api/partner/auth/verify?locale=fr
+```
 
-3. **Input validation errors**
-   - Check Zod schema definitions
-   - Verify sanitization functions are working correctly
+Response:
+```json
+{
+  "success": true,
+  "session": { ... },
+  "partnerId": "uuid",
+  "partnerStatus": "active"
+}
+```
 
-4. **Audit logs not being created**
-   - Verify triggers are installed and active
-   - Check function permissions and execution
+#### Refresh Endpoint
+**Location:** `app/api/partner/auth/refresh/route.ts`
 
-### Debug Commands
+Refreshes the partner's authentication session.
+
+```typescript
+POST /api/partner/auth/refresh
+```
+
+#### Logout Endpoint
+**Location:** `app/api/partner/auth/logout/route.ts`
+
+Handles partner logout and clears sensitive data.
+
+```typescript
+POST /api/partner/auth/logout
+```
+
+### 5. Audit Logging System
+
+**Location:** `database/partner-data-access-logs.sql`
+
+Database schema for logging all partner data access attempts.
+
+#### Features:
+
+- **Comprehensive Logging**: Logs all data access attempts with details
+- **Security Monitoring**: Detects suspicious access patterns
+- **Data Retention**: Automatically cleans logs older than 90 days
+- **Access Statistics**: Provides statistics on partner data access
+
+#### Database Functions:
 
 ```sql
--- Check active RLS policies
-SELECT schemaname, tablename, policyname, permissive, roles, cmd, qual 
-FROM pg_policies 
-WHERE tablename IN ('partners', 'lofts', 'reservations');
+-- Get access statistics for a partner
+SELECT * FROM get_partner_access_stats('partner-uuid', 30);
 
--- Check audit log entries
-SELECT * FROM partner_audit_log 
-ORDER BY created_at DESC 
-LIMIT 10;
+-- Detect suspicious access patterns
+SELECT * FROM detect_suspicious_partner_access('partner-uuid', 5);
 
--- Check rate limit store (if using database storage)
-SELECT * FROM rate_limit_store 
-WHERE key LIKE 'partner-%';
+-- Clean old logs
+SELECT cleanup_old_partner_access_logs();
 ```
 
-This comprehensive security implementation provides enterprise-level protection for the Partner Dashboard System while maintaining usability and performance.
+## Security Best Practices
+
+### 1. Always Verify Ownership
+
+Before allowing any operation on a resource, verify that the partner owns it:
+
+```typescript
+// ❌ BAD: Direct access without verification
+const property = await supabase
+  .from('lofts')
+  .select('*')
+  .eq('id', propertyId)
+  .single();
+
+// ✅ GOOD: Verify ownership first
+const ownershipResult = await PartnerDataIsolation.verifyPropertyOwnership(
+  propertyId,
+  partnerId,
+  supabase
+);
+
+if (!ownershipResult.success) {
+  return { error: 'Access denied' };
+}
+```
+
+### 2. Use Data Isolation Methods
+
+Always use the data isolation service methods instead of direct queries:
+
+```typescript
+// ❌ BAD: Direct query without isolation
+const properties = await supabase
+  .from('lofts')
+  .select('*')
+  .eq('partner_id', partnerId);
+
+// ✅ GOOD: Use isolation service
+const propertiesResult = await PartnerDataIsolation.getPartnerProperties(
+  partnerId,
+  {},
+  supabase
+);
+```
+
+### 3. Check Authentication on Every Page Load
+
+Use the authentication guard in all partner pages:
+
+```typescript
+// Server component
+export default async function PartnerPage({ params }) {
+  await requirePartner(params.locale);
+  // ... rest of component
+}
+
+// Client component
+export function PartnerClientPage() {
+  const { isAuthenticated, isLoading } = usePartnerAuth();
+  
+  if (isLoading) return <Loading />;
+  if (!isAuthenticated) return null;
+  
+  // ... rest of component
+}
+```
+
+### 4. Handle Session Expiration Gracefully
+
+Always provide clear feedback when sessions expire:
+
+```typescript
+const { isAuthenticated, error } = usePartnerAuth({
+  onSessionExpired: () => {
+    toast.error('Your session has expired. Please log in again.');
+  }
+});
+```
+
+### 5. Clear Sensitive Data on Logout
+
+Always use the proper logout methods that clear sensitive data:
+
+```typescript
+// ❌ BAD: Direct sign out
+await supabase.auth.signOut();
+
+// ✅ GOOD: Use auth guard logout
+await PartnerAuthGuard.clearSensitiveData();
+```
+
+## Testing
+
+### Running Security Tests
+
+A comprehensive test script is provided to verify security implementation:
+
+```bash
+# Run security tests
+npx ts-node scripts/test-partner-security.ts
+```
+
+The test script verifies:
+- RLS policies are correctly configured
+- Property ownership verification works
+- Reservation access verification works
+- Data isolation between partners is enforced
+- Audit logging is functional
+
+### Manual Testing Checklist
+
+- [ ] Partner can only see their own properties
+- [ ] Partner cannot access other partners' properties
+- [ ] Partner can only see reservations for their properties
+- [ ] Session expires after 24 hours
+- [ ] Session is refreshed automatically
+- [ ] Logout clears all sensitive data
+- [ ] Unauthorized access is properly blocked
+- [ ] All data access is logged in audit table
+
+## Database Setup
+
+To set up the audit logging system, run the SQL migration:
+
+```bash
+# Apply the migration
+psql -h your-db-host -U your-user -d your-database -f database/partner-data-access-logs.sql
+```
+
+Or use Supabase dashboard to run the SQL script.
+
+## Monitoring and Alerts
+
+### Access Log Monitoring
+
+Monitor the `partner_data_access_logs` table for:
+
+1. **Failed Access Attempts**: High number of failed attempts may indicate an attack
+2. **Unusual Access Patterns**: Accessing many different resources quickly
+3. **Cross-Partner Access Attempts**: Attempts to access other partners' data
+
+### Setting Up Alerts
+
+Create alerts for suspicious patterns:
+
+```sql
+-- Alert on high failed access rate
+SELECT partner_id, COUNT(*) as failed_attempts
+FROM partner_data_access_logs
+WHERE success = false
+  AND created_at >= NOW() - INTERVAL '5 minutes'
+GROUP BY partner_id
+HAVING COUNT(*) >= 10;
+```
+
+## Compliance
+
+This implementation helps meet compliance requirements for:
+
+- **GDPR**: Audit logging and data access tracking
+- **SOC 2**: Access controls and monitoring
+- **ISO 27001**: Information security management
+
+## Troubleshooting
+
+### Issue: Partner can see other partners' data
+
+**Solution**: Verify RLS policies are enabled and correctly configured:
+
+```sql
+-- Check RLS status
+SELECT tablename, rowsecurity 
+FROM pg_tables 
+WHERE tablename IN ('lofts', 'reservations');
+
+-- Should return rowsecurity = true for both tables
+```
+
+### Issue: Session expires too quickly
+
+**Solution**: Check session refresh is working:
+
+```typescript
+// Verify refresh is being called
+const { refreshAuth } = usePartnerAuth();
+await refreshAuth();
+```
+
+### Issue: Audit logs not being created
+
+**Solution**: Verify service role key is configured:
+
+```bash
+# Check environment variable
+echo $SUPABASE_SERVICE_ROLE_KEY
+```
+
+## Future Enhancements
+
+1. **Rate Limiting**: Add rate limiting to prevent abuse
+2. **IP Whitelisting**: Allow partners to whitelist IP addresses
+3. **Two-Factor Authentication**: Add 2FA for enhanced security
+4. **Anomaly Detection**: ML-based detection of unusual access patterns
+5. **Real-time Alerts**: Push notifications for security events
+
+## Support
+
+For security issues or questions, contact the security team or create a ticket in the issue tracker.
+
+**Important**: Never share security-related information in public channels.

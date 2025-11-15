@@ -204,7 +204,15 @@
     "dev:fast": "next dev --turbo",
     "build:analyze": "ANALYZE=true npm run build",
     "perf:check": "npm run build && npm run start &",
-    "cache:clear": "rm -rf .next/cache && npm run dev"
+    "cache:clear": "rm -rf .next/cache && npm run dev",
+    "deploy:partner-dashboard:staging": "npm run deploy:staging",
+    "deploy:partner-dashboard:prod": "npm run deploy:prod",
+    "monitor:partner-dashboard": "tsx scripts/monitor-partner-dashboard.ts",
+    "monitor:partner-dashboard:staging": "tsx scripts/monitor-partner-dashboard.ts staging",
+    "monitor:partner-dashboard:prod": "tsx scripts/monitor-partner-dashboard.ts production",
+    "verify:partner-dashboard": "tsx scripts/verify-partner-dashboard-deployment.ts",
+    "verify:partner-dashboard:staging": "tsx scripts/verify-partner-dashboard-deployment.ts staging",
+    "verify:partner-dashboard:prod": "tsx scripts/verify-partner-dashboard-deployment.ts production"
   },
   "ts-node": {
     "esm": true
@@ -291,6 +299,7 @@
     "react-to-print": "^2.15.1",
     "recharts": "latest",
     "sonner": "^1.7.4",
+    "swr": "^2.3.6",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",

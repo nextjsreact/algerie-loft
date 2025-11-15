@@ -11,6 +11,7 @@ export async function getSession(): Promise<AuthSession | null> {
   const { data: { user }, error: userError } = await supabase.auth.getUser();
 
   if (userError || !user) {
+    // Silently return null for unauthenticated users (expected behavior)
     return null;
   }
 
@@ -484,6 +485,7 @@ export async function getSessionReadOnly(): Promise<AuthSession | null> {
   const { data: { user }, error: userError } = await supabase.auth.getUser();
 
   if (userError || !user) {
+    // Silently return null for unauthenticated users (expected behavior)
     return null;
   }
 

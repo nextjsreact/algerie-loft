@@ -16,7 +16,18 @@ interface EngagementRequest {
 
 export async function POST(request: NextRequest) {
   try {
-    const { sessionId, engagement }: EngagementRequest = await request.json();
+    // Parse JSON with error handling for empty body
+    let body;
+    try {
+      body = await request.json();
+    } catch (jsonError) {
+      return NextResponse.json(
+        { error: 'Invalid JSON body' },
+        { status: 400 }
+      );
+    }
+    
+    const { sessionId, engagement }: EngagementRequest = body;
     
     // Validate the engagement data
     if (!sessionId || !engagement || !engagement.page || typeof engagement.timeOnPage !== 'number') {

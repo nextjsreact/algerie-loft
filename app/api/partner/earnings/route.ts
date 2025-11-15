@@ -13,9 +13,11 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    if (session.user.role !== 'partner') {
+    // Allow partners, admins, and clients to access (multi-role support)
+    const allowedRoles = ['partner', 'admin', 'client'];
+    if (!allowedRoles.includes(session.user.role)) {
       return NextResponse.json(
-        { error: 'Partner access required' },
+        { error: 'Access denied - partner, admin, or client role required' },
         { status: 403 }
       )
     }

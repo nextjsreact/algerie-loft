@@ -1051,118 +1051,7 @@
       "allOperational": "All systems operational",
       "online": "Online"
     },
-    "title": "Dashboard",
-    "description": "Manage your apartments and track your activities",
-    "availableSections": "Available sections",
-    "access": "Access",
-    "sections": {
-      "apartments": {
-        "title": "Apartments",
-        "description": "Manage your lofts and properties"
-      },
-      "reservations": {
-        "title": "Reservations",
-        "description": "Track reservations and bookings"
-      },
-      "availability": {
-        "title": "Availability",
-        "description": "Manage availability calendars"
-      },
-      "tasks": {
-        "title": "Tasks",
-        "description": "Track and manage tasks"
-      },
-      "teams": {
-        "title": "Teams",
-        "description": "Manage teams and members"
-      },
-      "platformSettings": {
-        "title": "Platform settings",
-        "description": "Platform configuration"
-      },
-      "owners": {
-        "title": "Owners",
-        "description": "Manage owners"
-      },
-      "transactions": {
-        "title": "Transactions",
-        "description": "Track financial transactions"
-      },
-      "detailedReports": {
-        "title": "Detailed reports",
-        "description": "Generate and view reports"
-      },
-      "pendingPartners": {
-        "title": "Pending partners",
-        "description": "Manage partnership requests"
-      },
-      "validatePartners": {
-        "title": "Validate partners",
-        "description": "Validate new partners"
-      },
-      "openDisputes": {
-        "title": "Open disputes",
-        "description": "Manage ongoing disputes"
-      },
-      "manageDisputes": {
-        "title": "Manage disputes",
-        "description": "Dispute administration"
-      }
-    },
-    "quickAccess": {
-      "title": "Quick access"
-    },
-    "quickAccessItems": {
-      "conversations": {
-        "title": "Conversations",
-        "description": "Messages and communications"
-      },
-      "notifications": {
-        "title": "Notifications",
-        "description": "Alerts and notifications"
-      },
-      "dashboard": {
-        "title": "Dashboard",
-        "description": "Activity overview"
-      },
-      "detailedReports": {
-        "title": "Detailed reports",
-        "description": "Analytics and statistics"
-      }
-    },
-    "tasks": {
-      "status": {
-        "completed": "Completed",
-        "inProgress": "In Progress",
-        "todo": "To Do"
-      }
-    },
-    "teams": "Teams",
-    "thisMonth": "This Month",
     "title": "Algeria Loft - Apartment Management",
-    "toDo": "To Do",
-    "today": "Today",
-    "tomorrow": "Tomorrow",
-    "totalLofts": "Total Lofts",
-    "upToDate": "You're up to date!",
-    "upcoming": "Upcoming",
-    "upcomingBillsTitle": "Upcoming Bills",
-    "updated": "Updated",
-    "viewReports": "View Reports",
-    "welcomeBack": "Welcome back",
-    "myProfile": "My Profile",
-    "viewMyTasks": "View My Tasks",
-    "allCaughtUp": "You are all caught up!",
-    "noUrgentTasks": "No urgent tasks.",
-    "urgentTasks": "Urgent Tasks",
-    "noTasksAssigned": "No tasks assigned to you.",
-    "noTasksYet": "No tasks yet.",
-    "viewAllMyTasks": "View All My Tasks",
-    "completed": "Completed",
-    "secureViewMessage": "Secure Member View - Showing only your assigned tasks and relevant information",
-    "tasksVisible": "tasks visible",
-    "loftsAccessible": "lofts accessible",
-    "dismiss": "Dismiss",
     "description": "Complete application for managing apartments, owners, transactions...",
     "availableSections": "Available sections for your profile",
     "access": "Access",
@@ -1220,6 +1109,9 @@
         "description": "Dispute resolution"
       }
     },
+    "quickAccess": {
+      "title": "Quick Access"
+    },
     "quickAccessItems": {
       "conversations": {
         "title": "💬 Conversations",
@@ -1238,9 +1130,38 @@
         "description": "Detailed operational reports"
       }
     },
-    "quickAccess": {
-      "title": "Quick Access"
+    "tasks": {
+      "status": {
+        "completed": "Completed",
+        "inProgress": "In Progress",
+        "todo": "To Do"
+      }
     },
+    "teams": "Teams",
+    "thisMonth": "This Month",
+    "toDo": "To Do",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "totalLofts": "Total Lofts",
+    "upToDate": "You're up to date!",
+    "upcoming": "Upcoming",
+    "upcomingBillsTitle": "Upcoming Bills",
+    "updated": "Updated",
+    "viewReports": "View Reports",
+    "welcomeBack": "Welcome back",
+    "myProfile": "My Profile",
+    "viewMyTasks": "View My Tasks",
+    "allCaughtUp": "You are all caught up!",
+    "noUrgentTasks": "No urgent tasks.",
+    "urgentTasks": "Urgent Tasks",
+    "noTasksAssigned": "No tasks assigned to you.",
+    "noTasksYet": "No tasks yet.",
+    "viewAllMyTasks": "View All My Tasks",
+    "completed": "Completed",
+    "secureViewMessage": "Secure Member View - Showing only your assigned tasks and relevant information",
+    "tasksVisible": "tasks visible",
+    "loftsAccessible": "lofts accessible",
+    "dismiss": "Dismiss",
     "loading": "Loading...",
     "error": "Error",
     "noData": "No data",
@@ -1364,222 +1285,23 @@
   "lofts": {
     "ar": "Arabic",
     "addFirstLoft": "Add my first loft",
-    "editLoft": "Edit Apartment",
+    "editLoft": "Edit loft",
     "linkToAirbnb": "Link to Airbnb",
-    "loftInfoTitle": "Apartment Information",
-    "pricePerNight": "Price per night",
+    "loftInfoTitle": "Loft Information",
+    "pricePerNight": "Price per Night",
     "owner": "Owner",
     "description": "Description",
     "available": "Available",
     "occupied": "Occupied",
     "maintenance": "Maintenance",
-    "loftNotFound": "Apartment not found",
-    "noLoftFoundForId": "No apartment found for ID",
+    "loftNotFound": "Loft not found",
+    "noLoftFoundForId": "No loft found for ID",
     "quarterly": "Quarterly",
     "monthly": "Monthly",
     "yearly": "Yearly",
     "weekly": "Weekly",
     "bimonthly": "Bimonthly",
-    "fourMonthly": "Four Monthly",
-    "photos": {
-      "loadError": "Error loading photos",
-      "photoDownloaded": "Photo downloaded",
-      "noPhotos": "No photos available",
-      "noPhotosDescription": "No photos have been added for this apartment.",
-      "mainPhoto": "Main photo",
-      "photoViewer": "Photo Viewer",
-      "photoGallery": "Photo Gallery",
-      "photosAvailable": "{count} photo(s) available"
-    },
-    "addLoft": "Add loft",
-    "addNewPropertyListing": "Add a new property listing",
-    "cancel": "Cancel",
-    "selectOption": "Select an option",
-    "additionalInfo": {
-      "airbnbId": "Airbnb ID",
-      "company": "Company",
-      "title": "Additional Information",
-      "percentages": "Percentages",
-      "photoGallery": "Photo Gallery",
-      "createdOn": "Created on",
-      "lastUpdated": "Last updated",
-      "createdOn": "Created on",
-      "lastUpdated": "Last updated",
-      "owner": "Owner",
-      "percentages": "Percentages",
-      "phone": "Phone",
-      "title": "Additional Information"
-    },
-    "allOwners": "All owners",
-    "allStatuses": "All statuses",
-    "allZoneAreas": "All zones",
-    "available": "Available",
-    "billManagement": {
-      "billMarkedAsPaid": "{billType} bill marked as paid. Next due date calculated automatically.",
-      "cancel": "Cancel",
-      "title": "Bill Management",
-      "water": "Water",
-      "electricity": "Electricity",
-      "gas": "Gas",
-      "phone": "Phone",
-      "internet": "Internet",
-      "nextBills": "Next Bills",
-      "notSet": "Not Set",
-      "customerCode": "Customer Code",
-      "meterNumber": "Meter Number",
-      "correspondent": "Correspondent",
-      "clientNumber": "Client Number",
-      "pdlRef": "PDL Reference",
-      "frequency": "Frequency",
-      "noFrequencySet": "Frequency not set",
-      "daysOverdue": "days overdue",
-      "dueToday": "Due today",
-      "dueTomorrow": "Due tomorrow",
-      "dueInDays": "Due in {days} days",
-      "due": "Due",
-      "pleaseEnterPaymentAmount": "Please enter payment amount",
-      "markAsPaid": "Mark as Paid",
-      "noBillDueDatesSet": "No bill due dates set",
-      "editLoftToAddBillInfo": "Edit the apartment to add billing information",
-      "markBillAsPaid": "Mark {billType} bill as paid",
-      "paymentAmount": "Payment Amount",
-      "enterPaymentAmount": "Enter payment amount",
-      "processing": "Processing...",
-      "nextDueDateAutoCalculated": "Next due date will be calculated automatically based on {frequency} frequency",
-      "currentDueDate": "Current Due Date",
-      "daysOverdue": "days overdue",
-      "due": "Due",
-      "dueInDays": "Due in {days} days",
-      "dueToday": "Due Today",
-      "dueTomorrow": "Due Tomorrow",
-      "editLoftToAddBillInfo": "Edit the loft to add bill frequencies and due dates",
-      "energy": "Energy",
-      "enterPaymentAmount": "Enter payment amount",
-      "failedToMarkBillAsPaid": "Failed to mark bill as paid",
-      "frequency": "Frequency",
-      "internet": "Internet",
-      "markAsPaid": "Mark as Paid",
-      "markBillAsPaid": "Mark {billType} Bill as Paid",
-      "nextDueDateAutoCalculated": "Next due date will be automatically calculated based on {frequency} frequency.",
-      "noBillDueDatesSet": "No bill due dates set",
-      "noFrequencySet": "No frequency set",
-      "notSet": "Not Set",
-      "paymentAmount": "Payment Amount",
-      "phone": "Phone",
-      "pleaseEnterPaymentAmount": "Please enter a payment amount",
-      "processing": "Processing...",
-      "title": "Bill Management",
-      "water": "Water",
-      "electricity": "Electricity",
-      "gas": "Gas"
-    },
-    "billingAlerts": "Billing Alerts",
-    "billingAlertsDescription": "Configure frequencies and due dates for automatic bill tracking",
-    "billingSections": {
-      "energy": "Energy Bills",
-      "gas": "Gas Bills",
-      "internet": "Internet Bills",
-      "phone": "Phone Bills",
-      "tv": "TV Subscription",
-      "water": "Water Bills"
-    },
-    "bimonthly": "Bimonthly",
-    "companyPercentage": "Company Percentage",
-    "companyShare": "Company share",
-    "createLoft": "Create Loft",
-    "createNewLoft": "Create New Loft",
-    "creating": "Creating...",
-    "dailyRent": "Daily Rent",
-    "deleteCancelled": "Deletion cancelled",
-    "deleteCancelledDescription": "Confirmation text was incorrect",
-    "deleteConfirm": "Are you sure you want to delete {loftName}?",
-    "deleteConfirmMessage": "This action is irreversible. It will permanently delete all data associated with this loft, including reservations and transactions. To confirm, please type",
-    "deleteConfirmPrompt": "Type 'DELETE' to confirm",
-    "deleteConfirmTitle": "Are you absolutely sure?",
-    "deleteConfirmationIncorrect": "The confirmation text is incorrect. Deletion aborted.",
-    "deleteConfirmationKeyword": "DELETE",
-    "deleteConfirmationPrompt": "Type 'DELETE' to confirm",
-    "deleteError": "Error deleting {name}",
-    "deleteErrorDescription": "An error occurred during deletion. Please try again.",
-    "deleteErrorMessage": "An error occurred while trying to delete the loft. Please try again.",
-    "deleteLoft": "Delete loft",
-    "deleteSuccess": "{name} deleted successfully",
-    "deleteSuccessDescription": "The loft and all its associated data have been deleted",
-    "deletingDescription": "Deleting loft in progress",
-    "deletingInProgress": "Deleting...",
-    "deletingLoftData": "Deleting loft data...",
-    "description": "Description",
-    "descriptions": {
-      "aidaLoft": "Modern Aida Loft in the heart of the city",
-      "familyLoftConstantine": "Family loft in Constantine",
-      "heavenLoft": "Paradise Loft with panoramic sea view",
-      "loftStudentBabEzzouar": "Student loft in Bab Ezzouar",
-      "modernCenterAlger": "Modern apartment in downtown Algiers",
-      "nadaLoft": "Spacious Nada Loft with private terrace",
-      "penthouseOranSeaView": "Penthouse in Oran with sea view",
-      "studioHydraPremium": "Premium studio in Hydra with view"
-    },
-    "editLoft": "Edit loft",
-    "electricityCustomerNumber": "Electricity Customer Number",
-    "electricityMeterNumber": "Electricity Meter Number",
-    "electricityPdlRef": "Electricity PDL Ref",
-    "energy": "Energy",
-    "energyBillFrequency": "Energy Bill Frequency",
-    "errorCreatingLoft": "Error Creating Loft",
-    "errorCreatingLoftDescription": "An error occurred while creating the loft. Please try again.",
-    "filterByOwner": "Filter by owner",
-    "filterByStatus": "Filter by status",
-    "filterByZone": "Filter by zone",
-    "filterByZoneArea": "Filter by zone",
-    "filterTitle": "Filter your lofts",
     "fourMonthly": "Every Four Months",
-    "frequency": {
-      "bimonthly": "Bimonthly",
-      "fourMonthly": "Every Four Months",
-      "monthly": "Monthly",
-      "quarterly": "Quarterly",
-      "sixMonthly": "Every Six Months",
-      "weekly": "Weekly",
-      "yearly": "Yearly"
-    },
-    "gas": "Gas",
-    "gasCustomerNumber": "Gas Customer Number",
-    "gasMeterNumber": "Gas Meter Number",
-    "gasPdlRef": "Gas PDL Ref",
-    "internet": "Internet",
-    "internetBillFrequency": "Internet Bill Frequency",
-    "internetConnection": "Internet Connection",
-    "loftAddress": "Address",
-    "loftCreateError": "Error creating loft",
-    "loftCreatedSuccess": "Loft Created Successfully",
-    "loftCreatedSuccessDescription": "The new loft has been added to your property list.",
-    "loftDataDeleted": "Loft data has been permanently deleted.",
-    "loftDeletedSuccess": "Loft Deleted Successfully",
-    "loftDescription": "Loft Description",
-    "loftInfoDescription": "Provide the main details of the loft, including its name, address, and rental price.",
-    "loftInfoTitle": "Loft Information",
-    "loftName": "Loft name",
-    "loftNotFound": "Loft not found",
-    "loftUpdated": "Loft updated",
-    "loftUpdatedDescription": "All changes have been saved successfully",
-    "maintenance": "Maintenance",
-    "managePropertiesDescription": "Manage your properties - Discover and manage your real estate portfolio with style",
-    "monthly": "Monthly",
-    "nextEnergyBill": "Next Energy Bill Due",
-    "nextInternetBill": "Next Internet Bill Due",
-    "nextPhoneBill": "Next Phone Bill Due",
-    "nextTvBill": "Next TV Bill Due",
-    "nextWaterBill": "Next Water Bill Due",
-    "noLoftFoundForId": "No loft found for ID",
-    "noLoftsFound": "No lofts found",
-    "noLoftsMatch": "No lofts match the filters",
-    "noLoftsYet": "No lofts yet",
-    "occupied": "Occupied",
-    "owner": "Owner",
-    "ownerPercentage": "Owner Percentage",
-    "phone": "Phone",
-    "phoneBillFrequency": "Phone Bill Frequency",
-    "phoneNumber": "Phone Number",
     "photos": {
       "addedBy": "Added by {name}",
       "cancel": "Cancel",
@@ -1619,10 +1341,158 @@
       "viewPhoto": "View photo",
       "willBeDeleted": "This photo will be permanently deleted"
     },
+    "addLoft": "Add loft",
+    "addNewPropertyListing": "Add a new property listing",
+    "cancel": "Cancel",
+    "selectOption": "Select an option",
+    "additionalInfo": {
+      "airbnbId": "Airbnb ID",
+      "company": "Company",
+      "title": "Additional Information",
+      "percentages": "Percentages",
+      "photoGallery": "Photo Gallery",
+      "createdOn": "Created on",
+      "lastUpdated": "Last updated",
+      "owner": "Owner",
+      "phone": "Phone"
+    },
+    "allOwners": "All owners",
+    "allStatuses": "All statuses",
+    "allZoneAreas": "All zones",
+    "billManagement": {
+      "billMarkedAsPaid": "{billType} bill marked as paid. Next due date calculated automatically.",
+      "cancel": "Cancel",
+      "title": "Bill Management",
+      "water": "Water",
+      "electricity": "Electricity",
+      "gas": "Gas",
+      "phone": "Phone",
+      "internet": "Internet",
+      "nextBills": "Next Bills",
+      "notSet": "Not Set",
+      "customerCode": "Customer Code",
+      "meterNumber": "Meter Number",
+      "correspondent": "Correspondent",
+      "clientNumber": "Client Number",
+      "pdlRef": "PDL Reference",
+      "frequency": "Frequency",
+      "noFrequencySet": "No frequency set",
+      "daysOverdue": "days overdue",
+      "dueToday": "Due Today",
+      "dueTomorrow": "Due Tomorrow",
+      "dueInDays": "Due in {days} days",
+      "due": "Due",
+      "pleaseEnterPaymentAmount": "Please enter a payment amount",
+      "markAsPaid": "Mark as Paid",
+      "noBillDueDatesSet": "No bill due dates set",
+      "editLoftToAddBillInfo": "Edit the loft to add bill frequencies and due dates",
+      "markBillAsPaid": "Mark {billType} Bill as Paid",
+      "paymentAmount": "Payment Amount",
+      "enterPaymentAmount": "Enter payment amount",
+      "processing": "Processing...",
+      "nextDueDateAutoCalculated": "Next due date will be automatically calculated based on {frequency} frequency.",
+      "currentDueDate": "Current Due Date",
+      "energy": "Energy",
+      "failedToMarkBillAsPaid": "Failed to mark bill as paid"
+    },
+    "billingAlerts": "Billing Alerts",
+    "billingAlertsDescription": "Configure frequencies and due dates for automatic bill tracking",
+    "billingSections": {
+      "energy": "Energy Bills",
+      "gas": "Gas Bills",
+      "internet": "Internet Bills",
+      "phone": "Phone Bills",
+      "tv": "TV Subscription",
+      "water": "Water Bills"
+    },
+    "companyPercentage": "Company Percentage",
+    "companyShare": "Company share",
+    "createLoft": "Create Loft",
+    "createNewLoft": "Create New Loft",
+    "creating": "Creating...",
+    "dailyRent": "Daily Rent",
+    "deleteCancelled": "Deletion cancelled",
+    "deleteCancelledDescription": "Confirmation text was incorrect",
+    "deleteConfirm": "Are you sure you want to delete {loftName}?",
+    "deleteConfirmMessage": "This action is irreversible. It will permanently delete all data associated with this loft, including reservations and transactions. To confirm, please type",
+    "deleteConfirmPrompt": "Type 'DELETE' to confirm",
+    "deleteConfirmTitle": "Are you absolutely sure?",
+    "deleteConfirmationIncorrect": "The confirmation text is incorrect. Deletion aborted.",
+    "deleteConfirmationKeyword": "DELETE",
+    "deleteConfirmationPrompt": "Type 'DELETE' to confirm",
+    "deleteError": "Error deleting {name}",
+    "deleteErrorDescription": "An error occurred during deletion. Please try again.",
+    "deleteErrorMessage": "An error occurred while trying to delete the loft. Please try again.",
+    "deleteLoft": "Delete loft",
+    "deleteSuccess": "{name} deleted successfully",
+    "deleteSuccessDescription": "The loft and all its associated data have been deleted",
+    "deletingDescription": "Deleting loft in progress",
+    "deletingInProgress": "Deleting...",
+    "deletingLoftData": "Deleting loft data...",
+    "descriptions": {
+      "aidaLoft": "Modern Aida Loft in the heart of the city",
+      "familyLoftConstantine": "Family loft in Constantine",
+      "heavenLoft": "Paradise Loft with panoramic sea view",
+      "loftStudentBabEzzouar": "Student loft in Bab Ezzouar",
+      "modernCenterAlger": "Modern apartment in downtown Algiers",
+      "nadaLoft": "Spacious Nada Loft with private terrace",
+      "penthouseOranSeaView": "Penthouse in Oran with sea view",
+      "studioHydraPremium": "Premium studio in Hydra with view"
+    },
+    "electricityCustomerNumber": "Electricity Customer Number",
+    "electricityMeterNumber": "Electricity Meter Number",
+    "electricityPdlRef": "Electricity PDL Ref",
+    "energy": "Energy",
+    "energyBillFrequency": "Energy Bill Frequency",
+    "errorCreatingLoft": "Error Creating Loft",
+    "errorCreatingLoftDescription": "An error occurred while creating the loft. Please try again.",
+    "filterByOwner": "Filter by owner",
+    "filterByStatus": "Filter by status",
+    "filterByZone": "Filter by zone",
+    "filterByZoneArea": "Filter by zone",
+    "filterTitle": "Filter your lofts",
+    "frequency": {
+      "bimonthly": "Bimonthly",
+      "fourMonthly": "Every Four Months",
+      "monthly": "Monthly",
+      "quarterly": "Quarterly",
+      "sixMonthly": "Every Six Months",
+      "weekly": "Weekly",
+      "yearly": "Yearly"
+    },
+    "gas": "Gas",
+    "gasCustomerNumber": "Gas Customer Number",
+    "gasMeterNumber": "Gas Meter Number",
+    "gasPdlRef": "Gas PDL Ref",
+    "internet": "Internet",
+    "internetBillFrequency": "Internet Bill Frequency",
+    "internetConnection": "Internet Connection",
+    "loftAddress": "Address",
+    "loftCreateError": "Error creating loft",
+    "loftCreatedSuccess": "Loft Created Successfully",
+    "loftCreatedSuccessDescription": "The new loft has been added to your property list.",
+    "loftDataDeleted": "Loft data has been permanently deleted.",
+    "loftDeletedSuccess": "Loft Deleted Successfully",
+    "loftDescription": "Loft Description",
+    "loftInfoDescription": "Provide the main details of the loft, including its name, address, and rental price.",
+    "loftName": "Loft name",
+    "loftUpdated": "Loft updated",
+    "loftUpdatedDescription": "All changes have been saved successfully",
+    "managePropertiesDescription": "Manage your properties - Discover and manage your real estate portfolio with style",
+    "nextEnergyBill": "Next Energy Bill Due",
+    "nextInternetBill": "Next Internet Bill Due",
+    "nextPhoneBill": "Next Phone Bill Due",
+    "nextTvBill": "Next TV Bill Due",
+    "nextWaterBill": "Next Water Bill Due",
+    "noLoftsFound": "No lofts found",
+    "noLoftsMatch": "No lofts match the filters",
+    "noLoftsYet": "No lofts yet",
+    "ownerPercentage": "Owner Percentage",
+    "phone": "Phone",
+    "phoneBillFrequency": "Phone Bill Frequency",
+    "phoneNumber": "Phone Number",
     "pricePerDay": "Price per Day (DA)",
     "pricePerMonth": "Price per Month",
-    "pricePerNight": "Price per Night",
-    "quarterly": "Quarterly",
     "selectFrequency": "Select Frequency",
     "shouldEqual100": "Total percentage must equal 100%",
     "sixMonthly": "Every Six Months",
@@ -1664,8 +1534,6 @@
     "waterContractCode": "Water Contract Code",
     "waterCustomerCode": "Water Customer Code",
     "waterMeterNumber": "Water Meter Number",
-    "weekly": "Weekly",
-    "yearly": "Yearly",
     "zoneArea": "Zone",
     "loftsList": "Lofts List",
     "searchLofts": "Search lofts...",
@@ -3414,9 +3282,12 @@
       "emergencyAlerts": "Critical Alerts"
     },
     "dashboard": {
-      "systemStatus": {
-        "title": "System Status"
-      },
+      "title": "Superuser Dashboard",
+      "welcome": "Congratulations! You are now logged in as a superuser.",
+      "successMessage": "Success! The superuser authentication system is working correctly.",
+      "errorLoading": "Error loading dashboard",
+      "noData": "No data available",
+      "systemStatus": "System Status",
       "responseTime": "Response time",
       "activeUsers": "Active Users",
       "sessions": "Sessions",
@@ -3432,35 +3303,45 @@
       "database": "Database",
       "avgResponseTime": "Average response time",
       "quickActions": "Quick Actions",
-      "cards": {
-        "userManagement": {
-          "title": "User Management"
-        },
-        "backup": {
-          "title": "Backups"
-        },
-        "audit": {
-          "title": "Audit"
-        },
-        "maintenance": {
-          "title": "Maintenance"
-        }
-      },
       "recentSecurityAlerts": "Recent Security Alerts",
-      "securityAlertsDescription": "Latest system security alerts",
-      "noRecentAlerts": "No recent alerts",
+      "securityAlertsDescription": "Monitoring suspicious activities and unauthorized access attempts",
+      "noRecentAlerts": "No recent security alerts",
       "resolve": "Resolve",
       "recentAuditLog": "Recent Audit Log",
-      "auditLogDescription": "Latest audit log entries",
-      "noRecentAuditEntries": "No recent entries",
-      "emergencyActionsDescription": "Critical actions for emergency situations",
-      "emergencyWarning": "These actions are irreversible and should only be used in absolute emergencies",
+      "auditLogDescription": "History of administrative actions and system modifications",
+      "noRecentAuditEntries": "No recent audit entries",
+      "emergencyActionsDescription": "Critical functions for system emergency management",
+      "emergencyWarning": "These actions may affect system operation. Use with caution.",
       "emergencyLockdown": "Emergency Lockdown",
       "emergencyBackup": "Emergency Backup",
       "systemRestart": "System Restart",
       "massLogout": "Mass Logout",
-      "errorLoading": "Error loading",
-      "noData": "No data available"
+      "cards": {
+        "userManagement": {
+          "title": "User Management",
+          "description": "Manage user accounts and their permissions"
+        },
+        "security": {
+          "title": "Security",
+          "description": "Security monitoring and alerts"
+        },
+        "audit": {
+          "title": "Audit",
+          "description": "Logs and action history"
+        },
+        "maintenance": {
+          "title": "Maintenance",
+          "description": "System maintenance tools"
+        },
+        "backup": {
+          "title": "Backups",
+          "description": "Backup management"
+        },
+        "configuration": {
+          "title": "Configuration",
+          "description": "System configuration"
+        }
+      }
     },
     "status": {
       "systemStatus": "System Status",
@@ -3551,68 +3432,6 @@
         "activateUsers": "Activate Users",
         "deactivateUsers": "Deactivate Users",
         "deleteUsers": "Delete Users"
-      }
-    },
-    "dashboard": {
-      "title": "Superuser Dashboard",
-      "welcome": "Congratulations! You are now logged in as a superuser.",
-      "successMessage": "Success! The superuser authentication system is working correctly.",
-      "errorLoading": "Error loading dashboard",
-      "noData": "No data available",
-      "systemStatus": "System Status",
-      "responseTime": "Response time",
-      "activeUsers": "Active Users",
-      "sessions": "Sessions",
-      "reservations": "Reservations",
-      "errorRate": "Error rate",
-      "backup": "Backup",
-      "lastBackup": "Last backup",
-      "overview": "Overview",
-      "securityAlerts": "Security Alerts",
-      "auditLog": "Audit Log",
-      "emergencyActions": "Emergency Actions",
-      "systemPerformance": "System Performance",
-      "database": "Database",
-      "avgResponseTime": "Average response time",
-      "quickActions": "Quick Actions",
-      "recentSecurityAlerts": "Recent Security Alerts",
-      "securityAlertsDescription": "Monitoring suspicious activities and unauthorized access attempts",
-      "noRecentAlerts": "No recent security alerts",
-      "resolve": "Resolve",
-      "recentAuditLog": "Recent Audit Log",
-      "auditLogDescription": "History of administrative actions and system modifications",
-      "noRecentAuditEntries": "No recent audit entries",
-      "emergencyActionsDescription": "Critical functions for system emergency management",
-      "emergencyWarning": "These actions may affect system operation. Use with caution.",
-      "emergencyLockdown": "Emergency Lockdown",
-      "emergencyBackup": "Emergency Backup",
-      "systemRestart": "System Restart",
-      "massLogout": "Mass Logout",
-      "cards": {
-        "userManagement": {
-          "title": "User Management",
-          "description": "Manage user accounts and their permissions"
-        },
-        "security": {
-          "title": "Security",
-          "description": "Security monitoring and alerts"
-        },
-        "audit": {
-          "title": "Audit",
-          "description": "Logs and action history"
-        },
-        "maintenance": {
-          "title": "Maintenance",
-          "description": "System maintenance tools"
-        },
-        "backup": {
-          "title": "Backups",
-          "description": "Backup management"
-        },
-        "configuration": {
-          "title": "Configuration",
-          "description": "System configuration"
-        }
       }
     }
   },
@@ -3719,6 +3538,144 @@
     },
     "common": {
       "cancel": "Cancel"
+    },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "properties": "My Properties",
+      "bookings": "Bookings",
+      "revenue": "Revenue",
+      "analytics": "Analytics",
+      "messages": "Messages",
+      "settings": "Settings",
+      "profile": "Profile",
+      "logout": "Logout"
+    },
+    "dashboard": {
+      "title": "Partner Dashboard",
+      "subtitle": "Manage your properties and track your performance",
+      "stats": {
+        "totalProperties": "Total Properties",
+        "activeProperties": "{count} active",
+        "bookings": "Bookings",
+        "upcomingBookings": "{count} upcoming",
+        "monthlyRevenue": "Monthly Revenue",
+        "occupancyRate": "Occupancy Rate",
+        "excellentRate": "Excellent rate",
+        "averageRating": "Average Rating",
+        "totalReviews": "{count} reviews"
+      },
+      "actions": {
+        "quickActions": "Quick Actions",
+        "addProperty": "Add Property",
+        "manageProperties": "Manage Properties",
+        "viewCalendar": "View Calendar",
+        "financialReports": "Financial Reports"
+      },
+      "properties": {
+        "title": "My Properties",
+        "viewAll": "View All",
+        "noProperties": "No properties",
+        "noPropertiesMessage": "Add your first property to start receiving bookings",
+        "status": {
+          "available": "Available",
+          "occupied": "Occupied",
+          "maintenance": "Maintenance"
+        },
+        "pricePerNight": "Price/night",
+        "bookingsCount": "Bookings",
+        "monthlyRevenue": "Revenue/month",
+        "occupancy": "Occupancy",
+        "nextBooking": "Next booking",
+        "filters": {
+          "filterByStatus": "Filter by status",
+          "allStatuses": "All statuses",
+          "sortBy": "Sort by",
+          "sortOptions": {
+            "name": "Name",
+            "revenue": "Revenue",
+            "occupancy": "Occupancy rate"
+          }
+        }
+      },
+      "bookings": {
+        "title": "Recent Bookings",
+        "noBookings": "No recent bookings",
+        "noBookingsMessage": "You haven't received any bookings yet. New bookings will appear here.",
+        "status": {
+          "pending": "Pending",
+          "confirmed": "Confirmed",
+          "cancelled": "Cancelled",
+          "completed": "Completed"
+        },
+        "paymentStatus": {
+          "pending": "Pending",
+          "paid": "Paid",
+          "refunded": "Refunded",
+          "failed": "Failed"
+        },
+        "filters": {
+          "allStatuses": "All statuses",
+          "dateRange": "Date range",
+          "noResults": "No bookings found",
+          "noResultsMessage": "No bookings match the selected filters.",
+          "clearFilters": "Clear filters"
+        }
+      },
+      "loading": "Loading your dashboard...",
+      "error": {
+        "title": "Loading Error",
+        "message": "An error occurred while loading data",
+        "retry": "Retry",
+        "boundary": {
+          "title": "Dashboard Error",
+          "partnerError": "A partner-specific error occurred while loading this page.",
+          "genericError": "Something went wrong with the partner dashboard. Our team has been notified.",
+          "errorId": "Error ID",
+          "errorIdHelp": "Please include this ID when contacting support",
+          "devDetails": "Development Error Details",
+          "stackTrace": "Stack Trace",
+          "tryAgain": "Try Again",
+          "goToDashboard": "Go to Dashboard",
+          "contactSupport": "Contact Support",
+          "persistHelp": "If this problem persists, please contact our support team with the error ID above."
+        },
+        "stats": {
+          "title": "Stats Loading Error",
+          "message": "Unable to load dashboard statistics",
+          "retry": "Retry"
+        },
+        "properties": {
+          "title": "Properties Loading Error",
+          "message": "Unable to load your properties",
+          "retry": "Retry"
+        },
+        "bookings": {
+          "title": "Bookings Loading Error",
+          "message": "Unable to load recent bookings",
+          "retry": "Retry"
+        },
+        "unauthorized": {
+          "title": "Unauthorized Access",
+          "message": "You don't have permission to access this page"
+        },
+        "generic": {
+          "title": "An Error Occurred",
+          "message": "Something went wrong. Please try again."
+        },
+        "network": {
+          "title": "Connection Error",
+          "message": "Unable to connect to the server. Please check your internet connection."
+        },
+        "timeout": {
+          "title": "Request Timeout",
+          "message": "The request took too long. Please try again."
+        },
+        "contactSupportMessage": "If the problem persists, contact our support team"
+      }
+    },
+    "branding": {
+      "title": "Partner Portal",
+      "subtitle": "Property Management"
     }
   },
   "privacy": {

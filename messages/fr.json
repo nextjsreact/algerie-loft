@@ -1053,118 +1053,7 @@
       "allOperational": "Tous les systèmes sont opérationnels",
       "online": "En ligne"
     },
-    "title": "Tableau de bord",
-    "description": "Gérez vos appartements et suivez vos activités",
-    "availableSections": "Sections disponibles",
-    "access": "Accéder",
-    "sections": {
-      "apartments": {
-        "title": "Appartements",
-        "description": "Gérer vos lofts et propriétés"
-      },
-      "reservations": {
-        "title": "Réservations",
-        "description": "Suivre les réservations et bookings"
-      },
-      "availability": {
-        "title": "Disponibilité",
-        "description": "Gérer les calendriers de disponibilité"
-      },
-      "tasks": {
-        "title": "Tâches",
-        "description": "Suivre et gérer les tâches"
-      },
-      "teams": {
-        "title": "Équipes",
-        "description": "Gérer les équipes et membres"
-      },
-      "platformSettings": {
-        "title": "Paramètres plateforme",
-        "description": "Configuration de la plateforme"
-      },
-      "owners": {
-        "title": "Propriétaires",
-        "description": "Gérer les propriétaires"
-      },
-      "transactions": {
-        "title": "Transactions",
-        "description": "Suivre les transactions financières"
-      },
-      "detailedReports": {
-        "title": "Rapports détaillés",
-        "description": "Générer et consulter les rapports"
-      },
-      "pendingPartners": {
-        "title": "Partenaires en attente",
-        "description": "Gérer les demandes de partenariat"
-      },
-      "validatePartners": {
-        "title": "Valider partenaires",
-        "description": "Valider les nouveaux partenaires"
-      },
-      "openDisputes": {
-        "title": "Litiges ouverts",
-        "description": "Gérer les litiges en cours"
-      },
-      "manageDisputes": {
-        "title": "Gérer litiges",
-        "description": "Administration des litiges"
-      }
-    },
-    "quickAccess": {
-      "title": "Accès rapide"
-    },
-    "quickAccessItems": {
-      "conversations": {
-        "title": "Conversations",
-        "description": "Messages et communications"
-      },
-      "notifications": {
-        "title": "Notifications",
-        "description": "Alertes et notifications"
-      },
-      "dashboard": {
-        "title": "Tableau de bord",
-        "description": "Vue d'ensemble des activités"
-      },
-      "detailedReports": {
-        "title": "Rapports détaillés",
-        "description": "Analyses et statistiques"
-      }
-    },
-    "tasks": {
-      "status": {
-        "completed": "Terminée",
-        "inProgress": "En cours",
-        "todo": "À faire"
-      }
-    },
-    "teams": "Équipes",
-    "thisMonth": "Ce mois-ci",
     "title": "Algerie Loft - Gestion d'appartements",
-    "toDo": "À faire",
-    "today": "Aujourd'hui",
-    "tomorrow": "Demain",
-    "totalLofts": "Total des appartements",
-    "upToDate": "Vous êtes à jour !",
-    "upcoming": "À venir",
-    "upcomingBillsTitle": "Factures à venir",
-    "updated": "Mis à jour",
-    "viewReports": "Voir les rapports",
-    "welcomeBack": "Bienvenue",
-    "myProfile": "Mon Profil",
-    "viewMyTasks": "Voir Mes Tâches",
-    "allCaughtUp": "Vous êtes à jour !",
-    "noUrgentTasks": "Aucune tâche urgente.",
-    "urgentTasks": "Tâches Urgentes",
-    "noTasksAssigned": "Aucune tâche ne vous est assignée.",
-    "noTasksYet": "Pas encore de tâches.",
-    "viewAllMyTasks": "Voir Toutes Mes Tâches",
-    "completed": "Terminée",
-    "secureViewMessage": "Vue Membre Sécurisée - Affiche uniquement vos tâches assignées et informations pertinentes",
-    "tasksVisible": "tâches visibles",
-    "loftsAccessible": "appartements accessibles",
-    "dismiss": "Masquer",
     "description": "Application complète pour la gestion des appartements, des propriétaires, des transactions...",
     "availableSections": "Sections disponibles pour votre profil",
     "access": "Accéder",
@@ -1222,6 +1111,9 @@
         "description": "Résolution des litiges"
       }
     },
+    "quickAccess": {
+      "title": "Accès rapide"
+    },
     "quickAccessItems": {
       "conversations": {
         "title": "💬 Conversations",
@@ -1240,9 +1132,38 @@
         "description": "Rapports opérationnels détaillés"
       }
     },
-    "quickAccess": {
-      "title": "Accès rapide"
+    "tasks": {
+      "status": {
+        "completed": "Terminée",
+        "inProgress": "En cours",
+        "todo": "À faire"
+      }
     },
+    "teams": "Équipes",
+    "thisMonth": "Ce mois-ci",
+    "toDo": "À faire",
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "totalLofts": "Total des appartements",
+    "upToDate": "Vous êtes à jour !",
+    "upcoming": "À venir",
+    "upcomingBillsTitle": "Factures à venir",
+    "updated": "Mis à jour",
+    "viewReports": "Voir les rapports",
+    "welcomeBack": "Bienvenue",
+    "myProfile": "Mon Profil",
+    "viewMyTasks": "Voir Mes Tâches",
+    "allCaughtUp": "Vous êtes à jour !",
+    "noUrgentTasks": "Aucune tâche urgente.",
+    "urgentTasks": "Tâches Urgentes",
+    "noTasksAssigned": "Aucune tâche ne vous est assignée.",
+    "noTasksYet": "Pas encore de tâches.",
+    "viewAllMyTasks": "Voir Toutes Mes Tâches",
+    "completed": "Terminée",
+    "secureViewMessage": "Vue Membre Sécurisée - Affiche uniquement vos tâches assignées et informations pertinentes",
+    "tasksVisible": "tâches visibles",
+    "loftsAccessible": "appartements accessibles",
+    "dismiss": "Masquer",
     "loading": "Chargement...",
     "error": "Erreur",
     "noData": "Aucune donnée",
@@ -1382,205 +1303,7 @@
     "yearly": "Annuel",
     "weekly": "Hebdomadaire",
     "bimonthly": "Bimestriel",
-    "fourMonthly": "Quadrimestriel",
-    "photos": {
-      "loadError": "Erreur lors du chargement des photos",
-      "photoDownloaded": "Photo téléchargée",
-      "noPhotos": "Aucune photo disponible",
-      "noPhotosDescription": "Aucune photo n'a été ajoutée pour cet appartement.",
-      "mainPhoto": "Photo principale",
-      "photoViewer": "Visionneuse de photos",
-      "photoGallery": "Galerie de photos",
-      "photosAvailable": "{count} photo(s) disponible(s)"
-    },
-    "addLoft": "Ajouter un appartement",
-    "addNewPropertyListing": "Ajouter une nouvelle annonce immobilière",
-    "cancel": "Annuler",
-    "selectOption": "Sélectionner une option",
-    "additionalInfo": {
-      "airbnbId": "ID Airbnb",
-      "company": "Société",
-      "title": "Informations supplémentaires",
-      "percentages": "Pourcentages",
-      "photoGallery": "Galerie de photos",
-      "createdOn": "Créé le",
-      "lastUpdated": "Dernière mise à jour",
-      "createdOn": "Créé le",
-      "lastUpdated": "Dernière mise à jour",
-      "owner": "Propriétaire",
-      "percentages": "Pourcentages",
-      "phone": "Téléphone",
-      "title": "Informations supplémentaires"
-    },
-    "allOwners": "Tous les propriétaires",
-    "allStatuses": "Tous les statuts",
-    "allZoneAreas": "Toutes les zones",
-    "available": "Disponible",
-    "billManagement": {
-      "billMarkedAsPaid": "Facture {billType} marquée comme payée. Prochaine échéance calculée automatiquement.",
-      "cancel": "Annuler",
-      "title": "Gestion des factures",
-      "water": "Eau",
-      "electricity": "Électricité",
-      "gas": "Gaz",
-      "phone": "Téléphone",
-      "internet": "Internet",
-      "nextBills": "Prochaines factures",
-      "notSet": "Non défini",
-      "customerCode": "Code client",
-      "meterNumber": "Numéro de compteur",
-      "correspondent": "Correspondant",
-      "clientNumber": "Numéro client",
-      "pdlRef": "Référence PDL",
-      "frequency": "Fréquence",
-      "noFrequencySet": "Fréquence non définie",
-      "daysOverdue": "jours de retard",
-      "dueToday": "Dû aujourd'hui",
-      "dueTomorrow": "Dû demain",
-      "dueInDays": "Dû dans {days} jours",
-      "due": "Dû",
-      "pleaseEnterPaymentAmount": "Veuillez entrer le montant du paiement",
-      "markAsPaid": "Marquer comme payé",
-      "noBillDueDatesSet": "Aucune date d'échéance définie",
-      "editLoftToAddBillInfo": "Modifiez l'appartement pour ajouter les informations de facturation",
-      "markBillAsPaid": "Marquer la facture {billType} comme payée",
-      "paymentAmount": "Montant du paiement",
-      "enterPaymentAmount": "Entrez le montant du paiement",
-      "processing": "Traitement en cours...",
-      "nextDueDateAutoCalculated": "La prochaine date d'échéance sera calculée automatiquement selon la fréquence {frequency}",
-      "currentDueDate": "Date d'échéance actuelle",
-      "daysOverdue": "jours de retard",
-      "due": "Dû",
-      "dueInDays": "Dû dans {days} jours",
-      "dueToday": "Dû aujourd'hui",
-      "dueTomorrow": "Dû demain",
-      "editLoftToAddBillInfo": "Modifiez l'appartement pour ajouter les fréquences et les dates d'échéance des factures",
-      "energy": "Énergie",
-      "enterPaymentAmount": "Entrez le montant du paiement",
-      "failedToMarkBillAsPaid": "Échec du marquage de la facture comme payée",
-      "frequency": "Fréquence",
-      "internet": "Internet",
-      "markAsPaid": "Marquer comme payé",
-      "markBillAsPaid": "Marquer la facture {billType} comme payée",
-      "nextDueDateAutoCalculated": "La prochaine date d'échéance sera automatiquement calculée en fonction de la fréquence {frequency}.",
-      "noBillDueDatesSet": "Aucune date d'échéance de facture définie",
-      "noFrequencySet": "Aucune fréquence définie",
-      "notSet": "Non défini",
-      "paymentAmount": "Montant du paiement",
-      "phone": "Téléphone",
-      "pleaseEnterPaymentAmount": "Veuillez entrer un montant de paiement",
-      "processing": "Traitement en cours...",
-      "title": "Gestion des factures",
-      "water": "Eau",
-      "electricity": "Électricité",
-      "gas": "Gaz"
-    },
-    "billingAlerts": "Alertes de facturation",
-    "billingAlertsDescription": "Configurez les fréquences et les dates d'échéance pour le suivi automatique des factures",
-    "billingSections": {
-      "energy": "Factures d'énergie",
-      "gas": "Factures de gaz",
-      "internet": "Factures Internet",
-      "phone": "Factures de téléphone",
-      "tv": "Abonnement TV",
-      "water": "Factures d'eau"
-    },
-    "bimonthly": "Bimestriel",
-    "companyPercentage": "Pourcentage de la société",
-    "companyShare": "Part de la société",
-    "createLoft": "Créer un appartement",
-    "createNewLoft": "Créer un nouvel appartement",
-    "creating": "Création en cours...",
-    "dailyRent": "Loyer journalier",
-    "deleteCancelled": "Suppression annulée",
-    "deleteCancelledDescription": "Le texte de confirmation était incorrect",
-    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer {loftName} ?",
-    "deleteConfirmMessage": "Cette action est irréversible. Elle supprimera définitivement toutes les données associées à cet appartement, y compris les réservations et les transactions. Pour confirmer, veuillez taper",
-    "deleteConfirmPrompt": "Tapez 'DELETE' pour confirmer",
-    "deleteConfirmTitle": "Êtes-vous absolument sûr ?",
-    "deleteConfirmationIncorrect": "Le texte de confirmation est incorrect. Suppression annulée.",
-    "deleteConfirmationKeyword": "DELETE",
-    "deleteError": "Erreur lors de la suppression de {name}",
-    "deleteErrorDescription": "Une erreur s'est produite lors de la suppression. Veuillez réessayer.",
-    "deleteErrorMessage": "Une erreur s'est produite lors de la tentative de suppression de l'appartement. Veuillez réessayer.",
-    "deleteLoft": "Supprimer l'appartement",
-    "deleteSuccess": "{name} supprimé avec succès",
-    "deleteSuccessDescription": "L'appartement et toutes ses données associées ont été supprimés",
-    "deletingDescription": "Suppression de l'appartement en cours",
-    "deletingInProgress": "Suppression en cours...",
-    "deletingLoftData": "Suppression des données de l'appartement...",
-    "description": "Description",
-    "descriptions": {
-      "aidaLoft": "Loft Aida moderne au cœur de la ville",
-      "familyLoftConstantine": "Loft familial à Constantine",
-      "heavenLoft": "Loft paradisiaque avec vue mer panoramique",
-      "loftStudentBabEzzouar": "Loft étudiant à Bab Ezzouar",
-      "modernCenterAlger": "Appartement moderne au centre-ville d'Alger",
-      "nadaLoft": "Loft Nada spacieux avec terrasse privée",
-      "penthouseOranSeaView": "Penthouse à Oran avec vue sur la mer",
-      "studioHydraPremium": "Studio premium à Hydra avec vue"
-    },
-    "editLoft": "Modifier l'appartement",
-    "electricityCustomerNumber": "Numéro client électricité",
-    "electricityMeterNumber": "Numéro de compteur d'électricité",
-    "electricityPdlRef": "Référence PDL électricité",
-    "energy": "Énergie",
-    "energyBillFrequency": "Fréquence des factures d'énergie",
-    "errorCreatingLoft": "Erreur lors de la création de l'appartement",
-    "errorCreatingLoftDescription": "Une erreur s'est produite lors de la création de l'appartement. Veuillez réessayer.",
-    "filterByOwner": "Filtrer par propriétaire",
-    "filterByStatus": "Filtrer par statut",
-    "filterByZone": "Filtrer par zone",
-    "filterByZoneArea": "Filtrer par zone",
-    "filterTitle": "Filtrez vos appartements",
     "fourMonthly": "Tous les quatre mois",
-    "frequency": {
-      "bimonthly": "Bimestriel",
-      "fourMonthly": "Tous les quatre mois",
-      "monthly": "Mensuel",
-      "quarterly": "Trimestriel",
-      "sixMonthly": "Tous les six mois",
-      "weekly": "Hebdomadaire",
-      "yearly": "Annuel"
-    },
-    "gas": "Gaz",
-    "gasCustomerNumber": "Numéro client gaz",
-    "gasMeterNumber": "Numéro de compteur de gaz",
-    "gasPdlRef": "Référence PDL gaz",
-    "internet": "Internet",
-    "internetBillFrequency": "Fréquence des factures Internet",
-    "internetConnection": "Connexion Internet",
-    "loftAddress": "Adresse",
-    "loftCreateError": "Erreur lors de la création de l'appartement",
-    "loftCreatedSuccess": "Appartement créé avec succès",
-    "loftCreatedSuccessDescription": "Le nouvel appartement a été ajouté à votre liste de propriétés.",
-    "loftDataDeleted": "Les données de l'appartement ont été supprimées définitivement.",
-    "loftDeletedSuccess": "Appartement supprimé avec succès",
-    "loftDescription": "Description de l'appartement",
-    "loftInfoDescription": "Fournissez les détails principaux de l'appartement, y compris son nom, son adresse et son prix de location.",
-    "loftInfoTitle": "Informations sur l'appartement",
-    "loftName": "Nom de l'appartement",
-    "loftNotFound": "Appartement non trouvé",
-    "loftUpdated": "Appartement mis à jour",
-    "loftUpdatedDescription": "Toutes les modifications ont été enregistrées avec succès",
-    "maintenance": "Maintenance",
-    "managePropertiesDescription": "Gérez vos propriétés - Découvrez et gérez votre portefeuille immobilier avec style",
-    "monthly": "Mensuel",
-    "nextEnergyBill": "Prochaine facture d'énergie due",
-    "nextInternetBill": "Prochaine facture Internet due",
-    "nextPhoneBill": "Prochaine facture de téléphone due",
-    "nextTvBill": "Prochaine facture TV due",
-    "nextWaterBill": "Prochaine facture d'eau due",
-    "noLoftFoundForId": "Aucun appartement trouvé pour l'ID",
-    "noLoftsFound": "Aucun appartement trouvé",
-    "noLoftsMatch": "Aucun appartement ne correspond aux filtres",
-    "noLoftsYet": "Aucun appartement pour le moment",
-    "occupied": "Occupé",
-    "owner": "Propriétaire",
-    "ownerPercentage": "Pourcentage du propriétaire",
-    "phone": "Téléphone",
-    "phoneBillFrequency": "Fréquence des factures de téléphone",
-    "phoneNumber": "Numéro de téléphone",
     "photos": {
       "addedBy": "Ajouté par {name}",
       "cancel": "Annuler",
@@ -1617,10 +1340,157 @@
       "viewPhoto": "Voir la photo",
       "willBeDeleted": "Cette photo sera supprimée définitivement"
     },
+    "addLoft": "Ajouter un appartement",
+    "addNewPropertyListing": "Ajouter une nouvelle annonce immobilière",
+    "cancel": "Annuler",
+    "selectOption": "Sélectionner une option",
+    "additionalInfo": {
+      "airbnbId": "ID Airbnb",
+      "company": "Société",
+      "title": "Informations supplémentaires",
+      "percentages": "Pourcentages",
+      "photoGallery": "Galerie de photos",
+      "createdOn": "Créé le",
+      "lastUpdated": "Dernière mise à jour",
+      "owner": "Propriétaire",
+      "phone": "Téléphone"
+    },
+    "allOwners": "Tous les propriétaires",
+    "allStatuses": "Tous les statuts",
+    "allZoneAreas": "Toutes les zones",
+    "billManagement": {
+      "billMarkedAsPaid": "Facture {billType} marquée comme payée. Prochaine échéance calculée automatiquement.",
+      "cancel": "Annuler",
+      "title": "Gestion des factures",
+      "water": "Eau",
+      "electricity": "Électricité",
+      "gas": "Gaz",
+      "phone": "Téléphone",
+      "internet": "Internet",
+      "nextBills": "Prochaines factures",
+      "notSet": "Non défini",
+      "customerCode": "Code client",
+      "meterNumber": "Numéro de compteur",
+      "correspondent": "Correspondant",
+      "clientNumber": "Numéro client",
+      "pdlRef": "Référence PDL",
+      "frequency": "Fréquence",
+      "noFrequencySet": "Aucune fréquence définie",
+      "daysOverdue": "jours de retard",
+      "dueToday": "Dû aujourd'hui",
+      "dueTomorrow": "Dû demain",
+      "dueInDays": "Dû dans {days} jours",
+      "due": "Dû",
+      "pleaseEnterPaymentAmount": "Veuillez entrer un montant de paiement",
+      "markAsPaid": "Marquer comme payé",
+      "noBillDueDatesSet": "Aucune date d'échéance de facture définie",
+      "editLoftToAddBillInfo": "Modifiez l'appartement pour ajouter les fréquences et les dates d'échéance des factures",
+      "markBillAsPaid": "Marquer la facture {billType} comme payée",
+      "paymentAmount": "Montant du paiement",
+      "enterPaymentAmount": "Entrez le montant du paiement",
+      "processing": "Traitement en cours...",
+      "nextDueDateAutoCalculated": "La prochaine date d'échéance sera automatiquement calculée en fonction de la fréquence {frequency}.",
+      "currentDueDate": "Date d'échéance actuelle",
+      "energy": "Énergie",
+      "failedToMarkBillAsPaid": "Échec du marquage de la facture comme payée"
+    },
+    "billingAlerts": "Alertes de facturation",
+    "billingAlertsDescription": "Configurez les fréquences et les dates d'échéance pour le suivi automatique des factures",
+    "billingSections": {
+      "energy": "Factures d'énergie",
+      "gas": "Factures de gaz",
+      "internet": "Factures Internet",
+      "phone": "Factures de téléphone",
+      "tv": "Abonnement TV",
+      "water": "Factures d'eau"
+    },
+    "companyPercentage": "Pourcentage de la société",
+    "companyShare": "Part de la société",
+    "createLoft": "Créer un appartement",
+    "createNewLoft": "Créer un nouvel appartement",
+    "creating": "Création en cours...",
+    "dailyRent": "Loyer journalier",
+    "deleteCancelled": "Suppression annulée",
+    "deleteCancelledDescription": "Le texte de confirmation était incorrect",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer {loftName} ?",
+    "deleteConfirmMessage": "Cette action est irréversible. Elle supprimera définitivement toutes les données associées à cet appartement, y compris les réservations et les transactions. Pour confirmer, veuillez taper",
+    "deleteConfirmPrompt": "Tapez 'DELETE' pour confirmer",
+    "deleteConfirmTitle": "Êtes-vous absolument sûr ?",
+    "deleteConfirmationIncorrect": "Le texte de confirmation est incorrect. Suppression annulée.",
+    "deleteConfirmationKeyword": "DELETE",
+    "deleteError": "Erreur lors de la suppression de {name}",
+    "deleteErrorDescription": "Une erreur s'est produite lors de la suppression. Veuillez réessayer.",
+    "deleteErrorMessage": "Une erreur s'est produite lors de la tentative de suppression de l'appartement. Veuillez réessayer.",
+    "deleteLoft": "Supprimer l'appartement",
+    "deleteSuccess": "{name} supprimé avec succès",
+    "deleteSuccessDescription": "L'appartement et toutes ses données associées ont été supprimés",
+    "deletingDescription": "Suppression de l'appartement en cours",
+    "deletingInProgress": "Suppression en cours...",
+    "deletingLoftData": "Suppression des données de l'appartement...",
+    "descriptions": {
+      "aidaLoft": "Loft Aida moderne au cœur de la ville",
+      "familyLoftConstantine": "Loft familial à Constantine",
+      "heavenLoft": "Loft paradisiaque avec vue mer panoramique",
+      "loftStudentBabEzzouar": "Loft étudiant à Bab Ezzouar",
+      "modernCenterAlger": "Appartement moderne au centre-ville d'Alger",
+      "nadaLoft": "Loft Nada spacieux avec terrasse privée",
+      "penthouseOranSeaView": "Penthouse à Oran avec vue sur la mer",
+      "studioHydraPremium": "Studio premium à Hydra avec vue"
+    },
+    "electricityCustomerNumber": "Numéro client électricité",
+    "electricityMeterNumber": "Numéro de compteur d'électricité",
+    "electricityPdlRef": "Référence PDL électricité",
+    "energy": "Énergie",
+    "energyBillFrequency": "Fréquence des factures d'énergie",
+    "errorCreatingLoft": "Erreur lors de la création de l'appartement",
+    "errorCreatingLoftDescription": "Une erreur s'est produite lors de la création de l'appartement. Veuillez réessayer.",
+    "filterByOwner": "Filtrer par propriétaire",
+    "filterByStatus": "Filtrer par statut",
+    "filterByZone": "Filtrer par zone",
+    "filterByZoneArea": "Filtrer par zone",
+    "filterTitle": "Filtrez vos appartements",
+    "frequency": {
+      "bimonthly": "Bimestriel",
+      "fourMonthly": "Tous les quatre mois",
+      "monthly": "Mensuel",
+      "quarterly": "Trimestriel",
+      "sixMonthly": "Tous les six mois",
+      "weekly": "Hebdomadaire",
+      "yearly": "Annuel"
+    },
+    "gas": "Gaz",
+    "gasCustomerNumber": "Numéro client gaz",
+    "gasMeterNumber": "Numéro de compteur de gaz",
+    "gasPdlRef": "Référence PDL gaz",
+    "internet": "Internet",
+    "internetBillFrequency": "Fréquence des factures Internet",
+    "internetConnection": "Connexion Internet",
+    "loftAddress": "Adresse",
+    "loftCreateError": "Erreur lors de la création de l'appartement",
+    "loftCreatedSuccess": "Appartement créé avec succès",
+    "loftCreatedSuccessDescription": "Le nouvel appartement a été ajouté à votre liste de propriétés.",
+    "loftDataDeleted": "Les données de l'appartement ont été supprimées définitivement.",
+    "loftDeletedSuccess": "Appartement supprimé avec succès",
+    "loftDescription": "Description de l'appartement",
+    "loftInfoDescription": "Fournissez les détails principaux de l'appartement, y compris son nom, son adresse et son prix de location.",
+    "loftName": "Nom de l'appartement",
+    "loftUpdated": "Appartement mis à jour",
+    "loftUpdatedDescription": "Toutes les modifications ont été enregistrées avec succès",
+    "managePropertiesDescription": "Gérez vos propriétés - Découvrez et gérez votre portefeuille immobilier avec style",
+    "nextEnergyBill": "Prochaine facture d'énergie due",
+    "nextInternetBill": "Prochaine facture Internet due",
+    "nextPhoneBill": "Prochaine facture de téléphone due",
+    "nextTvBill": "Prochaine facture TV due",
+    "nextWaterBill": "Prochaine facture d'eau due",
+    "noLoftsFound": "Aucun appartement trouvé",
+    "noLoftsMatch": "Aucun appartement ne correspond aux filtres",
+    "noLoftsYet": "Aucun appartement pour le moment",
+    "ownerPercentage": "Pourcentage du propriétaire",
+    "phone": "Téléphone",
+    "phoneBillFrequency": "Fréquence des factures de téléphone",
+    "phoneNumber": "Numéro de téléphone",
     "pricePerDay": "Prix par jour (DA)",
     "pricePerMonth": "Prix par mois",
-    "pricePerNight": "Prix par nuit",
-    "quarterly": "Trimestriel",
     "selectFrequency": "Sélectionner la fréquence",
     "shouldEqual100": "Le pourcentage total doit être égal à 100%",
     "sixMonthly": "Tous les six mois",
@@ -1662,8 +1532,6 @@
     "waterContractCode": "Code de contrat d'eau",
     "waterCustomerCode": "Code client eau",
     "waterMeterNumber": "Numéro de compteur d'eau",
-    "weekly": "Hebdomadaire",
-    "yearly": "Annuel",
     "zoneArea": "Zone",
     "loftsList": "Liste des appartements",
     "searchLofts": "Rechercher des appartements...",
@@ -3474,6 +3342,144 @@
     },
     "common": {
       "cancel": "Annuler"
+    },
+    "navigation": {
+      "dashboard": "Tableau de bord",
+      "properties": "Mes propriétés",
+      "bookings": "Réservations",
+      "revenue": "Revenus",
+      "analytics": "Analytiques",
+      "messages": "Messages",
+      "settings": "Paramètres",
+      "profile": "Profil",
+      "logout": "Déconnexion"
+    },
+    "dashboard": {
+      "title": "Tableau de bord partenaire",
+      "subtitle": "Gérez vos propriétés et suivez vos performances",
+      "stats": {
+        "totalProperties": "Propriétés totales",
+        "activeProperties": "{count} actives",
+        "bookings": "Réservations",
+        "upcomingBookings": "{count} à venir",
+        "monthlyRevenue": "Revenus ce mois",
+        "occupancyRate": "Taux d'occupation",
+        "excellentRate": "Excellent taux",
+        "averageRating": "Note moyenne",
+        "totalReviews": "{count} avis"
+      },
+      "actions": {
+        "quickActions": "Actions rapides",
+        "addProperty": "Ajouter une propriété",
+        "manageProperties": "Gérer mes propriétés",
+        "viewCalendar": "Voir le calendrier",
+        "financialReports": "Rapports financiers"
+      },
+      "properties": {
+        "title": "Mes propriétés",
+        "viewAll": "Voir tout",
+        "noProperties": "Aucune propriété",
+        "noPropertiesMessage": "Ajoutez votre première propriété pour commencer à recevoir des réservations",
+        "status": {
+          "available": "Disponible",
+          "occupied": "Occupé",
+          "maintenance": "Maintenance"
+        },
+        "pricePerNight": "Prix/nuit",
+        "bookingsCount": "Réservations",
+        "monthlyRevenue": "Revenus/mois",
+        "occupancy": "Occupation",
+        "nextBooking": "Prochaine réservation",
+        "filters": {
+          "filterByStatus": "Filtrer par statut",
+          "allStatuses": "Tous les statuts",
+          "sortBy": "Trier par",
+          "sortOptions": {
+            "name": "Nom",
+            "revenue": "Revenus",
+            "occupancy": "Taux d'occupation"
+          }
+        }
+      },
+      "bookings": {
+        "title": "Réservations récentes",
+        "noBookings": "Aucune réservation récente",
+        "noBookingsMessage": "Vous n'avez pas encore reçu de réservations. Les nouvelles réservations apparaîtront ici.",
+        "status": {
+          "pending": "En attente",
+          "confirmed": "Confirmée",
+          "cancelled": "Annulée",
+          "completed": "Terminée"
+        },
+        "paymentStatus": {
+          "pending": "En attente",
+          "paid": "Payée",
+          "refunded": "Remboursée",
+          "failed": "Échec"
+        },
+        "filters": {
+          "allStatuses": "Tous les statuts",
+          "dateRange": "Plage de dates",
+          "noResults": "Aucune réservation trouvée",
+          "noResultsMessage": "Aucune réservation ne correspond aux filtres sélectionnés.",
+          "clearFilters": "Effacer les filtres"
+        }
+      },
+      "loading": "Chargement de votre dashboard...",
+      "error": {
+        "title": "Erreur de chargement",
+        "message": "Une erreur s'est produite lors du chargement des données",
+        "retry": "Réessayer",
+        "boundary": {
+          "title": "Erreur du tableau de bord",
+          "partnerError": "Une erreur spécifique au partenaire s'est produite lors du chargement de cette page.",
+          "genericError": "Une erreur s'est produite avec le tableau de bord partenaire. Notre équipe a été notifiée.",
+          "errorId": "ID d'erreur",
+          "errorIdHelp": "Veuillez inclure cet ID lors du contact avec le support",
+          "devDetails": "Détails de l'erreur (développement)",
+          "stackTrace": "Trace de la pile",
+          "tryAgain": "Réessayer",
+          "goToDashboard": "Aller au tableau de bord",
+          "contactSupport": "Contacter le support",
+          "persistHelp": "Si ce problème persiste, veuillez contacter notre équipe de support avec l'ID d'erreur ci-dessus."
+        },
+        "stats": {
+          "title": "Erreur de chargement des statistiques",
+          "message": "Impossible de charger les statistiques du tableau de bord",
+          "retry": "Réessayer"
+        },
+        "properties": {
+          "title": "Erreur de chargement des propriétés",
+          "message": "Impossible de charger vos propriétés",
+          "retry": "Réessayer"
+        },
+        "bookings": {
+          "title": "Erreur de chargement des réservations",
+          "message": "Impossible de charger les réservations récentes",
+          "retry": "Réessayer"
+        },
+        "unauthorized": {
+          "title": "Accès non autorisé",
+          "message": "Vous n'avez pas l'autorisation d'accéder à cette page"
+        },
+        "generic": {
+          "title": "Une erreur s'est produite",
+          "message": "Quelque chose s'est mal passé. Veuillez réessayer."
+        },
+        "network": {
+          "title": "Erreur de connexion",
+          "message": "Impossible de se connecter au serveur. Vérifiez votre connexion Internet."
+        },
+        "timeout": {
+          "title": "Délai d'attente dépassé",
+          "message": "La requête a pris trop de temps. Veuillez réessayer."
+        },
+        "contactSupportMessage": "Si le problème persiste, contactez notre équipe de support"
+      }
+    },
+    "branding": {
+      "title": "Portail Partenaire",
+      "subtitle": "Gestion de propriétés"
     }
   },
   "privacy": {

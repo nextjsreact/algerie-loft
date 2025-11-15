@@ -1,8 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { use, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { PortalNavigation } from '@/components/portal/portal-navigation'
+import { useTranslations } from 'next-intl'
+import { PartnerLayout } from '@/components/partner/partner-layout'
+import { DashboardHeader } from '@/components/partner/dashboard-header'
+import { QuickActions } from '@/components/partner/quick-actions'
+import { PropertiesOverview } from '@/components/partner/properties-overview'
+import { RecentBookingsSection } from '@/components/partner/recent-bookings-section'
+import { DashboardPageSkeleton } from '@/components/partner/dashboard-skeletons'
+import { FullPageErrorDisplay, useErrorHandler } from '@/components/partner/dashboard-error-display'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Building2, Calendar, DollarSign, TrendingUp, Plus } from 'lucide-react'
 
 interface PartnerStats {
   total_properties: number
@@ -45,8 +55,19 @@ interface RecentBooking {
   loft_name: string
 }
 
-export default function PartnerDashboardPage() {
+interface PartnerDashboardPageProps {
+  params: Promise<{
+    locale: string
+  }>
+}
+
+export default function PartnerDashboardPage({ params }: PartnerDashboardPageProps) {
+  // Unwrap params Promise for Next.js 15
+  const { locale } = use(params)
+  
   const router = useRouter()
+  const t = useTranslations('partner.dashboard')
+  const { error, handleError, clearError, getErrorType } = useErrorHandler()
   const [stats, setStats] = useState<PartnerStats>({
     total_properties: 0,
     active_properties: 0,
@@ -60,474 +81,257 @@ export default function PartnerDashboardPage() {
   const [properties, setProperties] = useState<PropertySummary[]>([])
   const [recentBookings, setRecentBookings] = useState<RecentBooking[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [partnerStatus, setPartnerStatus] = useState<'pending' | 'verified' | 'rejected' | null>(null)
+  const [partnerInfo, setPartnerInfo] = useState<{ userName?: string; submittedDate?: string }>({})
+
+  const checkPartnerStatus = async () => {
+    try {
+      const response = await fetch('/api/partner/status')
+      if (response.ok) {
+        const data = await response.json()
+        setPartnerStatus(data.verification_status)
+        setPartnerInfo({
+          userName: data.business_name,
+          submittedDate: data.created_at
+        })
+        return data.verification_status
+      }
+    } catch (error) {
+      console.error('Failed to check partner status:', error)
+    }
+    return null
+  }
 
   const fetchDashboardData = async () => {
     try {
       setLoading(true)
+      clearError()
       
-      // Fetch partner stats
-      try {
-        const statsResponse = await fetch('/api/partner/dashboard/stats')
-        if (statsResponse.ok) {
-          const statsData = await statsResponse.json()
-          setStats(statsData)
-        } else {
-          console.log('Stats API not available, using default values')
+      // Import the efficient data fetching utility
+      const { fetchDashboardData: fetchData, getErrorType: getErrType } = await import('@/lib/partner/data-fetching')
+      
+      // Fetch all data in parallel with retry logic and timeout handling
+      const results = await fetchData({
+        timeout: 10000, // 10 second timeout
+        retries: 2, // Retry up to 2 times
+        retryDelay: 1000, // Start with 1 second delay
+      })
+      
+      // Handle stats result
+      if (results.stats.error) {
+        if (results.stats.status === 401 || results.stats.status === 403) {
+          handleError('unauthorized')
+          return
         }
-      } catch (statsErr) {
-        console.log('Stats API error:', statsErr)
+        const errorType = getErrType(results.stats.error)
+        if (errorType === 'network' || errorType === 'timeout') {
+          handleError(errorType)
+          return
+        }
+        console.log('Stats API error:', results.stats.error)
+      } else if (results.stats.data) {
+        setStats(results.stats.data)
       }
-
-      // Fetch properties
-      try {
-        const propertiesResponse = await fetch('/api/partner/properties?summary=true')
-        if (propertiesResponse.ok) {
-          const propertiesData = await propertiesResponse.json()
-          setProperties(propertiesData.properties || [])
-        } else {
-          console.log('Properties API not available, using empty array')
-        }
-      } catch (propsErr) {
-        console.log('Properties API error:', propsErr)
+      
+      // Handle properties result
+      if (results.properties.error) {
+        console.log('Properties API error:', results.properties.error)
+      } else if (results.properties.data) {
+        setProperties(results.properties.data.properties || [])
       }
-
-      // Fetch recent bookings
-      try {
-        const bookingsResponse = await fetch('/api/bookings?limit=5')
-        if (bookingsResponse.ok) {
-          const bookingsData = await bookingsResponse.json()
-          setRecentBookings(bookingsData.bookings || [])
-        } else {
-          console.log('Bookings API not available, using empty array')
-        }
-      } catch (bookingsErr) {
-        console.log('Bookings API error:', bookingsErr)
+      
+      // Handle bookings result
+      if (results.bookings.error) {
+        console.log('Bookings API error:', results.bookings.error)
+      } else if (results.bookings.data) {
+        setRecentBookings(results.bookings.data.bookings || [])
       }
       
     } catch (err) {
       console.error('Dashboard data fetch error:', err)
-      setError(err instanceof Error ? err.message : 'Erreur lors du chargement')
+      const { getErrorType: getErrType } = await import('@/lib/partner/data-fetching')
+      const errorType = getErrType(err)
+      handleError(errorType, err instanceof Error ? err.message : undefined)
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchDashboardData()
+    const initDashboard = async () => {
+      const status = await checkPartnerStatus()
+      if (status === 'verified') {
+        await fetchDashboardData()
+      } else {
+        setLoading(false)
+      }
+    }
+    initDashboard()
   }, [])
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'available': return '#10B981'
-      case 'occupied': return '#F59E0B'
-      case 'maintenance': return '#EF4444'
-      case 'pending': return '#F59E0B'
-      case 'confirmed': return '#10B981'
-      case 'cancelled': return '#EF4444'
-      case 'completed': return '#3B82F6'
-      case 'paid': return '#10B981'
-      case 'failed': return '#EF4444'
-      default: return '#6B7280'
-    }
-  }
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'available': return 'Disponible'
-      case 'occupied': return 'Occupé'
-      case 'maintenance': return 'Maintenance'
-      case 'pending': return 'En attente'
-      case 'confirmed': return 'Confirmée'
-      case 'cancelled': return 'Annulée'
-      case 'completed': return 'Terminée'
-      case 'paid': return 'Payée'
-      case 'failed': return 'Échec'
-      default: return status
-    }
-  }
-
-  const cardStyle = {
-    backgroundColor: 'white',
-    border: '1px solid #E5E7EB',
-    borderRadius: '0.5rem',
-    padding: '1.5rem',
-    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-  }
-
-  const buttonStyle = {
-    padding: '0.75rem 1.5rem',
-    borderRadius: '0.5rem',
-    border: 'none',
-    fontSize: '1rem',
-    cursor: 'pointer',
-    fontWeight: '500'
-  }
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔄</div>
-          <p style={{ color: '#6B7280' }}>Chargement de votre dashboard...</p>
+      <PartnerLayout locale={locale}>
+        <DashboardPageSkeleton />
+      </PartnerLayout>
+    )
+  }
+
+  // Show pending status view if partner is not yet verified
+  if (partnerStatus === 'pending') {
+    const { PendingStatusView } = require('@/components/partner/pending-status-view')
+    return <PendingStatusView locale={locale} userName={partnerInfo.userName} submittedDate={partnerInfo.submittedDate} />
+  }
+
+  // Show rejected message if partner was rejected
+  if (partnerStatus === 'rejected') {
+    return (
+      <PartnerLayout locale={locale}>
+        <div className="flex items-center justify-center min-h-screen">
+          <Card className="max-w-md">
+            <CardHeader>
+              <CardTitle className="text-red-600">Demande refusée</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Malheureusement, votre demande de partenariat n'a pas été approuvée. Pour plus d'informations, veuillez contacter notre équipe.</p>
+            </CardContent>
+          </Card>
         </div>
-      </div>
+      </PartnerLayout>
     )
   }
 
   if (error) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>❌</div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Erreur de chargement</h2>
-          <p style={{ color: '#6B7280', marginBottom: '1.5rem' }}>{error}</p>
-          <button
-            onClick={fetchDashboardData}
-            style={{ ...buttonStyle, backgroundColor: '#3B82F6', color: 'white' }}
-          >
-            Réessayer
-          </button>
-        </div>
-      </div>
+      <PartnerLayout locale={params.locale}>
+        <FullPageErrorDisplay
+          type={error.type}
+          message={error.message}
+          onRetry={fetchDashboardData}
+          showContactSupport={true}
+        />
+      </PartnerLayout>
     )
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F9FAFB' }}>
-      <PortalNavigation currentPage="Dashboard Partenaire" locale="fr" />
-      {/* Header */}
-      <div style={{ backgroundColor: 'white', borderBottom: '1px solid #E5E7EB', padding: '1rem 0' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
-          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827', margin: 0 }}>
-            🏢 Dashboard Partenaire
-          </h1>
-          <p style={{ color: '#6B7280', margin: '0.5rem 0 0 0' }}>
-            Gérez vos propriétés et suivez vos performances
-          </p>
-        </div>
-      </div>
+    <PartnerLayout locale={params.locale}>
+      <div className="container mx-auto p-4 sm:p-6 lg:p-8">
+        <DashboardHeader 
+          title={t('title')} 
+          subtitle={t('subtitle')}
+        />
+        {/* Stats Cards - Responsive grid with better mobile layout */}
+        <section 
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 mb-6 sm:mb-8"
+          aria-label="Dashboard statistics"
+        >
+          <Card className="hover:shadow-md transition-shadow duration-200">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {t('stats.totalProperties')}
+                </h2>
+                <Building2 className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" aria-hidden="true" />
+              </div>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100" aria-label={`${stats.total_properties} total properties`}>
+                {stats.total_properties}
+              </p>
+              <p className="text-xs sm:text-sm text-green-600 dark:text-green-400 mt-1">
+                {t('stats.activeProperties', { count: stats.active_properties })}
+              </p>
+            </CardContent>
+          </Card>
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
-        {/* Stats Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-          <div style={cardStyle}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <h3 style={{ fontSize: '0.875rem', fontWeight: '500', color: '#6B7280', margin: 0 }}>
-                Propriétés Totales
-              </h3>
-              <div style={{ fontSize: '1.5rem' }}>🏠</div>
-            </div>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827' }}>
-              {stats.total_properties}
-            </div>
-            <div style={{ fontSize: '0.875rem', color: '#10B981', marginTop: '0.25rem' }}>
-              {stats.active_properties} actives
-            </div>
-          </div>
+          <Card className="hover:shadow-md transition-shadow duration-200">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {t('stats.bookings')}
+                </h2>
+                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" aria-hidden="true" />
+              </div>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100" aria-label={`${stats.total_bookings} total bookings`}>
+                {stats.total_bookings}
+              </p>
+              <p className="text-xs sm:text-sm text-amber-600 dark:text-amber-400 mt-1">
+                {t('stats.upcomingBookings', { count: stats.upcoming_bookings })}
+              </p>
+            </CardContent>
+          </Card>
 
-          <div style={cardStyle}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <h3 style={{ fontSize: '0.875rem', fontWeight: '500', color: '#6B7280', margin: 0 }}>
-                Réservations
-              </h3>
-              <div style={{ fontSize: '1.5rem' }}>📅</div>
-            </div>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827' }}>
-              {stats.total_bookings}
-            </div>
-            <div style={{ fontSize: '0.875rem', color: '#F59E0B', marginTop: '0.25rem' }}>
-              {stats.upcoming_bookings} à venir
-            </div>
-          </div>
+          <Card className="hover:shadow-md transition-shadow duration-200">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {t('stats.monthlyRevenue')}
+                </h2>
+                <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" aria-hidden="true" />
+              </div>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100" aria-label={`${stats.monthly_earnings} euros monthly revenue`}>
+                {stats.monthly_earnings}€
+              </p>
+              <p className="text-xs sm:text-sm text-green-600 dark:text-green-400 mt-1" aria-label={`Increase of ${Math.round(stats.monthly_earnings * 0.15)} euros`}>
+                +{Math.round(stats.monthly_earnings * 0.15)}€
+              </p>
+            </CardContent>
+          </Card>
 
-          <div style={cardStyle}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <h3 style={{ fontSize: '0.875rem', fontWeight: '500', color: '#6B7280', margin: 0 }}>
-                Revenus ce Mois
-              </h3>
-              <div style={{ fontSize: '1.5rem' }}>💰</div>
-            </div>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827' }}>
-              {stats.monthly_earnings}€
-            </div>
-            <div style={{ fontSize: '0.875rem', color: '#10B981', marginTop: '0.25rem' }}>
-              +{Math.round(stats.monthly_earnings * 0.15)}€ vs mois dernier
-            </div>
-          </div>
+          <Card className="hover:shadow-md transition-shadow duration-200">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {t('stats.occupancyRate')}
+                </h2>
+                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" aria-hidden="true" />
+              </div>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100" aria-label={`${Math.round(stats.occupancy_rate)} percent occupancy rate`}>
+                {Math.round(stats.occupancy_rate)}%
+              </p>
+              <p className="text-xs sm:text-sm text-green-600 dark:text-green-400 mt-1">
+                {t('stats.excellentRate')}
+              </p>
+            </CardContent>
+          </Card>
 
-          <div style={cardStyle}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <h3 style={{ fontSize: '0.875rem', fontWeight: '500', color: '#6B7280', margin: 0 }}>
-                Taux d'Occupation
-              </h3>
-              <div style={{ fontSize: '1.5rem' }}>📊</div>
-            </div>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827' }}>
-              {Math.round(stats.occupancy_rate)}%
-            </div>
-            <div style={{ fontSize: '0.875rem', color: '#10B981', marginTop: '0.25rem' }}>
-              Excellent taux
-            </div>
-          </div>
-
-          <div style={cardStyle}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <h3 style={{ fontSize: '0.875rem', fontWeight: '500', color: '#6B7280', margin: 0 }}>
-                Note Moyenne
-              </h3>
-              <div style={{ fontSize: '1.5rem' }}>⭐</div>
-            </div>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827' }}>
-              {stats.average_rating.toFixed(1)}
-            </div>
-            <div style={{ fontSize: '0.875rem', color: '#6B7280', marginTop: '0.25rem' }}>
-              {stats.total_reviews} avis
-            </div>
-          </div>
-        </div>
+          <Card className="hover:shadow-md transition-shadow duration-200">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {t('stats.averageRating')}
+                </h2>
+                <span className="text-xl sm:text-2xl" aria-hidden="true">⭐</span>
+              </div>
+              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100" aria-label={`${stats.average_rating.toFixed(1)} average rating out of 5`}>
+                {stats.average_rating.toFixed(1)}
+              </p>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
+                {t('stats.totalReviews', { count: stats.total_reviews })}
+              </p>
+            </CardContent>
+          </Card>
+        </section>
 
         {/* Quick Actions */}
-        <div style={{ ...cardStyle, marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem' }}>
-            🚀 Actions Rapides
-          </h2>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-            <button
-              onClick={() => router.push('/fr/partner/properties/new')}
-              style={{
-                ...buttonStyle,
-                backgroundColor: '#10B981',
-                color: 'white'
-              }}
-            >
-              ➕ Ajouter une Propriété
-            </button>
-            <button
-              onClick={() => router.push('/fr/partner/properties')}
-              style={{
-                ...buttonStyle,
-                backgroundColor: '#3B82F6',
-                color: 'white'
-              }}
-            >
-              🏠 Gérer mes Propriétés
-            </button>
-            <button
-              onClick={() => router.push('/fr/partner/calendar')}
-              style={{
-                ...buttonStyle,
-                backgroundColor: '#F59E0B',
-                color: 'white'
-              }}
-            >
-              📅 Calendrier
-            </button>
-            <button
-              onClick={() => router.push('/fr/partner/earnings')}
-              style={{
-                ...buttonStyle,
-                backgroundColor: '#8B5CF6',
-                color: 'white'
-              }}
-            >
-              💰 Rapports Financiers
-            </button>
-          </div>
-        </div>
+        <QuickActions locale={params.locale} />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
-          {/* Properties Overview */}
-          <div style={cardStyle}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>
-                🏠 Mes Propriétés
-              </h2>
-              <button
-                onClick={() => router.push('/fr/partner/properties')}
-                style={{
-                  ...buttonStyle,
-                  backgroundColor: 'transparent',
-                  color: '#3B82F6',
-                  border: '1px solid #3B82F6',
-                  padding: '0.5rem 1rem',
-                  fontSize: '0.875rem'
-                }}
-              >
-                Voir tout
-              </button>
-            </div>
+        {/* Properties and Bookings - Responsive grid layout */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 sm:gap-8">
+          {/* Properties Overview - Takes 2 columns on xl screens */}
+          <PropertiesOverview 
+            properties={properties} 
+            locale={params.locale}
+            limit={3}
+          />
 
-            {properties.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '2rem' }}>
-                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏠</div>
-                <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>
-                  Aucune propriété
-                </h3>
-                <p style={{ color: '#6B7280', marginBottom: '1.5rem' }}>
-                  Ajoutez votre première propriété pour commencer à recevoir des réservations
-                </p>
-                <button
-                  onClick={() => router.push('/fr/partner/properties/new')}
-                  style={{
-                    ...buttonStyle,
-                    backgroundColor: '#10B981',
-                    color: 'white'
-                  }}
-                >
-                  ➕ Ajouter une Propriété
-                </button>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {properties.slice(0, 3).map((property) => (
-                  <div
-                    key={property.id}
-                    style={{
-                      border: '1px solid #E5E7EB',
-                      borderRadius: '0.5rem',
-                      padding: '1rem',
-                      backgroundColor: '#FAFAFA',
-                      cursor: 'pointer'
-                    }}
-                    onClick={() => router.push(`/fr/partner/properties/${property.id}`)}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.5rem' }}>
-                      <div>
-                        <h3 style={{ fontSize: '1rem', fontWeight: '600', margin: '0 0 0.25rem 0' }}>
-                          {property.name}
-                        </h3>
-                        <p style={{ color: '#6B7280', fontSize: '0.875rem', margin: 0 }}>
-                          📍 {property.address}
-                        </p>
-                      </div>
-                      <span
-                        style={{
-                          backgroundColor: getStatusColor(property.status),
-                          color: 'white',
-                          padding: '0.25rem 0.5rem',
-                          borderRadius: '0.25rem',
-                          fontSize: '0.75rem',
-                          fontWeight: '500'
-                        }}
-                      >
-                        {getStatusLabel(property.status)}
-                      </span>
-                    </div>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', fontSize: '0.875rem' }}>
-                      <div>
-                        <div style={{ color: '#6B7280' }}>Prix/nuit</div>
-                        <div style={{ fontWeight: '500' }}>{property.price_per_night}€</div>
-                      </div>
-                      <div>
-                        <div style={{ color: '#6B7280' }}>Réservations</div>
-                        <div style={{ fontWeight: '500' }}>{property.bookings_count}</div>
-                      </div>
-                      <div>
-                        <div style={{ color: '#6B7280' }}>Revenus/mois</div>
-                        <div style={{ fontWeight: '500' }}>{property.earnings_this_month}€</div>
-                      </div>
-                      <div>
-                        <div style={{ color: '#6B7280' }}>Occupation</div>
-                        <div style={{ fontWeight: '500' }}>{Math.round(property.occupancy_rate)}%</div>
-                      </div>
-                    </div>
-
-                    {property.next_booking && (
-                      <div style={{ marginTop: '0.75rem', padding: '0.5rem', backgroundColor: '#EBF8FF', borderRadius: '0.25rem' }}>
-                        <div style={{ fontSize: '0.75rem', color: '#1E40AF', fontWeight: '500' }}>
-                          Prochaine réservation: {property.next_booking.client_name}
-                        </div>
-                        <div style={{ fontSize: '0.75rem', color: '#1E40AF' }}>
-                          {new Date(property.next_booking.check_in).toLocaleDateString('fr-FR')} - {new Date(property.next_booking.check_out).toLocaleDateString('fr-FR')}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Recent Bookings */}
-          <div style={cardStyle}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1.5rem' }}>
-              📋 Réservations Récentes
-            </h2>
-
-            {recentBookings.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '2rem' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📅</div>
-                <p style={{ color: '#6B7280', fontSize: '0.875rem' }}>
-                  Aucune réservation récente
-                </p>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {recentBookings.map((booking) => (
-                  <div
-                    key={booking.id}
-                    style={{
-                      border: '1px solid #E5E7EB',
-                      borderRadius: '0.25rem',
-                      padding: '0.75rem',
-                      backgroundColor: '#FAFAFA',
-                      cursor: 'pointer'
-                    }}
-                    onClick={() => router.push(`/fr/client/bookings/${booking.id}`)}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.5rem' }}>
-                      <div>
-                        <div style={{ fontSize: '0.875rem', fontWeight: '500' }}>
-                          {booking.client_name}
-                        </div>
-                        <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>
-                          {booking.loft_name}
-                        </div>
-                      </div>
-                      <div style={{ fontSize: '0.875rem', fontWeight: '500' }}>
-                        {booking.total_price}€
-                      </div>
-                    </div>
-                    
-                    <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.5rem' }}>
-                      {new Date(booking.check_in).toLocaleDateString('fr-FR')} - {new Date(booking.check_out).toLocaleDateString('fr-FR')}
-                    </div>
-                    
-                    <div style={{ display: 'flex', gap: '0.25rem' }}>
-                      <span
-                        style={{
-                          backgroundColor: getStatusColor(booking.status),
-                          color: 'white',
-                          padding: '0.125rem 0.375rem',
-                          borderRadius: '0.125rem',
-                          fontSize: '0.625rem',
-                          fontWeight: '500'
-                        }}
-                      >
-                        {getStatusLabel(booking.status)}
-                      </span>
-                      <span
-                        style={{
-                          backgroundColor: getStatusColor(booking.payment_status),
-                          color: 'white',
-                          padding: '0.125rem 0.375rem',
-                          borderRadius: '0.125rem',
-                          fontSize: '0.625rem',
-                          fontWeight: '500'
-                        }}
-                      >
-                        {getStatusLabel(booking.payment_status)}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Recent Bookings - Takes 1 column on xl screens */}
+          <RecentBookingsSection 
+            bookings={recentBookings}
+            locale={params.locale}
+            loading={false}
+          />
         </div>
       </div>
-    </div>
+    </PartnerLayout>
   )
 }

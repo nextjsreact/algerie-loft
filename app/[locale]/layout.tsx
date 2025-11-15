@@ -29,10 +29,19 @@ export default async function LocaleLayout({
     messages = {};
   }
 
-  // Simplified session loading
-  let session: Awaited<ReturnType<typeof getSessionReadOnly>>;
+  // Optimized session loading - only check if auth cookies exist
+  let session: Awaited<ReturnType<typeof getSessionReadOnly>> = null;
   try {
-    session = await getSessionReadOnly();
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    const hasAuthCookie = cookieStore.getAll().some(cookie => 
+      cookie.name.startsWith('sb-') && cookie.name.includes('-auth-token')
+    );
+    
+    // Only call getSessionReadOnly if auth cookies exist
+    if (hasAuthCookie) {
+      session = await getSessionReadOnly();
+    }
   } catch (error) {
     session = null;
   }

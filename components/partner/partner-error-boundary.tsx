@@ -4,6 +4,7 @@ import React from 'react';
 import { AlertTriangle, RefreshCw, Home, Mail } from 'lucide-react';
 import { PartnerErrorCodes, PartnerError } from '@/types/partner';
 import { PartnerErrorHandler } from '@/lib/services/partner-error-handler';
+import { useTranslations } from 'next-intl';
 
 interface PartnerErrorBoundaryState {
   hasError: boolean;
@@ -90,103 +91,128 @@ export class PartnerErrorBoundary extends React.Component<
 
   render() {
     if (this.state.hasError) {
-      // Check if it's a partner-specific error
-      const isPartnerError = this.state.error && 'code' in this.state.error;
-      
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-          <div className="max-w-md w-full">
-            <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-              <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                  <AlertTriangle className="w-8 h-8 text-red-600" />
-                </div>
-              </div>
-
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                Partner Dashboard Error
-              </h1>
-
-              <p className="text-gray-600 mb-6">
-                {isPartnerError 
-                  ? 'A partner-specific error occurred while loading this page.'
-                  : 'Something went wrong with the partner dashboard. Our team has been notified.'
-                }
-              </p>
-
-              {this.state.errorId && (
-                <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                  <p className="text-sm text-gray-600">
-                    <strong>Error ID:</strong> {this.state.errorId}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Please include this ID when contacting support
-                  </p>
-                </div>
-              )}
-
-              {process.env.NODE_ENV === 'development' && this.state.error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-left">
-                  <h3 className="text-sm font-medium text-red-800 mb-2">
-                    Development Error Details:
-                  </h3>
-                  <p className="text-xs text-red-700 font-mono break-all">
-                    {this.state.error.message}
-                  </p>
-                  {this.state.error.stack && (
-                    <details className="mt-2">
-                      <summary className="text-xs text-red-600 cursor-pointer">
-                        Stack Trace
-                      </summary>
-                      <pre className="text-xs text-red-600 mt-1 whitespace-pre-wrap">
-                        {this.state.error.stack}
-                      </pre>
-                    </details>
-                  )}
-                </div>
-              )}
-
-              <div className="space-y-3">
-                <button
-                  onClick={this.handleRetry}
-                  className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Try Again
-                </button>
-
-                <button
-                  onClick={this.handleGoHome}
-                  className="w-full flex items-center justify-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                >
-                  <Home className="w-4 h-4 mr-2" />
-                  Go to Dashboard
-                </button>
-
-                <button
-                  onClick={this.handleContactSupport}
-                  className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Contact Support
-                </button>
-              </div>
-
-              <p className="text-xs text-gray-500 mt-6">
-                If this problem persists, please contact our support team with the error ID above.
-              </p>
-            </div>
-          </div>
-        </div>
+        <ErrorBoundaryFallback
+          error={this.state.error}
+          errorId={this.state.errorId}
+          onRetry={this.handleRetry}
+          onGoHome={this.handleGoHome}
+          onContactSupport={this.handleContactSupport}
+        />
       );
     }
 
     return this.props.children;
   }
+}
+
+// Functional component for error display with translations
+function ErrorBoundaryFallback({
+  error,
+  errorId,
+  onRetry,
+  onGoHome,
+  onContactSupport,
+}: {
+  error?: Error | PartnerError;
+  errorId?: string;
+  onRetry: () => void;
+  onGoHome: () => void;
+  onContactSupport: () => void;
+}) {
+  const t = useTranslations('partner.dashboard.error');
+  const isPartnerError = error && 'code' in error;
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+      <div className="max-w-md w-full">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center">
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
+              <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
+            </div>
+          </div>
+
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+            {t('boundary.title')}
+          </h1>
+
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            {isPartnerError 
+              ? t('boundary.partnerError')
+              : t('boundary.genericError')
+            }
+          </p>
+
+          {errorId && (
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                <strong>{t('boundary.errorId')}:</strong> {errorId}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                {t('boundary.errorIdHelp')}
+              </p>
+            </div>
+          )}
+
+          {process.env.NODE_ENV === 'development' && error && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6 text-left">
+              <h3 className="text-sm font-medium text-red-800 dark:text-red-400 mb-2">
+                {t('boundary.devDetails')}:
+              </h3>
+              <p className="text-xs text-red-700 dark:text-red-300 font-mono break-all">
+                {error.message}
+              </p>
+              {error.stack && (
+                <details className="mt-2">
+                  <summary className="text-xs text-red-600 dark:text-red-400 cursor-pointer">
+                    {t('boundary.stackTrace')}
+                  </summary>
+                  <pre className="text-xs text-red-600 dark:text-red-400 mt-1 whitespace-pre-wrap">
+                    {error.stack}
+                  </pre>
+                </details>
+              )}
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <button
+              onClick={onRetry}
+              className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              {t('boundary.tryAgain')}
+            </button>
+
+            <button
+              onClick={onGoHome}
+              className="w-full flex items-center justify-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600"
+            >
+              <Home className="w-4 h-4 mr-2" />
+              {t('boundary.goToDashboard')}
+            </button>
+
+            <button
+              onClick={onContactSupport}
+              className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              {t('boundary.contactSupport')}
+            </button>
+          </div>
+
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-6">
+            {t('boundary.persistHelp')}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // HOC to wrap components with partner error boundary

@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import PublicLanguageSelector from './PublicLanguageSelector';
 import MobileLanguageSelector from './MobileLanguageSelector';
-import { HeaderLogo } from '@/components/futuristic/AnimatedLogo';
-import RobustLogo from '@/components/futuristic/RobustLogo';
+import Image from 'next/image';
 import { UserAvatarDropdown } from '@/components/auth/user-avatar-dropdown';
 import { createClient } from '@/utils/supabase/client';
 
@@ -43,10 +42,18 @@ export default function PublicHeader({ locale, text }: PublicHeaderProps) {
       <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
+        <div className="flex justify-between items-center py-2">
           {/* Logo */}
           <div className="flex items-center shrink-0 ml-8">
-            <RobustLogo variant="header" />
+            <Image 
+              src="/logo.jpg" 
+              alt="Loft Algérie" 
+              width={230} 
+              height={80} 
+              priority
+              className="w-auto object-contain"
+              style={{ maxHeight: '65px', height: '65px' }}
+            />
           </div>
           
           {/* Desktop Navigation */}

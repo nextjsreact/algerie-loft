@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { requireAuthAPI } from '@/lib/auth'
+import { PartnerDataIsolation } from '@/lib/security/partner-data-isolation'
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,10 +14,11 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Check if user is a partner
-    if (session.user.role !== 'partner') {
+    // Check if user is a partner, admin, or client (multi-role support)
+    const allowedRoles = ['partner', 'admin', 'client'];
+    if (!allowedRoles.includes(session.user.role)) {
       return NextResponse.json(
-        { error: 'Only partners can access this endpoint' },
+        { error: 'Access denied - partner, admin, or client role required' },
         { status: 403 }
       )
     }
@@ -25,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     // Get partner profile
     const { data: partnerProfile, error: profileError } = await supabase
-      .from('partner_profiles')
+      .from('partners')
       .select('id')
       .eq('user_id', session.user.id)
       .single()
@@ -37,94 +39,80 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get properties count
-    const { count: totalProperties, error: propertiesError } = await supabase
-      .from('lofts')
-      .select('*', { count: 'exact', head: true })
-      .eq('owner_id', session.user.id)
+    const partnerId = partnerProfile.id
 
-    if (propertiesError) {
-      console.error('Properties count error:', propertiesError)
+    // Get properties count with data isolation
+    const propertiesResult = await PartnerDataIsolation.getPartnerProperties(
+      partnerId,
+      {},
+      supabase
+    )
+
+    if (!propertiesResult.success) {
+      return NextResponse.json(
+        { error: propertiesResult.error || 'Failed to fetch properties' },
+        { status: 500 }
+      )
     }
 
-    // Get active properties count
-    const { count: activeProperties, error: activePropertiesError } = await supabase
-      .from('lofts')
-      .select('*', { count: 'exact', head: true })
-      .eq('owner_id', session.user.id)
-      .eq('status', 'available')
+    const properties = propertiesResult.data || []
+    const totalProperties = properties.length
+    const activeProperties = properties.filter(p => p.status === 'available').length
 
-    if (activePropertiesError) {
-      console.error('Active properties count error:', activePropertiesError)
+    // Get reservations with data isolation
+    const reservationsResult = await PartnerDataIsolation.getPartnerReservations(
+      partnerId,
+      {},
+      supabase
+    )
+
+    if (!reservationsResult.success) {
+      return NextResponse.json(
+        { error: reservationsResult.error || 'Failed to fetch reservations' },
+        { status: 500 }
+      )
     }
 
-    // Get total bookings count
-    const { count: totalBookings, error: bookingsError } = await supabase
-      .from('bookings')
-      .select('*', { count: 'exact', head: true })
-      .eq('partner_id', session.user.id)
-
-    if (bookingsError) {
-      console.error('Bookings count error:', bookingsError)
-    }
+    const reservations = reservationsResult.data || []
+    const totalBookings = reservations.length
 
     // Get upcoming bookings count
     const today = new Date().toISOString().split('T')[0]
-    const { count: upcomingBookings, error: upcomingError } = await supabase
-      .from('bookings')
-      .select('*', { count: 'exact', head: true })
-      .eq('partner_id', session.user.id)
-      .gte('check_in', today)
-      .neq('status', 'cancelled')
-
-    if (upcomingError) {
-      console.error('Upcoming bookings count error:', upcomingError)
-    }
+    const upcomingBookings = reservations.filter(
+      r => r.check_in >= today && r.status !== 'cancelled'
+    ).length
 
     // Get monthly earnings (current month)
     const currentMonth = new Date()
     const firstDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).toISOString().split('T')[0]
     const lastDayOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).toISOString().split('T')[0]
 
-    const { data: monthlyBookings, error: earningsError } = await supabase
-      .from('bookings')
-      .select('total_price')
-      .eq('partner_id', session.user.id)
-      .eq('payment_status', 'paid')
-      .gte('check_in', firstDayOfMonth)
-      .lte('check_in', lastDayOfMonth)
+    const monthlyReservationsResult = await PartnerDataIsolation.getPartnerReservations(
+      partnerId,
+      {
+        startDate: firstDayOfMonth,
+        endDate: lastDayOfMonth
+      },
+      supabase
+    )
 
-    if (earningsError) {
-      console.error('Monthly earnings error:', earningsError)
-    }
-
-    const monthlyEarnings = monthlyBookings?.reduce((sum, booking) => sum + booking.total_price, 0) || 0
+    const monthlyReservations = monthlyReservationsResult.data || []
+    const monthlyEarnings = monthlyReservations
+      .filter(r => r.payment_status === 'paid')
+      .reduce((sum, r) => sum + (r.total_price || 0), 0)
 
     // Calculate occupancy rate (simplified)
     const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate()
     const totalPossibleNights = (totalProperties || 0) * daysInMonth
     
-    const { data: occupiedNights, error: occupancyError } = await supabase
-      .from('bookings')
-      .select('check_in, check_out')
-      .eq('partner_id', session.user.id)
-      .neq('status', 'cancelled')
-      .gte('check_in', firstDayOfMonth)
-      .lte('check_out', lastDayOfMonth)
-
-    if (occupancyError) {
-      console.error('Occupancy calculation error:', occupancyError)
-    }
-
-    let totalOccupiedNights = 0
-    if (occupiedNights) {
-      totalOccupiedNights = occupiedNights.reduce((sum, booking) => {
-        const checkIn = new Date(booking.check_in)
-        const checkOut = new Date(booking.check_out)
+    const totalOccupiedNights = monthlyReservations
+      .filter(r => r.status !== 'cancelled')
+      .reduce((sum, r) => {
+        const checkIn = new Date(r.check_in)
+        const checkOut = new Date(r.check_out)
         const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24))
         return sum + nights
       }, 0)
-    }
 
     const occupancyRate = totalPossibleNights > 0 ? (totalOccupiedNights / totalPossibleNights) * 100 : 0
 

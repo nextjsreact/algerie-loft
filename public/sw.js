@@ -170,6 +170,28 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
+  // Skip localhost root and locale roots to avoid redirect issues
+  if (url.pathname === '/' || 
+      url.pathname === '/fr' || 
+      url.pathname === '/en' || 
+      url.pathname === '/ar' ||
+      url.pathname === '/fr/' || 
+      url.pathname === '/en/' || 
+      url.pathname === '/ar/') {
+    // Let the browser handle these naturally (they redirect)
+    return;
+  }
+  
+  // Skip authentication and sensitive API routes
+  if (url.pathname.startsWith('/api/auth/') ||
+      url.pathname.startsWith('/api/analytics/') ||
+      url.pathname.includes('/login') ||
+      url.pathname.includes('/logout') ||
+      url.pathname.includes('/register')) {
+    // Never cache auth-related requests
+    return;
+  }
+  
   // Handle different types of requests
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(handleApiRequest(request));
@@ -249,17 +271,16 @@ async function handleStaticAsset(request) {
 // Handle page requests with network-first, fallback to cache
 async function handlePageRequest(request) {
   try {
-    // Try network first
+    // Try network first - let browser handle redirects naturally
     const networkResponse = await fetch(request);
     
-    if (networkResponse.ok) {
-      // Cache the page
+    // Only cache successful non-redirect responses
+    if (networkResponse.ok && !networkResponse.redirected) {
       const cache = await caches.open(CACHE_NAME);
       cache.put(request, networkResponse.clone());
-      return networkResponse;
     }
     
-    throw new Error('Network response not ok');
+    return networkResponse;
   } catch (error) {
     console.log('Network failed for page, trying cache:', request.url);
     

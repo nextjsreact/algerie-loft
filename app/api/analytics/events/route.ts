@@ -2,7 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { sessionId, event } = await request.json();
+    // Vérifier si le body existe
+    const text = await request.text();
+    if (!text || text.trim() === '') {
+      return NextResponse.json({ success: true, message: 'Empty body ignored' });
+    }
+
+    // Parser le JSON
+    let body;
+    try {
+      body = JSON.parse(text);
+    } catch (e) {
+      console.warn('[Analytics API] Invalid JSON body:', text.substring(0, 100));
+      return NextResponse.json({ success: true, message: 'Invalid JSON ignored' });
+    }
+
+    const { sessionId, event } = body;
 
     // Validate required fields
     if (!sessionId || !event) {

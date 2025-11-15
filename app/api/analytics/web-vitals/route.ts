@@ -15,7 +15,16 @@ interface WebVitalMetric {
 
 export async function POST(request: NextRequest) {
   try {
-    const metric: WebVitalMetric = await request.json();
+    // Parse JSON with error handling for empty body
+    let metric: WebVitalMetric;
+    try {
+      metric = await request.json();
+    } catch (jsonError) {
+      return NextResponse.json(
+        { error: 'Invalid JSON body' },
+        { status: 400 }
+      );
+    }
     
     // Validate the metric data
     if (!metric.name || typeof metric.value !== 'number') {

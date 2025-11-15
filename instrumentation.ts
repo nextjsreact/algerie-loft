@@ -1,6 +1,9 @@
 /**
  * Next.js instrumentation file
- * Handles application-wide initialization including database seeding
+ * Handles application-wide initialization
+ * 
+ * Note: Database seeding is now handled by the DatabaseInitializer client component
+ * to avoid issues with cookies being called outside request context.
  */
 
 export async function register() {
@@ -10,26 +13,13 @@ export async function register() {
   }
 
   try {
-    console.log('[Instrumentation] Starting application initialization...');
-
-    // Initialize database seeding on server startup
-    const { initializeServerDatabase } = await import('@/lib/initialization/server-database-init');
+    console.log('[Instrumentation] Application initialization completed');
     
-    const result = await initializeServerDatabase({
-      forceReseed: false,
-      logLevel: 'info'
-    });
-
-    if (result.seeded) {
-      console.log(`[Instrumentation] Database seeded with ${result.count} lofts in ${result.duration}ms`);
-    } else if (result.errors.length > 0) {
-      console.warn('[Instrumentation] Database initialization completed with warnings:', result.errors);
-    } else {
-      console.log('[Instrumentation] Database initialization completed (no seeding needed)');
-    }
-
+    // Database seeding is now handled by:
+    // - DatabaseInitializer component (client-side, automatic)
+    // - API routes can use ensureDatabaseReady() if needed
+    
   } catch (error) {
     console.error('[Instrumentation] Application initialization failed:', error);
-    // Don't throw - allow application to continue even if seeding fails
   }
 }

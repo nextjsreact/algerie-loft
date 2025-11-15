@@ -14,20 +14,44 @@ export async function GET(request: NextRequest) {
       const { data, error } = await supabase.auth.exchangeCodeForSession(code)
       
       if (!error && data.user) {
-        console.log('OAuth callback successful for:', data.user.email, 'with role:', selectedRole)
+        console.log('OAuth callback successful for:', data.user.email, 'with URL role param:', selectedRole)
         
-        // Créer le cookie login_context selon le rôle sélectionné
+        // Détecter le VRAI rôle depuis la DB
+        const { detectUserRole } = await import('@/lib/auth/role-detection');
+        const actualDbRole = await detectUserRole(data.user.id, data.user.email);
+        console.log('✅ Actual DB role detected:', actualDbRole)
+        
+        // Créer le cookie login_context
         const { cookies } = await import('next/headers')
         const cookieStore = await cookies()
         
-        // Mapper le rôle sélectionné au contexte
-        const contextMap: Record<string, string> = {
-          'client': 'client',
-          'partner': 'partner',
-          'admin': 'employee',
-          'employee': 'employee'
+        // Déterminer le contexte selon le rôle sélectionné ET les permissions
+        let loginContext: string;
+        
+        // Si l'utilisateur est un employé (admin, manager, etc.), il peut choisir son contexte
+        const isEmployee = ['admin', 'manager', 'member', 'executive', 'superuser'].includes(actualDbRole);
+        
+        if (isEmployee) {
+          // Un employé peut se connecter comme client, partner ou employee
+          const contextMap: Record<string, string> = {
+            'client': 'client',
+            'partner': 'partner',
+            'admin': 'employee',
+            'employee': 'employee'
+          }
+          loginContext = contextMap[selectedRole] || 'employee';
+          console.log(`✅ Employee choosing context: ${loginContext} (from URL param: ${selectedRole})`);
+        } else {
+          // Un client/partner ne peut se connecter que dans son propre contexte
+          if (actualDbRole === 'client') {
+            loginContext = 'client';
+          } else if (actualDbRole === 'partner') {
+            loginContext = 'partner';
+          } else {
+            loginContext = 'employee'; // Fallback
+          }
+          console.log(`✅ Non-employee forced to their context: ${loginContext}`);
         }
-        const loginContext = contextMap[selectedRole] || 'employee'
         
         // Créer le cookie côté serveur
         cookieStore.set('login_context', loginContext, {
@@ -38,22 +62,9 @@ export async function GET(request: NextRequest) {
           secure: process.env.NODE_ENV === 'production'
         })
         
-        console.log(`✅ [OAuth Callback] Cookie login_context=${loginContext} créé pour role=${selectedRole}`)
+        console.log(`✅ [OAuth Callback] Cookie login_context=${loginContext} créé pour DB role=${actualDbRole}`)
         
-        // Détecter le rôle DB pour les employés uniquement
-        let actualUserRole = selectedRole;
-        if (loginContext === 'employee') {
-          try {
-            const { detectUserRole } = await import('@/lib/auth/role-detection');
-            actualUserRole = await detectUserRole(data.user.id, data.user.email);
-            console.log('✅ User actual role detected:', actualUserRole)
-          } catch (roleDetectionErr) {
-            console.error('Exception in role detection:', roleDetectionErr)
-            actualUserRole = 'member' // Fallback sécurisé
-          }
-        }
-        
-        // Rediriger selon le CONTEXTE DE CONNEXION
+        // Rediriger selon le CONTEXTE DE CONNEXION (basé sur le rôle DB)
         const locale = next.replace('/', '') || 'fr'
         const timestamp = Date.now()
         
@@ -64,7 +75,7 @@ export async function GET(request: NextRequest) {
             return NextResponse.redirect(`${origin}/${locale}/partner/dashboard?t=${timestamp}`)
           case 'employee':
             // Pour les employés, utiliser le rôle DB
-            switch (actualUserRole) {
+            switch (actualDbRole) {
               case 'superuser':
                 return NextResponse.redirect(`${origin}/${locale}/admin/superuser/dashboard?t=${timestamp}`)
               case 'executive':

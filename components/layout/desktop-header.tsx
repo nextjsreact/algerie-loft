@@ -16,10 +16,11 @@ export function DesktopHeader() {
         <Image 
           src="/logo.jpg" 
           alt="Loft Algérie" 
-          width={140} 
-          height={48} 
+          width={230} 
+          height={80} 
           priority
-          className="h-12 w-auto object-contain max-h-12"
+          className="w-auto object-contain"
+          style={{ maxHeight: '65px', height: '65px' }}
         />
       </div>
 

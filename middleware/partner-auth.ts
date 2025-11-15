@@ -21,7 +21,8 @@ const PARTNER_AUTH_CONFIG: PartnerAuthMiddlewareConfig = {
     '/partner/reservations',
     '/partner/revenue',
     '/partner/profile',
-    '/partner/settings'
+    '/partner/settings',
+    '/partner/application-pending'
   ],
   statusRequirements: {
     '/partner/dashboard': ['active'],
@@ -32,7 +33,7 @@ const PARTNER_AUTH_CONFIG: PartnerAuthMiddlewareConfig = {
     '/partner/settings': ['active', 'pending']
   },
   redirectUrls: {
-    pending: '/partner/pending',
+    pending: '/partner/application-pending',
     rejected: '/partner/rejected',
     suspended: '/partner/suspended',
     active: '/partner/dashboard'
@@ -113,51 +114,55 @@ export async function partnerAuthMiddleware(request: NextRequest): Promise<NextR
       return NextResponse.redirect(new URL(`/${locale}/partner/login`, request.url));
     }
 
-    // Get user profile to verify partner role
-    const { data: profile, error: profileError } = await supabase
+    // Get user profile and partner profile in one query using join
+    const { data: profileData, error: profileError } = await supabase
       .from('profiles')
-      .select('role')
+      .select(`
+        role,
+        partners:partners!user_id(id, verification_status)
+      `)
       .eq('id', user.id)
       .single();
 
-    const userRole: UserRole = profile?.role || user.user_metadata?.role || 'guest';
+    const userRole: UserRole = profileData?.role || user.user_metadata?.role || 'guest';
     
-    if (userRole !== 'partner') {
-      console.log(`[PARTNER AUTH MIDDLEWARE] User is not a partner (role: ${userRole}), redirecting`);
+    // Allow partners, admins, and clients to access partner routes
+    const allowedRoles: UserRole[] = ['partner', 'admin', 'client'];
+    if (!allowedRoles.includes(userRole)) {
+      console.log(`[PARTNER AUTH MIDDLEWARE] User role ${userRole} not allowed, redirecting`);
       return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
     }
 
-    // Get partner profile and status
-    const { data: partnerProfile, error: partnerError } = await supabase
-      .from('partners')
-      .select('id, verification_status')
-      .eq('user_id', user.id)
-      .single();
+    // Extract partner profile from joined data
+    const partnerProfile = profileData?.partners?.[0] || null;
+    const partnerError = !partnerProfile;
 
-    if (partnerError || !partnerProfile) {
-      console.log(`[PARTNER AUTH MIDDLEWARE] Partner profile not found, redirecting to registration`);
+    // Quick check: if no partner profile, redirect immediately
+    if (!partnerProfile) {
+      console.log(`[PARTNER AUTH MIDDLEWARE] No partner profile, redirecting to registration`);
       return NextResponse.redirect(new URL(`/${locale}/partner/register`, request.url));
     }
 
     const partnerStatus = partnerProfile.verification_status as PartnerStatus;
-    console.log(`[PARTNER AUTH MIDDLEWARE] Partner status: ${partnerStatus}`);
 
-    // Check if partner status allows access to this route
-    const requiredStatuses = getRequiredStatusesForRoute(pathWithoutLocale);
-    
-    if (requiredStatuses.length > 0 && !requiredStatuses.includes(partnerStatus)) {
-      console.log(`[PARTNER AUTH MIDDLEWARE] Partner status ${partnerStatus} not allowed for ${pathWithoutLocale}`);
-      
-      const redirectUrl = PARTNER_AUTH_CONFIG.redirectUrls[partnerStatus];
-      return NextResponse.redirect(new URL(`/${locale}${redirectUrl}`, request.url));
+    // Quick check: if pending, redirect immediately
+    if (partnerStatus === 'pending') {
+      return NextResponse.redirect(new URL(`/${locale}/partner/application-pending`, request.url));
     }
 
-    // Add partner information to request headers for downstream use
+    // Quick check: if rejected or suspended, redirect immediately
+    if (partnerStatus === 'rejected') {
+      return NextResponse.redirect(new URL(`/${locale}/partner/rejected`, request.url));
+    }
+    if (partnerStatus === 'suspended') {
+      return NextResponse.redirect(new URL(`/${locale}/partner/suspended`, request.url));
+    }
+
+    // If active, add headers and allow access
     response.headers.set('x-partner-id', partnerProfile.id);
     response.headers.set('x-partner-status', partnerStatus);
     response.headers.set('x-user-id', user.id);
 
-    console.log(`[PARTNER AUTH MIDDLEWARE] Access granted for partner ${partnerProfile.id} with status ${partnerStatus}`);
     return response;
 
   } catch (error) {

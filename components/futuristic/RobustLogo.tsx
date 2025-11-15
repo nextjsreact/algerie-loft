@@ -43,7 +43,8 @@ export default function RobustLogo({
       case 'hero':
         return { width: 300, height: 120, maxHeight: 'max-h-32' };
       case 'header':
-        return { width: 80, height: 24, maxHeight: 'max-h-6 -m-8' };
+        // Hauteur réduite à 24px (h-6) pour bien rentrer dans le header sans déborder
+        return { width: 100, height: 35, maxHeight: 'max-h-6' };
       case 'footer':
         return { width: 160, height: 48, maxHeight: 'max-h-12' };
       default:
@@ -68,7 +69,7 @@ export default function RobustLogo({
         setImageError(true);
       }
     };
-    img.src = `/logo.jpg?v=${Date.now()}`; // Cache busting
+    img.src = `/logo.png`;
   };
 
   useEffect(() => {
@@ -107,35 +108,26 @@ export default function RobustLogo({
         />
       )}
 
-      {/* Votre Logo JPG */}
+      {/* Votre Logo PNG */}
       <div className={`relative z-10 ${maxHeight}`}>
         {imageLoaded ? (
           <img
-            src={`/logo.jpg?v=${Date.now()}`}
+            src="/logo.png"
             alt="Loft Algérie - Votre Confort Notre Priorité"
             width={width}
             height={height}
-            className={`object-contain transition-all duration-500 ${
-              variant === 'hero' ? 'filter brightness-110 contrast-105' : ''
-            }`}
+            className="object-contain block"
             style={{
-              filter: variant === 'hero' 
-                ? 'drop-shadow(0 10px 25px rgba(255, 215, 0, 0.3)) brightness(1.1)' 
-                : 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15))',
               maxWidth: '100%',
-              height: 'auto'
+              height: 'auto',
+              display: 'block'
             }}
           />
         ) : (
-          // Loading placeholder avec votre style
-          <div className={`${maxHeight} flex items-center justify-center bg-gradient-to-r from-yellow-100 to-amber-100 rounded-lg animate-pulse`} style={{ width, height }}>
-            <div className="text-center">
-              <div className="text-yellow-600 font-bold text-sm mb-1">
-                LOFT ALGÉRIE
-              </div>
-              <div className="text-xs text-yellow-500">
-                Chargement...
-              </div>
+          // Loading placeholder simple
+          <div className={`${maxHeight} flex items-center justify-center animate-pulse`} style={{ width, height }}>
+            <div className="text-center text-gray-400 text-xs">
+              Chargement...
             </div>
           </div>
         )}

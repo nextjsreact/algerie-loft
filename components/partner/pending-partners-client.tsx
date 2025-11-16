@@ -119,44 +119,58 @@ export function PendingPartnersClient() {
   }
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Title */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Partenaires en attente</h1>
-        <p className="text-gray-600 mt-1">Gérer les demandes de partenariat en attente de validation</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="w-full space-y-8 p-8 pr-12">
+        {/* Title Section */}
+        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-amber-100 rounded-lg">
+              <UserPlus className="h-8 w-8 text-amber-600" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Partenaires en attente</h1>
+              <p className="text-gray-600 mt-1">Gérer les demandes de partenariat en attente de validation</p>
+            </div>
+          </div>
+        </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <Clock className="h-8 w-8 text-amber-500" />
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="border-l-4 border-l-amber-500 shadow-md hover:shadow-lg transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-amber-100 rounded-full">
+                <Clock className="h-8 w-8 text-amber-600" />
+              </div>
               <div>
-                <p className="text-2xl font-bold text-amber-600">{partners.length}</p>
-                <p className="text-sm text-gray-600">En attente</p>
+                <p className="text-3xl font-bold text-amber-600">{partners.length}</p>
+                <p className="text-sm text-gray-600 font-medium">En attente</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <CheckCircle className="h-8 w-8 text-green-500" />
+        <Card className="border-l-4 border-l-green-500 shadow-md hover:shadow-lg transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-green-100 rounded-full">
+                <CheckCircle className="h-8 w-8 text-green-600" />
+              </div>
               <div>
-                <p className="text-2xl font-bold text-green-600">0</p>
-                <p className="text-sm text-gray-600">Approuvés aujourd'hui</p>
+                <p className="text-3xl font-bold text-green-600">0</p>
+                <p className="text-sm text-gray-600 font-medium">Approuvés aujourd'hui</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <XCircle className="h-8 w-8 text-red-500" />
+        <Card className="border-l-4 border-l-red-500 shadow-md hover:shadow-lg transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-red-100 rounded-full">
+                <XCircle className="h-8 w-8 text-red-600" />
+              </div>
               <div>
-                <p className="text-2xl font-bold text-red-600">0</p>
-                <p className="text-sm text-gray-600">Rejetés aujourd'hui</p>
+                <p className="text-3xl font-bold text-red-600">0</p>
+                <p className="text-sm text-gray-600 font-medium">Rejetés aujourd'hui</p>
               </div>
             </div>
           </CardContent>
@@ -164,20 +178,20 @@ export function PendingPartnersClient() {
       </div>
 
       {/* Liste des partenaires */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         {partners.map((partner) => (
-          <Card key={partner.id} className="border-l-4 border-l-amber-500">
-            <CardContent className="p-6">
+          <Card key={partner.id} className="border-l-4 border-l-amber-500 shadow-md hover:shadow-xl transition-all duration-200 hover:-translate-y-1">
+            <CardContent className="p-8">
               <div className="flex items-start justify-between">
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-xl font-semibold text-gray-900">{partner.full_name}</h3>
-                    <Badge variant="outline" className="text-amber-600 border-amber-600">
-                      {partner.verification_status === 'pending' ? 'En attente' : partner.verification_status}
+                    <h3 className="text-2xl font-bold text-gray-900">{partner.full_name}</h3>
+                    <Badge className="bg-amber-100 text-amber-700 border-amber-300 px-3 py-1">
+                      {partner.verification_status === 'pending' ? '⏳ En attente' : partner.verification_status}
                     </Badge>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700">
                     <div>
                       <p><strong>Email:</strong> {partner.email}</p>
                       <p><strong>Téléphone:</strong> {partner.phone}</p>
@@ -193,34 +207,30 @@ export function PendingPartnersClient() {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-3">
                   <Button
                     variant="outline"
-                    size="sm"
-                    className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                    className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:border-blue-700 transition-colors"
                     onClick={() => handleShowDetails(partner)}
                   >
-                    <Eye className="h-4 w-4 mr-1" />
-                    Détails
+                    <Eye className="h-4 w-4 mr-2" />
+                    Voir détails
                   </Button>
                   <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-green-600 border-green-600 hover:bg-green-50"
+                    className="bg-green-600 hover:bg-green-700 text-white shadow-md"
                     onClick={() => handleApprove(partner.id)}
                     disabled={actionLoading === partner.id}
                   >
-                    <CheckCircle className="h-4 w-4 mr-1" />
+                    <CheckCircle className="h-4 w-4 mr-2" />
                     {actionLoading === partner.id ? 'En cours...' : 'Approuver'}
                   </Button>
                   <Button
                     variant="outline"
-                    size="sm"
-                    className="text-red-600 border-red-600 hover:bg-red-50"
+                    className="text-red-600 border-red-600 hover:bg-red-50 hover:border-red-700 transition-colors"
                     onClick={() => handleReject(partner.id)}
                     disabled={actionLoading === partner.id}
                   >
-                    <XCircle className="h-4 w-4 mr-1" />
+                    <XCircle className="h-4 w-4 mr-2" />
                     {actionLoading === partner.id ? 'En cours...' : 'Rejeter'}
                   </Button>
                 </div>
@@ -231,19 +241,22 @@ export function PendingPartnersClient() {
       </div>
 
       {partners.length === 0 && (
-        <Card>
-          <CardContent className="p-8 text-center">
-            <UserPlus className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun partenaire en attente</h3>
-            <p className="text-gray-600">Il n'y a actuellement aucune demande de partenariat en attente de validation.</p>
+        <Card className="shadow-md">
+          <CardContent className="p-12 text-center">
+            <div className="p-4 bg-gray-100 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+              <UserPlus className="h-12 w-12 text-gray-400" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">Aucun partenaire en attente</h3>
+            <p className="text-gray-600 text-lg">Il n'y a actuellement aucune demande de partenariat en attente de validation.</p>
           </CardContent>
         </Card>
       )}
 
       {/* Details Modal */}
       {showDetails && selectedPartner && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <Card className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-[9999]">
+          <div className="flex items-center justify-center min-h-screen p-4 md:pl-72">
+            <Card className="max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Détails du partenaire</CardTitle>
@@ -337,8 +350,10 @@ export function PendingPartnersClient() {
               </div>
             </CardContent>
           </Card>
+          </div>
         </div>
       )}
+      </div>
     </div>
   )
 }

@@ -8,9 +8,7 @@ export default async function PartnerValidationPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen">
-        <PartnerValidationClient />
-      </div>
+      <PartnerValidationClient />
     </ErrorBoundary>
   )
 }

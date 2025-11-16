@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPartnerInfoFromHeaders } from '@/middleware/partner-auth';
 import { createReadOnlyClient } from '@/utils/supabase/server';
+import { getSession } from '@/lib/auth';
 
 interface PropertyFilters {
   status?: string;
@@ -46,15 +46,40 @@ interface PartnerPropertiesResponse {
 
 export async function GET(request: NextRequest): Promise<NextResponse<PartnerPropertiesResponse>> {
   try {
-    // Get partner info from middleware headers
-    const partnerInfo = getPartnerInfoFromHeaders(request);
+    // Check authentication
+    const session = await getSession();
     
-    if (!partnerInfo.partnerId || !partnerInfo.userId) {
+    if (!session) {
       return NextResponse.json({
         success: false,
-        error: 'Partner authentication required'
+        error: 'Authentication required'
       }, { status: 401 });
     }
+
+    const supabase = await createReadOnlyClient();
+
+    // Get partner profile
+    const { data: partnerProfile, error: partnerError } = await supabase
+      .from('partner_profiles')
+      .select('id, verification_status')
+      .eq('user_id', session.user.id)
+      .single();
+
+    if (partnerError || !partnerProfile) {
+      return NextResponse.json({
+        success: false,
+        error: 'Partner profile not found'
+      }, { status: 403 });
+    }
+
+    if (partnerProfile.verification_status !== 'verified') {
+      return NextResponse.json({
+        success: false,
+        error: 'Partner account not verified'
+      }, { status: 403 });
+    }
+
+    const partnerId = partnerProfile.id;
 
     const { searchParams } = new URL(request.url);
     const page = Number(searchParams.get('page')) || 1;
@@ -68,23 +93,18 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
       search: searchParams.get('search') || undefined
     };
 
-    const supabase = await createReadOnlyClient();
-
     // Build query with RLS automatically applied
     let query = supabase
       .from('lofts')
       .select(`
         id,
         name,
-        type,
         address,
         status,
-        price_per_night,
-        images,
         created_at,
         updated_at
       `)
-      .eq('partner_id', partnerInfo.partnerId)
+      .eq('owner_id', partnerId)
       .order('created_at', { ascending: false });
 
     // Apply filters
@@ -104,7 +124,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
     const { count: totalCount, error: countError } = await supabase
       .from('lofts')
       .select('*', { count: 'exact', head: true })
-      .eq('partner_id', partnerInfo.partnerId);
+      .eq('owner_id', partnerId);
 
     if (countError) {
       console.error('Count query error:', countError);
@@ -136,25 +156,24 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
     let reservationsData: any[] = [];
     
     if (propertyIds.length > 0) {
-      const { data: reservations, error: reservationsError } = await supabase
-        .from('reservations')
+      const { data: bookings, error: bookingsError } = await supabase
+        .from('bookings')
         .select(`
           id,
           loft_id,
-          guest_name,
           check_in,
           check_out,
           status,
-          total_amount,
+          total_price,
           created_at
         `)
         .in('loft_id', propertyIds)
         .order('created_at', { ascending: false });
 
-      if (reservationsError) {
-        console.error('Reservations fetch error:', reservationsError);
+      if (bookingsError) {
+        console.error('Bookings fetch error:', bookingsError);
       } else {
-        reservationsData = reservations || [];
+        reservationsData = bookings || [];
       }
     }
 
@@ -173,14 +192,14 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
           const checkIn = new Date(r.check_in);
           return checkIn >= currentMonthStart && checkIn <= currentMonthEnd && r.status === 'completed';
         })
-        .reduce((sum, r) => sum + (r.total_amount || 0), 0);
+        .reduce((sum, r) => sum + (r.total_price || 0), 0);
 
       const propertyPreviousMonthRevenue = propertyReservations
         .filter(r => {
           const checkIn = new Date(r.check_in);
           return checkIn >= previousMonthStart && checkIn <= previousMonthEnd && r.status === 'completed';
         })
-        .reduce((sum, r) => sum + (r.total_amount || 0), 0);
+        .reduce((sum, r) => sum + (r.total_price || 0), 0);
 
       // Determine current occupancy status
       const currentReservation = propertyReservations.find(r => {
@@ -199,21 +218,21 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
       return {
         id: property.id,
         name: property.name,
-        type: property.type || 'loft',
+        type: 'loft',
         address: property.address || '',
         status: property.status,
-        price_per_night: property.price_per_night || 0,
+        price_per_night: 0, // Price not available in current schema
         current_occupancy_status: occupancyStatus,
         next_reservation: nextReservation ? {
           check_in: nextReservation.check_in,
           check_out: nextReservation.check_out,
-          guest_name: nextReservation.guest_name || 'Guest'
+          guest_name: 'Guest' // Guest name not available in bookings table
         } : undefined,
         revenue_this_month: propertyCurrentMonthRevenue,
         revenue_last_month: propertyPreviousMonthRevenue,
         total_reservations: propertyReservations.length,
         average_rating: 4.2 + Math.random() * 0.6, // Simulated - would come from reviews
-        images: property.images || [],
+        images: [],
         created_at: property.created_at,
         updated_at: property.updated_at
       };

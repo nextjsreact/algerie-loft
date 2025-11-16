@@ -25,17 +25,19 @@ const PARTNER_AUTH_CONFIG: PartnerAuthMiddlewareConfig = {
     '/partner/application-pending'
   ],
   statusRequirements: {
-    '/partner/dashboard': ['active'],
-    '/partner/properties': ['active'],
-    '/partner/reservations': ['active'],
-    '/partner/revenue': ['active'],
-    '/partner/profile': ['active', 'pending', 'rejected'],
-    '/partner/settings': ['active', 'pending']
+    '/partner/dashboard': ['active', 'verified'],
+    '/partner/properties': ['active', 'verified'],
+    '/partner/reservations': ['active', 'verified'],
+    '/partner/revenue': ['active', 'verified'],
+    '/partner/profile': ['active', 'verified', 'pending', 'rejected'],
+    '/partner/settings': ['active', 'verified', 'pending'],
+    '/partner/application-pending': ['pending']
   },
   redirectUrls: {
     pending: '/partner/application-pending',
     rejected: '/partner/rejected',
     suspended: '/partner/suspended',
+    verified: '/partner/dashboard',
     active: '/partner/dashboard'
   }
 };
@@ -114,28 +116,18 @@ export async function partnerAuthMiddleware(request: NextRequest): Promise<NextR
       return NextResponse.redirect(new URL(`/${locale}/partner/login`, request.url));
     }
 
-    // Get user profile and partner profile in one query using join
-    const { data: profileData, error: profileError } = await supabase
-      .from('profiles')
-      .select(`
-        role,
-        partners:partners!user_id(id, verification_status)
-      `)
-      .eq('id', user.id)
+    // Get partner profile directly from partner_profiles table
+    const { data: partnerProfile, error: partnerError } = await supabase
+      .from('partner_profiles')
+      .select('id, verification_status')
+      .eq('user_id', user.id)
       .single();
 
-    const userRole: UserRole = profileData?.role || user.user_metadata?.role || 'guest';
-    
-    // Allow partners, admins, and clients to access partner routes
-    const allowedRoles: UserRole[] = ['partner', 'admin', 'client'];
-    if (!allowedRoles.includes(userRole)) {
-      console.log(`[PARTNER AUTH MIDDLEWARE] User role ${userRole} not allowed, redirecting`);
-      return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
-    }
-
-    // Extract partner profile from joined data
-    const partnerProfile = profileData?.partners?.[0] || null;
-    const partnerError = !partnerProfile;
+    console.log(`[PARTNER AUTH MIDDLEWARE] Partner profile query result:`, { 
+      hasProfile: !!partnerProfile, 
+      error: partnerError?.message,
+      status: partnerProfile?.verification_status 
+    });
 
     // Quick check: if no partner profile, redirect immediately
     if (!partnerProfile) {
@@ -143,24 +135,38 @@ export async function partnerAuthMiddleware(request: NextRequest): Promise<NextR
       return NextResponse.redirect(new URL(`/${locale}/partner/register`, request.url));
     }
 
-    const partnerStatus = partnerProfile.verification_status as PartnerStatus;
+    const partnerStatus = partnerProfile.verification_status;
+    console.log(`[PARTNER AUTH MIDDLEWARE] Partner status: ${partnerStatus}`);
 
-    // Quick check: if pending, redirect immediately
-    if (partnerStatus === 'pending') {
+    // Quick check: if pending, redirect to application-pending (unless already there)
+    if (partnerStatus === 'pending' && pathWithoutLocale !== '/partner/application-pending') {
+      console.log(`[PARTNER AUTH MIDDLEWARE] Pending status, redirecting to application-pending`);
       return NextResponse.redirect(new URL(`/${locale}/partner/application-pending`, request.url));
     }
 
-    // Quick check: if rejected or suspended, redirect immediately
-    if (partnerStatus === 'rejected') {
+    // Quick check: if rejected, redirect to rejected page (unless already there)
+    if (partnerStatus === 'rejected' && pathWithoutLocale !== '/partner/rejected') {
+      console.log(`[PARTNER AUTH MIDDLEWARE] Rejected status, redirecting to rejected page`);
       return NextResponse.redirect(new URL(`/${locale}/partner/rejected`, request.url));
     }
-    if (partnerStatus === 'suspended') {
+    
+    // Quick check: if suspended, redirect to suspended page (unless already there)
+    if (partnerStatus === 'suspended' && pathWithoutLocale !== '/partner/suspended') {
+      console.log(`[PARTNER AUTH MIDDLEWARE] Suspended status, redirecting to suspended page`);
       return NextResponse.redirect(new URL(`/${locale}/partner/suspended`, request.url));
     }
 
-    // If active, add headers and allow access
+    // Allow access based on status and route
+    const allowedStatuses = ['verified', 'active', 'pending', 'rejected', 'suspended'];
+    if (!allowedStatuses.includes(partnerStatus)) {
+      console.log(`[PARTNER AUTH MIDDLEWARE] Invalid partner status: ${partnerStatus}, redirecting to registration`);
+      return NextResponse.redirect(new URL(`/${locale}/partner/register`, request.url));
+    }
+    
+    // Set headers and allow access
     response.headers.set('x-partner-id', partnerProfile.id);
     response.headers.set('x-partner-status', partnerStatus);
+    console.log(`[PARTNER AUTH MIDDLEWARE] Access granted for status: ${partnerStatus} on route: ${pathWithoutLocale}`);
     response.headers.set('x-user-id', user.id);
 
     return response;

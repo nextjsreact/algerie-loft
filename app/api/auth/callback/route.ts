@@ -72,7 +72,33 @@ export async function GET(request: NextRequest) {
           case 'client':
             return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
           case 'partner':
-            return NextResponse.redirect(`${origin}/${locale}/partner/dashboard?t=${timestamp}`)
+            // Check if partner has completed registration
+            const { data: partnerProfile } = await supabase
+              .from('partner_profiles')
+              .select('id, verification_status')
+              .eq('user_id', data.user.id)
+              .single();
+            
+            if (!partnerProfile) {
+              // No partner profile, redirect to registration
+              console.log(`✅ [OAuth Callback] Partner has no profile, redirecting to registration`);
+              return NextResponse.redirect(`${origin}/${locale}/partner/register?t=${timestamp}`)
+            } else if (partnerProfile.verification_status === 'pending') {
+              // Pending approval, redirect to pending page
+              console.log(`✅ [OAuth Callback] Partner status is pending, redirecting to pending page`);
+              return NextResponse.redirect(`${origin}/${locale}/partner/application-pending?t=${timestamp}`)
+            } else if (partnerProfile.verification_status === 'rejected') {
+              // Rejected, redirect to rejected page
+              console.log(`✅ [OAuth Callback] Partner status is rejected, redirecting to rejected page`);
+              return NextResponse.redirect(`${origin}/${locale}/partner/rejected?t=${timestamp}`)
+            } else if (partnerProfile.verification_status === 'suspended') {
+              // Suspended, redirect to suspended page
+              console.log(`✅ [OAuth Callback] Partner status is suspended, redirecting to suspended page`);
+              return NextResponse.redirect(`${origin}/${locale}/partner/suspended?t=${timestamp}`)
+            } else {
+              // Active or verified, redirect to dashboard
+              return NextResponse.redirect(`${origin}/${locale}/partner/dashboard?t=${timestamp}`)
+            }
           case 'employee':
             // Pour les employés, utiliser le rôle DB
             switch (actualDbRole) {

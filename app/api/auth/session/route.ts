@@ -16,6 +16,14 @@ export async function GET(request: NextRequest) {
 
     console.log('📡 Session API: Returning user with role:', session.user.role);
 
+    // Check if user has a partner profile for multi-role support
+    const supabase = await createClient();
+    const { data: partnerProfile } = await supabase
+      .from('partner_profiles')
+      .select('id, verification_status, business_name')
+      .eq('user_id', session.user.id)
+      .single();
+
     return NextResponse.json({
       isAuthenticated: true,
       user: {
@@ -27,6 +35,7 @@ export async function GET(request: NextRequest) {
         created_at: session.user.created_at,
         updated_at: session.user.updated_at
       },
+      partnerProfile: partnerProfile || undefined,
       isSuperuser: session.isSuperuser,
       permissions: session.permissions,
       token: session.token

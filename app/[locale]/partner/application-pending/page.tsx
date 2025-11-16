@@ -1,14 +1,28 @@
-import { Clock, CheckCircle, Mail, Phone } from 'lucide-react'
+'use client'
+
+import { Clock, CheckCircle, Mail, Phone, LogOut, Home } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { use } from 'react'
 
-export default async function ApplicationPendingPage({
+export default function ApplicationPendingPage({
   params
 }: {
   params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params
+  const { locale } = use(params)
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      router.push(`/${locale}/login`)
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 py-12 px-6 sm:px-8 lg:px-12">
@@ -74,14 +88,18 @@ export default async function ApplicationPendingPage({
             <div className="pt-6 flex flex-col sm:flex-row gap-4 max-w-xl mx-auto">
               <Link href={`/${locale}`} className="flex-1">
                 <Button variant="outline" className="w-full h-12 text-base">
+                  <Home className="h-4 w-4 mr-2" />
                   Retour à l'accueil
                 </Button>
               </Link>
-              <Link href={`/${locale}/partner/login`} className="flex-1">
-                <Button className="w-full h-12 text-base bg-amber-600 hover:bg-amber-700">
-                  Se connecter
-                </Button>
-              </Link>
+              <Button 
+                onClick={handleLogout}
+                variant="outline"
+                className="flex-1 w-full h-12 text-base border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Se déconnecter
+              </Button>
             </div>
           </CardContent>
         </Card>

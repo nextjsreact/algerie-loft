@@ -1,9 +1,9 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import createIntlMiddleware from 'next-intl/middleware';
 import { performanceMiddleware, addResourceHints, addPerformanceMonitoring, addCSP } from './middleware/performance';
-// Temporarily disable auth middleware during build
+import { partnerAuthMiddleware } from './middleware/partner-auth';
+// Temporarily disable other auth middleware during build
 // import { authMiddleware } from './middleware/auth';
-// import { partnerAuthMiddleware } from './middleware/partner-auth';
 // import { superuserMiddleware } from './middleware/superuser';
 
 const intlMiddleware = createIntlMiddleware({
@@ -26,9 +26,14 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Temporarily disable auth middleware during build
+  // Apply partner authentication middleware for partner routes
+  const partnerAuthResponse = await partnerAuthMiddleware(request);
+  if (partnerAuthResponse.status >= 300 && partnerAuthResponse.status < 400) {
+    return partnerAuthResponse;
+  }
+  
+  // Temporarily disable other auth middleware during build
   // const authResponse = await authMiddleware(request);
-  // const partnerAuthResponse = await partnerAuthMiddleware(request);
   // const superuserResponse = await superuserMiddleware(request);
   
   // Apply performance optimizations

@@ -1,6 +1,6 @@
 import { UserRole, AuthSession } from '@/lib/types';
 
-export type PartnerStatus = 'pending' | 'active' | 'rejected' | 'suspended';
+export type PartnerStatus = 'pending' | 'verified' | 'active' | 'rejected' | 'suspended';
 
 export interface PartnerUser {
   id: string;

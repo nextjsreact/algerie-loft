@@ -25,11 +25,41 @@ export default function PartnerRegisterPage() {
 
   console.log('[REGISTER PAGE] Component mounted')
 
-  // Fetch user session data and pre-fill form
+  // Fetch user session data and check partner status
   useEffect(() => {
     console.log('[REGISTER PAGE] useEffect running')
     async function fetchUserData() {
       try {
+        // Check if user already has a partner profile
+        const statusResponse = await fetch('/api/partner/status')
+        console.log('[REGISTER PAGE] Status response:', statusResponse.status)
+        
+        if (statusResponse.ok) {
+          const statusData = await statusResponse.json()
+          console.log('[REGISTER PAGE] Status data:', statusData)
+          
+          // If user has a verified partner profile, redirect to dashboard
+          if (statusData.hasProfile && statusData.verification_status === 'verified') {
+            console.log('[REGISTER PAGE] Verified partner detected, redirecting to dashboard')
+            const locale = window.location.pathname.split('/')[1] || 'fr'
+            router.push(`/${locale}/partner/dashboard`)
+            return
+          }
+          
+          // If user has a pending application, redirect to pending page
+          if (statusData.hasProfile && statusData.verification_status === 'pending') {
+            console.log('[REGISTER PAGE] Pending partner detected, redirecting to pending page')
+            const locale = window.location.pathname.split('/')[1] || 'fr'
+            router.push(`/${locale}/partner/application-pending`)
+            return
+          }
+          
+          console.log('[REGISTER PAGE] No redirect needed, showing registration form')
+        } else {
+          console.log('[REGISTER PAGE] Status check failed:', statusResponse.status)
+        }
+        
+        // Fetch user session to pre-fill form
         const response = await fetch('/api/auth/session')
         if (response.ok) {
           const data = await response.json()
@@ -49,7 +79,7 @@ export default function PartnerRegisterPage() {
     }
     
     fetchUserData()
-  }, [])
+  }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

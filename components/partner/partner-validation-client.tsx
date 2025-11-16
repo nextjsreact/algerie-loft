@@ -31,44 +31,81 @@ export function PartnerValidationClient() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null)
   const [validationNotes, setValidationNotes] = useState("")
-  const t = useTranslations('partner')
+  
+  // Safe translation hook
+  let t: any
+  try {
+    t = useTranslations('partner')
+  } catch (error) {
+    console.error('[PartnerValidationClient] Translation error:', error)
+    t = (key: string) => key
+  }
+
+  console.log('[PartnerValidationClient] Component mounted')
 
   useEffect(() => {
+    console.log('[PartnerValidationClient] useEffect triggered')
     fetchPartners()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchPartners = async () => {
+    setLoading(true)
     try {
-      // Simulation de données pour la validation des partenaires
-      const mockData: Partner[] = [
-        {
-          id: '1',
-          full_name: 'Ahmed Benali',
-          email: 'ahmed.benali@email.com',
-          business_name: 'Benali Immobilier',
-          business_type: 'company',
-          phone: '+213 555 123 456',
-          address: 'Alger Centre, Algérie',
-          tax_id: 'ALG123456789',
-          verification_status: 'pending',
-          created_at: '2024-01-15T10:30:00Z'
-        },
-        {
-          id: '2',
-          full_name: 'Fatima Khelifi',
-          email: 'fatima.khelifi@email.com',
-          business_type: 'individual',
-          phone: '+213 555 789 012',
-          address: 'Oran, Algérie',
-          verification_status: 'approved',
-          created_at: '2024-01-14T14:20:00Z',
-          approved_at: '2024-01-16T09:15:00Z',
-          notes: 'Partenaire validé avec tous les documents requis'
+      console.log('Fetching partners from API...')
+      const response = await fetch('/api/admin/partners/profiles?status=all')
+      
+      console.log('Response status:', response.status)
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('API Error Response:', errorText)
+        try {
+          const errorData = JSON.parse(errorText)
+          throw new Error(errorData.error || 'Failed to fetch partner profiles')
+        } catch (e) {
+          throw new Error(`API Error: ${response.status} - ${errorText}`)
         }
-      ]
-      setPartners(mockData)
+      }
+      
+      const data = await response.json()
+      console.log('Fetched partner profiles data:', data)
+      
+      const partnerProfiles = data.partners || []
+      
+      if (partnerProfiles.length === 0) {
+        console.log('No partner profiles found')
+        setPartners([])
+        return
+      }
+      
+      // Transformer les données pour correspondre à l'interface Partner
+      const transformedPartners = partnerProfiles.map((p: any) => {
+        // Gérer le cas où profiles est un tableau au lieu d'un objet
+        const profileData = Array.isArray(p.profiles) ? p.profiles[0] : p.profiles
+        
+        return {
+          id: p.id,
+          full_name: p.contact_name || profileData?.full_name || 'N/A',
+          email: p.contact_email || profileData?.email || 'N/A',
+          business_name: p.company_name || undefined,
+          business_type: p.company_name ? 'company' as const : 'individual' as const,
+          phone: p.contact_phone || 'N/A',
+          address: p.address || 'N/A',
+          tax_id: undefined,
+          verification_status: p.verification_status || 'pending',
+          created_at: p.created_at,
+          approved_at: p.verified_at,
+          rejected_at: p.rejected_at,
+          notes: p.verification_notes
+        }
+      })
+      
+      console.log('Transformed partners:', transformedPartners)
+      setPartners(transformedPartners)
     } catch (error) {
       console.error('Erreur lors du chargement des partenaires:', error)
+      setPartners([])
     } finally {
       setLoading(false)
     }
@@ -76,25 +113,28 @@ export function PartnerValidationClient() {
 
   const handleValidate = async (partnerId: string, status: 'approved' | 'rejected') => {
     try {
-      // Implémenter la validation du partenaire
-      console.log(`${status} partenaire:`, partnerId, 'Notes:', validationNotes)
+      const endpoint = status === 'approved' 
+        ? `/api/admin/partners/${partnerId}/approve`
+        : `/api/admin/partners/${partnerId}/reject`
       
-      // Mettre à jour l'état local
-      setPartners(prev => prev.map(partner => 
-        partner.id === partnerId 
-          ? { 
-              ...partner, 
-              verification_status: status,
-              notes: validationNotes,
-              [status === 'approved' ? 'approved_at' : 'rejected_at']: new Date().toISOString()
-            }
-          : partner
-      ))
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notes: validationNotes })
+      })
+      
+      if (!response.ok) {
+        throw new Error(`Failed to ${status} partner`)
+      }
+      
+      // Recharger la liste des partenaires
+      await fetchPartners()
       
       setSelectedPartner(null)
       setValidationNotes("")
     } catch (error) {
       console.error('Erreur lors de la validation:', error)
+      alert(`Erreur lors de la validation du partenaire`)
     }
   }
 
@@ -113,9 +153,10 @@ export function PartnerValidationClient() {
   }
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
+    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center gap-3">
         <CheckCircle className="h-8 w-8 text-emerald-600" />
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Validation des partenaires</h1>
@@ -157,7 +198,7 @@ export function PartnerValidationClient() {
               <CheckCircle className="h-8 w-8 text-green-500" />
               <div>
                 <p className="text-2xl font-bold text-green-600">
-                  {partners.filter(p => p.verification_status === 'approved').length}
+                  {partners.filter(p => p.verification_status === 'verified' || p.verification_status === 'approved').length}
                 </p>
                 <p className="text-sm text-gray-600">Approuvés</p>
               </div>
@@ -196,7 +237,20 @@ export function PartnerValidationClient() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
           <h2 className="text-xl font-semibold text-gray-900">Liste des partenaires</h2>
-          {filteredPartners.map((partner) => (
+          {filteredPartners.length === 0 ? (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun partenaire trouvé</h3>
+                <p className="text-gray-600">
+                  {searchTerm 
+                    ? 'Aucun partenaire ne correspond à votre recherche.' 
+                    : 'Aucun partenaire enregistré pour le moment.'}
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            filteredPartners.map((partner) => (
             <Card 
               key={partner.id} 
               className={`cursor-pointer transition-all ${
@@ -211,11 +265,11 @@ export function PartnerValidationClient() {
                       <h3 className="font-semibold text-gray-900">{partner.full_name}</h3>
                       <Badge 
                         variant={
-                          partner.verification_status === 'approved' ? 'default' :
+                          partner.verification_status === 'verified' || partner.verification_status === 'approved' ? 'default' :
                           partner.verification_status === 'pending' ? 'secondary' : 'destructive'
                         }
                       >
-                        {partner.verification_status === 'approved' ? 'Approuvé' :
+                        {partner.verification_status === 'verified' || partner.verification_status === 'approved' ? 'Approuvé' :
                          partner.verification_status === 'pending' ? 'En attente' : 'Rejeté'}
                       </Badge>
                     </div>
@@ -230,7 +284,7 @@ export function PartnerValidationClient() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          )))}
         </div>
 
         {/* Détails du partenaire sélectionné */}
@@ -327,6 +381,7 @@ export function PartnerValidationClient() {
             </Card>
           )}
         </div>
+      </div>
       </div>
     </div>
   )

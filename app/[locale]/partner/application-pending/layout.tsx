@@ -1,5 +1,3 @@
-import { PartnerRegisterHeader } from '@/components/partner/partner-register-header'
-
 export default async function ApplicationPendingLayout({
   children,
   params,
@@ -11,11 +9,8 @@ export default async function ApplicationPendingLayout({
   const { locale } = await params
   
   return (
-    <div className="min-h-screen flex flex-col">
-      <PartnerRegisterHeader locale={locale} />
-      <div className="flex-1">
-        {children}
-      </div>
+    <div className="min-h-screen">
+      {children}
     </div>
   )
 }

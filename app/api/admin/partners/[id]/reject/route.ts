@@ -32,28 +32,25 @@ export async function POST(
 
     // Get partner information
     const { data: partner, error: partnerError } = await supabase
-      .from('partners')
-      .select(`
-        id,
-        user_id,
-        business_name,
-        business_type,
-        verification_status,
-        profiles:user_id (
-          id,
-          full_name,
-          email
-        )
-      `)
+      .from('partner_profiles')
+      .select('*')
       .eq('id', partnerId)
       .single()
 
     if (partnerError || !partner) {
+      console.error('Partner not found:', partnerError)
       return NextResponse.json(
         { error: 'Partner not found' },
         { status: 404 }
       )
     }
+
+    // Get user profile
+    const { data: userProfile } = await supabase
+      .from('profiles')
+      .select('full_name, email')
+      .eq('id', partner.user_id)
+      .single()
 
     if (partner.verification_status === 'rejected') {
       return NextResponse.json(
@@ -64,13 +61,13 @@ export async function POST(
 
     // Update partner status to rejected
     const { error: updateError } = await supabase
-      .from('partners')
+      .from('partner_profiles')
       .update({
         verification_status: 'rejected',
         rejected_at: new Date().toISOString(),
         rejected_by: session.user.id,
         rejection_reason: body.rejection_reason,
-        admin_notes: body.admin_notes,
+        verification_notes: body.admin_notes || body.notes || body.rejection_reason,
         updated_at: new Date().toISOString()
       })
       .eq('id', partnerId)
@@ -100,17 +97,19 @@ export async function POST(
     }
 
     // Send rejection email
-    try {
-      const { EmailNotificationService } = await import('@/lib/services/email-notification-service')
-      
-      await EmailNotificationService.sendPartnerRejectionEmail(
-        partner.profiles.email,
-        partner.profiles.full_name,
-        body.rejection_reason
-      )
-    } catch (emailError) {
-      console.error('Failed to send rejection email:', emailError)
-      // Don't fail the rejection for email issues
+    if (userProfile?.email) {
+      try {
+        const { EmailNotificationService } = await import('@/lib/services/email-notification-service')
+        
+        await EmailNotificationService.sendPartnerRejectionEmail(
+          userProfile.email,
+          userProfile.full_name || 'Partner',
+          body.rejection_reason
+        )
+      } catch (emailError) {
+        console.error('Failed to send rejection email:', emailError)
+        // Don't fail the rejection for email issues
+      }
     }
 
     // Create notification for partner

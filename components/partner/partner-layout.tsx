@@ -70,8 +70,18 @@ export function PartnerLayout({
           return
         }
         
-        // Verify user has partner role
-        if (sessionData.user.role !== 'partner') {
+        // Verify user has partner access (either role='partner' or has verified partner profile)
+        // For multi-role support, check if user has a partner profile
+        const hasPartnerAccess = sessionData.user.role === 'partner' || 
+                                 sessionData.user.role === 'admin' ||
+                                 sessionData.partnerProfile?.verification_status === 'verified'
+        
+        if (!hasPartnerAccess) {
+          console.log('[PartnerLayout] User does not have partner access:', {
+            role: sessionData.user.role,
+            hasPartnerProfile: !!sessionData.partnerProfile,
+            partnerStatus: sessionData.partnerProfile?.verification_status
+          })
           handleUnauthorized()
           return
         }
@@ -80,6 +90,11 @@ export function PartnerLayout({
         setSession({
           user: sessionData.user,
           token: sessionData.token
+        })
+        
+        console.log('[PartnerLayout] Partner access granted:', {
+          role: sessionData.user.role,
+          hasPartnerProfile: !!sessionData.partnerProfile
         })
         
         console.log('[PartnerLayout] Session loaded successfully for partner:', sessionData.user.email)

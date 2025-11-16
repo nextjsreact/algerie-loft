@@ -25,44 +25,41 @@ export async function POST(
 
     // Get partner information
     const { data: partner, error: partnerError } = await supabase
-      .from('partners')
-      .select(`
-        id,
-        user_id,
-        business_name,
-        business_type,
-        verification_status,
-        profiles:user_id (
-          id,
-          full_name,
-          email
-        )
-      `)
+      .from('partner_profiles')
+      .select('*')
       .eq('id', partnerId)
       .single()
 
     if (partnerError || !partner) {
+      console.error('Partner not found:', partnerError)
       return NextResponse.json(
         { error: 'Partner not found' },
         { status: 404 }
       )
     }
 
-    if (partner.verification_status === 'approved') {
+    // Get user profile
+    const { data: userProfile } = await supabase
+      .from('profiles')
+      .select('full_name, email')
+      .eq('id', partner.user_id)
+      .single()
+
+    if (partner.verification_status === 'verified') {
       return NextResponse.json(
         { error: 'Partner is already approved' },
         { status: 400 }
       )
     }
 
-    // Update partner status to approved
+    // Update partner status to verified (approved)
     const { error: updateError } = await supabase
-      .from('partners')
+      .from('partner_profiles')
       .update({
-        verification_status: 'approved',
-        approved_at: new Date().toISOString(),
-        approved_by: session.user.id,
-        admin_notes: body.admin_notes,
+        verification_status: 'verified',
+        verified_at: new Date().toISOString(),
+        verified_by: session.user.id,
+        verification_notes: body.admin_notes || body.notes,
         updated_at: new Date().toISOString()
       })
       .eq('id', partnerId)
@@ -92,18 +89,20 @@ export async function POST(
     }
 
     // Send approval email
-    try {
-      const { EmailNotificationService } = await import('@/lib/services/email-notification-service')
-      const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL}/partner/dashboard`
-      
-      await EmailNotificationService.sendPartnerApprovalEmail(
-        partner.profiles.email,
-        partner.profiles.full_name,
-        dashboardUrl
-      )
-    } catch (emailError) {
-      console.error('Failed to send approval email:', emailError)
-      // Don't fail the approval for email issues
+    if (userProfile?.email) {
+      try {
+        const { EmailNotificationService } = await import('@/lib/services/email-notification-service')
+        const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL}/partner/dashboard`
+        
+        await EmailNotificationService.sendPartnerApprovalEmail(
+          userProfile.email,
+          userProfile.full_name || 'Partner',
+          dashboardUrl
+        )
+      } catch (emailError) {
+        console.error('Failed to send approval email:', emailError)
+        // Don't fail the approval for email issues
+      }
     }
 
     // Create notification for partner

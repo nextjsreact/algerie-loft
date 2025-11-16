@@ -19,7 +19,8 @@ import { SuperuserSidebar } from "@/components/admin/superuser/superuser-sidebar
 import { Header } from "@/components/layout/header-nextintl"
 import { AdaptiveHeader } from "@/components/layout/adaptive-header"
 import { MobileHeader } from "@/components/layout/mobile-header"
-import { ErrorBoundary } from "@/components/error-boundary"
+// ErrorBoundary removed - causing compatibility issues with Next.js 15
+// import { ErrorBoundary } from "@/components/error-boundary"
 
 interface ClientProvidersProps {
   children: React.ReactNode;
@@ -57,7 +58,7 @@ export default function ClientProviders({ children, session, unreadCount, locale
   }, [pathname, session?.user?.role, shouldHideSidebar])
 
    return (
-     <ErrorBoundary>
+     <>
        {!session || isAuthPage || isPublicPage ? (
          // For pages without session OR auth pages OR public pages, use minimal providers
          <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos">
@@ -72,7 +73,7 @@ export default function ClientProviders({ children, session, unreadCount, locale
              </main>
            </ThemeProvider>
          </NextIntlClientProvider>
-       ) : (
+       ) : session?.user?.id ? (
          // For authenticated pages (non-auth), use full provider stack
          <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos">
            <SupabaseProvider>
@@ -83,22 +84,17 @@ export default function ClientProviders({ children, session, unreadCount, locale
                disableTransitionOnChange
              >
              <ToastProvider />
-             <ErrorBoundary>
                <EnhancedRealtimeProvider userId={session.user.id}>
                  <NotificationProvider userId={session.user.id}>
                    <div className="flex h-screen bg-background" key={`layout-${renderKey}`}>
                      {/* Show appropriate sidebar based on user role */}
                      {session.user.role === 'superuser' && pathname?.includes('/admin/superuser') ? (
                        <div className="flex w-72 flex-shrink-0 z-10">
-                         <ErrorBoundary>
-                           <SuperuserSidebar />
-                         </ErrorBoundary>
+                         <SuperuserSidebar />
                        </div>
                      ) : !shouldHideSidebar && (
                        <div className="hidden md:flex md:w-72 md:flex-shrink-0 md:z-10">
-                         <ErrorBoundary>
-                           <Sidebar user={session.user} unreadCount={unreadCount} />
-                         </ErrorBoundary>
+                         <Sidebar user={session.user} unreadCount={unreadCount} />
                        </div>
                      )}
                      <div className="flex flex-1 flex-col min-w-0 relative">
@@ -107,43 +103,48 @@ export default function ClientProviders({ children, session, unreadCount, locale
                          "hidden md:block fixed top-0 right-0 left-0 z-20",
                          !shouldHideSidebar && "md:left-72"
                        )}>
-                         <ErrorBoundary>
-                           <DesktopHeader />
-                         </ErrorBoundary>
+                         <DesktopHeader />
                        </div>
                        
                        {/* Mobile header - always shows burger menu */}
-                       <ErrorBoundary>
-                         <MobileHeader 
-                           user={session.user} 
-                           showLogo={shouldHideSidebar} 
-                         />
-                       </ErrorBoundary>
+                       <MobileHeader 
+                         user={session.user} 
+                         showLogo={shouldHideSidebar} 
+                       />
                        
                        <main className="flex-1 overflow-y-auto relative z-0 p-6 md:p-8 lg:p-12 md:pt-24">
                          {children}
                        </main>
                      </div>
                      {/* Notifications d'alertes critiques pour les executives */}
-                     <ErrorBoundary>
-                       <CriticalAlertsNotification
-                         userId={session.user.id}
-                         userRole={session.user.role}
-                       />
-                     </ErrorBoundary>
+                     <CriticalAlertsNotification
+                       userId={session.user.id}
+                       userRole={session.user.role}
+                     />
                      {/* Prompt d'installation PWA avec paramètres intelligents */}
-                     <ErrorBoundary>
-                       <InstallPrompt userRole={session.user.role} />
-                     </ErrorBoundary>
+                     <InstallPrompt userRole={session.user.role} />
 
                    </div>
                  </NotificationProvider>
                </EnhancedRealtimeProvider>
-             </ErrorBoundary>
              </ThemeProvider>
            </SupabaseProvider>
          </NextIntlClientProvider>
+       ) : (
+         // Fallback if session exists but user.id is missing
+         <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos">
+           <ThemeProvider
+             attribute="class"
+             defaultTheme="system"
+             enableSystem
+             disableTransitionOnChange
+           >
+             <main className="flex-1 overflow-y-auto">
+               {children}
+             </main>
+           </ThemeProvider>
+         </NextIntlClientProvider>
        )}
-     </ErrorBoundary>
+     </>
    );
  }

@@ -14,28 +14,26 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Check if user is a partner, admin, or client (multi-role support)
-    const allowedRoles = ['partner', 'admin', 'client'];
-    if (!allowedRoles.includes(session.user.role)) {
-      return NextResponse.json(
-        { error: 'Access denied - partner, admin, or client role required' },
-        { status: 403 }
-      )
-    }
-
     const supabase = await createClient()
 
-    // Get partner profile
+    // Get partner profile - check partner_profiles table for multi-role support
     const { data: partnerProfile, error: profileError } = await supabase
-      .from('partners')
-      .select('id')
+      .from('partner_profiles')
+      .select('id, verification_status')
       .eq('user_id', session.user.id)
       .single()
 
     if (profileError || !partnerProfile) {
       return NextResponse.json(
         { error: 'Partner profile not found' },
-        { status: 404 }
+        { status: 403 }
+      )
+    }
+
+    if (partnerProfile.verification_status !== 'verified') {
+      return NextResponse.json(
+        { error: 'Partner account not verified' },
+        { status: 403 }
       )
     }
 

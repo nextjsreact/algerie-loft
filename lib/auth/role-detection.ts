@@ -65,11 +65,11 @@ export async function detectUserRole(userId: string, userEmail: string | null): 
       }
     }
     
-    // Step 4: Default role assignment
-    console.log(`[ROLE DETECTION] User ${userId} assigned default role: member`);
-    await createUserProfile(userId, 'member', userEmail);
+    // Step 4: Default role assignment (client for regular users)
+    console.log(`[ROLE DETECTION] User ${userId} assigned default role: client`);
+    await createUserProfile(userId, 'client', userEmail);
     
-    return 'member';
+    return 'client';
     
   } catch (error) {
     console.error('[ROLE DETECTION] Error detecting user role:', error);
@@ -116,11 +116,11 @@ function detectRoleFromEmail(email: string): UserRole {
     return 'client';
   }
   
-  // Partner patterns
-  if (emailLower.includes('partner') || 
-      emailLower.includes('vendor')) {
-    return 'partner';
-  }
+  // Partner patterns - DISABLED: Partners should register explicitly
+  // if (emailLower.includes('partner') || 
+  //     emailLower.includes('vendor')) {
+  //   return 'partner';
+  // }
   
   return 'guest'; // No pattern matched
 }

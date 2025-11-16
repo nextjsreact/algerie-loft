@@ -293,6 +293,7 @@
     "react-big-calendar": "^1.19.4",
     "react-day-picker": "8.10.1",
     "react-dom": "^18",
+    "react-error-boundary": "^6.0.0",
     "react-hook-form": "latest",
     "react-hot-toast": "^2.5.2",
     "react-resizable-panels": "^2.1.7",

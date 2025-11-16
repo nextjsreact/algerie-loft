@@ -215,7 +215,7 @@ export default function PartnerDashboardPage({ params }: PartnerDashboardPagePro
   }
 
   return (
-    <PartnerLayout locale={params.locale}>
+    <PartnerLayout locale={locale}>
       <div className="container mx-auto p-4 sm:p-6 lg:p-8">
         <DashboardHeader 
           title={t('title')} 
@@ -313,7 +313,7 @@ export default function PartnerDashboardPage({ params }: PartnerDashboardPagePro
         </section>
 
         {/* Quick Actions */}
-        <QuickActions locale={params.locale} />
+        <QuickActions locale={locale} />
 
         {/* Properties and Bookings - Responsive grid layout */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 sm:gap-8">
@@ -327,7 +327,7 @@ export default function PartnerDashboardPage({ params }: PartnerDashboardPagePro
           {/* Recent Bookings - Takes 1 column on xl screens */}
           <RecentBookingsSection 
             bookings={recentBookings}
-            locale={params.locale}
+            locale={locale}
             loading={false}
           />
         </div>

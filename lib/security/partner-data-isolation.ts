@@ -116,7 +116,7 @@ export class PartnerDataIsolation {
     
     try {
       const { data, error } = await client
-        .from('reservations')
+        .from('bookings')
         .select(`
           id,
           loft_id,
@@ -261,7 +261,7 @@ export class PartnerDataIsolation {
     
     try {
       let query = client
-        .from('reservations')
+        .from('bookings')
         .select(`
           *,
           lofts!inner(id, name, partner_id)
@@ -361,7 +361,7 @@ export class PartnerDataIsolation {
       // Test 2: Try to access reservations without explicit filtering
       // RLS should automatically filter to only reservations for this partner's properties
       const { data: allReservations, error: reservationsError } = await client
-        .from('reservations')
+        .from('bookings')
         .select(`
           id,
           loft_id,

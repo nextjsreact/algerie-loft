@@ -64,6 +64,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Update user role to 'partner' in profiles table
+    const { error: roleError } = await supabase
+      .from('profiles')
+      .update({ 
+        role: 'partner',
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', partnerProfile.user_id)
+
+    if (roleError) {
+      console.error('Error updating user role:', roleError)
+      // Don't fail the approval, but log the error
+    } else {
+      console.log(`✅ User ${partnerProfile.user_id} role updated to 'partner'`)
+    }
+
     // Delete all notifications about this partner registration for all admins/managers
     const { error: deleteNotifError } = await supabase
       .from('notifications')

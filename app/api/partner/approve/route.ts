@@ -33,6 +33,20 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient()
 
+    // Get partner info first
+    const { data: partnerProfile, error: fetchError } = await supabase
+      .from('partner_profiles')
+      .select('user_id, business_name')
+      .eq('id', partnerId)
+      .single()
+
+    if (fetchError || !partnerProfile) {
+      return NextResponse.json(
+        { error: 'Partner not found' },
+        { status: 404 }
+      )
+    }
+
     // Update partner status to verified
     const { error } = await supabase
       .from('partner_profiles')
@@ -48,6 +62,36 @@ export async function POST(request: NextRequest) {
         { error: 'Failed to approve partner' },
         { status: 500 }
       )
+    }
+
+    // Delete all notifications about this partner registration for all admins/managers
+    const { error: deleteNotifError } = await supabase
+      .from('notifications')
+      .delete()
+      .eq('type', 'partner_registration')
+      .eq('related_id', partnerId)
+
+    if (deleteNotifError) {
+      console.error('Error deleting notifications:', deleteNotifError)
+      // Don't fail the approval for this
+    }
+
+    // Create notification for the partner
+    const { error: partnerNotifError } = await supabase
+      .from('notifications')
+      .insert({
+        user_id: partnerProfile.user_id,
+        title: 'Demande de partenariat approuvée',
+        message: `Félicitations! Votre demande de partenariat a été approuvée. Vous avez maintenant accès au tableau de bord partenaire complet.`,
+        type: 'partner_approved',
+        related_id: partnerId,
+        is_read: false,
+        created_at: new Date().toISOString()
+      })
+
+    if (partnerNotifError) {
+      console.error('Error creating partner notification:', partnerNotifError)
+      // Don't fail the approval for this
     }
 
     // TODO: Send email notification to partner

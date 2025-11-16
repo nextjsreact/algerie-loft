@@ -22,10 +22,13 @@ interface PendingPartner {
 export function PendingPartnersClient() {
   const [partners, setPartners] = useState<PendingPartner[]>([])
   const [loading, setLoading] = useState(true)
+  const [approvedToday, setApprovedToday] = useState(0)
+  const [rejectedToday, setRejectedToday] = useState(0)
   const t = useTranslations('partner')
 
   useEffect(() => {
     fetchPendingPartners()
+    fetchTodayStats()
   }, [])
 
   const fetchPendingPartners = async () => {
@@ -43,6 +46,22 @@ export function PendingPartnersClient() {
       setPartners([])
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchTodayStats = async () => {
+    try {
+      const response = await fetch('/api/partner/today-stats')
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch today stats')
+      }
+      
+      const data = await response.json()
+      setApprovedToday(data.approved || 0)
+      setRejectedToday(data.rejected || 0)
+    } catch (error) {
+      console.error('Erreur lors du chargement des statistiques:', error)
     }
   }
 
@@ -72,8 +91,9 @@ export function PendingPartnersClient() {
         throw new Error('Failed to approve partner')
       }
 
-      // Refresh the list
+      // Refresh the list and stats
       await fetchPendingPartners()
+      await fetchTodayStats()
       alert('Partenaire approuvé avec succès!')
     } catch (error) {
       console.error('Error approving partner:', error)
@@ -99,8 +119,9 @@ export function PendingPartnersClient() {
         throw new Error('Failed to reject partner')
       }
 
-      // Refresh the list
+      // Refresh the list and stats
       await fetchPendingPartners()
+      await fetchTodayStats()
       alert('Partenaire rejeté')
     } catch (error) {
       console.error('Error rejecting partner:', error)
@@ -156,7 +177,7 @@ export function PendingPartnersClient() {
                 <CheckCircle className="h-8 w-8 text-green-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-green-600">0</p>
+                <p className="text-3xl font-bold text-green-600">{approvedToday}</p>
                 <p className="text-sm text-gray-600 font-medium">Approuvés aujourd'hui</p>
               </div>
             </div>
@@ -169,7 +190,7 @@ export function PendingPartnersClient() {
                 <XCircle className="h-8 w-8 text-red-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-red-600">0</p>
+                <p className="text-3xl font-bold text-red-600">{rejectedToday}</p>
                 <p className="text-sm text-gray-600 font-medium">Rejetés aujourd'hui</p>
               </div>
             </div>

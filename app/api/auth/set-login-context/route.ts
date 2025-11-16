@@ -3,7 +3,17 @@ import { cookies } from 'next/headers'
 
 export async function POST(request: NextRequest) {
   try {
-    const { context } = await request.json()
+    // Check if request has a body
+    const contentLength = request.headers.get('content-length')
+    if (!contentLength || contentLength === '0') {
+      return NextResponse.json(
+        { error: 'Missing request body' },
+        { status: 400 }
+      )
+    }
+
+    const body = await request.json()
+    const { context } = body
     
     if (!context || !['client', 'partner', 'employee'].includes(context)) {
       return NextResponse.json(

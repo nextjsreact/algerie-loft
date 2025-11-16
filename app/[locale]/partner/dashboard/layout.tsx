@@ -1,6 +1,7 @@
 import { PartnerSidebar } from '@/components/partner/partner-sidebar'
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import { Separator } from '@/components/ui/separator'
+import { requireVerifiedPartner } from '@/lib/partner-auth'
 
 export default async function DashboardLayout({
   children,
@@ -12,7 +13,10 @@ export default async function DashboardLayout({
   // Unwrap params Promise for Next.js 15
   const { locale } = await params
   
-  // Get session - middleware already handled auth
+  // Ensure user has a verified partner profile (will redirect if not)
+  await requireVerifiedPartner()
+  
+  // Get session
   const { getSession } = await import('@/lib/auth')
   const session = await getSession()
   

@@ -1,10 +1,16 @@
 import { redirect } from 'next/navigation'
-import { requireRole } from '@/lib/auth'
+import { requireVerifiedPartner } from '@/lib/partner-auth'
 
-export default async function PartnerPage() {
-  // Ensure user is authenticated and has partner role
-  await requireRole(['partner'])
+export default async function PartnerPage({
+  params
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  
+  // Ensure user has a verified partner profile
+  await requireVerifiedPartner()
   
   // Redirect to dashboard
-  redirect('/partner/dashboard')
+  redirect(`/${locale}/partner/dashboard`)
 }

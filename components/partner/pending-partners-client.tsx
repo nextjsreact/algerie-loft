@@ -54,7 +54,8 @@ export function PendingPartnersClient() {
       const response = await fetch('/api/partner/today-stats')
       
       if (!response.ok) {
-        throw new Error('Failed to fetch today stats')
+        console.warn('Failed to fetch today stats, using defaults')
+        return
       }
       
       const data = await response.json()
@@ -62,6 +63,7 @@ export function PendingPartnersClient() {
       setRejectedToday(data.rejected || 0)
     } catch (error) {
       console.error('Erreur lors du chargement des statistiques:', error)
+      // Keep default values (0) if fetch fails
     }
   }
 

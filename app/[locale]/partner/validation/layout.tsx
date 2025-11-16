@@ -31,12 +31,12 @@ export default async function ValidationLayout({
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <PartnerSidebar locale={locale} userProfile={userProfile} />
-        <SidebarInset>
+        <SidebarInset className="peer-data-[state=expanded]:md:ml-[-16rem]">
           {/* Mobile header with trigger button */}
           <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4 md:hidden">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="h-6" />
-            <span className="text-sm font-semibold">Partner Portal</span>
+            <span className="text-sm font-semibold">Validation Partenaires</span>
           </header>
           
           {/* Main content area with proper responsive padding */}

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { CheckCircle, Search, FileText, User, Building } from "lucide-react"
+import { CheckCircle, Search, FileText, User, Building, XCircle } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 interface Partner {
@@ -153,16 +153,20 @@ export function PartnerValidationClient() {
   }
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-      <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+      <div className="w-full space-y-8 p-4 sm:p-6 lg:p-8">
         {/* Header */}
-        <div className="flex items-center gap-3">
-        <CheckCircle className="h-8 w-8 text-emerald-600" />
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Validation des partenaires</h1>
-          <p className="text-gray-600">Valider et gérer les partenaires de la plateforme</p>
+        <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-blue-200">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-emerald-100 rounded-lg">
+              <CheckCircle className="h-8 w-8 text-emerald-600" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Validation des partenaires</h1>
+              <p className="text-gray-600 mt-1">Valider et gérer les partenaires de la plateforme</p>
+            </div>
+          </div>
         </div>
-      </div>
 
       {/* Recherche */}
       <Card>
@@ -180,7 +184,7 @@ export function PartnerValidationClient() {
       </Card>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -221,12 +225,12 @@ export function PartnerValidationClient() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <Building className="h-8 w-8 text-purple-500" />
+              <XCircle className="h-8 w-8 text-red-500" />
               <div>
-                <p className="text-2xl font-bold text-purple-600">
-                  {partners.filter(p => p.business_type === 'company').length}
+                <p className="text-2xl font-bold text-red-600">
+                  {partners.filter(p => p.verification_status === 'rejected').length}
                 </p>
-                <p className="text-sm text-gray-600">Entreprises</p>
+                <p className="text-sm text-gray-600">Rejetés</p>
               </div>
             </div>
           </CardContent>

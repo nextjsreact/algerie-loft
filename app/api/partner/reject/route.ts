@@ -77,16 +77,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Create notification for the partner
-    const reasonMessage = reason 
-      ? `Raison: ${reason}` 
-      : 'Pour plus d\'informations, veuillez contacter notre équipe.'
-
     const { error: partnerNotifError } = await supabase
       .from('notifications')
       .insert({
         user_id: partnerProfile.user_id,
-        title: 'Demande de partenariat refusée',
-        message: `Votre demande de partenariat n'a pas été approuvée. ${reasonMessage}`,
+        title_key: 'partner.notifications.rejected.title',
+        message_key: 'partner.notifications.rejected.message',
+        message_payload: reason ? { reason } : null,
         type: 'partner_rejected',
         related_id: partnerId,
         is_read: false,

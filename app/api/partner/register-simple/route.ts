@@ -101,8 +101,9 @@ export async function POST(request: NextRequest) {
         // Create notification for each admin/manager
         const notifications = adminUsers.map(admin => ({
           user_id: admin.id,
-          title: 'Nouvelle demande de partenariat',
-          message: `${company_name} a soumis une demande de partenariat. Veuillez examiner la demande dans la section Partenaires en attente.`,
+          title_key: 'partner.notifications.newRegistration.title',
+          message_key: 'partner.notifications.newRegistration.message',
+          message_payload: { company_name },
           type: 'partner_registration',
           related_id: partnerData.id,
           is_read: false,

@@ -81,8 +81,8 @@ export async function POST(request: NextRequest) {
       .from('notifications')
       .insert({
         user_id: partnerProfile.user_id,
-        title: 'Demande de partenariat approuvée',
-        message: `Félicitations! Votre demande de partenariat a été approuvée. Vous avez maintenant accès au tableau de bord partenaire complet.`,
+        title_key: 'partner.notifications.approved.title',
+        message_key: 'partner.notifications.approved.message',
         type: 'partner_approved',
         related_id: partnerId,
         is_read: false,

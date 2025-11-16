@@ -3480,6 +3480,20 @@
     "branding": {
       "title": "Portail Partenaire",
       "subtitle": "Gestion de propriétés"
+    },
+    "notifications": {
+      "newRegistration": {
+        "title": "Nouvelle demande de partenariat",
+        "message": "{company_name} a soumis une demande de partenariat. Veuillez examiner la demande dans la section Partenaires en attente."
+      },
+      "approved": {
+        "title": "Demande de partenariat approuvée",
+        "message": "Félicitations! Votre demande de partenariat a été approuvée. Vous avez maintenant accès au tableau de bord partenaire complet."
+      },
+      "rejected": {
+        "title": "Demande de partenariat refusée",
+        "message": "Votre demande de partenariat n'a pas été approuvée. {reason, select, other {Pour plus d'informations, veuillez contacter notre équipe.}}"
+      }
     }
   },
   "privacy": {

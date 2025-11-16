@@ -3676,6 +3676,20 @@
     "branding": {
       "title": "Partner Portal",
       "subtitle": "Property Management"
+    },
+    "notifications": {
+      "newRegistration": {
+        "title": "New partnership request",
+        "message": "{company_name} has submitted a partnership request. Please review the request in the Pending Partners section."
+      },
+      "approved": {
+        "title": "Partnership request approved",
+        "message": "Congratulations! Your partnership request has been approved. You now have access to the full partner dashboard."
+      },
+      "rejected": {
+        "title": "Partnership request rejected",
+        "message": "Your partnership request has not been approved. {reason, select, other {For more information, please contact our team.}}"
+      }
     }
   },
   "privacy": {

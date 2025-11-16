@@ -31,7 +31,7 @@ export default async function PendingLayout({
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <PartnerSidebar locale={locale} userProfile={userProfile} />
-        <SidebarInset>
+        <SidebarInset className="peer-data-[state=expanded]:md:ml-[-16rem]">
           {/* Mobile header with trigger button */}
           <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4 md:hidden">
             <SidebarTrigger className="-ml-1" />

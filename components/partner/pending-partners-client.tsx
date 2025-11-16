@@ -120,7 +120,7 @@ export function PendingPartnersClient() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-      <div className="container max-w-[1600px] mx-auto space-y-8 px-8 py-8">
+      <div className="w-full space-y-8 p-4 sm:p-6 lg:p-8">
         {/* Title Section */}
         <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-blue-200">
           <div className="flex items-center gap-3">
@@ -182,8 +182,8 @@ export function PendingPartnersClient() {
         {partners.map((partner) => (
           <Card key={partner.id} className="border-l-4 border-l-amber-500 shadow-md hover:shadow-xl transition-all duration-200 hover:-translate-y-1">
             <CardContent className="p-8">
-              <div className="flex items-start justify-between">
-                <div className="space-y-4">
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+                <div className="space-y-4 flex-1">
                   <div className="flex items-center gap-3">
                     <h3 className="text-2xl font-bold text-gray-900">{partner.full_name}</h3>
                     <Badge className="bg-amber-100 text-amber-700 border-amber-300 px-3 py-1">
@@ -207,17 +207,17 @@ export function PendingPartnersClient() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-col gap-3 lg:min-w-[200px] lg:items-end">
                   <Button
                     variant="outline"
-                    className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:border-blue-700 transition-colors"
+                    className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:border-blue-700 transition-colors w-full lg:w-auto"
                     onClick={() => handleShowDetails(partner)}
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     Voir détails
                   </Button>
                   <Button
-                    className="bg-green-600 hover:bg-green-700 text-white shadow-md"
+                    className="bg-green-600 hover:bg-green-700 text-white shadow-md w-full lg:w-auto"
                     onClick={() => handleApprove(partner.id)}
                     disabled={actionLoading === partner.id}
                   >
@@ -226,7 +226,7 @@ export function PendingPartnersClient() {
                   </Button>
                   <Button
                     variant="outline"
-                    className="text-red-600 border-red-600 hover:bg-red-50 hover:border-red-700 transition-colors"
+                    className="text-red-600 border-red-600 hover:bg-red-50 hover:border-red-700 transition-colors w-full lg:w-auto"
                     onClick={() => handleReject(partner.id)}
                     disabled={actionLoading === partner.id}
                   >
@@ -254,9 +254,9 @@ export function PendingPartnersClient() {
 
       {/* Details Modal */}
       {showDetails && selectedPartner && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-[9999]">
-          <div className="flex items-center justify-center min-h-screen p-4 md:pl-72">
-            <Card className="max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 md:pl-72">
+          <div className="w-full max-w-3xl">
+            <Card className="w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Détails du partenaire</CardTitle>

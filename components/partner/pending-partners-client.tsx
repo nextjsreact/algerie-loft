@@ -119,10 +119,10 @@ export function PendingPartnersClient() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="w-full space-y-8 p-8 pr-12">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+      <div className="container max-w-[1600px] mx-auto space-y-8 px-8 py-8">
         {/* Title Section */}
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+        <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-blue-200">
           <div className="flex items-center gap-3">
             <div className="p-3 bg-amber-100 rounded-lg">
               <UserPlus className="h-8 w-8 text-amber-600" />

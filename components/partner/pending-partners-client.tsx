@@ -30,34 +30,17 @@ export function PendingPartnersClient() {
 
   const fetchPendingPartners = async () => {
     try {
-      // Ici vous pouvez implémenter l'appel API pour récupérer les partenaires en attente
-      // Pour l'instant, on simule des données
-      const mockData: PendingPartner[] = [
-        {
-          id: '1',
-          full_name: 'Ahmed Benali',
-          email: 'ahmed.benali@email.com',
-          business_name: 'Benali Immobilier',
-          business_type: 'company',
-          phone: '+213 555 123 456',
-          address: 'Alger Centre, Algérie',
-          created_at: '2024-01-15T10:30:00Z',
-          verification_status: 'pending'
-        },
-        {
-          id: '2',
-          full_name: 'Fatima Khelifi',
-          email: 'fatima.khelifi@email.com',
-          business_type: 'individual',
-          phone: '+213 555 789 012',
-          address: 'Oran, Algérie',
-          created_at: '2024-01-14T14:20:00Z',
-          verification_status: 'pending'
-        }
-      ]
-      setPartners(mockData)
+      const response = await fetch('/api/partner/pending')
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch pending partners')
+      }
+      
+      const data = await response.json()
+      setPartners(data.partners || [])
     } catch (error) {
       console.error('Erreur lors du chargement des partenaires:', error)
+      setPartners([])
     } finally {
       setLoading(false)
     }
@@ -83,13 +66,10 @@ export function PendingPartnersClient() {
 
   return (
     <div className="space-y-6 p-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <UserPlus className="h-8 w-8 text-amber-600" />
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Partenaires en attente</h1>
-          <p className="text-gray-600">Gérer les demandes de partenariat en attente de validation</p>
-        </div>
+      {/* Title */}
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Partenaires en attente</h1>
+        <p className="text-gray-600 mt-1">Gérer les demandes de partenariat en attente de validation</p>
       </div>
 
       {/* Stats */}

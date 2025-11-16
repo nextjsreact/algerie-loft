@@ -11,67 +11,36 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 
-    // For demo purposes, return mock notifications
-    // In a real implementation, you would query a notifications table
-    const mockNotifications = [
-      {
-        id: '1',
-        type: 'booking',
-        title: 'Nouvelle réservation',
-        message: 'Vous avez reçu une nouvelle réservation pour votre loft moderne.',
-        timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 min ago
-        read: false,
-        priority: 'high',
-        actionUrl: '/partner/bookings',
-        actionLabel: 'Voir la réservation'
-      },
-      {
-        id: '2',
-        type: 'payment',
-        title: 'Paiement reçu',
-        message: 'Un paiement de 250€ a été traité avec succès.',
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2h ago
-        read: false,
-        priority: 'medium',
-        actionUrl: '/partner/earnings',
-        actionLabel: 'Voir les revenus'
-      },
-      {
-        id: '3',
-        type: 'review',
-        title: 'Nouvel avis client',
-        message: 'Marie D. a laissé un avis 5 étoiles pour votre propriété !',
-        timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4h ago
-        read: true,
-        priority: 'low',
-        actionUrl: '/partner/reviews',
-        actionLabel: 'Voir l\'avis'
-      },
-      {
-        id: '4',
-        type: 'message',
-        title: 'Nouveau message',
-        message: 'Un client vous a envoyé un message concernant sa réservation.',
-        timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6h ago
-        read: true,
-        priority: 'medium',
-        actionUrl: '/partner/messages',
-        actionLabel: 'Répondre'
-      },
-      {
-        id: '5',
-        type: 'system',
-        title: 'Mise à jour système',
-        message: 'De nouvelles fonctionnalités sont disponibles dans votre dashboard.',
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-        read: true,
-        priority: 'low',
-        actionUrl: '/partner/dashboard',
-        actionLabel: 'Découvrir'
-      }
-    ]
+    // Get notifications from database
+    const { data: notifications, error: notifError } = await supabase
+      .from('notifications')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(50)
 
-    return NextResponse.json({ notifications: mockNotifications })
+    if (notifError) {
+      console.error('Error fetching notifications:', notifError)
+      return NextResponse.json(
+        { error: 'Failed to fetch notifications' },
+        { status: 500 }
+      )
+    }
+
+    // Transform to match expected format
+    const transformedNotifications = notifications?.map(notif => ({
+      id: notif.id,
+      type: notif.type || 'system',
+      title: notif.title,
+      message: notif.message,
+      timestamp: notif.created_at,
+      read: notif.is_read,
+      priority: 'medium',
+      actionUrl: notif.type === 'partner_registration' ? '/partner/pending' : undefined,
+      actionLabel: notif.type === 'partner_registration' ? 'Voir les demandes' : undefined
+    })) || []
+
+    return NextResponse.json({ notifications: transformedNotifications })
 
   } catch (error) {
     console.error('Error fetching notifications:', error)

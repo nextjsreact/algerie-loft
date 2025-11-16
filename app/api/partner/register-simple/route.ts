@@ -89,8 +89,41 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // TODO: Send notification email to admins when email service is implemented
-    // For now, admins can see new partner applications in the admin dashboard
+    // Create notifications for all admins and managers
+    try {
+      // Get all admin and manager users
+      const { data: adminUsers, error: adminError } = await supabase
+        .from('profiles')
+        .select('id, full_name')
+        .in('role', ['admin', 'manager'])
+
+      if (!adminError && adminUsers && adminUsers.length > 0) {
+        // Create notification for each admin/manager
+        const notifications = adminUsers.map(admin => ({
+          user_id: admin.id,
+          title: 'Nouvelle demande de partenariat',
+          message: `${company_name} a soumis une demande de partenariat. Veuillez examiner la demande dans la section Partenaires en attente.`,
+          type: 'partner_registration',
+          related_id: partnerData.id,
+          is_read: false,
+          created_at: new Date().toISOString()
+        }))
+
+        const { error: notifError } = await supabase
+          .from('notifications')
+          .insert(notifications)
+
+        if (notifError) {
+          console.error('Failed to create notifications:', notifError)
+          // Don't fail the registration for notification errors
+        } else {
+          console.log(`Created ${notifications.length} notifications for admins/managers`)
+        }
+      }
+    } catch (notifError) {
+      console.error('Error creating notifications:', notifError)
+      // Don't fail the registration for notification errors
+    }
 
     return NextResponse.json({
       success: true,

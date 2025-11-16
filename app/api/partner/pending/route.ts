@@ -24,53 +24,45 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createClient()
 
-    // Get all pending partner profiles with user information
-    const { data: partners, error } = await supabase
+    // Get all pending partner profiles
+    const { data: partnerProfiles, error: profilesError } = await supabase
       .from('partner_profiles')
-      .select(`
-        id,
-        user_id,
-        business_name,
-        business_type,
-        phone,
-        address,
-        portfolio_description,
-        verification_status,
-        created_at,
-        profiles:user_id (
-          full_name,
-          email
-        )
-      `)
+      .select('*')
       .eq('verification_status', 'pending')
       .order('created_at', { ascending: false })
 
-    if (error) {
-      console.error('Error fetching pending partners:', error)
+    if (profilesError) {
+      console.error('Error fetching partner profiles:', profilesError)
       return NextResponse.json(
-        { error: 'Failed to fetch pending partners' },
+        { error: 'Failed to fetch partner profiles' },
         { status: 500 }
       )
     }
 
-    // Transform data to match the expected format
-    const transformedPartners = partners?.map(partner => ({
-      id: partner.id,
-      user_id: partner.user_id,
-      full_name: partner.profiles?.full_name || 'N/A',
-      email: partner.profiles?.email || 'N/A',
-      business_name: partner.business_name,
-      business_type: partner.business_type,
-      phone: partner.phone,
-      address: partner.address,
-      portfolio_description: partner.portfolio_description,
-      verification_status: partner.verification_status,
-      created_at: partner.created_at
-    })) || []
+    // Get user information for each partner
+    const userIds = partnerProfiles?.map(p => p.user_id) || []
+    const { data: users, error: usersError } = await supabase
+      .from('profiles')
+      .select('id, full_name, email')
+      .in('id', userIds)
+
+    if (usersError) {
+      console.error('Error fetching user profiles:', usersError)
+    }
+
+    // Combine the data
+    const partners = partnerProfiles?.map(partner => {
+      const user = users?.find(u => u.id === partner.user_id)
+      return {
+        ...partner,
+        full_name: user?.full_name || 'N/A',
+        email: user?.email || 'N/A'
+      }
+    }) || []
 
     return NextResponse.json({
-      partners: transformedPartners,
-      count: transformedPartners.length
+      partners: partners,
+      count: partners.length
     })
 
   } catch (error) {

@@ -46,14 +46,68 @@ export function PendingPartnersClient() {
     }
   }
 
+  const [selectedPartner, setSelectedPartner] = useState<PendingPartner | null>(null)
+  const [showDetails, setShowDetails] = useState(false)
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
+
+  const handleShowDetails = (partner: PendingPartner) => {
+    setSelectedPartner(partner)
+    setShowDetails(true)
+  }
+
   const handleApprove = async (partnerId: string) => {
-    // Implémenter l'approbation du partenaire
-    console.log('Approuver partenaire:', partnerId)
+    if (!confirm('Êtes-vous sûr de vouloir approuver ce partenaire ?')) {
+      return
+    }
+
+    setActionLoading(partnerId)
+    try {
+      const response = await fetch('/api/partner/approve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ partnerId })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to approve partner')
+      }
+
+      // Refresh the list
+      await fetchPendingPartners()
+      alert('Partenaire approuvé avec succès!')
+    } catch (error) {
+      console.error('Error approving partner:', error)
+      alert('Erreur lors de l\'approbation du partenaire')
+    } finally {
+      setActionLoading(null)
+    }
   }
 
   const handleReject = async (partnerId: string) => {
-    // Implémenter le rejet du partenaire
-    console.log('Rejeter partenaire:', partnerId)
+    const reason = prompt('Raison du rejet (optionnel):')
+    if (reason === null) return // User cancelled
+
+    setActionLoading(partnerId)
+    try {
+      const response = await fetch('/api/partner/reject', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ partnerId, reason })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to reject partner')
+      }
+
+      // Refresh the list
+      await fetchPendingPartners()
+      alert('Partenaire rejeté')
+    } catch (error) {
+      console.error('Error rejecting partner:', error)
+      alert('Erreur lors du rejet du partenaire')
+    } finally {
+      setActionLoading(null)
+    }
   }
 
   if (loading) {
@@ -144,6 +198,7 @@ export function PendingPartnersClient() {
                     variant="outline"
                     size="sm"
                     className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                    onClick={() => handleShowDetails(partner)}
                   >
                     <Eye className="h-4 w-4 mr-1" />
                     Détails
@@ -153,18 +208,20 @@ export function PendingPartnersClient() {
                     size="sm"
                     className="text-green-600 border-green-600 hover:bg-green-50"
                     onClick={() => handleApprove(partner.id)}
+                    disabled={actionLoading === partner.id}
                   >
                     <CheckCircle className="h-4 w-4 mr-1" />
-                    Approuver
+                    {actionLoading === partner.id ? 'En cours...' : 'Approuver'}
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     className="text-red-600 border-red-600 hover:bg-red-50"
                     onClick={() => handleReject(partner.id)}
+                    disabled={actionLoading === partner.id}
                   >
                     <XCircle className="h-4 w-4 mr-1" />
-                    Rejeter
+                    {actionLoading === partner.id ? 'En cours...' : 'Rejeter'}
                   </Button>
                 </div>
               </div>
@@ -181,6 +238,106 @@ export function PendingPartnersClient() {
             <p className="text-gray-600">Il n'y a actuellement aucune demande de partenariat en attente de validation.</p>
           </CardContent>
         </Card>
+      )}
+
+      {/* Details Modal */}
+      {showDetails && selectedPartner && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <Card className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Détails du partenaire</CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowDetails(false)}
+                >
+                  <XCircle className="h-5 w-5" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h3 className="font-semibold text-lg mb-2">{selectedPartner.full_name}</h3>
+                <Badge variant="outline" className="text-amber-600 border-amber-600">
+                  {selectedPartner.verification_status === 'pending' ? 'En attente' : selectedPartner.verification_status}
+                </Badge>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-semibold text-gray-700">Email</p>
+                  <p className="text-sm text-gray-600">{selectedPartner.email}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-700">Téléphone</p>
+                  <p className="text-sm text-gray-600">{selectedPartner.phone}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-700">Type</p>
+                  <p className="text-sm text-gray-600">
+                    {selectedPartner.business_type === 'company' ? 'Entreprise' : 'Particulier'}
+                  </p>
+                </div>
+                {selectedPartner.business_name && (
+                  <div>
+                    <p className="text-sm font-semibold text-gray-700">Nom de l'entreprise</p>
+                    <p className="text-sm text-gray-600">{selectedPartner.business_name}</p>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <p className="text-sm font-semibold text-gray-700">Adresse</p>
+                <p className="text-sm text-gray-600">{selectedPartner.address}</p>
+              </div>
+
+              {(selectedPartner as any).portfolio_description && (
+                <div>
+                  <p className="text-sm font-semibold text-gray-700">Description</p>
+                  <p className="text-sm text-gray-600">{(selectedPartner as any).portfolio_description}</p>
+                </div>
+              )}
+
+              <div>
+                <p className="text-sm font-semibold text-gray-700">Date de demande</p>
+                <p className="text-sm text-gray-600">
+                  {new Date(selectedPartner.created_at).toLocaleDateString('fr-FR', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  onClick={() => {
+                    setShowDetails(false)
+                    handleApprove(selectedPartner.id)
+                  }}
+                >
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Approuver
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1 text-red-600 border-red-600 hover:bg-red-50"
+                  onClick={() => {
+                    setShowDetails(false)
+                    handleReject(selectedPartner.id)
+                  }}
+                >
+                  <XCircle className="h-4 w-4 mr-2" />
+                  Rejeter
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
     </div>
   )

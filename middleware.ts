@@ -64,6 +64,7 @@ export const config = {
     '/auth/:path*',
     '/public/:path*',
     '/lofts/:path*',
+    '/owners/:path*',
     '/transactions/:path*',
     '/reports/:path*',
     '/settings/:path*',

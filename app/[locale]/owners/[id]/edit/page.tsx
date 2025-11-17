@@ -28,8 +28,8 @@ export default async function EditOwnerPage({ params }: { params: Promise<{ id: 
       }
     }
 
-    const { data: owner, error } = await supabase
-      .from("loft_owners")
+    const { data: ownerData, error } = await supabase
+      .from("partner_profiles")
       .select("*")
       .eq("id", id)
       .single()
@@ -46,7 +46,7 @@ export default async function EditOwnerPage({ params }: { params: Promise<{ id: 
       )
     }
 
-    if (!owner) {
+    if (!ownerData) {
       return (
         <div className="space-y-6">
           <div>
@@ -55,6 +55,16 @@ export default async function EditOwnerPage({ params }: { params: Promise<{ id: 
           </div>
         </div>
       )
+    }
+
+    // Adapter les champs de partner_profiles au format attendu par OwnerForm
+    const owner = {
+      id: ownerData.id,
+      name: ownerData.business_name || '',
+      ownership_type: ownerData.business_type === 'company' ? 'company' : 'third_party',
+      email: '', // Pas d'email dans partner_profiles
+      phone: ownerData.phone || '',
+      address: ownerData.address || '',
     }
 
     return (

@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server"
 import { format } from "date-fns"
 import { DeleteOwnerButton } from './delete-button'
 import { getTranslations } from 'next-intl/server'
+import { notFound } from 'next/navigation'
 
 export default async function OwnerViewPage({ params }: { params: Promise<{ id: string, locale: string }> }) {
   const { id, locale } = await params;
@@ -18,15 +19,8 @@ export default async function OwnerViewPage({ params }: { params: Promise<{ id: 
     .eq("id", id)
     .single()
 
-  if (!ownerData) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('notFoundTitle')}</h1>
-          <p className="text-muted-foreground">{t('notFoundDescription', { id })}</p>
-        </div>
-      </div>
-    )
+  if (!ownerData || error) {
+    notFound()
   }
 
   // Adapter les champs de partner_profiles

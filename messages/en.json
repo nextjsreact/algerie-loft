@@ -1728,6 +1728,7 @@
     "updateOwnerInfo": "Update owner information",
     "ownerNotFound": "Owner Not Found",
     "couldNotFindOwner": "Could not find owner with ID",
+    "backToOwners": "Back to Owners",
     "placeholders": {
       "name": "Ex: John Smith",
       "email": "Ex: john.smith@email.com",

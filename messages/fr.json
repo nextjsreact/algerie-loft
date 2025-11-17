@@ -1719,6 +1719,7 @@
     "updateOwnerInfo": "Mettre à jour les informations du propriétaire",
     "ownerNotFound": "Propriétaire non trouvé",
     "couldNotFindOwner": "Impossible de trouver le propriétaire avec l'ID",
+    "backToOwners": "Retour aux propriétaires",
     "placeholders": {
       "name": "Ex: Jean Dupont",
       "email": "Ex: jean.dupont@email.com",

@@ -1745,6 +1745,7 @@
     "updateOwnerInfo": "تحديث معلومات المالك",
     "ownerNotFound": "المالك غير موجود",
     "couldNotFindOwner": "تعذر العثور على مالك بالمعرف",
+    "backToOwners": "العودة إلى الملاك",
     "placeholders": {
       "name": "مثال: جون سميث",
       "email": "مثال: john.smith@email.com",

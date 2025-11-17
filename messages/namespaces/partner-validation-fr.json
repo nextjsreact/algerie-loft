@@ -1,0 +1,60 @@
+{
+  "validation": {
+    "title": "Validation des partenaires",
+    "description": "Valider et gérer les partenaires de la plateforme",
+    "stats": {
+      "total": "Total partenaires",
+      "approved": "Approuvés",
+      "pending": "En attente",
+      "rejected": "Rejetés"
+    },
+    "search": {
+      "placeholder": "Rechercher un partenaire par nom, email ou entreprise..."
+    },
+    "list": {
+      "title": "Liste des partenaires",
+      "noPartners": "Aucun partenaire trouvé",
+      "noPartnersMessage": "Aucun partenaire ne correspond à votre recherche.",
+      "noPartnersRegistered": "Aucun partenaire enregistré pour le moment."
+    },
+    "details": {
+      "title": "Détails du partenaire",
+      "selectPartner": "Sélectionner un partenaire",
+      "selectPartnerMessage": "Cliquez sur un partenaire dans la liste pour voir ses détails.",
+      "fullName": "Nom complet",
+      "email": "Email",
+      "phone": "Téléphone",
+      "type": "Type",
+      "businessName": "Nom de l'entreprise",
+      "address": "Adresse",
+      "taxId": "Numéro fiscal",
+      "validationNotes": "Notes de validation",
+      "validationNotesPlaceholder": "Ajouter des notes sur la validation..."
+    },
+    "status": {
+      "approved": "Approuvé",
+      "pending": "En attente",
+      "rejected": "Rejeté",
+      "verified": "Vérifié"
+    },
+    "businessType": {
+      "company": "Entreprise",
+      "individual": "Particulier"
+    },
+    "actions": {
+      "approve": "Approuver",
+      "reject": "Rejeter"
+    }
+  },
+  "pending": {
+    "title": "Partenaires en attente",
+    "description": "Gérer les demandes de partenariat en attente de validation",
+    "stats": {
+      "pending": "En attente",
+      "approvedToday": "Approuvés aujourd'hui",
+      "rejectedToday": "Rejetés aujourd'hui"
+    },
+    "noPartners": "Aucun partenaire en attente",
+    "noPartnersMessage": "Il n'y a actuellement aucune demande de partenariat en attente de validation."
+  }
+}

@@ -3800,5 +3800,173 @@
   "ui": {
     "toggleTheme": "Toggle Theme",
     "userRole": "User Role"
+  },
+  "partnerRejected": {
+    "title": "Application Rejected",
+    "portalTitle": "Partner Portal",
+    "reasons": {
+      "title": "Common reasons for rejection",
+      "incomplete": "Incomplete or insufficient documentation",
+      "quality": "Property does not meet our quality standards",
+      "location": "Location not currently supported",
+      "verification": "Business information could not be verified"
+    },
+    "reapply": {
+      "title": "Want to reapply?",
+      "message": "You can submit a new application after addressing the issues mentioned in your rejection email. Contact our partner team for guidance on improving your application."
+    },
+    "help": "Need help with your application?",
+    "contact": "Contact our partner team",
+    "actions": {
+      "newApplication": "Submit New Application",
+      "backToLogin": "← Back to login"
+    }
+  },
+  "partnerSuspended": {
+    "title": "Account Suspended",
+    "reasons": {
+      "title": "Common reasons for suspension",
+      "terms": "Violation of partner terms and conditions",
+      "complaints": "Multiple guest complaints or poor ratings",
+      "standards": "Failure to maintain property standards",
+      "payment": "Outstanding payment or billing issues",
+      "fraud": "Suspicious or fraudulent activity"
+    },
+    "restoration": {
+      "title": "Account Restoration",
+      "message": "To restore your account, please contact our partner support team. We'll work with you to resolve any issues and get your account back in good standing."
+    },
+    "steps": {
+      "title": "Steps to resolve suspension",
+      "step1": "Contact our partner support team immediately",
+      "step2": "Review the specific reasons for suspension",
+      "step3": "Provide documentation or take corrective actions as required",
+      "step4": "Wait for account review and restoration"
+    },
+    "help": "Need immediate assistance?",
+    "contact": "Contact Partner Support",
+    "backToLogin": "← Back to login"
+  },
+  "partnerApplicationPending": {
+    "title": "Application Under Review",
+    "subtitle": "Your partnership application has been successfully submitted",
+    "nextSteps": {
+      "title": "Next Steps",
+      "step1": "Our team will review your application within 24-48 hours",
+      "step2": "We will verify the information provided",
+      "step3": "You will receive an email with the decision",
+      "step4": "If approved, you will be able to access the partner dashboard"
+    },
+    "help": {
+      "title": "Need help?",
+      "message": "If you have any questions about your application, please don't hesitate to contact us.",
+      "email": "partners@loft-algerie.com",
+      "phone": "+213 XXX XXX XXX"
+    },
+    "actions": {
+      "home": "Back to home",
+      "logout": "Log out"
+    }
+  },
+  "partnerPending": {
+    "title": "Pending Partners",
+    "description": "Manage pending partnership requests awaiting validation",
+    "loading": "Loading pending partners...",
+    "stats": {
+      "pending": "Pending",
+      "approvedToday": "Approved today",
+      "rejectedToday": "Rejected today"
+    },
+    "list": {
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "company": "Company",
+      "type": "Type",
+      "requestCreated": "Request created",
+      "viewDetails": "View details",
+      "approve": "Approve",
+      "reject": "Reject",
+      "processing": "Processing...",
+      "noPending": "No pending partners",
+      "noPendingMessage": "There are currently no partnership requests awaiting validation."
+    },
+    "status": {
+      "pending": "⏳ Pending"
+    },
+    "businessTypes": {
+      "company": "Company",
+      "individual": "Individual"
+    },
+    "actions": {
+      "confirmApprove": "Are you sure you want to approve this partner?",
+      "approveSuccess": "Partner approved successfully!",
+      "approveError": "Error approving partner",
+      "rejectReason": "Reason for rejection (optional):",
+      "rejectSuccess": "Partner rejected",
+      "rejectError": "Error rejecting partner"
+    },
+    "details": {
+      "title": "Partner Details",
+      "email": "Email",
+      "phone": "Phone",
+      "type": "Type",
+      "businessName": "Company Name",
+      "address": "Address",
+      "description": "Description",
+      "requestDate": "Request Date",
+      "approve": "Approve",
+      "reject": "Reject"
+    }
+  },
+  "partnerValidation": {
+    "header": {
+      "title": "Partner Validation"
+    },
+    "validation": {
+      "title": "Partner Validation",
+      "description": "Review and validate partner applications",
+      "loading": "Loading partners...",
+      "search": {
+        "placeholder": "Search by name, email or company..."
+      },
+      "stats": {
+        "total": "Total Partners",
+        "approved": "Approved",
+        "pending": "Pending",
+        "rejected": "Rejected"
+      },
+      "list": {
+        "title": "Partner List",
+        "noPartners": "No partners found",
+        "noPartnersMessage": "No partners match your search criteria",
+        "noPartnersRegistered": "No partners registered yet"
+      },
+      "status": {
+        "approved": "Approved",
+        "pending": "Pending",
+        "rejected": "Rejected"
+      },
+      "details": {
+        "title": "Partner Details",
+        "fullName": "Full Name",
+        "email": "Email",
+        "phone": "Phone",
+        "type": "Type",
+        "businessName": "Company Name",
+        "address": "Address",
+        "taxId": "Tax ID",
+        "validationNotes": "Validation Notes",
+        "addNotes": "Add notes about the validation...",
+        "approve": "Approve",
+        "reject": "Reject",
+        "selectPartner": "Select a partner",
+        "selectPartnerMessage": "Click on a partner in the list to view their details.",
+        "businessTypes": {
+          "company": "Company",
+          "individual": "Individual"
+        }
+      }
+    }
   }
 }

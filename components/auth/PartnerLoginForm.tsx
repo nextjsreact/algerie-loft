@@ -264,10 +264,32 @@ export function PartnerLoginForm({
 
 // Status-specific components for different partner states
 export function PartnerStatusMessage({ status, locale = 'fr' }: { status: PartnerStatus; locale?: string }) {
+  // Import translations dynamically based on status
+  const { useTranslations } = require('next-intl');
+  const t = useTranslations(
+    status === 'pending' ? 'partnerApplicationPending' :
+    status === 'rejected' ? 'partnerRejected' :
+    status === 'suspended' ? 'partnerSuspended' :
+    'partner'
+  );
+
+  const getStatusMessage = () => {
+    if (status === 'pending') {
+      return { title: t('title'), message: t('subtitle') };
+    } else if (status === 'rejected') {
+      return { title: t('title'), message: t('reapply.message') };
+    } else if (status === 'suspended') {
+      return { title: t('title'), message: t('restoration.message') };
+    }
+    return { title: 'Welcome Back!', message: 'Your partner account is active and ready to use.' };
+  };
+
+  const statusMessage = getStatusMessage();
+
   const statusConfig = {
     pending: {
-      title: 'Account Pending Approval',
-      message: 'Your partner application is currently under review. You will receive an email notification once approved.',
+      title: statusMessage.title,
+      message: statusMessage.message,
       color: 'yellow',
       icon: (
         <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -276,8 +298,8 @@ export function PartnerStatusMessage({ status, locale = 'fr' }: { status: Partne
       )
     },
     rejected: {
-      title: 'Application Rejected',
-      message: 'Your partner application has been rejected. Please contact support for more information.',
+      title: statusMessage.title,
+      message: statusMessage.message,
       color: 'red',
       icon: (
         <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -286,8 +308,8 @@ export function PartnerStatusMessage({ status, locale = 'fr' }: { status: Partne
       )
     },
     suspended: {
-      title: 'Account Suspended',
-      message: 'Your partner account has been temporarily suspended. Please contact support to resolve this issue.',
+      title: statusMessage.title,
+      message: statusMessage.message,
       color: 'orange',
       icon: (
         <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -296,8 +318,8 @@ export function PartnerStatusMessage({ status, locale = 'fr' }: { status: Partne
       )
     },
     active: {
-      title: 'Welcome Back!',
-      message: 'Your partner account is active and ready to use.',
+      title: statusMessage.title,
+      message: statusMessage.message,
       color: 'green',
       icon: (
         <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -329,7 +351,7 @@ export function PartnerStatusMessage({ status, locale = 'fr' }: { status: Partne
             config.color === 'red' ? 'bg-red-600 hover:bg-red-700' : 'bg-orange-600 hover:bg-orange-700'
           } transition-colors`}
         >
-          Contact Support
+          {t('contact')}
         </button>
       )}
     </div>

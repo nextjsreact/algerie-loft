@@ -35,7 +35,7 @@ export function PartnerValidationClient() {
   // Safe translation hook
   let t: any
   try {
-    t = useTranslations('partner')
+    t = useTranslations('partnerValidation.validation')
   } catch (error) {
     console.error('[PartnerValidationClient] Translation error:', error)
     t = (key: string) => key
@@ -147,7 +147,7 @@ export function PartnerValidationClient() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Chargement des partenaires...</div>
+        <div className="text-lg">{t('loading')}</div>
       </div>
     )
   }
@@ -162,8 +162,8 @@ export function PartnerValidationClient() {
               <CheckCircle className="h-8 w-8 text-emerald-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Validation des partenaires</h1>
-              <p className="text-gray-600 mt-1">Valider et gérer les partenaires de la plateforme</p>
+              <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+              <p className="text-gray-600 mt-1">{t('description')}</p>
             </div>
           </div>
         </div>
@@ -174,7 +174,7 @@ export function PartnerValidationClient() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Rechercher un partenaire par nom, email ou entreprise..."
+              placeholder={t('search.placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -191,7 +191,7 @@ export function PartnerValidationClient() {
               <User className="h-8 w-8 text-blue-500" />
               <div>
                 <p className="text-2xl font-bold text-blue-600">{partners.length}</p>
-                <p className="text-sm text-gray-600">Total partenaires</p>
+                <p className="text-sm text-gray-600">{t('stats.total')}</p>
               </div>
             </div>
           </CardContent>
@@ -204,7 +204,7 @@ export function PartnerValidationClient() {
                 <p className="text-2xl font-bold text-green-600">
                   {partners.filter(p => p.verification_status === 'verified' || p.verification_status === 'approved').length}
                 </p>
-                <p className="text-sm text-gray-600">Approuvés</p>
+                <p className="text-sm text-gray-600">{t('stats.approved')}</p>
               </div>
             </div>
           </CardContent>
@@ -217,7 +217,7 @@ export function PartnerValidationClient() {
                 <p className="text-2xl font-bold text-amber-600">
                   {partners.filter(p => p.verification_status === 'pending').length}
                 </p>
-                <p className="text-sm text-gray-600">En attente</p>
+                <p className="text-sm text-gray-600">{t('stats.pending')}</p>
               </div>
             </div>
           </CardContent>
@@ -230,7 +230,7 @@ export function PartnerValidationClient() {
                 <p className="text-2xl font-bold text-red-600">
                   {partners.filter(p => p.verification_status === 'rejected').length}
                 </p>
-                <p className="text-sm text-gray-600">Rejetés</p>
+                <p className="text-sm text-gray-600">{t('stats.rejected')}</p>
               </div>
             </div>
           </CardContent>
@@ -240,16 +240,16 @@ export function PartnerValidationClient() {
       {/* Liste des partenaires */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-900">Liste des partenaires</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{t('list.title')}</h2>
           {filteredPartners.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
                 <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun partenaire trouvé</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">{t('list.noPartners')}</h3>
                 <p className="text-gray-600">
                   {searchTerm 
-                    ? 'Aucun partenaire ne correspond à votre recherche.' 
-                    : 'Aucun partenaire enregistré pour le moment.'}
+                    ? t('list.noPartnersMessage')
+                    : t('list.noPartnersRegistered')}
                 </p>
               </CardContent>
             </Card>
@@ -273,8 +273,8 @@ export function PartnerValidationClient() {
                           partner.verification_status === 'pending' ? 'secondary' : 'destructive'
                         }
                       >
-                        {partner.verification_status === 'verified' || partner.verification_status === 'approved' ? 'Approuvé' :
-                         partner.verification_status === 'pending' ? 'En attente' : 'Rejeté'}
+                        {partner.verification_status === 'verified' || partner.verification_status === 'approved' ? t('status.approved') :
+                         partner.verification_status === 'pending' ? t('status.pending') : t('status.rejected')}
                       </Badge>
                     </div>
                     <p className="text-sm text-gray-600">{partner.email}</p>
@@ -296,41 +296,41 @@ export function PartnerValidationClient() {
           {selectedPartner ? (
             <Card>
               <CardHeader>
-                <CardTitle>Détails du partenaire</CardTitle>
+                <CardTitle>{t('details.title')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="font-medium text-gray-700">Nom complet</p>
+                    <p className="font-medium text-gray-700">{t('details.fullName')}</p>
                     <p className="text-gray-600">{selectedPartner.full_name}</p>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-700">Email</p>
+                    <p className="font-medium text-gray-700">{t('details.email')}</p>
                     <p className="text-gray-600">{selectedPartner.email}</p>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-700">Téléphone</p>
+                    <p className="font-medium text-gray-700">{t('details.phone')}</p>
                     <p className="text-gray-600">{selectedPartner.phone}</p>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-700">Type</p>
+                    <p className="font-medium text-gray-700">{t('details.type')}</p>
                     <p className="text-gray-600">
-                      {selectedPartner.business_type === 'company' ? 'Entreprise' : 'Particulier'}
+                      {selectedPartner.business_type === 'company' ? t('details.businessTypes.company') : t('details.businessTypes.individual')}
                     </p>
                   </div>
                   {selectedPartner.business_name && (
                     <div className="col-span-2">
-                      <p className="font-medium text-gray-700">Nom de l'entreprise</p>
+                      <p className="font-medium text-gray-700">{t('details.businessName')}</p>
                       <p className="text-gray-600">{selectedPartner.business_name}</p>
                     </div>
                   )}
                   <div className="col-span-2">
-                    <p className="font-medium text-gray-700">Adresse</p>
+                    <p className="font-medium text-gray-700">{t('details.address')}</p>
                     <p className="text-gray-600">{selectedPartner.address}</p>
                   </div>
                   {selectedPartner.tax_id && (
                     <div className="col-span-2">
-                      <p className="font-medium text-gray-700">Numéro fiscal</p>
+                      <p className="font-medium text-gray-700">{t('details.taxId')}</p>
                       <p className="text-gray-600">{selectedPartner.tax_id}</p>
                     </div>
                   )}
@@ -338,7 +338,7 @@ export function PartnerValidationClient() {
 
                 {selectedPartner.notes && (
                   <div>
-                    <p className="font-medium text-gray-700 mb-2">Notes de validation</p>
+                    <p className="font-medium text-gray-700 mb-2">{t('details.validationNotes')}</p>
                     <p className="text-gray-600 bg-gray-50 p-3 rounded">{selectedPartner.notes}</p>
                   </div>
                 )}
@@ -347,10 +347,10 @@ export function PartnerValidationClient() {
                   <div className="space-y-4 pt-4 border-t">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Notes de validation
+                        {t('details.validationNotes')}
                       </label>
                       <Textarea
-                        placeholder="Ajouter des notes sur la validation..."
+                        placeholder={t('details.addNotes')}
                         value={validationNotes}
                         onChange={(e) => setValidationNotes(e.target.value)}
                         rows={3}
@@ -362,13 +362,13 @@ export function PartnerValidationClient() {
                         className="bg-green-600 hover:bg-green-700"
                       >
                         <CheckCircle className="h-4 w-4 mr-2" />
-                        Approuver
+                        {t('details.approve')}
                       </Button>
                       <Button
                         variant="destructive"
                         onClick={() => handleValidate(selectedPartner.id, 'rejected')}
                       >
-                        Rejeter
+                        {t('details.reject')}
                       </Button>
                     </div>
                   </div>
@@ -379,8 +379,8 @@ export function PartnerValidationClient() {
             <Card>
               <CardContent className="p-8 text-center">
                 <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Sélectionner un partenaire</h3>
-                <p className="text-gray-600">Cliquez sur un partenaire dans la liste pour voir ses détails.</p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">{t('details.selectPartner')}</h3>
+                <p className="text-gray-600">{t('details.selectPartnerMessage')}</p>
               </CardContent>
             </Card>
           )}

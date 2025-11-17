@@ -1,0 +1,60 @@
+{
+  "validation": {
+    "title": "التحقق من الشركاء",
+    "description": "التحقق من الشركاء وإدارتهم على المنصة",
+    "stats": {
+      "total": "إجمالي الشركاء",
+      "approved": "موافق عليهم",
+      "pending": "قيد الانتظار",
+      "rejected": "مرفوضون"
+    },
+    "search": {
+      "placeholder": "البحث عن شريك بالاسم أو البريد الإلكتروني أو الشركة..."
+    },
+    "list": {
+      "title": "قائمة الشركاء",
+      "noPartners": "لم يتم العثور على شركاء",
+      "noPartnersMessage": "لا يوجد شركاء يطابقون بحثك.",
+      "noPartnersRegistered": "لا يوجد شركاء مسجلون حتى الآن."
+    },
+    "details": {
+      "title": "تفاصيل الشريك",
+      "selectPartner": "اختر شريكًا",
+      "selectPartnerMessage": "انقر على شريك في القائمة لرؤية تفاصيله.",
+      "fullName": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "type": "النوع",
+      "businessName": "اسم الشركة",
+      "address": "العنوان",
+      "taxId": "الرقم الضريبي",
+      "validationNotes": "ملاحظات التحقق",
+      "validationNotesPlaceholder": "أضف ملاحظات حول التحقق..."
+    },
+    "status": {
+      "approved": "موافق عليه",
+      "pending": "قيد الانتظار",
+      "rejected": "مرفوض",
+      "verified": "تم التحقق منه"
+    },
+    "businessType": {
+      "company": "شركة",
+      "individual": "فرد"
+    },
+    "actions": {
+      "approve": "موافقة",
+      "reject": "رفض"
+    }
+  },
+  "pending": {
+    "title": "الشركاء قيد الانتظار",
+    "description": "إدارة طلبات الشراكة قيد الانتظار",
+    "stats": {
+      "pending": "قيد الانتظار",
+      "approvedToday": "تمت الموافقة عليهم اليوم",
+      "rejectedToday": "تم رفضهم اليوم"
+    },
+    "noPartners": "لا يوجد شركاء قيد الانتظار",
+    "noPartnersMessage": "لا توجد حاليًا طلبات شراكة قيد الانتظار."
+  }
+}

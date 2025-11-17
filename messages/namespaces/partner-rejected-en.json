@@ -1,0 +1,21 @@
+{
+  "title": "Application Rejected",
+  "portalTitle": "Partner Portal",
+  "reasons": {
+    "title": "Common reasons for rejection",
+    "incomplete": "Incomplete or insufficient documentation",
+    "quality": "Property does not meet our quality standards",
+    "location": "Location not currently supported",
+    "verification": "Business information could not be verified"
+  },
+  "reapply": {
+    "title": "Want to reapply?",
+    "message": "You can submit a new application after addressing the issues mentioned in your rejection email. Contact our partner team for guidance on improving your application."
+  },
+  "help": "Need help with your application?",
+  "contact": "Contact our partner team",
+  "actions": {
+    "newApplication": "Submit New Application",
+    "backToLogin": "← Back to login"
+  }
+}

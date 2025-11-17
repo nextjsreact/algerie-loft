@@ -3604,5 +3604,173 @@
   "ui": {
     "toggleTheme": "Basculer le thème",
     "userRole": "Rôle utilisateur"
+  },
+  "partnerRejected": {
+    "title": "Candidature rejetée",
+    "portalTitle": "Portail Partenaire",
+    "reasons": {
+      "title": "Raisons courantes de rejet",
+      "incomplete": "Documentation incomplète ou insuffisante",
+      "quality": "La propriété ne répond pas à nos normes de qualité",
+      "location": "Emplacement actuellement non pris en charge",
+      "verification": "Les informations commerciales n'ont pas pu être vérifiées"
+    },
+    "reapply": {
+      "title": "Vous souhaitez postuler à nouveau ?",
+      "message": "Vous pouvez soumettre une nouvelle candidature après avoir résolu les problèmes mentionnés dans votre email de rejet. Contactez notre équipe partenaire pour obtenir des conseils sur l'amélioration de votre candidature."
+    },
+    "help": "Besoin d'aide avec votre candidature ?",
+    "contact": "Contactez notre équipe partenaire",
+    "actions": {
+      "newApplication": "Soumettre une nouvelle candidature",
+      "backToLogin": "← Retour à la connexion"
+    }
+  },
+  "partnerSuspended": {
+    "title": "Compte suspendu",
+    "reasons": {
+      "title": "Raisons courantes de suspension",
+      "terms": "Violation des conditions générales du partenaire",
+      "complaints": "Plaintes multiples des clients ou mauvaises notes",
+      "standards": "Non-respect des normes de propriété",
+      "payment": "Problèmes de paiement ou de facturation en suspens",
+      "fraud": "Activité suspecte ou frauduleuse"
+    },
+    "restoration": {
+      "title": "Restauration du compte",
+      "message": "Pour restaurer votre compte, veuillez contacter notre équipe d'assistance partenaire. Nous travaillerons avec vous pour résoudre les problèmes et remettre votre compte en règle."
+    },
+    "steps": {
+      "title": "Étapes pour résoudre la suspension",
+      "step1": "Contactez immédiatement notre équipe d'assistance partenaire",
+      "step2": "Examinez les raisons spécifiques de la suspension",
+      "step3": "Fournissez la documentation ou prenez les mesures correctives requises",
+      "step4": "Attendez l'examen et la restauration du compte"
+    },
+    "help": "Besoin d'aide immédiate ?",
+    "contact": "Contactez l'assistance partenaire",
+    "backToLogin": "← Retour à la connexion"
+  },
+  "partnerApplicationPending": {
+    "title": "Demande en cours de traitement",
+    "subtitle": "Votre demande de partenariat a été soumise avec succès",
+    "nextSteps": {
+      "title": "Prochaines étapes",
+      "step1": "Notre équipe examinera votre demande dans les 24-48 heures",
+      "step2": "Nous vérifierons les informations fournies",
+      "step3": "Vous recevrez un email avec la décision",
+      "step4": "Si approuvé, vous pourrez accéder au tableau de bord partenaire"
+    },
+    "help": {
+      "title": "Besoin d'aide ?",
+      "message": "Si vous avez des questions concernant votre demande, n'hésitez pas à nous contacter.",
+      "email": "partners@loft-algerie.com",
+      "phone": "+213 XXX XXX XXX"
+    },
+    "actions": {
+      "home": "Retour à l'accueil",
+      "logout": "Se déconnecter"
+    }
+  },
+  "partnerPending": {
+    "title": "Partenaires en attente",
+    "description": "Gérer les demandes de partenariat en attente de validation",
+    "loading": "Chargement des partenaires en attente...",
+    "stats": {
+      "pending": "En attente",
+      "approvedToday": "Approuvés aujourd'hui",
+      "rejectedToday": "Rejetés aujourd'hui"
+    },
+    "list": {
+      "email": "Email",
+      "phone": "Téléphone",
+      "address": "Adresse",
+      "company": "Entreprise",
+      "type": "Type",
+      "requestCreated": "Demande créée",
+      "viewDetails": "Voir détails",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "processing": "En cours...",
+      "noPending": "Aucun partenaire en attente",
+      "noPendingMessage": "Il n'y a actuellement aucune demande de partenariat en attente de validation."
+    },
+    "status": {
+      "pending": "⏳ En attente"
+    },
+    "businessTypes": {
+      "company": "Entreprise",
+      "individual": "Particulier"
+    },
+    "actions": {
+      "confirmApprove": "Êtes-vous sûr de vouloir approuver ce partenaire ?",
+      "approveSuccess": "Partenaire approuvé avec succès!",
+      "approveError": "Erreur lors de l'approbation du partenaire",
+      "rejectReason": "Raison du rejet (optionnel):",
+      "rejectSuccess": "Partenaire rejeté",
+      "rejectError": "Erreur lors du rejet du partenaire"
+    },
+    "details": {
+      "title": "Détails du partenaire",
+      "email": "Email",
+      "phone": "Téléphone",
+      "type": "Type",
+      "businessName": "Nom de l'entreprise",
+      "address": "Adresse",
+      "description": "Description",
+      "requestDate": "Date de demande",
+      "approve": "Approuver",
+      "reject": "Rejeter"
+    }
+  },
+  "partnerValidation": {
+    "header": {
+      "title": "Validation Partenaires"
+    },
+    "validation": {
+      "title": "Validation des Partenaires",
+      "description": "Examiner et valider les candidatures de partenaires",
+      "loading": "Chargement des partenaires...",
+      "search": {
+        "placeholder": "Rechercher par nom, email ou entreprise..."
+      },
+      "stats": {
+        "total": "Total Partenaires",
+        "approved": "Approuvés",
+        "pending": "En attente",
+        "rejected": "Rejetés"
+      },
+      "list": {
+        "title": "Liste des Partenaires",
+        "noPartners": "Aucun partenaire trouvé",
+        "noPartnersMessage": "Aucun partenaire ne correspond à vos critères de recherche",
+        "noPartnersRegistered": "Aucun partenaire enregistré pour le moment"
+      },
+      "status": {
+        "approved": "Approuvé",
+        "pending": "En attente",
+        "rejected": "Rejeté"
+      },
+      "details": {
+        "title": "Détails du partenaire",
+        "fullName": "Nom complet",
+        "email": "Email",
+        "phone": "Téléphone",
+        "type": "Type",
+        "businessName": "Nom de l'entreprise",
+        "address": "Adresse",
+        "taxId": "Numéro fiscal",
+        "validationNotes": "Notes de validation",
+        "addNotes": "Ajouter des notes sur la validation...",
+        "approve": "Approuver",
+        "reject": "Rejeter",
+        "selectPartner": "Sélectionner un partenaire",
+        "selectPartnerMessage": "Cliquez sur un partenaire dans la liste pour voir ses détails.",
+        "businessTypes": {
+          "company": "Entreprise",
+          "individual": "Particulier"
+        }
+      }
+    }
   }
 }

@@ -264,6 +264,10 @@ const sentryConfig = {
   
   // Enables automatic instrumentation of Vercel Cron Monitors
   automaticVercelMonitors: true,
+  
+  // 🚀 OPTIMISATION: Désactiver Sentry en développement pour réduire le bundle
+  // Sentry sera actif uniquement en production
+  enabled: process.env.NODE_ENV === 'production',
 };
 
 export default withSentryConfig(withNextIntl(nextConfig), sentryConfig)

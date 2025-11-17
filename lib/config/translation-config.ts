@@ -44,7 +44,7 @@ export interface TranslationConfig {
 // Configuration par défaut
 export const defaultTranslationConfig: TranslationConfig = {
   cache: {
-    ttl: 30 * 60 * 1000, // 30 minutes
+    ttl: 60 * 60 * 1000, // 🚀 OPTIMISATION: 1 heure (au lieu de 30 min) pour réduire les rechargements
     maxSize: 1000,
     cleanupInterval: 5 * 60 * 1000, // 5 minutes
   },

@@ -56,7 +56,22 @@ export function LanguageSelector() {
 
   const currentLanguage = languages.find(lang => lang.code === currentLocale) || languages[1]
 
-  const handleLanguageChange = (newLocale: Locale) => {
+  const handleLanguageChange = async (newLocale: Locale) => {
+    // 🚀 OPTIMISATION: Précharger les traductions de la nouvelle langue en arrière-plan
+    // Cela réduit le temps de chargement lors du changement de langue
+    if (typeof window !== 'undefined') {
+      try {
+        // Précharger les traductions communes de la nouvelle langue
+        const preloadLink = document.createElement('link');
+        preloadLink.rel = 'prefetch';
+        preloadLink.href = `/messages/${newLocale}.json`;
+        preloadLink.as = 'fetch';
+        document.head.appendChild(preloadLink);
+      } catch (error) {
+        console.warn('Failed to prefetch translations:', error);
+      }
+    }
+
     // Preserve current search context and user session
     if (typeof window !== 'undefined') {
       // Save current search parameters to session

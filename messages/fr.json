@@ -2423,7 +2423,12 @@
     "saving": "Sauvegarde en cours...",
     "search": "Rechercher",
     "searchPlaceholder": "Rechercher par titre ou description...",
-    "status": "Statut",
+    "status": {
+      "todo": "À faire",
+      "inProgress": "En cours",
+      "completed": "Terminée"
+    },
+    "statusLabel": "Statut",
     "subtitle": "Gérez vos tâches assignées et suivez leur progression.",
     "table": {
       "actions": "Actions",

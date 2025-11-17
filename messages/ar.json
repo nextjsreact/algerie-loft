@@ -2445,7 +2445,12 @@
     "saving": "جاري الحفظ...",
     "search": "بحث",
     "searchPlaceholder": "البحث حسب العنوان أو الوصف...",
-    "status": "الحالة",
+    "status": {
+      "todo": "للقيام به",
+      "inProgress": "قيد التقدم",
+      "completed": "مكتملة"
+    },
+    "statusLabel": "الحالة",
     "subtitle": "إدارة المهام المعينة لك وتتبع تقدمها.",
     "table": {
       "actions": "الإجراءات",

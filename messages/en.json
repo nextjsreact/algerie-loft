@@ -2432,7 +2432,12 @@
     "saving": "Saving...",
     "search": "Search",
     "searchPlaceholder": "Search by title or description...",
-    "status": "Status",
+    "status": {
+      "todo": "To Do",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    },
+    "statusLabel": "Status",
     "subtitle": "Manage your assigned tasks and track their progress.",
     "table": {
       "actions": "Actions",

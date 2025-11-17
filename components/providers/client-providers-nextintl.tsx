@@ -112,7 +112,7 @@ export default function ClientProviders({ children, session, unreadCount, locale
                          showLogo={shouldHideSidebar} 
                        />
                        
-                       <main className="flex-1 overflow-y-auto relative z-0 px-6 pb-6 pt-24 md:px-8 md:pb-8 md:pt-32 lg:px-12 lg:pb-12">
+                       <main className="flex-1 overflow-y-auto relative z-0 px-6 pb-6 pt-28 md:px-8 md:pb-8 md:pt-36 lg:px-12 lg:pb-12">
                          {children}
                        </main>
                      </div>

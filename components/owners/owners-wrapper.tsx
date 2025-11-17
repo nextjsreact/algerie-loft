@@ -173,17 +173,17 @@ export function OwnersWrapper({ owners }: OwnersWrapperProps) {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex gap-2 pt-4 border-t border-gray-100">
+                  <div className="flex gap-1.5 pt-4 border-t border-gray-100">
                     <Button 
                       variant="outline" 
                       size="sm" 
                       asChild 
-                      className="flex-1 hover:bg-blue-50 hover:border-blue-300 px-2"
+                      className="flex-1 hover:bg-blue-50 hover:border-blue-300 px-1.5 text-xs"
                       title={t('view')}
                     >
                       <Link href={`/owners/${owner.id}`} className="flex items-center justify-center gap-1">
-                        <Eye className="h-4 w-4" />
-                        <span className="hidden sm:inline">{t('view')}</span>
+                        <Eye className="h-3.5 w-3.5" />
+                        <span className="hidden md:inline">{t('view')}</span>
                       </Link>
                     </Button>
                     
@@ -191,12 +191,12 @@ export function OwnersWrapper({ owners }: OwnersWrapperProps) {
                       variant="outline" 
                       size="sm" 
                       asChild 
-                      className="flex-1 hover:bg-gray-50 hover:border-gray-300 px-2"
+                      className="flex-1 hover:bg-gray-50 hover:border-gray-300 px-1.5 text-xs"
                       title={t('edit')}
                     >
                       <Link href={`/owners/${owner.id}/edit`} className="flex items-center justify-center gap-1">
-                        <Edit className="h-4 w-4" />
-                        <span className="hidden sm:inline">{t('edit')}</span>
+                        <Edit className="h-3.5 w-3.5" />
+                        <span className="hidden md:inline">{t('edit')}</span>
                       </Link>
                     </Button>
                     
@@ -212,11 +212,11 @@ export function OwnersWrapper({ owners }: OwnersWrapperProps) {
                         variant="destructive" 
                         size="sm" 
                         type="submit"
-                        className="w-full flex items-center justify-center gap-1 hover:bg-red-600 px-2"
+                        className="w-full flex items-center justify-center gap-1 hover:bg-red-600 px-1.5 text-xs"
                         title={t('delete')}
                       >
-                        <Trash2 className="h-4 w-4" />
-                        <span className="hidden sm:inline">{t('delete')}</span>
+                        <Trash2 className="h-3.5 w-3.5" />
+                        <span className="hidden md:inline">{t('delete')}</span>
                       </Button>
                     </form>
                   </div>

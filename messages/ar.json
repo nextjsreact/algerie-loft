@@ -1746,6 +1746,7 @@
     "ownerNotFound": "المالك غير موجود",
     "couldNotFindOwner": "تعذر العثور على مالك بالمعرف",
     "backToOwners": "العودة إلى الملاك",
+    "notFoundMessage": "المالك الذي تبحث عنه غير موجود أو تم حذفه.",
     "placeholders": {
       "name": "مثال: جون سميث",
       "email": "مثال: john.smith@email.com",

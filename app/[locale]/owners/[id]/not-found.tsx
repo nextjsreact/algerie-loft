@@ -13,7 +13,7 @@ export default async function NotFound() {
       <h1 className="text-4xl font-bold">404</h1>
       <h2 className="text-2xl font-semibold">{t('notFoundTitle')}</h2>
       <p className="text-muted-foreground text-center max-w-md">
-        {t('notFoundDescription')}
+        {t('notFoundMessage')}
       </p>
       <Button asChild>
         <Link href={`/${locale}/owners`}>

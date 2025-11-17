@@ -1729,6 +1729,7 @@
     "ownerNotFound": "Owner Not Found",
     "couldNotFindOwner": "Could not find owner with ID",
     "backToOwners": "Back to Owners",
+    "notFoundMessage": "The owner you are looking for does not exist or has been deleted.",
     "placeholders": {
       "name": "Ex: John Smith",
       "email": "Ex: john.smith@email.com",

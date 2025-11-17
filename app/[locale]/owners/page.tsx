@@ -8,32 +8,22 @@ export default async function OwnersPage() {
   const supabase = await createClient()
 
   // Utiliser partner_profiles au lieu de loft_owners
+  // Simplifié sans la relation lofts pour l'instant
   const { data: ownersData, error } = await supabase
     .from("partner_profiles")
-    .select(
-      `
-      *,
-      lofts:lofts!partner_id (
-        id,
-        price_per_night
-      )
-    `
-    )
+    .select("*")
     .order("created_at", { ascending: false })
 
   if (error) {
-    console.error("Error fetching partners:", error)
+    console.error("Error fetching partners:", error.message, error.details, error.hint)
     // Si la table n'existe pas ou est vide, retourner un tableau vide
     return <OwnersWrapper owners={[]} />
   }
 
   const owners = (ownersData || []).map((owner) => {
-    const lofts = (owner.lofts || []) as unknown as { price_per_night: number }[]
-    const loft_count = lofts.length
-    const total_monthly_value = lofts.reduce(
-      (acc, loft) => acc + (loft.price_per_night || 0),
-      0
-    )
+    // Pour l'instant, pas de lofts associés
+    const loft_count = 0
+    const total_monthly_value = 0
     
     // Adapter les champs de partner_profiles au format attendu par OwnersWrapper
     return {

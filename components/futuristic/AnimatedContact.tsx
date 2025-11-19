@@ -234,7 +234,7 @@ export default function AnimatedContact({
               <h4 className="font-semibold card-text-contrast mb-1">
                 {method.label}
               </h4>
-              <p className="text-sm service-description-contrast truncate">
+              <p className="text-sm service-description-contrast truncate" dir={method.type === 'phone' || method.type === 'email' ? 'ltr' : undefined}>
                 {method.value}
               </p>
             </div>

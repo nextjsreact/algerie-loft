@@ -369,6 +369,7 @@ export class ReservationErrorBoundary extends Component<
                   <a 
                     href="mailto:support@loftalgerie.com" 
                     className="text-blue-600 hover:text-blue-800 underline"
+                    dir="ltr"
                   >
                     support@loftalgerie.com
                   </a>
@@ -376,6 +377,7 @@ export class ReservationErrorBoundary extends Component<
                   <a 
                     href="tel:+213560362543" 
                     className="text-blue-600 hover:text-blue-800 underline"
+                    dir="ltr"
                   >
                     +213 56 03 62 543
                   </a>

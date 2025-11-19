@@ -120,6 +120,17 @@
         "palace": "Palais du Bey",
         "cirta": "Musée Cirta"
       }
+    },
+    "footer": {
+      "brandName": "Loft Algérie",
+      "tagline": "Premium Rentals",
+      "description": "La référence de la location de lofts haut de gamme en Algérie",
+      "quickLinks": "Liens Rapides",
+      "ourLofts": "Nos Lofts",
+      "becomePartner": "Devenir Partenaire",
+      "contact": "Contact",
+      "phone": "+213 56 03 62 543",
+      "phoneLink": "tel:+213560362543"
     }
   },
   "currency": {

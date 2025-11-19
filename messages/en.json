@@ -120,6 +120,17 @@
         "palace": "Bey's Palace",
         "cirta": "Cirta Museum"
       }
+    },
+    "footer": {
+      "brandName": "Loft Algérie",
+      "tagline": "Premium Rentals",
+      "description": "The reference for luxury loft rentals in Algeria",
+      "quickLinks": "Quick Links",
+      "ourLofts": "Our Lofts",
+      "becomePartner": "Become Partner",
+      "contact": "Contact",
+      "phone": "+213 56 03 62 543",
+      "phoneLink": "tel:+213560362543"
     }
   },
   "currency": {

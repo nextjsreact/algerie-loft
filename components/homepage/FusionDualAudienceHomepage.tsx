@@ -346,6 +346,48 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
   const containerVariants = getMotionVariants('stagger');
   const sectionVariants = getMotionVariants('fade');
 
+  // Footer translations
+  const footerContent = {
+    fr: {
+      brandName: "Loft Algérie",
+      tagline: "Premium Rentals",
+      description: "La référence de la location de lofts haut de gamme en Algérie",
+      quickLinks: "Liens Rapides",
+      ourLofts: "Nos Lofts",
+      becomePartner: "Devenir Partenaire",
+      contact: "Contact",
+      clientArea: "Espace Client",
+      phone: "+213 56 03 62 543",
+      phoneLink: "tel:+213560362543"
+    },
+    en: {
+      brandName: "Loft Algérie",
+      tagline: "Premium Rentals",
+      description: "The reference for luxury loft rentals in Algeria",
+      quickLinks: "Quick Links",
+      ourLofts: "Our Lofts",
+      becomePartner: "Become Partner",
+      contact: "Contact",
+      clientArea: "Client Area",
+      phone: "+213 56 03 62 543",
+      phoneLink: "tel:+213560362543"
+    },
+    ar: {
+      brandName: "Loft Algérie",
+      tagline: "Premium Rentals",
+      description: "المرجع في تأجير الشقق المفروشة الفاخرة في الجزائر",
+      quickLinks: "روابط سريعة",
+      ourLofts: "شققنا",
+      becomePartner: "كن شريكاً",
+      contact: "اتصل بنا",
+      clientArea: "منطقة العميل",
+      phone: "+213 56 03 62 543",
+      phoneLink: "tel:+213560362543"
+    }
+  };
+
+  const footerText = footerContent[locale as keyof typeof footerContent] || footerContent.fr;
+
   // Helper function to get localized text
   const getLocalizedText = (textObj: any) => {
     return textObj[locale as keyof typeof textObj] || textObj.fr;
@@ -736,25 +778,25 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
-                  name: locale === 'fr' ? 'Sarah M.' : locale === 'en' ? 'Sarah M.' : 'سارة م.',
+                  name: locale === 'fr' ? 'Amina L.' : locale === 'en' ? 'Amina L.' : 'أمينة ل.',
                   role: locale === 'fr' ? 'Voyageuse d\'affaires' : locale === 'en' ? 'Business Traveler' : 'مسافرة أعمال',
-                  content: locale === 'fr' ? 'Séjour exceptionnel dans le loft d\'Hydra. Vue magnifique et service impeccable. Je recommande vivement !' : locale === 'en' ? 'Exceptional stay in the Hydra loft. Magnificent view and impeccable service. Highly recommend!' : 'إقامة استثنائية في شقة حيدرة. إطلالة رائعة وخدمة لا تشوبها شائبة. أنصح بشدة!',
+                  content: locale === 'fr' ? 'Séjour exceptionnel dans le loft d\'Alger. Vue magnifique sur la baie et service impeccable. Je recommande vivement !' : locale === 'en' ? 'Exceptional stay in the Algiers loft. Magnificent view of the bay and impeccable service. Highly recommend!' : 'إقامة استثنائية في شقة الجزائر. إطلالة رائعة على الخليج وخدمة لا تشوبها شائبة. أنصح بشدة!',
                   rating: 5,
-                  image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face'
+                  image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Amina&backgroundColor=b6e3f4'
                 },
                 {
-                  name: locale === 'fr' ? 'Ahmed K.' : locale === 'en' ? 'Ahmed K.' : 'أحمد ك.',
+                  name: locale === 'fr' ? 'Karim B.' : locale === 'en' ? 'Karim B.' : 'كريم ب.',
                   role: locale === 'fr' ? 'Famille en vacances' : locale === 'en' ? 'Family on vacation' : 'عائلة في إجازة',
-                  content: locale === 'fr' ? 'Parfait pour notre séjour familial à Oran. Loft spacieux, bien équipé et très propre. Les enfants ont adoré !' : locale === 'en' ? 'Perfect for our family stay in Oran. Spacious, well-equipped and very clean loft. The kids loved it!' : 'مثالي لإقامتنا العائلية في وهران. شقة واسعة ومجهزة جيداً ونظيفة جداً. أحبها الأطفال!',
+                  content: locale === 'fr' ? 'Parfait pour notre séjour familial à Béjaïa. Loft spacieux, bien équipé et très propre. Les enfants ont adoré la proximité de la plage !' : locale === 'en' ? 'Perfect for our family stay in Bejaia. Spacious, well-equipped and very clean loft. The kids loved being close to the beach!' : 'مثالي لإقامتنا العائلية في بجاية. شقة واسعة ومجهزة جيداً ونظيفة جداً. أحب الأطفال القرب من الشاطئ!',
                   rating: 5,
-                  image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face'
+                  image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Karim&backgroundColor=c0aede'
                 },
                 {
-                  name: locale === 'fr' ? 'Fatima B.' : locale === 'en' ? 'Fatima B.' : 'فاطمة ب.',
+                  name: locale === 'fr' ? 'Yasmine D.' : locale === 'en' ? 'Yasmine D.' : 'ياسمين د.',
                   role: locale === 'fr' ? 'Couple romantique' : locale === 'en' ? 'Romantic couple' : 'زوجان رومانسيان',
-                  content: locale === 'fr' ? 'Week-end romantique parfait à Constantine. Loft charmant avec une décoration soignée. Nous reviendrons !' : locale === 'en' ? 'Perfect romantic weekend in Constantine. Charming loft with careful decoration. We will be back!' : 'عطلة نهاية أسبوع رومانسية مثالية في قسنطينة. شقة ساحرة مع ديكور أنيق. سنعود!',
+                  content: locale === 'fr' ? 'Week-end romantique parfait à Jijel. Loft charmant avec vue sur mer et décoration soignée. Nous reviendrons !' : locale === 'en' ? 'Perfect romantic weekend in Jijel. Charming loft with sea view and careful decoration. We will be back!' : 'عطلة نهاية أسبوع رومانسية مثالية في جيجل. شقة ساحرة مع إطلالة على البحر وديكور أنيق. سنعود!',
                   rating: 5,
-                  image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face'
+                  image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Yasmine&backgroundColor=ffd5dc'
                 }
               ].map((testimonial, index) => (
                 <motion.div
@@ -1339,28 +1381,24 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                     <span className="text-white font-bold text-xl" style={{ fontFamily: 'Caveat, cursive' }}>L</span>
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold" style={{ fontFamily: 'Caveat, cursive' }}>Loft Algérie</h3>
-                    <p className="text-sm text-gray-400">Premium Rentals</p>
+                    <h3 className="text-xl font-bold" style={{ fontFamily: 'Caveat, cursive' }}>
+                      {footerText.brandName}
+                    </h3>
+                    <p className="text-sm text-gray-400">{footerText.tagline}</p>
                   </div>
                 </div>
                 <p className="text-gray-400 mb-6">
-                  {locale === 'fr' && 'La référence de la location de lofts haut de gamme en Algérie'}
-                  {locale === 'en' && 'The reference for luxury loft rentals in Algeria'}
-                  {locale === 'ar' && 'المرجع في تأجير الشقق المفروشة الفاخرة في الجزائر'}
+                  {footerText.description}
                 </p>
               </div>
 
               <div>
                 <h3 className="text-lg font-semibold mb-6" style={{ fontFamily: 'Caveat, cursive' }}>
-                  {locale === 'fr' && 'Liens Rapides'}
-                  {locale === 'en' && 'Quick Links'}
-                  {locale === 'ar' && 'روابط سريعة'}
+                  {footerText.quickLinks}
                 </h3>
                 <div className="space-y-4">
                   <a href="#featured-lofts" className="block text-gray-400 hover:text-white transition-colors">
-                    {locale === 'fr' && 'Nos Lofts'}
-                    {locale === 'en' && 'Our Lofts'}
-                    {locale === 'ar' && 'شققنا'}
+                    {footerText.ourLofts}
                   </a>
                   <a 
                     href="#" 
@@ -1370,26 +1408,22 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                     }}
                     className="block text-gray-400 hover:text-white transition-colors cursor-pointer"
                   >
-                    {locale === 'fr' && 'Devenir Partenaire'}
-                    {locale === 'en' && 'Become Partner'}
-                    {locale === 'ar' && 'كن شريكاً'}
+                    {footerText.becomePartner}
                   </a>
                 </div>
               </div>
 
               <div>
                 <h3 className="text-lg font-semibold mb-6" style={{ fontFamily: 'Caveat, cursive' }}>
-                  {locale === 'fr' && 'Contact'}
-                  {locale === 'en' && 'Contact'}
-                  {locale === 'ar' && 'اتصل بنا'}
+                  {footerText.contact}
                 </h3>
                 <div className="space-y-4">
                   <a 
-                    href="tel:+213560362543"
+                    href={footerText.phoneLink}
                     className="flex items-center space-x-3 text-gray-400 hover:text-white transition-colors"
                   >
                     <Phone className="w-5 h-5 text-blue-400" />
-                    <span>+213 56 03 62 543</span>
+                    <span dir="ltr">{footerText.phone}</span>
                   </a>
                   <a 
                     href="mailto:contact@loftalgerie.com"
@@ -1404,14 +1438,14 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
             
             <div className="border-t border-gray-800 mt-12 pt-8 text-center">
               {/* Logo Footer */}
-              <div className="mb-6">
+              <div className="mb-6 flex justify-center">
                 <Image 
                   src="/logo.jpg" 
                   alt="Loft Algérie" 
-                  width={160} 
-                  height={56} 
-                  className="w-auto object-contain"
-                  style={{ maxHeight: '48px' }}
+                  width={240} 
+                  height={84} 
+                  className="w-auto h-auto object-contain"
+                  style={{ maxHeight: '80px', maxWidth: '280px' }}
                 />
               </div>
               
@@ -1424,17 +1458,13 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                   href={`/${locale}/login`} 
                   className="text-blue-300 hover:text-blue-200 transition-colors font-bold text-lg"
                 >
-                  {locale === 'fr' && 'Espace Client'}
-                  {locale === 'en' && 'Client Area'}
-                  {locale === 'ar' && 'منطقة العميل'}
+                  {footerText.clientArea || (locale === 'fr' ? 'Espace Client' : locale === 'en' ? 'Client Area' : 'منطقة العميل')}
                 </a>
                 <a 
                   href="mailto:contact@loftalgerie.com" 
                   className="text-blue-300 hover:text-blue-200 transition-colors"
                 >
-                  {locale === 'fr' && 'Contact'}
-                  {locale === 'en' && 'Contact'}
-                  {locale === 'ar' && 'اتصال'}
+                  {footerText.contact}
                 </a>
               </div>
             </div>

@@ -120,6 +120,17 @@
         "palace": "قصر الباي",
         "cirta": "متحف سيرتا"
       }
+    },
+    "footer": {
+      "brandName": "Loft Algérie",
+      "tagline": "Premium Rentals",
+      "description": "المرجع في تأجير الشقق المفروشة الفاخرة في الجزائر",
+      "quickLinks": "روابط سريعة",
+      "ourLofts": "شققنا",
+      "becomePartner": "كن شريكاً",
+      "contact": "اتصل بنا",
+      "phone": "+213 56 03 62 543",
+      "phoneLink": "tel:+213560362543"
     }
   },
   "currency": {

@@ -123,14 +123,20 @@ export function MobileReservationWrapper({
                 Profile
               </Button>
               <div className="pt-3 border-t border-gray-200">
-                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <a 
+                  href="tel:+213560362543"
+                  className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
                   <Phone className="h-4 w-4" />
-                  <span>+213 56 03 62 543</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-muted-foreground mt-2">
+                  <span dir="ltr">+213 56 03 62 543</span>
+                </a>
+                <a 
+                  href="mailto:support@loftalgerie.com"
+                  className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors mt-2"
+                >
                   <Mail className="h-4 w-4" />
-                  <span>support@loftalgerie.com</span>
-                </div>
+                  <span dir="ltr">support@loftalgerie.com</span>
+                </a>
               </div>
             </div>
           </div>

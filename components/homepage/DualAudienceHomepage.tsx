@@ -103,6 +103,7 @@ export default function DualAudienceHomepage({ locale }: DualAudienceHomepagePro
       // Header
       login: "Connexion",
       signup: "Inscription",
+      tagline: "Premium Rentals",
       
       // Hero
       heroTitle: "Découvrez les Plus Beaux Lofts d'Algérie",
@@ -141,12 +142,15 @@ export default function DualAudienceHomepage({ locale }: DualAudienceHomepagePro
       quickLinks: "Liens Rapides",
       contact: "Contact",
       followUs: "Suivez-nous",
-      copyright: "© 2024 Loft Algérie. Tous droits réservés."
+      copyright: "© 2024 Loft Algérie. Tous droits réservés.",
+      phone: "+213 56 03 62 543",
+      phoneLink: "tel:+213560362543"
     },
     en: {
       // Header  
       login: "Login",
       signup: "Sign Up",
+      tagline: "Premium Rentals",
       
       // Hero
       heroTitle: "Discover Algeria's Most Beautiful Lofts",
@@ -185,11 +189,14 @@ export default function DualAudienceHomepage({ locale }: DualAudienceHomepagePro
       quickLinks: "Quick Links", 
       contact: "Contact",
       followUs: "Follow Us",
-      copyright: "© 2024 Loft Algeria. All rights reserved."
+      copyright: "© 2024 Loft Algeria. All rights reserved.",
+      phone: "+213 56 03 62 543",
+      phoneLink: "tel:+213560362543"
     },
     ar: {
       // Header
-      login: "تسجيل الدخول", 
+      login: "تسجيل الدخول",
+      tagline: "Premium Rentals", 
       signup: "التسجيل",
       
       // Hero
@@ -229,7 +236,9 @@ export default function DualAudienceHomepage({ locale }: DualAudienceHomepagePro
       quickLinks: "روابط سريعة",
       contact: "اتصل بنا", 
       followUs: "تابعنا",
-      copyright: "© 2024 لوفت الجزائر. جميع الحقوق محفوظة."
+      copyright: "© 2024 لوفت الجزائر. جميع الحقوق محفوظة.",
+      phone: "+213 56 03 62 543",
+      phoneLink: "tel:+213560362543"
     }
   };
 
@@ -248,7 +257,7 @@ export default function DualAudienceHomepage({ locale }: DualAudienceHomepagePro
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">Loft Algérie</h1>
-                <p className="text-xs text-gray-500">Premium Rentals</p>
+                <p className="text-xs text-gray-500">{t.tagline || "Premium Rentals"}</p>
               </div>
             </div>
 
@@ -537,14 +546,20 @@ export default function DualAudienceHomepage({ locale }: DualAudienceHomepagePro
               <div>
                 <h3 className="text-xl font-bold mb-4">{t.contact}</h3>
                 <div className="space-y-3">
-                  <div className="flex items-center space-x-3">
+                  <a 
+                    href={t.phoneLink || "tel:+213560362543"}
+                    className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
+                  >
                     <Phone className="w-5 h-5 text-blue-400" />
-                    <span>+213 56 03 62 543</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
+                    <span dir="ltr">{t.phone || "+213 56 03 62 543"}</span>
+                  </a>
+                  <a 
+                    href="mailto:contact@loftalgerie.com"
+                    className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
+                  >
                     <Mail className="w-5 h-5 text-blue-400" />
                     <span>contact@loftalgerie.com</span>
-                  </div>
+                  </a>
                 </div>
               </div>
               

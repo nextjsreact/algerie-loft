@@ -52,8 +52,8 @@ export default function AnimatedContact({
         {
           icon: <Phone size={24} />,
           label: 'Téléphone',
-          value: '+213 123 456 789',
-          href: 'tel:+213123456789',
+          value: '+213 56 03 62 543',
+          href: 'tel:+213560362543',
           type: 'phone' as const
         },
         {
@@ -81,8 +81,8 @@ export default function AnimatedContact({
         {
           icon: <Phone size={24} />,
           label: 'Phone',
-          value: '+213 123 456 789',
-          href: 'tel:+213123456789',
+          value: '+213 56 03 62 543',
+          href: 'tel:+213560362543',
           type: 'phone' as const
         },
         {
@@ -110,8 +110,8 @@ export default function AnimatedContact({
         {
           icon: <Phone size={24} />,
           label: 'الهاتف',
-          value: '+213 123 456 789',
-          href: 'tel:+213123456789',
+          value: '+213 56 03 62 543',
+          href: 'tel:+213560362543',
           type: 'phone' as const
         },
         {

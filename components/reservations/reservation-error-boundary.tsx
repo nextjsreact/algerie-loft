@@ -374,10 +374,10 @@ export class ReservationErrorBoundary extends Component<
                   </a>
                   <span className="hidden sm:inline text-blue-400">•</span>
                   <a 
-                    href="tel:+213123456789" 
+                    href="tel:+213560362543" 
                     className="text-blue-600 hover:text-blue-800 underline"
                   >
-                    +213 123 456 789
+                    +213 56 03 62 543
                   </a>
                 </div>
               </div>

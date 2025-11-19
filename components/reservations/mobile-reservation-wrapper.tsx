@@ -125,7 +125,7 @@ export function MobileReservationWrapper({
               <div className="pt-3 border-t border-gray-200">
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <Phone className="h-4 w-4" />
-                  <span>+213 123 456 789</span>
+                  <span>+213 56 03 62 543</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground mt-2">
                   <Mail className="h-4 w-4" />

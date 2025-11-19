@@ -65,7 +65,7 @@ export function PlatformSettingsClient() {
       platform_name: "Algerie Loft",
       platform_description: "Plateforme de gestion d'appartements en Algérie",
       contact_email: "contact@algerieloft.com",
-      support_phone: "+213 555 000 000",
+      support_phone: "+213 56 03 62 543",
       maintenance_mode: false,
       registration_enabled: true
     },

@@ -504,7 +504,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                     whileTap={{ scale: 0.95 }}
                     onClick={() => {
                       // Open phone call
-                      window.open('tel:+213234567890', '_self');
+                      window.open('tel:+213560362543', '_self');
                     }}
                     className="w-full sm:w-auto bg-white/20 backdrop-blur-md border-2 border-white text-white px-6 py-4 rounded-full text-lg font-bold hover:bg-white hover:text-gray-900 transition-all duration-300 shadow-2xl"
                     style={{ fontFamily: 'Caveat, cursive' }}
@@ -1385,11 +1385,11 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                 </h3>
                 <div className="space-y-4">
                   <a 
-                    href="tel:+213234567890"
+                    href="tel:+213560362543"
                     className="flex items-center space-x-3 text-gray-400 hover:text-white transition-colors"
                   >
                     <Phone className="w-5 h-5 text-blue-400" />
-                    <span>+213 23 45 67 89</span>
+                    <span>+213 56 03 62 543</span>
                   </a>
                   <a 
                     href="mailto:contact@loftalgerie.com"

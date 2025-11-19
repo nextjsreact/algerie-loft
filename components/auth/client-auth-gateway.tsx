@@ -304,7 +304,7 @@ export function ClientAuthGateway({ returnUrl, onAuthSuccess, onClose }: AuthGat
                   <Input
                     id="phone"
                     type="tel"
-                    placeholder="+213 123 456 789"
+                    placeholder="+213 56 03 62 543"
                     {...registerForm.register("phone")}
                     disabled={isLoading}
                   />

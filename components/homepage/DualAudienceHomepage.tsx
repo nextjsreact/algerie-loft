@@ -539,7 +539,7 @@ export default function DualAudienceHomepage({ locale }: DualAudienceHomepagePro
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
                     <Phone className="w-5 h-5 text-blue-400" />
-                    <span>+213 23 45 67 89</span>
+                    <span>+213 56 03 62 543</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Mail className="w-5 h-5 text-blue-400" />

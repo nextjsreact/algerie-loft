@@ -3382,6 +3382,16 @@
       "lastBackup": "Last backup",
       "systemLoad": "System load"
     },
+    "visitorStats": {
+      "totalVisitors": "Total Visitors",
+      "todayVisitors": "Today's Visitors",
+      "newToday": "New today",
+      "totalPageViews": "Total Page Views",
+      "todayViews": "Today",
+      "avgDuration": "Avg. Session Duration",
+      "perSession": "Per session",
+      "allTime": "All time"
+    },
     "user": {
       "profile": "Superuser",
       "access": "Full access",

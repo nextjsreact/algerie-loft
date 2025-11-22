@@ -3152,6 +3152,16 @@
       "lastBackup": "Dernière sauvegarde",
       "systemLoad": "Charge système"
     },
+    "visitorStats": {
+      "totalVisitors": "Total Visiteurs",
+      "todayVisitors": "Visiteurs Aujourd'hui",
+      "newToday": "Nouveaux aujourd'hui",
+      "totalPageViews": "Total Pages Vues",
+      "todayViews": "Aujourd'hui",
+      "avgDuration": "Durée Moy. Session",
+      "perSession": "Par session",
+      "allTime": "Depuis le début"
+    },
     "user": {
       "profile": "Superuser",
       "access": "Accès complet",

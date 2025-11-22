@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import type { SystemMetrics, SecurityAlert, AuditLogEntry } from '@/types/superuser';
+import { VisitorStatsCard } from './visitor-stats-card';
 
 interface DashboardData {
   systemMetrics: SystemMetrics;
@@ -118,6 +119,9 @@ export function SuperuserDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Visitor Statistics */}
+      <VisitorStatsCard />
+
       {/* System Health Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>

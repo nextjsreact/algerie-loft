@@ -146,7 +146,7 @@ export default function EnvironmentSelector({ onEnvironmentsSelected, cloneOptio
                                 : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                                 }`}
                         >
-                            Configured
+                            {t('configured')}
                         </button>
                         <button
                             onClick={() => setSourceMode('manual')}
@@ -155,7 +155,7 @@ export default function EnvironmentSelector({ onEnvironmentsSelected, cloneOptio
                                 : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                                 }`}
                         >
-                            Manual
+                            {t('manual')}
                         </button>
                     </div>
 
@@ -174,6 +174,7 @@ export default function EnvironmentSelector({ onEnvironmentsSelected, cloneOptio
                         <ManualEntryForm
                             data={manualSource}
                             onChange={setManualSource}
+                            t={t}
                         />
                     )}
                 </div>
@@ -193,7 +194,7 @@ export default function EnvironmentSelector({ onEnvironmentsSelected, cloneOptio
                                 : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                                 }`}
                         >
-                            Configured
+                            {t('configured')}
                         </button>
                         <button
                             onClick={() => setTargetMode('manual')}
@@ -202,7 +203,7 @@ export default function EnvironmentSelector({ onEnvironmentsSelected, cloneOptio
                                 : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                                 }`}
                         >
-                            Manual
+                            {t('manual')}
                         </button>
                     </div>
 
@@ -221,6 +222,7 @@ export default function EnvironmentSelector({ onEnvironmentsSelected, cloneOptio
                         <ManualEntryForm
                             data={manualTarget}
                             onChange={setManualTarget}
+                            t={t}
                         />
                     )}
                 </div>
@@ -297,54 +299,55 @@ function EnvironmentCard({ environment, selected, onSelect }: {
     )
 }
 
-function ManualEntryForm({ data, onChange }: {
+function ManualEntryForm({ data, onChange, t }: {
     data: { name: string; url: string; anonKey: string; serviceKey: string; password: string; host: string; port: string }
     onChange: (data: any) => void
+    t: any
 }) {
     return (
         <div className="space-y-3">
             <input
                 type="text"
-                placeholder="Environment Name"
+                placeholder={t('environmentName')}
                 value={data.name}
                 onChange={(e) => onChange({ ...data, name: e.target.value })}
                 className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white"
             />
             <input
                 type="url"
-                placeholder="Supabase URL (https://xxxxx.supabase.co)"
+                placeholder={`${t('supabaseUrl')} (${t('supabaseUrlPlaceholder')})`}
                 value={data.url}
                 onChange={(e) => onChange({ ...data, url: e.target.value })}
                 className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white"
             />
             <input
                 type="password"
-                placeholder="Anon Key (optional for read operations)"
+                placeholder={`${t('anonKey')} (${t('anonKeyPlaceholder')})`}
                 value={data.anonKey}
                 onChange={(e) => onChange({ ...data, anonKey: e.target.value })}
                 className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white"
             />
             <input
                 type="password"
-                placeholder="Service Role Key (required)"
+                placeholder={`${t('serviceKey')} (${t('serviceKeyPlaceholder')})`}
                 value={data.serviceKey}
                 onChange={(e) => onChange({ ...data, serviceKey: e.target.value })}
                 className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-white"
             />
             <div className="border-t border-slate-200 dark:border-slate-700 pt-3 mt-3">
                 <div className="flex items-center gap-2 mb-2">
-                    <span className="text-sm font-semibold text-amber-600 dark:text-amber-400">🔑 PostgreSQL Password</span>
-                    <span className="text-xs px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full font-medium">REQUIRED</span>
+                    <span className="text-sm font-semibold text-amber-600 dark:text-amber-400">🔑 {t('postgresPassword')}</span>
+                    <span className="text-xs px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full font-medium">{t('required')}</span>
                 </div>
                 <input
                     type="password"
-                    placeholder="PostgreSQL Database Password (Canada!2025Mosta)"
+                    placeholder={t('postgresPassword')}
                     value={data.password}
                     onChange={(e) => onChange({ ...data, password: e.target.value })}
                     className="w-full px-4 py-2 rounded-lg border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 text-slate-800 dark:text-white focus:border-amber-500 focus:ring-2 focus:ring-amber-200 dark:focus:ring-amber-800"
                 />
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    📍 Find in Supabase: Settings → Database → Connection string
+                    📍 {t('findInSupabase')}
                 </p>
             </div>
         </div>

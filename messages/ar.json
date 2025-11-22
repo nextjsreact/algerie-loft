@@ -3099,6 +3099,8 @@
       "securityDesc": "السجلات والمراقبة",
       "backup": "النسخ الاحتياطية",
       "backupDesc": "إدارة النسخ الاحتياطية",
+      "databaseCloner": "استنساخ قاعدة البيانات",
+      "databaseClonerDesc": "استنساخ بيئات قاعدة البيانات",
       "maintenance": "الصيانة",
       "maintenanceDesc": "أدوات الصيانة",
       "configuration": "التكوين",

@@ -3072,6 +3072,8 @@
       "securityDesc": "Logs et surveillance",
       "backup": "Sauvegardes",
       "backupDesc": "Gestion des sauvegardes",
+      "databaseCloner": "Clonage de Base de Données",
+      "databaseClonerDesc": "Cloner les environnements de base de données",
       "maintenance": "Maintenance",
       "maintenanceDesc": "Outils de maintenance",
       "configuration": "Configuration",

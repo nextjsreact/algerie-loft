@@ -18,14 +18,15 @@ export function SuperuserSidebar({ className }: SuperuserSidebarProps) {
   const t = useTranslations('superuser')
 
   const navigation = [
-    { name: t('navigation.dashboard'), href: `/admin/superuser/dashboard`, icon: LayoutDashboard },
-    { name: t('navigation.userManagement'), href: `/admin/superuser/users`, icon: Users },
-    { name: t('navigation.security'), href: `/admin/superuser/audit`, icon: Shield },
-    { name: t('navigation.backup'), href: `/admin/superuser/backup`, icon: Database },
-    { name: t('navigation.maintenance'), href: `/admin/superuser/maintenance`, icon: Wrench },
-    { name: t('navigation.configuration'), href: `/admin/superuser/config`, icon: Settings },
-    { name: t('navigation.monitoring'), href: `/admin/superuser/monitoring`, icon: Activity },
-    { name: t('navigation.archives'), href: `/admin/superuser/archives`, icon: Archive },
+    { name: t('navigation.dashboard'), href: `/${locale}/admin/superuser/dashboard`, icon: LayoutDashboard },
+    { name: t('navigation.userManagement'), href: `/${locale}/admin/superuser/users`, icon: Users },
+    { name: t('navigation.security'), href: `/${locale}/admin/superuser/audit`, icon: Shield },
+    { name: t('navigation.backup'), href: `/${locale}/admin/superuser/backup`, icon: Database },
+    { name: t('navigation.databaseCloner'), href: `/${locale}/database-cloner`, icon: Database },
+    { name: t('navigation.maintenance'), href: `/${locale}/admin/superuser/maintenance`, icon: Wrench },
+    { name: t('navigation.configuration'), href: `/${locale}/admin/superuser/config`, icon: Settings },
+    { name: t('navigation.monitoring'), href: `/${locale}/admin/superuser/monitoring`, icon: Activity },
+    { name: t('navigation.archives'), href: `/${locale}/admin/superuser/archives`, icon: Archive },
   ]
 
   const emergencyActions = [

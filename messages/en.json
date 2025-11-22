@@ -3288,6 +3288,8 @@
       "securityDesc": "Logs and monitoring",
       "backup": "Backups",
       "backupDesc": "Backup management",
+      "databaseCloner": "Database Cloner",
+      "databaseClonerDesc": "Clone database environments",
       "maintenance": "Maintenance",
       "maintenanceDesc": "Maintenance tools",
       "configuration": "Configuration",

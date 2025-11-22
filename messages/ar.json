@@ -3177,6 +3177,16 @@
           "title": "التكوين",
           "description": "تكوين النظام"
         }
+      },
+      "visitorStats": {
+        "totalVisitors": "إجمالي الزوار",
+        "todayVisitors": "زوار اليوم",
+        "newToday": "جديد اليوم",
+        "totalPageViews": "إجمالي مشاهدات الصفحة",
+        "todayViews": "اليوم",
+        "avgDuration": "متوسط مدة الجلسة",
+        "perSession": "لكل جلسة",
+        "allTime": "منذ البداية"
       }
     },
     "status": {
@@ -3192,16 +3202,6 @@
       "openSessions": "الجلسات المفتوحة",
       "lastBackup": "آخر نسخة احتياطية",
       "systemLoad": "حمولة النظام"
-    },
-    "visitorStats": {
-      "totalVisitors": "إجمالي الزوار",
-      "todayVisitors": "زوار اليوم",
-      "newToday": "جديد اليوم",
-      "totalPageViews": "إجمالي مشاهدات الصفحة",
-      "todayViews": "اليوم",
-      "avgDuration": "متوسط مدة الجلسة",
-      "perSession": "لكل جلسة",
-      "allTime": "منذ البداية"
     },
     "user": {
       "profile": "المدير الأعلى",

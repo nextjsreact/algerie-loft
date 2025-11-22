@@ -21,7 +21,8 @@ import {
   LogOut,
   ChevronUp,
   User2,
-  Shield
+  Shield,
+  Database
 } from "lucide-react"
 
 import {
@@ -152,6 +153,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: "Administration Superuser",
         url: `/${locale}/admin/superuser`,
         icon: Shield,
+        roles: ["superuser"]
+      },
+      {
+        title: t("databaseCloner"),
+        url: `/${locale}/database-cloner`,
+        icon: Database,
         roles: ["superuser"]
       },
       {

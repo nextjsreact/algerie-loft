@@ -2725,6 +2725,7 @@
     "owners": "Owners",
     "transactions": "Transactions",
     "reports": "Reports",
+    "databaseCloner": "Database Cloner",
     "settings": "Settings",
     "categories": "Categories",
     "logout": "Logout",

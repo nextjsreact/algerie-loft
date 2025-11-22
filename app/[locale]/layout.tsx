@@ -46,8 +46,10 @@ export default async function LocaleLayout({
     session = null;
   }
 
+  const direction = locale === 'ar' ? 'rtl' : 'ltr';
+
   return (
-    <>
+    <div dir={direction} lang={locale}>
       {/* <NuclearSpacingFix /> */}
       <LangSetter locale={locale} />
       <ClientProviders 
@@ -58,6 +60,6 @@ export default async function LocaleLayout({
       >
         {children}
       </ClientProviders>
-    </>
+    </div>
   );
 }

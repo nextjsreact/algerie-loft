@@ -110,13 +110,24 @@ export default function DatabaseClonerPage() {
             <div className="container mx-auto px-4 py-8 max-w-7xl">
 
                 {/* Header */}
-                <div className="mb-8 text-center">
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
-                        🗄️ {t('title')}
-                    </h1>
-                    <p className="text-slate-600 dark:text-slate-300 text-lg">
-                        {t('description')}
-                    </p>
+                <div className="mb-8">
+                    <button
+                        onClick={() => window.history.back()}
+                        className="mb-4 flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                        </svg>
+                        <span className="font-medium">{t('backToDashboard')}</span>
+                    </button>
+                    <div className="text-center">
+                        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+                            🗄️ {t('title')}
+                        </h1>
+                        <p className="text-slate-600 dark:text-slate-300 text-lg">
+                            {t('description')}
+                        </p>
+                    </div>
                 </div>
 
                 {/* Progress Steps */}

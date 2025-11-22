@@ -3800,6 +3800,7 @@
   "databaseCloner": {
     "title": "Clonage de Base de Données",
     "description": "Clonez vos environnements de base de données en toute sécurité",
+    "backToDashboard": "Retour au Tableau de Bord",
     "steps": {
       "select": "Sélection",
       "validate": "Validation",

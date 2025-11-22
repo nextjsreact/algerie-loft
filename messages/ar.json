@@ -3841,6 +3841,7 @@
   "databaseCloner": {
     "title": "استنساخ قاعدة البيانات",
     "description": "استنسخ بيئات قاعدة البيانات بأمان",
+    "backToDashboard": "العودة إلى لوحة التحكم",
     "steps": {
       "select": "اختيار",
       "validate": "التحقق",

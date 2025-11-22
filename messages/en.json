@@ -3997,6 +3997,7 @@
   "databaseCloner": {
     "title": "Database Cloner",
     "description": "Clone your database environments safely",
+    "backToDashboard": "Back to Dashboard",
     "steps": {
       "select": "Select",
       "validate": "Validate",

@@ -3986,5 +3986,85 @@
         }
       }
     }
+  },
+  "databaseCloner": {
+    "title": "Database Cloner",
+    "description": "Clone your database environments safely",
+    "steps": {
+      "select": "Select",
+      "validate": "Validate",
+      "options": "Options",
+      "clone": "Clone",
+      "results": "Results"
+    },
+    "selectEnvironment": {
+      "title": "Select Environments",
+      "source": "Source Environment",
+      "target": "Target Environment",
+      "selectSource": "Select source environment",
+      "selectTarget": "Select target environment",
+      "next": "Next",
+      "environments": {
+        "production": "Production",
+        "test": "Test",
+        "development": "Development"
+      }
+    },
+    "validation": {
+      "title": "Connection Validation",
+      "validating": "Validating...",
+      "success": "Connections validated successfully",
+      "error": "Validation error",
+      "sourceStatus": "Source Status",
+      "targetStatus": "Target Status",
+      "back": "Back",
+      "next": "Next"
+    },
+    "options": {
+      "title": "Clone Options",
+      "dataOnly": "Data only",
+      "dataOnlyDesc": "Clone only data (no schema)",
+      "schemaOnly": "Schema only",
+      "schemaOnlyDesc": "Clone only schema (no data)",
+      "dropExisting": "Drop existing",
+      "dropExistingDesc": "Drop existing tables before cloning",
+      "excludeTables": "Exclude tables",
+      "excludeTablesDesc": "Tables to exclude from cloning (comma-separated)",
+      "back": "Back",
+      "startClone": "Start Clone"
+    },
+    "cloning": {
+      "title": "Cloning in Progress",
+      "progress": "Progress",
+      "currentStep": "Current step",
+      "cancel": "Cancel",
+      "steps": {
+        "preparing": "Preparing",
+        "dumping": "Dumping data",
+        "transferring": "Transferring",
+        "restoring": "Restoring",
+        "verifying": "Verifying",
+        "completed": "Completed"
+      }
+    },
+    "results": {
+      "title": "Clone Results",
+      "success": "Clone successful!",
+      "failed": "Clone failed",
+      "duration": "Duration",
+      "tablesCloned": "Tables cloned",
+      "rowsCloned": "Rows cloned",
+      "errors": "Errors",
+      "viewLogs": "View logs",
+      "newClone": "New Clone",
+      "backToDashboard": "Back to Dashboard"
+    },
+    "errors": {
+      "unauthorized": "Unauthorized. Only superusers can access this feature.",
+      "sameEnvironment": "Source and target environments must be different",
+      "connectionFailed": "Database connection failed",
+      "cloneFailed": "Clone failed",
+      "operationNotFound": "Operation not found"
+    }
   }
 }

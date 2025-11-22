@@ -6,7 +6,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import EnvironmentSelector from './components/EnvironmentSelector'
 import ConnectionValidator from './components/ConnectionValidator'
@@ -44,7 +44,19 @@ export default function DatabaseClonerPage() {
         setCurrentStep('confirm')
     }
 
+    const [isCloning, setIsCloning] = useState(false)
+    const isCloningRef = useRef(false)
+
     const handleConfirmClone = async () => {
+        console.log('🔵 [FRONTEND] handleConfirmClone called, isCloning:', isCloning, 'isCloningRef:', isCloningRef.current)
+        
+        if (isCloning || isCloningRef.current) {
+            console.log('🔵 [FRONTEND] Clone already in progress, ignoring duplicate call')
+            return
+        }
+        
+        setIsCloning(true)
+        isCloningRef.current = true
         setCurrentStep('progress')
 
         try {
@@ -71,6 +83,12 @@ export default function DatabaseClonerPage() {
             console.error('Error starting clone:', error)
             alert('Failed to start clone operation')
             setCurrentStep('confirm')
+        } finally {
+            setTimeout(() => {
+                setIsCloning(false)
+                isCloningRef.current = false
+                console.log('🔵 [FRONTEND] Clone lock released')
+            }, 2000) // Keep lock for 2 seconds
         }
     }
 
@@ -94,10 +112,10 @@ export default function DatabaseClonerPage() {
                 {/* Header */}
                 <div className="mb-8 text-center">
                     <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
-                        🗄️ Database Cloner
+                        🗄️ {t('title')}
                     </h1>
                     <p className="text-slate-600 dark:text-slate-300 text-lg">
-                        Clone your Supabase databases safely and efficiently
+                        {t('description')}
                     </p>
                 </div>
 
@@ -106,28 +124,28 @@ export default function DatabaseClonerPage() {
                     <div className="flex items-center justify-center space-x-4">
                         <StepIndicator
                             step={1}
-                            label="Select"
+                            label={t('steps.select')}
                             active={currentStep === 'select'}
                             completed={['validate', 'confirm', 'progress', 'results'].includes(currentStep)}
                         />
                         <div className="h-1 w-16 bg-slate-300 dark:bg-slate-600" />
                         <StepIndicator
                             step={2}
-                            label="Validate"
+                            label={t('steps.validate')}
                             active={currentStep === 'validate'}
                             completed={['confirm', 'progress', 'results'].includes(currentStep)}
                         />
                         <div className="h-1 w-16 bg-slate-300 dark:bg-slate-600" />
                         <StepIndicator
                             step={3}
-                            label="Confirm"
+                            label={t('steps.options')}
                             active={currentStep === 'confirm'}
                             completed={['progress', 'results'].includes(currentStep)}
                         />
                         <div className="h-1 w-16 bg-slate-300 dark:bg-slate-600" />
                         <StepIndicator
                             step={4}
-                            label="Clone"
+                            label={t('steps.clone')}
                             active={currentStep === 'progress'}
                             completed={currentStep === 'results'}
                         />

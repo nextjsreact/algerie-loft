@@ -3790,5 +3790,85 @@
         }
       }
     }
+  },
+  "databaseCloner": {
+    "title": "Clonage de Base de Données",
+    "description": "Clonez vos environnements de base de données en toute sécurité",
+    "steps": {
+      "select": "Sélection",
+      "validate": "Validation",
+      "options": "Options",
+      "clone": "Clonage",
+      "results": "Résultats"
+    },
+    "selectEnvironment": {
+      "title": "Sélectionner les Environnements",
+      "source": "Environnement Source",
+      "target": "Environnement Cible",
+      "selectSource": "Sélectionnez l'environnement source",
+      "selectTarget": "Sélectionnez l'environnement cible",
+      "next": "Suivant",
+      "environments": {
+        "production": "Production",
+        "test": "Test",
+        "development": "Développement"
+      }
+    },
+    "validation": {
+      "title": "Validation des Connexions",
+      "validating": "Validation en cours...",
+      "success": "Connexions validées avec succès",
+      "error": "Erreur de validation",
+      "sourceStatus": "Statut Source",
+      "targetStatus": "Statut Cible",
+      "back": "Retour",
+      "next": "Suivant"
+    },
+    "options": {
+      "title": "Options de Clonage",
+      "dataOnly": "Données uniquement",
+      "dataOnlyDesc": "Cloner uniquement les données (pas le schéma)",
+      "schemaOnly": "Schéma uniquement",
+      "schemaOnlyDesc": "Cloner uniquement le schéma (pas les données)",
+      "dropExisting": "Supprimer l'existant",
+      "dropExistingDesc": "Supprimer les tables existantes avant le clonage",
+      "excludeTables": "Exclure des tables",
+      "excludeTablesDesc": "Tables à exclure du clonage (séparées par des virgules)",
+      "back": "Retour",
+      "startClone": "Démarrer le Clonage"
+    },
+    "cloning": {
+      "title": "Clonage en Cours",
+      "progress": "Progression",
+      "currentStep": "Étape actuelle",
+      "cancel": "Annuler",
+      "steps": {
+        "preparing": "Préparation",
+        "dumping": "Export des données",
+        "transferring": "Transfert",
+        "restoring": "Restauration",
+        "verifying": "Vérification",
+        "completed": "Terminé"
+      }
+    },
+    "results": {
+      "title": "Résultats du Clonage",
+      "success": "Clonage réussi !",
+      "failed": "Échec du clonage",
+      "duration": "Durée",
+      "tablesCloned": "Tables clonées",
+      "rowsCloned": "Lignes clonées",
+      "errors": "Erreurs",
+      "viewLogs": "Voir les logs",
+      "newClone": "Nouveau Clonage",
+      "backToDashboard": "Retour au Tableau de Bord"
+    },
+    "errors": {
+      "unauthorized": "Non autorisé. Seuls les superutilisateurs peuvent accéder à cette fonctionnalité.",
+      "sameEnvironment": "Les environnements source et cible doivent être différents",
+      "connectionFailed": "Échec de la connexion à la base de données",
+      "cloneFailed": "Échec du clonage",
+      "operationNotFound": "Opération non trouvée"
+    }
   }
 }

@@ -6,7 +6,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { CloneEnvironment, CloneOptions } from '@/lib/database-cloner/types'
 
 interface Props {
@@ -20,6 +20,43 @@ interface Props {
 export default function CloneConfirmation({ source, target, options, onConfirm, onBack }: Props) {
     const [confirmed, setConfirmed] = useState(false)
     const [countdown, setCountdown] = useState(0)
+    const [isStarting, setIsStarting] = useState(false)
+    const intervalRef = useRef<NodeJS.Timeout | null>(null)
+
+    // Cleanup interval on unmount
+    useEffect(() => {
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current)
+            }
+        }
+    }, [])
+
+    // Handle countdown
+    useEffect(() => {
+        if (countdown > 0 && countdown <= 3) {
+            intervalRef.current = setInterval(() => {
+                setCountdown(prev => {
+                    if (prev <= 1) {
+                        if (intervalRef.current) {
+                            clearInterval(intervalRef.current)
+                            intervalRef.current = null
+                        }
+                        onConfirm()
+                        return 0
+                    }
+                    return prev - 1
+                })
+            }, 1000)
+
+            return () => {
+                if (intervalRef.current) {
+                    clearInterval(intervalRef.current)
+                    intervalRef.current = null
+                }
+            }
+        }
+    }, [countdown, onConfirm])
 
     const handleConfirmClick = () => {
         if (!confirmed) {
@@ -27,18 +64,13 @@ export default function CloneConfirmation({ source, target, options, onConfirm, 
             return
         }
 
-        // Start countdown
-        setCountdown(3)
-        const interval = setInterval(() => {
-            setCountdown(prev => {
-                if (prev <= 1) {
-                    clearInterval(interval)
-                    onConfirm()
-                    return 0
-                }
-                return prev - 1
-            })
-        }, 1000)
+        if (isStarting) {
+            console.log('Clone already starting, ignoring duplicate click')
+            return
+        }
+
+        setIsStarting(true)
+        setCountdown(3) // This will trigger the useEffect above
     }
 
     return (

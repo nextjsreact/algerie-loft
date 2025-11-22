@@ -8,6 +8,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { CloneEnvironment, ConfiguredEnvironment, SupabaseCredentials, CloneOptions } from '@/lib/database-cloner/types'
 
 interface Props {
@@ -19,6 +20,7 @@ interface Props {
 type SelectionMode = 'configured' | 'manual'
 
 export default function EnvironmentSelector({ onEnvironmentsSelected, cloneOptions, onOptionsChange }: Props) {
+    const t = useTranslations('databaseCloner.selectEnvironment')
     const [sourceMode, setSourceMode] = useState<SelectionMode>('manual')
     const [targetMode, setTargetMode] = useState<SelectionMode>('manual')
 
@@ -115,16 +117,16 @@ export default function EnvironmentSelector({ onEnvironmentsSelected, cloneOptio
     }
 
     const canContinue =
-        (sourceMode === 'configured' && selectedSourceId !== '') ||
-        (sourceMode === 'manual' && manualSource.name && manualSource.url && manualSource.serviceKey && manualSource.password) &&
-        (targetMode === 'configured' && selectedTargetId !== '') ||
-        (targetMode === 'manual' && manualTarget.name && manualTarget.url && manualTarget.serviceKey && manualTarget.password)
+        ((sourceMode === 'configured' && selectedSourceId !== '') ||
+        (sourceMode === 'manual' && manualSource.name && manualSource.url && manualSource.serviceKey && manualSource.password)) &&
+        ((targetMode === 'configured' && selectedTargetId !== '') ||
+        (targetMode === 'manual' && manualTarget.name && manualTarget.url && manualTarget.serviceKey && manualTarget.password))
 
     return (
         <div className="space-y-8">
 
             <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">
-                Select Source and Target Environments
+                {t('title')}
             </h2>
 
             <div className="grid md:grid-cols-2 gap-8">
@@ -133,7 +135,7 @@ export default function EnvironmentSelector({ onEnvironmentsSelected, cloneOptio
                 <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-blue-600 dark:text-blue-400 flex items-center">
                         <span className="bg-blue-100 dark:bg-blue-900 w-8 h-8 rounded-full flex items-center justify-center mr-2">📤</span>
-                        Source Database
+                        {t('source')}
                     </h3>
 
                     <div className="flex gap-2 mb-4">
@@ -180,7 +182,7 @@ export default function EnvironmentSelector({ onEnvironmentsSelected, cloneOptio
                 <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-green-600 dark:text-green-400 flex items-center">
                         <span className="bg-green-100 dark:bg-green-900 w-8 h-8 rounded-full flex items-center justify-center mr-2">📥</span>
-                        Target Database
+                        {t('target')}
                     </h3>
 
                     <div className="flex gap-2 mb-4">
@@ -227,29 +229,29 @@ export default function EnvironmentSelector({ onEnvironmentsSelected, cloneOptio
 
             {/* Clone Options */}
             <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">Clone Options</h3>
+                <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">{useTranslations('databaseCloner.options')('title')}</h3>
                 <div className="grid md:grid-cols-2 gap-4">
                     <OptionCheckbox
-                        label="Create Backup"
-                        description="Create a backup of target before cloning"
+                        label={useTranslations('databaseCloner.options')('dataOnly')}
+                        description={useTranslations('databaseCloner.options')('dataOnlyDesc')}
                         checked={cloneOptions.createBackup}
                         onChange={(checked) => onOptionsChange({ ...cloneOptions, createBackup: checked })}
                     />
                     <OptionCheckbox
-                        label="Anonymize Data"
-                        description="Anonymize sensitive information"
+                        label={useTranslations('databaseCloner.options')('schemaOnly')}
+                        description={useTranslations('databaseCloner.options')('schemaOnlyDesc')}
                         checked={cloneOptions.anonymizeData}
                         onChange={(checked) => onOptionsChange({ ...cloneOptions, anonymizeData: checked })}
                     />
                     <OptionCheckbox
-                        label="Include Functions"
-                        description="Clone database functions"
+                        label={useTranslations('databaseCloner.options')('dropExisting')}
+                        description={useTranslations('databaseCloner.options')('dropExistingDesc')}
                         checked={cloneOptions.includeFunctions}
                         onChange={(checked) => onOptionsChange({ ...cloneOptions, includeFunctions: checked })}
                     />
                     <OptionCheckbox
-                        label="Include Triggers"
-                        description="Clone database triggers"
+                        label={useTranslations('databaseCloner.options')('excludeTables')}
+                        description={useTranslations('databaseCloner.options')('excludeTablesDesc')}
                         checked={cloneOptions.includeTriggers}
                         onChange={(checked) => onOptionsChange({ ...cloneOptions, includeTriggers: checked })}
                     />
@@ -263,7 +265,7 @@ export default function EnvironmentSelector({ onEnvironmentsSelected, cloneOptio
                     disabled={!canContinue}
                     className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
-                    Continue to Validation →
+                    {t('next')} →
                 </button>
             </div>
 

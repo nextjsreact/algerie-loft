@@ -25,6 +25,7 @@ export class ClonerOrchestrator {
     private dataDeleter: DataDeleter
     private dataCopier: DataCopier
     private pgDumpCloner: PgDumpCloner
+    private isCloning: boolean = false
 
     constructor() {
         this.connectionValidator = new ConnectionValidator()
@@ -37,6 +38,15 @@ export class ClonerOrchestrator {
      * Start a clone operation
      */
     async startClone(request: CloneRequest): Promise<string> {
+        console.log('🟢 [ORCHESTRATOR] startClone called at:', new Date().toISOString())
+        
+        // Prevent multiple simultaneous clones
+        if (this.isCloning) {
+            console.log('⚠️ [ORCHESTRATOR] Clone already in progress, rejecting duplicate request')
+            throw new Error('A clone operation is already in progress. Please wait for it to complete.')
+        }
+        
+        this.isCloning = true
         const operationId = this.generateOperationId()
 
         // Initialize progress tracking
@@ -65,6 +75,9 @@ export class ClonerOrchestrator {
         // Start cloning in background
         this.executeClone(operationId, request).catch(error => {
             this.handleCloneError(operationId, error)
+        }).finally(() => {
+            this.isCloning = false
+            console.log('🟢 [ORCHESTRATOR] Clone operation finished, lock released')
         })
 
         return operationId

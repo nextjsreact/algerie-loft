@@ -72,6 +72,7 @@ export class PgDumpCloner {
             warnings: []
         }
 
+        console.log('🟡 [PG-DUMP-CLONER] cloneDatabase called at:', new Date().toISOString())
         this.log('info', 'Starting', 'Initializing pg_dump cloning process...')
 
         try {
@@ -86,7 +87,8 @@ export class PgDumpCloner {
             // We dump these separately as data-only to avoid permission issues with creating system schemas/types
             // We exclude tables that are known to cause version mismatch issues or contain transient data
             this.log('info', 'Dumping', 'Dumping system schemas (auth, storage) data...')
-            const systemDumpFile = path.join(this.tempDir, `dump_system_${Date.now()}.sql`)
+            const systemTimestamp = Date.now()
+            const systemDumpFile = path.join(this.tempDir, `dump_system_${systemTimestamp}.sql`)
             await this.executeDump(sourceConn, systemDumpFile, {
                 ...options,
                 schemaOnly: false,
@@ -117,9 +119,12 @@ export class PgDumpCloner {
             // We exclude auth/storage here as we handled them above
             // We also exclude other system schemas that are managed by Supabase extensions
             this.log('info', 'Dumping', 'Dumping user schemas (public, etc)...')
-            const userDumpFile = path.join(this.tempDir, `dump_user_${Date.now()}.sql`)
+            const userTimestamp = Date.now()
+            const userDumpFile = path.join(this.tempDir, `dump_user_${userTimestamp}.sql`)
             await this.executeDump(sourceConn, userDumpFile, {
                 ...options,
+                clean: true,  // Add DROP commands
+                ifExists: true,  // Add IF EXISTS to DROP commands
                 excludeSchemas: [
                     'auth',
                     'storage',
@@ -231,7 +236,10 @@ export class PgDumpCloner {
 
             -- 1. Reset public schema (drops all user tables and FKs to auth)
             DROP SCHEMA IF EXISTS public CASCADE; 
-            CREATE SCHEMA public; 
+            CREATE SCHEMA public;
+            
+            -- 3. Drop audit schema if it exists (to avoid conflicts)
+            DROP SCHEMA IF EXISTS audit CASCADE; 
             GRANT USAGE ON SCHEMA public TO postgres, anon, authenticated, service_role; 
             GRANT ALL ON SCHEMA public TO postgres;
             ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO postgres, service_role;
@@ -445,9 +453,11 @@ export class PgDumpCloner {
             let content = fs.readFileSync(inputFile, 'utf8');
             let modified = false;
 
+            this.log('info', 'Restoring', `Sanitizing dump file: ${inputFile}`);
+            this.log('info', 'Restoring', `File size: ${content.length} bytes`);
+            this.log('info', 'Restoring', `Contains CREATE TYPE: ${content.includes('CREATE TYPE')}`);
+
             // 1. Remove transaction_timeout (pg_dump 17 vs pg 15)
-            this.log('info', 'Debug', `Reading file: ${inputFile}`);
-            this.log('info', 'Debug', `File start: ${content.substring(0, 200)}`);
 
             if (content.includes('transaction_timeout')) {
                 this.log('info', 'Restoring', 'Sanitizing: replacing transaction_timeout with statement_timeout...');
@@ -506,6 +516,32 @@ export class PgDumpCloner {
                 this.log('info', 'Restoring', 'Sanitizing: adding IF NOT EXISTS to CREATE SCHEMA...');
                 content = content.replace(/^CREATE SCHEMA "?([a-zA-Z0-9_]+)"?;/gm, 'CREATE SCHEMA IF NOT EXISTS "$1";');
                 modified = true;
+            }
+
+            // 4b. Add DROP TYPE before each CREATE TYPE to avoid conflicts
+            if (content.includes('CREATE TYPE')) {
+                this.log('info', 'Restoring', 'Sanitizing: adding DROP TYPE before each CREATE TYPE...');
+                
+                const beforeLength = content.length;
+                
+                // Simple replacement: add DROP before each CREATE TYPE
+                content = content.replace(
+                    /CREATE TYPE ([a-zA-Z0-9_."]+)/g,
+                    (match, typeName) => {
+                        this.log('info', 'Restoring', `Replacing CREATE TYPE ${typeName}`);
+                        return `DROP TYPE IF EXISTS ${typeName} CASCADE;\nCREATE TYPE ${typeName}`;
+                    }
+                );
+                
+                const afterLength = content.length;
+                this.log('info', 'Restoring', `Content length before: ${beforeLength}, after: ${afterLength}`);
+                
+                if (afterLength > beforeLength) {
+                    modified = true;
+                    this.log('success', 'Restoring', 'Added DROP TYPE IF EXISTS before each CREATE TYPE');
+                } else {
+                    this.log('error', 'Restoring', '❌ Failed to add DROP TYPE - content unchanged!');
+                }
             }
 
             // 5. Inject TRUNCATE for system tables if this is the system dump
@@ -576,11 +612,26 @@ export class PgDumpCloner {
             }
 
             if (modified) {
-                fs.writeFileSync(inputFile, content);
-                this.log('info', 'Debug', 'Sanitized dump file written to disk.');
+                this.log('info', 'Restoring', `Writing sanitized file to: ${inputFile}`);
+                fs.writeFileSync(inputFile, content, 'utf8');
+                
+                // Verify the file was written correctly by reading it back
+                const verifyContent = fs.readFileSync(inputFile, 'utf8');
+                const hasDropType = verifyContent.includes('DROP TYPE IF EXISTS');
+                
+                this.log('success', 'Restoring', `✅ Dump file sanitized and saved (${verifyContent.length} bytes)`);
+                this.log('info', 'Restoring', `Verification: File contains DROP TYPE: ${hasDropType}`);
+                
+                if (!hasDropType && content.includes('DROP TYPE IF EXISTS')) {
+                    this.log('error', 'Restoring', '❌ CRITICAL: File was written but DROP TYPE commands are missing!');
+                }
+            } else {
+                this.log('warning', 'Restoring', '⚠️ No modifications were made to dump file');
             }
-        } catch (e) {
-            this.log('warning', 'Restoring', `Failed to sanitize dump file: ${e}`);
+        } catch (e: any) {
+            this.log('error', 'Restoring', `❌ Failed to sanitize dump file: ${e.message}`);
+            this.log('error', 'Restoring', `Stack: ${e.stack}`);
+            // Don't throw - continue with unsanitized file
         }
 
         return new Promise((resolve, reject) => {
@@ -666,6 +717,14 @@ export class PgDumpCloner {
             '--no-owner',           // Don't include ownership commands
             '--no-acl',             // Don't include privileges (GRANT/REVOKE) to avoid role errors
         ]
+
+        // Add --clean and --if-exists for safe restoration
+        if ((options as any).clean) {
+            args.push('--clean')
+        }
+        if ((options as any).ifExists) {
+            args.push('--if-exists')
+        }
 
         // Use INSERTs with ON CONFLICT DO NOTHING
         if (options.useInserts) {

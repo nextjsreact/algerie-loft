@@ -3830,5 +3830,85 @@
         }
       }
     }
+  },
+  "databaseCloner": {
+    "title": "استنساخ قاعدة البيانات",
+    "description": "استنسخ بيئات قاعدة البيانات بأمان",
+    "steps": {
+      "select": "اختيار",
+      "validate": "التحقق",
+      "options": "خيارات",
+      "clone": "استنساخ",
+      "results": "النتائج"
+    },
+    "selectEnvironment": {
+      "title": "اختر البيئات",
+      "source": "البيئة المصدر",
+      "target": "البيئة الهدف",
+      "selectSource": "اختر البيئة المصدر",
+      "selectTarget": "اختر البيئة الهدف",
+      "next": "التالي",
+      "environments": {
+        "production": "الإنتاج",
+        "test": "الاختبار",
+        "development": "التطوير"
+      }
+    },
+    "validation": {
+      "title": "التحقق من الاتصالات",
+      "validating": "جاري التحقق...",
+      "success": "تم التحقق من الاتصالات بنجاح",
+      "error": "خطأ في التحقق",
+      "sourceStatus": "حالة المصدر",
+      "targetStatus": "حالة الهدف",
+      "back": "رجوع",
+      "next": "التالي"
+    },
+    "options": {
+      "title": "خيارات الاستنساخ",
+      "dataOnly": "البيانات فقط",
+      "dataOnlyDesc": "استنساخ البيانات فقط (بدون المخطط)",
+      "schemaOnly": "المخطط فقط",
+      "schemaOnlyDesc": "استنساخ المخطط فقط (بدون البيانات)",
+      "dropExisting": "حذف الموجود",
+      "dropExistingDesc": "حذف الجداول الموجودة قبل الاستنساخ",
+      "excludeTables": "استبعاد الجداول",
+      "excludeTablesDesc": "الجداول المراد استبعادها من الاستنساخ (مفصولة بفواصل)",
+      "back": "رجوع",
+      "startClone": "بدء الاستنساخ"
+    },
+    "cloning": {
+      "title": "الاستنساخ قيد التقدم",
+      "progress": "التقدم",
+      "currentStep": "الخطوة الحالية",
+      "cancel": "إلغاء",
+      "steps": {
+        "preparing": "التحضير",
+        "dumping": "تصدير البيانات",
+        "transferring": "النقل",
+        "restoring": "الاستعادة",
+        "verifying": "التحقق",
+        "completed": "مكتمل"
+      }
+    },
+    "results": {
+      "title": "نتائج الاستنساخ",
+      "success": "نجح الاستنساخ!",
+      "failed": "فشل الاستنساخ",
+      "duration": "المدة",
+      "tablesCloned": "الجداول المستنسخة",
+      "rowsCloned": "الصفوف المستنسخة",
+      "errors": "الأخطاء",
+      "viewLogs": "عرض السجلات",
+      "newClone": "استنساخ جديد",
+      "backToDashboard": "العودة إلى لوحة التحكم"
+    },
+    "errors": {
+      "unauthorized": "غير مصرح. يمكن للمستخدمين المتميزين فقط الوصول إلى هذه الميزة.",
+      "sameEnvironment": "يجب أن تكون بيئات المصدر والهدف مختلفة",
+      "connectionFailed": "فشل الاتصال بقاعدة البيانات",
+      "cloneFailed": "فشل الاستنساخ",
+      "operationNotFound": "العملية غير موجودة"
+    }
   }
 }

@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
-import { orchestrator } from '@/lib/database-cloner/orchestrator-instance'
+import { getOrchestrator } from '@/lib/database-cloner/orchestrator-instance'
 
 export async function POST(
     request: NextRequest,
@@ -25,6 +25,7 @@ export async function POST(
         const { operationId } = await params
 
         // Cancel the operation
+        const orchestrator = getOrchestrator()
         const cancelled = orchestrator.cancelOperation(operationId)
 
         if (!cancelled) {

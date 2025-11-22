@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
-import { orchestrator } from '@/lib/database-cloner/orchestrator-instance'
+import { getOrchestrator } from '@/lib/database-cloner/orchestrator-instance'
 
 export async function GET(
     request: NextRequest,
@@ -25,6 +25,7 @@ export async function GET(
         const { operationId } = await params
 
         // Get operation status
+        const orchestrator = getOrchestrator()
         const status = orchestrator.getOperationStatus(operationId)
 
         if (!status) {

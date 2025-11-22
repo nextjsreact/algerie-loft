@@ -3119,7 +3119,9 @@
       "successMessage": "نجح! نظام المصادقة للمدير الأعلى يعمل بشكل صحيح.",
       "errorLoading": "خطأ في تحميل لوحة التحكم",
       "noData": "لا توجد بيانات متاحة",
-      "systemStatus": "حالة النظام",
+      "systemStatus": {
+        "title": "حالة النظام"
+      },
       "responseTime": "وقت الاستجابة",
       "activeUsers": "المستخدمون النشطون",
       "sessions": "الجلسات",

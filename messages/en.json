@@ -3308,7 +3308,9 @@
       "successMessage": "Success! The superuser authentication system is working correctly.",
       "errorLoading": "Error loading dashboard",
       "noData": "No data available",
-      "systemStatus": "System Status",
+      "systemStatus": {
+        "title": "System Status"
+      },
       "responseTime": "Response time",
       "activeUsers": "Active Users",
       "sessions": "Sessions",

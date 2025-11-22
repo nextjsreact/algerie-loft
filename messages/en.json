@@ -3385,7 +3385,14 @@
       "operational": "Operational",
       "warning": "Warning",
       "critical": "Critical",
-      "maintenance": "Maintenance"
+      "maintenance": "Maintenance",
+      "healthy": "Healthy",
+      "backup": {
+        "up_to_date": "Up to Date",
+        "pending": "Pending",
+        "outdated": "Outdated",
+        "failed": "Failed"
+      }
     },
     "stats": {
       "quickStats": "Quick Stats",

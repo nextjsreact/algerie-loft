@@ -3196,7 +3196,14 @@
       "operational": "تشغيلي",
       "warning": "تحذير",
       "critical": "حرج",
-      "maintenance": "صيانة"
+      "maintenance": "صيانة",
+      "healthy": "سليم",
+      "backup": {
+        "up_to_date": "محدث",
+        "pending": "قيد الانتظار",
+        "outdated": "قديم",
+        "failed": "فشل"
+      }
     },
     "stats": {
       "quickStats": "إحصائيات سريعة",

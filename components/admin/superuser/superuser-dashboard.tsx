@@ -131,7 +131,7 @@ export function SuperuserDashboard() {
           </CardHeader>
           <CardContent>
             <div className={`text-2xl font-bold ${getHealthStatusColor(systemMetrics.system_health)}`}>
-              {systemMetrics.system_health}
+              {t(`status.${systemMetrics.system_health.toLowerCase()}`)}
             </div>
             <p className="text-xs text-muted-foreground">
               {t('dashboard.responseTime')}: {systemMetrics.response_time_avg}ms
@@ -173,7 +173,7 @@ export function SuperuserDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">
               <Badge variant={systemMetrics.backup_status === 'UP_TO_DATE' ? 'default' : 'destructive'}>
-                {systemMetrics.backup_status}
+                {t(`status.backup.${systemMetrics.backup_status.toLowerCase()}`)}
               </Badge>
             </div>
             <p className="text-xs text-muted-foreground">

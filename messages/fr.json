@@ -3153,7 +3153,14 @@
       "operational": "Opérationnel",
       "warning": "Attention",
       "critical": "Critique",
-      "maintenance": "Maintenance"
+      "maintenance": "Maintenance",
+      "healthy": "Sain",
+      "backup": {
+        "up_to_date": "À jour",
+        "pending": "En attente",
+        "outdated": "Obsolète",
+        "failed": "Échoué"
+      }
     },
     "stats": {
       "quickStats": "Statistiques Rapides",

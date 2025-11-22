@@ -3358,6 +3358,10 @@
           "title": "Backups",
           "description": "Backup management"
         },
+        "databaseCloner": {
+          "title": "Database Cloner",
+          "description": "Clone database environments"
+        },
         "configuration": {
           "title": "Configuration",
           "description": "System configuration"

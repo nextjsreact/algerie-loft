@@ -3169,6 +3169,10 @@
           "title": "النسخ الاحتياطية",
           "description": "إدارة النسخ الاحتياطية"
         },
+        "databaseCloner": {
+          "title": "استنساخ قاعدة البيانات",
+          "description": "استنساخ بيئات قاعدة البيانات"
+        },
         "configuration": {
           "title": "التكوين",
           "description": "تكوين النظام"

@@ -3112,6 +3112,9 @@
         "backup": {
           "title": "Sauvegardes"
         },
+        "databaseCloner": {
+          "title": "Clonage de Base de Données"
+        },
         "audit": {
           "title": "Audit"
         },

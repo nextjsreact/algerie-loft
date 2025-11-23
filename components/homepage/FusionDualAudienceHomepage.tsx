@@ -94,6 +94,8 @@ const heroSlides = [
   }
 ];
 
+import { getLoftImage } from '@/config/featured-lofts-images';
+
 // Données réelles de lofts algériens
 const realLofts = [
   {
@@ -118,7 +120,7 @@ const realLofts = [
     rating: 4.8,
     reviews: 127,
     amenities: ['Wifi', 'Car', 'Coffee', 'Tv'],
-    image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop"
+    image: getLoftImage('loft1')
   },
   {
     id: 2,
@@ -142,7 +144,7 @@ const realLofts = [
     rating: 4.9,
     reviews: 89,
     amenities: ['Wifi', 'Car', 'Coffee', 'Tv'],
-    image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=500&h=300&fit=crop"
+    image: getLoftImage('loft2')
   },
   {
     id: 3,
@@ -166,7 +168,7 @@ const realLofts = [
     rating: 4.7,
     reviews: 156,
     amenities: ['Wifi', 'Coffee', 'Tv'],
-    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=500&h=300&fit=crop"
+    image: getLoftImage('loft3')
   }
 ];
 

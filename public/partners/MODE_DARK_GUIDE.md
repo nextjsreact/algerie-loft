@@ -52,17 +52,19 @@ Si votre logo :
 
 Ouvrez le fichier SVG dans un éditeur de texte et changez les couleurs :
 
-**Avant (light) :**
+**Version light (pour fond blanc) :**
 ```xml
-<text fill="#ffffff">Mon Logo</text>
+<text fill="#ffffff">Mon Logo</text>  <!-- Blanc sur fond clair -->
 <path fill="#fff" d="..."/>
 ```
 
-**Après (dark) :**
+**Version dark (pour fond gris foncé #1f2937) :**
 ```xml
-<text fill="#e5e7eb">Mon Logo</text>  <!-- Gris clair -->
-<path fill="#d1d5db" d="..."/>        <!-- Gris moyen -->
+<text fill="#ffffff">Mon Logo</text>  <!-- Blanc sur fond sombre -->
+<path fill="#ffffff" d="..."/>        <!-- Contraste maximal -->
 ```
+
+**Note :** Utilisez `#ffffff` (blanc pur) dans les deux cas si votre logo a du texte blanc. Le fond change, pas le logo !
 
 ### Méthode 2 : Utiliser un éditeur graphique
 
@@ -144,12 +146,27 @@ public/partners/
 
 ## 🎯 Couleurs recommandées pour mode dark
 
-| Élément | Mode Light | Mode Dark |
-|---------|-----------|-----------|
-| Texte principal | `#ffffff` | `#e5e7eb` |
-| Texte secondaire | `#f0f0f0` | `#d1d5db` |
-| Bordures | `#ffffff` | `#9ca3af` |
-| Fond (si nécessaire) | Transparent | Transparent |
+### Contexte des fonds
+- **Mode Light** : Fond blanc (`bg-white`)
+- **Mode Dark** : Fond gris foncé (`dark:bg-gray-800` = `#1f2937`)
+
+### Couleurs de texte
+
+| Élément | Mode Light | Mode Dark | Raison |
+|---------|-----------|-----------|--------|
+| Texte principal | `#ffffff` (blanc) | `#ffffff` (blanc) | Contraste maximal |
+| Texte secondaire | `#f0f0f0` | `#f9fafb` | Bon contraste |
+| Bordures | `#ffffff` | `#d1d5db` | Visible mais subtil |
+| Fond (si nécessaire) | Transparent | Transparent | S'adapte au thème |
+
+**⚠️ À éviter en mode dark :**
+- `#e5e7eb` (trop clair, se confond avec le fond gris)
+- Couleurs pastel claires
+- Gris très clairs
+
+**✅ Recommandé :**
+- `#ffffff` pour un contraste maximal
+- `#f9fafb` pour les éléments secondaires
 
 ---
 

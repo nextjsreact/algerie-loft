@@ -9,6 +9,7 @@ import BackToTop from '@/components/ui/BackToTop';
 import Image from 'next/image';
 import { useResponsiveAnimations } from '@/hooks/useResponsiveAnimations';
 import { usePerformanceOptimization } from '@/hooks/usePerformanceOptimization';
+import { PartnerLogos } from './PartnerLogos';
 
 interface FusionDualAudienceHomepageProps {
   locale: string;
@@ -1370,6 +1371,9 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
             </motion.div>
           </div>
         </motion.section>
+
+        {/* Partner Logos Section */}
+        <PartnerLogos locale={locale} />
 
         {/* Footer */}
         <footer className="bg-gray-900 text-white py-16">

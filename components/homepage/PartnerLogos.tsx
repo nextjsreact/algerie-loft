@@ -16,48 +16,49 @@ interface PartnerLogosProps {
 }
 
 // Liste des partenaires - À personnaliser avec vos vrais partenaires
+// Utilisez des URLs d'images réelles ou ajoutez vos logos dans public/partners/
 const partners: Partner[] = [
   {
     id: 'partner-1',
-    name: 'Airbnb',
-    logo: '/partners/airbnb-logo.png',
-    website: 'https://www.airbnb.com',
-    description: 'Plateforme de location de logements'
+    name: 'Partenaire 1',
+    logo: 'https://via.placeholder.com/200x80/3B82F6/FFFFFF?text=Partenaire+1',
+    website: 'https://www.example.com',
+    description: 'Description du partenaire 1'
   },
   {
     id: 'partner-2',
-    name: 'Booking.com',
-    logo: '/partners/booking-logo.png',
-    website: 'https://www.booking.com',
-    description: 'Réservation d\'hébergements en ligne'
+    name: 'Partenaire 2',
+    logo: 'https://via.placeholder.com/200x80/10B981/FFFFFF?text=Partenaire+2',
+    website: 'https://www.example.com',
+    description: 'Description du partenaire 2'
   },
   {
     id: 'partner-3',
-    name: 'Expedia',
-    logo: '/partners/expedia-logo.png',
-    website: 'https://www.expedia.com',
-    description: 'Agence de voyage en ligne'
+    name: 'Partenaire 3',
+    logo: 'https://via.placeholder.com/200x80/F59E0B/FFFFFF?text=Partenaire+3',
+    website: 'https://www.example.com',
+    description: 'Description du partenaire 3'
   },
   {
     id: 'partner-4',
-    name: 'TripAdvisor',
-    logo: '/partners/tripadvisor-logo.png',
-    website: 'https://www.tripadvisor.com',
-    description: 'Avis et réservations de voyages'
+    name: 'Partenaire 4',
+    logo: 'https://via.placeholder.com/200x80/EF4444/FFFFFF?text=Partenaire+4',
+    website: 'https://www.example.com',
+    description: 'Description du partenaire 4'
   },
   {
     id: 'partner-5',
-    name: 'Hotels.com',
-    logo: '/partners/hotels-logo.png',
-    website: 'https://www.hotels.com',
-    description: 'Réservation d\'hôtels'
+    name: 'Partenaire 5',
+    logo: 'https://via.placeholder.com/200x80/8B5CF6/FFFFFF?text=Partenaire+5',
+    website: 'https://www.example.com',
+    description: 'Description du partenaire 5'
   },
   {
     id: 'partner-6',
-    name: 'Agoda',
-    logo: '/partners/agoda-logo.png',
-    website: 'https://www.agoda.com',
-    description: 'Réservation d\'hébergements'
+    name: 'Partenaire 6',
+    logo: 'https://via.placeholder.com/200x80/EC4899/FFFFFF?text=Partenaire+6',
+    website: 'https://www.example.com',
+    description: 'Description du partenaire 6'
   }
 ];
 

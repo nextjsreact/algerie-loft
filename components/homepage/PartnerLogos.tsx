@@ -16,49 +16,49 @@ interface PartnerLogosProps {
 }
 
 // Liste des partenaires - À personnaliser avec vos vrais partenaires
-// Utilisez des URLs d'images réelles ou ajoutez vos logos dans public/partners/
+// Remplacez ces SVG par vos vrais logos dans public/partners/
 const partners: Partner[] = [
   {
     id: 'partner-1',
     name: 'Partenaire 1',
-    logo: 'https://via.placeholder.com/200x80/3B82F6/FFFFFF?text=Partenaire+1',
+    logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiMzQjgyRjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlBhcnRlbmFpcmUgMTwvdGV4dD48L3N2Zz4=',
     website: 'https://www.example.com',
     description: 'Description du partenaire 1'
   },
   {
     id: 'partner-2',
     name: 'Partenaire 2',
-    logo: 'https://via.placeholder.com/200x80/10B981/FFFFFF?text=Partenaire+2',
+    logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiMxMEI5ODEiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlBhcnRlbmFpcmUgMjwvdGV4dD48L3N2Zz4=',
     website: 'https://www.example.com',
     description: 'Description du partenaire 2'
   },
   {
     id: 'partner-3',
     name: 'Partenaire 3',
-    logo: 'https://via.placeholder.com/200x80/F59E0B/FFFFFF?text=Partenaire+3',
+    logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiNGNTlFMEIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlBhcnRlbmFpcmUgMzwvdGV4dD48L3N2Zz4=',
     website: 'https://www.example.com',
     description: 'Description du partenaire 3'
   },
   {
     id: 'partner-4',
     name: 'Partenaire 4',
-    logo: 'https://via.placeholder.com/200x80/EF4444/FFFFFF?text=Partenaire+4',
+    logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiNFRjQ0NDQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlBhcnRlbmFpcmUgNDwvdGV4dD48L3N2Zz4=',
     website: 'https://www.example.com',
     description: 'Description du partenaire 4'
   },
   {
     id: 'partner-5',
     name: 'Partenaire 5',
-    logo: 'https://via.placeholder.com/200x80/8B5CF6/FFFFFF?text=Partenaire+5',
+    logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiM4QjVDRjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlBhcnRlbmFpcmUgNTwvdGV4dD48L3N2Zz4=',
     website: 'https://www.example.com',
     description: 'Description du partenaire 5'
   },
   {
     id: 'partner-6',
-    name: 'Partenaire 6',
-    logo: 'https://via.placeholder.com/200x80/EC4899/FFFFFF?text=Partenaire+6',
-    website: 'https://www.example.com',
-    description: 'Description du partenaire 6'
+    name: 'Destination Algeria',
+    logo: '/partners/destination-algerie-blanc-logo.svg',
+    website: 'https://www.destination-algeria.com',
+    description: 'Partenaire touristique officiel'
   }
 ];
 
@@ -104,23 +104,33 @@ export function PartnerLogos({ locale }: PartnerLogosProps) {
               className="group flex items-center justify-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105 border border-gray-100 dark:border-gray-700"
               title={partner.description || partner.name}
             >
-              <div className="relative w-full h-16 grayscale group-hover:grayscale-0 transition-all duration-300 opacity-70 group-hover:opacity-100">
-                <Image
-                  src={partner.logo}
-                  alt={`${partner.name} logo`}
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 16vw"
-                  onError={(e) => {
-                    // Fallback si l'image n'existe pas
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    const parent = target.parentElement;
-                    if (parent) {
-                      parent.innerHTML = `<div class="flex items-center justify-center w-full h-full text-gray-400 dark:text-gray-500 font-semibold text-sm">${partner.name}</div>`;
-                    }
-                  }}
-                />
+              <div className="relative w-full h-16 flex items-center justify-center grayscale group-hover:grayscale-0 transition-all duration-300 opacity-70 group-hover:opacity-100">
+                {partner.logo.startsWith('data:') ? (
+                  // SVG en base64 - utiliser img directement
+                  <img
+                    src={partner.logo}
+                    alt={`${partner.name} logo`}
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  // Image externe - utiliser Next Image
+                  <Image
+                    src={partner.logo}
+                    alt={`${partner.name} logo`}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                    onError={(e) => {
+                      // Fallback si l'image n'existe pas
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `<div class="flex items-center justify-center w-full h-full text-gray-400 dark:text-gray-500 font-semibold text-sm">${partner.name}</div>`;
+                      }
+                    }}
+                  />
+                )}
               </div>
             </a>
           ))}

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Star, MapPin, Wifi, Car, Coffee, Tv, Users, Phone, Mail, Calendar } from 'lucide-react';
+import { PartnerLogos } from './PartnerLogos';
 
 interface DualAudienceHomepageProps {
   locale: string;
@@ -595,6 +596,9 @@ export default function DualAudienceHomepage({ locale }: DualAudienceHomepagePro
             </div>
           </div>
         </section>
+
+        {/* Partner Logos Section */}
+        <PartnerLogos locale={locale} />
       </main>
     </div>
   );

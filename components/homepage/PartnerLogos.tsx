@@ -1,0 +1,147 @@
+'use client';
+
+import React from 'react';
+import Image from 'next/image';
+
+interface Partner {
+  id: string;
+  name: string;
+  logo: string;
+  website: string;
+  description?: string;
+}
+
+interface PartnerLogosProps {
+  locale: string;
+}
+
+// Liste des partenaires - À personnaliser avec vos vrais partenaires
+const partners: Partner[] = [
+  {
+    id: 'partner-1',
+    name: 'Airbnb',
+    logo: '/partners/airbnb-logo.png',
+    website: 'https://www.airbnb.com',
+    description: 'Plateforme de location de logements'
+  },
+  {
+    id: 'partner-2',
+    name: 'Booking.com',
+    logo: '/partners/booking-logo.png',
+    website: 'https://www.booking.com',
+    description: 'Réservation d\'hébergements en ligne'
+  },
+  {
+    id: 'partner-3',
+    name: 'Expedia',
+    logo: '/partners/expedia-logo.png',
+    website: 'https://www.expedia.com',
+    description: 'Agence de voyage en ligne'
+  },
+  {
+    id: 'partner-4',
+    name: 'TripAdvisor',
+    logo: '/partners/tripadvisor-logo.png',
+    website: 'https://www.tripadvisor.com',
+    description: 'Avis et réservations de voyages'
+  },
+  {
+    id: 'partner-5',
+    name: 'Hotels.com',
+    logo: '/partners/hotels-logo.png',
+    website: 'https://www.hotels.com',
+    description: 'Réservation d\'hôtels'
+  },
+  {
+    id: 'partner-6',
+    name: 'Agoda',
+    logo: '/partners/agoda-logo.png',
+    website: 'https://www.agoda.com',
+    description: 'Réservation d\'hébergements'
+  }
+];
+
+const translations = {
+  fr: {
+    title: 'Nos Partenaires',
+    subtitle: 'Ils nous font confiance'
+  },
+  en: {
+    title: 'Our Partners',
+    subtitle: 'They trust us'
+  },
+  ar: {
+    title: 'شركاؤنا',
+    subtitle: 'يثقون بنا'
+  }
+};
+
+export function PartnerLogos({ locale }: PartnerLogosProps) {
+  const t = translations[locale as keyof typeof translations] || translations.fr;
+
+  return (
+    <section className="py-16 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <div className="container mx-auto px-4">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">
+            {t.title}
+          </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
+            {t.subtitle}
+          </p>
+        </div>
+
+        {/* Partner Logos Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 items-center">
+          {partners.map((partner) => (
+            <a
+              key={partner.id}
+              href={partner.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center justify-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105 border border-gray-100 dark:border-gray-700"
+              title={partner.description || partner.name}
+            >
+              <div className="relative w-full h-16 grayscale group-hover:grayscale-0 transition-all duration-300 opacity-70 group-hover:opacity-100">
+                <Image
+                  src={partner.logo}
+                  alt={`${partner.name} logo`}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                  onError={(e) => {
+                    // Fallback si l'image n'existe pas
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent) {
+                      parent.innerHTML = `<div class="flex items-center justify-center w-full h-full text-gray-400 dark:text-gray-500 font-semibold text-sm">${partner.name}</div>`;
+                    }
+                  }}
+                />
+              </div>
+            </a>
+          ))}
+        </div>
+
+        {/* Optional: Add a CTA for becoming a partner */}
+        <div className="text-center mt-12">
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            {locale === 'fr' && 'Vous souhaitez devenir partenaire ?'}
+            {locale === 'en' && 'Want to become a partner?'}
+            {locale === 'ar' && 'هل تريد أن تصبح شريكاً؟'}
+          </p>
+          <a
+            href={`/${locale}/contact`}
+            className="inline-block px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg"
+          >
+            {locale === 'fr' && 'Contactez-nous'}
+            {locale === 'en' && 'Contact us'}
+            {locale === 'ar' && 'اتصل بنا'}
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}

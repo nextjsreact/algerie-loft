@@ -57,8 +57,8 @@ const partners: Partner[] = [
   {
     id: 'partner-6',
     name: 'Destination Algeria',
-    logo: '/partners/destination-algerie-blanc-logo.svg', // Version avec texte blanc (pour fond clair)
-    logoDark: '/partners/destination-algerie-dark-logo.svg', // Version avec texte gris clair (pour fond sombre)
+    logo: '/partners/destination-algerie-light-logo.svg',  // Texte foncé pour fond clair
+    logoDark: '/partners/destination-algerie-dark-logo.svg', // Texte blanc pour fond sombre
     website: 'https://www.destination-algeria.com',
     description: 'Partenaire touristique officiel'
   }

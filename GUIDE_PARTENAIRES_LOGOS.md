@@ -56,6 +56,21 @@ const partners: Partner[] = [
 ];
 ```
 
+**Pour les logos avec texte blanc (mode dark) :**
+
+Si votre logo a du texte blanc ou des couleurs claires, créez deux versions :
+
+```typescript
+{
+  id: 'partner-nouveau',
+  name: 'Nom du Partenaire',
+  logo: '/partners/nom-partenaire-light.svg',      // Pour fond clair
+  logoDark: '/partners/nom-partenaire-dark.svg',   // Pour fond sombre (optionnel)
+  website: 'https://www.site-partenaire.com',
+  description: 'Description du partenaire'
+}
+```
+
 ### Étape 4 : Tester
 
 1. Lancez le serveur de développement : `npm run dev`
@@ -220,6 +235,57 @@ Dans `components/homepage/DualAudienceHomepage.tsx`, commentez :
 {/* Partner Logos Section */}
 {/* <PartnerLogos locale={locale} /> */}
 ```
+
+## 🌓 Gestion du mode Dark
+
+### Pourquoi deux versions ?
+
+Les logos avec texte blanc ou couleurs claires ne sont pas visibles sur fond sombre. Le système supporte deux versions :
+
+- **logo** : Version pour mode light (fond clair)
+- **logoDark** : Version pour mode dark (fond sombre) - optionnel
+
+### Comment créer une version dark ?
+
+**Option 1 : Modifier le SVG**
+
+Changez les couleurs dans le fichier SVG :
+```xml
+<!-- Version light (texte blanc) -->
+<text fill="#ffffff">Mon Logo</text>
+
+<!-- Version dark (texte gris clair) -->
+<text fill="#e5e7eb">Mon Logo</text>
+```
+
+**Option 2 : Utiliser un éditeur**
+
+1. Ouvrez le SVG dans Figma, Illustrator ou Inkscape
+2. Changez les couleurs claires en couleurs plus foncées
+3. Exportez sous un nouveau nom : `logo-dark.svg`
+
+### Exemple complet
+
+**Fichiers :**
+- `destination-algerie-blanc-logo.svg` (texte blanc)
+- `destination-algerie-dark-logo.svg` (texte gris clair)
+
+**Code :**
+```typescript
+{
+  id: 'destination-algeria',
+  name: 'Destination Algeria',
+  logo: '/partners/destination-algerie-blanc-logo.svg',
+  logoDark: '/partners/destination-algerie-dark-logo.svg',
+  website: 'https://www.destination-algeria.com'
+}
+```
+
+**Résultat :** Le logo bascule automatiquement selon le thème !
+
+### Si vous n'avez qu'une version
+
+Pas de problème ! Si vous ne spécifiez pas `logoDark`, le même logo sera utilisé dans les deux modes. L'effet grayscale aide à l'adapter visuellement.
 
 ## Dépannage
 

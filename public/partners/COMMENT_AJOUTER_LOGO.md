@@ -94,6 +94,28 @@ GET /partners/mon-logo 404
 }
 ```
 
+## 🌓 Support du mode Dark
+
+Si votre logo a du texte blanc ou des couleurs claires qui ne sont pas visibles en mode sombre, créez deux versions :
+
+**Fichiers :**
+- `public/partners/mon-logo-light.svg` (texte blanc/clair)
+- `public/partners/mon-logo-dark.svg` (texte gris/foncé)
+
+**Code :**
+```typescript
+{
+  id: 'mon-partenaire',
+  name: 'Mon Partenaire',
+  logo: '/partners/mon-logo-light.svg',      // Pour fond clair
+  logoDark: '/partners/mon-logo-dark.svg',   // Pour fond sombre
+  website: 'https://www.mon-partenaire.com',
+  description: 'Description'
+}
+```
+
+**Le système bascule automatiquement entre les deux versions selon le thème !**
+
 ## 🚀 Formats supportés
 
 - ✅ `.svg` (recommandé)

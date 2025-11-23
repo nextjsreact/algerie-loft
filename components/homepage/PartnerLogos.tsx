@@ -7,6 +7,7 @@ interface Partner {
   id: string;
   name: string;
   logo: string;
+  logoDark?: string; // Logo alternatif pour le mode sombre
   website: string;
   description?: string;
 }
@@ -56,7 +57,8 @@ const partners: Partner[] = [
   {
     id: 'partner-6',
     name: 'Destination Algeria',
-    logo: '/partners/destination-algerie-blanc-logo.svg',
+    logo: '/partners/destination-algerie-blanc-logo.svg', // Version avec texte blanc (pour fond clair)
+    logoDark: '/partners/destination-algerie-dark-logo.svg', // Version avec texte gris clair (pour fond sombre)
     website: 'https://www.destination-algeria.com',
     description: 'Partenaire touristique officiel'
   }
@@ -113,23 +115,34 @@ export function PartnerLogos({ locale }: PartnerLogosProps) {
                     className="w-full h-full object-contain"
                   />
                 ) : (
-                  // Image externe - utiliser Next Image
-                  <Image
-                    src={partner.logo}
-                    alt={`${partner.name} logo`}
-                    fill
-                    className="object-contain"
-                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 16vw"
-                    onError={(e) => {
-                      // Fallback si l'image n'existe pas
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const parent = target.parentElement;
-                      if (parent) {
-                        parent.innerHTML = `<div class="flex items-center justify-center w-full h-full text-gray-400 dark:text-gray-500 font-semibold text-sm">${partner.name}</div>`;
-                      }
-                    }}
-                  />
+                  <>
+                    {/* Logo pour mode light */}
+                    <Image
+                      src={partner.logo}
+                      alt={`${partner.name} logo`}
+                      fill
+                      className={`object-contain ${partner.logoDark ? 'dark:hidden' : ''}`}
+                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const parent = target.parentElement;
+                        if (parent) {
+                          parent.innerHTML = `<div class="flex items-center justify-center w-full h-full text-gray-400 dark:text-gray-500 font-semibold text-sm">${partner.name}</div>`;
+                        }
+                      }}
+                    />
+                    {/* Logo pour mode dark (si disponible) */}
+                    {partner.logoDark && (
+                      <Image
+                        src={partner.logoDark}
+                        alt={`${partner.name} logo`}
+                        fill
+                        className="object-contain hidden dark:block"
+                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                      />
+                    )}
+                  </>
                 )}
               </div>
             </a>

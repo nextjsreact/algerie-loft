@@ -1,0 +1,7 @@
+<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+  <text x="100" y="35" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#34E0A1" text-anchor="middle">
+    TripAdvisor
+  </text>
+  <circle cx="70" cy="50" r="8" fill="#34E0A1"/>
+  <circle cx="130" cy="50" r="8" fill="#34E0A1"/>
+</svg>

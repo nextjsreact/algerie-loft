@@ -16,46 +16,45 @@ interface PartnerLogosProps {
   locale: string;
 }
 
-// Liste des partenaires - À personnaliser avec vos vrais partenaires
-// Remplacez ces SVG par vos vrais logos dans public/partners/
+// Partenaires touristiques officiels
 const partners: Partner[] = [
   {
-    id: 'partner-1',
-    name: 'Partenaire 1',
-    logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiMzQjgyRjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlBhcnRlbmFpcmUgMTwvdGV4dD48L3N2Zz4=',
-    website: 'https://www.example.com',
-    description: 'Description du partenaire 1'
+    id: 'airbnb',
+    name: 'Airbnb',
+    logo: '/partners/airbnb-logo.svg',
+    website: 'https://www.airbnb.com',
+    description: 'Plateforme de location de logements'
   },
   {
-    id: 'partner-2',
-    name: 'Partenaire 2',
-    logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiMxMEI5ODEiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlBhcnRlbmFpcmUgMjwvdGV4dD48L3N2Zz4=',
-    website: 'https://www.example.com',
-    description: 'Description du partenaire 2'
+    id: 'booking',
+    name: 'Booking.com',
+    logo: '/partners/booking-logo.svg',
+    website: 'https://www.booking.com',
+    description: 'Réservation d\'hôtels et hébergements'
   },
   {
-    id: 'partner-3',
-    name: 'Partenaire 3',
-    logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiNGNTlFMEIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlBhcnRlbmFpcmUgMzwvdGV4dD48L3N2Zz4=',
-    website: 'https://www.example.com',
-    description: 'Description du partenaire 3'
+    id: 'expedia',
+    name: 'Expedia',
+    logo: '/partners/expedia-logo.svg',
+    website: 'https://www.expedia.com',
+    description: 'Agence de voyage en ligne'
   },
   {
-    id: 'partner-4',
-    name: 'Partenaire 4',
-    logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiNFRjQ0NDQiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlBhcnRlbmFpcmUgNDwvdGV4dD48L3N2Zz4=',
-    website: 'https://www.example.com',
-    description: 'Description du partenaire 4'
+    id: 'tripadvisor',
+    name: 'TripAdvisor',
+    logo: '/partners/tripadvisor-logo.svg',
+    website: 'https://www.tripadvisor.com',
+    description: 'Avis et recommandations de voyage'
   },
   {
-    id: 'partner-5',
-    name: 'Partenaire 5',
-    logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIGZpbGw9IiM4QjVDRjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE2IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlBhcnRlbmFpcmUgNTwvdGV4dD48L3N2Zz4=',
-    website: 'https://www.example.com',
-    description: 'Description du partenaire 5'
+    id: 'hotels',
+    name: 'Hotels.com',
+    logo: '/partners/hotels-logo.svg',
+    website: 'https://www.hotels.com',
+    description: 'Réservation d\'hôtels dans le monde'
   },
   {
-    id: 'partner-6',
+    id: 'destination-algeria',
     name: 'Destination Algeria',
     logo: '/partners/destination-algerie-light-logo.svg',  // Texte foncé pour fond clair
     logoDark: '/partners/destination-algerie-dark-logo.svg', // Texte blanc pour fond sombre

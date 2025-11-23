@@ -54,8 +54,8 @@ Ouvrez le fichier SVG dans un éditeur de texte et changez les couleurs :
 
 **Version light (pour fond blanc) :**
 ```xml
-<text fill="#ffffff">Mon Logo</text>  <!-- Blanc sur fond clair -->
-<path fill="#fff" d="..."/>
+<text fill="#1f2937">Mon Logo</text>  <!-- Gris foncé sur fond clair -->
+<path fill="#1f2937" d="..."/>        <!-- Bien visible -->
 ```
 
 **Version dark (pour fond gris foncé #1f2937) :**
@@ -64,7 +64,9 @@ Ouvrez le fichier SVG dans un éditeur de texte et changez les couleurs :
 <path fill="#ffffff" d="..."/>        <!-- Contraste maximal -->
 ```
 
-**Note :** Utilisez `#ffffff` (blanc pur) dans les deux cas si votre logo a du texte blanc. Le fond change, pas le logo !
+**Règle simple :**
+- **Mode light** → Texte foncé (`#1f2937`) sur fond blanc
+- **Mode dark** → Texte blanc (`#ffffff`) sur fond gris foncé
 
 ### Méthode 2 : Utiliser un éditeur graphique
 
@@ -127,8 +129,8 @@ public/partners/
 **Fichiers :**
 ```
 public/partners/
-├── destination-algerie-blanc-logo.svg  (texte blanc #fff)
-└── destination-algerie-dark-logo.svg   (texte gris #e5e7eb)
+├── destination-algerie-light-logo.svg  (texte foncé #1f2937)
+└── destination-algerie-dark-logo.svg   (texte blanc #ffffff)
 ```
 
 **Code :**
@@ -136,8 +138,8 @@ public/partners/
 {
   id: 'destination-algeria',
   name: 'Destination Algeria',
-  logo: '/partners/destination-algerie-blanc-logo.svg',
-  logoDark: '/partners/destination-algerie-dark-logo.svg',
+  logo: '/partners/destination-algerie-light-logo.svg',   // Texte foncé
+  logoDark: '/partners/destination-algerie-dark-logo.svg', // Texte blanc
   website: 'https://www.destination-algeria.com'
 }
 ```

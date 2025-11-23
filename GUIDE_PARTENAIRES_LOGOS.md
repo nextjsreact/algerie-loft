@@ -23,14 +23,18 @@ Les logos des partenaires s'affichent sur la page d'accueil du site, juste avant
 
 ### Étape 1 : Préparer le logo
 
-1. **Format** : PNG avec fond transparent (recommandé)
-2. **Dimensions** : 200x80 pixels (ratio 2.5:1)
-3. **Taille** : Maximum 100 KB
-4. **Nom du fichier** : `nom-partenaire-logo.png`
+1. **Format** : SVG (recommandé) ou PNG avec fond transparent
+2. **Dimensions** : 200x80 pixels (ratio 2.5:1) pour PNG/JPG - SVG s'adapte automatiquement
+3. **Taille** : Maximum 100 KB (SVG généralement < 10 KB)
+4. **Nom du fichier** : `nom-partenaire-logo.svg` ou `.png`
 
 ### Étape 2 : Ajouter le logo au projet
 
 Placez le fichier logo dans le dossier :
+```
+public/partners/nom-partenaire-logo.svg
+```
+ou
 ```
 public/partners/nom-partenaire-logo.png
 ```
@@ -45,7 +49,7 @@ const partners: Partner[] = [
   {
     id: 'partner-nouveau',
     name: 'Nom du Partenaire',
-    logo: '/partners/nom-partenaire-logo.png',
+    logo: '/partners/nom-partenaire-logo.svg',  // ou .png, .webp, .jpg
     website: 'https://www.site-partenaire.com',
     description: 'Description du partenaire'
   }
@@ -117,24 +121,47 @@ className="group flex items-center justify-center p-6 bg-white dark:bg-gray-800 
 
 ## Exemples de logos
 
-### Logos avec fond transparent (recommandé)
+### Logos SVG (recommandé - qualité parfaite)
 
 ```
-✅ airbnb-logo.png (fond transparent)
-✅ booking-logo.png (fond transparent)
-✅ expedia-logo.png (fond transparent)
+✅ airbnb-logo.svg (vectoriel, léger, parfait)
+✅ booking-logo.svg (s'adapte à toutes les tailles)
+✅ expedia-logo.svg (poids minimal)
 ```
 
-### Logos avec fond blanc (acceptable)
+### Logos PNG (acceptable - avec transparence)
 
 ```
-⚠️ partner-logo.png (fond blanc)
+✅ tripadvisor-logo.png (fond transparent)
+✅ hotels-logo.png (fond transparent)
+```
+
+### Logos avec fond blanc (à éviter)
+
+```
+⚠️ partner-logo.jpg (fond blanc, moins flexible)
 ```
 
 ## Optimisation des images
 
-### Avec ImageMagick
+### Optimiser les SVG (recommandé)
 
+**Outils en ligne :**
+- [SVGOMG](https://jakearchibald.github.io/svgomg/) - Optimisation SVG interactive
+- [SVG Optimizer](https://svgoptimizer.com/) - Compression SVG
+
+**Ligne de commande :**
+```bash
+# Installer SVGO
+npm install -g svgo
+
+# Optimiser un SVG
+svgo logo.svg -o logo-optimise.svg
+```
+
+### Optimiser les PNG
+
+**Avec ImageMagick :**
 ```bash
 # Redimensionner
 convert logo.png -resize 200x80 logo-optimise.png
@@ -146,8 +173,7 @@ convert logo.png -quality 85 -strip logo-optimise.png
 convert logo.png -resize 200x80 -quality 85 -strip logo-optimise.png
 ```
 
-### Avec des outils en ligne
-
+**Outils en ligne :**
 - [TinyPNG](https://tinypng.com/) - Compression PNG
 - [Squoosh](https://squoosh.app/) - Optimisation d'images
 - [Remove.bg](https://www.remove.bg/) - Supprimer le fond

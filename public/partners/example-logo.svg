@@ -1,0 +1,11 @@
+<svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Exemple de logo simple -->
+  <rect width="200" height="80" fill="#3B82F6" rx="8"/>
+  <circle cx="40" cy="40" r="20" fill="white" opacity="0.9"/>
+  <text x="70" y="45" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white">
+    LOGO
+  </text>
+  <text x="70" y="60" font-family="Arial, sans-serif" font-size="10" fill="white" opacity="0.8">
+    Example Partner
+  </text>
+</svg>

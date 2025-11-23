@@ -94,83 +94,10 @@ const heroSlides = [
   }
 ];
 
-import { getLoftImage } from '@/config/featured-lofts-images';
+import { featuredLofts } from '@/config/featured-lofts-content';
 
-// Données réelles de lofts algériens
-const realLofts = [
-  {
-    id: 1,
-    title: {
-      fr: "Loft Moderne Hydra - Vue Panoramique",
-      en: "Modern Hydra Loft - Panoramic View", 
-      ar: "شقة حديثة في حيدرة - إطلالة بانورامية"
-    },
-    location: {
-      fr: "Hydra, Alger",
-      en: "Hydra, Algiers",
-      ar: "حيدرة، الجزائر"
-    },
-    description: {
-      fr: "Magnifique loft de 120m² avec terrasse privée et vue imprenable sur la baie d'Alger.",
-      en: "Beautiful 120m² loft with private terrace and stunning view of Algiers bay.",
-      ar: "شقة جميلة 120 متر مربع مع تراس خاص وإطلالة خلابة على خليج الجزائر."
-    },
-    price: 25000,
-    currency: "DZD",
-    rating: 4.8,
-    reviews: 127,
-    amenities: ['Wifi', 'Car', 'Coffee', 'Tv'],
-    image: getLoftImage('loft1')
-  },
-  {
-    id: 2,
-    title: {
-      fr: "Penthouse Luxury Oran Centre",
-      en: "Luxury Penthouse Oran Center",
-      ar: "بنتهاوس فاخر وسط وهران"
-    },
-    location: {
-      fr: "Centre-ville, Oran",
-      en: "City Center, Oran", 
-      ar: "وسط المدينة، وهران"
-    },
-    description: {
-      fr: "Penthouse exceptionnel de 180m² au cœur d'Oran. Design contemporain, 3 chambres.",
-      en: "Exceptional 180m² penthouse in the heart of Oran. Contemporary design, 3 bedrooms.",
-      ar: "بنتهاوس استثنائي 180 متر مربع في قلب وهران. تصميم معاصر، 3 غرف نوم."
-    },
-    price: 45000,
-    currency: "DZD", 
-    rating: 4.9,
-    reviews: 89,
-    amenities: ['Wifi', 'Car', 'Coffee', 'Tv'],
-    image: getLoftImage('loft2')
-  },
-  {
-    id: 3,
-    title: {
-      fr: "Loft Artistique Constantine",
-      en: "Artistic Loft Constantine",
-      ar: "شقة فنية في قسنطينة"
-    },
-    location: {
-      fr: "Vieille ville, Constantine",
-      en: "Old City, Constantine",
-      ar: "المدينة القديمة، قسنطينة"
-    },
-    description: {
-      fr: "Loft unique de 95m² dans un bâtiment historique rénové. Plafonds hauts.",
-      en: "Unique 95m² loft in a renovated historic building. High ceilings.",
-      ar: "شقة فريدة 95 متر مربع في مبنى تاريخي مجدد. أسقف عالية."
-    },
-    price: 18000,
-    currency: "DZD",
-    rating: 4.7,
-    reviews: 156,
-    amenities: ['Wifi', 'Coffee', 'Tv'],
-    image: getLoftImage('loft3')
-  }
-];
+// Utilisation des données de configuration
+const realLofts = featuredLofts;
 
 const AmenityIcon = ({ type }: { type: string }) => {
   switch (type) {

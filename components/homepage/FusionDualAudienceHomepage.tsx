@@ -8,6 +8,7 @@ import SmoothScroll from '@/components/ui/SmoothScroll';
 import BackToTop from '@/components/ui/BackToTop';
 import Image from 'next/image';
 import { useResponsiveAnimations } from '@/hooks/useResponsiveAnimations';
+import UrgentAnnouncementBanner from '@/components/UrgentAnnouncementBanner';
 import { usePerformanceOptimization } from '@/hooks/usePerformanceOptimization';
 import { PartnerLogos } from './PartnerLogos';
 
@@ -325,6 +326,9 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
 
   return (
     <div dir={locale === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen w-full overflow-x-hidden bg-gray-50 dark:bg-gray-900 transition-colors">
+      {/* Bannière d'annonce urgente */}
+      <UrgentAnnouncementBanner locale={locale} />
+      
       <SmoothScroll />
       
       {/* Google Fonts - Caveat */}

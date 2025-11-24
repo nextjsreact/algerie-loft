@@ -91,9 +91,25 @@ export default function AnnouncementsPage() {
       setEditingId(null);
       resetForm();
       fetchAnnouncements();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving announcement:', error);
-      alert('Erreur lors de la sauvegarde');
+      
+      // Messages d'erreur plus explicites
+      let errorMessage = 'Erreur lors de la sauvegarde';
+      
+      if (error?.message?.includes('relation') && error?.message?.includes('does not exist')) {
+        errorMessage = '❌ La table n\'existe pas encore.\n\n' +
+                      '📋 Veuillez exécuter le SQL de migration dans Supabase.\n' +
+                      'Voir: INSTALLATION_ANNONCES.md';
+      } else if (error?.message?.includes('permission denied') || error?.message?.includes('policy')) {
+        errorMessage = '❌ Permission refusée.\n\n' +
+                      'Vous devez être Admin ou Superuser pour créer des annonces.\n' +
+                      'Vérifiez votre rôle dans la table profiles.';
+      } else if (error?.message) {
+        errorMessage = `Erreur: ${error.message}`;
+      }
+      
+      alert(errorMessage);
     }
   };
 
@@ -168,6 +184,26 @@ export default function AnnouncementsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Message d'aide pour la première utilisation */}
+      {announcements.length === 0 && !isLoading && (
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+          <div className="flex items-start space-x-3">
+            <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+                Première utilisation ?
+              </h3>
+              <p className="text-sm text-blue-800 dark:text-blue-200 mb-2">
+                Si vous voyez une erreur lors de la création, la table n'existe peut-être pas encore.
+              </p>
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                📋 Consultez <code className="bg-blue-100 dark:bg-blue-800 px-2 py-0.5 rounded">INSTALLATION_ANNONCES.md</code> pour exécuter le SQL de migration.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">

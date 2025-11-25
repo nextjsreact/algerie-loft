@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Complet - Annonces</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+        }
+        .section {
+            background: #000;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        h2 {
+            color: #00ffff;
+            border-bottom: 2px solid #00ffff;
+            padding-bottom: 10px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid;
+        }
+        .success { border-color: #00ff00; background: #003300; }
+        .error { border-color: #ff0000; background: #330000; color: #ff6666; }
+        .warning { border-color: #ffaa00; background: #332200; color: #ffcc66; }
+        .info { border-color: #00aaff; background: #002233; color: #66ccff; }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+        pre {
+            background: #111;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #333;
+        }
+        .code {
+            background: #222;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #ffaa00;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 DEBUG COMPLET - SYSTÈME D'ANNONCES</h1>
+    
+    <div class="section">
+        <h2>📋 ÉTAPE 1: Configuration</h2>
+        <div id="config-status">Vérification...</div>
+    </div>
+
+    <div class="section">
+        <h2>🔐 ÉTAPE 2: Authentification</h2>
+        <div id="auth-status">Vérification...</div>
+    </div>
+
+    <div class="section">
+        <h2>🗄️ ÉTAPE 3: Structure de la table</h2>
+        <div id="table-status">Vérification...</div>
+    </div>
+
+    <div class="section">
+        <h2>🔒 ÉTAPE 4: Politiques RLS</h2>
+        <div id="rls-status">Vérification...</div>
+    </div>
+
+    <div class="section">
+        <h2>✍️ ÉTAPE 5: Test d'insertion</h2>
+        <button onclick="testInsert()">🚀 TESTER L'INSERTION</button>
+        <div id="insert-status"></div>
+    </div>
+
+    <div class="section">
+        <h2>🧹 ÉTAPE 6: Nettoyage (si nécessaire)</h2>
+        <button onclick="cleanCache()">🗑️ NETTOYER LE CACHE</button>
+        <button onclick="cleanCookies()">🍪 NETTOYER LES COOKIES</button>
+        <div id="clean-status"></div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://yfqkqxbzxqfvjqxqxqxq.supabase.co'; // REMPLACER
+        const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY'; // REMPLACER
+
+        let supabase;
+        let currentUser;
+
+        // Initialisation
+        async function init() {
+            try {
+                // 1. Configuration
+                const configDiv = document.getElementById('config-status');
+                if (!SUPABASE_URL.includes('supabase.co') || SUPABASE_ANON_KEY === 'YOUR_ANON_KEY') {
+                    configDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ <strong>ERREUR:</strong> Vous devez configurer vos clés Supabase dans ce fichier!<br><br>
+                            <strong>Instructions:</strong><br>
+                            1. Ouvrez ce fichier HTML dans un éditeur<br>
+                            2. Remplacez <span class="code">SUPABASE_URL</span> par votre URL Supabase<br>
+                            3. Remplacez <span class="code">SUPABASE_ANON_KEY</span> par votre clé anonyme<br>
+                            4. Sauvegardez et rechargez cette page
+                        </div>
+                    `;
+                    return;
+                }
+
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                configDiv.innerHTML = `
+                    <div class="status success">
+                        ✅ Client Supabase initialisé<br>
+                        URL: <span class="code">${SUPABASE_URL}</span>
+                    </div>
+                `;
+
+                // 2. Authentification
+                await checkAuth();
+
+                // 3. Structure de la table
+                await checkTable();
+
+                // 4. Politiques RLS
+                await checkRLS();
+
+            } catch (error) {
+                console.error('Erreur d\'initialisation:', error);
+                document.getElementById('config-status').innerHTML = `
+                    <div class="status error">
+                        ❌ <strong>ERREUR:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function checkAuth() {
+            const authDiv = document.getElementById('auth-status');
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (error) throw error;
+
+                if (!session) {
+                    authDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ <strong>NON CONNECTÉ</strong><br><br>
+                            Vous devez être connecté pour continuer.<br>
+                            <a href="/fr/login" style="color: #00ff00;">→ Se connecter</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                currentUser = session.user;
+                const metadata = currentUser.user_metadata || {};
+                const role = metadata.role || 'N/A';
+
+                authDiv.innerHTML = `
+                    <div class="status success">
+                        ✅ <strong>CONNECTÉ</strong><br><br>
+                        <strong>User ID:</strong> <span class="code">${currentUser.id}</span><br>
+                        <strong>Email:</strong> <span class="code">${currentUser.email}</span><br>
+                        <strong>Rôle:</strong> <span class="code">${role}</span><br>
+                        <strong>Token valide jusqu'à:</strong> <span class="code">${new Date(session.expires_at * 1000).toLocaleString()}</span>
+                    </div>
+                `;
+
+                if (role !== 'admin' && role !== 'superuser') {
+                    authDiv.innerHTML += `
+                        <div class="status warning">
+                            ⚠️ <strong>ATTENTION:</strong> Votre rôle est <span class="code">${role}</span><br>
+                            Vous devez être <span class="code">admin</span> ou <span class="code">superuser</span> pour créer des annonces.
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                authDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ <strong>ERREUR:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function checkTable() {
+            const tableDiv = document.getElementById('table-status');
+            try {
+                // Essayer de lire la table
+                const { data, error } = await supabase
+                    .from('urgent_announcements')
+                    .select('*')
+                    .limit(1);
+
+                if (error) {
+                    if (error.message.includes('does not exist')) {
+                        tableDiv.innerHTML = `
+                            <div class="status error">
+                                ❌ <strong>TABLE N'EXISTE PAS</strong><br><br>
+                                La table <span class="code">urgent_announcements</span> n'existe pas dans votre base de données.<br><br>
+                                <strong>Solution:</strong><br>
+                                1. Ouvrez Supabase Dashboard → SQL Editor<br>
+                                2. Exécutez le fichier <span class="code">database/migrations/create_urgent_announcements.sql</span><br>
+                                3. Rechargez cette page
+                            </div>
+                        `;
+                        return;
+                    }
+                    throw error;
+                }
+
+                tableDiv.innerHTML = `
+                    <div class="status success">
+                        ✅ Table <span class="code">urgent_announcements</span> existe<br>
+                        Nombre d'annonces: <span class="code">${data?.length || 0}</span>
+                    </div>
+                `;
+
+            } catch (error) {
+                tableDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ <strong>ERREUR:</strong> ${error.message}<br>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        async function checkRLS() {
+            const rlsDiv = document.getElementById('rls-status');
+            try {
+                // Tester une lecture
+                const { data: readData, error: readError } = await supabase
+                    .from('urgent_announcements')
+                    .select('*')
+                    .limit(1);
+
+                let html = '';
+
+                if (readError) {
+                    html += `
+                        <div class="status error">
+                            ❌ <strong>LECTURE IMPOSSIBLE</strong><br>
+                            ${readError.message}
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="status success">
+                            ✅ Lecture autorisée
+                        </div>
+                    `;
+                }
+
+                // Tester une insertion (sera annulée)
+                const testData = {
+                    message_fr: 'TEST',
+                    message_en: 'TEST',
+                    message_ar: 'TEST',
+                    start_date: new Date().toISOString(),
+                    end_date: new Date().toISOString(),
+                    background_color: '#000000',
+                    text_color: '#FFFFFF',
+                    is_active: false
+                };
+
+                const { data: insertData, error: insertError } = await supabase
+                    .from('urgent_announcements')
+                    .insert([testData])
+                    .select();
+
+                if (insertError) {
+                    html += `
+                        <div class="status error">
+                            ❌ <strong>INSERTION IMPOSSIBLE</strong><br><br>
+                            <strong>Message:</strong> ${insertError.message}<br>
+                            <strong>Code:</strong> ${insertError.code || 'N/A'}<br>
+                            <strong>Détails:</strong> ${insertError.details || 'N/A'}<br>
+                            <strong>Hint:</strong> ${insertError.hint || 'N/A'}<br><br>
+                            <pre>${JSON.stringify(insertError, null, 2)}</pre>
+                            <br>
+                            <strong>Solutions possibles:</strong><br>
+                            1. Vérifiez que les politiques RLS sont correctes<br>
+                            2. Exécutez <span class="code">database/migrations/fix_announcements_policies.sql</span><br>
+                            3. Vérifiez votre rôle utilisateur (doit être admin ou superuser)
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="status success">
+                            ✅ Insertion autorisée (test réussi)
+                        </div>
+                    `;
+                    
+                    // Supprimer le test
+                    if (insertData && insertData[0]) {
+                        await supabase
+                            .from('urgent_announcements')
+                            .delete()
+                            .eq('id', insertData[0].id);
+                    }
+                }
+
+                rlsDiv.innerHTML = html;
+
+            } catch (error) {
+                rlsDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ <strong>ERREUR:</strong> ${error.message}<br>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        async function testInsert() {
+            const insertDiv = document.getElementById('insert-status');
+            insertDiv.innerHTML = '<div class="status info">⏳ Test en cours...</div>';
+
+            try {
+                const testData = {
+                    message_fr: '🎉 Test - Promotion spéciale',
+                    message_en: '🎉 Test - Special promotion',
+                    message_ar: '🎉 اختبار - عرض خاص',
+                    start_date: new Date().toISOString(),
+                    end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                    background_color: '#EF4444',
+                    text_color: '#FFFFFF',
+                    is_active: true
+                };
+
+                console.log('📤 Données à insérer:', testData);
+
+                const { data, error } = await supabase
+                    .from('urgent_announcements')
+                    .insert([testData])
+                    .select();
+
+                console.log('📥 Réponse Supabase:', { data, error });
+
+                if (error) {
+                    insertDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ <strong>ÉCHEC DE L'INSERTION</strong><br><br>
+                            <strong>Message:</strong> ${error.message}<br>
+                            <strong>Code:</strong> ${error.code || 'N/A'}<br>
+                            <strong>Détails:</strong> ${error.details || 'N/A'}<br>
+                            <strong>Hint:</strong> ${error.hint || 'N/A'}<br><br>
+                            <strong>Objet complet:</strong>
+                            <pre>${JSON.stringify(error, null, 2)}</pre>
+                        </div>
+                    `;
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    insertDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ <strong>AUCUNE DONNÉE RETOURNÉE</strong><br><br>
+                            L'insertion semble avoir réussi mais aucune donnée n'a été retournée.<br>
+                            Cela indique probablement un problème avec les politiques RLS SELECT.
+                        </div>
+                    `;
+                    return;
+                }
+
+                insertDiv.innerHTML = `
+                    <div class="status success">
+                        ✅ <strong>INSERTION RÉUSSIE!</strong><br><br>
+                        <strong>ID:</strong> <span class="code">${data[0].id}</span><br>
+                        <strong>Message FR:</strong> ${data[0].message_fr}<br>
+                        <strong>Active:</strong> ${data[0].is_active ? 'Oui' : 'Non'}<br><br>
+                        <strong>Données complètes:</strong>
+                        <pre>${JSON.stringify(data[0], null, 2)}</pre>
+                    </div>
+                `;
+
+            } catch (error) {
+                insertDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ <strong>EXCEPTION:</strong> ${error.message}<br>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>
+                    </div>
+                `;
+            }
+        }
+
+        function cleanCache() {
+            const cleanDiv = document.getElementById('clean-status');
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+                cleanDiv.innerHTML = `
+                    <div class="status success">
+                        ✅ Cache nettoyé!<br>
+                        Rechargement dans 2 secondes...
+                    </div>
+                `;
+                setTimeout(() => location.reload(), 2000);
+            } catch (error) {
+                cleanDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ Erreur: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function cleanCookies() {
+            const cleanDiv = document.getElementById('clean-status');
+            try {
+                const cookies = document.cookie.split(';');
+                cookies.forEach(cookie => {
+                    const eqPos = cookie.indexOf('=');
+                    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+                    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=' + window.location.hostname;
+                });
+                cleanDiv.innerHTML = `
+                    <div class="status success">
+                        ✅ Cookies nettoyés!<br>
+                        Rechargement dans 2 secondes...
+                    </div>
+                `;
+                setTimeout(() => location.reload(), 2000);
+            } catch (error) {
+                cleanDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ Erreur: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Lancer au chargement
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

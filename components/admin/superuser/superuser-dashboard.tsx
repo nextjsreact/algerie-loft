@@ -236,6 +236,14 @@ export function SuperuserDashboard() {
                 <Button 
                   variant="outline" 
                   className="w-full justify-start"
+                  onClick={() => window.location.href = `/${locale}/admin/announcements`}
+                >
+                  <AlertTriangle className="h-4 w-4 mr-2" />
+                  Annonces Urgentes
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
                   onClick={() => window.location.href = `/${locale}/admin/superuser/users`}
                 >
                   <Users className="h-4 w-4 mr-2" />

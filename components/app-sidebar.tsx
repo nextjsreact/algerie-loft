@@ -22,7 +22,8 @@ import {
   ChevronUp,
   User2,
   Shield,
-  Database
+  Database,
+  AlertTriangle
 } from "lucide-react"
 
 import {
@@ -148,6 +149,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: `/${locale}/notifications`,
         icon: Bell,
         roles: ["admin", "manager", "executive", "member"]
+      },
+      {
+        title: "Annonces Urgentes",
+        url: `/${locale}/admin/announcements`,
+        icon: AlertTriangle,
+        roles: ["admin", "superuser"]
       },
       {
         title: "Administration Superuser",

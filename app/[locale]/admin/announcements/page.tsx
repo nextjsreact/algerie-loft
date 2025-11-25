@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/client';
 import { Plus, Edit, Trash2, Eye, EyeOff, Calendar, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -23,7 +23,7 @@ export default function AnnouncementsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const [formData, setFormData] = useState({
     message_fr: '',
@@ -35,7 +35,16 @@ export default function AnnouncementsPage() {
   });
 
   useEffect(() => {
-    fetchAnnouncements();
+    // Rafraîchir la session au chargement pour éviter les problèmes de cache
+    const initSession = async () => {
+      try {
+        await supabase.auth.refreshSession();
+      } catch (error) {
+        console.warn('Session refresh warning:', error);
+      }
+      fetchAnnouncements();
+    };
+    initSession();
   }, []);
 
   const fetchAnnouncements = async () => {
@@ -72,27 +81,64 @@ export default function AnnouncementsPage() {
     };
 
     try {
+      // Forcer le rafraîchissement de la session AVANT toute opération
+      const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+      
+      if (refreshError) {
+        console.warn('Refresh warning:', refreshError);
+      }
+      
+      // Vérifier la session après rafraîchissement
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        alert('❌ Session expirée.\n\nVeuillez vous déconnecter et vous reconnecter.');
+        return;
+      }
+
+      console.log('✅ Session rafraîchie, user:', session.user.email);
+
+      let result;
+      
       if (editingId) {
-        const { error } = await supabase
+        result = await supabase
           .from('urgent_announcements')
           .update(announcementData)
-          .eq('id', editingId);
-
-        if (error) throw error;
+          .eq('id', editingId)
+          .select();
       } else {
-        const { error } = await supabase
+        result = await supabase
           .from('urgent_announcements')
-          .insert([announcementData]);
+          .insert([announcementData])
+          .select();
+      }
 
-        if (error) throw error;
+      // Log complet pour debug
+      console.log('Supabase result:', result);
+      console.log('Result data:', result.data);
+      console.log('Result error:', result.error);
+      console.log('Result status:', result.status);
+      console.log('Result statusText:', result.statusText);
+      
+      if (result.error) {
+        console.error('Supabase error details:', result.error);
+        throw result.error;
+      }
+
+      if (!result.data || result.data.length === 0) {
+        throw new Error('Aucune donnée retournée. Vérifiez les politiques RLS.');
       }
 
       setShowForm(false);
       setEditingId(null);
       resetForm();
       fetchAnnouncements();
+      alert('✅ Annonce créée avec succès !');
     } catch (error: any) {
       console.error('Error saving announcement:', error);
+      console.error('Error type:', typeof error);
+      console.error('Error keys:', Object.keys(error || {}));
+      console.error('Error stringified:', JSON.stringify(error, null, 2));
       
       // Messages d'erreur plus explicites
       let errorMessage = 'Erreur lors de la sauvegarde';
@@ -101,12 +147,33 @@ export default function AnnouncementsPage() {
         errorMessage = '❌ La table n\'existe pas encore.\n\n' +
                       '📋 Veuillez exécuter le SQL de migration dans Supabase.\n' +
                       'Voir: INSTALLATION_ANNONCES.md';
-      } else if (error?.message?.includes('permission denied') || error?.message?.includes('policy')) {
-        errorMessage = '❌ Permission refusée.\n\n' +
-                      'Vous devez être Admin ou Superuser pour créer des annonces.\n' +
-                      'Vérifiez votre rôle dans la table profiles.';
+      } else if (error?.message?.includes('permission denied') || error?.message?.includes('policy') || error?.message?.includes('row-level security')) {
+        errorMessage = '❌ Permission refusée (RLS).\n\n' +
+                      '🔄 Solution:\n' +
+                      '1. Déconnectez-vous\n' +
+                      '2. Videz le cache (Ctrl+Shift+Del)\n' +
+                      '3. Reconnectez-vous\n\n' +
+                      'Ou essayez en navigation privée.';
+      } else if (error?.code === 'PGRST301' || error?.code === '42501') {
+        errorMessage = '❌ Erreur de politique RLS (Code: ' + error.code + ').\n\n' +
+                      '🔄 Votre session est en cache.\n\n' +
+                      'Solution rapide:\n' +
+                      '1. Ouvrez la console (F12)\n' +
+                      '2. Tapez: localStorage.clear(); location.reload()\n' +
+                      '3. Reconnectez-vous';
       } else if (error?.message) {
-        errorMessage = `Erreur: ${error.message}`;
+        errorMessage = `❌ Erreur: ${error.message}\n\n` +
+                      `Code: ${error.code || 'N/A'}\n` +
+                      `Détails: ${error.details || 'N/A'}\n` +
+                      `Hint: ${error.hint || 'N/A'}`;
+      } else if (Object.keys(error || {}).length === 0) {
+        errorMessage = '❌ Erreur inconnue (objet vide).\n\n' +
+                      '🔄 Essayez de:\n' +
+                      '1. Vider le cache du navigateur\n' +
+                      '2. Vous déconnecter/reconnecter\n' +
+                      '3. Tester en navigation privée';
+      } else {
+        errorMessage = `❌ Erreur inconnue.\n\nDétails: ${JSON.stringify(error)}`;
       }
       
       alert(errorMessage);

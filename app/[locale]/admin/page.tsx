@@ -19,6 +19,13 @@ export default async function AdminPage() {
 
   const adminSections = [
     {
+      title: "Annonces Urgentes",
+      description: "Gérer les bannières de promotion sur la homepage",
+      href: "/admin/announcements",
+      icon: AlertTriangle,
+      color: "bg-red-500"
+    },
+    {
       title: "Gestion des Employés",
       description: "Gérer les comptes et mots de passe des employés",
       href: "/admin/employees",
@@ -120,7 +127,14 @@ export default async function AdminPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Link href="/fr/admin/announcements">
+                <Button className="w-full" variant="outline">
+                  <AlertTriangle className="h-4 w-4 mr-2" />
+                  Annonces Urgentes
+                </Button>
+              </Link>
+              
               <Link href="/fr/admin/employees">
                 <Button className="w-full" variant="outline">
                   <Users className="h-4 w-4 mr-2" />

@@ -19,6 +19,7 @@ export function SuperuserSidebar({ className }: SuperuserSidebarProps) {
 
   const navigation = [
     { name: t('navigation.dashboard'), href: `/${locale}/admin/superuser/dashboard`, icon: LayoutDashboard },
+    { name: 'Annonces Urgentes', href: `/${locale}/admin/announcements`, icon: AlertTriangle },
     { name: t('navigation.userManagement'), href: `/${locale}/admin/superuser/users`, icon: Users },
     { name: t('navigation.security'), href: `/${locale}/admin/superuser/audit`, icon: Shield },
     { name: t('navigation.backup'), href: `/${locale}/admin/superuser/backup`, icon: Database },

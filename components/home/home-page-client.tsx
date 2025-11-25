@@ -107,6 +107,14 @@ export function HomePageClient() {
   const profileSpecificSections = [
     // Sections pour Admin uniquement
     {
+      title: 'Annonces Urgentes',
+      description: 'Gérer les bannières de promotion sur la homepage',
+      href: `/${locale}/admin/announcements`,
+      icon: AlertTriangle,
+      color: "from-red-500 to-red-600",
+      roles: ['admin', 'superuser']
+    },
+    {
       title: t('sections.teams.title'),
       description: t('sections.teams.description'),
       href: `/${locale}/teams`,

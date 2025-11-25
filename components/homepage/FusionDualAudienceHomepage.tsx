@@ -327,7 +327,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
   return (
     <div dir={locale === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen w-full overflow-x-hidden bg-gray-50 dark:bg-gray-900 transition-colors">
       {/* Bannière d'annonce urgente */}
-      <UrgentAnnouncementBanner locale={locale} />
+      <UrgentAnnouncementBanner key="urgent-banner-v2" locale={locale} />
       
       <SmoothScroll />
       

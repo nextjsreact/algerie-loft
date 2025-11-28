@@ -99,7 +99,7 @@ export default function ClientProviders({ children, session, unreadCount, locale
                  <NotificationProvider userId={session.user.id}>
                    <div className="flex h-screen bg-background" key={`layout-${renderKey}`}>
                      {/* Show appropriate sidebar based on user role */}
-                     {session.user.role === 'superuser' && (pathname?.includes('/admin/superuser') || pathname?.includes('/database-cloner')) ? (
+                     {session.user.role === 'superuser' && (pathname?.includes('/admin/superuser') || pathname?.includes('/database-cloner') || pathname?.includes('/admin/announcements')) ? (
                        <div className="flex w-72 flex-shrink-0 z-10">
                          <SuperuserSidebar />
                        </div>

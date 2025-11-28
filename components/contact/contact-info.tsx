@@ -146,7 +146,9 @@ export function ContactInfo({ className, showMap = true, compactMode = false }: 
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <p className="font-medium text-lg">{method.value}</p>
+                <p className={`font-medium text-lg ${(method.type === 'phone' || method.type === 'whatsapp') ? 'ltr' : ''}`} dir={method.type === 'phone' || method.type === 'whatsapp' ? 'ltr' : undefined}>
+                  {method.value}
+                </p>
                 {method.description && (
                   <p className="text-sm text-muted-foreground">{method.description}</p>
                 )}
@@ -210,7 +212,7 @@ export function ContactInfo({ className, showMap = true, compactMode = false }: 
             <div className="flex items-center space-x-3">
               <Phone className="h-5 w-5 text-orange-600" />
               <div>
-                <p className="font-medium text-orange-900">{t("info.emergency.phone")}</p>
+                <p className="font-medium text-orange-900 ltr" dir="ltr">{t("info.emergency.phone")}</p>
                 <p className="text-sm text-orange-700">{t("info.emergency.availability")}</p>
               </div>
             </div>

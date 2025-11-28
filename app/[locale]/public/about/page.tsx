@@ -458,7 +458,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
             </p>
             <div className="mt-8">
               <a 
-                href={`/${locale}/public/contact`}
+                href={`/${locale}/contact`}
                 className="inline-flex items-center px-8 py-4 bg-emerald-600 dark:bg-emerald-700 text-white font-semibold rounded-lg hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors"
               >
                 {locale === 'fr' ? 'Contactez-nous' : locale === 'en' ? 'Contact Us' : 'اتصل بنا'}

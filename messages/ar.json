@@ -3333,53 +3333,167 @@
     "title": "العنوان"
   },
   "contact": {
-    "reasons": {
-      "propertyManagement": {
-        "title": "العنوان"
-      },
-      "rentalServices": {
-        "title": "العنوان"
-      },
-      "maintenance": {
-        "title": "العنوان"
-      },
-      "consultation": {
-        "title": "العنوان"
-      },
-      "title": "العنوان"
-    },
-    "process": {
-      "step1": {
-        "title": "العنوان"
-      },
-      "step2": {
-        "title": "العنوان"
-      },
-      "step3": {
-        "title": "العنوان"
-      },
-      "title": "العنوان"
-    },
     "page": {
-      "title": "العنوان"
-    },
-    "faq": {
-      "title": "العنوان"
-    },
-    "info": {
-      "emergency": {
-        "title": "العنوان"
-      },
-      "location": {
-        "title": "العنوان"
-      }
+      "title": "اتصل بنا",
+      "subtitle": "فريقنا هنا للإجابة على جميع أسئلتك",
+      "responseTime": "الرد خلال 24 ساعة",
+      "freeConsultation": "استشارة مجانية"
     },
     "form": {
-      "title": "العنوان",
-      "name": "الاسم",
-      "email": "البريد الإلكتروني",
+      "sectionTitle": "أرسل لنا رسالة",
+      "sectionDescription": "املأ النموذج أدناه وسنعود إليك في أقرب وقت ممكن",
+      "title": "نموذج الاتصال",
+      "description": "نحن هنا لمساعدتك",
+      "name": "الاسم الكامل",
+      "namePlaceholder": "أدخل اسمك الكامل",
+      "email": "عنوان البريد الإلكتروني",
+      "emailPlaceholder": "your.email@example.com",
+      "phone": "الهاتف",
+      "phonePlaceholder": "+213 XX XX XX XX",
+      "preferredContact": "طريقة الاتصال المفضلة",
       "contactMethods": {
-        "email": "البريد الإلكتروني"
+        "email": "البريد الإلكتروني",
+        "phone": "الهاتف"
+      },
+      "subject": "الموضوع",
+      "subjectPlaceholder": "ما هو موضوع رسالتك؟",
+      "message": "رسالتك",
+      "messagePlaceholder": "صف طلبك بالتفصيل...",
+      "consentText": "أوافق على أن تتصل بي Loft Algérie بخصوص طلبي",
+      "submit": "إرسال الرسالة",
+      "privacyNotice": "بياناتك محمية ولن تتم مشاركتها مع أطراف ثالثة أبداً"
+    },
+    "reasons": {
+      "title": "لماذا تتصل بنا؟",
+      "description": "نحن هنا لدعمك في جميع احتياجاتك",
+      "propertyManagement": {
+        "title": "إدارة العقارات",
+        "description": "عهد إلينا بإدارة عقارك",
+        "badge": "شائع"
+      },
+      "rentalServices": {
+        "title": "خدمات الإيجار",
+        "description": "احجز شقتك المثالية",
+        "badge": "سريع"
+      },
+      "maintenance": {
+        "title": "الصيانة",
+        "description": "المساعدة الفنية والصيانة",
+        "badge": "24/7"
+      },
+      "consultation": {
+        "title": "الاستشارة",
+        "description": "نصائح مجانية مخصصة",
+        "badge": "مجاني"
+      }
+    },
+    "info": {
+      "sectionTitle": "معلومات الاتصال",
+      "sectionDescription": "طرق متعددة للوصول إلينا لراحتك",
+      "primary": "رئيسي",
+      "available": "متاح",
+      "phone": {
+        "label": "الهاتف",
+        "primary": "رئيسي",
+        "available": "متاح",
+        "number": "+213 56 03 62 543",
+        "description": "اتصل بنا للحصول على رد فوري"
+      },
+      "email": {
+        "label": "البريد الإلكتروني",
+        "primary": "رئيسي",
+        "available": "متاح",
+        "address": "contact@loftalgerie.com",
+        "description": "اكتب لنا، نرد خلال 24 ساعة"
+      },
+      "whatsapp": {
+        "label": "واتساب",
+        "available": "متاح",
+        "number": "+213 56 03 62 543",
+        "description": "اتصل بنا عبر واتساب"
+      },
+      "address": {
+        "label": "العنوان",
+        "full": "الجزائر العاصمة، الجزائر",
+        "description": "قم بزيارتنا بموعد مسبق",
+        "details": "الجزائر العاصمة، الجزائر"
+      },
+      "clickToContact": "انقر للاتصال",
+      "businessHours": "ساعات العمل",
+      "businessHoursDescription": "نحن متاحون كل يوم",
+      "hours": {
+        "monday": "الاثنين",
+        "tuesday": "الثلاثاء",
+        "wednesday": "الأربعاء",
+        "thursday": "الخميس",
+        "friday": "الجمعة",
+        "saturday": "السبت",
+        "sunday": "الأحد",
+        "weekdayHours": "9:00 صباحاً - 10:00 مساءً",
+        "saturdayHours": "9:00 صباحاً - 10:00 مساءً",
+        "sundayHours": "9:00 صباحاً - 10:00 مساءً"
+      },
+      "appointmentNote": "يوصى بالموعد",
+      "appointmentDescription": "حدد موعداً للحصول على استشارة مخصصة",
+      "emergency": {
+        "title": "طوارئ",
+        "description": "للطوارئ، اتصل بنا فوراً",
+        "phone": "+213 56 03 62 543",
+        "availability": "متاح 24/7"
+      },
+      "callNow": "اتصل الآن",
+      "location": {
+        "title": "موقعنا",
+        "description": "قم بزيارتنا في مكتبنا"
+      },
+      "map": {
+        "placeholder": "خريطة الموقع",
+        "openInMaps": "فتح في خرائط جوجل"
+      },
+      "directions": {
+        "publicTransport": "النقل العام",
+        "publicTransportDetails": "يمكن الوصول بالمترو والحافلة",
+        "parking": "موقف السيارات",
+        "parkingDetails": "موقف مجاني متاح"
+      }
+    },
+    "process": {
+      "title": "عملية الرد لدينا",
+      "description": "كيف نتعامل مع طلبك في 3 خطوات بسيطة",
+      "step1": {
+        "title": "الاستقبال",
+        "description": "نستقبل ونحلل رسالتك",
+        "time": "فوري"
+      },
+      "step2": {
+        "title": "التحليل",
+        "description": "يدرس فريقنا طلبك بالتفصيل",
+        "time": "خلال ساعتين"
+      },
+      "step3": {
+        "title": "الرد",
+        "description": "نتصل بك بحل مخصص",
+        "time": "خلال 24 ساعة"
+      }
+    },
+    "faq": {
+      "title": "الأسئلة الشائعة",
+      "description": "اعثر على إجابات سريعة لأسئلتك",
+      "q1": {
+        "question": "ما هو وقت الرد؟",
+        "answer": "نلتزم بالرد على جميع الطلبات خلال 24 ساعة عمل. للطوارئ، نحن متاحون 24/7 عبر الهاتف."
+      },
+      "q2": {
+        "question": "هل تقدمون استشارات مجانية؟",
+        "answer": "نعم، نقدم استشارة أولية مجانية لجميع خدماتنا. اتصل بنا لتحديد موعد."
+      },
+      "q3": {
+        "question": "كيف يمكنني حجز شقة؟",
+        "answer": "يمكنك الحجز مباشرة على منصتنا الإلكترونية، عبر الهاتف، أو بالاتصال بنا من خلال هذا النموذج. سيرشدك فريقنا خلال العملية."
+      },
+      "q4": {
+        "question": "ما هي ساعات عملكم؟",
+        "answer": "نحن متاحون كل يوم من 9 صباحاً إلى 10 مساءً. للطوارئ، خدمة العملاء لدينا متاحة 24/7."
       }
     }
   },

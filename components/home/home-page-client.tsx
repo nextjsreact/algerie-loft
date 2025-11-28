@@ -225,6 +225,14 @@ export function HomePageClient() {
     ]
 
     const roleSpecificItems = [
+      // Pour Admin et Superuser - Annonces urgentes
+      {
+        title: 'Annonces Urgentes',
+        href: `/${locale}/admin/announcements`,
+        icon: AlertTriangle,
+        description: 'Gérer les bannières de promotion',
+        roles: ['admin', 'superuser']
+      },
       // Pour Admin et Manager - Vue opérationnelle
       {
         title: t('quickAccessItems.dashboard.title'),

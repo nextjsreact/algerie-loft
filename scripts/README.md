@@ -1,152 +1,186 @@
-# Scripts de Migration i18next vers next-intl
+# 📁 Scripts - Tracking des Visiteurs
 
-Ce dossier contient tous les scripts nécessaires pour valider, tester et finaliser la migration de i18next vers next-intl.
+## 📄 test-visitor-tracking.sql
 
-## Scripts Disponibles
+Script de test complet pour le système de tracking des visiteurs.
 
-### 1. `validate-migration.js`
-**Objectif**: Validation générale de l'état de la migration
+### 🎯 Objectif
 
-**Utilisation**:
+Tester et valider le système de tracking en créant des données de démonstration réalistes.
+
+### 📊 Ce Que Fait le Script
+
+1. **Vérification du Système**
+   - Vérifie que les tables existent
+   - Vérifie que les fonctions SQL existent
+   - Vérifie que les index sont en place
+
+2. **État Actuel**
+   - Affiche les statistiques actuelles
+   - Liste les derniers visiteurs
+   - Montre l'état de la base de données
+
+3. **Création de Données de Test**
+   - Crée 20 visiteurs de test
+   - Données réalistes et variées :
+     - 60% mobile, 30% desktop, 10% tablet
+     - Différents navigateurs (Chrome, Firefox, Safari, Edge)
+     - Différentes sources (Google, Facebook, Instagram, Direct)
+     - Différentes pages d'arrivée (/fr, /en, /ar, /fr/lofts)
+   - Ajoute des pages vues pour 50% des visiteurs
+
+4. **Vérification Après Création**
+   - Affiche les nouvelles statistiques
+   - Montre la répartition par appareil
+   - Montre la répartition par navigateur
+   - Affiche les sources de trafic
+   - Liste les pages d'arrivée populaires
+   - Montre les tendances des 7 derniers jours
+
+### 🚀 Comment Utiliser
+
+#### Méthode 1 : Supabase Dashboard (Recommandé)
+
+1. **Ouvrez Supabase Dashboard**
+   - Allez sur https://supabase.com
+   - Sélectionnez votre projet
+
+2. **Ouvrez SQL Editor**
+   - Cliquez sur "SQL Editor" dans le menu
+   - Cliquez sur "New query"
+
+3. **Copiez le Script**
+   - Ouvrez `scripts/test-visitor-tracking.sql`
+   - Copiez TOUT le contenu (Ctrl+A, Ctrl+C)
+
+4. **Exécutez**
+   - Collez dans l'éditeur SQL
+   - Cliquez sur "Run" (ou F5)
+   - Attendez ~5 secondes
+
+5. **Vérifiez les Résultats**
+   - Vous verrez plusieurs tableaux de résultats
+   - Vérifiez que tout est ✅ OK
+
+#### Méthode 2 : Ligne de Commande
+
 ```bash
-node scripts/validate-migration.js
+# Si vous avez psql installé
+psql -h your-supabase-host -U postgres -d postgres -f scripts/test-visitor-tracking.sql
 ```
 
-**Fonctionnalités**:
-- Vérifie l'absence de références à react-i18next
-- Compte les utilisations de useTranslations
-- Valide la présence des fichiers de messages
-- Vérifie la configuration next-intl
-- Contrôle la suppression des anciennes dépendances
-- Valide la structure des routes localisées
+### 📊 Résultats Attendus
 
-### 2. `test-migration.js`
-**Objectif**: Tests de cohérence des traductions
+Après l'exécution, vous devriez voir :
 
-**Utilisation**:
-```bash
-node scripts/test-migration.js
+```
+✅ Tables: 2 (visitors, page_views)
+✅ Functions: 3 (get_visitor_stats, get_visitor_trends, record_visitor)
+✅ Indexes: 7+
+
+📊 STATISTIQUES ACTUELLES
+Total Visiteurs: 20
+Visiteurs Aujourd'hui: 20
+Nouveaux Aujourd'hui: 20
+Total Pages Vues: 10
+Pages Vues Aujourd'hui: 10
+Durée Moy.: ~150 secondes
+
+📱 RÉPARTITION PAR APPAREIL
+mobile: 12 (60%)
+desktop: 6 (30%)
+tablet: 2 (10%)
+
+🌐 RÉPARTITION PAR NAVIGATEUR
+Chrome: 5 (25%)
+Safari: 5 (25%)
+Firefox: 5 (25%)
+Edge: 5 (25%)
 ```
 
-**Fonctionnalités**:
-- Test de cohérence des clés de traduction entre langues
-- Vérification de la structure des traductions
-- Analyse des interpolations
-- Détection des incohérences
+### 🧹 Nettoyage
 
-### 3. `performance-test.js`
-**Objectif**: Tests de performance de la migration
+Pour supprimer les données de test :
 
-**Utilisation**:
-```bash
-node scripts/performance-test.js
+```sql
+-- Supprimer uniquement les données de test
+DELETE FROM page_views WHERE session_id LIKE 'demo-session-%';
+DELETE FROM visitors WHERE session_id LIKE 'demo-session-%';
 ```
 
-**Fonctionnalités**:
-- Analyse de la taille des bundles
-- Test de chargement des traductions
-- Recommandations d'optimisation
-- Mesure des performances
+Pour supprimer TOUTES les données (⚠️ ATTENTION) :
 
-### 4. `generate-migration-report.js`
-**Objectif**: Génération d'un rapport complet de migration
-
-**Utilisation**:
-```bash
-node scripts/generate-migration-report.js
+```sql
+-- ATTENTION : Ceci supprime TOUT !
+DELETE FROM page_views;
+DELETE FROM visitors;
 ```
 
-**Fonctionnalités**:
-- Analyse complète de l'état de la migration
-- Calcul du pourcentage de progression
-- Génération de recommandations
-- Sauvegarde du rapport en JSON
+### 🔍 Requêtes Utiles
 
-### 5. `auto-migrate-remaining.js`
-**Objectif**: Migration automatique des composants restants
+Le script inclut aussi des requêtes commentées pour :
 
-**Utilisation**:
-```bash
-node scripts/auto-migrate-remaining.js
+```sql
+-- Voir les détails d'un visiteur
+SELECT * FROM visitors WHERE session_id = 'votre-session-id';
+
+-- Voir toutes les pages vues d'un visiteur
+SELECT * FROM page_views WHERE session_id = 'votre-session-id';
+
+-- Statistiques en temps réel
+SELECT * FROM get_visitor_stats();
+
+-- Tendances des 7 derniers jours
+SELECT * FROM get_visitor_trends();
 ```
 
-**Fonctionnalités**:
-- Identification automatique des composants à migrer
-- Migration automatique des patterns courants
-- Remplacement des imports et hooks
-- Correction des appels de traduction
+### 🆘 Dépannage
 
-### 6. `final-validation.js`
-**Objectif**: Validation finale complète de la migration
+#### Erreur : "function record_visitor does not exist"
 
-**Utilisation**:
-```bash
-node scripts/final-validation.js
-```
+**Cause :** Le schéma SQL n'est pas déployé
 
-**Fonctionnalités**:
-- Tests complets de validation
-- Vérification de la construction
-- Génération d'un rapport de validation
-- Statut global de la migration
+**Solution :**
+1. Ouvrez `database/visitor-tracking-schema.sql`
+2. Exécutez-le dans Supabase SQL Editor
+3. Réessayez le script de test
 
-## Workflow Recommandé
+#### Erreur : "relation visitors does not exist"
 
-1. **Validation initiale**:
-   ```bash
-   node scripts/validate-migration.js
-   ```
+**Cause :** Les tables n'existent pas
 
-2. **Tests de cohérence**:
-   ```bash
-   node scripts/test-migration.js
-   ```
+**Solution :**
+1. Exécutez d'abord `database/visitor-tracking-schema.sql`
+2. Puis exécutez ce script de test
 
-3. **Migration automatique** (si nécessaire):
-   ```bash
-   node scripts/auto-migrate-remaining.js
-   ```
+#### Erreur : "permission denied"
 
-4. **Génération du rapport**:
-   ```bash
-   node scripts/generate-migration-report.js
-   ```
+**Cause :** Problème de permissions
 
-5. **Tests de performance**:
-   ```bash
-   node scripts/performance-test.js
-   ```
+**Solution :**
+1. Vérifiez que vous êtes connecté avec le bon compte
+2. Vérifiez les politiques RLS
+3. Utilisez le service role key si nécessaire
 
-6. **Validation finale**:
-   ```bash
-   node scripts/final-validation.js
-   ```
+### 📚 Documentation
 
-## Fichiers Générés
+- **Guide complet :** `TRACKING_VISITEURS_LIGHT.md`
+- **Démarrage rapide :** `DEMARRAGE_RAPIDE_TRACKING.md`
+- **Implémentation :** `TRACKING_IMPLEMENTATION_COMPLETE.md`
+- **Schéma SQL :** `database/visitor-tracking-schema.sql`
 
-- `migration-report.json`: Rapport détaillé de la migration
-- `validation-report.json`: Rapport de validation finale
+### ✅ Checklist
 
-## Prérequis
+Avant d'exécuter le script :
+- [ ] Le schéma SQL est déployé (`visitor-tracking-schema.sql`)
+- [ ] Vous êtes connecté à Supabase
+- [ ] Vous avez les permissions nécessaires
 
-- Node.js 18+
-- PowerShell (pour les commandes Windows)
-- Projet Next.js avec next-intl configuré
+Après l'exécution :
+- [ ] Vérifiez les résultats dans le terminal
+- [ ] Consultez le dashboard superuser
+- [ ] Testez les requêtes manuellement
 
-## Notes Importantes
+---
 
-- Les scripts sont optimisés pour Windows avec PowerShell
-- Ils utilisent des modules ES (import/export)
-- Certains scripts nécessitent que le projet soit buildable
-- Les rapports sont sauvegardés au format JSON pour faciliter l'intégration
-
-## Dépannage
-
-### Erreur "require is not defined"
-Le projet utilise des modules ES. Assurez-vous que les scripts utilisent `import` au lieu de `require`.
-
-### Erreur PowerShell
-Vérifiez que PowerShell est disponible et que les permissions d'exécution sont correctes.
-
-### Erreur de construction
-Assurez-vous que toutes les dépendances sont installées et que la configuration next-intl est correcte.
+**Prêt à tester ? Exécutez le script maintenant ! 🚀**

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import { useSidebarVisibility } from "@/hooks/use-sidebar-visibility"
+import { useVisitorTracking } from "@/hooks/useVisitorTracking"
 import { cn } from "@/lib/utils"
 
 import { DesktopHeader } from "@/components/layout/desktop-header"
@@ -40,6 +41,16 @@ export default function ClientProviders({ children, session, unreadCount, locale
     userRole: session?.user?.role,
     hideSidebar
   })
+  
+  // Visitor tracking - Light version (once per session)
+  // Track everyone EXCEPT superusers on admin pages
+  const isSuperuserAdmin = session?.user?.role === 'superuser' && pathname?.includes('/admin/superuser');
+  const shouldTrack = !isSuperuserAdmin;
+  
+  useVisitorTracking({ 
+    enabled: shouldTrack,
+    debug: false // Set to true for debugging
+  });
   
   // Debug logs
   useEffect(() => {

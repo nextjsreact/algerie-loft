@@ -92,6 +92,20 @@ const heroSlides = [
       ar: "مواجهة للبحر الأبيض المتوسط"
     },
     price: "55,000 DZD/nuit"
+  },
+    {id: 6,
+    image: "/lofts/redoute5.jpg",
+    title: {
+      fr: "Villa Moderne Tipaza",
+      en: "Modern Villa Tipaza",
+      ar: "فيلا حديثة تيبازة"
+    },
+    subtitle: {
+      fr: "Face à la mer Méditerranée",
+      en: "Facing the Mediterranean Sea",
+      ar: "مواجهة للبحر الأبيض المتوسط"
+    },
+    price: "55,000 DZD/nuit"
   }
 ];
 

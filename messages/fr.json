@@ -3290,53 +3290,167 @@
     "title": "Titre"
   },
   "contact": {
-    "reasons": {
-      "propertyManagement": {
-        "title": "Titre"
-      },
-      "rentalServices": {
-        "title": "Titre"
-      },
-      "maintenance": {
-        "title": "Titre"
-      },
-      "consultation": {
-        "title": "Titre"
-      },
-      "title": "Titre"
-    },
-    "process": {
-      "step1": {
-        "title": "Titre"
-      },
-      "step2": {
-        "title": "Titre"
-      },
-      "step3": {
-        "title": "Titre"
-      },
-      "title": "Titre"
-    },
     "page": {
-      "title": "Titre"
-    },
-    "faq": {
-      "title": "Titre"
-    },
-    "info": {
-      "emergency": {
-        "title": "Titre"
-      },
-      "location": {
-        "title": "Titre"
-      }
+      "title": "Contactez-nous",
+      "subtitle": "Notre équipe est à votre écoute pour répondre à toutes vos questions",
+      "responseTime": "Réponse sous 24h",
+      "freeConsultation": "Consultation gratuite"
     },
     "form": {
-      "title": "Titre",
-      "name": "Nom",
-      "email": "Email",
+      "sectionTitle": "Envoyez-nous un message",
+      "sectionDescription": "Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais",
+      "title": "Formulaire de contact",
+      "description": "Nous sommes là pour vous aider",
+      "name": "Nom complet",
+      "namePlaceholder": "Entrez votre nom complet",
+      "email": "Adresse email",
+      "emailPlaceholder": "votre.email@exemple.com",
+      "phone": "Téléphone",
+      "phonePlaceholder": "+213 XX XX XX XX",
+      "preferredContact": "Méthode de contact préférée",
       "contactMethods": {
-        "email": "Email"
+        "email": "Email",
+        "phone": "Téléphone"
+      },
+      "subject": "Sujet",
+      "subjectPlaceholder": "Quel est l'objet de votre message ?",
+      "message": "Votre message",
+      "messagePlaceholder": "Décrivez votre demande en détail...",
+      "consentText": "J'accepte d'être contacté par Loft Algérie concernant ma demande",
+      "submit": "Envoyer le message",
+      "privacyNotice": "Vos données sont protégées et ne seront jamais partagées avec des tiers"
+    },
+    "reasons": {
+      "title": "Pourquoi nous contacter ?",
+      "description": "Nous sommes là pour vous accompagner dans tous vos besoins",
+      "propertyManagement": {
+        "title": "Gestion immobilière",
+        "description": "Confiez-nous la gestion de votre bien",
+        "badge": "Populaire"
+      },
+      "rentalServices": {
+        "title": "Services de location",
+        "description": "Réservez votre loft idéal",
+        "badge": "Rapide"
+      },
+      "maintenance": {
+        "title": "Maintenance",
+        "description": "Assistance technique et entretien",
+        "badge": "24/7"
+      },
+      "consultation": {
+        "title": "Consultation",
+        "description": "Conseils personnalisés gratuits",
+        "badge": "Gratuit"
+      }
+    },
+    "info": {
+      "sectionTitle": "Nos coordonnées",
+      "sectionDescription": "Plusieurs moyens de nous joindre pour votre confort",
+      "primary": "Principal",
+      "available": "Disponible",
+      "phone": {
+        "label": "Téléphone",
+        "primary": "Principal",
+        "available": "Disponible",
+        "number": "+213 56 03 62 543",
+        "description": "Appelez-nous pour une réponse immédiate"
+      },
+      "email": {
+        "label": "Email",
+        "primary": "Principal",
+        "available": "Disponible",
+        "address": "contact@loftalgerie.com",
+        "description": "Écrivez-nous, nous répondons sous 24h"
+      },
+      "whatsapp": {
+        "label": "WhatsApp",
+        "available": "Disponible",
+        "number": "+213 56 03 62 543",
+        "description": "Contactez-nous via WhatsApp"
+      },
+      "address": {
+        "label": "Adresse",
+        "full": "Alger, Algérie",
+        "description": "Visitez-nous sur rendez-vous",
+        "details": "Alger, Algérie"
+      },
+      "clickToContact": "Cliquer pour contacter",
+      "businessHours": "Horaires d'ouverture",
+      "businessHoursDescription": "Nous sommes disponibles tous les jours",
+      "hours": {
+        "monday": "Lundi",
+        "tuesday": "Mardi",
+        "wednesday": "Mercredi",
+        "thursday": "Jeudi",
+        "friday": "Vendredi",
+        "saturday": "Samedi",
+        "sunday": "Dimanche",
+        "weekdayHours": "9h00 - 22h00",
+        "saturdayHours": "9h00 - 22h00",
+        "sundayHours": "9h00 - 22h00"
+      },
+      "appointmentNote": "Rendez-vous recommandé",
+      "appointmentDescription": "Prenez rendez-vous pour une consultation personnalisée",
+      "emergency": {
+        "title": "Urgence",
+        "description": "Pour les urgences, contactez-nous immédiatement",
+        "phone": "+213 56 03 62 543",
+        "availability": "Disponible 24/7"
+      },
+      "callNow": "Appeler maintenant",
+      "location": {
+        "title": "Notre emplacement",
+        "description": "Visitez-nous à notre bureau"
+      },
+      "map": {
+        "placeholder": "Carte de localisation",
+        "openInMaps": "Ouvrir dans Google Maps"
+      },
+      "directions": {
+        "publicTransport": "Transports en commun",
+        "publicTransportDetails": "Accessible en métro et bus",
+        "parking": "Parking",
+        "parkingDetails": "Parking gratuit disponible"
+      }
+    },
+    "process": {
+      "title": "Notre processus de réponse",
+      "description": "Comment nous traitons votre demande en 3 étapes simples",
+      "step1": {
+        "title": "Réception",
+        "description": "Nous recevons votre message et l'analysons",
+        "time": "Immédiat"
+      },
+      "step2": {
+        "title": "Analyse",
+        "description": "Notre équipe étudie votre demande en détail",
+        "time": "Sous 2h"
+      },
+      "step3": {
+        "title": "Réponse",
+        "description": "Nous vous contactons avec une solution adaptée",
+        "time": "Sous 24h"
+      }
+    },
+    "faq": {
+      "title": "Questions fréquentes",
+      "description": "Trouvez rapidement des réponses à vos questions",
+      "q1": {
+        "question": "Quel est votre délai de réponse ?",
+        "answer": "Nous nous engageons à répondre à toutes les demandes sous 24 heures ouvrables. Pour les urgences, nous sommes disponibles 24/7 par téléphone."
+      },
+      "q2": {
+        "question": "Proposez-vous des consultations gratuites ?",
+        "answer": "Oui, nous offrons une première consultation gratuite pour tous nos services. Contactez-nous pour prendre rendez-vous."
+      },
+      "q3": {
+        "question": "Comment puis-je réserver un loft ?",
+        "answer": "Vous pouvez réserver directement sur notre plateforme en ligne, par téléphone ou en nous contactant via ce formulaire. Notre équipe vous guidera dans le processus."
+      },
+      "q4": {
+        "question": "Quels sont vos horaires d'ouverture ?",
+        "answer": "Nous sommes disponibles tous les jours de 9h à 22h. Pour les urgences, notre service client est joignable 24/7."
       }
     }
   },

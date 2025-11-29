@@ -145,5 +145,56 @@ export default async function LocalePage({ params }: LocalePageProps) {
   }
   
   // Utilisateurs non connectés voient la page publique
-  return <FusionDualAudienceHomepage locale={locale} />;
+  return (
+    <>
+      {/* Schema.org JSON-LD pour SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: 'Loft Algérie',
+            url: `https://loft-algerie.com/${locale}`,
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: {
+                '@type': 'EntryPoint',
+                urlTemplate: `https://loft-algerie.com/${locale}/search?q={search_term_string}`,
+              },
+              'query-input': 'required name=search_term_string',
+            },
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'Loft Algérie',
+            url: 'https://loft-algerie.com',
+            logo: 'https://loft-algerie.com/logo.png',
+            description: locale === 'fr' 
+              ? 'Plateforme de réservation et gestion de lofts en Algérie'
+              : locale === 'en'
+              ? 'Loft booking and management platform in Algeria'
+              : 'منصة حجز وإدارة الشقق المفروشة في الجزائر',
+            address: {
+              '@type': 'PostalAddress',
+              addressCountry: 'DZ',
+              addressLocality: 'Alger',
+            },
+            contactPoint: {
+              '@type': 'ContactPoint',
+              contactType: 'customer service',
+              availableLanguage: ['French', 'English', 'Arabic'],
+            },
+          }),
+        }}
+      />
+      <FusionDualAudienceHomepage locale={locale} />
+    </>
+  );
 }

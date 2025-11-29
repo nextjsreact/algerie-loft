@@ -28,7 +28,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { DateRangePicker } from '@/components/ui/date-range-picker';
+import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import { 
   Search, 
   Download, 
@@ -258,9 +258,18 @@ export function AuditLogViewer() {
               </SelectContent>
             </Select>
 
-            <DateRangePicker
-              value={filters.dateRange}
-              onChange={(range) => setFilters(prev => ({ ...prev, dateRange: range }))}
+            <DatePickerWithRange
+              date={filters.dateRange.from && filters.dateRange.to ? {
+                from: filters.dateRange.from,
+                to: filters.dateRange.to
+              } : undefined}
+              onDateChange={(range) => setFilters(prev => ({ 
+                ...prev, 
+                dateRange: {
+                  from: range?.from || null,
+                  to: range?.to || null
+                }
+              }))}
             />
           </div>
         </CardContent>

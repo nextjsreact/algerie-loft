@@ -1,17 +1,20 @@
 import { Metadata } from 'next'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Archive, Search, Download, Calendar, Database, FileText, Users } from 'lucide-react'
+import { ArchiveManager } from '@/components/admin/superuser/archive-manager'
 
 export const metadata: Metadata = {
   title: 'Archives - Superuser',
-  description: 'Gestion des données archivées'
+  description: 'Gestion des données archivées et politiques d\'archivage'
 }
 
 export default async function ArchivesPage() {
+  return (
+    <ArchiveManager />
+  );
+}
+
+/*
+// Old static version - kept for reference
+export default async function ArchivesPageOld() {
   return (
     <div className="container mx-auto px-6 py-8">
       <div className="mb-8">
@@ -260,3 +263,4 @@ export default async function ArchivesPage() {
     </div>
   )
 }
+*/

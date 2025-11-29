@@ -3299,6 +3299,75 @@
         "unknownError": "خطأ غير معروف"
       }
     },
+    "archives": {
+      "title": "إدارة الأرشيف",
+      "subtitle": "تكوين وإدارة الأرشفة التلقائية للبيانات",
+      "stats": {
+        "totalArchived": "إجمالي المؤرشف",
+        "totalSize": "الحجم الإجمالي",
+        "activePolicies": "السياسات النشطة",
+        "oldestArchive": "أقدم أرشيف",
+        "entries": "إدخالات مؤرشفة",
+        "diskSpace": "مساحة القرص",
+        "of": "من",
+        "total": "إجمالي",
+        "none": "لا يوجد",
+        "date": "التاريخ",
+        "never": "أبداً"
+      },
+      "actions": {
+        "refresh": "تحديث",
+        "newPolicy": "سياسة جديدة",
+        "createFirst": "إنشاء السياسة الأولى"
+      },
+      "policies": {
+        "title": "سياسات الأرشفة",
+        "subtitle": "إدارة قواعد الأرشفة التلقائية لكل جدول",
+        "noPolicies": "لم يتم تكوين سياسات أرشفة",
+        "retention": "الاحتفاظ",
+        "days": "أيام",
+        "frequency": "التكرار",
+        "archived": "مؤرشف",
+        "entries": "إدخالات",
+        "lastRun": "آخر تشغيل"
+      },
+      "status": {
+        "active": "نشط",
+        "inactive": "غير نشط"
+      },
+      "dialog": {
+        "addTitle": "سياسة أرشفة جديدة",
+        "addSubtitle": "تكوين قاعدة أرشفة تلقائية جديدة",
+        "editTitle": "تعديل سياسة الأرشفة",
+        "editSubtitle": "تحديث تكوين السياسة",
+        "table": "الجدول المراد أرشفته",
+        "selectTable": "اختر جدولاً",
+        "retention": "فترة الاحتفاظ (أيام)",
+        "retentionHelp": "سيتم أرشفة البيانات الأقدم من هذه الفترة",
+        "frequency": "تكرار الأرشفة",
+        "enableImmediately": "تفعيل فوراً",
+        "enabled": "مفعّل",
+        "cancel": "إلغاء",
+        "create": "إنشاء",
+        "save": "حفظ"
+      },
+      "messages": {
+        "loadError": "فشل تحميل السياسات",
+        "createError": "فشل إنشاء السياسة",
+        "updateError": "فشل تحديث السياسة",
+        "deleteError": "فشل حذف السياسة",
+        "toggleError": "فشل تغيير الحالة",
+        "archiveError": "فشل الأرشفة",
+        "policyCreated": "✅ تم إنشاء سياسة الأرشفة بنجاح",
+        "policyUpdated": "✅ تم تحديث السياسة بنجاح",
+        "policyDeleted": "✅ تم حذف السياسة بنجاح",
+        "policyEnabled": "✅ تم تفعيل السياسة",
+        "policyDisabled": "✅ تم تعطيل السياسة",
+        "archiveSuccess": "✅ تم أرشفة {count} إدخالات بنجاح",
+        "confirmDelete": "هل أنت متأكد من حذف سياسة الأرشفة هذه؟",
+        "unknownError": "خطأ غير معروف"
+      }
+    },
     "userManagement": {
       "title": "إدارة المستخدمين",
       "description": "إدارة جميع المستخدمين والأدوار والصلاحيات في النظام",

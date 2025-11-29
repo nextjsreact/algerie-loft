@@ -3256,6 +3256,75 @@
         "unknownError": "Erreur inconnue"
       }
     },
+    "archives": {
+      "title": "Gestion des Archives",
+      "subtitle": "Configuration et gestion de l'archivage automatique des données",
+      "stats": {
+        "totalArchived": "Total Archivé",
+        "totalSize": "Espace Total",
+        "activePolicies": "Politiques Actives",
+        "oldestArchive": "Archive la Plus Ancienne",
+        "entries": "entrées archivées",
+        "diskSpace": "espace disque",
+        "of": "sur",
+        "total": "total",
+        "none": "Aucune",
+        "date": "Date",
+        "never": "Jamais"
+      },
+      "actions": {
+        "refresh": "Actualiser",
+        "newPolicy": "Nouvelle Politique",
+        "createFirst": "Créer la Première Politique"
+      },
+      "policies": {
+        "title": "Politiques d'Archivage",
+        "subtitle": "Gérer les règles d'archivage automatique pour chaque table",
+        "noPolicies": "Aucune politique d'archivage configurée",
+        "retention": "Rétention",
+        "days": "jours",
+        "frequency": "Fréquence",
+        "archived": "Archivé",
+        "entries": "entrées",
+        "lastRun": "Dernière exécution"
+      },
+      "status": {
+        "active": "Actif",
+        "inactive": "Inactif"
+      },
+      "dialog": {
+        "addTitle": "Nouvelle Politique d'Archivage",
+        "addSubtitle": "Configurer une nouvelle règle d'archivage automatique",
+        "editTitle": "Modifier la Politique d'Archivage",
+        "editSubtitle": "Mettre à jour la configuration de la politique",
+        "table": "Table à Archiver",
+        "selectTable": "Sélectionner une table",
+        "retention": "Période de Rétention (jours)",
+        "retentionHelp": "Les données plus anciennes que cette période seront archivées",
+        "frequency": "Fréquence d'Archivage",
+        "enableImmediately": "Activer immédiatement",
+        "enabled": "Activé",
+        "cancel": "Annuler",
+        "create": "Créer",
+        "save": "Enregistrer"
+      },
+      "messages": {
+        "loadError": "Échec du chargement des politiques",
+        "createError": "Échec de la création de la politique",
+        "updateError": "Échec de la mise à jour de la politique",
+        "deleteError": "Échec de la suppression de la politique",
+        "toggleError": "Échec de la modification du statut",
+        "archiveError": "Échec de l'archivage",
+        "policyCreated": "✅ Politique d'archivage créée avec succès",
+        "policyUpdated": "✅ Politique mise à jour avec succès",
+        "policyDeleted": "✅ Politique supprimée avec succès",
+        "policyEnabled": "✅ Politique activée",
+        "policyDisabled": "✅ Politique désactivée",
+        "archiveSuccess": "✅ {count} entrées archivées avec succès",
+        "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette politique d'archivage ?",
+        "unknownError": "Erreur inconnue"
+      }
+    },
     "userManagement": {
       "title": "Gestion des Utilisateurs",
       "description": "Gérer tous les utilisateurs, rôles et permissions du système",

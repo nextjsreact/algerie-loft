@@ -3066,6 +3066,8 @@
       "title": "Panneau Superuser",
       "dashboard": "Tableau de bord",
       "dashboardDesc": "Vue d'ensemble du système",
+      "announcements": "Annonces Urgentes",
+      "announcementsDesc": "Gérer les annonces urgentes",
       "userManagement": "Gestion Utilisateurs",
       "userManagementDesc": "Gérer tous les utilisateurs",
       "security": "Sécurité & Audit",
@@ -3173,6 +3175,86 @@
       "profile": "Superuser",
       "access": "Accès complet",
       "logout": "Déconnexion"
+    },
+    "backup": {
+      "title": "Gestion des Sauvegardes",
+      "subtitle": "Système de sauvegarde automatique et manuelle des données",
+      "totalEntries": "Entrées totales",
+      "stats": {
+        "today": "Aujourd'hui",
+        "critical": "Critiques",
+        "users": "Utilisateurs",
+        "actions": "Actions",
+        "lastBackup": "Dernière Sauvegarde",
+        "nextBackup": "Prochaine Sauvegarde",
+        "spaceUsed": "Espace Utilisé",
+        "of": "Sur",
+        "available": "disponibles",
+        "automatic": "Automatique",
+        "dailyScheduled": "Sauvegarde quotidienne programmée",
+        "noBackup": "Aucune sauvegarde",
+        "notAvailable": "N/A"
+      },
+      "lastBackup": "Dernière Sauvegarde",
+      "nextBackup": "Prochaine Sauvegarde",
+      "spaceUsed": "Espace Utilisé",
+      "available": "disponibles",
+      "automatic": "Automatique",
+      "scheduledDaily": "Sauvegarde quotidienne programmée",
+      "actions": {
+        "title": "Actions de Sauvegarde",
+        "subtitle": "Créer et gérer les sauvegardes manuelles",
+        "fullBackup": "Sauvegarde Complète Immédiate",
+        "incrementalBackup": "Sauvegarde Incrémentale",
+        "manualBackup": "Sauvegarde Manuelle",
+        "inProgress": "Sauvegarde en cours...",
+        "refresh": "Actualiser",
+        "export": "Exporter CSV"
+      },
+      "history": {
+        "title": "Historique des Sauvegardes",
+        "subtitle": "Dernières sauvegardes effectuées",
+        "noBackups": "Aucune sauvegarde disponible",
+        "view": "Voir"
+      },
+      "details": {
+        "title": "Détails de la Sauvegarde",
+        "subtitle": "Informations complètes sur la sauvegarde sélectionnée",
+        "id": "ID",
+        "type": "Type",
+        "status": "Statut",
+        "size": "Taille",
+        "started": "Démarré",
+        "completed": "Terminé",
+        "filePath": "Emplacement du Fichier",
+        "checksum": "Checksum (SHA-256)",
+        "verifyIntegrity": "Vérifier l'Intégrité",
+        "notAvailable": "Non disponible"
+      },
+      "status": {
+        "completed": "Terminé",
+        "inProgress": "En cours",
+        "pending": "En attente",
+        "failed": "Échoué",
+        "cancelled": "Annulé"
+      },
+      "types": {
+        "full": "Complète",
+        "incremental": "Incrémentale",
+        "manual": "Manuelle"
+      },
+      "messages": {
+        "loadError": "Échec du chargement des sauvegardes",
+        "createError": "Échec de la création de la sauvegarde",
+        "launched": "Sauvegarde {type} lancée avec succès! ID: {id}",
+        "completed": "✅ Sauvegarde terminée avec succès! ({size})",
+        "failed": "❌ Sauvegarde échouée: {error}",
+        "timeout": "⏱️ Timeout: La sauvegarde prend trop de temps. Vérifiez l'historique.",
+        "verifySuccess": "✓ Sauvegarde valide",
+        "verifyFailed": "✗ Sauvegarde invalide",
+        "verifyError": "Échec de la vérification",
+        "unknownError": "Erreur inconnue"
+      }
     },
     "userManagement": {
       "title": "Gestion des Utilisateurs",

@@ -3282,6 +3282,8 @@
       "title": "Superuser Panel",
       "dashboard": "Dashboard",
       "dashboardDesc": "System overview",
+      "announcements": "Urgent Announcements",
+      "announcementsDesc": "Manage urgent announcements",
       "userManagement": "User Management",
       "userManagementDesc": "Manage all users",
       "security": "Security & Audit",
@@ -3405,6 +3407,86 @@
       "profile": "Superuser",
       "access": "Full access",
       "logout": "Logout"
+    },
+    "backup": {
+      "title": "Backup Management",
+      "subtitle": "Automatic and manual data backup system",
+      "totalEntries": "Total Entries",
+      "stats": {
+        "today": "Today",
+        "critical": "Critical",
+        "users": "Users",
+        "actions": "Actions",
+        "lastBackup": "Last Backup",
+        "nextBackup": "Next Backup",
+        "spaceUsed": "Space Used",
+        "of": "of",
+        "available": "available",
+        "automatic": "Automatic",
+        "dailyScheduled": "Scheduled daily backup",
+        "noBackup": "No backup",
+        "notAvailable": "N/A"
+      },
+      "lastBackup": "Last Backup",
+      "nextBackup": "Next Backup",
+      "spaceUsed": "Space Used",
+      "available": "available",
+      "automatic": "Automatic",
+      "scheduledDaily": "Scheduled daily backup",
+      "actions": {
+        "title": "Backup Actions",
+        "subtitle": "Create and manage manual backups",
+        "fullBackup": "Full Backup Now",
+        "incrementalBackup": "Incremental Backup",
+        "manualBackup": "Manual Backup",
+        "inProgress": "Backup in progress...",
+        "refresh": "Refresh",
+        "export": "Export CSV"
+      },
+      "history": {
+        "title": "Backup History",
+        "subtitle": "Recent backups",
+        "noBackups": "No backups available",
+        "view": "View"
+      },
+      "details": {
+        "title": "Backup Details",
+        "subtitle": "Complete information about the selected backup",
+        "id": "ID",
+        "type": "Type",
+        "status": "Status",
+        "size": "Size",
+        "started": "Started",
+        "completed": "Completed",
+        "filePath": "File Location",
+        "checksum": "Checksum (SHA-256)",
+        "verifyIntegrity": "Verify Integrity",
+        "notAvailable": "Not available"
+      },
+      "status": {
+        "completed": "Completed",
+        "inProgress": "In Progress",
+        "pending": "Pending",
+        "failed": "Failed",
+        "cancelled": "Cancelled"
+      },
+      "types": {
+        "full": "Full",
+        "incremental": "Incremental",
+        "manual": "Manual"
+      },
+      "messages": {
+        "loadError": "Failed to load backups",
+        "createError": "Failed to create backup",
+        "launched": "{type} backup launched successfully! ID: {id}",
+        "completed": "✅ Backup completed successfully! ({size})",
+        "failed": "❌ Backup failed: {error}",
+        "timeout": "⏱️ Timeout: Backup is taking too long. Check history.",
+        "verifySuccess": "✓ Backup is valid",
+        "verifyFailed": "✗ Backup is invalid",
+        "verifyError": "Verification failed",
+        "unknownError": "Unknown error"
+      }
     },
     "userManagement": {
       "title": "User Management",

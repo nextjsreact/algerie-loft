@@ -154,19 +154,19 @@ export default function PublicHeader({ locale, text }: PublicHeaderProps) {
                     href={`/${locale}/client/login`}
                     className="block px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors font-medium"
                   >
-                    🏠 Client - Réserver
+                    🏠 {locale === 'fr' ? 'Client - Réserver' : locale === 'en' ? 'Client - Book' : 'عميل - حجز'}
                   </a>
                   <a 
                     href={`/${locale}/partner/login`}
                     className="block px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors font-medium"
                   >
-                    🏢 Partenaire - Gérer
+                    🏢 {locale === 'fr' ? 'Partenaire - Gérer' : locale === 'en' ? 'Partner - Manage' : 'شريك - إدارة'}
                   </a>
                   <a 
                     href={`/${locale}/login`}
                     className="block px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors font-medium"
                   >
-                    ⚙️ Employé - Admin
+                    ⚙️ {locale === 'fr' ? 'Employé - Admin' : locale === 'en' ? 'Employee - Admin' : 'موظف - إدارة'}
                   </a>
                 </div>
               </div>
@@ -290,7 +290,7 @@ export default function PublicHeader({ locale, text }: PublicHeaderProps) {
               {/* Mobile Login Options */}
               <div className="px-2 pt-4">
                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 px-2">
-                  🔐 Connexion
+                  🔐 {locale === 'fr' ? 'Connexion' : locale === 'en' ? 'Login' : 'تسجيل الدخول'}
                 </p>
                 <div className="space-y-2">
                   <a 
@@ -298,21 +298,21 @@ export default function PublicHeader({ locale, text }: PublicHeaderProps) {
                     className="block w-full bg-blue-600 dark:bg-blue-700 text-white text-center px-6 py-3 rounded-lg font-bold hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors text-lg"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    🏠 Client - Réserver
+                    🏠 {locale === 'fr' ? 'Client - Réserver' : locale === 'en' ? 'Client - Book' : 'عميل - حجز'}
                   </a>
                   <a 
                     href={`/${locale}/partner/login`}
                     className="block w-full bg-green-600 dark:bg-green-700 text-white text-center px-6 py-3 rounded-lg font-bold hover:bg-green-700 dark:hover:bg-green-600 transition-colors text-lg"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    🏢 Partenaire - Gérer
+                    🏢 {locale === 'fr' ? 'Partenaire - Gérer' : locale === 'en' ? 'Partner - Manage' : 'شريك - إدارة'}
                   </a>
                   <a 
                     href={`/${locale}/login`}
                     className="block w-full bg-red-600 dark:bg-red-700 text-white text-center px-6 py-3 rounded-lg font-bold hover:bg-red-700 dark:hover:bg-red-600 transition-colors text-lg"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    ⚙️ Employé - Admin
+                    ⚙️ {locale === 'fr' ? 'Employé - Admin' : locale === 'en' ? 'Employee - Admin' : 'موظف - إدارة'}
                   </a>
                 </div>
               </div>

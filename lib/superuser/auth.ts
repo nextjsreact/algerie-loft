@@ -91,9 +91,39 @@ export async function verifySuperuserPermissions(
 }
 
 /**
- * Require superuser access - redirect if not authorized
+ * Require superuser access - redirect if not authorized (for pages)
  */
-export async function requireSuperuser(): Promise<SuperuserProfile> {
+export async function requireSuperuser(): Promise<SuperuserProfile>;
+export async function requireSuperuser(supabase: any, permissions?: string[]): Promise<{ success: boolean; superuser?: any; error?: string }>;
+export async function requireSuperuser(supabase?: any, permissions?: string[]): Promise<any> {
+  // API route version with supabase client
+  if (supabase) {
+    try {
+      const session = await getSession();
+      if (!session || session.user.role !== 'superuser') {
+        console.log('[requireSuperuser] No session or not superuser role:', session?.user?.role);
+        return { success: false, error: 'Unauthorized' };
+      }
+
+      // For API routes, we just check the role from the session
+      // No need for additional tables if they don't exist
+      const superuserProfile = {
+        id: session.user.id,
+        user_id: session.user.id,
+        email: session.user.email,
+        role: 'superuser',
+        is_active: true
+      };
+
+      console.log('[requireSuperuser] Success for user:', session.user.id);
+      return { success: true, superuser: superuserProfile };
+    } catch (error) {
+      console.error('Error in requireSuperuser:', error);
+      return { success: false, error: 'Internal error' };
+    }
+  }
+
+  // Page version - redirect if not authorized
   const superuser = await getSuperuserProfile();
   if (!superuser) {
     redirect('/fr/unauthorized');

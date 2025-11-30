@@ -456,7 +456,7 @@ export class AuditService {
       
       // Build count query with same filters as export
       let query = supabase
-        .from('audit.audit_logs')
+        .from('audit_logs_view')
         .select('id', { count: 'exact', head: true });
 
       // Apply same filters as in getAuditLogs

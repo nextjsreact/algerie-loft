@@ -139,7 +139,7 @@ async function getRecentSecurityAlerts(supabase: any): Promise<SecurityAlert[]> 
 async function getRecentAuditLogs(supabase: any): Promise<AuditLogEntry[]> {
   try {
     const { data: logs, error } = await supabase
-      .from('audit_logs')
+      .from('audit_logs_view')
       .select('*')
       .order('timestamp', { ascending: false })
       .limit(20);

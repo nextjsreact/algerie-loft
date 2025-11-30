@@ -21,21 +21,11 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '50');
 
-    const supabase = await createClient(true); // Use service role
+    const supabase = await createClient(); // Use user session
 
     let query = supabase
-      .from('audit_logs')
-      .select(`
-        *,
-        superuser_profiles!inner(
-          users!inner(
-            full_name
-          )
-        ),
-        target_users:users!audit_logs_target_user_id_fkey(
-          full_name
-        )
-      `, { count: 'exact' })
+      .from('audit_logs_view')
+      .select('*', { count: 'exact' })
       .order('timestamp', { ascending: false });
 
     // Apply filters
@@ -74,11 +64,11 @@ export async function GET(request: NextRequest) {
       throw fetchError;
     }
 
-    // Transform the data to include user names
+    // Transform the data
     const transformedLogs = (logs || []).map((log: any) => ({
       ...log,
-      superuser_name: log.superuser_profiles?.users?.full_name || 'Système',
-      target_user_name: log.target_users?.full_name || null,
+      superuser_name: 'Superuser',
+      target_user_name: null,
       timestamp: new Date(log.timestamp)
     }));
 
@@ -94,8 +84,13 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Error fetching audit logs:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'Failed to fetch audit logs',
+        details: errorMessage,
+        hint: 'The audit_logs table may not exist. Run the audit setup migration.'
+      },
       { status: 500 }
     );
   }

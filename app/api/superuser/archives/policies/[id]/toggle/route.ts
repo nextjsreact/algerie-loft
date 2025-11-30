@@ -1,19 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { requireRole } from '@/lib/auth/require-role';
+import { verifySuperuserAPI } from '@/lib/superuser/auth';
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const authResult = await requireRole(['superuser']);
-    if (authResult.error) {
+    const verification = await verifySuperuserAPI();
+    if (!verification.authorized) {
       return NextResponse.json(
-        { error: authResult.error },
-        { status: authResult.status }
+        { error: verification.error || 'Unauthorized' },
+        { status: 403 }
       );
     }
+
+    const { user } = verification;
 
     const body = await request.json();
     const { enabled } = body;
@@ -47,7 +49,7 @@ export async function PATCH(
 
     // Log the action
     await supabase.from('audit_logs').insert({
-      user_id: authResult.user.id,
+      user_id: user.id,
       action: enabled ? 'ENABLE_ARCHIVE_POLICY' : 'DISABLE_ARCHIVE_POLICY',
       resource_type: 'archive_policy',
       resource_id: params.id,

@@ -98,13 +98,21 @@ export function addPerformanceMonitoring(response: NextResponse) {
 
 // Content Security Policy for performance and security
 export function addCSP(response: NextResponse) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseWsUrl = supabaseUrl.replace('https://', 'wss://');
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
   const csp = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
     "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
     "font-src 'self' fonts.gstatic.com",
     "img-src 'self' data: blob: https:",
-    "connect-src 'self' https:",
+    // In development, allow all WebSocket connections for debugging tools
+    // In production, only allow specific origins
+    isDevelopment 
+      ? `connect-src 'self' https: ws: wss: ${supabaseUrl} ${supabaseWsUrl}`
+      : `connect-src 'self' https: wss: ${supabaseUrl} ${supabaseWsUrl}`,
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'"

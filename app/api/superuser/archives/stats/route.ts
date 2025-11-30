@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { requireRole } from '@/lib/auth/require-role';
+import { verifySuperuserAPI } from '@/lib/superuser/auth';
 
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await requireRole(['superuser']);
-    if (authResult.error) {
+    const verification = await verifySuperuserAPI();
+    if (!verification.authorized) {
       return NextResponse.json(
-        { error: authResult.error },
-        { status: authResult.status }
+        { error: verification.error || 'Unauthorized' },
+        { status: 403 }
       );
     }
 

@@ -1,0 +1,218 @@
+{
+  "fr": {
+    "backup": {
+      "title": "Gestion des Sauvegardes",
+      "subtitle": "Système de sauvegarde automatique et manuelle des données",
+      "totalEntries": "Entrées totales",
+      "stats": {
+        "today": "Aujourd'hui",
+        "critical": "Critiques",
+        "users": "Utilisateurs",
+        "actions": "Actions"
+      },
+      "lastBackup": "Dernière Sauvegarde",
+      "nextBackup": "Prochaine Sauvegarde",
+      "spaceUsed": "Espace Utilisé",
+      "available": "disponibles",
+      "automatic": "Automatique",
+      "scheduledDaily": "Sauvegarde quotidienne programmée",
+      "actions": {
+        "title": "Actions de Sauvegarde",
+        "subtitle": "Créer et gérer les sauvegardes manuelles",
+        "fullBackup": "Sauvegarde Complète Immédiate",
+        "incrementalBackup": "Sauvegarde Incrémentale",
+        "manualBackup": "Sauvegarde Manuelle",
+        "inProgress": "Sauvegarde en cours...",
+        "refresh": "Actualiser",
+        "export": "Exporter CSV"
+      },
+      "history": {
+        "title": "Historique des Sauvegardes",
+        "subtitle": "Dernières sauvegardes effectuées",
+        "noBackups": "Aucune sauvegarde disponible",
+        "view": "Voir"
+      },
+      "details": {
+        "title": "Détails de la Sauvegarde",
+        "subtitle": "Informations complètes sur la sauvegarde sélectionnée",
+        "id": "ID",
+        "type": "Type",
+        "status": "Statut",
+        "size": "Taille",
+        "started": "Démarré",
+        "completed": "Terminé",
+        "filePath": "Emplacement du Fichier",
+        "checksum": "Checksum (SHA-256)",
+        "verifyIntegrity": "Vérifier l'Intégrité",
+        "notAvailable": "Non disponible"
+      },
+      "status": {
+        "completed": "Terminé",
+        "inProgress": "En cours",
+        "pending": "En attente",
+        "failed": "Échoué",
+        "cancelled": "Annulé"
+      },
+      "types": {
+        "full": "Complète",
+        "incremental": "Incrémentale",
+        "manual": "Manuelle"
+      },
+      "messages": {
+        "loadError": "Échec du chargement des sauvegardes",
+        "createError": "Échec de la création de la sauvegarde",
+        "launched": "Sauvegarde {type} lancée avec succès! ID: {id}",
+        "completed": "Sauvegarde terminée avec succès! ({size})",
+        "failed": "Sauvegarde échouée: {error}",
+        "timeout": "Timeout: La sauvegarde prend trop de temps. Vérifiez l'historique.",
+        "verifySuccess": "Sauvegarde valide ✓",
+        "verifyFailed": "Sauvegarde invalide ✗",
+        "verifyError": "Échec de la vérification"
+      }
+    }
+  },
+  "en": {
+    "backup": {
+      "title": "Backup Management",
+      "subtitle": "Automatic and manual data backup system",
+      "totalEntries": "Total Entries",
+      "stats": {
+        "today": "Today",
+        "critical": "Critical",
+        "users": "Users",
+        "actions": "Actions"
+      },
+      "lastBackup": "Last Backup",
+      "nextBackup": "Next Backup",
+      "spaceUsed": "Space Used",
+      "available": "available",
+      "automatic": "Automatic",
+      "scheduledDaily": "Scheduled daily backup",
+      "actions": {
+        "title": "Backup Actions",
+        "subtitle": "Create and manage manual backups",
+        "fullBackup": "Full Backup Now",
+        "incrementalBackup": "Incremental Backup",
+        "manualBackup": "Manual Backup",
+        "inProgress": "Backup in progress...",
+        "refresh": "Refresh",
+        "export": "Export CSV"
+      },
+      "history": {
+        "title": "Backup History",
+        "subtitle": "Recent backups",
+        "noBackups": "No backups available",
+        "view": "View"
+      },
+      "details": {
+        "title": "Backup Details",
+        "subtitle": "Complete information about the selected backup",
+        "id": "ID",
+        "type": "Type",
+        "status": "Status",
+        "size": "Size",
+        "started": "Started",
+        "completed": "Completed",
+        "filePath": "File Location",
+        "checksum": "Checksum (SHA-256)",
+        "verifyIntegrity": "Verify Integrity",
+        "notAvailable": "Not available"
+      },
+      "status": {
+        "completed": "Completed",
+        "inProgress": "In Progress",
+        "pending": "Pending",
+        "failed": "Failed",
+        "cancelled": "Cancelled"
+      },
+      "types": {
+        "full": "Full",
+        "incremental": "Incremental",
+        "manual": "Manual"
+      },
+      "messages": {
+        "loadError": "Failed to load backups",
+        "createError": "Failed to create backup",
+        "launched": "{type} backup launched successfully! ID: {id}",
+        "completed": "Backup completed successfully! ({size})",
+        "failed": "Backup failed: {error}",
+        "timeout": "Timeout: Backup is taking too long. Check history.",
+        "verifySuccess": "Backup is valid ✓",
+        "verifyFailed": "Backup is invalid ✗",
+        "verifyError": "Verification failed"
+      }
+    }
+  },
+  "ar": {
+    "backup": {
+      "title": "إدارة النسخ الاحتياطية",
+      "subtitle": "نظام النسخ الاحتياطي التلقائي واليدوي للبيانات",
+      "totalEntries": "إجمالي الإدخالات",
+      "stats": {
+        "today": "اليوم",
+        "critical": "حرجة",
+        "users": "المستخدمون",
+        "actions": "الإجراءات"
+      },
+      "lastBackup": "آخر نسخة احتياطية",
+      "nextBackup": "النسخة الاحتياطية التالية",
+      "spaceUsed": "المساحة المستخدمة",
+      "available": "متاح",
+      "automatic": "تلقائي",
+      "scheduledDaily": "نسخة احتياطية يومية مجدولة",
+      "actions": {
+        "title": "إجراءات النسخ الاحتياطي",
+        "subtitle": "إنشاء وإدارة النسخ الاحتياطية اليدوية",
+        "fullBackup": "نسخة احتياطية كاملة فورية",
+        "incrementalBackup": "نسخة احتياطية تزايدية",
+        "manualBackup": "نسخة احتياطية يدوية",
+        "inProgress": "جاري إنشاء النسخة الاحتياطية...",
+        "refresh": "تحديث",
+        "export": "تصدير CSV"
+      },
+      "history": {
+        "title": "سجل النسخ الاحتياطية",
+        "subtitle": "آخر النسخ الاحتياطية المنفذة",
+        "noBackups": "لا توجد نسخ احتياطية متاحة",
+        "view": "عرض"
+      },
+      "details": {
+        "title": "تفاصيل النسخة الاحتياطية",
+        "subtitle": "معلومات كاملة عن النسخة الاحتياطية المحددة",
+        "id": "المعرف",
+        "type": "النوع",
+        "status": "الحالة",
+        "size": "الحجم",
+        "started": "بدأت",
+        "completed": "اكتملت",
+        "filePath": "موقع الملف",
+        "checksum": "المجموع الاختباري (SHA-256)",
+        "verifyIntegrity": "التحقق من السلامة",
+        "notAvailable": "غير متوفر"
+      },
+      "status": {
+        "completed": "مكتمل",
+        "inProgress": "قيد التنفيذ",
+        "pending": "قيد الانتظار",
+        "failed": "فشل",
+        "cancelled": "ملغى"
+      },
+      "types": {
+        "full": "كاملة",
+        "incremental": "تزايدية",
+        "manual": "يدوية"
+      },
+      "messages": {
+        "loadError": "فشل تحميل النسخ الاحتياطية",
+        "createError": "فشل إنشاء النسخة الاحتياطية",
+        "launched": "تم إطلاق النسخة الاحتياطية {type} بنجاح! المعرف: {id}",
+        "completed": "اكتملت النسخة الاحتياطية بنجاح! ({size})",
+        "failed": "فشلت النسخة الاحتياطية: {error}",
+        "timeout": "انتهت المهلة: النسخة الاحتياطية تستغرق وقتًا طويلاً. تحقق من السجل.",
+        "verifySuccess": "النسخة الاحتياطية صالحة ✓",
+        "verifyFailed": "النسخة الاحتياطية غير صالحة ✗",
+        "verifyError": "فشل التحقق"
+      }
+    }
+  }
+}

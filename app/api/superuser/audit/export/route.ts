@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient(true); // Use service role
 
     let query = supabase
-      .from('audit_logs')
+      .from('audit_logs_view')
       .select(`
         *,
         superuser_profiles!inner(

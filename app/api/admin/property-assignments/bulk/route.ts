@@ -123,6 +123,7 @@ export async function POST(request: NextRequest) {
     // Log audit trail for each property
     for (const property of currentProperties) {
       await supabase
+        .schema('audit')
         .from('audit_logs')
         .insert({
           table_name: 'lofts',

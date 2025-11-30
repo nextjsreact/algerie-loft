@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { requireRole } from '@/lib/auth/require-role';
+import { verifySuperuserAPI } from '@/lib/superuser/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await requireRole(['superuser']);
-    if (authResult.error) {
+    const verification = await verifySuperuserAPI();
+    if (!verification.authorized) {
       return NextResponse.json(
-        { error: authResult.error },
-        { status: authResult.status }
+        { error: verification.error || 'Unauthorized' },
+        { status: 403 }
       );
     }
+
+    const { user } = verification;
 
     const body = await request.json();
     const { policy_id } = body;
@@ -61,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     // Log the action
     await supabase.from('audit_logs').insert({
-      user_id: authResult.user.id,
+      user_id: user.id,
       action: 'RUN_ARCHIVE',
       resource_type: 'archive_policy',
       resource_id: policy_id,
@@ -231,8 +233,28 @@ function calculateNextRun(frequency: string): string {
       now.setDate(now.getDate() + (7 - now.getDay()));
       now.setHours(0, 0, 0, 0);
       break;
+    case 'BIWEEKLY':
+      now.setDate(now.getDate() + 14);
+      now.setHours(0, 0, 0, 0);
+      break;
     case 'MONTHLY':
       now.setMonth(now.getMonth() + 1);
+      now.setDate(1);
+      now.setHours(0, 0, 0, 0);
+      break;
+    case 'QUARTERLY':
+      now.setMonth(now.getMonth() + 3);
+      now.setDate(1);
+      now.setHours(0, 0, 0, 0);
+      break;
+    case 'BIANNUAL':
+      now.setMonth(now.getMonth() + 6);
+      now.setDate(1);
+      now.setHours(0, 0, 0, 0);
+      break;
+    case 'ANNUAL':
+      now.setFullYear(now.getFullYear() + 1);
+      now.setMonth(0);
       now.setDate(1);
       now.setHours(0, 0, 0, 0);
       break;

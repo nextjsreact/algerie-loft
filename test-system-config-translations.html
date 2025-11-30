@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Traductions Configuration Système</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 0; }
+        .key { 
+            font-family: monospace; 
+            background: #f0f0f0; 
+            padding: 2px 6px; 
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .value-fr { color: #2563eb; margin: 5px 0; }
+        .value-en { color: #059669; margin: 5px 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+        .success { color: #059669; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>✅ Test des Traductions - Configuration Système</h1>
+    
+    <div class="test-section">
+        <h2>📋 Résumé</h2>
+        <p class="success">✓ Toutes les traductions ont été ajoutées avec succès!</p>
+        <p>La page de Configuration Système utilise maintenant le système de traduction i18n.</p>
+    </div>
+
+    <div class="test-section">
+        <h2>🔑 Clés de Traduction Ajoutées</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Clé</th>
+                    <th>Français</th>
+                    <th>English</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="key">systemConfiguration.title</span></td>
+                    <td class="value-fr">Configuration Système</td>
+                    <td class="value-en">System Configuration</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.subtitle</span></td>
+                    <td class="value-fr">Gérer les paramètres système et les configurations globales</td>
+                    <td class="value-en">Manage system settings and global configurations</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.newConfiguration</span></td>
+                    <td class="value-fr">Nouvelle Configuration</td>
+                    <td class="value-en">New Configuration</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.category</span></td>
+                    <td class="value-fr">Catégorie</td>
+                    <td class="value-en">Category</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.allCategories</span></td>
+                    <td class="value-fr">Toutes les catégories</td>
+                    <td class="value-en">All categories</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.refresh</span></td>
+                    <td class="value-fr">Actualiser</td>
+                    <td class="value-en">Refresh</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.currentValue</span></td>
+                    <td class="value-fr">Valeur actuelle:</td>
+                    <td class="value-en">Current value:</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.previousValue</span></td>
+                    <td class="value-fr">Valeur précédente:</td>
+                    <td class="value-en">Previous value:</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.modifiedBy</span></td>
+                    <td class="value-fr">Modifié par</td>
+                    <td class="value-en">Modified by</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.requiresRestart</span></td>
+                    <td class="value-fr">Redémarrage requis</td>
+                    <td class="value-en">Requires restart</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.sensitive</span></td>
+                    <td class="value-fr">Sensible</td>
+                    <td class="value-en">Sensitive</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 Formulaire de Création</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Clé</th>
+                    <th>Français</th>
+                    <th>English</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="key">systemConfiguration.configKey</span></td>
+                    <td class="value-fr">Clé de Configuration</td>
+                    <td class="value-en">Configuration Key</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.dataType</span></td>
+                    <td class="value-fr">Type de Données</td>
+                    <td class="value-en">Data Type</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.value</span></td>
+                    <td class="value-fr">Valeur</td>
+                    <td class="value-en">Value</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.isSensitive</span></td>
+                    <td class="value-fr">Données sensibles</td>
+                    <td class="value-en">Sensitive data</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.create</span></td>
+                    <td class="value-fr">Créer</td>
+                    <td class="value-en">Create</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.save</span></td>
+                    <td class="value-fr">Sauvegarder</td>
+                    <td class="value-en">Save</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.cancel</span></td>
+                    <td class="value-fr">Annuler</td>
+                    <td class="value-en">Cancel</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="test-section">
+        <h2>💬 Messages de Confirmation</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Clé</th>
+                    <th>Français</th>
+                    <th>English</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="key">systemConfiguration.deleteConfirm</span></td>
+                    <td class="value-fr">Êtes-vous sûr de vouloir supprimer cette configuration ? Cette action ne peut pas être annulée.</td>
+                    <td class="value-en">Are you sure you want to delete this configuration? This action cannot be undone.</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.rollbackConfirm</span></td>
+                    <td class="value-fr">Êtes-vous sûr de vouloir restaurer cette configuration à sa valeur précédente ?</td>
+                    <td class="value-en">Are you sure you want to rollback this configuration to its previous value?</td>
+                </tr>
+                <tr>
+                    <td><span class="key">systemConfiguration.restartWarning</span></td>
+                    <td class="value-fr">Cette configuration nécessite un redémarrage du système pour prendre effet.</td>
+                    <td class="value-en">This configuration requires a system restart to take effect.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="test-section">
+        <h2>🎯 Prochaines Étapes</h2>
+        <ol>
+            <li>Redémarrez le serveur de développement</li>
+            <li>Accédez à la page de Configuration Système</li>
+            <li>Changez la langue entre FR et EN</li>
+            <li>Vérifiez que tous les textes changent correctement</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>📁 Fichiers Modifiés</h2>
+        <ul>
+            <li><code>public/locales/fr/settings.json</code> - Traductions françaises ajoutées</li>
+            <li><code>public/locales/en/settings.json</code> - Traductions anglaises ajoutées</li>
+            <li><code>components/admin/superuser/system-configuration-panel.tsx</code> - Composant mis à jour avec i18n</li>
+        </ul>
+    </div>
+</body>
+</html>

@@ -105,20 +105,8 @@ export class FontOptimizer {
     }
 
     try {
-      // Use CSS Font Loading API if available
-      if ('fonts' in document) {
-        const font = new FontFace(family, `url(https://fonts.gstatic.com/s/${family.toLowerCase()}/v1/${family}-${weight}.woff2)`, {
-          weight: weight.toString(),
-          display: 'swap'
-        });
-
-        await font.load();
-        document.fonts.add(font);
-        this.loadedFonts.add(fontKey);
-      } else {
-        // Fallback for older browsers
-        await this.loadFontFallback(family, weight);
-      }
+      // Use CSS Font Loading API - load via Google Fonts CSS
+      await this.loadFontFallback(family, weight);
     } catch (error) {
       console.warn(`Failed to load font ${family}-${weight}:`, error);
     }

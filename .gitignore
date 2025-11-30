@@ -100,6 +100,11 @@ temp/
 
 # Backup files
 backup/
+backups/*.sql
+backups/*.gz
+backups/*.zip
+!backups/README.md
+!backups/clone-operations/
 *.backup
 
 # OS generated files

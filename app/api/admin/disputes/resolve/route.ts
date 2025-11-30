@@ -138,6 +138,7 @@ export async function POST(request: NextRequest) {
 
     // Log the admin action
     await supabase
+      .schema('audit')
       .from('audit_logs')
       .insert({
         table_name: 'booking_disputes',

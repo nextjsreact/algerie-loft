@@ -21,6 +21,32 @@ export async function logAuditEntry(entry: Omit<AuditLogEntry, 'id'>): Promise<v
   }
 }
 
+/**
+ * Helper function for logging audit events with a simpler signature
+ * @deprecated Use logAuditEntry instead for better type safety
+ */
+export async function logAuditEvent(
+  supabase: any,
+  userId: string,
+  category: string,
+  action: string,
+  details?: Record<string, any>
+): Promise<void> {
+  try {
+    await supabase
+      .from('audit_logs')
+      .insert({
+        user_id: userId,
+        action: `${category}_${action}`,
+        resource_type: category,
+        details: details || {},
+        created_at: new Date().toISOString()
+      });
+  } catch (error) {
+    console.error('Failed to log audit event:', error);
+  }
+}
+
 export async function getAuditLogs(filters: {
   superuserId?: string;
   actionType?: string;

@@ -72,7 +72,11 @@ const AVAILABLE_TABLES = [
 const FREQUENCY_OPTIONS = [
   { value: 'DAILY', label: 'Quotidien', description: 'Tous les jours à minuit' },
   { value: 'WEEKLY', label: 'Hebdomadaire', description: 'Tous les dimanches' },
+  { value: 'BIWEEKLY', label: 'Bimensuel', description: 'Toutes les 2 semaines' },
   { value: 'MONTHLY', label: 'Mensuel', description: 'Le 1er de chaque mois' },
+  { value: 'QUARTERLY', label: 'Trimestriel', description: 'Tous les 3 mois' },
+  { value: 'BIANNUAL', label: 'Semestriel', description: 'Tous les 6 mois' },
+  { value: 'ANNUAL', label: 'Annuel', description: 'Une fois par an' },
 ];
 
 export function ArchiveManager() {
@@ -91,10 +95,15 @@ export function ArchiveManager() {
   const [archiving, setArchiving] = useState(false);
 
   // Form state for new/edit policy
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    table_name: string;
+    retention_days: number;
+    frequency: 'DAILY' | 'WEEKLY' | 'BIWEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'BIANNUAL' | 'ANNUAL';
+    enabled: boolean;
+  }>({
     table_name: '',
     retention_days: 90,
-    frequency: 'WEEKLY' as const,
+    frequency: 'WEEKLY',
     enabled: true,
   });
 

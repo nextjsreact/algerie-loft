@@ -173,6 +173,7 @@ export async function PUT(
 
     // Log audit trail
     await supabase
+      .schema('audit')
       .from('audit_logs')
       .insert({
         table_name: 'lofts',
@@ -361,6 +362,7 @@ export async function DELETE(
 
     // Log audit trail
     await supabase
+      .schema('audit')
       .from('audit_logs')
       .insert({
         table_name: 'lofts',

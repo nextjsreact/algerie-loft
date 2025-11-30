@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS archive_policies (
   table_name TEXT NOT NULL UNIQUE,
   enabled BOOLEAN DEFAULT true,
   retention_days INTEGER NOT NULL CHECK (retention_days > 0),
-  frequency TEXT NOT NULL CHECK (frequency IN ('DAILY', 'WEEKLY', 'MONTHLY')),
+  frequency TEXT NOT NULL CHECK (frequency IN ('DAILY', 'WEEKLY', 'BIWEEKLY', 'MONTHLY', 'QUARTERLY', 'BIANNUAL', 'ANNUAL')),
   last_run TIMESTAMPTZ,
   next_run TIMESTAMPTZ,
   archived_count INTEGER DEFAULT 0,

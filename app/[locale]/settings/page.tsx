@@ -146,7 +146,7 @@ export default function SettingsPage() {
             </div>
             <RoleBasedAccess 
               userRole={session.user.role}
-              allowedRoles={['admin', 'manager', 'executive']}
+              allowedRoles={['admin', 'manager', 'executive', 'superuser']}
               showFallback={false}
             >
               <div className="flex items-center justify-between">
@@ -164,7 +164,7 @@ export default function SettingsPage() {
 
         <RoleBasedAccess 
           userRole={session.user.role}
-          allowedRoles={['admin', 'manager']}
+          allowedRoles={['admin', 'manager', 'superuser']}
           showFallback={false}
         >
           <Card>
@@ -196,7 +196,7 @@ export default function SettingsPage() {
 
         <RoleBasedAccess 
           userRole={session.user.role}
-          allowedRoles={['admin', 'manager']}
+          allowedRoles={['admin', 'manager', 'superuser']}
           showFallback={false}
         >
           <Card>
@@ -219,7 +219,7 @@ export default function SettingsPage() {
         
         <RoleBasedAccess 
           userRole={session.user.role}
-          allowedRoles={['admin', 'manager']}
+          allowedRoles={['admin', 'manager', 'superuser']}
           showFallback={false}
         >
           <Card>
@@ -242,7 +242,7 @@ export default function SettingsPage() {
 
         <RoleBasedAccess 
           userRole={session.user.role}
-          allowedRoles={['admin', 'manager']}
+          allowedRoles={['admin', 'manager', 'superuser']}
           showFallback={false}
         >
           <Card>
@@ -265,7 +265,7 @@ export default function SettingsPage() {
 
         <RoleBasedAccess 
           userRole={session.user.role}
-          allowedRoles={['admin']}
+          allowedRoles={['admin', 'superuser']}
           showFallback={false}
         >
           <Card>
@@ -288,7 +288,7 @@ export default function SettingsPage() {
 
         <RoleBasedAccess 
           userRole={session.user.role}
-          allowedRoles={['admin', 'manager']}
+          allowedRoles={['admin', 'manager', 'superuser']}
           showFallback={false}
         >
           <Card>

@@ -53,15 +53,15 @@ export function EnhancedSidebar({ user, unreadCount, className }: EnhancedSideba
       name: t('settings'), 
       href: `/${locale}/settings`, 
       icon: Settings, 
-      roles: ["admin", "manager"],
+      roles: ["admin", "manager", "superuser"],
       subItems: [
-        { name: t('categories'), href: `/${locale}/settings/categories`, icon: ClipboardList, roles: ["admin"] },
-        { name: t('currencies'), href: `/${locale}/settings/currencies`, icon: DollarSign, roles: ["admin"] },
-        { name: t('zoneAreas'), href: `/${locale}/settings/zone-areas`, icon: Home, roles: ["admin"] },
-        { name: t('paymentMethods'), href: `/${locale}/settings/payment-methods`, icon: CreditCard, roles: ["admin"] },
-        { name: t('internetConnections'), href: `/${locale}/settings/internet-connections`, icon: Building2, roles: ["admin"] },
-        { name: t('audit'), href: `/${locale}/settings/audit`, icon: Shield, roles: ["admin", "manager"] },
-        { name: t('application'), href: `/${locale}/settings/application`, icon: Settings, roles: ["admin"] }
+        { name: t('categories'), href: `/${locale}/settings/categories`, icon: ClipboardList, roles: ["admin", "superuser"] },
+        { name: t('currencies'), href: `/${locale}/settings/currencies`, icon: DollarSign, roles: ["admin", "superuser"] },
+        { name: t('zoneAreas'), href: `/${locale}/settings/zone-areas`, icon: Home, roles: ["admin", "superuser"] },
+        { name: t('paymentMethods'), href: `/${locale}/settings/payment-methods`, icon: CreditCard, roles: ["admin", "superuser"] },
+        { name: t('internetConnections'), href: `/${locale}/settings/internet-connections`, icon: Building2, roles: ["admin", "superuser"] },
+        { name: t('audit'), href: `/${locale}/settings/audit`, icon: Shield, roles: ["admin", "manager", "superuser"] },
+        { name: t('application'), href: `/${locale}/settings/application`, icon: Settings, roles: ["admin", "superuser"] }
       ]
     },
   ]

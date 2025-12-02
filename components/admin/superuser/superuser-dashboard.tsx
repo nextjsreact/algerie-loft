@@ -16,7 +16,8 @@ import {
   Clock,
   Server,
   HardDrive,
-  Zap
+  Zap,
+  Settings
 } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import type { SystemMetrics, SecurityAlert, AuditLogEntry } from '@/types/superuser';
@@ -239,7 +240,7 @@ export function SuperuserDashboard() {
                   onClick={() => window.location.href = `/${locale}/admin/announcements`}
                 >
                   <AlertTriangle className="h-4 w-4 mr-2" />
-                  Annonces Urgentes
+                  {t('navigation.announcements')}
                 </Button>
                 <Button 
                   variant="outline" 
@@ -272,6 +273,14 @@ export function SuperuserDashboard() {
                 >
                   <Shield className="h-4 w-4 mr-2" />
                   {t('dashboard.cards.audit.title')}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => window.location.href = `/${locale}/settings`}
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  {t('navigation.settings')}
                 </Button>
                 <Button 
                   variant="outline" 

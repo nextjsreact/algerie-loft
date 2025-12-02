@@ -17,19 +17,31 @@ export default function SettingsPage() {
   const t = useTranslations();
   const [session, setSession] = useState<AuthSession | null>(null)
   const [loading, setLoading] = useState(true)
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: ''
+  })
 
   useEffect(() => {
-    // Debug logging for missing application route
-    console.log('🔍 DEBUG: Current pathname:', window.location.pathname)
-    console.log('🔍 DEBUG: Available settings routes should be checked')
-    console.log('🔍 DEBUG: Looking for /settings/application route - NOT FOUND in directory structure')
-
     async function fetchSession() {
       try {
         const sessionData = await getSession()
+        console.log('✅ Session loaded:', sessionData)
         setSession(sessionData)
+        
+        // Update form data when session is loaded
+        if (sessionData?.user) {
+          setFormData({
+            fullName: sessionData.user.full_name || '',
+            email: sessionData.user.email || ''
+          })
+          console.log('✅ Form data set:', {
+            fullName: sessionData.user.full_name,
+            email: sessionData.user.email
+          })
+        }
       } catch (error) {
-        console.error('Failed to fetch session:', error)
+        console.error('❌ Failed to fetch session:', error)
       } finally {
         setLoading(false)
       }
@@ -49,11 +61,15 @@ export default function SettingsPage() {
     )
   }
 
-  const userRoleTranslationKeys = {
-    admin: "auth.admin",
-    manager: "auth.manager",
-    member: "auth.member",
+  const userRoleTranslationKeys: Record<string, string> = {
+    admin: "roles.admin",
+    manager: "roles.manager",
+    member: "roles.member",
+    superuser: "roles.superuser",
+    executive: "roles.executive",
   };
+
+  console.log('📋 Rendering with form data:', formData);
 
   return (
     <div className="space-y-6">
@@ -74,11 +90,20 @@ export default function SettingsPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="fullName">{t('settings.fullName')}</Label>
-              <Input id="fullName" defaultValue={session.user.full_name || ''} />
+              <Input 
+                id="fullName" 
+                value={formData.fullName}
+                onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">{t('settings.email')}</Label>
-              <Input id="email" type="email" defaultValue={session.user.email || ''} />
+              <Input 
+                id="email" 
+                type="email" 
+                value={formData.email}
+                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              />
             </div>
             <div className="space-y-2">
               <Label>{t('settings.role')}</Label>
@@ -116,6 +141,29 @@ export default function SettingsPage() {
             <Button>{t('settings.changePassword')}</Button>
           </CardContent>
         </Card>
+
+        <RoleBasedAccess 
+          userRole={session.user.role}
+          allowedRoles={['admin', 'superuser']}
+          showFallback={false}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5" />
+                {t('settings.applicationSettings')}
+              </CardTitle>
+              <CardDescription>{t('settings.applicationSettingsDesc')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/settings/application">
+                  {t('settings.accessSettings')}
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </RoleBasedAccess>
 
         <Card>
           <CardHeader>
@@ -203,14 +251,14 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Shield className="h-5 w-5" />
-                Audit et Traçabilité
+                {t('settings.auditTraceability')}
               </CardTitle>
-              <CardDescription>Consulter l'historique des modifications et les logs d'audit</CardDescription>
+              <CardDescription>{t('settings.auditTraceabilityDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" size="sm" asChild>
                 <Link href="/settings/audit">
-                  Voir les logs d'audit
+                  {t('settings.viewAuditLogs')}
                 </Link>
               </Button>
             </CardContent>
@@ -242,29 +290,6 @@ export default function SettingsPage() {
 
         <RoleBasedAccess 
           userRole={session.user.role}
-          allowedRoles={['admin', 'manager', 'superuser']}
-          showFallback={false}
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Audit et Traçabilité
-              </CardTitle>
-              <CardDescription>Consulter l'historique des modifications et les logs d'audit</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/settings/audit">
-                  Voir les logs d'audit
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </RoleBasedAccess>
-
-        <RoleBasedAccess 
-          userRole={session.user.role}
           allowedRoles={['admin', 'superuser']}
           showFallback={false}
         >
@@ -272,14 +297,14 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Key className="h-5 w-5" />
-                Gestion des mots de passe
+                {t('settings.passwordManagement')}
               </CardTitle>
-              <CardDescription>Changer les mots de passe des autres utilisateurs (admin uniquement)</CardDescription>
+              <CardDescription>{t('settings.passwordManagementDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" size="sm" asChild>
                 <Link href="/settings/user-passwords">
-                  Gérer les mots de passe
+                  {t('settings.managePasswords')}
                 </Link>
               </Button>
             </CardContent>
@@ -295,14 +320,14 @@ export default function SettingsPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Building className="h-5 w-5" />
-                Gestion des Partenaires
+                {t('settings.partnerManagement')}
               </CardTitle>
-              <CardDescription>Vérifier et approuver les candidatures de partenaires</CardDescription>
+              <CardDescription>{t('settings.partnerManagementDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" size="sm" asChild>
                 <Link href="/settings/partners">
-                  Gérer les partenaires
+                  {t('settings.managePartners')}
                 </Link>
               </Button>
             </CardContent>

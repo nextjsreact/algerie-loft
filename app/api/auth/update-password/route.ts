@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     console.log('Updating password for user:', user.email)
 
-    // Mettre à jour le mot de passe
+    // Mettre à jour le mot de passe dans Supabase Auth
     const { error: updateError } = await supabase.auth.updateUser({
       password: password
     })

@@ -26,6 +26,7 @@ export function SuperuserSidebar({ className }: SuperuserSidebarProps) {
     { name: t('navigation.databaseCloner'), href: `/${locale}/database-cloner`, icon: Database },
     { name: t('navigation.maintenance'), href: `/${locale}/admin/superuser/maintenance`, icon: Wrench },
     { name: t('navigation.configuration'), href: `/${locale}/admin/superuser/config`, icon: Settings },
+    { name: t('navigation.settings'), href: `/${locale}/settings`, icon: Settings },
     { name: t('navigation.monitoring'), href: `/${locale}/admin/superuser/monitoring`, icon: Activity },
     { name: t('navigation.archives'), href: `/${locale}/admin/superuser/archives`, icon: Archive },
   ]

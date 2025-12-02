@@ -25,7 +25,6 @@ export default function ApplicationSettingsPage() {
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isChangingPassword, setIsChangingPassword] = useState(false)
-
   useEffect(() => {
     async function fetchSession() {
       try {
@@ -328,7 +327,7 @@ export default function ApplicationSettingsPage() {
           </Card>
 
           {/* System Administration - Full Width on Mobile */}
-          {session.user.role === 'admin' && (
+          {(session.user.role === 'admin' || session.user.role === 'superuser') && (
             <Card className="group futuristic-card bg-white/5 backdrop-blur-xl border-white/10 hover:bg-white/10 hover:shadow-2xl hover:shadow-orange-500/25 lg:col-span-2 xl:col-span-3">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-3 text-white">

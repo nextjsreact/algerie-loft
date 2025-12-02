@@ -61,7 +61,9 @@ const getTranslations = (locale: string) => {
       averageRating: "Note moyenne",
       servicesUtilities: "Services & Utilitaires",
       equipment: "Équipements",
-      status: "Statut"
+      status: "Statut",
+      internet: "Internet",
+      wifiPassword: "Mot de passe WiFi"
     },
     en: {
       editLoft: "Edit Apartment",
@@ -94,7 +96,9 @@ const getTranslations = (locale: string) => {
       averageRating: "Average Rating",
       servicesUtilities: "Services & Utilities",
       equipment: "Equipment",
-      status: "Status"
+      status: "Status",
+      internet: "Internet",
+      wifiPassword: "WiFi Password"
     },
     ar: {
       editLoft: "تعديل الشقة",
@@ -124,6 +128,12 @@ const getTranslations = (locale: string) => {
       statistics: "الإحصائيات",
       totalBookings: "إجمالي الحجوزات",
       occupancyRate: "معدل الإشغال",
+      averageRating: "متوسط التقييم",
+      servicesUtilities: "الخدمات والمرافق",
+      equipment: "المعدات",
+      status: "الحالة",
+      internet: "الإنترنت",
+      wifiPassword: "كلمة مرور WiFi"
       averageRating: "التقييم المتوسط",
       servicesUtilities: "الخدمات والمرافق",
       equipment: "المعدات",
@@ -529,7 +539,7 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {/* Eau */}
                   <div className="border rounded-lg p-6 bg-gradient-to-br from-blue-50 to-blue-100">
                     <div className="flex items-center gap-3 mb-4">
@@ -622,6 +632,40 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                         </div>
                       ) : (
                         <div className="text-orange-600 italic text-center py-4">{t.noInfo}</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Internet */}
+                  <div className="border rounded-lg p-6 bg-gradient-to-br from-purple-50 to-purple-100">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 bg-purple-500 rounded-lg">
+                        <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+                        </svg>
+                      </div>
+                      <h4 className="text-lg font-semibold text-purple-700">{t.internet}</h4>
+                    </div>
+                    <div className="space-y-3">
+                      {loft.wifi_password ? (
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-purple-600">{t.wifiPassword}:</span>
+                            <span className="font-mono text-sm bg-white px-2 py-1 rounded border font-semibold text-purple-700">
+                              {loft.wifi_password}
+                            </span>
+                          </div>
+                          {loft.prochaine_echeance_internet && (
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-purple-600">Prochaine échéance:</span>
+                              <span className="font-medium text-purple-700 bg-white px-2 py-1 rounded border">
+                                {new Date(loft.prochaine_echeance_internet).toLocaleDateString()}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="text-purple-600 italic text-center py-4">{t.noInfo}</div>
                       )}
                     </div>
                   </div>

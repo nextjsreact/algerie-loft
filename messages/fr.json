@@ -1595,7 +1595,10 @@
       "edit": "Modifier l'appartement",
       "auditHistory": "Historique d'audit",
       "apartmentInfo": "Informations sur l'appartement"
-    }
+    },
+    "wifiPassword": "Mot de passe WiFi",
+    "wifiPasswordPlaceholder": "Entrez le mot de passe WiFi",
+    "wifiPasswordHelp": "Mot de passe que les invités utiliseront pour se connecter à Internet"
   },
   "nav": {
     "application": "Application",

@@ -54,6 +54,7 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
     prochaine_echeance_telephone: loft?.prochaine_echeance_telephone || "",
     frequence_paiement_internet: loft?.frequence_paiement_internet || "",
     prochaine_echeance_internet: loft?.prochaine_echeance_internet || "",
+    wifi_password: loft?.wifi_password || "",
     frequence_paiement_tv: loft?.frequence_paiement_tv || "",
     prochaine_echeance_tv: loft?.prochaine_echeance_tv || "",
   }), [loft])
@@ -531,6 +532,20 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
                       className="bg-white placeholder:text-gray-400 placeholder:opacity-100"
                     />
                   </div>
+                </div>
+                <div className="mt-4">
+                  <Label htmlFor="wifi_password" className="text-sm font-medium">
+                    {t('wifiPassword')}
+                  </Label>
+                  <Input 
+                    id="wifi_password" 
+                    type="text" 
+                    value={formData.wifi_password} 
+                    onChange={(e) => setFormData({...formData, wifi_password: e.target.value})}
+                    placeholder={t('wifiPasswordPlaceholder')}
+                    className="bg-white placeholder:text-gray-400 mt-2"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">{t('wifiPasswordHelp')}</p>
                 </div>
               </div>
 

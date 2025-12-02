@@ -119,7 +119,7 @@ export async function getLoft(id: string): Promise<Loft | null> {
   const supabase = await createClient() // Create client here
   const { data: loft, error } = await supabase
     .from("lofts")
-    .select("*, owner:loft_owners(name)")
+    .select("*, owner:owners(name)")
     .eq("id", id)
     .single()
 

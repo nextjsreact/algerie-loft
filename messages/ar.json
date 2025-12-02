@@ -1598,7 +1598,10 @@
       "edit": "تعديل الشقة",
       "auditHistory": "سجل التدقيق",
       "apartmentInfo": "معلومات الشقة"
-    }
+    },
+    "wifiPassword": "كلمة مرور WiFi",
+    "wifiPasswordPlaceholder": "أدخل كلمة مرور WiFi",
+    "wifiPasswordHelp": "كلمة المرور التي سيستخدمها الضيوف للاتصال بالإنترنت"
   },
   "nav": {
     "application": "التطبيق",

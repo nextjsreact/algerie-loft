@@ -10,9 +10,9 @@ type LoftOwner = Database['public']['Tables']['loft_owners']['Row']
 export async function getOwners(): Promise<LoftOwner[]> {
   const supabase = await createClient() // Create client here
   const { data: owners, error } = await supabase
-    .from("partner_profiles")
+    .from("owners")
     .select("*")
-    .order("business_name")
+    .order("name")
 
   if (error) {
     console.error("Error fetching owners:", error)
@@ -31,8 +31,9 @@ export async function updateOwner(id: string, formData: FormData) {
   const business_type = data.ownership_type?.toString().trim()
   
   const { error } = await supabase
-    .from("partner_profiles")
+    .from("owners")
     .update({
+      name: data.name.toString().trim(),
       business_name: data.name.toString().trim(),
       phone: data.phone?.toString().trim() || '',
       address: data.address?.toString().trim() || '',
@@ -52,7 +53,7 @@ export async function deleteOwner(id: string) {
   await requireRole(["admin"])
 
   const supabase = await createClient() // Create client here
-  const { error } = await supabase.from("partner_profiles").delete().eq("id", id)
+  const { error } = await supabase.from("owners").delete().eq("id", id)
 
   if (error) {
     console.error("Failed to delete owner:", error)
@@ -76,13 +77,15 @@ export async function createOwner(formData: FormData) {
   }
 
   const { data: newOwner, error } = await supabase
-    .from("partner_profiles")
+    .from("owners")
     .insert({
+      name: name,
       business_name: name,
       phone: data.phone?.toString().trim() || '',
       address: data.address?.toString().trim() || '',
       business_type: ownership_type === 'company' ? 'company' : 'individual',
-      verification_status: 'pending'
+      ownership_type: ownership_type === 'company' ? 'company' : 'third_party',
+      verification_status: 'verified'
     })
     .select()
     .single()

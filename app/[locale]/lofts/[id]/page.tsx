@@ -134,10 +134,6 @@ const getTranslations = (locale: string) => {
       status: "الحالة",
       internet: "الإنترنت",
       wifiPassword: "كلمة مرور WiFi"
-      averageRating: "التقييم المتوسط",
-      servicesUtilities: "الخدمات والمرافق",
-      equipment: "المعدات",
-      status: "الحالة"
     }
   }
   

@@ -1597,7 +1597,10 @@
       "edit": "Edit Apartment",
       "auditHistory": "Audit History",
       "apartmentInfo": "Apartment Information"
-    }
+    },
+    "wifiPassword": "WiFi Password",
+    "wifiPasswordPlaceholder": "Enter WiFi password",
+    "wifiPasswordHelp": "Password that guests will use to connect to the internet"
   },
   "nav": {
     "application": "Application",

@@ -3,13 +3,13 @@
 import { createClient } from '@/utils/supabase/server'
 import type { Database } from "@/lib/types"
 
-type LoftOwner = Database['public']['Tables']['loft_owners']['Row']
+type LoftOwner = Database['public']['Tables']['owners']['Row']
 
 export async function getOwnersForFilter(): Promise<{ value: string; label: string }[]> {
   const supabase = await createClient()
   
   const { data: owners, error } = await supabase
-    .from("loft_owners")
+    .from("owners")
     .select("id, name")
     .order("name")
 
@@ -37,7 +37,7 @@ export async function getLoftsWithAvailability() {
       status,
       zone_area_id,
       owner_id,
-      loft_owners!inner(
+      owners!inner(
         id,
         name
       ),
@@ -56,7 +56,7 @@ export async function getLoftsWithAvailability() {
     id: loft.id,
     name: loft.name,
     region: loft.zone_areas?.name || 'Unknown',
-    owner: loft.loft_owners.name,
+    owner: loft.owners.name,
     ownerId: loft.owner_id,
     capacity: 4, // Default capacity, you might want to add this field to your lofts table
     pricePerNight: loft.price_per_day,

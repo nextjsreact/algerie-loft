@@ -7,32 +7,39 @@ export default async function OwnersPage() {
   const session = await requireRole(["admin"])
   const supabase = await createClient()
 
-  // Utiliser partner_profiles au lieu de loft_owners
-  // Simplifié sans la relation lofts pour l'instant
+  // Utiliser la table unifiée owners
   const { data: ownersData, error } = await supabase
-    .from("partner_profiles")
+    .from("owners")
     .select("*")
     .order("created_at", { ascending: false })
+  
+  // Récupérer tous les lofts pour compter
+  const { data: allLofts } = await supabase
+    .from("lofts")
+    .select("id, new_owner_id, price_per_night")
 
   if (error) {
-    console.error("Error fetching partners:", error.message, error.details, error.hint)
+    console.error("Error fetching owners:", error.message, error.details, error.hint)
     // Si la table n'existe pas ou est vide, retourner un tableau vide
     return <OwnersWrapper owners={[]} />
   }
 
-  const owners = (ownersData || []).map((owner) => {
-    // Pour l'instant, pas de lofts associés
-    const loft_count = 0
-    const total_monthly_value = 0
+  const owners = (ownersData || []).map((owner: any) => {
+    // Compter les lofts associés à ce propriétaire
+    const ownerLofts = (allLofts || []).filter((loft: any) => loft.new_owner_id === owner.id)
+    const loft_count = ownerLofts.length
+    const total_monthly_value = ownerLofts.reduce((sum: number, loft: any) => {
+      return sum + (loft.price_per_night || 0) * 30
+    }, 0)
     
-    // Adapter les champs de partner_profiles au format attendu par OwnersWrapper
+    // Les champs sont maintenant directement compatibles
     return {
       id: owner.id,
-      name: owner.business_name || owner.full_name || 'N/A',
+      name: owner.name || owner.business_name || 'N/A',
       email: owner.email || '',
       phone: owner.phone || '',
       address: owner.address || '',
-      ownership_type: owner.business_name ? 'company' : 'third_party',
+      ownership_type: owner.ownership_type || owner.business_type || 'third_party',
       created_at: owner.created_at,
       loft_count: String(loft_count),
       total_monthly_value: String(total_monthly_value),

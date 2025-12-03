@@ -216,7 +216,7 @@ export default function PartnerDashboardPage({ params }: PartnerDashboardPagePro
 
   return (
     <PartnerLayout locale={locale}>
-      <div className="container mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="w-full h-full p-4 sm:p-6 lg:p-8">
         <DashboardHeader 
           title={t('title')} 
           subtitle={t('subtitle')}

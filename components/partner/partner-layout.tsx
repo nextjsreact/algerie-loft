@@ -164,9 +164,9 @@ export function PartnerLayout({
 
   return (
     <PartnerSWRProvider>
-      <SidebarProvider>
-        <div className="flex min-h-screen w-full">
-          {showSidebar && (
+      {showSidebar ? (
+        <SidebarProvider>
+          <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-900">
             <PartnerSidebar 
               locale={locale}
               userProfile={{
@@ -174,12 +174,18 @@ export function PartnerLayout({
                 email: session.user.email || '',
               }}
             />
-          )}
-          <main className="flex-1 overflow-auto">
-            {children}
-          </main>
-        </div>
-      </SidebarProvider>
+            <main className="flex-1 w-full overflow-auto">
+              <div className="w-full h-full">
+                {children}
+              </div>
+            </main>
+          </div>
+        </SidebarProvider>
+      ) : (
+        <main className="min-h-screen w-full">
+          {children}
+        </main>
+      )}
     </PartnerSWRProvider>
   )
 }

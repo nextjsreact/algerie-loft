@@ -30,6 +30,21 @@ interface BookingCardProps {
 export function BookingCard({ booking, locale, onClick }: BookingCardProps) {
   const t = useTranslations('partner.dashboard.bookings')
   const router = useRouter()
+  
+  // Helper pour formater la devise selon la locale
+  const formatCurrency = (amount: number) => {
+    const localeMap: Record<string, string> = {
+      'ar': 'ar-DZ',
+      'fr': 'fr-DZ',
+      'en': 'en-US'
+    }
+    return new Intl.NumberFormat(localeMap[locale] || 'ar-DZ', {
+      style: 'currency',
+      currency: 'DZD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount)
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -99,9 +114,8 @@ export function BookingCard({ booking, locale, onClick }: BookingCardProps) {
             </div>
           </div>
           <div className="text-right ml-3 flex-shrink-0">
-            <div className="flex items-center gap-1 font-bold text-lg text-gray-900 dark:text-gray-100">
-              <DollarSign className="h-4 w-4" />
-              <span>{booking.total_price}€</span>
+            <div className="font-bold text-lg text-gray-900 dark:text-gray-100">
+              {formatCurrency(booking.total_price)}
             </div>
           </div>
         </div>

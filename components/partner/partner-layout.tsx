@@ -2,10 +2,25 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { PartnerSidebar } from './partner-sidebar'
+import { SimplePartnerSidebar } from './simple-partner-sidebar'
 import { PartnerSWRProvider } from './swr-provider'
-import { SidebarProvider } from '@/components/ui/sidebar'
 import type { AuthSession } from '@/lib/types'
+
+// Hook to hide duplicate sidebars
+function useHideDuplicateSidebars() {
+  useEffect(() => {
+    // Hide any shadcn/ui sidebars that might be rendered
+    const style = document.createElement('style')
+    style.textContent = `
+      [data-sidebar]:not([data-sidebar="partner-sidebar"]) { display: none !important; }
+      .sidebar:not([data-sidebar="partner-sidebar"]) { display: none !important; }
+    `
+    document.head.appendChild(style)
+    return () => {
+      document.head.removeChild(style)
+    }
+  }, [])
+}
 
 interface PartnerLayoutProps {
   children: React.ReactNode
@@ -22,6 +37,9 @@ export function PartnerLayout({
   const [session, setSession] = useState<AuthSession | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  // Hide any duplicate sidebars
+  useHideDuplicateSidebars()
 
   // Handle session expiration gracefully
   const handleSessionExpired = useCallback(() => {
@@ -164,28 +182,21 @@ export function PartnerLayout({
 
   return (
     <PartnerSWRProvider>
-      {showSidebar ? (
-        <SidebarProvider>
-          <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-900">
-            <PartnerSidebar 
-              locale={locale}
-              userProfile={{
-                name: session.user.full_name || session.user.email || 'Partner',
-                email: session.user.email || '',
-              }}
-            />
-            <main className="flex-1 w-full overflow-auto">
-              <div className="w-full h-full">
-                {children}
-              </div>
-            </main>
-          </div>
-        </SidebarProvider>
-      ) : (
-        <main className="min-h-screen w-full">
+      <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-900">
+        {showSidebar && (
+          <SimplePartnerSidebar 
+            key="partner-sidebar-unique"
+            locale={locale}
+            userProfile={{
+              name: session.user.full_name || session.user.email || 'Partner',
+              email: session.user.email || '',
+            }}
+          />
+        )}
+        <main className="flex-1 min-w-0 overflow-auto">
           {children}
         </main>
-      )}
+      </div>
     </PartnerSWRProvider>
   )
 }

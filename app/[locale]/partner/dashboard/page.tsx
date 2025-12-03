@@ -3,7 +3,7 @@
 import { use, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { PartnerLayout } from '@/components/partner/partner-layout'
+import { ResponsivePartnerLayout } from '@/components/partner/responsive-partner-layout'
 import { DashboardHeader } from '@/components/partner/dashboard-header'
 import { QuickActions } from '@/components/partner/quick-actions'
 import { PropertiesOverview } from '@/components/partner/properties-overview'
@@ -68,6 +68,21 @@ export default function PartnerDashboardPage({ params }: PartnerDashboardPagePro
   const router = useRouter()
   const t = useTranslations('partner.dashboard')
   const { error, handleError, clearError, getErrorType } = useErrorHandler()
+  
+  // Helper pour formater la devise selon la locale
+  const formatCurrency = (amount: number) => {
+    const localeMap: Record<string, string> = {
+      'ar': 'ar-DZ',
+      'fr': 'fr-DZ',
+      'en': 'en-US'
+    }
+    return new Intl.NumberFormat(localeMap[locale] || 'ar-DZ', {
+      style: 'currency',
+      currency: 'DZD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount)
+  }
   const [stats, setStats] = useState<PartnerStats>({
     total_properties: 0,
     active_properties: 0,
@@ -171,9 +186,9 @@ export default function PartnerDashboardPage({ params }: PartnerDashboardPagePro
 
   if (loading) {
     return (
-      <PartnerLayout locale={locale}>
+      <ResponsivePartnerLayout locale={locale}>
         <DashboardPageSkeleton />
-      </PartnerLayout>
+      </ResponsivePartnerLayout>
     )
   }
 
@@ -186,7 +201,7 @@ export default function PartnerDashboardPage({ params }: PartnerDashboardPagePro
   // Show rejected message if partner was rejected
   if (partnerStatus === 'rejected') {
     return (
-      <PartnerLayout locale={locale}>
+      <ResponsivePartnerLayout locale={locale}>
         <div className="flex items-center justify-center min-h-screen">
           <Card className="max-w-md">
             <CardHeader>
@@ -197,26 +212,26 @@ export default function PartnerDashboardPage({ params }: PartnerDashboardPagePro
             </CardContent>
           </Card>
         </div>
-      </PartnerLayout>
+      </ResponsivePartnerLayout>
     )
   }
 
   if (error) {
     return (
-      <PartnerLayout locale={params.locale}>
+      <ResponsivePartnerLayout locale={locale}>
         <FullPageErrorDisplay
           type={error.type}
           message={error.message}
           onRetry={fetchDashboardData}
           showContactSupport={true}
         />
-      </PartnerLayout>
+      </ResponsivePartnerLayout>
     )
   }
 
   return (
-    <PartnerLayout locale={locale}>
-      <div className="w-full h-full p-4 sm:p-6 lg:p-8">
+    <ResponsivePartnerLayout locale={locale}>
+      <div>
         <DashboardHeader 
           title={t('title')} 
           subtitle={t('subtitle')}
@@ -268,11 +283,11 @@ export default function PartnerDashboardPage({ params }: PartnerDashboardPagePro
                 </h2>
                 <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" aria-hidden="true" />
               </div>
-              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100" aria-label={`${stats.monthly_earnings} euros monthly revenue`}>
-                {stats.monthly_earnings}€
+              <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100" aria-label={`${stats.monthly_earnings} DZD monthly revenue`}>
+                {formatCurrency(stats.monthly_earnings)}
               </p>
-              <p className="text-xs sm:text-sm text-green-600 dark:text-green-400 mt-1" aria-label={`Increase of ${Math.round(stats.monthly_earnings * 0.15)} euros`}>
-                +{Math.round(stats.monthly_earnings * 0.15)}€
+              <p className="text-xs sm:text-sm text-green-600 dark:text-green-400 mt-1" aria-label={`Increase of ${Math.round(stats.monthly_earnings * 0.15)} DZD`}>
+                +{formatCurrency(Math.round(stats.monthly_earnings * 0.15))}
               </p>
             </CardContent>
           </Card>
@@ -315,23 +330,27 @@ export default function PartnerDashboardPage({ params }: PartnerDashboardPagePro
         {/* Quick Actions */}
         <QuickActions locale={locale} />
 
-        {/* Properties and Bookings - Responsive grid layout */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 sm:gap-8">
-          {/* Properties Overview - Takes 2 columns on xl screens */}
-          <PropertiesOverview 
-            properties={properties} 
-            locale={params.locale}
-            limit={3}
-          />
+        {/* Properties and Bookings - Responsive layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Properties Overview */}
+          <div className="w-full">
+            <PropertiesOverview 
+              properties={properties} 
+              locale={locale}
+              limit={3}
+            />
+          </div>
 
-          {/* Recent Bookings - Takes 1 column on xl screens */}
-          <RecentBookingsSection 
-            bookings={recentBookings}
-            locale={locale}
-            loading={false}
-          />
+          {/* Recent Bookings */}
+          <div className="w-full">
+            <RecentBookingsSection 
+              bookings={recentBookings}
+              locale={locale}
+              loading={false}
+            />
+          </div>
         </div>
       </div>
-    </PartnerLayout>
+    </ResponsivePartnerLayout>
   )
 }

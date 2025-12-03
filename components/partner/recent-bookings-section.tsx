@@ -87,12 +87,12 @@ export function RecentBookingsSection({ bookings, locale, loading }: RecentBooki
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle>{t('title')}</CardTitle>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {/* Status Filter */}
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-[140px] sm:w-[150px]">
                 <Filter className="h-4 w-4 mr-2" />
                 <SelectValue />
               </SelectTrigger>
@@ -108,28 +108,31 @@ export function RecentBookingsSection({ bookings, locale, loading }: RecentBooki
             {/* Date Range Filter */}
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-[200px] justify-start text-left font-normal">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dateRange?.from ? (
-                    dateRange.to ? (
-                      <>
-                        {format(dateRange.from, 'MMM d')} - {format(dateRange.to, 'MMM d')}
-                      </>
+                <Button variant="outline" className="w-[180px] sm:w-[200px] justify-start text-left font-normal text-sm">
+                  <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">
+                    {dateRange?.from ? (
+                      dateRange.to ? (
+                        <>
+                          {format(dateRange.from, 'MMM d')} - {format(dateRange.to, 'MMM d')}
+                        </>
+                      ) : (
+                        format(dateRange.from, 'MMM d, yyyy')
+                      )
                     ) : (
-                      format(dateRange.from, 'MMM d, yyyy')
-                    )
-                  ) : (
-                    <span>{t('filters.dateRange')}</span>
-                  )}
+                      t('filters.dateRange')
+                    )}
+                  </span>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="end">
+              <PopoverContent className="w-auto p-0 max-w-[calc(100vw-2rem)]" align="end">
                 <Calendar
                   mode="range"
                   selected={dateRange}
                   onSelect={setDateRange}
-                  numberOfMonths={2}
+                  numberOfMonths={window.innerWidth < 768 ? 1 : 2}
                   initialFocus
+                  className="rounded-md"
                 />
               </PopoverContent>
             </Popover>
@@ -140,7 +143,7 @@ export function RecentBookingsSection({ bookings, locale, loading }: RecentBooki
                 variant="ghost"
                 size="sm"
                 onClick={clearFilters}
-                className="h-9 px-2"
+                className="h-9 px-2 flex-shrink-0"
               >
                 <X className="h-4 w-4" />
               </Button>

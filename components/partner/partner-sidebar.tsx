@@ -160,71 +160,7 @@ export function PartnerSidebar({ locale, userProfile }: PartnerSidebarProps) {
         </nav>
       </SidebarContent>
 
-      {/* Footer with user profile - Enhanced touch targets for mobile */}
-      <SidebarFooter className="border-t border-sidebar-border">
-        {userProfile && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button 
-                className="flex w-full items-center gap-3 rounded-md p-3 hover:bg-sidebar-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
-                aria-label="User menu"
-              >
-                <Avatar className="h-9 w-9 sm:h-8 sm:w-8">
-                  {userProfile.avatar && (
-                    <AvatarImage src={userProfile.avatar} alt={userProfile.name} />
-                  )}
-                  <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                    {getInitials(userProfile.name)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex flex-1 flex-col items-start text-left text-sm min-w-0">
-                  <span className="font-medium text-sidebar-foreground truncate w-full max-w-[140px]">
-                    {userProfile.name}
-                  </span>
-                  <span className="text-xs text-sidebar-foreground/70 truncate w-full max-w-[140px]">
-                    {userProfile.email}
-                  </span>
-                </div>
-                <ChevronDown className="h-4 w-4 text-sidebar-foreground/70 flex-shrink-0" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="truncate">{userProfile.name}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link 
-                  href={`/${locale}/partner/profile`}
-                  className="cursor-pointer focus:bg-sidebar-accent"
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  {t('profile')}
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link 
-                  href={`/${locale}/partner/settings`}
-                  className="cursor-pointer focus:bg-sidebar-accent"
-                >
-                  <Settings className="mr-2 h-4 w-4" />
-                  {t('settings')}
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <form action={logout} className="w-full">
-                  <button 
-                    type="submit" 
-                    className="flex w-full items-center text-red-600 dark:text-red-400 cursor-pointer focus:bg-sidebar-accent"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    {t('logout')}
-                  </button>
-                </form>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-      </SidebarFooter>
+      {/* Footer removed - User profile/logout now in header only */}
     </Sidebar>
   )
 }

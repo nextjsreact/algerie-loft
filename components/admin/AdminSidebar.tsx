@@ -12,7 +12,8 @@ import {
   FileText,
   Home,
   Menu,
-  X
+  X,
+  UserCheck
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -34,6 +35,11 @@ export default function AdminSidebar({ locale }: AdminSidebarProps) {
       title: 'Annonces Urgentes',
       href: `/${locale}/admin/announcements`,
       icon: AlertTriangle,
+    },
+    {
+      title: 'Partenaires',
+      href: `/${locale}/admin/partners`,
+      icon: UserCheck,
     },
     {
       title: 'Employés',

@@ -2,7 +2,7 @@
 
 import { 
   Shield, Users, Database, Settings, 
-  LayoutDashboard, Activity, Archive, Wrench, AlertTriangle, Lock
+  LayoutDashboard, Activity, Archive, Wrench, AlertTriangle, Lock, UserCheck
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -20,6 +20,7 @@ export function SuperuserSidebar({ className }: SuperuserSidebarProps) {
   const navigation = [
     { name: t('navigation.dashboard'), href: `/${locale}/admin/superuser/dashboard`, icon: LayoutDashboard },
     { name: t('navigation.announcements'), href: `/${locale}/admin/announcements`, icon: AlertTriangle },
+    { name: 'Partenaires', href: `/${locale}/admin/partners`, icon: UserCheck },
     { name: t('navigation.userManagement'), href: `/${locale}/admin/superuser/users`, icon: Users },
     { name: t('navigation.security'), href: `/${locale}/admin/superuser/audit`, icon: Shield },
     { name: t('navigation.backup'), href: `/${locale}/admin/superuser/backup`, icon: Database },

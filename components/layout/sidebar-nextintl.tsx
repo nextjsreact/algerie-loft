@@ -3,7 +3,7 @@
 import { 
   Building2, Calendar, DollarSign, Home, Settings, Users, 
   ClipboardList, UserCheck, ChevronDown, ChevronRight, LayoutDashboard, CreditCard, MessageSquare, Bell, CalendarCheck, Shield,
-  Database, Wrench, Activity, Archive, Lock, AlertTriangle
+  Database, Wrench, Activity, Archive, Lock, AlertTriangle, UserPlus
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -44,7 +44,8 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
       availability: "Disponibilité",
       tasks: "Tâches",
       teams: "Équipes",
-      owners: "Propriétaires", 
+      owners: "Propriétaires",
+      partners: "Partenaires",
       transactions: "Transactions",
       reports: "Rapports",
       reportsNav: "Rapports",
@@ -67,7 +68,8 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
       availability: "Availability",
       tasks: "Tasks",
       teams: "Teams",
-      owners: "Owners", 
+      owners: "Owners",
+      partners: "Partners",
       transactions: "Transactions",
       reports: "Reports",
       reportsNav: "Reports",
@@ -90,7 +92,8 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
       availability: "التوفر",
       tasks: "المهام",
       teams: "الفرق",
-      owners: "الملاك", 
+      owners: "الملاك",
+      partners: "الشركاء",
       transactions: "المعاملات",
       reports: "التقارير",
       reportsNav: "التقارير",
@@ -127,6 +130,7 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
     { name: t('tasks'), href: `/${locale}/tasks`, icon: ClipboardList, roles: ["admin", "manager", "member"] },
     { name: t('teams'), href: `/${locale}/teams`, icon: Users, roles: ["admin", "manager"] },
     { name: t('owners'), href: `/${locale}/owners`, icon: UserCheck, roles: ["admin"] },
+    { name: t('partners'), href: `/${locale}/admin/partners`, icon: UserPlus, roles: ["admin", "manager", "superuser"] },
     { name: t('transactions'), href: `/${locale}/transactions`, icon: DollarSign, roles: ["admin", "manager"] },
     { name: t('reportsNav'), href: `/${locale}/reports`, icon: Calendar, roles: ["admin", "manager", "executive"] },
     { 

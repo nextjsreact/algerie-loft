@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Plus, Users, Building2, Mail, Phone, MapPin, Trash2, Edit, Eye, DollarSign } from "lucide-react"
+import { Plus, Users, Building2, Mail, Phone, MapPin, Trash2, Edit, Eye, DollarSign, UserPlus } from "lucide-react"
 import Link from "next/link"
 import { deleteOwner } from "@/app/actions/owners"
 import type { LoftOwner } from "@/lib/types"
@@ -12,6 +12,7 @@ import type { LoftOwner } from "@/lib/types"
 interface Owner extends LoftOwner {
   loft_count: string
   total_monthly_value: string
+  user_id?: string
 }
 
 interface OwnersWrapperProps {
@@ -130,6 +131,12 @@ export function OwnersWrapper({ owners }: OwnersWrapperProps) {
                       <CardTitle className="text-xl font-semibold text-gray-900 mb-2 flex items-center gap-2">
                         <OwnershipIcon className="h-5 w-5 text-gray-600" />
                         {owner.name}
+                        {owner.user_id && (
+                          <Badge className="bg-purple-100 text-purple-800 border-purple-200 flex items-center gap-1">
+                            <UserPlus className="h-3 w-3" />
+                            Partner
+                          </Badge>
+                        )}
                       </CardTitle>
                       <CardDescription className="text-sm text-gray-600">
                         {t('propertiesCount', { count: parseInt(owner.loft_count) })} • 

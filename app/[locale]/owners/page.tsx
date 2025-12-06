@@ -43,8 +43,9 @@ export default async function OwnersPage() {
       created_at: owner.created_at,
       loft_count: String(loft_count),
       total_monthly_value: String(total_monthly_value),
+      user_id: owner.user_id, // Ajouter user_id pour identifier les partners
     }
-  }) as (LoftOwner & { loft_count: string; total_monthly_value: string })[]
+  }) as (LoftOwner & { loft_count: string; total_monthly_value: string; user_id?: string })[]
 
   return (
     <OwnersWrapper owners={owners} />

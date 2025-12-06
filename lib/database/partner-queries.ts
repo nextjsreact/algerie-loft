@@ -320,11 +320,11 @@ export class PartnerValidationQueries {
 export class AdminPartnerQueries {
   constructor(private supabase: any) {}
 
-  // Approve partner using database function
+  // Approve partner using database function (table owners)
   async approvePartner(partnerId: string, adminUserId: string, adminNotes?: string): Promise<boolean> {
     const { data, error } = await this.supabase
-      .rpc('approve_partner', {
-        partner_id: partnerId,
+      .rpc('approve_owner_partner', {
+        owner_id: partnerId,
         admin_user_id: adminUserId,
         admin_notes: adminNotes
       });
@@ -333,7 +333,7 @@ export class AdminPartnerQueries {
     return data;
   }
 
-  // Reject partner using database function
+  // Reject partner using database function (table owners)
   async rejectPartner(
     partnerId: string, 
     adminUserId: string, 
@@ -341,8 +341,8 @@ export class AdminPartnerQueries {
     adminNotes?: string
   ): Promise<boolean> {
     const { data, error } = await this.supabase
-      .rpc('reject_partner', {
-        partner_id: partnerId,
+      .rpc('reject_owner_partner', {
+        owner_id: partnerId,
         admin_user_id: adminUserId,
         rejection_reason: rejectionReason,
         admin_notes: adminNotes
@@ -352,15 +352,33 @@ export class AdminPartnerQueries {
     return data;
   }
 
-  // Get all partners for admin management
+  // Reactivate a rejected partner for re-evaluation (table owners)
+  async reactivatePartner(
+    partnerId: string, 
+    adminUserId: string, 
+    adminNotes?: string
+  ): Promise<boolean> {
+    const { data, error } = await this.supabase
+      .rpc('reactivate_owner_partner', {
+        owner_id: partnerId,
+        admin_user_id: adminUserId,
+        admin_notes: adminNotes
+      });
+
+    if (error) throw error;
+    return data;
+  }
+
+  // Get all partners for admin management (from owners table, user_id NOT NULL)
   async getAllPartners(limit = 50, offset = 0): Promise<ExtendedPartnerProfile[]> {
     const { data, error } = await this.supabase
-      .from('partners')
+      .from('owners')
       .select(`
         *,
-        approved_by_user:profiles!partners_approved_by_fkey(id, full_name, email),
-        rejected_by_user:profiles!partners_rejected_by_fkey(id, full_name, email)
+        approved_by_user:profiles!owners_approved_by_fkey(id, full_name, email),
+        rejected_by_user:profiles!owners_rejected_by_fkey(id, full_name, email)
       `)
+      .not('user_id', 'is', null)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
 

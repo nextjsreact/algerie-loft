@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test API Partners</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      border-bottom: 2px solid #4CAF50;
+      padding-bottom: 10px;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f9f9f9;
+      border-left: 4px solid #2196F3;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .result {
+      margin-top: 15px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    .success {
+      border-left: 4px solid #4CAF50;
+      background: #f1f8f4;
+    }
+    .error {
+      border-left: 4px solid #f44336;
+      background: #fef1f0;
+    }
+    .info {
+      background: #e3f2fd;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .count {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4CAF50;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 Test API Partners - Debug</h1>
+    
+    <div class="info">
+      <strong>📊 Données attendues :</strong> 3 partners dans la base de données
+    </div>
+
+    <div class="test-section">
+      <h2>Test 1 : API GET /api/admin/partners</h2>
+      <button onclick="testGetPartners()">🚀 Tester l'API</button>
+      <div id="result1" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 2 : Vérifier la structure des données</h2>
+      <button onclick="analyzeData()" id="analyzeBtn" disabled>🔍 Analyser les Données</button>
+      <div id="result2" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 3 : Vérifier les statuts</h2>
+      <button onclick="checkStatuses()" id="statusBtn" disabled>📊 Voir les Statuts</button>
+      <div id="result3" class="result" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script>
+    let partnersData = null;
+
+    async function testGetPartners() {
+      const resultDiv = document.getElementById('result1');
+      resultDiv.style.display = 'block';
+      resultDiv.className = 'result';
+      resultDiv.textContent = '⏳ Chargement...';
+
+      try {
+        const response = await fetch('/api/admin/partners', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `❌ ERREUR ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+          return;
+        }
+
+        partnersData = data;
+        resultDiv.className = 'result success';
+        
+        const count = data.partners?.length || 0;
+        let output = `✅ SUCCÈS!\n\n`;
+        output += `📊 Nombre de partners trouvés : ${count}\n\n`;
+        output += `📦 Données complètes :\n`;
+        output += JSON.stringify(data, null, 2);
+
+        resultDiv.textContent = output;
+
+        // Activer les autres boutons
+        document.getElementById('analyzeBtn').disabled = false;
+        document.getElementById('statusBtn').disabled = false;
+
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ ERREUR RÉSEAU\n\n${error.message}\n\n${error.stack}`;
+      }
+    }
+
+    function analyzeData() {
+      const resultDiv = document.getElementById('result2');
+      resultDiv.style.display = 'block';
+      resultDiv.className = 'result';
+
+      if (!partnersData || !partnersData.partners) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = '❌ Aucune donnée à analyser. Lancez d\'abord le Test 1.';
+        return;
+      }
+
+      const partners = partnersData.partners;
+      let output = `📊 ANALYSE DES DONNÉES\n\n`;
+      output += `Nombre total : ${partners.length}\n\n`;
+
+      partners.forEach((partner, index) => {
+        output += `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+        output += `Partner ${index + 1}:\n`;
+        output += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+        output += `ID: ${partner.id}\n`;
+        output += `Nom: ${partner.name || 'N/A'}\n`;
+        output += `Business: ${partner.business_name || 'N/A'}\n`;
+        output += `Email: ${partner.email || 'N/A'}\n`;
+        output += `Téléphone: ${partner.phone || 'N/A'}\n`;
+        output += `Statut: ${partner.verification_status || 'N/A'}\n`;
+        output += `User ID: ${partner.user_id || 'N/A'}\n`;
+        output += `Créé le: ${partner.created_at || 'N/A'}\n`;
+        
+        if (partner.approved_at) {
+          output += `Approuvé le: ${partner.approved_at}\n`;
+          output += `Approuvé par: ${partner.approved_by || 'N/A'}\n`;
+        }
+        
+        if (partner.rejected_at) {
+          output += `Rejeté le: ${partner.rejected_at}\n`;
+          output += `Rejeté par: ${partner.rejected_by || 'N/A'}\n`;
+          output += `Raison: ${partner.rejection_reason || 'N/A'}\n`;
+        }
+        
+        if (partner.admin_notes) {
+          output += `Notes admin: ${partner.admin_notes}\n`;
+        }
+      });
+
+      resultDiv.textContent = output;
+    }
+
+    function checkStatuses() {
+      const resultDiv = document.getElementById('result3');
+      resultDiv.style.display = 'block';
+      resultDiv.className = 'result';
+
+      if (!partnersData || !partnersData.partners) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = '❌ Aucune donnée à analyser. Lancez d\'abord le Test 1.';
+        return;
+      }
+
+      const partners = partnersData.partners;
+      const statusCount = {};
+
+      partners.forEach(partner => {
+        const status = partner.verification_status || 'unknown';
+        statusCount[status] = (statusCount[status] || 0) + 1;
+      });
+
+      let output = `📊 RÉPARTITION PAR STATUT\n\n`;
+      output += `Total : ${partners.length} partners\n\n`;
+
+      Object.entries(statusCount).forEach(([status, count]) => {
+        const emoji = {
+          'pending': '⏳',
+          'verified': '✅',
+          'approved': '✅',
+          'rejected': '❌',
+          'suspended': '⏸️',
+          'unknown': '❓'
+        }[status] || '❓';
+
+        output += `${emoji} ${status.toUpperCase()}: ${count}\n`;
+      });
+
+      output += `\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+      output += `Liste par statut :\n\n`;
+
+      Object.entries(statusCount).forEach(([status, count]) => {
+        output += `\n${status.toUpperCase()} (${count}) :\n`;
+        partners
+          .filter(p => (p.verification_status || 'unknown') === status)
+          .forEach(p => {
+            output += `  • ${p.name || p.business_name || 'Sans nom'} (${p.email || 'Pas d\'email'})\n`;
+          });
+      });
+
+      resultDiv.textContent = output;
+    }
+  </script>
+</body>
+</html>

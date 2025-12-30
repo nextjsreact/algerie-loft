@@ -1,0 +1,305 @@
+{
+  "contact": {
+    "page": {
+      "title": "Contact Us",
+      "subtitle": "Get in touch with our property management experts. We're here to help you maximize your property investment.",
+      "responseTime": "Response within 24 hours",
+      "freeConsultation": "Free consultation"
+    },
+    "form": {
+      "title": "Send us a message",
+      "description": "Fill out the form below and we'll get back to you as soon as possible.",
+      "sectionTitle": "Get in Touch",
+      "sectionDescription": "Ready to discuss your property management needs? Send us a message and we'll respond within 24 hours.",
+      "name": "Full Name",
+      "namePlaceholder": "Enter your full name",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email address",
+      "phone": "Phone Number",
+      "phonePlaceholder": "Enter your phone number (optional)",
+      "subject": "Subject",
+      "subjectPlaceholder": "What can we help you with?",
+      "message": "Message",
+      "messagePlaceholder": "Tell us about your property management needs...",
+      "preferredContact": "Preferred Contact Method",
+      "contactMethods": {
+        "email": "Email",
+        "phone": "Phone"
+      },
+      "consentText": "I consent to being contacted about my inquiry",
+      "privacyNotice": "We respect your privacy and will never share your information with third parties.",
+      "submit": "Send Message",
+      "submitting": "Sending...",
+      "submitAnother": "Send Another Message",
+      "successTitle": "Message Sent!",
+      "successMessage": "Thank you for your message. We'll get back to you within 24 hours.",
+      "responseTime": "We typically respond within 2-4 hours during business hours.",
+      "submitError": "Failed to send message. Please try again."
+    },
+    "info": {
+      "sectionTitle": "Contact Information",
+      "sectionDescription": "Multiple ways to reach us. Choose what works best for you.",
+      "primary": "Primary",
+      "available": "Available Now",
+      "clickToContact": "Click to contact",
+      "callNow": "Call Now",
+      "phone": {
+        "label": "Phone",
+        "number": "+213 XXX XXX XXX",
+        "description": "Call us directly for immediate assistance"
+      },
+      "email": {
+        "label": "Email",
+        "address": "contact@loftalgerie.com",
+        "description": "Send us an email for detailed inquiries"
+      },
+      "whatsapp": {
+        "label": "WhatsApp",
+        "number": "+213 XXX XXX XXX",
+        "description": "Message us on WhatsApp for quick responses"
+      },
+      "address": {
+        "label": "Office Address",
+        "full": "123 Business District, Algiers, Algeria",
+        "description": "Visit our office for in-person consultations",
+        "details": "Ground floor, Building A, Suite 101"
+      },
+      "businessHours": "Business Hours",
+      "businessHoursDescription": "Our team is available during these hours for immediate assistance.",
+      "hours": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday",
+        "weekdayHours": "9:00 AM - 6:00 PM",
+        "saturdayHours": "9:00 AM - 2:00 PM",
+        "sundayHours": "Closed"
+      },
+      "appointmentNote": "Appointments Available",
+      "appointmentDescription": "Schedule a meeting outside business hours by calling ahead.",
+      "emergency": {
+        "title": "Emergency Contact",
+        "description": "For urgent property issues outside business hours",
+        "phone": "+213 XXX XXX XXX",
+        "availability": "Available 24/7 for emergencies"
+      },
+      "location": {
+        "title": "Our Location",
+        "description": "Find us in the heart of Algiers business district"
+      },
+      "map": {
+        "placeholder": "Interactive Map",
+        "openInMaps": "Open in Maps"
+      },
+      "directions": {
+        "publicTransport": "Public Transport",
+        "publicTransportDetails": "Metro Line 1, Business District Station (5 min walk)",
+        "parking": "Parking",
+        "parkingDetails": "Free parking available in building garage"
+      }
+    },
+    "reasons": {
+      "title": "How Can We Help?",
+      "description": "Common reasons our clients contact us",
+      "propertyManagement": {
+        "title": "Property Management",
+        "description": "Full-service property management solutions",
+        "badge": "Most Popular"
+      },
+      "rentalServices": {
+        "title": "Rental Services",
+        "description": "Tenant screening and rental management",
+        "badge": "Quick Setup"
+      },
+      "maintenance": {
+        "title": "Maintenance",
+        "description": "Property maintenance and repairs",
+        "badge": "24/7 Support"
+      },
+      "consultation": {
+        "title": "Consultation",
+        "description": "Expert advice on property investment",
+        "badge": "Free"
+      }
+    },
+    "process": {
+      "title": "Our Response Process",
+      "description": "Here's what happens after you contact us",
+      "step1": {
+        "title": "We Receive Your Message",
+        "description": "Your inquiry is immediately logged and assigned to the right specialist",
+        "time": "Instant"
+      },
+      "step2": {
+        "title": "Initial Response",
+        "description": "We acknowledge your message and provide initial guidance",
+        "time": "Within 2 hours"
+      },
+      "step3": {
+        "title": "Detailed Follow-up",
+        "description": "Our specialist contacts you with a detailed response and next steps",
+        "time": "Within 24 hours"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "description": "Quick answers to common questions",
+      "q1": {
+        "question": "How quickly do you respond to inquiries?",
+        "answer": "We respond to all inquiries within 24 hours, typically within 2-4 hours during business hours."
+      },
+      "q2": {
+        "question": "Do you offer free consultations?",
+        "answer": "Yes, we offer free initial consultations to discuss your property management needs and how we can help."
+      },
+      "q3": {
+        "question": "What areas do you serve?",
+        "answer": "We primarily serve the Algiers metropolitan area and surrounding regions. Contact us to confirm service in your area."
+      },
+      "q4": {
+        "question": "Can I schedule a meeting outside business hours?",
+        "answer": "Yes, we can arrange meetings outside regular hours by appointment. Please call ahead to schedule."
+      }
+    }
+  },
+  "propertyInquiry": {
+    "form": {
+      "title": "Property Inquiry",
+      "description": "Interested in this property? Get in touch with us for more information.",
+      "descriptionWithProperty": "Interested in {property}? Get in touch with us for more information.",
+      "propertyInfo": "Property Information",
+      "name": "Full Name",
+      "namePlaceholder": "Enter your full name",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email address",
+      "phone": "Phone Number",
+      "phonePlaceholder": "Enter your phone number (optional)",
+      "inquiryType": "Type of Inquiry",
+      "inquiryTypes": {
+        "viewing": "Schedule a Viewing",
+        "information": "Request Information",
+        "rental": "Rental Inquiry",
+        "purchase": "Purchase Inquiry",
+        "management": "Management Services"
+      },
+      "preferredContactTime": "Preferred Contact Time",
+      "contactTimes": {
+        "morning": "Morning (9 AM - 12 PM)",
+        "afternoon": "Afternoon (12 PM - 6 PM)",
+        "evening": "Evening (6 PM - 9 PM)",
+        "anytime": "Anytime"
+      },
+      "budget": "Budget Range",
+      "budgetPlaceholder": "e.g., $1000-1500/month",
+      "moveInDate": "Preferred Move-in Date",
+      "message": "Additional Details",
+      "messagePlaceholder": "Tell us more about your requirements, questions, or specific needs...",
+      "consentText": "I consent to being contacted about this property inquiry",
+      "privacyNotice": "Your information is secure and will only be used to respond to your inquiry.",
+      "submit": "Send Inquiry",
+      "submitting": "Sending...",
+      "submitAnother": "Submit Another Inquiry",
+      "successTitle": "Inquiry Sent!",
+      "successMessage": "Thank you for your interest. We'll contact you soon with more information about this property.",
+      "responseTime": "Our property specialists typically respond within 2-4 hours.",
+      "submitError": "Failed to send inquiry. Please try again."
+    }
+  },
+  "serviceInquiry": {
+    "form": {
+      "title": "Service Inquiry",
+      "description": "Tell us about your property management needs and we'll provide a customized solution.",
+      "name": "Full Name",
+      "namePlaceholder": "Enter your full name",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email address",
+      "phone": "Phone Number",
+      "phonePlaceholder": "Enter your phone number (optional)",
+      "serviceType": "Service Type",
+      "serviceTypes": {
+        "property_management": "Property Management",
+        "rental_services": "Rental Services",
+        "maintenance": "Maintenance Services",
+        "consultation": "Consultation",
+        "other": "Other Services"
+      },
+      "propertyType": "Property Type",
+      "propertyTypes": {
+        "apartment": "Apartment",
+        "house": "House",
+        "commercial": "Commercial",
+        "multiple": "Multiple Properties",
+        "other": "Other"
+      },
+      "propertyCount": "Number of Properties",
+      "location": "Property Location",
+      "locationPlaceholder": "City or area",
+      "currentSituation": "Current Situation",
+      "situations": {
+        "new_owner": "New Property Owner",
+        "current_owner": "Current Property Owner",
+        "looking_to_buy": "Looking to Buy",
+        "property_manager": "Property Manager",
+        "other": "Other"
+      },
+      "timeline": "Timeline",
+      "timelines": {
+        "immediate": "Immediate (ASAP)",
+        "within_month": "Within 1 Month",
+        "within_3months": "Within 3 Months",
+        "within_6months": "Within 6 Months",
+        "planning": "Planning Phase"
+      },
+      "budget": "Budget Range",
+      "budgetPlaceholder": "e.g., $500-1000/month per property",
+      "message": "Describe Your Needs",
+      "messagePlaceholder": "Tell us about your specific requirements, challenges, or goals...",
+      "selectOption": "Select an option",
+      "consentText": "I consent to being contacted about my service inquiry",
+      "privacyNotice": "Your information is secure and will only be used to provide you with service information.",
+      "submit": "Send Service Inquiry",
+      "submitting": "Sending...",
+      "submitAnother": "Submit Another Inquiry",
+      "successTitle": "Service Inquiry Sent!",
+      "successMessage": "Thank you for your interest in our services. We'll contact you soon with a customized proposal.",
+      "responseTime": "Our service specialists typically respond within 4-6 hours with a detailed proposal.",
+      "submitError": "Failed to send service inquiry. Please try again."
+    }
+  },
+  "callbackRequest": {
+    "form": {
+      "title": "Request a Callback",
+      "description": "Leave your number and we'll call you back at your preferred time.",
+      "name": "Full Name",
+      "namePlaceholder": "Enter your full name",
+      "phone": "Phone Number",
+      "phonePlaceholder": "Enter your phone number",
+      "preferredTime": "Preferred Call Time",
+      "times": {
+        "morning": "Morning (9 AM - 12 PM)",
+        "afternoon": "Afternoon (12 PM - 6 PM)",
+        "evening": "Evening (6 PM - 9 PM)"
+      },
+      "topic": "Topic (Optional)",
+      "selectTopic": "Select a topic",
+      "topics": {
+        "property_management": "Property Management",
+        "rental_inquiry": "Rental Inquiry",
+        "general_inquiry": "General Inquiry",
+        "other": "Other"
+      },
+      "consentText": "I consent to being called at the provided number",
+      "privacyNotice": "We will only use your number to call you back about your inquiry.",
+      "submit": "Request Callback",
+      "submitting": "Submitting...",
+      "requestAnother": "Request Another Callback",
+      "successTitle": "Callback Requested!",
+      "successMessage": "Thank you! We'll call you back at your preferred time.",
+      "callbackTime": "You can expect our call within 2-4 hours during business hours.",
+      "submitError": "Failed to submit callback request. Please try again."
+    }
+  }
+}

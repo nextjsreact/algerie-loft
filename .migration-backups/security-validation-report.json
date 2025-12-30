@@ -1,0 +1,60 @@
+{
+  "overallSuccess": true,
+  "totalDuration": 415,
+  "results": [
+    {
+      "component": "Backup System",
+      "success": true,
+      "duration": 344,
+      "details": [
+        "Full backup created: full-1766960150746",
+        "Backup size: 1.00 MB",
+        "Files included: 4",
+        "Backup integrity validation passed",
+        "Snapshot created: snapshot-1766960150918 (Security-Test-Snapshot)",
+        "Incremental backup created: incremental-1766960150980",
+        "1 snapshots available for restoration"
+      ],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "component": "Rollback System",
+      "success": true,
+      "duration": 61,
+      "details": [
+        "Rollback capability validation passed",
+        "Available snapshots: 1",
+        "Configured triggers: 3",
+        "Build failure trigger configured correctly",
+        "Available rollback points: 1",
+        "Estimated rollback time: 30.0 seconds",
+        "Rollback time meets performance requirements"
+      ],
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "component": "Migration Controller Security",
+      "success": true,
+      "duration": 2,
+      "details": [
+        "Checkpoint creation successful",
+        "Available checkpoints: 1",
+        "Migration controller rollback integration working",
+        "Initial status: idle",
+        "Pause functionality working",
+        "Resume functionality working",
+        "Progress tracking: 0% (0/0)",
+        "Controller rollback points: 1"
+      ],
+      "errors": [],
+      "warnings": []
+    }
+  ],
+  "criticalIssues": [],
+  "recommendations": [
+    "Create additional snapshots before starting migration",
+    "Test rollback procedure in development environment first"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "backup_test_1767039643403_qesmpmt2e",
+  "environmentId": "test-env-001",
+  "environmentName": "Test Environment",
+  "environmentType": "test",
+  "createdAt": "2025-12-29T20:20:43.403Z",
+  "size": 405,
+  "options": {
+    "includeSchema": true,
+    "includeData": true,
+    "compressionLevel": "medium"
+  },
+  "filePath": "C:\\Users\\SERVICE-INFO\\IA\\algerie-loft\\backups\\clone-operations\\backup_test_1767039643403_qesmpmt2e.backup",
+  "checksum": "6af74c87",
+  "isValid": true
+}

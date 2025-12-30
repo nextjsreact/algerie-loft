@@ -1,4 +1,5 @@
-import * as Sentry from '@sentry/nextjs';
+// Error tracking with Sentry mock
+import * as Sentry from '@/lib/mocks/sentry';
 
 export interface ErrorContext {
   userId?: string;

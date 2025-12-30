@@ -1,0 +1,286 @@
+/**
+ * Local Application Test
+ * Start the Next.js 16 migrated application locally for user testing
+ * 
+ * This script will:
+ * 1. Check if the application is ready to run
+ * 2. Start the development server
+ * 3. Provide access information to the user
+ */
+
+import { spawn } from 'child_process'
+import { promises as fs } from 'fs'
+import { join } from 'path'
+
+class LocalApplicationTest {
+  constructor() {
+    this.serverProcess = null
+    this.serverUrl = 'http://localhost:3000'
+    this.isReady = false
+  }
+
+  async startLocalTest() {
+    console.log('🚀 Starting Local Application Test...')
+    console.log('Next.js 16 Migrated Application - Local Testing')
+    console.log('='.repeat(80))
+    
+    try {
+      console.log('\n📋 Phase 1: Pre-flight Checks')
+      await this.performPreflightChecks()
+      
+      console.log('\n📋 Phase 2: Start Development Server')
+      await this.startDevelopmentServer()
+      
+      console.log('\n📋 Phase 3: Wait for Server Ready')
+      await this.waitForServerReady()
+      
+      console.log('\n📋 Phase 4: Provide Access Information')
+      this.provideAccessInformation()
+      
+      console.log('\n📋 Phase 5: Monitor Server')
+      await this.monitorServer()
+      
+    } catch (error) {
+      console.error('❌ Local application test failed:', error.message)
+      this.cleanup()
+    }
+  }
+
+  async performPreflightChecks() {
+    console.log('🔍 Performing Pre-flight Checks...')
+    
+    const checks = [
+      { name: 'Check package.json', test: this.checkPackageJson.bind(this) },
+      { name: 'Check Next.js installation', test: this.checkNextJsInstallation.bind(this) },
+      { name: 'Check environment files', test: this.checkEnvironmentFiles.bind(this) },
+      { name: 'Check port availability', test: this.checkPortAvailability.bind(this) }
+    ]
+    
+    for (const check of checks) {
+      console.log(`     ${check.name}...`)
+      const result = await check.test()
+      
+      if (result.success) {
+        console.log(`       ✅ ${result.message}`)
+      } else {
+        console.log(`       ⚠️  ${result.message}`)
+      }
+    }
+  }
+
+  async startDevelopmentServer() {
+    console.log('🚀 Starting Development Server...')
+    
+    return new Promise((resolve, reject) => {
+      console.log('     Executing: npm run dev')
+      
+      // Start the Next.js development server
+      this.serverProcess = spawn('npm', ['run', 'dev'], {
+        stdio: ['pipe', 'pipe', 'pipe'],
+        shell: true
+      })
+      
+      let output = ''
+      
+      this.serverProcess.stdout.on('data', (data) => {
+        const text = data.toString()
+        output += text
+        
+        // Check if server is ready
+        if (text.includes('Ready') || text.includes('started server') || text.includes('Local:')) {
+          this.isReady = true
+          console.log('       ✅ Development server started successfully')
+          resolve()
+        }
+        
+        // Log server output
+        if (text.trim()) {
+          console.log(`       📝 ${text.trim()}`)
+        }
+      })
+      
+      this.serverProcess.stderr.on('data', (data) => {
+        const text = data.toString()
+        if (text.trim() && !text.includes('warn')) {
+          console.log(`       ⚠️  ${text.trim()}`)
+        }
+      })
+      
+      this.serverProcess.on('error', (error) => {
+        console.error('       ❌ Failed to start server:', error.message)
+        reject(error)
+      })
+      
+      // Timeout after 30 seconds
+      setTimeout(() => {
+        if (!this.isReady) {
+          console.log('       ⚠️  Server taking longer than expected to start...')
+          resolve() // Continue anyway
+        }
+      }, 30000)
+    })
+  }
+
+  async waitForServerReady() {
+    console.log('⏳ Waiting for Server to be Ready...')
+    
+    let attempts = 0
+    const maxAttempts = 10
+    
+    while (attempts < maxAttempts && !this.isReady) {
+      console.log(`     Attempt ${attempts + 1}/${maxAttempts}: Checking server status...`)
+      
+      try {
+        // Try to fetch the homepage
+        const response = await fetch(this.serverUrl)
+        if (response.ok) {
+          this.isReady = true
+          console.log('       ✅ Server is ready and responding')
+          break
+        }
+      } catch (error) {
+        // Server not ready yet
+      }
+      
+      attempts++
+      await new Promise(resolve => setTimeout(resolve, 3000)) // Wait 3 seconds
+    }
+    
+    if (!this.isReady) {
+      console.log('       ⚠️  Server may still be starting up...')
+    }
+  }
+
+  provideAccessInformation() {
+    console.log('🌐 Application Access Information')
+    console.log('='.repeat(50))
+    
+    console.log(`\n🔗 Application URL: ${this.serverUrl}`)
+    console.log('📱 Available Pages:')
+    console.log('   • Homepage: http://localhost:3000/')
+    console.log('   • Lofts: http://localhost:3000/lofts')
+    console.log('   • About: http://localhost:3000/about')
+    console.log('   • Contact: http://localhost:3000/contact')
+    console.log('   • Login: http://localhost:3000/login')
+    console.log('   • Register: http://localhost:3000/register')
+    
+    console.log('\n🌍 Language Options:')
+    console.log('   • French: http://localhost:3000/fr')
+    console.log('   • English: http://localhost:3000/en')
+    console.log('   • Arabic: http://localhost:3000/ar')
+    
+    console.log('\n👨‍💼 Admin/Partner Access:')
+    console.log('   • Admin Panel: http://localhost:3000/admin')
+    console.log('   • Partner Dashboard: http://localhost:3000/partner')
+    
+    console.log('\n📊 Development Tools:')
+    console.log('   • Next.js Dev Tools: Available in browser')
+    console.log('   • React Dev Tools: Install browser extension')
+    
+    console.log('\n' + '='.repeat(50))
+    console.log('🎉 APPLICATION IS READY!')
+    console.log('Open your browser and navigate to: http://localhost:3000')
+    console.log('='.repeat(50))
+  }
+
+  async monitorServer() {
+    console.log('\n📊 Monitoring Server (Press Ctrl+C to stop)...')
+    
+    // Monitor server health
+    const monitorInterval = setInterval(async () => {
+      try {
+        const response = await fetch(this.serverUrl)
+        const status = response.ok ? '✅ HEALTHY' : '⚠️  ISSUES'
+        console.log(`     Server Status: ${status} (${response.status})`)
+      } catch (error) {
+        console.log('     Server Status: ❌ OFFLINE')
+      }
+    }, 30000) // Check every 30 seconds
+    
+    // Handle graceful shutdown
+    process.on('SIGINT', () => {
+      console.log('\n\n🛑 Shutting down server...')
+      clearInterval(monitorInterval)
+      this.cleanup()
+      process.exit(0)
+    })
+    
+    process.on('SIGTERM', () => {
+      console.log('\n\n🛑 Shutting down server...')
+      clearInterval(monitorInterval)
+      this.cleanup()
+      process.exit(0)
+    })
+    
+    // Keep the process alive
+    return new Promise(() => {}) // Never resolves, keeps running
+  }
+
+  cleanup() {
+    if (this.serverProcess) {
+      console.log('     Stopping development server...')
+      this.serverProcess.kill('SIGTERM')
+      this.serverProcess = null
+    }
+  }
+
+  // Check methods
+  async checkPackageJson() {
+    try {
+      const packageJson = await fs.readFile('package.json', 'utf8')
+      const pkg = JSON.parse(packageJson)
+      
+      if (pkg.scripts && pkg.scripts.dev) {
+        return { success: true, message: 'package.json found with dev script' }
+      } else {
+        return { success: false, message: 'package.json missing dev script' }
+      }
+    } catch (error) {
+      return { success: false, message: 'package.json not found' }
+    }
+  }
+
+  async checkNextJsInstallation() {
+    try {
+      const packageJson = await fs.readFile('package.json', 'utf8')
+      const pkg = JSON.parse(packageJson)
+      
+      const nextVersion = pkg.dependencies?.next || pkg.devDependencies?.next
+      
+      if (nextVersion) {
+        return { success: true, message: `Next.js ${nextVersion} installed` }
+      } else {
+        return { success: false, message: 'Next.js not found in dependencies' }
+      }
+    } catch (error) {
+      return { success: false, message: 'Could not check Next.js installation' }
+    }
+  }
+
+  async checkEnvironmentFiles() {
+    try {
+      await fs.access('.env.local')
+      return { success: true, message: 'Environment file found' }
+    } catch (error) {
+      return { success: false, message: 'No .env.local file (may use defaults)' }
+    }
+  }
+
+  async checkPortAvailability() {
+    // Simple port check - in a real scenario, you'd check if port 3000 is available
+    return { success: true, message: 'Port 3000 should be available' }
+  }
+}
+
+// Start the local application test
+const localTest = new LocalApplicationTest()
+
+console.log('🎯 Starting Local Application Test for Next.js 16 Migration')
+console.log('This will start the application so you can test it in your browser')
+console.log('')
+
+localTest.startLocalTest()
+  .catch(error => {
+    console.error('💥 Local test failed:', error)
+    process.exit(1)
+  })

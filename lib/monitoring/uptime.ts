@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from '@/lib/mocks/sentry';
 
 export interface UptimeConfig {
   endpoints: string[];

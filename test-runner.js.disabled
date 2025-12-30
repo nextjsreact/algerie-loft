@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+
+const { spawn } = require('child_process');
+const path = require('path');
+
+// Get command line arguments (everything after the script name)
+const args = process.argv.slice(2);
+
+// Path to Jest
+const jestPath = path.join(__dirname, 'node_modules', 'jest', 'bin', 'jest.js');
+const configPath = path.join(__dirname, 'jest.config.cjs');
+
+// Build the command
+const jestArgs = ['--config', configPath, ...args];
+
+// Run Jest
+const jest = spawn('node', [jestPath, ...jestArgs], {
+  stdio: 'inherit',
+  shell: true
+});
+
+jest.on('close', (code) => {
+  process.exit(code);
+});
+
+jest.on('error', (err) => {
+  console.error('Failed to start Jest:', err);
+  process.exit(1);
+});

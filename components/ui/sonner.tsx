@@ -1,31 +1,160 @@
 "use client"
 
-import { useTheme } from "next-themes"
-import { Toaster as Sonner } from "sonner"
+/**
+ * Temporary Sonner Mock Component
+ * 
+ * This is a temporary replacement for the sonner library
+ * to fix the build error while npm install is having issues
+ */
 
-type ToasterProps = React.ComponentProps<typeof Sonner>
+import * as React from "react"
 
-const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme()
+// Mock toast function
+export const toast = {
+  success: (message: string, options?: any) => {
+    console.log("✅ SUCCESS:", message)
+    // You can add a simple alert or custom notification here
+    if (typeof window !== 'undefined') {
+      // Simple browser notification as fallback
+      const notification = document.createElement('div')
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #10b981;
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        z-index: 9999;
+        font-family: system-ui;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      `
+      notification.textContent = message
+      document.body.appendChild(notification)
+      
+      setTimeout(() => {
+        document.body.removeChild(notification)
+      }, 3000)
+    }
+  },
+  
+  error: (message: string, options?: any) => {
+    console.log("❌ ERROR:", message)
+    if (typeof window !== 'undefined') {
+      const notification = document.createElement('div')
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #ef4444;
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        z-index: 9999;
+        font-family: system-ui;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      `
+      notification.textContent = message
+      document.body.appendChild(notification)
+      
+      setTimeout(() => {
+        document.body.removeChild(notification)
+      }, 3000)
+    }
+  },
+  
+  info: (message: string, options?: any) => {
+    console.log("ℹ️ INFO:", message)
+    if (typeof window !== 'undefined') {
+      const notification = document.createElement('div')
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #3b82f6;
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        z-index: 9999;
+        font-family: system-ui;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      `
+      notification.textContent = message
+      document.body.appendChild(notification)
+      
+      setTimeout(() => {
+        document.body.removeChild(notification)
+      }, 3000)
+    }
+  },
+  
+  warning: (message: string, options?: any) => {
+    console.log("⚠️ WARNING:", message)
+    if (typeof window !== 'undefined') {
+      const notification = document.createElement('div')
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #f59e0b;
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        z-index: 9999;
+        font-family: system-ui;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      `
+      notification.textContent = message
+      document.body.appendChild(notification)
+      
+      setTimeout(() => {
+        document.body.removeChild(notification)
+      }, 3000)
+    }
+  },
+  
+  // Default toast function
+  default: (message: string, options?: any) => {
+    console.log("📢 TOAST:", message)
+    if (typeof window !== 'undefined') {
+      const notification = document.createElement('div')
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #374151;
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        z-index: 9999;
+        font-family: system-ui;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      `
+      notification.textContent = message
+      document.body.appendChild(notification)
+      
+      setTimeout(() => {
+        document.body.removeChild(notification)
+      }, 3000)
+    }
+  }
+}
 
+// Mock Toaster component
+export function Toaster({ ...props }) {
   return (
-    <Sonner
-      theme={theme as ToasterProps["theme"]}
-      className="toaster group"
-      toastOptions={{
-        classNames: {
-          toast:
-            "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
-          description: "group-[.toast]:text-muted-foreground",
-          actionButton:
-            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
-          cancelButton:
-            "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
-        },
+    <div 
+      id="sonner-toaster" 
+      style={{ 
+        position: 'fixed', 
+        top: 0, 
+        right: 0, 
+        zIndex: 9999,
+        pointerEvents: 'none'
       }}
       {...props}
     />
   )
 }
 
-export { Toaster }
+export default { toast, Toaster }

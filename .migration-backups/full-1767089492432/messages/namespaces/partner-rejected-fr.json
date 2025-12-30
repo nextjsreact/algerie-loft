@@ -1,0 +1,21 @@
+{
+  "title": "Candidature rejetée",
+  "portalTitle": "Portail Partenaire",
+  "reasons": {
+    "title": "Raisons courantes de rejet",
+    "incomplete": "Documentation incomplète ou insuffisante",
+    "quality": "La propriété ne répond pas à nos normes de qualité",
+    "location": "Emplacement actuellement non pris en charge",
+    "verification": "Les informations commerciales n'ont pas pu être vérifiées"
+  },
+  "reapply": {
+    "title": "Vous souhaitez postuler à nouveau ?",
+    "message": "Vous pouvez soumettre une nouvelle candidature après avoir résolu les problèmes mentionnés dans votre email de rejet. Contactez notre équipe partenaire pour obtenir des conseils sur l'amélioration de votre candidature."
+  },
+  "help": "Besoin d'aide avec votre candidature ?",
+  "contact": "Contactez notre équipe partenaire",
+  "actions": {
+    "newApplication": "Soumettre une nouvelle candidature",
+    "backToLogin": "← Retour à la connexion"
+  }
+}

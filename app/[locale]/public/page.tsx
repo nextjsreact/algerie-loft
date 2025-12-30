@@ -1,4 +1,4 @@
-import DualAudienceHomepage from '@/components/homepage/DualAudienceHomepage';
+import FusionDualAudienceHomepage from '@/components/homepage/FusionDualAudienceHomepage';
 import { Metadata } from 'next';
 
 interface PublicPageProps {
@@ -55,5 +55,5 @@ export async function generateMetadata({ params }: PublicPageProps): Promise<Met
 export default async function PublicPage({ params }: PublicPageProps) {
   const { locale } = await params;
   
-  return <DualAudienceHomepage locale={locale} />;
+  return <FusionDualAudienceHomepage locale={locale} />;
 }

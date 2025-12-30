@@ -1,0 +1,7 @@
+{
+  "alerts": {
+    "resolve": "Resolve",
+    "resolved": "Alert resolved successfully",
+    "resolveError": "Error resolving alert"
+  }
+}

@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Réinitialisation Langue</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>🇫🇷 Réinitialisation en cours...</h1>
+    <p>Nettoyage des cookies et définition du français...</p>
+    
+    <script>
+        // Nettoyer tous les cookies liés à la langue
+        document.cookie = 'language=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        document.cookie = 'i18nextLng=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        
+        // Définir le français
+        document.cookie = 'language=fr; path=/; max-age=31536000; SameSite=Lax';
+        document.cookie = 'i18nextLng=fr; path=/; max-age=31536000; SameSite=Lax';
+        
+        // Nettoyer le localStorage
+        localStorage.removeItem('i18nextLng');
+        localStorage.setItem('i18nextLng', 'fr');
+        
+        // Rediriger vers l'application
+        setTimeout(() => {
+            window.location.href = '/dashboard';
+        }, 2000);
+    </script>
+</body>
+</html>

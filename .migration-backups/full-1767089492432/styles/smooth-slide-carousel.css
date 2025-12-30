@@ -1,0 +1,255 @@
+/* Styles pour le carrousel à glissement smooth */
+
+/* Container principal sans optimisations qui causent le flou */
+.smooth-slide-carousel {
+  position: relative;
+}
+
+/* Optimisation du glissement horizontal sans 3D */
+.smooth-slide-container {
+  will-change: transform;
+}
+
+/* Transitions ultra-fluides */
+.smooth-slide * {
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Animation de glissement personnalisée */
+@keyframes smoothSlideLeft {
+  0% {
+    transform: translateX(100%);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+@keyframes smoothSlideRight {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+/* Effet de poussée douce */
+.slide-push-left {
+  animation: smoothSlideLeft 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.slide-push-right {
+  animation: smoothSlideRight 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Ombres et profondeur pour le glissement */
+.slide-shadow {
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.2),
+    0 20px 80px rgba(0, 0, 0, 0.1);
+}
+
+/* Effet de parallaxe subtil */
+.slide-parallax {
+  transform-style: preserve-3d;
+}
+
+.slide-parallax .slide-content {
+  transform: translateZ(20px);
+}
+
+.slide-parallax .slide-overlay {
+  transform: translateZ(10px);
+}
+
+/* Ken Burns amélioré pour le glissement */
+@keyframes kenBurnsSlide {
+  0% {
+    transform: scale(1) translateX(0);
+  }
+  50% {
+    transform: scale(1.02) translateX(-5px);
+  }
+  100% {
+    transform: scale(1.03) translateX(0);
+  }
+}
+
+.ken-burns-slide {
+  animation: kenBurnsSlide 5s ease-in-out infinite alternate;
+}
+
+/* Contrôles optimisés pour le glissement */
+.slide-control {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slide-control:hover {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transform: scale(1.1) translateZ(10px);
+}
+
+/* Indicateurs de glissement */
+.slide-dot {
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-origin: center;
+}
+
+.slide-dot.active {
+  transform: scale(1.2);
+}
+
+.slide-dot:hover {
+  transform: scale(1.1);
+}
+
+/* Barre de progression pour glissement */
+.slide-progress {
+  background: linear-gradient(
+    90deg,
+    rgba(59, 130, 246, 0.6) 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(59, 130, 246, 0.6) 100%
+  );
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* Animation de progression fluide */
+@keyframes slideProgress {
+  0% {
+    width: 0%;
+    transform: translateX(-10px);
+  }
+  100% {
+    width: 100%;
+    transform: translateX(0);
+  }
+}
+
+.slide-progress-bar {
+  animation: slideProgress var(--duration, 5s) linear;
+}
+
+/* Effet de shimmer pour la progression */
+.slide-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.slide-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmerSlide 2s ease-in-out infinite;
+}
+
+@keyframes shimmerSlide {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Texte avec animation de glissement */
+.slide-text-enter {
+  animation: slideTextIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes slideTextIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) translateX(0);
+  }
+}
+
+/* Responsive pour le glissement */
+@media (max-width: 768px) {
+  .smooth-slide-carousel {
+    perspective: 800px;
+  }
+  
+  .slide-control {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  
+  .ken-burns-slide {
+    animation-duration: 6s;
+  }
+}
+
+/* Optimisations pour les préférences de mouvement réduit */
+@media (prefers-reduced-motion: reduce) {
+  .smooth-slide *,
+  .slide-control,
+  .slide-dot {
+    transition: none;
+  }
+  
+  .slide-push-left,
+  .slide-push-right,
+  .ken-burns-slide,
+  .slide-progress-bar,
+  .slide-text-enter,
+  .slide-shimmer::after {
+    animation: none;
+  }
+}
+
+/* États de focus améliorés */
+.slide-control:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.6);
+  outline-offset: 3px;
+}
+
+/* Effet de glow pour les contrôles actifs */
+.slide-control.active {
+  box-shadow: 
+    0 0 20px rgba(59, 130, 246, 0.4),
+    0 0 40px rgba(59, 130, 246, 0.2);
+}
+
+/* Images nettes - rendu par défaut optimal */
+.crisp-image {
+  image-rendering: auto;
+  image-rendering: high-quality;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Éviter le flou sur les transformations */
+.no-blur-transform {
+  transform-style: flat;
+  backface-visibility: visible;
+}
+
+/* Container simple sans 3D */
+.slide-container {
+  position: relative;
+}
+
+.slide-item {
+  position: relative;
+}

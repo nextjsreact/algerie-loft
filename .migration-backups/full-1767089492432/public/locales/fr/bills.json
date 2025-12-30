@@ -1,0 +1,40 @@
+{
+  "amount": "Montant",
+  "cancel": "Annuler",
+  "description": "Description",
+  "descriptionPlaceholder": "Saisir la description de la facture",
+  "due": "Échéance",
+  "errorMessage": "Échec de l'enregistrement du paiement. Veuillez réessayer.",
+  "paymentDate": "Date de paiement",
+  "paymentMethod": "Méthode de paiement",
+  "recording": "Enregistrement...",
+  "recordPayment": "Enregistrer le paiement",
+  "selectPaymentMethod": "Sélectionner la méthode de paiement",
+  "successMessage": "Paiement enregistré avec succès.",
+  "title": "Factures",
+  "utilities": {
+    "eau": "Facture d'eau",
+    "energie": "Facture d'électricité",
+    "telephone": "Facture de téléphone",
+    "internet": "Facture d'Internet",
+    "tv": "Facture de télévision",
+    "gas": "Facture de gaz"
+  },
+  "paymentModal": {
+    "title": "Enregistrer le paiement"
+  },
+  "upcomingBills": "Factures à Venir",
+  "overdueBills": "Factures en Retard",
+  "noUpcomingBills": "Aucune facture à venir",
+  "markPaid": "Marquer comme payée",
+  "dueToday": "Échue aujourd'hui",
+  "dueTomorrow": "Échue demain",
+  "dayOverdue": "1 jour de retard",
+  "daysOverdue": "{{count}} jours de retard",
+  "days": "jours",
+  "noUpcomingBillsMessage": "Aucune facture à venir dans les 30 prochains jours",
+  "noOverdueBillsMessage": "Aucune facture en retard - excellent travail !",
+  "upcomingBillsTitle": "Factures à Venir",
+  "overdueBillsTitle": "Factures en Retard",
+  "loadingError": "Échec du chargement des alertes de factures"
+}

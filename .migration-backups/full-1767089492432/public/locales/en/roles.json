@@ -1,0 +1,7 @@
+{
+  "admin": "Admin",
+  "manager": "Manager",
+  "member": "Member",
+  "executive": "Executive",
+  "guest": "Guest"
+}

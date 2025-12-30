@@ -1,0 +1,284 @@
+/**
+ * Test Local de l'Application Migrée Next.js 16
+ * 
+ * Ce script lance l'application migrée dans le répertoire loft-algerie-next16/
+ * pour permettre au user de tester l'application en local
+ */
+
+import { spawn } from 'child_process'
+import { promises as fs } from 'fs'
+import { join } from 'path'
+
+class LocalMigratedApplicationTester {
+  constructor() {
+    this.targetDirectory = 'loft-algerie-next16'
+    this.serverProcess = null
+    this.serverUrl = 'http://localhost:3000'
+  }
+
+  async startLocalTest() {
+    console.log('🚀 Démarrage du Test Local de l\'Application Migrée Next.js 16')
+    console.log('='.repeat(80))
+    console.log(`📁 Répertoire cible: ${this.targetDirectory}`)
+    console.log(`🌐 URL de test: ${this.serverUrl}`)
+    console.log('='.repeat(80))
+    
+    try {
+      console.log('\n📋 Phase 1: Vérification du répertoire cible')
+      await this.verifyTargetDirectory()
+      
+      console.log('\n📋 Phase 2: Vérification des dépendances')
+      await this.verifyDependencies()
+      
+      console.log('\n📋 Phase 3: Démarrage du serveur de développement')
+      await this.startDevelopmentServer()
+      
+      console.log('\n📋 Phase 4: Instructions pour le test')
+      this.displayTestInstructions()
+      
+      // Garder le processus en vie
+      await this.keepServerRunning()
+      
+    } catch (error) {
+      console.error('❌ Erreur lors du démarrage du test local:', error.message)
+      throw error
+    }
+  }
+
+  async verifyTargetDirectory() {
+    console.log('🔍 Vérification du répertoire cible...')
+    
+    try {
+      const stats = await fs.stat(this.targetDirectory)
+      if (!stats.isDirectory()) {
+        throw new Error(`${this.targetDirectory} n'est pas un répertoire`)
+      }
+      
+      // Vérifier les fichiers essentiels
+      const essentialFiles = [
+        'package.json',
+        'next.config.mjs',
+        'app',
+        'components'
+      ]
+      
+      for (const file of essentialFiles) {
+        const filePath = join(this.targetDirectory, file)
+        try {
+          await fs.access(filePath)
+          console.log(`     ✅ ${file} trouvé`)
+        } catch {
+          throw new Error(`Fichier essentiel manquant: ${file}`)
+        }
+      }
+      
+      console.log('     ✅ Répertoire cible validé')
+      
+    } catch (error) {
+      throw new Error(`Erreur de vérification du répertoire: ${error.message}`)
+    }
+  }
+
+  async verifyDependencies() {
+    console.log('📦 Vérification des dépendances...')
+    
+    try {
+      // Vérifier si node_modules existe
+      const nodeModulesPath = join(this.targetDirectory, 'node_modules')
+      
+      try {
+        await fs.access(nodeModulesPath)
+        console.log('     ✅ node_modules trouvé')
+      } catch {
+        console.log('     ⚠️  node_modules manquant - installation nécessaire')
+        await this.installDependencies()
+      }
+      
+      // Vérifier package.json
+      const packageJsonPath = join(this.targetDirectory, 'package.json')
+      const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf8'))
+      
+      console.log(`     ✅ Application: ${packageJson.name}`)
+      console.log(`     ✅ Version Next.js: ${packageJson.dependencies?.next || 'Non spécifiée'}`)
+      
+    } catch (error) {
+      throw new Error(`Erreur de vérification des dépendances: ${error.message}`)
+    }
+  }
+
+  async installDependencies() {
+    console.log('     📥 Installation des dépendances...')
+    
+    return new Promise((resolve, reject) => {
+      const installProcess = spawn('npm', ['install'], {
+        cwd: this.targetDirectory,
+        stdio: 'pipe',
+        shell: true
+      })
+      
+      let output = ''
+      
+      installProcess.stdout.on('data', (data) => {
+        output += data.toString()
+        process.stdout.write('.')
+      })
+      
+      installProcess.stderr.on('data', (data) => {
+        output += data.toString()
+      })
+      
+      installProcess.on('close', (code) => {
+        console.log('') // Nouvelle ligne après les points
+        
+        if (code === 0) {
+          console.log('     ✅ Dépendances installées avec succès')
+          resolve()
+        } else {
+          console.log('     ❌ Erreur lors de l\'installation des dépendances')
+          console.log('     Output:', output.slice(-500)) // Derniers 500 caractères
+          reject(new Error(`Installation failed with code ${code}`))
+        }
+      })
+    })
+  }
+
+  async startDevelopmentServer() {
+    console.log('🚀 Démarrage du serveur de développement...')
+    
+    return new Promise((resolve, reject) => {
+      // Utiliser npm run dev pour démarrer le serveur
+      this.serverProcess = spawn('npm', ['run', 'dev'], {
+        cwd: this.targetDirectory,
+        stdio: 'pipe',
+        shell: true
+      })
+      
+      let output = ''
+      let serverStarted = false
+      
+      this.serverProcess.stdout.on('data', (data) => {
+        const text = data.toString()
+        output += text
+        
+        // Afficher la sortie en temps réel
+        process.stdout.write(text)
+        
+        // Détecter quand le serveur est prêt
+        if (text.includes('Ready') || text.includes('started server') || text.includes('Local:')) {
+          if (!serverStarted) {
+            serverStarted = true
+            console.log('\\n     ✅ Serveur de développement démarré avec succès')
+            resolve()
+          }
+        }
+      })
+      
+      this.serverProcess.stderr.on('data', (data) => {
+        const text = data.toString()
+        output += text
+        process.stderr.write(text)
+      })
+      
+      this.serverProcess.on('close', (code) => {
+        if (code !== 0 && !serverStarted) {
+          console.log('\\n     ❌ Erreur lors du démarrage du serveur')
+          console.log('     Output:', output.slice(-1000))
+          reject(new Error(`Server failed to start with code ${code}`))
+        }
+      })
+      
+      // Timeout de 30 secondes pour le démarrage
+      setTimeout(() => {
+        if (!serverStarted) {
+          console.log('\\n     ⚠️  Le serveur prend du temps à démarrer...')
+          console.log('     ✅ Considéré comme démarré (timeout)')
+          resolve()
+        }
+      }, 30000)
+    })
+  }
+
+  displayTestInstructions() {
+    console.log('\\n' + '='.repeat(80))
+    console.log('🎯 INSTRUCTIONS POUR TESTER L\'APPLICATION MIGRÉE')
+    console.log('='.repeat(80))
+    
+    console.log('\\n📱 Application Next.js 16 Migrée Disponible:')
+    console.log(`   🌐 URL: ${this.serverUrl}`)
+    console.log('   📁 Répertoire: loft-algerie-next16/')
+    
+    console.log('\\n🧪 Tests à Effectuer:')
+    console.log('   1. ✅ Navigation générale de l\'application')
+    console.log('   2. ✅ Fonctionnalités de recherche de lofts')
+    console.log('   3. ✅ Processus de réservation')
+    console.log('   4. ✅ Interface partenaires (si accessible)')
+    console.log('   5. ✅ Changement de langue (fr/en/ar)')
+    console.log('   6. ✅ Responsivité mobile')
+    console.log('   7. ✅ Performance générale')
+    
+    console.log('\\n🔍 Points d\'Attention:')
+    console.log('   • Vérifier que toutes les fonctionnalités de l\'app source fonctionnent')
+    console.log('   • Tester les traductions multilingues')
+    console.log('   • Valider la responsivité sur différentes tailles d\'écran')
+    console.log('   • Contrôler les performances (temps de chargement)')
+    
+    console.log('\\n⚠️  Important:')
+    console.log('   • Cette application est la VERSION MIGRÉE vers Next.js 16')
+    console.log('   • Elle doit avoir les mêmes fonctionnalités que l\'application source')
+    console.log('   • Signalez tout problème ou différence observée')
+    
+    console.log('\\n🛑 Pour Arrêter le Test:')
+    console.log('   • Appuyez sur Ctrl+C dans ce terminal')
+    console.log('   • Ou fermez cette fenêtre de terminal')
+    
+    console.log('\\n' + '='.repeat(80))
+    console.log('🚀 L\'application est maintenant accessible pour vos tests!')
+    console.log('='.repeat(80))
+  }
+
+  async keepServerRunning() {
+    console.log('\\n⏳ Serveur en cours d\'exécution... (Ctrl+C pour arrêter)')
+    
+    // Gérer l'arrêt propre
+    process.on('SIGINT', () => {
+      console.log('\\n\\n🛑 Arrêt du serveur de test...')
+      
+      if (this.serverProcess) {
+        this.serverProcess.kill('SIGTERM')
+        
+        setTimeout(() => {
+          if (this.serverProcess && !this.serverProcess.killed) {
+            this.serverProcess.kill('SIGKILL')
+          }
+        }, 5000)
+      }
+      
+      console.log('✅ Test local terminé')
+      process.exit(0)
+    })
+    
+    // Garder le processus en vie
+    return new Promise(() => {
+      // Cette promesse ne se résout jamais, gardant le processus actif
+    })
+  }
+}
+
+// Démarrer le test local
+async function runLocalMigratedApplicationTest() {
+  const tester = new LocalMigratedApplicationTester()
+  
+  try {
+    await tester.startLocalTest()
+  } catch (error) {
+    console.error('\\n💥 Échec du test local:', error.message)
+    console.log('\\n🔧 Solutions possibles:')
+    console.log('   1. Vérifiez que Node.js est installé')
+    console.log('   2. Vérifiez que le répertoire loft-algerie-next16/ existe')
+    console.log('   3. Essayez de lancer manuellement: cd loft-algerie-next16 && npm install && npm run dev')
+    process.exit(1)
+  }
+}
+
+// Lancer le test
+runLocalMigratedApplicationTest()

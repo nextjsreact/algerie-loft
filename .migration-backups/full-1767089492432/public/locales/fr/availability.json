@@ -1,0 +1,78 @@
+{
+  "title": "Vérification des Disponibilités",
+  "subtitle": "Consultez les disponibilités en temps réel et réservez instantanément",
+  "featuresText": "Recherche en temps réel • Filtres avancés • Réservation directe",
+  
+  "filters": "Filtres",
+  "filtersDescription": "Affinez votre recherche avec nos filtres avancés",
+  "resetFilters": "Réinitialiser les filtres",
+  "activeFilters": "{{count}} filtre(s) actif(s)",
+  
+  "dateRange": "Période",
+  "startDate": "Date de début",
+  "endDate": "Date de fin",
+  "region": "Région",
+  "owner": "Propriétaire",
+  "owners": "Propriétaires",
+  "selectOwners": "Sélectionner les propriétaires",
+  "ownersSelected": "{{count}} propriétaire(s) sélectionné(s)",
+  "clearAll": "Tout effacer",
+  "selectAll": "Tout sélectionner",
+  "loadingOwners": "Chargement des propriétaires...",
+  "errorLoadingOwners": "Erreur lors du chargement des propriétaires",
+  "noOwnersFound": "Aucun propriétaire trouvé",
+  "guests": "Invités",
+  "priceRange": "Gamme de prix",
+  "minPrice": "Prix minimum",
+  "maxPrice": "Prix maximum",
+  
+  "allRegions": "Toutes les régions",
+  "allOwners": "Tous les propriétaires",
+  "allLofts": "Tous les lofts",
+  
+  "availabilityOverview": "Aperçu des Disponibilités",
+  "availabilityDescription": "Visualisez les disponibilités de vos lofts en temps réel",
+  "calendarView": "Vue Calendrier",
+  "gridView": "Vue Grille",
+  
+  "totalLofts": "Total Lofts",
+  "availableLofts": "Lofts Disponibles",
+  "occupiedLofts": "Lofts Occupés",
+  "maintenanceLofts": "En Maintenance",
+  "averagePrice": "Prix Moyen",
+  "occupancyRate": "Taux d'Occupation",
+  
+  "high": "Élevé",
+  "medium": "Moyen",
+  "low": "Faible",
+  
+  "available": "Disponible",
+  "occupied": "Occupé",
+  "maintenance": "Maintenance",
+  "unknown": "Inconnu",
+  
+  "today": "Aujourd'hui",
+  "viewDetails": "Voir Détails",
+  "bookNow": "Réserver Maintenant",
+  "book": "Réserver",
+  "contact": "Contacter",
+  "checkAvailability": "Vérifier Disponibilité",
+  
+  "parking": "Parking",
+  "kitchen": "Cuisine",
+  "airConditioning": "Climatisation",
+  "balcony": "Balcon",
+  "amenities": "Équipements",
+  
+  "basicInfo": "Informations de Base",
+  "capacity": "Capacité",
+  "pricePerNight": "Prix par Nuit",
+  "loftDetailsDescription": "Informations détaillées et options de réservation",
+  
+  "showingResults": "Affichage de {{count}} résultat(s) sur {{total}}",
+  "noLoftsFound": "Aucun loft trouvé",
+  "noLoftsFoundDescription": "Aucun loft ne correspond à vos critères de recherche. Essayez de modifier vos filtres.",
+  
+  "testOwner": "Propriétaire Test",
+  "algerCenterRegion": "Centre-ville Alger"
+}

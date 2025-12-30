@@ -1,0 +1,71 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "view": "Voir",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "actions": "Actions"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "lofts": "Lofts",
+    "dashboard": "Tableau de bord",
+    "admin": "Administration",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "login": "Connexion",
+    "register": "S'inscrire"
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "email": "Email",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "forgotPassword": "Mot de passe oublié ?",
+      "noAccount": "Pas de compte ?",
+      "createAccount": "Créer un compte"
+    },
+    "register": {
+      "title": "Inscription",
+      "name": "Nom",
+      "email": "Email",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "submit": "S'inscrire",
+      "hasAccount": "Déjà un compte ?",
+      "signIn": "Se connecter"
+    }
+  },
+  "lofts": {
+    "title": "Nos Lofts",
+    "search": "Rechercher un loft",
+    "filters": "Filtres",
+    "price": "Prix",
+    "location": "Localisation",
+    "capacity": "Capacité",
+    "amenities": "Équipements",
+    "availability": "Disponibilité",
+    "book": "Réserver",
+    "details": "Détails",
+    "gallery": "Galerie"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue",
+    "stats": "Statistiques",
+    "recentActivity": "Activité récente",
+    "quickActions": "Actions rapides"
+  }
+}

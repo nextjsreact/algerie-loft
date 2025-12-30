@@ -1,0 +1,95 @@
+{
+  "page": {
+    "title": "Détails de l'appartement",
+    "editLoft": "Modifier l'appartement",
+    "linkToAirbnb": "Lier à Airbnb",
+    "backToList": "Retour à la liste"
+  },
+  "tabs": {
+    "details": "Détails du Loft",
+    "auditHistory": "Historique d'audit",
+    "photos": "Photos",
+    "bills": "Factures"
+  },
+  "status": {
+    "available": "Disponible",
+    "occupied": "Occupé",
+    "maintenance": "Maintenance",
+    "unavailable": "Indisponible"
+  },
+  "sections": {
+    "basicInfo": {
+      "title": "Informations sur l'appartement",
+      "pricePerNight": "Prix par nuit",
+      "owner": "Propriétaire",
+      "description": "Description",
+      "ownershipType": "Type de propriété",
+      "company": "Société",
+      "percentages": "Répartition des revenus",
+      "companyShare": "Part société",
+      "ownerShare": "Part propriétaire",
+      "phone": "Téléphone",
+      "notSet": "Non défini"
+    },
+    "utilities": {
+      "title": "Informations supplémentaires",
+      "water": "Eau",
+      "electricity": "Électricité",
+      "gas": "Gaz",
+      "internet": "Internet",
+      "customerCode": "Code client",
+      "meterNumber": "Numéro de compteur",
+      "correspondent": "Correspondant",
+      "clientNumber": "Numéro client",
+      "pdlRef": "Référence PDL",
+      "contractCode": "Code contrat",
+      "noInfo": "Aucune information disponible"
+    },
+    "bills": {
+      "title": "Gestion des factures",
+      "nextBills": "Prochaines factures",
+      "frequency": "Fréquence",
+      "dueDate": "Date d'échéance",
+      "amount": "Montant",
+      "status": "Statut",
+      "paid": "Payé",
+      "pending": "En attente",
+      "overdue": "En retard",
+      "noDueDatesSet": "Aucune date d'échéance définie",
+      "editLoftToAddBillInfo": "Modifiez l'appartement pour ajouter les informations de facturation",
+      "frequencies": {
+        "monthly": "Mensuel",
+        "quarterly": "Trimestriel",
+        "yearly": "Annuel",
+        "bimonthly": "Bimestriel",
+        "weekly": "Hebdomadaire"
+      }
+    },
+    "photos": {
+      "title": "Galerie de photos",
+      "noPhotos": "Aucune photo disponible",
+      "noPhotosDescription": "Aucune photo n'a été ajoutée pour cet appartement.",
+      "mainPhoto": "Photo principale",
+      "addPhotos": "Ajouter des photos"
+    },
+    "metadata": {
+      "title": "Informations supplémentaires",
+      "createdOn": "Créé le",
+      "lastUpdated": "Dernière mise à jour",
+      "airbnbId": "ID Airbnb",
+      "internalId": "ID interne"
+    }
+  },
+  "errors": {
+    "loftNotFound": "Appartement non trouvé",
+    "noLoftFoundForId": "Aucun appartement trouvé pour l'ID",
+    "loadingError": "Erreur lors du chargement",
+    "systemError": "Erreur système",
+    "unexpectedError": "Une erreur inattendue s'est produite"
+  },
+  "currency": {
+    "da": "DA",
+    "eur": "€",
+    "usd": "$"
+  }
+}

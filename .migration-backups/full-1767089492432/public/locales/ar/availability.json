@@ -1,0 +1,78 @@
+{
+  "title": "فحص التوفر",
+  "subtitle": "تحقق من التوفر في الوقت الفعلي واحجز فوراً",
+  "featuresText": "بحث في الوقت الفعلي • مرشحات متقدمة • حجز مباشر",
+  
+  "filters": "المرشحات",
+  "filtersDescription": "حسّن بحثك باستخدام مرشحاتنا المتقدمة",
+  "resetFilters": "إعادة تعيين المرشحات",
+  "activeFilters": "{{count}} مرشح نشط",
+  
+  "dateRange": "نطاق التاريخ",
+  "startDate": "تاريخ البدء",
+  "endDate": "تاريخ الانتهاء",
+  "region": "المنطقة",
+  "owner": "المالك",
+  "owners": "المالكين",
+  "selectOwners": "اختر المالكين",
+  "ownersSelected": "تم اختيار {{count}} مالك",
+  "clearAll": "مسح الكل",
+  "selectAll": "اختيار الكل",
+  "loadingOwners": "جاري تحميل المالكين...",
+  "errorLoadingOwners": "خطأ في تحميل المالكين",
+  "noOwnersFound": "لم يتم العثور على مالكين",
+  "guests": "الضيوف",
+  "priceRange": "نطاق السعر",
+  "minPrice": "الحد الأدنى للسعر",
+  "maxPrice": "الحد الأقصى للسعر",
+  
+  "allRegions": "جميع المناطق",
+  "allOwners": "جميع المالكين",
+  "allLofts": "جميع الشقق",
+  
+  "availabilityOverview": "نظرة عامة على التوفر",
+  "availabilityDescription": "اعرض توفر شققك في الوقت الفعلي",
+  "calendarView": "عرض التقويم",
+  "gridView": "عرض الشبكة",
+  
+  "totalLofts": "إجمالي الشقق",
+  "availableLofts": "الشقق المتاحة",
+  "occupiedLofts": "الشقق المشغولة",
+  "maintenanceLofts": "قيد الصيانة",
+  "averagePrice": "متوسط السعر",
+  "occupancyRate": "معدل الإشغال",
+  
+  "high": "مرتفع",
+  "medium": "متوسط",
+  "low": "منخفض",
+  
+  "available": "متاح",
+  "occupied": "مشغول",
+  "maintenance": "صيانة",
+  "unknown": "غير معروف",
+  
+  "today": "اليوم",
+  "viewDetails": "عرض التفاصيل",
+  "bookNow": "احجز الآن",
+  "book": "احجز",
+  "contact": "اتصل",
+  "checkAvailability": "تحقق من التوفر",
+  
+  "parking": "موقف سيارات",
+  "kitchen": "مطبخ",
+  "airConditioning": "تكييف",
+  "balcony": "شرفة",
+  "amenities": "المرافق",
+  
+  "basicInfo": "المعلومات الأساسية",
+  "capacity": "السعة",
+  "pricePerNight": "السعر لكل ليلة",
+  "loftDetailsDescription": "معلومات مفصلة وخيارات الحجز",
+  
+  "showingResults": "عرض {{count}} نتيجة من أصل {{total}}",
+  "noLoftsFound": "لم يتم العثور على شقق",
+  "noLoftsFoundDescription": "لا توجد شقق تطابق معايير البحث الخاصة بك. حاول تعديل المرشحات.",
+  
+  "testOwner": "مالك تجريبي",
+  "algerCenterRegion": "وسط الجزائر"
+}

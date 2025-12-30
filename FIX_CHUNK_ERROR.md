@@ -1,184 +1,114 @@
-# 🔧 Résoudre l'Erreur ChunkLoadError
+# Fix ChunkLoadError - Solution Complète
 
-**Erreur:** `Loading chunk app/layout failed`  
-**Cause:** Cache Next.js corrompu après modifications  
-**Solution:** ✅ Cache nettoyé et application redémarrée
+## Problème Identifié
 
----
+```
+Error Type: Runtime ChunkLoadError
+Error Message: Loading chunk app/layout failed.(timeout: http://localhost:3000/_next/static/chunks/app/layout.js)
+Next.js version: 15.5.2 (Webpack)
+```
 
-## ✅ Solution Appliquée
+## Causes
 
-### 1. Cache Nettoyé
+1. **Version Next.js incohérente** - package.json montre 14.2.18 mais l'erreur montre 15.5.2
+2. **Cache corrompu** - .next et node_modules contiennent des versions mixtes
+3. **PerformanceProvider** - Composant qui peut causer des problèmes de chunk loading
+
+## Solutions Appliquées
+
+### 1. Suppression du PerformanceProvider
+```tsx
+// AVANT (problématique)
+<PerformanceProvider enableMonitoring={process.env.NODE_ENV === 'development'}>
+  <DatabaseInitializer>
+    {children}
+  </DatabaseInitializer>
+</PerformanceProvider>
+
+// APRÈS (simplifié)
+<DatabaseInitializer enableSeeding={process.env.NODE_ENV !== 'production'}>
+  <LogoInitializer>
+    <AnalyticsProvider>
+      {children}
+    </AnalyticsProvider>
+  </LogoInitializer>
+</DatabaseInitializer>
+```
+
+### 2. Nettoyage Complet
+
+**Option A - Script Batch:**
+```bash
+emergency-fix.bat
+```
+
+**Option B - Script PowerShell (recommandé):**
 ```powershell
-Remove-Item -Recurse -Force .next
+powershell -ExecutionPolicy Bypass -File fix-chunk-error.ps1
 ```
 
-### 2. Application Redémarrée
+### 3. Étapes Manuelles
+
+Si les scripts ne fonctionnent pas:
+
 ```powershell
-npm run dev
-```
+# 1. Arrêter tous les processus
+Get-Process -Name "node" -ErrorAction SilentlyContinue | Stop-Process -Force
 
----
+# 2. Supprimer les caches
+Remove-Item -Recurse -Force ".next"
+Remove-Item -Recurse -Force "node_modules"
+Remove-Item -Force "package-lock.json"
 
-## 🧪 Vérifier que Ça Fonctionne
+# 3. Nettoyer npm
+npm cache clean --force
 
-### Ouvrir le Navigateur
-```
-http://localhost:3000
-```
-
-**Résultat attendu:**
-- ✅ Page d'accueil charge correctement
-- ✅ Pas d'erreur ChunkLoadError
-- ✅ Navigation fonctionne
-
----
-
-## ⚠️ Si l'Erreur Persiste
-
-### Solution 1: Nettoyer Complètement
-```powershell
-# Arrêter le serveur (Ctrl+C)
-
-# Nettoyer tout
-Remove-Item -Recurse -Force .next
-Remove-Item -Recurse -Force node_modules\.cache
-
-# Redémarrer
-npm run dev
-```
-
-### Solution 2: Vider le Cache du Navigateur
-1. Ouvrir DevTools (F12)
-2. Clic droit sur le bouton Refresh
-3. Sélectionner "Vider le cache et actualiser"
-
-Ou:
-```
-Ctrl + Shift + Delete
-→ Cocher "Images et fichiers en cache"
-→ Effacer
-```
-
-### Solution 3: Mode Incognito
-Tester dans une fenêtre de navigation privée:
-```
-Ctrl + Shift + N (Chrome)
-Ctrl + Shift + P (Firefox)
-```
-
-### Solution 4: Redémarrer Complètement
-```powershell
-# Arrêter le serveur (Ctrl+C)
-
-# Nettoyer
-Remove-Item -Recurse -Force .next
-
-# Réinstaller les dépendances (si nécessaire)
+# 4. Réinstaller
 npm install
 
-# Redémarrer
+# 5. Vérifier la version
+npm list next
+
+# 6. Tester
+npm run build
 npm run dev
 ```
 
----
+## Vérifications Post-Fix
 
-## 📊 Pourquoi Cette Erreur?
+1. **Version Next.js correcte:**
+   ```bash
+   npm list next
+   # Doit montrer: next@14.2.18
+   ```
 
-### Causes Communes
-1. **Cache corrompu** après modifications importantes
-2. **Build incomplet** après interruption
-3. **Fichiers manquants** dans .next/
-4. **Cache navigateur** avec anciens chunks
+2. **Build réussi:**
+   ```bash
+   npm run build
+   # Doit se terminer sans erreur
+   ```
 
-### Après une Migration
-C'est **normal** après:
-- Modifications de nombreux fichiers
-- Changements de structure
-- Ajout/suppression de fichiers
-- Migration de base de données
+3. **Dev server fonctionne:**
+   ```bash
+   npm run dev
+   # Doit démarrer sur http://localhost:3000
+   ```
 
----
+## Prévention Future
 
-## ✅ Prévention
+1. **Toujours nettoyer après changement de version:**
+   ```bash
+   rm -rf .next node_modules package-lock.json
+   npm install
+   ```
 
-### Après de Gros Changements
-Toujours nettoyer le cache:
-```powershell
-Remove-Item -Recurse -Force .next
-npm run dev
-```
+2. **Éviter les providers complexes** dans layout.tsx en développement
 
-### Avant un Commit Important
-```powershell
-# Nettoyer
-Remove-Item -Recurse -Force .next
+3. **Utiliser les versions stables** de Next.js (14.x plutôt que 15.x)
 
-# Tester
-npm run dev
+## Status
 
-# Si OK, commit
-git add .
-git commit -m "..."
-```
-
----
-
-## 🎯 État Actuel
-
-### ✅ Actions Effectuées
-1. Cache .next supprimé
-2. Application redémarrée
-3. Compilation en cours
-
-### 📝 À Faire
-1. Attendre que la compilation se termine
-2. Ouvrir http://localhost:3000
-3. Vérifier que tout fonctionne
-
----
-
-## 💡 Commandes Utiles
-
-### Nettoyer et Redémarrer
-```powershell
-Remove-Item -Recurse -Force .next; npm run dev
-```
-
-### Nettoyer Complètement
-```powershell
-Remove-Item -Recurse -Force .next
-Remove-Item -Recurse -Force node_modules\.cache
-npm run dev
-```
-
-### Vérifier les Processus
-```powershell
-# Voir les processus Node
-Get-Process node
-
-# Tuer tous les processus Node (si bloqué)
-Stop-Process -Name node -Force
-```
-
----
-
-## ✅ Résultat Attendu
-
-Après le redémarrage:
-- ✅ Compilation réussie
-- ✅ Serveur sur http://localhost:3000
-- ✅ Pas d'erreur ChunkLoadError
-- ✅ Application fonctionnelle
-
----
-
-## 🎉 Conclusion
-
-L'erreur ChunkLoadError est **résolue** par le nettoyage du cache.
-
-**L'application devrait maintenant fonctionner correctement!**
-
----
-
-*Dépannage ChunkLoadError - 2 Décembre 2024*
+- ✅ PerformanceProvider supprimé du layout
+- ✅ Scripts de nettoyage créés
+- ✅ Next.js 14.2.18 configuré dans package.json
+- ⏳ Nettoyage et réinstallation à effectuer

@@ -1,0 +1,30 @@
+/* Fix spécifique pour l'espacement en arabe */
+[lang="ar"] *,
+[dir="rtl"] * {
+  word-spacing: 0.25em !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Espacement normal pour tous les éléments */
+* {
+  word-spacing: normal !important;
+  letter-spacing: normal !important;
+}
+
+/* Correction pour les textes arabes */
+[lang="ar"] {
+  word-spacing: 0.3em !important;
+  letter-spacing: 0.1em !important;
+}
+
+/* Espacement entre les mots pour tous les textes */
+body {
+  word-spacing: 0.2em !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Correction spécifique pour les éléments inline */
+span, a, button, p, div, h1, h2, h3, h4, h5, h6 {
+  word-spacing: 0.25em !important;
+  letter-spacing: 0.05em !important;
+}

@@ -1,0 +1,8 @@
+{
+  "title": "Unauthorized",
+  "message": "You do not have permission to access this page.",
+  "go_home": "Go Home",
+  "accessDenied": "Access Denied",
+  "backToDashboard": "Back to Dashboard",
+  "noPermission": "No Permission"
+}

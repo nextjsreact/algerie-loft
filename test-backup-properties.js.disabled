@@ -1,0 +1,121 @@
+/**
+ * Simple Property Test for BackupManager
+ * Feature: nextjs-16-migration-plan, Property 2: Backup Completeness and Integrity
+ */
+
+import { BackupManager } from './lib/migration/backup-manager.js'
+import { promises as fs } from 'fs'
+import { join } from 'path'
+
+async function testBackupProperties() {
+  console.log('🧪 Testing BackupManager Properties...')
+  
+  const testDir = join(process.cwd(), '.test-migration-backups')
+  const backupManager = new BackupManager(testDir)
+  
+  try {
+    // Clean up any existing test backups
+    await fs.rm(testDir, { recursive: true, force: true }).catch(() => {})
+    
+    // Test Property 2: Backup round-trip preserves application state
+    console.log('📋 Property 2: Testing backup round-trip...')
+    
+    const iterations = 10 // Reduced for quick test
+    let successCount = 0
+    
+    for (let i = 0; i < iterations; i++) {
+      const testFiles = [
+        { path: `test-file-${i}-1.txt`, content: `Content ${i} - File 1` },
+        { path: `test-file-${i}-2.txt`, content: `Content ${i} - File 2 with more data` }
+      ]
+      
+      const createdFiles = []
+      
+      try {
+        // Create test files
+        for (const file of testFiles) {
+          const filePath = join(process.cwd(), file.path)
+          await fs.writeFile(filePath, file.content, 'utf-8')
+          createdFiles.push({ path: filePath, content: file.content })
+        }
+        
+        // Create backup
+        const backup = await backupManager.createFullBackup()
+        
+        if (!backup || !backup.id) {
+          throw new Error('Backup creation failed')
+        }
+        
+        // Modify files
+        for (const file of createdFiles) {
+          await fs.writeFile(file.path, `MODIFIED_${i}`, 'utf-8')
+        }
+        
+        // Restore from backup
+        const restoreResult = await backupManager.restoreFromBackup(backup.id)
+        
+        if (!restoreResult.success) {
+          throw new Error(`Restore failed: ${restoreResult.errors.join(', ')}`)
+        }
+        
+        // Verify restoration
+        for (const file of createdFiles) {
+          const restoredContent = await fs.readFile(file.path, 'utf-8')
+          if (restoredContent !== file.content) {
+            throw new Error(`Content mismatch for ${file.path}`)
+          }
+        }
+        
+        successCount++
+        console.log(`   ✅ Iteration ${i + 1}/${iterations} passed`)
+        
+      } catch (error) {
+        console.log(`   ❌ Iteration ${i + 1}/${iterations} failed: ${error.message}`)
+      } finally {
+        // Cleanup
+        for (const file of createdFiles) {
+          try {
+            await fs.unlink(file.path)
+          } catch {}
+        }
+      }
+    }
+    
+    console.log(`\n📊 Property Test Results:`)
+    console.log(`   Successful iterations: ${successCount}/${iterations}`)
+    console.log(`   Success rate: ${Math.round((successCount / iterations) * 100)}%`)
+    
+    if (successCount === iterations) {
+      console.log('✅ Property 2: PASSED - Backup round-trip preserves application state')
+      return true
+    } else {
+      console.log('❌ Property 2: FAILED - Some iterations failed')
+      return false
+    }
+    
+  } catch (error) {
+    console.error('❌ Property test failed:', error.message)
+    return false
+  } finally {
+    // Final cleanup
+    try {
+      await fs.rm(testDir, { recursive: true, force: true })
+    } catch {}
+  }
+}
+
+// Run the test
+testBackupProperties()
+  .then(success => {
+    if (success) {
+      console.log('\n🎉 BackupManager property tests completed successfully!')
+      process.exit(0)
+    } else {
+      console.log('\n💥 BackupManager property tests failed!')
+      process.exit(1)
+    }
+  })
+  .catch(error => {
+    console.error('\n💥 Test execution failed:', error)
+    process.exit(1)
+  })

@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "lofts": "Lofts",
+    "conversations": "Conversations",
+    "notifications": "Notifications",
+    "customers": "Customers",
+    "reservations": "Reservations",
+    "availability": "Availability",
+    "tasks": "Tasks",
+    "teams": "Teams",
+    "owners": "Owners",
+    "transactions": "Transactions",
+    "reportsNav": "Reports",
+    "settings": "Settings",
+    "loftManager": "Loft Manager",
+    "logout": "Logout"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "company": "Company"
+  },
+  "lofts": {
+    "editLoft": "Edit Apartment",
+    "available": "Available",
+    "occupied": "Occupied",
+    "maintenance": "Maintenance"
+  }
+}

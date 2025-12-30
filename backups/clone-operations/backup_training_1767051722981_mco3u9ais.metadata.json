@@ -1,0 +1,16 @@
+{
+  "id": "backup_training_1767051722981_mco3u9ais",
+  "environmentId": "training-env-001",
+  "environmentName": "Training Environment",
+  "environmentType": "training",
+  "createdAt": "2025-12-29T23:42:02.982Z",
+  "size": 417,
+  "options": {
+    "includeSchema": true,
+    "includeData": true,
+    "compressionLevel": "medium"
+  },
+  "filePath": "C:\\Users\\SERVICE-INFO\\IA\\algerie-loft\\backups\\clone-operations\\backup_training_1767051722981_mco3u9ais.backup",
+  "checksum": "540fac63",
+  "isValid": true
+}

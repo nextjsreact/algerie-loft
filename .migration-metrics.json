@@ -1,0 +1,11 @@
+{
+  "baseline": {
+    "buildTime": 0,
+    "bundleSize": 0,
+    "pageLoadTime": 2272.182,
+    "firstContentfulPaint": 1090.3904859232646,
+    "largestContentfulPaint": 1425.3768686316548,
+    "cumulativeLayoutShift": 0.006272254967485536,
+    "timestamp": "2025-12-30T10:12:34.218Z"
+  }
+}

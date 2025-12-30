@@ -1,0 +1,40 @@
+{
+  "amount": "المبلغ",
+  "cancel": "إلغاء",
+  "description": "الوصف",
+  "descriptionPlaceholder": "أدخل وصف الفاتورة",
+  "due": "مستحق",
+  "errorMessage": "فشل تسجيل الدفعة. يرجى المحاولة مرة أخرى.",
+  "paymentDate": "تاريخ الدفع",
+  "paymentMethod": "طريقة الدفع",
+  "recording": "جاري التسجيل...",
+  "recordPayment": "تسجيل الدفعة",
+  "selectPaymentMethod": "اختر طريقة الدفع",
+  "successMessage": "تم تسجيل الدفعة بنجاح.",
+  "title": "الفواتير",
+  "utilities": {
+    "eau": "فاتورة الماء",
+    "energie": "فاتورة الكهرباء",
+    "telephone": "فاتورة الهاتف",
+    "internet": "فاتورة الإنترنت",
+    "tv": "فاتورة التلفزيون",
+    "gas": "فاتورة الغاز"
+  },
+  "paymentModal": {
+    "title": "تسجيل دفعة"
+  },
+  "upcomingBills": "الفواتير القادمة",
+  "overdueBills": "الفواتير المتأخرة",
+  "noUpcomingBills": "لا توجد فواتير قادمة",
+  "markPaid": "تسجيل كمدفوعة",
+  "dueToday": "مستحق اليوم",
+  "dueTomorrow": "مستحق غداً",
+  "dayOverdue": "يوم واحد متأخر",
+  "daysOverdue": "{{count}} أيام متأخرة",
+  "days": "أيام",
+  "noUpcomingBillsMessage": "لا توجد فواتير قادمة في الـ 30 يومًا القادمة",
+  "noOverdueBillsMessage": "لا توجد فواتير متأخرة - عمل ممتاز!",
+  "upcomingBillsTitle": "الفواتير القادمة",
+  "overdueBillsTitle": "الفواتير المتأخرة",
+  "loadingError": "فشل في تحميل تنبيهات الفواتير"
+}

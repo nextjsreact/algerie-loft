@@ -1,0 +1,4478 @@
+{
+  "homepage": {
+    "hero": {
+      "headline": "Book your ideal loft in Algeria",
+      "subheadline": "Discover unique and authentic lofts in Algeria's most beautiful cities",
+      "ctaPrimary": "Search now",
+      "ctaSecondary": "View available lofts",
+      "trustBadge": "Over 1000 satisfied customers"
+    },
+    "search": {
+      "location": "Destination",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "guests": "Guests",
+      "searchButton": "Search",
+      "locationPlaceholder": "Where would you like to stay?",
+      "guestsLabel": "{count} guest",
+      "guestsLabel_plural": "{count} guests"
+    },
+    "featuredLofts": {
+      "title": "Available lofts",
+      "subtitle": "Discover our selection of quality lofts",
+      "pricePerNight": "per night",
+      "bookNow": "Book now",
+      "viewDetails": "View details",
+      "available": "Available",
+      "unavailable": "Unavailable",
+      "rating": "Rating",
+      "reviews": "reviews",
+      "instantBook": "Instant booking"
+    },
+    "filters": {
+      "priceRange": "Price range",
+      "amenities": "Amenities",
+      "location": "Location",
+      "sortBy": "Sort by",
+      "sortOptions": {
+        "price_asc": "Price: Low to High",
+        "price_desc": "Price: High to Low",
+        "rating": "Rating",
+        "availability": "Availability"
+      },
+      "viewMode": {
+        "grid": "Grid",
+        "list": "List",
+        "map": "Map"
+      }
+    },
+    "trust": {
+      "title": "Why choose us?",
+      "subtitle": "Your satisfaction is our priority",
+      "reviews": {
+        "title": "Verified reviews",
+        "subtitle": "Authentic testimonials from our customers"
+      },
+      "certifications": {
+        "title": "Quality certifications",
+        "subtitle": "Professional management and high standards"
+      },
+      "support": {
+        "title": "24/7 Support",
+        "subtitle": "A dedicated team at your service",
+        "responseTime": "Average response time: 2h"
+      },
+      "guarantees": {
+        "title": "Guarantees",
+        "cancellation": "Flexible cancellation",
+        "quality": "Quality guaranteed",
+        "security": "Secure payment"
+      }
+    },
+    "owners": {
+      "title": "Property Owners: Maximize Your Revenue",
+      "subtitle": "Trust us with your property management and increase your profitability",
+      "metrics": {
+        "occupancyRate": "Average occupancy rate",
+        "revenueIncrease": "Revenue increase",
+        "averageRevenue": "Average monthly revenue"
+      },
+      "services": {
+        "title": "Our services",
+        "management": "Complete management",
+        "marketing": "Professional marketing",
+        "maintenance": "Maintenance and upkeep",
+        "support": "24/7 customer support"
+      },
+      "cta": {
+        "primary": "Evaluate my property",
+        "secondary": "Learn more"
+      },
+      "testimonials": {
+        "title": "Owner testimonials"
+      }
+    },
+    "locations": {
+      "algiers": "Algiers",
+      "oran": "Oran",
+      "constantine": "Constantine",
+      "annaba": "Annaba",
+      "tlemcen": "Tlemcen",
+      "setif": "Setif",
+      "sidibelabbes": "Sidi Bel Abbes",
+      "biskra": "Biskra",
+      "batna": "Batna",
+      "blida": "Blida"
+    },
+    "attractions": {
+      "algiers": {
+        "casbah": "The Casbah of Algiers",
+        "notredame": "Notre-Dame d'Afrique",
+        "martyrs": "Martyrs' Memorial"
+      },
+      "oran": {
+        "santacruz": "Santa Cruz Fort",
+        "theatre": "Oran Theatre",
+        "corniche": "The Corniche"
+      },
+      "constantine": {
+        "bridges": "Suspension Bridges",
+        "palace": "Bey's Palace",
+        "cirta": "Cirta Museum"
+      }
+    },
+    "footer": {
+      "brandName": "Loft Algérie",
+      "tagline": "Premium Rentals",
+      "description": "The reference for luxury loft rentals in Algeria",
+      "quickLinks": "Quick Links",
+      "ourLofts": "Our Lofts",
+      "becomePartner": "Become Partner",
+      "contact": "Contact",
+      "phone": "+213 56 03 62 543",
+      "phoneLink": "tel:+213560362543"
+    }
+  },
+  "currency": {
+    "dzd": "Algerian Dinar",
+    "eur": "Euro",
+    "usd": "US Dollar",
+    "selector": {
+      "title": "Currency",
+      "change": "Change currency"
+    }
+  },
+  "blog": {
+    "title": "Blog & News",
+    "subtitle": "Discover our latest articles and tips on property management",
+    "meta": {
+      "title": "Blog - Loft Algeria",
+      "description": "Discover our articles and tips on property management, market trends and best practices."
+    },
+    "noPosts": "No articles found",
+    "noPostsDescription": "There are no articles matching your search criteria.",
+    "loading": "Loading articles...",
+    "readMore": "Read more",
+    "relatedPosts": "Related articles",
+    "tags": "Tags",
+    "categories": {
+      "property-management": "Property Management",
+      "real-estate-tips": "Real Estate Tips",
+      "market-analysis": "Market Analysis",
+      "company-news": "Company News",
+      "client-stories": "Client Stories"
+    },
+    "filters": {
+      "selectCategory": "Select a category",
+      "allCategories": "All categories",
+      "selectTag": "Select a tag",
+      "allTags": "All tags",
+      "clearAll": "Clear filters"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "navigation": {
+      "home": "Home",
+      "backToBlog": "Back to blog"
+    },
+    "share": {
+      "title": "Share",
+      "share": "Share",
+      "copyLink": "Copy link",
+      "linkCopied": "Link copied to clipboard",
+      "linkCopyError": "Error copying link"
+    },
+    "comments": {
+      "title": "Comments",
+      "addComment": "Add a comment",
+      "noComments": "No comments yet",
+      "beFirst": "Be the first to comment on this article",
+      "moderationNotice": "Your comment will be moderated before publication.",
+      "submitSuccess": "Comment submitted successfully",
+      "submitError": "Error submitting comment",
+      "form": {
+        "name": "Name",
+        "namePlaceholder": "Your name",
+        "email": "Email",
+        "emailPlaceholder": "your@email.com",
+        "comment": "Comment",
+        "commentPlaceholder": "Share your thoughts...",
+        "submit": "Post comment",
+        "submitting": "Posting...",
+        "cancel": "Cancel"
+      },
+      "validation": {
+        "required": "All fields are required",
+        "invalidEmail": "Invalid email address"
+      }
+    }
+  },
+  "customers": {
+    "title": "Customers",
+    "subtitle": "Manage your customers and their information.",
+    "description": "Manage your customer base.",
+    "newCustomer": "New Customer",
+    "searchCustomers": "Search customers...",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "status": "Status",
+    "notes": "Notes",
+    "actions": {
+      "backToCustomers": "Back to Customers",
+      "contact": "Contact",
+      "edit": "Edit",
+      "email": "Email",
+      "call": "Call",
+      "schedule": "Schedule",
+      "addNote": "Add Note",
+      "delete": "Delete"
+    },
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete {name}?",
+    "deleteSuccess": "Customer {name} deleted successfully.",
+    "deleteError": "Error deleting customer: {error}",
+    "noCustomersFound": "No customers found.",
+    "loadingCustomers": "Loading customers...",
+    "createSuccess": "Customer created successfully!",
+    "createError": "Error creating customer: {error}",
+    "updateSuccess": "Customer updated successfully!",
+    "updateError": "Error updating customer: {error}",
+    "unknownError": "An unknown error occurred.",
+    "selectStatus": "Select status",
+    "submitting": "Submitting...",
+    "createCustomer": "Create Customer",
+    "updateCustomer": "Update Customer",
+    "editCustomer": "Edit Customer",
+    "statusOptions": {
+      "prospect": "Prospect",
+      "active": "Active",
+      "former": "Former"
+    },
+    "currentLoft": "Current Loft",
+    "hub": {
+      "intelligentPlatform": "Intelligent Platform",
+      "title": "Customer Hub"
+    },
+    "stats": {
+      "totalClients": "Total Clients",
+      "clientBase": "Client Base",
+      "activeClients": "Active Clients",
+      "loyal": "Loyal",
+      "prospects": "Prospects",
+      "potential": "Potential",
+      "formerClients": "Former Clients",
+      "history": "History"
+    },
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "prospect": "Prospect",
+      "former": "Former"
+    },
+    "viewModes": {
+      "grid": "Grid"
+    },
+    "detail": {
+      "loadingProfile": "Loading profile...",
+      "contactInfo": "Contact Info",
+      "contactDescription": "Contact information for the client.",
+      "clientSince": "Client Since",
+      "lastUpdate": "Last Update",
+      "interactionHistory": "Interaction History",
+      "interactionDescription": "History of interactions with the client.",
+      "clientCreated": "Client Created",
+      "profileCreated": "Profile Created",
+      "noInteractions": "No interactions yet.",
+      "futureInteractions": "Future Interactions",
+      "statistics": "Statistics",
+      "satisfaction": "Satisfaction",
+      "interactions": "Interactions",
+      "reservations": "Reservations",
+      "quickActions": "Quick Actions"
+    }
+  },
+  "landing": {
+    "title": "Loft Algeria",
+    "subtitle": "Optimize your real estate management.",
+    "description": "Complete real estate management system with professional PDF report generation to optimize your operations.",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "home": {
+      "title": "Loft Algeria - Loft Management",
+      "subtitle": "Complete application for managing lofts, owners, transactions...",
+      "mainSections": "Main Sections",
+      "quickAccess": "Quick Access",
+      "systemStatus": "All systems operational",
+      "online": "Online",
+      "navigationCards": {
+        "lofts": {
+          "title": "🏢 Lofts",
+          "description": "Property management"
+        },
+        "reservations": {
+          "title": "📅 Reservations",
+          "description": "Reservation management"
+        },
+        "availability": {
+          "title": "📋 Availability",
+          "description": "Availability calendar"
+        },
+        "tasks": {
+          "title": "✅ Tasks",
+          "description": "Task management"
+        },
+        "teams": {
+          "title": "👥 Teams",
+          "description": "Team management"
+        },
+        "owners": {
+          "title": "🏠 Owners",
+          "description": "Owner management"
+        },
+        "transactions": {
+          "title": "💰 Transactions",
+          "description": "Financial management"
+        },
+        "reports": {
+          "title": "📊 Reports",
+          "description": "Dashboards and reports"
+        }
+      },
+      "quickAccessButtons": {
+        "dashboard": {
+          "title": "📊 Dashboard",
+          "description": "Main dashboard"
+        },
+        "conversations": {
+          "title": "💬 Conversations",
+          "description": "Messaging/chat"
+        },
+        "notifications": {
+          "title": "🔔 Notifications",
+          "description": "Notification center"
+        },
+        "pdfReports": {
+          "title": "📄 PDF Reports",
+          "description": "Report generation"
+        }
+      }
+    },
+    "features": {
+      "financial": {
+        "description": "Track revenue, expenses and generate detailed financial reports.",
+        "title": "Complete Financial Management"
+      },
+      "notifications": {
+        "description": "Receive real-time alerts for tasks, bills and important events.",
+        "title": "Real-Time Notifications"
+      },
+      "property": {
+        "description": "Easily manage multiple properties, from details to documents.",
+        "title": "Intuitive Property Management"
+      },
+      "tasks": {
+        "description": "Organize maintenance tasks and team assignments with ease.",
+        "title": "Efficient Task Management"
+      },
+      "title": "Key Features"
+    },
+    "quickAccess": {
+      "conversations": "Conversations",
+      "dashboard": "Dashboard",
+      "description": "Access the most used features directly",
+      "notifications": "Notifications",
+      "pdfReports": "PDF Reports",
+      "title": "Quick Access"
+    },
+    "sections": {
+      "availability": {
+        "description": "View and manage availability",
+        "title": "Availability"
+      },
+      "owners": {
+        "description": "Manage your owner relationships",
+        "title": "Owners"
+      },
+      "reports": {
+        "description": "Generate professional reports",
+        "title": "Reports"
+      },
+      "reservations": {
+        "description": "Manage your reservations and availability",
+        "title": "Reservations"
+      },
+      "tasks": {
+        "description": "Organize maintenance tasks",
+        "title": "Tasks"
+      },
+      "teams": {
+        "description": "Manage your teams and collaborators",
+        "title": "Teams"
+      },
+      "transactions": {
+        "description": "Track revenue and expenses",
+        "title": "Transactions"
+      }
+    },
+    "signIn": "Sign In",
+    "systemStatus": {
+      "description": "All services are running normally. PDF report generation available.",
+      "title": "System Operational"
+    },
+    "viewButton": "View →"
+  },
+  "analytics": {
+    "advancedRevenueDescription": "Complete revenue analysis with forecasting and trend analysis.",
+    "advancedRevenueTracking": "Advanced Revenue Tracking",
+    "aiInsights": "AI Insights",
+    "averageStay": "Average Stay",
+    "customReports": "Custom Reports",
+    "detailedFinancialPerformance": "Detailed Financial Performance",
+    "enterpriseDescription": "Complete business intelligence dashboard with advanced reporting, predictive analytics, and performance optimization recommendations.",
+    "enterpriseSuite": "Enterprise Analytics Suite",
+    "expenses": "Expenses",
+    "financial": "Financial",
+    "forecasting": "Forecasting",
+    "guestSatisfaction": "Guest Satisfaction",
+    "keyMetrics": "Key Metrics",
+    "maintenance": "Maintenance",
+    "monthlyFinancialTrend": "Monthly Financial Trend",
+    "monthlyOccupancyRates": "Monthly Occupancy Rates",
+    "monthlyRevenue": "Monthly Revenue",
+    "mostValuableAssets": "Most Valuable Assets",
+    "occupancy": "Occupancy",
+    "occupancyInsights": "Occupancy Insights",
+    "occupancyRate": "Occupancy Rate",
+    "occupancyRateTrends": "Occupancy Rate Trends",
+    "optimization": "Optimization",
+    "overview": "Overview",
+    "poweredInsights": "Powered Insights",
+    "realTimeDataBadge": "Real-time Data",
+    "realTimeMonitoring": "Real-time Monitoring",
+    "revenue": "Revenue",
+    "revenueAnalytics": "Revenue Analytics",
+    "revenueExpensesByLoft": "Revenue and Expenses by Loft",
+    "smartOccupancyAnalysis": "Smart Occupancy Analysis",
+    "smartOccupancyDescription": "AI-powered insights to optimize your property's occupancy rates.",
+    "subtitle": "Visualize financial performance and trends of your lofts",
+    "title": "Performance Analytics",
+    "top5ProfitableLofts": "Top 5 Most Profitable Lofts",
+    "totalReservations": "Total Reservations",
+    "totalRevenue": "Total Revenue",
+    "netProfit": "Net Profit",
+    "trackRevenueExpenses": "Track revenue and expenses over time.",
+    "trends": "Trends",
+    "vsLastMonth": "vs last month",
+    "calendar": {
+      "title": "Title"
+    },
+    "form": {
+      "guest": "Guest"
+    },
+    "list": {
+      "title": "Title"
+    },
+    "details": {
+      "title": "Title",
+      "guest": "Guest"
+    },
+    "statusActions": {
+      "cancel": "Cancel"
+    }
+  },
+  "auth": {
+    "admin": "Admin",
+    "createAccount": "Create Account",
+    "demoAccounts": "Demo Accounts",
+    "email": "Email",
+    "enterEmail": "Enter your email",
+    "enterFullName": "Enter your full name",
+    "enterPassword": "Enter your password",
+    "forgotPassword": "Forgot password?",
+    "fullName": "Full Name",
+    "hasAccount": "Already have an account?",
+    "haveAccount": "Already have an account?",
+    "manager": "Manager",
+    "member": "Member",
+    "noAccount": "Don't have an account?",
+    "password": "Password",
+    "registrationFailed": "Registration failed. Please try again.",
+    "rememberMe": "Remember me",
+    "signIn": "Sign In",
+    "signInDescription": "Sign in to your account",
+    "signInToAccount": "Sign in to your account",
+    "signOut": "Sign Out",
+    "signUp": "Sign Up",
+    "signUpDescription": "Create a new account",
+    "signUpTitle": "Sign Up",
+    "signingIn": "Signing in...",
+    "signingUp": "Signing up...",
+    "unexpectedError": "An unexpected error occurred. Please try again.",
+    "welcomeBack": "Welcome back",
+    "passwordReset": {
+      "title": "Account Recovery",
+      "subtitle": "Enter your email address to receive instructions",
+      "cardTitle": "Password Recovery",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "sendButton": "Send Instructions",
+      "sendingButton": "Sending...",
+      "backToLogin": "Back to Login",
+      "footerText": "A secure recovery link will be sent to your email address",
+      "success": {
+        "title": "Instructions Sent",
+        "subtitle": "Check your email inbox",
+        "message": "Recovery instructions sent",
+        "description": "A secure recovery link has been sent to your email address. Follow the instructions to restore access to your account.",
+        "securityNote": "Valid for 60 minutes for your security",
+        "noEmailTitle": "Email not received?",
+        "noEmailDesc": "Check your spam folder or wait a few moments",
+        "tryAgain": "Try with another email address"
+      },
+      "newPassword": {
+        "title": "Account Security",
+        "subtitle": "Set a strong new password",
+        "cardTitle": "Security Configuration",
+        "passwordLabel": "Primary Password",
+        "passwordPlaceholder": "Enter your password",
+        "confirmLabel": "Password Confirmation",
+        "confirmPlaceholder": "Re-enter password",
+        "criteriaTitle": "Strength Criteria",
+        "criteria": {
+          "minLength": "8+ characters",
+          "lowercase": "Lowercase (a-z)",
+          "uppercase": "Uppercase (A-Z)",
+          "number": "Number (0-9)"
+        },
+        "updateButton": "Secure Account",
+        "updatingButton": "Updating...",
+        "footerText": "Your authentication data is encrypted and protected",
+        "success": {
+          "title": "Account Secured Successfully",
+          "subtitle": "Your authentication has been strengthened",
+          "message": "Authentication Enhanced",
+          "description": "Your account security has been successfully finalized. You can now access your space with your new credentials.",
+          "redirecting": "Redirecting to login...",
+          "footerText": "Keep your access credentials confidential"
+        }
+      }
+    },
+    "roleSelector": {
+      "title": "Choose your account type",
+      "subtitle": "Select the account type that matches your needs",
+      "continue": "Continue",
+      "client": {
+        "title": "Client",
+        "description": "I want to book lofts for my stays"
+      },
+      "partner": {
+        "title": "Partner",
+        "description": "I want to rent out my properties"
+      },
+      "employee": {
+        "title": "Employee",
+        "description": "I have an employee access code"
+      }
+    },
+    "clientRegistration": {
+      "title": "Client Registration",
+      "description": "Create your account to book lofts",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Your full name",
+      "email": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Minimum 8 characters",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Re-enter your password",
+      "submit": "Create my client account",
+      "benefits": "Instant access to loft search and booking"
+    },
+    "partnerRegistration": {
+      "title": "Partner Registration",
+      "description": "Join our network of real estate partners",
+      "step": "Step",
+      "nextStep": "Next Step",
+      "previousStep": "Previous Step",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Your full name",
+      "email": "Professional Email Address",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Minimum 8 characters",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Re-enter your password",
+      "businessType": "Business Type",
+      "individual": "Individual",
+      "company": "Company",
+      "businessName": "Company Name",
+      "businessNamePlaceholder": "Your company name",
+      "address": "Complete Address",
+      "addressPlaceholder": "Complete address of your home or business",
+      "phone": "Phone Number",
+      "phonePlaceholder": "+213 XX XX XX XX",
+      "taxId": "Tax ID (optional)",
+      "taxIdPlaceholder": "Tax identification number",
+      "verificationNotice": "Your account will be verified by our team before activation (24-48h).",
+      "submit": "Submit my application"
+    },
+    "clientRegistrationSuccess": {
+      "title": "Registration Successful!",
+      "subtitle": "Your client account has been created successfully",
+      "emailSent": "Confirmation email sent",
+      "nextSteps": "Check your email and click the confirmation link to activate your account.",
+      "whatNext": "What's next?",
+      "step1": "Check your email and confirm your account",
+      "step2": "Sign in to your client area",
+      "step3": "Start searching and booking lofts",
+      "continueToLogin": "Sign In",
+      "browseProperties": "Browse Properties",
+      "supportText": "Need help? Contact our customer support"
+    },
+    "register": {
+      "title": "Title"
+    },
+    "employeeAccess": {
+      "title": "Title",
+      "email": "Email",
+      "password": "Password"
+    },
+    "error": "Error",
+    "auth": {
+      "email": "Email",
+      "password": "Password",
+      "admin": "Administrator",
+      "manager": "Manager",
+      "member": "Member"
+    },
+    "role": "Role",
+    "executive": "Executive"
+  },
+  "availability": {
+    "activeFilters": "{count} active filter(s)",
+    "airConditioning": "Air Conditioning",
+    "algerCenterRegion": "Algiers Center",
+    "allLofts": "All Lofts",
+    "allOwners": "All Owners",
+    "allRegions": "All Regions",
+    "amenities": "Amenities",
+    "availabilityDescription": "View real-time availability of your lofts",
+    "availabilityOverview": "Availability Overview",
+    "available": "Available",
+    "availableLofts": "Available Lofts",
+    "averagePrice": "Average Price",
+    "balcony": "Balcony",
+    "basicInfo": "Basic Information",
+    "book": "Book",
+    "bookNow": "Book Now",
+    "calendarView": "Calendar View",
+    "capacity": "Capacity",
+    "checkAvailability": "Check Availability",
+    "clearAll": "Clear all",
+    "contact": "Contact",
+    "dateRange": "Date Range",
+    "endDate": "End Date",
+    "errorLoadingOwners": "Error loading owners",
+    "featuresText": "Real-time Search • Advanced Filters • Direct Booking",
+    "filters": "Filters",
+    "filtersDescription": "Refine your search with our advanced filters",
+    "gridView": "Grid View",
+    "guests": "Guests",
+    "high": "High",
+    "kitchen": "Kitchen",
+    "loadingOwners": "Loading owners...",
+    "loftDetailsDescription": "Detailed information and booking options",
+    "low": "Low",
+    "maintenance": "Maintenance",
+    "maintenanceLofts": "Under Maintenance",
+    "management": "Availability Management",
+    "blockDates": "Block Dates",
+    "unblockDates": "Unblock Dates",
+    "selectLoft": "Select Loft",
+    "chooseLoft": "Choose a loft",
+    "reasonForBlocking": "Reason for blocking",
+    "selectReason": "Select reason",
+    "personal_use": "Personal Use",
+    "renovation": "Renovation",
+    "other": "Other",
+    "minimumStay": "Minimum Stay",
+    "maxPrice": "Maximum Price",
+    "medium": "Medium",
+    "minPrice": "Minimum Price",
+    "noLoftsFound": "No Lofts Found",
+    "noLoftsFoundDescription": "No lofts match your search criteria. Try adjusting your filters.",
+    "noOwnersFound": "No owners found",
+    "occupancyRate": "Occupancy Rate",
+    "occupied": "Occupied",
+    "personalUse": "Personal Use",
+    "occupiedLofts": "Occupied Lofts",
+    "owner": "Owner",
+    "owners": "Owners",
+    "customers": "Customers",
+    "ownersSelected": "{count} owner(s) selected",
+    "parking": "Parking",
+    "pricePerNight": "Price per Night",
+    "priceRange": "Price Range",
+    "region": "Region",
+    "resetFilters": "Reset Filters",
+    "selectAll": "Select all",
+    "selectOwners": "Select owners",
+    "showingResults": "Showing {count} result(s) out of {total}",
+    "startDate": "Start Date",
+    "subtitle": "Check real-time availability and book instantly",
+    "testOwner": "Test Owner",
+    "title": "Availability Check",
+    "today": "Today",
+    "totalLofts": "Total Lofts",
+    "unknown": "Unknown",
+    "viewDetails": "View Details",
+    "blocked": "Blocked",
+    "status": "Status",
+    "selectStatuses": "Select Statuses",
+    "allStatuses": "All Statuses",
+    "statusesSelected": "{count} statuses selected",
+    "calendar": {
+      "selectDates": "Select Dates",
+      "selectDatesDescription": "Choose your check-in and check-out dates",
+      "title": "Title"
+    },
+    "errors": {
+      "fetchFailed": "Failed to load availability data",
+      "availabilityCheckFailed": "Error checking availability",
+      "minimumStay": "Minimum stay of {nights} night(s) required",
+      "maximumStay": "Maximum stay of {nights} night(s) allowed"
+    },
+    "pricing": {
+      "title": "Price Breakdown",
+      "description": "Price for {nights} night(s)",
+      "nightlyRate": "Nightly rate ({nights} nights)",
+      "cleaningFee": "Cleaning fee",
+      "serviceFee": "Service fee",
+      "taxes": "Taxes",
+      "total": "Total",
+      "calculating": "Calculating price...",
+      "seasonalPricing": "Seasonal pricing applied for selected dates"
+    },
+    "rules": {
+      "title": "Booking Rules",
+      "minimumStay": "Minimum stay: {nights} night(s)",
+      "maximumStay": "Maximum stay: {nights} night(s)",
+      "pricePerNight": "Price per night: {price} EUR"
+    },
+    "form": {
+      "guest": "Guest"
+    },
+    "list": {
+      "title": "Title"
+    },
+    "details": {
+      "title": "Title",
+      "guest": "Guest"
+    },
+    "statusActions": {
+      "cancel": "Cancel"
+    },
+    "cancel": "Cancel",
+    "upcoming": {
+      "title": "Title"
+    },
+    "search": "Search"
+  },
+  "bills": {
+    "amount": "Amount",
+    "cancel": "Cancel",
+    "dayOverdue": "1 day overdue",
+    "days": "days",
+    "daysOverdue": "{count} days overdue",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter bill description",
+    "due": "Due",
+    "dueToday": "Due today",
+    "dueTomorrow": "Due tomorrow",
+    "errorMessage": "Failed to record payment. Please try again.",
+    "loadingError": "Failed to load bill alerts",
+    "markPaid": "Mark as Paid",
+    "noOverdueBillsMessage": "No overdue bills - great job!",
+    "noUpcomingBills": "No upcoming bills",
+    "noUpcomingBillsMessage": "No upcoming bills in the next 30 days",
+    "overdueBills": "Overdue Bills",
+    "overdueBillsTitle": "Overdue Bills",
+    "paymentDate": "Payment Date",
+    "paymentMethod": "Payment Method",
+    "paymentModal": {
+      "title": "Record Payment"
+    },
+    "recordPayment": "Record Payment",
+    "recording": "Recording...",
+    "selectPaymentMethod": "Select Payment Method",
+    "successMessage": "Payment recorded successfully.",
+    "title": "Bills",
+    "upcomingBills": "Upcoming Bills",
+    "upcomingBillsTitle": "Upcoming Bills",
+    "utilities": {
+      "eau": "Water Bill",
+      "energie": "Electricity Bill",
+      "gas": "Gas Bill",
+      "internet": "Internet Bill",
+      "telephone": "Telephone Bill",
+      "tv": "TV Bill"
+    },
+    "bills": {
+      "title": "Title",
+      "cancel": "Cancel"
+    },
+    "active": "Active",
+    "management": {
+      "title": "Bill Management",
+      "water": "Water",
+      "electricity": "Electricity",
+      "gas": "Gas",
+      "phone": "Phone",
+      "internet": "Internet"
+    },
+    "frequency": {
+      "notSet": "Frequency not set",
+      "undefined": "Undefined"
+    },
+    "noDueDatesSet": "No due dates set",
+    "editLoftToAddFrequencies": "Edit the loft to add frequencies and due dates"
+  },
+  "common": {
+    "actions": "Actions",
+    "all": "All",
+    "allOwners": "All Owners",
+    "allZones": "All Zones",
+    "ar": "Arabic",
+    "en": "English",
+    "fr": "French",
+    "cancel": "Cancel",
+    "clearFilters": "Clear Filters",
+    "back": "Back",
+    "saving": "Saving...",
+    "currencies": {
+      "da": "DA"
+    },
+    "date": "Date",
+    "edit": "Edit",
+    "error": "Error",
+    "success": "Success",
+    "loading": "Loading...",
+    "name": "Name",
+    "next": "Next",
+    "none": "None",
+    "of": "of",
+    "owners": {
+      "ownershipType": "Ownership Type"
+    },
+    "page": "Page",
+    "pickDateRange": "Pick a date range",
+    "previous": "Previous",
+    "results": "results",
+    "selectOption": "Select an option",
+    "showing": "Showing",
+    "systemError": "System Error",
+    "systemErrorDescription": "A system error occurred. Please try again.",
+    "time": "Time",
+    "to": "to",
+    "today": "Today",
+    "view": "View",
+    "notificationsEnabled": "🔔 Notifications enabled!",
+    "notificationsEnabledDescription": "You will now receive instant notifications for tasks and messages.",
+    "transfer": "Transfer",
+    "delete": "Delete",
+    "save": "Save",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "active": "Active",
+    "inactive": "Inactive",
+    "title": "Title",
+    "accountSettings": {
+      "title": "Title",
+      "email": "Email",
+      "role": "Role"
+    },
+    "passwordChange": {
+      "title": "Title"
+    },
+    "appInfo": {
+      "title": "Title",
+      "status": "Status"
+    },
+    "admin": {
+      "title": "Title"
+    },
+    "pricing": {
+      "title": "Title"
+    },
+    "rules": {
+      "title": "Title"
+    },
+    "status": "Status",
+    "common": {
+      "error": "Error",
+      "success": "Success"
+    },
+    "executive": "Executive",
+    "calendar": {
+      "title": "Title"
+    },
+    "upcoming": {
+      "title": "Title"
+    },
+    "available": "Available",
+    "modify": "Modify",
+    "company": "Company",
+    "individual": "Individual",
+    "percentages": "Percentages",
+    "amenityInfo": "Amenity Information"
+  },
+  "conversations": {
+    "addMembers": "Add Members",
+    "all": "All",
+    "allConversations": "All conversations",
+    "archived": "Archived",
+    "backToConversations": "Back to Conversations",
+    "conversation": "Conversation",
+    "createDirectOrGroup": "Create direct or group conversation",
+    "createdSuccessfully": "Conversation created successfully!",
+    "direct": "Direct",
+    "directMessage": "Direct Message",
+    "endToEndEncryption": "Your personal messages are protected with end-to-end encryption",
+    "enterGroupName": "Enter group name",
+    "errorDescription": "Unable to load this conversation. This might be due to RLS policy issues.",
+    "errorTitle": "Conversation Error",
+    "failedToCreateConversation": "Failed to create conversation",
+    "failedToSearchUsers": "Failed to search users",
+    "fixInstruction1": "Run:",
+    "fixInstruction2": "Copy the SQL output to your Supabase SQL Editor",
+    "fixInstruction3": "Execute the SQL script",
+    "fixInstruction4": "Refresh this page",
+    "fixInstructionsTitle": "To fix the issue:",
+    "group": "Group",
+    "groupChat": "Group Chat",
+    "groupChatBenefits": "Stay in touch with your groups",
+    "groupName": "Group Name",
+    "groups": "Groups",
+    "loftManager": "LoftManager",
+    "member": "Member",
+    "member1": "Member 1",
+    "members": "Members",
+    "messages": "Messages",
+    "multiDeviceSync": "Access your messages everywhere",
+    "new": "New",
+    "newConversation": "New Conversation",
+    "noConversations": "No conversations",
+    "noConversationsMatch": "No conversations match your search",
+    "noConversationsYet": "No conversations yet",
+    "noMessage": "No message",
+    "noMessages": "No messages",
+    "noMessagesYet": "No messages yet",
+    "noResults": "No results",
+    "noUsersFound": "No users found",
+    "participant": "Participant",
+    "participants": "Participants",
+    "privacyNotice": "Your personal messages are end-to-end encrypted",
+    "searchByNameOrEmail": "Search by name or email",
+    "searchConversations": "Search conversations",
+    "searchOrCreateNewConversation": "Search or start a new conversation",
+    "searchResults": "Search Results",
+    "searching": "Searching...",
+    "selectAtLeastOneUser": "Select at least one user",
+    "selectConversation": "Select Conversation",
+    "selectConversationDesc": "Choose a conversation to start messaging",
+    "selectedMembers": "Selected Members",
+    "selectedUser": "Selected User",
+    "sendInstructions": "Send instructions",
+    "settings": "Settings",
+    "someone": "Someone",
+    "startChatting": "Select a conversation from the list to start chatting",
+    "startConversation": "Start Conversation",
+    "startConversationDesc": "Begin a new conversation",
+    "startNewConversation": "Start new conversation",
+    "startNewToBegin": "Start a new conversation to begin",
+    "title": "Conversations",
+    "toggleTheme": "Toggle theme",
+    "totalUnread": "{count} unread message",
+    "totalUnread_plural": "{count} unread messages",
+    "tryDifferentSearch": "Try a different search term",
+    "typeMessage": "Type a message...",
+    "unknownUser": "Unknown User",
+    "unread": "Unread",
+    "whatsappWeb": "WhatsApp Web",
+    "whatsappWebDescription": "Send and receive messages without keeping your phone connected.\nUse WhatsApp on up to 4 linked devices and 1 phone at the same time.",
+    "yesterday": "Yesterday",
+    "you": "You",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "dashboard": {
+    "actionRequired": "Action Required",
+    "active": "Active",
+    "activeTasks": "Active Tasks",
+    "activeTeams": "Active Teams",
+    "addTransaction": "Add Transaction",
+    "allBillsCurrent": "All Bills Current",
+    "attentionNeeded": "Attention Needed",
+    "billAlerts": "Bill Alerts",
+    "billMonitoring": "Bill Monitoring",
+    "billsNeedAttention": "Bills Need Attention",
+    "bills": {
+      "due": "Due",
+      "title": "Bills"
+    },
+    "billsDueNow": "Bills Due Now",
+    "billsPastDue": "Bills Past Due",
+    "dayOverdue": "1 day overdue",
+    "days": "days",
+    "daysOverdue": "{count} days overdue",
+    "due": "Due",
+    "dueToday": "Due Today",
+    "excellent": "Excellent!",
+    "inProgress": "In Progress",
+    "latestTaskUpdates": "Latest Task Updates",
+    "lofts": {
+      "addLoft": "Add Loft"
+    },
+    "loftsWithBills": "Lofts with Bills",
+    "monthlyFinancialOverview": "Monthly Financial Overview",
+    "monthlyRevenue": "Monthly Revenue",
+    "next30Days": "Next 30 Days",
+    "nextDueDates": "Next due dates in 30 days",
+    "noOverdueBills": "No overdue bills - great job!",
+    "noRecentTasks": "No recent tasks",
+    "noUpcomingBills": "No upcoming bills",
+    "occupiedLofts": "Occupied Lofts",
+    "overdue": "Overdue",
+    "overdueBillsTitle": "Overdue Bills",
+    "pay": "Pay",
+    "pendingTasks": "You have {todo} tasks to do and {inProgress} tasks in progress.",
+    "quickActions": "Quick Actions",
+    "myRecentTasks": "My Recent Tasks",
+    "recentTasks": "Recent Tasks",
+    "revenueVsExpenses": "Revenue vs Expenses",
+    "subtitle": "Welcome to your property management dashboard",
+    "systemStatus": {
+      "title": "System Status",
+      "allOperational": "All systems operational",
+      "online": "Online"
+    },
+    "title": "Algeria Loft - Apartment Management",
+    "description": "Complete application for managing apartments, owners, transactions...",
+    "availableSections": "Available sections for your profile",
+    "access": "Access",
+    "sections": {
+      "apartments": {
+        "title": "🏢 Apartments",
+        "description": "Manage properties"
+      },
+      "reservations": {
+        "title": "📅 Reservations",
+        "description": "Manage reservations"
+      },
+      "availability": {
+        "title": "📋 Availability",
+        "description": "Manage availability"
+      },
+      "tasks": {
+        "title": "✅ Tasks",
+        "description": "Manage tasks"
+      },
+      "teams": {
+        "title": "👥 Teams",
+        "description": "Manage teams"
+      },
+      "platformSettings": {
+        "title": "⚙️ Platform Settings",
+        "description": "Platform configuration"
+      },
+      "owners": {
+        "title": "🏠 Owners",
+        "description": "Manage owners"
+      },
+      "transactions": {
+        "title": "💰 Transactions",
+        "description": "Financial management"
+      },
+      "detailedReports": {
+        "title": "📊 Detailed Reports",
+        "description": "Detailed operational reports"
+      },
+      "pendingPartners": {
+        "title": "🤝 Pending Partners",
+        "description": "Manage partnership requests"
+      },
+      "validatePartners": {
+        "title": "✅ Validate Partners",
+        "description": "Partner validation"
+      },
+      "openDisputes": {
+        "title": "⚠️ Open Disputes",
+        "description": "Manage ongoing disputes"
+      },
+      "manageDisputes": {
+        "title": "⚖️ Manage Disputes",
+        "description": "Dispute resolution"
+      }
+    },
+    "quickAccess": {
+      "title": "Quick Access"
+    },
+    "quickAccessItems": {
+      "conversations": {
+        "title": "💬 Conversations",
+        "description": "Messages and communications"
+      },
+      "notifications": {
+        "title": "🔔 Notifications",
+        "description": "Alerts and notifications"
+      },
+      "dashboard": {
+        "title": "📊 Dashboard",
+        "description": "Operational overview"
+      },
+      "detailedReports": {
+        "title": "📄 Detailed Reports",
+        "description": "Detailed operational reports"
+      }
+    },
+    "tasks": {
+      "status": {
+        "completed": "Completed",
+        "inProgress": "In Progress",
+        "todo": "To Do"
+      }
+    },
+    "teams": "Teams",
+    "thisMonth": "This Month",
+    "toDo": "To Do",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "totalLofts": "Total Lofts",
+    "upToDate": "You're up to date!",
+    "upcoming": "Upcoming",
+    "upcomingBillsTitle": "Upcoming Bills",
+    "updated": "Updated",
+    "viewReports": "View Reports",
+    "welcomeBack": "Welcome back",
+    "myProfile": "My Profile",
+    "viewMyTasks": "View My Tasks",
+    "allCaughtUp": "You are all caught up!",
+    "noUrgentTasks": "No urgent tasks.",
+    "urgentTasks": "Urgent Tasks",
+    "noTasksAssigned": "No tasks assigned to you.",
+    "noTasksYet": "No tasks yet.",
+    "viewAllMyTasks": "View All My Tasks",
+    "completed": "Completed",
+    "secureViewMessage": "Secure Member View - Showing only your assigned tasks and relevant information",
+    "tasksVisible": "tasks visible",
+    "loftsAccessible": "lofts accessible",
+    "dismiss": "Dismiss",
+    "loading": "Loading...",
+    "error": "Error",
+    "noData": "No data",
+    "dashboard": {
+      "active": "Active",
+      "title": "Title"
+    }
+  },
+  "executive": {
+    "alerts": {
+      "resolve": "Resolve",
+      "resolveError": "Error resolving alert",
+      "resolved": "Alert resolved successfully"
+    },
+    "title": "Executive",
+    "subtitle": "Executive Dashboard",
+    "confidential": "Confidential",
+    "executiveOnly": "Executive Only",
+    "commandCenter": "Executive Command Center",
+    "intelligenceDashboard": "Intelligence Dashboard",
+    "predictiveAnalysis": "Real-time predictive analysis of your real estate empire",
+    "criticalAlerts": "Critical Alerts",
+    "totalRevenue": "Total Revenue",
+    "netProfit": "Net Profit",
+    "occupancyRate": "Occupancy Rate",
+    "totalProperties": "Total Properties",
+    "excellentPerformance": "Excellent Performance",
+    "diversifiedPortfolio": "Diversified Portfolio",
+    "financialIntelligence": "Financial Intelligence",
+    "realTimePredictiveAnalysis": "Real-time predictive analysis",
+    "totalExpenses": "Total Expenses",
+    "cashFlow": "Cash Flow",
+    "maintenance": "Maintenance",
+    "aiAnalysisInProgress": "AI Analysis in progress...",
+    "revenueMatrix": "Revenue Matrix",
+    "intelligentDistribution": "Intelligent Distribution",
+    "companyRevenue": "Company Revenue",
+    "thirdPartyRevenue": "Third Party Revenue",
+    "companyDominance": "Company Dominance",
+    "automaticOptimizationEnabled": "Automatic optimization enabled",
+    "quantumTimeline": "Quantum Timeline",
+    "temporalPerformanceEvolution": "Temporal performance evolution",
+    "currentYear": "Current Year",
+    "evolution": "Evolution",
+    "performanceIndex": "Performance Index",
+    "excellent": "Excellent",
+    "temporalAnalysis": "Temporal Analysis",
+    "multidimensionalComparison": "Multidimensional comparison",
+    "revenue": "Revenue",
+    "expenses": "Expenses",
+    "profit": "Profit",
+    "occupancy": "Occupancy",
+    "resolve": "Resolve",
+    "thisMonth": "this month",
+    "trend": "trend",
+    "margin": "Margin",
+    "averageRent": "Average Rent",
+    "apartmentManager": "Apartment Manager",
+    "toggleTheme": "Toggle Theme",
+    "chats": "Chats",
+    "logout": "Logout",
+    "executiveDashboard": "Executive Dashboard",
+    "forExecutivesOnly": "For Executives Only"
+  },
+  "internetConnections": {
+    "active": "Active",
+    "addFirstConnection": "Add your first connection type to get started",
+    "addNewConnectionType": "Add New Connection Type",
+    "cancelButton": "Cancel",
+    "connectionDetails": "Connection details",
+    "connectionType": "connection type",
+    "connectionTypes": "connection types",
+    "cost": "Cost",
+    "costPlaceholder": "e.g. 29.99",
+    "create": "Create",
+    "createConnectionType": "Create Internet Connection Type",
+    "createConnectionTypeDescription": "Add a new internet connection type to the system",
+    "createNewConnectionType": "Create new internet connection type",
+    "delete": "Delete",
+    "deleteButton": "Delete",
+    "deleteConfirmation": "Delete {type} connection from {provider}?",
+    "deleteConfirmationDescription": "This action is irreversible and will permanently delete this connection.",
+    "deleteError": "Error deleting connection",
+    "deleteErrorDescription": "An error occurred while deleting the connection",
+    "deleteSuccess": "Connection deleted successfully",
+    "deleteSuccessDescription": "The {type} connection type has been deleted",
+    "description": "Configure and manage all internet connection types available in your lofts",
+    "edit": "Edit",
+    "editConnectionType": "Edit Internet Connection Type",
+    "enterConnectionInfo": "Enter the connection information below",
+    "existingConnectionTypes": "Existing Connection Types",
+    "inactive": "Inactive",
+    "loadError": "Error loading internet connection types",
+    "maintenance": "Maintenance",
+    "manageConnections": "Manage internet connections",
+    "noConnectionTypesFound": "No internet connection types found",
+    "paginationNext": "Next",
+    "paginationPage": "Page {current} of {total}",
+    "paginationPrevious": "Previous",
+    "paginationShowing": "Showing {start} to {end} of {total} connection types",
+    "provider": "Provider",
+    "providerInfo": "Provider information",
+    "providerPlaceholder": "e.g. Verizon, AT&T, Comcast...",
+    "saveChanges": "Save Changes",
+    "speed": "Speed",
+    "speedPlaceholder": "e.g. 100 Mbps, 1 Gbps...",
+    "status": "Status",
+    "statusPlaceholder": "e.g. Active, Inactive, Maintenance...",
+    "subtitle": "Manage internet connection types for your properties",
+    "title": "Internet Connections",
+    "total": "Total",
+    "totalConnections": "{count} internet connections",
+    "totalConnectionsDisplay": "{count} connection types",
+    "type": "Type",
+    "typePlaceholder": "e.g. Fiber, ADSL, Satellite...",
+    "updateConnectionInfo": "Update the details of the internet connection type",
+    "createSuccess": "Internet connection type created successfully",
+    "updateSuccess": "Internet connection type updated successfully",
+    "error": "An error occurred. Please try again."
+  },
+  "lofts": {
+    "ar": "Arabic",
+    "addFirstLoft": "Add my first loft",
+    "editLoft": "Edit loft",
+    "linkToAirbnb": "Link to Airbnb",
+    "loftInfoTitle": "Loft Information",
+    "pricePerNight": "Price per Night",
+    "owner": "Owner",
+    "description": "Description",
+    "available": "Available",
+    "occupied": "Occupied",
+    "maintenance": "Maintenance",
+    "loftNotFound": "Loft not found",
+    "noLoftFoundForId": "No loft found for ID",
+    "quarterly": "Quarterly",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "weekly": "Weekly",
+    "bimonthly": "Bimonthly",
+    "fourMonthly": "Every Four Months",
+    "photos": {
+      "addedBy": "Added by {name}",
+      "cancel": "Cancel",
+      "confirmDelete": "Confirm deletion",
+      "confirmDeleteDescription": "Are you sure you want to delete this photo? This action cannot be undone.",
+      "deleteError": "Error deleting photo",
+      "deletePhoto": "Delete photo",
+      "deleteSuccess": "Photo deleted",
+      "description": "Add photos to showcase your loft. Photos help clients better visualize the space.",
+      "downloadError": "Download error",
+      "downloadPhoto": "Download photo",
+      "dragDropText": "Drag your photos here or click to select",
+      "fileSize": "{size} MB",
+      "fileTooLarge": "{filename} is too large (max 5MB)",
+      "invalidFileType": "{filename} is not an image",
+      "loadError": "Error loading photos",
+      "mainPhoto": "Main photo",
+      "maxPhotosReached": "Maximum {max} photos allowed",
+      "noPhotos": "No photos available",
+      "noPhotosDescription": "Photos for this loft have not been added yet.",
+      "photoCount": "{count}/{max} photos",
+      "photoCount_many": "{count}/{max} photos",
+      "photoCount_one": "{count}/{max} photo",
+      "photoCount_other": "{count}/{max} photos",
+      "photoDownloaded": "Photo downloaded",
+      "photoGallery": "Photo gallery",
+      "photoViewer": "Photo viewer",
+      "photosAvailable": "{count} photo available",
+      "photosAvailable_plural": "{count} photos available",
+      "selectPhotos": "Select photos",
+      "supportedFormats": "Supported formats: JPG, PNG, WebP (max 5MB per photo)",
+      "thumbnails": "Thumbnails",
+      "title": "Loft Photos",
+      "uploadError": "Error uploading {filename}: {error}",
+      "uploadSuccess": "{filename} uploaded successfully",
+      "uploading": "Uploading...",
+      "viewPhoto": "View photo",
+      "willBeDeleted": "This photo will be permanently deleted"
+    },
+    "addLoft": "Add loft",
+    "addNewPropertyListing": "Add a new property listing",
+    "cancel": "Cancel",
+    "selectOption": "Select an option",
+    "additionalInfo": {
+      "airbnbId": "Airbnb ID",
+      "company": "Company",
+      "title": "Additional Information",
+      "percentages": "Percentages",
+      "photoGallery": "Photo Gallery",
+      "createdOn": "Created on",
+      "lastUpdated": "Last updated",
+      "owner": "Owner",
+      "phone": "Phone"
+    },
+    "allOwners": "All owners",
+    "allStatuses": "All statuses",
+    "allZoneAreas": "All zones",
+    "billManagement": {
+      "billMarkedAsPaid": "{billType} bill marked as paid. Next due date calculated automatically.",
+      "cancel": "Cancel",
+      "title": "Bill Management",
+      "water": "Water",
+      "electricity": "Electricity",
+      "gas": "Gas",
+      "phone": "Phone",
+      "internet": "Internet",
+      "nextBills": "Next Bills",
+      "notSet": "Not Set",
+      "customerCode": "Customer Code",
+      "meterNumber": "Meter Number",
+      "correspondent": "Correspondent",
+      "clientNumber": "Client Number",
+      "pdlRef": "PDL Reference",
+      "frequency": "Frequency",
+      "noFrequencySet": "No frequency set",
+      "daysOverdue": "days overdue",
+      "dueToday": "Due Today",
+      "dueTomorrow": "Due Tomorrow",
+      "dueInDays": "Due in {days} days",
+      "due": "Due",
+      "pleaseEnterPaymentAmount": "Please enter a payment amount",
+      "markAsPaid": "Mark as Paid",
+      "noBillDueDatesSet": "No bill due dates set",
+      "editLoftToAddBillInfo": "Edit the loft to add bill frequencies and due dates",
+      "markBillAsPaid": "Mark {billType} Bill as Paid",
+      "paymentAmount": "Payment Amount",
+      "enterPaymentAmount": "Enter payment amount",
+      "processing": "Processing...",
+      "nextDueDateAutoCalculated": "Next due date will be automatically calculated based on {frequency} frequency.",
+      "currentDueDate": "Current Due Date",
+      "energy": "Energy",
+      "failedToMarkBillAsPaid": "Failed to mark bill as paid"
+    },
+    "billingAlerts": "Billing Alerts",
+    "billingAlertsDescription": "Configure frequencies and due dates for automatic bill tracking",
+    "billingSections": {
+      "energy": "Energy Bills",
+      "gas": "Gas Bills",
+      "internet": "Internet Bills",
+      "phone": "Phone Bills",
+      "tv": "TV Subscription",
+      "water": "Water Bills"
+    },
+    "companyPercentage": "Company Percentage",
+    "companyShare": "Company share",
+    "createLoft": "Create Loft",
+    "createNewLoft": "Create New Loft",
+    "creating": "Creating...",
+    "dailyRent": "Daily Rent",
+    "deleteCancelled": "Deletion cancelled",
+    "deleteCancelledDescription": "Confirmation text was incorrect",
+    "deleteConfirm": "Are you sure you want to delete {loftName}?",
+    "deleteConfirmMessage": "This action is irreversible. It will permanently delete all data associated with this loft, including reservations and transactions. To confirm, please type",
+    "deleteConfirmPrompt": "Type 'DELETE' to confirm",
+    "deleteConfirmTitle": "Are you absolutely sure?",
+    "deleteConfirmationIncorrect": "The confirmation text is incorrect. Deletion aborted.",
+    "deleteConfirmationKeyword": "DELETE",
+    "deleteConfirmationPrompt": "Type 'DELETE' to confirm",
+    "deleteError": "Error deleting {name}",
+    "deleteErrorDescription": "An error occurred during deletion. Please try again.",
+    "deleteErrorMessage": "An error occurred while trying to delete the loft. Please try again.",
+    "deleteLoft": "Delete loft",
+    "deleteSuccess": "{name} deleted successfully",
+    "deleteSuccessDescription": "The loft and all its associated data have been deleted",
+    "deletingDescription": "Deleting loft in progress",
+    "deletingInProgress": "Deleting...",
+    "deletingLoftData": "Deleting loft data...",
+    "descriptions": {
+      "aidaLoft": "Modern Aida Loft in the heart of the city",
+      "familyLoftConstantine": "Family loft in Constantine",
+      "heavenLoft": "Paradise Loft with panoramic sea view",
+      "loftStudentBabEzzouar": "Student loft in Bab Ezzouar",
+      "modernCenterAlger": "Modern apartment in downtown Algiers",
+      "nadaLoft": "Spacious Nada Loft with private terrace",
+      "penthouseOranSeaView": "Penthouse in Oran with sea view",
+      "studioHydraPremium": "Premium studio in Hydra with view"
+    },
+    "electricityCustomerNumber": "Electricity Customer Number",
+    "electricityMeterNumber": "Electricity Meter Number",
+    "electricityPdlRef": "Electricity PDL Ref",
+    "energy": "Energy",
+    "energyBillFrequency": "Energy Bill Frequency",
+    "errorCreatingLoft": "Error Creating Loft",
+    "errorCreatingLoftDescription": "An error occurred while creating the loft. Please try again.",
+    "filterByOwner": "Filter by owner",
+    "filterByStatus": "Filter by status",
+    "filterByZone": "Filter by zone",
+    "filterByZoneArea": "Filter by zone",
+    "filterTitle": "Filter your lofts",
+    "frequency": {
+      "bimonthly": "Bimonthly",
+      "fourMonthly": "Every Four Months",
+      "monthly": "Monthly",
+      "quarterly": "Quarterly",
+      "sixMonthly": "Every Six Months",
+      "weekly": "Weekly",
+      "yearly": "Yearly"
+    },
+    "gas": "Gas",
+    "gasCustomerNumber": "Gas Customer Number",
+    "gasMeterNumber": "Gas Meter Number",
+    "gasPdlRef": "Gas PDL Ref",
+    "internet": "Internet",
+    "internetBillFrequency": "Internet Bill Frequency",
+    "internetConnection": "Internet Connection",
+    "loftAddress": "Address",
+    "loftCreateError": "Error creating loft",
+    "loftCreatedSuccess": "Loft Created Successfully",
+    "loftCreatedSuccessDescription": "The new loft has been added to your property list.",
+    "loftDataDeleted": "Loft data has been permanently deleted.",
+    "loftDeletedSuccess": "Loft Deleted Successfully",
+    "loftDescription": "Loft Description",
+    "loftInfoDescription": "Provide the main details of the loft, including its name, address, and rental price.",
+    "loftName": "Loft name",
+    "loftUpdated": "Loft updated",
+    "loftUpdatedDescription": "All changes have been saved successfully",
+    "managePropertiesDescription": "Manage your properties - Discover and manage your real estate portfolio with style",
+    "nextEnergyBill": "Next Energy Bill Due",
+    "nextInternetBill": "Next Internet Bill Due",
+    "nextPhoneBill": "Next Phone Bill Due",
+    "nextTvBill": "Next TV Bill Due",
+    "nextWaterBill": "Next Water Bill Due",
+    "noLoftsFound": "No lofts found",
+    "noLoftsMatch": "No lofts match the filters",
+    "noLoftsYet": "No lofts yet",
+    "ownerPercentage": "Owner Percentage",
+    "phone": "Phone",
+    "phoneBillFrequency": "Phone Bill Frequency",
+    "phoneNumber": "Phone Number",
+    "pricePerDay": "Price per Day (DA)",
+    "pricePerMonth": "Price per Month",
+    "selectFrequency": "Select Frequency",
+    "shouldEqual100": "Total percentage must equal 100%",
+    "sixMonthly": "Every Six Months",
+    "startYourJourney": "Start your real estate journey by adding your first loft!",
+    "statusTitle": "Status",
+    "status": {
+      "available": "Available",
+      "occupied": "Occupied",
+      "maintenance": "Maintenance"
+    },
+    "subtitle": "Manage your properties",
+    "systemError": "System Error",
+    "systemErrorDescription": "An unexpected error occurred during update. Contact support if the problem persists",
+    "title": "Lofts",
+    "total": "Total",
+    "totalRevenue": "Total Revenue",
+    "tv": "TV",
+    "tvBillFrequency": "TV Subscription Frequency",
+    "unknown": "Unknown",
+    "updateError": "Failed to save changes. Check your data and try again",
+    "updateLoft": "Update Loft",
+    "updatePropertyDetails": "Update property details",
+    "updating": "Updating...",
+    "utilityInfo": {
+      "correspondent": "Correspondent",
+      "customerCode": "Customer code",
+      "customerNumber": "Customer number",
+      "electricity": "Electricity",
+      "gas": "Gas",
+      "meterNumber": "Meter number",
+      "nextBills": "Next Bills",
+      "pdlRef": "PDL Ref",
+      "title": "Utility Information",
+      "water": "Water"
+    },
+    "utilityInformation": "Utility Information",
+    "water": "Water",
+    "waterBillFrequency": "Water Bill Frequency",
+    "waterContractCode": "Water Contract Code",
+    "waterCustomerCode": "Water Customer Code",
+    "waterMeterNumber": "Water Meter Number",
+    "zoneArea": "Zone",
+    "loftsList": "Lofts List",
+    "searchLofts": "Search lofts...",
+    "found": "found",
+    "loft": "loft",
+    "lofts": "lofts",
+    "confirmDelete": "Are you sure you want to delete {name}?",
+    "confirmDeleteTitle": "Confirm Deletion",
+    "confirmDeleteDescription": "Are you sure you want to delete the loft \"{name}\"? This action is irreversible and will delete all associated data.",
+    "confirmDeleteButton": "Delete Permanently",
+    "deleting": "Deleting...",
+    "name": "Name",
+    "namePlaceholder": "Ex: Modern downtown loft",
+    "address": "Address",
+    "addressPlaceholder": "Ex: 123 Independence Street, Algiers",
+    "zone": "Zone",
+    "member": {
+      "myAssignedLofts": "My Assigned Lofts",
+      "loftsWithTasks": "Lofts where you have assigned tasks",
+      "memberView": "Member View",
+      "memberViewDescription": "You can only see lofts where you have assigned tasks. You can update task statuses but cannot modify loft information.",
+      "loftsAccessible": "lofts accessible",
+      "noAssignedLofts": "No Assigned Lofts",
+      "noAssignedLoftsDescription": "You don't have any tasks assigned to lofts yet. Contact your manager if you think this is an error.",
+      "toDo": "To Do",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "yourTasks": "Your Tasks",
+      "viewUpdateTasks": "View & Update Tasks",
+      "zone": "Zone",
+      "memberViewShort": "Limited access",
+      "showDetails": "Show details",
+      "hideDetails": "Hide details",
+      "dismiss": "Dismiss"
+    },
+    "price": "Price",
+    "rooms": "Rooms",
+    "unavailable": "Unavailable",
+    "details": {
+      "title": "Loft Details",
+      "pricePerNight": "Price per night",
+      "owner": "Owner",
+      "propertyType": "Property Type",
+      "description": "Description",
+      "amenities": "Amenities",
+      "gallery": "Photo Gallery",
+      "additionalInfo": "Additional Information",
+      "createdAt": "Created on",
+      "lastUpdated": "Last updated",
+      "edit": "Edit Apartment",
+      "auditHistory": "Audit History",
+      "apartmentInfo": "Apartment Information"
+    },
+    "wifiPassword": "WiFi Password",
+    "wifiPasswordPlaceholder": "Enter WiFi password",
+    "wifiPasswordHelp": "Password that guests will use to connect to the internet"
+  },
+  "nav": {
+    "application": "Application",
+    "availability": "Availability",
+    "audit": "Audit",
+    "categories": "Categories",
+    "conversations": "Conversations",
+    "currencies": "Currencies",
+    "dashboard": "Dashboard",
+    "executive": "Executive",
+    "internetConnections": "Internet Connections",
+    "loftManager": "Loft Manager",
+    "lofts": "Lofts",
+    "owners": "Owners",
+    "customers": "Customers",
+    "notifications": "Notifications",
+    "paymentMethods": "Payment Methods",
+    "paymentMethodsNav": "Payment Methods",
+    "reports": "Reports",
+    "reportsNav": "Reports",
+    "reservations": "Reservations",
+    "settings": "Settings",
+    "tasks": "Tasks",
+    "teams": "Teams",
+    "toggleTheme": "Toggle theme",
+    "transactions": "Transactions",
+    "userPasswords": {
+      "common": {
+        "loading": "Loading..."
+      },
+      "title": "Title",
+      "userSelection": {
+        "title": "Title"
+      },
+      "passwordForm": {
+        "title": "Title"
+      },
+      "security": {
+        "title": "Title"
+      },
+      "roles": {
+        "admin": "Administrator",
+        "manager": "Manager",
+        "member": "Member",
+        "executive": "Executive"
+      }
+    },
+    "zoneAreas": "Geographic Zones",
+    "clients": "Clients",
+    "bookings": "Bookings",
+    "logout": "Logout"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "description": "Manage your notifications and stay informed of the latest activities.",
+    "unreadCount": "{count} unread",
+    "markAllAsRead": "Mark all as read",
+    "view": "View",
+    "new": "New",
+    "success": "Success",
+    "warning": "Warning",
+    "error": "Error",
+    "info": "Info",
+    "viewDetails": "View details",
+    "newTaskAssigned": "New Task Assigned",
+    "Task Assigned to You": "Task Assigned to You",
+    "Task Reassigned": "Task Reassigned",
+    "Task Status Updated": "Task Status Updated",
+    "Your Task Status Updated": "Your Task Status Updated",
+    "Task Due Date Updated": "Task Due Date Updated",
+    "Task Deleted": "Task Deleted",
+    "Task Overdue": "Task Overdue",
+    "newTaskAssignedMessage": "You have been assigned a new task: \"{taskTitle}\" (Due: {dueDate})",
+    "taskDueDateUpdatedMessage": "Due date for task \"{taskTitle}\" has been updated. Due date updated to: {dueDate}",
+    "taskStatusUpdatedMessage": "The status of task \"{taskTitle}\" has been updated to {newStatus}.",
+    "taskReassignedMessage": "Task \"{taskTitle}\" has been reassigned to someone else by {userName}.",
+    "unknownUser": "a user",
+    "task": "task",
+    "updated": "updated",
+    "noNotificationsMessage": "You will receive important notifications about your tasks and activities here.",
+    "newMessageFrom": "New message from {sender}",
+    "noNotifications": "No notifications found.",
+    "Notification Read": "Notification Read",
+    "notificationReadMessage": "Your notification for task \"{taskTitle}\" has been read by {userName}.",
+    "notifications": {
+      "newTaskAssigned": "New Task Assigned",
+      "newTaskAssignedMessage": "You have been assigned a new task: \"{taskTitle}\" (Due: {dueDate})",
+      "taskDueDateUpdatedMessage": "Due date for task \"{taskTitle}\" has been updated. Due date updated to: {dueDate}",
+      "taskStatusUpdatedMessage": "The status of task \"{taskTitle}\" has been updated to {newStatus}.",
+      "taskReassignedMessage": "Task \"{taskTitle}\" has been reassigned to someone else by {userName}.",
+      "notificationReadMessage": "Your notification for task \"{taskTitle}\" has been read by {userName}."
+    },
+    "optimizedBanner": {
+      "title": "Optimized Version Active",
+      "description": "Using batch operations, memoization, and React optimization techniques."
+    },
+    "status": "Status"
+  },
+  "owners": {
+    "addFirstOwner": "Add Owner",
+    "addOwner": "Add Owner",
+    "address": "Address",
+    "cancel": "Cancel",
+    "company": "Company",
+    "companyOwned": "Company Owned",
+    "createNewOwner": "Create New Owner",
+    "createOwner": "Create Owner",
+    "deleteConfirm": "Are you sure you want to delete this owner?",
+    "deleteError": "Failed to delete owner",
+    "deleteOwner": "Delete Owner",
+    "deleteOwnerConfirm": "Are you sure you want to delete this owner? This will also delete all their lofts.",
+    "deleteSuccessDescription": "The owner has been successfully removed",
+    "deleteSuccessTitle": "Owner deleted",
+    "editOwner": "Edit Owner",
+    "email": "Email",
+    "enterOwnerInfo": "Enter owner information",
+    "name": "Name",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "noOwnersDescription": "Start by adding your first owner to manage your properties.",
+    "noOwnersFound": "No owners found",
+    "notFoundDescription": "Could not find owner with ID {id}",
+    "notFoundTitle": "Owner Not Found",
+    "ownerDetails": "Owner Details",
+    "ownerInformation": "Owner Information",
+    "ownershipType": "Ownership Type",
+    "phone": "Phone",
+    "propertiesCount": "{count} properties",
+    "saving": "Saving...",
+    "selectType": "Select Type",
+    "subtitle": "Manage your property owners",
+    "thirdParty": "Third Party",
+    "title": "Owners",
+    "totalMonthlyValue": "Total Monthly Value",
+    "totalOwners": "Total Owners",
+    "totalProperties": "Total Properties",
+    "updateOwner": "Update Owner",
+    "updateOwnerInfo": "Update owner information",
+    "ownerNotFound": "Owner Not Found",
+    "couldNotFindOwner": "Could not find owner with ID",
+    "backToOwners": "Back to Owners",
+    "notFoundMessage": "The owner you are looking for does not exist or has been deleted.",
+    "placeholders": {
+      "name": "Ex: John Smith",
+      "email": "Ex: john.smith@email.com",
+      "phone": "Ex: +213 555 123 456",
+      "address": "Ex: 123 Peace Street, Algiers",
+      "cancel": "Cancel"
+    }
+  },
+  "paymentMethods": {
+    "common": {
+      "loading": "Loading"
+    },
+    "active": "Active",
+    "addPaymentMethod": "Add Payment Method",
+    "additionalDetails": "Additional details",
+    "additionalInfoAvailable": "Additional information available",
+    "algerianDinar": "Algerian Dinar (DZD)",
+    "apiIntegrations": "API Integrations",
+    "automaticValidation": "Automatic validation",
+    "automaticallyValidateSmallAmounts": "Automatically validate small amounts",
+    "back": "Back",
+    "bankTransfer": "Bank Transfer",
+    "basicSettingsForAllMethods": "Basic settings for all payment methods",
+    "cancel": "Cancel",
+    "cards": "Cards",
+    "check": "Check",
+    "configureGlobalSettings": "Configure global settings for your payment methods",
+    "configureNewMethod": "Configure a new payment method",
+    "configuredMethods": "Configured Methods",
+    "confirmationRequired": "Confirmation required",
+    "createFirstMethod": "Create the first method",
+    "createNewPaymentMethod": "Create new payment method",
+    "createPaymentMethod": "Create Payment Method",
+    "creditCard": "Credit Card",
+    "defaultCurrency": "Default currency",
+    "defaultFees": "Default fees (%)",
+    "description": "Configure and supervise all payment methods available on your platform",
+    "details": "Details",
+    "editPaymentMethod": "Edit Payment Method",
+    "enablePaypalIntegration": "Enable PayPal integration",
+    "enableStripeIntegration": "Enable Stripe integration",
+    "enterPaymentInfo": "Enter payment information",
+    "euro": "Euro (EUR)",
+    "externalPaymentServicesConfiguration": "External payment services configuration",
+    "fillMethodDetails": "Fill in the payment method details",
+    "generalConfiguration": "General Configuration",
+    "maxAmountAllowed": "Maximum amount allowed",
+    "methodName": "Method name",
+    "methodsActive": "payment methods active on your platform",
+    "mobilePayment": "Mobile Payment",
+    "modify": "Modify",
+    "name": "Name",
+    "newMethod": "New Method",
+    "newPaymentMethod": "New Payment Method",
+    "noAdditionalDetails": "No additional details",
+    "noMethodConfigured": "No method configured",
+    "noMethodsConfigured": "No payment methods configured at the moment",
+    "notificationSettingsForPayments": "Notification settings for payments",
+    "notifications": "Notifications",
+    "notificationsEnabled": "Notifications enabled",
+    "other": "Other",
+    "paymentDetails": "Payment Details",
+    "paymentInformation": "Payment Information",
+    "paymentMethodsSettings": "Payment Methods Settings",
+    "paymentType": "Payment type",
+    "paypal": "PayPal",
+    "paypalClientId": "PayPal Client ID",
+    "receiveNotificationsForNewPayments": "Receive notifications for new payments",
+    "requestConfirmationForEachTransaction": "Request confirmation for each transaction",
+    "required": "required",
+    "saveSettings": "Save Settings",
+    "saving": "Saving...",
+    "securePayments": "Payment methods allow your customers to pay for their transactions securely",
+    "securityAndValidation": "Security and Validation",
+    "securitySettingsForTransactions": "Security settings for transactions",
+    "settings": "Settings",
+    "settingsSavedSuccessfully": "Settings saved successfully!",
+    "startByAdding": "Start by adding your first payment method",
+    "stripe": "Stripe",
+    "stripeApiKey": "Stripe API Key",
+    "subtitle": "Centralized payment management",
+    "title": "Payment Methods",
+    "total": "Total",
+    "type": "Type",
+    "updatePaymentMethod": "Update Payment Method",
+    "updatePaymentMethodInfo": "Update payment method information",
+    "usDollar": "US Dollar (USD)",
+    "cash": "Cash"
+  },
+  "photos": {
+    "addedBy": "Added by {name}",
+    "cancel": "Cancel",
+    "confirmDelete": "Confirm deletion",
+    "confirmDeleteDescription": "Are you sure you want to delete this photo? This action is irreversible.",
+    "deleteError": "Error deleting photo",
+    "deletePhoto": "Delete photo",
+    "deleteSuccess": "Photo deleted",
+    "description": "Add photos to showcase your loft. Photos help clients better visualize the space.",
+    "downloadError": "Download error",
+    "downloadPhoto": "Download photo",
+    "dragDropText": "Drag your photos here or click to select",
+    "fileSize": "{size} MB",
+    "fileTooLarge": "{filename} is too large (max 5MB)",
+    "invalidFileType": "{filename} is not an image",
+    "loadError": "Error loading photos",
+    "mainPhoto": "Main photo",
+    "maxPhotosReached": "Maximum {max} photos allowed",
+    "noPhotos": "No photos available",
+    "noPhotosDescription": "Photos for this loft have not been added yet.",
+    "photoCount": "{count}/{max} photos",
+    "photoCount_many": "{count}/{max} photos",
+    "photoCount_one": "{count}/{max} photo",
+    "photoCount_other": "{count}/{max} photos",
+    "photoDownloaded": "Photo downloaded",
+    "photoGallery": "Photo gallery",
+    "photoViewer": "Photo viewer",
+    "photosAvailable": "{count} photo available",
+    "photosAvailable_plural": "{count} photos available",
+    "selectPhotos": "Select photos",
+    "supportedFormats": "Supported formats: JPG, PNG, WebP (max 5MB per photo)",
+    "thumbnails": "Thumbnails",
+    "title": "Loft Photos",
+    "uploadError": "Error uploading {filename}: {error}",
+    "uploadSuccess": "{filename} uploaded successfully",
+    "uploading": "Uploading...",
+    "viewPhoto": "View photo",
+    "willBeDeleted": "This photo will be permanently deleted"
+  },
+  "reports": {
+    "aboutPdfReports": "About PDF Reports",
+    "advancedAnalytics": "Advanced Analytics",
+    "allCategories": "All Categories",
+    "allTransactions": "All Transactions",
+    "analyticsTab": "Analytics and Charts",
+    "byLoft": "By Loft",
+    "byOwner": "By Owner",
+    "category": "Category",
+    "chooseLoft": "Choose a loft",
+    "chooseOwner": "Choose an owner",
+    "chooseReportType": "Choose Report Type",
+    "configureFilters": "Configure filters",
+    "customRange": "Custom Range",
+    "customReports": "Custom Reports",
+    "dateRange": "Date Range",
+    "downloadReports": "Download Reports",
+    "endDate": "End Date",
+    "expenses": "Expenses",
+    "expensesOnly": "Expenses Only",
+    "export": "Export",
+    "exportReports": "Export Reports",
+    "exporting": "Exporting...",
+    "featuresText": "Real-time Data • Advanced Analytics • Custom Reports",
+    "financialReports": "Financial Reports",
+    "form": {
+      "end_date": "End Date",
+      "financial_report": "Financial Report",
+      "occupancy_report": "Occupancy Report",
+      "report_name": "Report Name",
+      "report_name_placeholder": "Enter report name",
+      "report_type": "Report Type",
+      "sales_report": "Sales Report",
+      "start_date": "Start Date"
+    },
+    "format": "Format",
+    "generateDetailedReports": "Generate and view detailed reports.",
+    "generateGlobalReport": "Generate Global Report",
+    "generateLoftReport": "Generate Loft Report",
+    "generateOwnerReport": "Generate Owner Report",
+    "generateReport": "Generate Report",
+    "generateReports": "Generate Reports",
+    "generate_report": "Generate Report",
+    "generatingInProgress": "Generating...",
+    "globalReport": "Global Report",
+    "globalReportDescription": "Complete analysis of all lofts and owners with detailed statistics.",
+    "globalReportInfo": "• Complete overview\n• Performance of all lofts\n• General statistics\n• Multiple analyses",
+    "globalReportTab": "Global",
+    "globalReportTitle": "Global Report",
+    "groupBy": "Group By",
+    "groupByCategory": "Group by Category",
+    "groupByLoft": "Group by Loft",
+    "groupByMonth": "Group by Month",
+    "includeDetails": "Include Details",
+    "includeSummary": "Include Summary",
+    "insurance": "Insurance",
+    "loftReportInfo": "• Detailed loft information\n• All loft transactions\n• Financial summary\n• Category analysis",
+    "loftReportTitle": "Loft Report",
+    "maintenance": "Maintenance",
+    "messages": {
+      "delete_confirm": "Are you sure you want to delete this report?",
+      "deleted_success": "Report deleted successfully.",
+      "generated_success": "Report generated successfully."
+    },
+    "netResult": "Net Result",
+    "other": "Other",
+    "ownerReportInfo": "• Owner information\n• List of all their lofts\n• Performance per loft\n• Global summary",
+    "ownerReportTitle": "Owner Report",
+    "pageTitle": "Reports and Analytics",
+    "pdfGeneration": "PDF Generation",
+    "pdfTab": "PDF Generator",
+    "quarter": "Quarter",
+    "quickPeriod": "Quick Period",
+    "realTimeData": "Real-time Data",
+    "realTimeDataBadge": "Real-time Data",
+    "rent": "Rent",
+    "reportFilters": "Report Filters",
+    "reportOptions": "Report Options",
+    "report_details": "Report Details",
+    "revenue": "Revenue",
+    "revenueOnly": "Revenue Only",
+    "selectLoft": "Select Loft",
+    "selectLoftError": "Please select a loft",
+    "selectOwner": "Select Owner",
+    "selectOwnerError": "Please select an owner",
+    "sevenDays": "7 Days",
+    "startDate": "Start Date",
+    "subtitle": "Generate detailed PDF reports and visualize your data with interactive charts.",
+    "table": {
+      "actions": "Actions",
+      "date_created": "Date Created",
+      "id": "ID",
+      "name": "Name",
+      "type": "Type"
+    },
+    "taxes": "Taxes",
+    "thisMonth": "This Month",
+    "thisQuarter": "This Quarter",
+    "thisWeek": "This Week",
+    "thisYear": "This Year",
+    "title": "Reports",
+    "today": "Today",
+    "transactionType": "Transaction Type",
+    "transactionsCount": "Transactions Count",
+    "utilities": "Utilities",
+    "name": "Name",
+    "email": "Email"
+  },
+  "reservations": {
+    "actions": {
+      "cancel": "Cancel"
+    },
+    "activities": {
+      "bookingCancelled": "Booking Cancelled",
+      "checkinCompleted": "Check-in Completed",
+      "hourAgo": "an hour ago",
+      "hoursAgo": "a few hours ago",
+      "minAgo": "a minute ago",
+      "newReservation": "New Reservation",
+      "noRecentActivity": "No recent activity"
+    },
+    "activity": "Recent Activity",
+    "aiTag": "AI",
+    "availability": {
+      "blockDates": "Block Dates",
+      "chooseLoft": "Choose a loft",
+      "endDate": "End Date",
+      "maintenance": "Maintenance",
+      "management": "Availability Management",
+      "minimumStay": "Minimum Stay",
+      "minimumStay_one": "Minimum Stay",
+      "minimumStay_other": "Minimum Stay",
+      "other": "Other",
+      "personalUse": "Personal Use",
+      "priceOverride": "Price Override",
+      "priceOverridePlaceholder": "New price per night",
+      "reasonForBlocking": "Reason for blocking",
+      "renovation": "Renovation",
+      "selectLoft": "Select a loft first",
+      "selectReason": "Select a reason",
+      "startDate": "Start Date",
+      "unblockDates": "Unblock Dates"
+    },
+    "calendar": {
+      "agenda": "Agenda",
+      "allDay": "All Day",
+      "day": "Day",
+      "event": "Event",
+      "month": "Month",
+      "noEventsInRange": "No events in this range",
+      "showMore": "Show more ({count})",
+      "title": "Reservations Calendar",
+      "tomorrow": "Tomorrow",
+      "week": "Week",
+      "work_week": "Work Week",
+      "yesterday": "Yesterday"
+    },
+    "comingSoon": "Coming Soon",
+    "common": {
+      "cancel": "Cancel"
+    },
+    "create": "Create Reservation",
+    "description": "Manage your reservations, availability and analytics.",
+    "details": {
+      "dates": "Dates",
+      "guest": "Guest",
+      "loft": "Loft",
+      "specialRequests": "Special Requests",
+      "title": "Reservation Details",
+      "total": "Total"
+    },
+    "enterpriseTag": "Enterprise",
+    "form": {
+      "available": "Available",
+      "badge": "Hybrid",
+      "basePrice": "Base Price",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "checkingAvailability": "Checking availability...",
+      "cleaningFee": "Cleaning Fee",
+      "confirmationMessage": "Your reservation has been confirmed.",
+      "createReservation": "Create Reservation",
+      "creating": "Creating...",
+      "errorCreatingReservation": "Error Creating Reservation",
+      "guest": "Guest",
+      "guestCount": "Number of Guests",
+      "guestEmail": "Guest Email",
+      "guestInfo": "Guest Information",
+      "guestName": "Guest Name",
+      "guestNationality": "Guest Nationality",
+      "guestPhone": "Guest Phone",
+      "guests": "Guests",
+      "loft": "Loft",
+      "notAvailable": "Not available for the selected dates.",
+      "propertyAndGuestDetails": "Property & Guest Details",
+      "reservationSuccess": "Reservation Successful",
+      "selectLoft": "Select a loft",
+      "serviceFee": "Service Fee",
+      "specialRequests": "Special Requests",
+      "specialRequestsPlaceholder": "Any special requests for the guest?",
+      "stayDates": "Stay Dates",
+      "taxes": "Taxes",
+      "title": "New Reservation",
+      "total": "Total Price",
+      "fullNamePlaceholder": "Enter guest's full name",
+      "emailPlaceholder": "Enter guest's email address",
+      "phonePlaceholder": "Enter guest's phone number",
+      "nationalityPlaceholder": "Enter guest's nationality"
+    },
+    "guestSatisfaction": "guestSatisfaction",
+    "guests": "Guests",
+    "list": {
+      "advancedDescription": "Complete reservation management with advanced filtering, sorting, and bulk operations.",
+      "advancedFilters": "Advanced Filters",
+      "advancedTitle": "Advanced List View",
+      "bulkActions": "Bulk Actions",
+      "exportOptions": "Export Options",
+      "title": "Reservations List"
+    },
+    "live": "Live",
+    "monthlyRevenue": "monthlyRevenue",
+    "new": "New",
+    "nights": "nights",
+    "nights_one": "night",
+    "nights_other": "nights",
+    "occupancyRate": "occupancyRate",
+    "pro": "Pro",
+    "proTag": "Pro",
+    "reportsLabel": "Reports",
+    "status": {
+      "cancelled": "Annulée",
+      "completed": "Terminée",
+      "confirmed": "Confirmée",
+      "pending": "En attente"
+    },
+    "statusActions": {
+      "confirm": "Confirmer",
+      "cancel": "Annuler",
+      "complete": "Marquer comme terminée"
+    },
+    "subtitle": "subtitle",
+    "tabs": {
+      "analytics": "Analytics",
+      "calendar": "Calendar",
+      "list": "List"
+    },
+    "title": "Reservations",
+    "upcoming": {
+      "empty": "No upcoming reservations.",
+      "title": "Upcoming Reservations"
+    },
+    "vsLastMonth": "vs last month",
+    "allLofts": "All Lofts",
+    "reservations": {
+      "form": {
+        "title": "Title",
+        "guest": "Guest"
+      },
+      "details": {
+        "title": "Title",
+        "guest": "Guest"
+      }
+    }
+  },
+  "roles": {
+    "admin": "Administrator",
+    "executive": "Executive",
+    "guest": "Guest",
+    "manager": "Manager",
+    "member": "Member",
+    "owner": "Owner",
+    "user": "User",
+    "client": "Client",
+    "partner": "Partner",
+    "superuser": "Superuser"
+  },
+  "userMenu": {
+    "user": "User",
+    "myDashboard": "My Dashboard",
+    "myProfile": "My Profile",
+    "editProfile": "Edit Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "settings": {
+    "profileInfo": "Profile Information",
+    "updatePersonalInfo": "Update your personal information and preferences",
+    "categories": {
+      "addNew": "Add New Category",
+      "allCategories": "All Categories",
+      "categoryCreated": "Category '{name}' created successfully",
+      "categoryDetails": "Category Details",
+      "categoryName": "Category Name",
+      "categoryType": "Category Type",
+      "categoryUpdated": "Category '{name}' updated successfully",
+      "createCategory": "Create Category",
+      "createNewCategory": "Create a new transaction category",
+      "deleteConfirm": "Are you sure you want to delete this category?",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter category description (optional)",
+      "editCategory": "Edit Category",
+      "enterCategoryInfo": "Enter the category information below",
+      "expenseCategories": "Expense Categories",
+      "incomeCategories": "Income Categories",
+      "manageCategoriesExpense": "Categories for expense transactions",
+      "manageCategoriesIncome": "Categories for income transactions",
+      "namePlaceholder": "Enter category name",
+      "noExpenseCategories": "No expense categories found",
+      "noIncomeCategories": "No income categories found",
+      "saveChanges": "Save Changes",
+      "saveError": "Failed to save category - please try again",
+      "selectType": "Select category type",
+      "subtitle": "Manage your transaction categories",
+      "type": "Type",
+      "income": "Income",
+      "expense": "Expense",
+      "totalCategories": "Total: {count} categories",
+      "updateCategoryInfo": "Update category information",
+      "incomeCount": "{count} income",
+      "expenseCount": "{count} expenses"
+    },
+    "currencies": {
+      "addFirstCurrency": "Add your first currency to get started",
+      "addNew": "Add New Currency",
+      "addNewCurrency": "Add New Currency",
+      "allCurrencies": "All Currencies",
+      "code": "Code",
+      "createCurrency": "Create Currency",
+      "createNewCurrency": "Create New Currency",
+      "creating": "Creating...",
+      "currencyForm": {
+        "title": "Currency Information",
+        "name": "Currency Name",
+        "namePlaceholder": "e.g., US Dollar",
+        "code": "Currency Code",
+        "codePlaceholder": "e.g., USD",
+        "symbol": "Symbol",
+        "symbolPlaceholder": "e.g., $",
+        "ratio": "Exchange Rate",
+        "ratioPlaceholder": "e.g., 1.00",
+        "ratioHelp": "Exchange rate relative to Algerian Dinar (e.g., 1 DZD = X of this currency)",
+        "status": "Status",
+        "statusPlaceholder": "Select status",
+        "createButton": "Create Currency",
+        "updateButton": "Update Currency",
+        "cancelButton": "Cancel"
+      },
+      "default": "Default",
+      "defaultCurrency": "Default Currency",
+      "defaultCurrencyDesc": "This currency is used as the default for all transactions",
+      "delete": "Delete",
+      "deleteConfirm": "Are you sure you want to delete this currency?",
+      "deleteSuccess": "Currency deleted successfully",
+      "deleteError": "Error deleting currency",
+      "edit": "Edit",
+      "editCurrency": "Edit Currency",
+      "enterCurrencyDetails": "Enter the currency details below",
+      "exchangeRate": "Exchange Rate",
+      "loading": "Loading currencies...",
+      "name": "Name",
+      "noCurrenciesFound": "No currencies found",
+      "primary": "Primary",
+      "ratio": "Exchange Rate",
+      "ratioHelp": "Exchange rate relative to USD (e.g., 1 USD = X of this currency)",
+      "ratioTooltip": "Enter the conversion ratio to USD or base currency",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "searchCurrencies": "Search currencies...",
+      "searchPlaceholder": "Search by currency name, code, or symbol",
+      "secondary": "Secondary",
+      "setAsDefault": "Set as default",
+      "setDefault": "Set as default",
+      "setDefaultConfirm": "Are you sure you want to set this as the default currency?",
+      "setDefaultSuccess": "Default currency updated successfully",
+      "status": "Status",
+      "subtitle": "Manage currencies for your transactions",
+      "symbol": "Symbol",
+      "table": {
+        "name": "Name",
+        "code": "Code",
+        "symbol": "Symbol",
+        "exchangeRate": "Exchange Rate",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "totalCurrencies": "Total: {count} currencies",
+      "updateCurrency": "Update Currency",
+      "updateSuccess": "Currency updated successfully",
+      "updateError": "Error updating currency"
+    },
+    "paymentMethods": "Payment Methods",
+    "common": {
+      "actions": "Actions",
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "subtitle": "Manage your application settings and preferences",
+    "title": "Settings",
+    "zones": {
+      "subtitle": "Manage geographic zones",
+      "title": "Zones"
+    },
+    "application": {
+      "title": "Application Settings",
+      "subtitle": "General configuration and system settings",
+      "authRequired": "Authentication Required",
+      "loginPrompt": "Please log in to access application settings.",
+      "accountSettings": {
+        "title": "Account Settings",
+        "description": "Manage your account information and security",
+        "fullName": "Full Name",
+        "email": "Email",
+        "role": "Role"
+      },
+      "passwordChange": {
+        "title": "Change Password",
+        "description": "Update your account password",
+        "currentPassword": "Current Password",
+        "currentPasswordPlaceholder": "Enter your current password",
+        "newPassword": "New Password",
+        "newPasswordPlaceholder": "Enter your new password",
+        "confirmNewPassword": "Confirm New Password",
+        "confirmNewPasswordPlaceholder": "Confirm your new password",
+        "button": "Change Password",
+        "buttonProgress": "Changing Password..."
+      },
+      "appInfo": {
+        "title": "Application Information",
+        "description": "Current application details and status",
+        "appName": "Application Name",
+        "version": "Version",
+        "status": "Status",
+        "statusActive": "Active",
+        "statusProduction": "Production"
+      },
+      "admin": {
+        "title": "System Administration",
+        "description": "Administrative functions (Admin only)",
+        "quickActions": "Quick Actions",
+        "clearCache": "Clear Cache"
+      },
+      "saveAll": {
+        "button": "Save All Settings"
+      }
+    },
+    "userPasswords": {
+      "common": {
+        "loading": "Loading..."
+      },
+      "title": "User Passwords",
+      "subtitle": "Manage user passwords (admin only)",
+      "userSelection": {
+        "title": "Select User",
+        "description": "Select the user whose password you want to change",
+        "searchLabel": "Search for a user",
+        "searchPlaceholder": "Search by name or email...",
+        "selectLabel": "Select a user",
+        "noResults": "No users found",
+        "selectedUser": "Selected user: {name}"
+      },
+      "passwordForm": {
+        "title": "New Password",
+        "description": "Set a new password for the selected user",
+        "newPassword": "New Password",
+        "newPasswordPlaceholder": "Enter the new password",
+        "confirmPassword": "Confirm Password",
+        "confirmPasswordPlaceholder": "Confirm the new password",
+        "button": "Change Password",
+        "buttonProgress": "Changing Password...",
+        "selectedUser": "Change password for {name}"
+      },
+      "security": {
+        "title": "Security Considerations",
+        "description": "Important information about password changes",
+        "warning1": "Remember to inform the user about the password change",
+        "warning2": "Password must be at least 6 characters long",
+        "warning3": "This action is irreversible"
+      },
+      "selectUserError": "Please select a user",
+      "passwordMismatchError": "Passwords do not match",
+      "passwordLengthError": "Password must be at least 6 characters long",
+      "passwordUpdateSuccess": "Password updated successfully for {name}",
+      "passwordUpdateError": "Error updating password",
+      "roles": {
+        "admin": "Administrator",
+        "manager": "Manager",
+        "member": "Member",
+        "executive": "Executive"
+      }
+    },
+    "email": "Email",
+    "role": "Role",
+    "fullName": "Full Name",
+    "updateProfile": "Update Profile",
+    "security": "Security",
+    "manageAccountSecurity": "Manage your account security",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "changePassword": "Change Password",
+    "notifications": "Notifications",
+    "configureNotifications": "Configure your notification preferences",
+    "taskAssignments": "Task Assignments",
+    "taskAssignmentsDesc": "Receive notifications when new tasks are assigned",
+    "dueDateReminders": "Due Date Reminders",
+    "dueDateRemindersDesc": "Receive reminders for upcoming tasks",
+    "financialReports": "Financial Reports",
+    "financialReportsDesc": "Receive notifications for financial reports",
+    "enable": "Enable",
+    "dataPrivacy": "Data Privacy",
+    "manageDataPrivacy": "Manage your data privacy",
+    "dataExport": "Data Export",
+    "dataExportDesc": "Download a copy of your data",
+    "exportData": "Export Data",
+    "accountDeletion": "Account Deletion",
+    "accountDeletionDesc": "Permanently delete your account and all your data",
+    "deleteAccount": "Delete Account",
+    "managePaymentMethods": "Manage payment methods",
+    "managePaymentMethodsBtn": "Manage Payment Methods",
+    "applicationSettings": "Application Settings",
+    "applicationSettingsDesc": "Advanced configuration and system settings",
+    "accessSettings": "Access Settings",
+    "auditTraceability": "Audit and Traceability",
+    "auditTraceabilityDesc": "View modification history and audit logs",
+    "viewAuditLogs": "View Audit Logs",
+    "passwordManagement": "Password Management",
+    "passwordManagementDesc": "Change passwords for other users (admin only)",
+    "managePasswords": "Manage Passwords",
+    "partnerManagement": "Partner Management",
+    "partnerManagementDesc": "Review and approve partner applications",
+    "managePartners": "Manage Partners"
+  },
+  "tasks": {
+    "addTask": "Add Task",
+    "add_task": "Add Task",
+    "allLofts": "All Lofts",
+    "allUsers": "All Users",
+    "assignTo": "Assign To",
+    "associatedLoft": "Associated Loft",
+    "loadingLofts": "Loading lofts...",
+    "noLoftAssociated": "No loft associated",
+    "assigned": "assigned",
+    "assignedTo": "Assigned to",
+    "cancel": "Cancel",
+    "clearFilters": "Clear Filters",
+    "createError": "Error creating task.",
+    "createNewTask": "Create New Task",
+    "createSuccess": "Task created successfully!",
+    "createTask": "Create Task",
+    "dateRange": "Due Date",
+    "delete_task": "Delete Task",
+    "dueDateFormat": "Due Date: {date}",
+    "editTask": "Edit Task",
+    "edit_task": "Edit Task",
+    "fillTaskInformation": "Fill task information",
+    "filtersTitle": "Filters",
+    "filters": {
+      "allStatuses": "All Statuses",
+      "endDate": "End Date",
+      "filterByStatus": "Filter by Status",
+      "startDate": "Start Date"
+    },
+    "form": {
+      "addNewTask": "Add New Task",
+      "createNewTask": "Create New Task",
+      "editTask": "Edit Task",
+      "updateStatusDescription": "Update task status and description.",
+      "updateTaskInfo": "Update task information",
+      "updateTaskStatus": "Update task status"
+    },
+    "history": {
+      "backToTask": "Back to Task",
+      "taskHistory": "Task History",
+      "historyFor": "History and details for",
+      "taskInformation": "Task Information",
+      "taskTitle": "Task Title",
+      "currentStatus": "Current Status",
+      "description": "Description",
+      "noDescription": "No description provided",
+      "dueDate": "Due Date",
+      "noDueDate": "No due date set",
+      "taskTimeline": "Task Timeline",
+      "taskCreated": "Task Created",
+      "lastUpdated": "Last Updated",
+      "associatedLoft": "Associated Loft",
+      "availableActions": "Available Actions",
+      "updateStatus": "Update Task Status",
+      "backToAllTasks": "Back to All Tasks"
+    },
+    "inProgress": "in progress",
+    "memberCanOnlyUpdateStatus": "Members can only update status and description of tasks.",
+    "messages": {
+      "created_success": "Task created successfully.",
+      "delete_confirm": "Are you sure you want to delete this task?",
+      "deleted_success": "Task deleted successfully.",
+      "updated_success": "Task updated successfully."
+    },
+    "myTasks": "My Tasks",
+    "noDescription": "No description",
+    "noDueDate": "No due date",
+    "noTasks": "No tasks found.",
+    "noTasksDescription": "No tasks match the search criteria.",
+    "overdue": "Overdue",
+    "saving": "Saving...",
+    "search": "Search",
+    "searchPlaceholder": "Search by title or description...",
+    "status": {
+      "todo": "To Do",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    },
+    "statusLabel": "Status",
+    "subtitle": "Manage your assigned tasks and track their progress.",
+    "table": {
+      "actions": "Actions",
+      "assigned_to": "Assigned To",
+      "due_date": "Due Date",
+      "id": "ID",
+      "name": "Name",
+      "status": "Status"
+    },
+    "taskDescription": "Task Description",
+    "taskDetails": "Task Details",
+    "taskDueDate": "Task Due Date",
+    "taskStatus": "Task Status",
+    "taskTitle": "Task Title",
+    "task_details": "Task Details",
+    "tasks": "tasks",
+    "tasksList": "Tasks List",
+    "title": "Tasks",
+    "to": "to",
+    "updateError": "Error updating task.",
+    "updateStatus": "Update Status",
+    "updateSuccess": "Task updated successfully!",
+    "updateTask": "Update Task",
+    "urgent": "Urgent",
+    "viewTask": "View Task",
+    "yourTasks": "Your Tasks",
+    "fullAccess": "Full Access",
+    "assignedAccess": "Assigned Access",
+    "viewOnlyAccess": "View-Only Access",
+    "current": "current",
+    "viewDetails": "View Details",
+    "yourPermissions": "Your Permissions",
+    "allowed": "Allowed",
+    "denied": "Denied",
+    "view": "View",
+    "edit": "Edit",
+    "reassign": "Reassign",
+    "restrictedAccess": "Restricted Access",
+    "markAs": "Mark as",
+    "loftName": "Loft Name",
+    "loftAddress": "Loft Address",
+    "viewLoftDetails": "View Loft Details",
+    "bills": {
+      "title": "Title"
+    },
+    "active": "Active",
+    "optimizedBanner": {
+      "title": "Title"
+    }
+  },
+  "teams": {
+    "activeMembers": "Active Members",
+    "activeTasks": "Active Tasks",
+    "activeTeams": "Active Teams",
+    "addNewTeam": "Add new team",
+    "addTeam": "Add Team",
+    "add_team": "Add Team",
+    "basicInformation": "Basic information about the team",
+    "cancel": "Cancel",
+    "couldNotFindTeam": "Could not find team with ID",
+    "createTeam": "Create team",
+    "createNewTeam": "Create New Team",
+    "addNewTeamDescription": "Add a new team to your organization",
+    "createdAt": "Created At",
+    "createdBy": "Created by",
+    "daysActive": "days active",
+    "delete_team": "Delete Team",
+    "description": "Description",
+    "editTeam": "Edit Team",
+    "edit_team": "Edit Team",
+    "enterTeamInfo": "Enter team information",
+    "form": {
+      "add_member": "Add Member",
+      "enterTeamInfo": "Enter team information",
+      "members": "Members",
+      "name": "Team Name",
+      "name_placeholder": "Enter team name",
+      "updateTeamInfo": "Update team information"
+    },
+    "goBack": "Go Back",
+    "loading": "Loading...",
+    "membersCount": "active members",
+    "preparingWorkspace": "Preparing your workspace",
+    "messages": {
+      "created_success": "Team created successfully.",
+      "delete_confirm": "Are you sure you want to delete this team?",
+      "deleted_success": "Team deleted successfully.",
+      "updated_success": "Team updated successfully."
+    },
+    "saving": "Saving...",
+    "subtitle": "Manage your teams, members, and their assigned tasks.",
+    "table": {
+      "actions": "Actions",
+      "id": "ID",
+      "members": "Members",
+      "name": "Name"
+    },
+    "tasksInProgress": "Tasks in Progress",
+    "teamAge": "Team Age",
+    "teamDetails": "Team Details",
+    "teamId": "Team ID",
+    "teamName": "Team Name",
+    "teamNotFound": "Team Not Found",
+    "teamNotFoundDescription": "Could not find team with ID {id}",
+    "team_details": "Team Details",
+    "title": "Teams",
+    "totalTeams": "Total Teams",
+    "updateTeam": "Update Team",
+    "updateTeamInfo": "Update team information",
+    "members": "Members",
+    "tasks": "Tasks",
+    "noActiveTasks": "No active tasks",
+    "view": "View",
+    "edit": "Edit",
+    "taskCount": "{count} task",
+    "taskCountPlural": "{count} tasks",
+    "activeTaskCount": "{count} active task",
+    "activeTaskCountPlural": "{count} active tasks",
+    "collaborators": "Collaborators",
+    "inProgress": "In Progress",
+    "searchPlaceholder": "Search for a team...",
+    "teamCount": "{count} team",
+    "teamCountPlural": "{count} teams",
+    "teamFoundCount": "{count} team found",
+    "teamFoundCountPlural": "{count} teams found",
+    "noTeamsFound": "No teams found",
+    "noTeamsDescription": "Start by creating your first team to organize your work and collaborate effectively.",
+    "noSearchResults": "No teams match your search \"{searchTerm}\". Try different keywords.",
+    "clearSearch": "Clear search",
+    "name": "Name"
+  },
+  "admin": {
+    "management": {
+      "title": "System Management",
+      "description": "Comprehensive dashboard for managing users, partners, and system operations"
+    },
+    "stats": {
+      "totalUsers": "Total Users",
+      "active": "active",
+      "clients": "Clients",
+      "ofTotal": "of total",
+      "partners": "Partners",
+      "pending": "pending",
+      "disputes": "Disputes",
+      "needsAttention": "needs attention",
+      "inactive": "inactive"
+    },
+    "userDistribution": {
+      "title": "User Distribution",
+      "description": "Overview of user type distribution across the system"
+    },
+    "roles": {
+      "client": "Client",
+      "partner": "Partner",
+      "employees": "Employees"
+    },
+    "users": {
+      "title": "User Management",
+      "description": "Manage system users",
+      "filters": {
+        "title": "Filters",
+        "search": "Search users...",
+        "searchPlaceholder": "Search users...",
+        "role": "Filter by role",
+        "allRoles": "All roles",
+        "status": "Filter by status",
+        "allStatuses": "All statuses",
+        "apply": "Apply filters"
+      },
+      "usersList": {
+        "title": "Users List",
+        "noUsers": "No users found"
+      },
+      "table": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "activate": "Activate",
+        "deactivate": "Deactivate"
+      },
+      "status": {
+        "inactive": "Inactive",
+        "active": "Active"
+      },
+      "roles": {
+        "admin": "Administrator",
+        "manager": "Manager",
+        "executive": "Executive",
+        "member": "Member",
+        "client": "Client",
+        "partner": "Partner",
+        "guest": "Guest"
+      },
+      "deleteDialog": {
+        "title": "Title",
+        "cancel": "Cancel"
+      }
+    },
+    "tabs": {
+      "userManagement": "User Management",
+      "partnerVerification": "Partner Verification",
+      "disputeResolution": "Dispute Resolution",
+      "reports": "Reports"
+    },
+    "editCategory": "Edit Category",
+    "newCategory": "New Category",
+    "categoryName": "Category Name",
+    "partners": {
+      "title": "Partner Management",
+      "description": "Verification and approval of partner applications",
+      "tabs": {
+        "pending": "Pending",
+        "verified": "Verified",
+        "rejected": "Rejected"
+      },
+      "status": {
+        "pending": "Pending",
+        "verified": "Verified",
+        "rejected": "Rejected"
+      },
+      "submittedOn": "Submitted on",
+      "contactPerson": "Contact Person",
+      "businessType": "Business Type",
+      "phone": "Phone",
+      "address": "Address",
+      "taxId": "Tax ID",
+      "company": "Company",
+      "individual": "Individual",
+      "verificationNotes": "Verification Notes",
+      "notesPlaceholder": "Add verification notes (optional)...",
+      "approve": "Approve",
+      "reject": "Reject",
+      "noPendingPartners": "No pending partner applications.",
+      "noVerifiedPartners": "No verified partners.",
+      "noRejectedPartners": "No rejected partners."
+    },
+    "disputes": {
+      "client": "Client",
+      "partner": "Partner",
+      "status": "Status",
+      "cancel": "Cancel",
+      "title": "Title"
+    },
+    "cancel": "Cancel",
+    "reports": {
+      "title": "Title",
+      "filters": {
+        "title": "Title"
+      },
+      "analytics": {
+        "active": "Active"
+      }
+    }
+  },
+  "navigation": {
+    "executiveDashboard": "Executive Dashboard",
+    "dashboard": "Dashboard",
+    "conversations": "Conversations",
+    "notifications": "Notifications",
+    "lofts": "Lofts",
+    "customers": "Customers",
+    "reservations": "Reservations",
+    "availability": "Availability",
+    "tasks": "Tasks",
+    "teams": "Teams",
+    "owners": "Owners",
+    "transactions": "Transactions",
+    "reports": "Reports",
+    "databaseCloner": "Database Cloner",
+    "settings": "Settings",
+    "categories": "Categories",
+    "logout": "Logout",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "validation": {
+      "email": "Email"
+    },
+    "actions": {
+      "save": "Save"
+    }
+  },
+  "testSound": {
+    "browserBlocksAudio": "Browsers require user interaction before playing audio",
+    "checkConsole": "Check browser console for any audio-related errors",
+    "clickAnywhere": "Click anywhere on the page first",
+    "errorSound": "Error Sound (Lowest)",
+    "failedToSend": "Failed to send test notification",
+    "failedToSendTask": "Failed to send test task notification",
+    "infoSound": "Info Sound (Medium)",
+    "notificationHint": "These should trigger real-time notifications with sound and update the sidebar badge without page refresh!",
+    "sendSuccessNotification": "Send Success Notification",
+    "sendWarningNotification": "Send Warning Notification",
+    "successSound": "Success Sound (High)",
+    "taskCompletedMessage": "Your task has been completed successfully.",
+    "taskCompletedTitle": "Task Completed!",
+    "taskOverdueMessage": "You have a task that is overdue and needs attention.",
+    "taskOverdueTitle": "Task Overdue",
+    "testRealTimeNotifications": "Test Real-Time Notifications",
+    "testSoundTypes": "Test Different Sound Types",
+    "testTaskNotification": "Test Task Notification",
+    "title": "Notification Sound Test",
+    "troubleshooting": "Troubleshooting:",
+    "tryDifferentBrowsers": "Try different browsers if sound doesn't work",
+    "volumeUp": "Make sure your device volume is turned up",
+    "warningSound": "Warning Sound (Low)"
+  },
+  "testTranslations": {
+    "arabic": "Arabic",
+    "currentLanguage": "Current Language",
+    "english": "English",
+    "french": "French",
+    "testedTranslations": "Tested Translations",
+    "title": "Test Translations"
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light",
+    "system": "System",
+    "toggleTheme": "Toggle theme"
+  },
+  "transactions": {
+    "addNewTransaction": "Add New Transaction",
+    "allCategories": "All Categories",
+    "allCurrencies": "All Currencies",
+    "allLofts": "All Lofts",
+    "allPaymentMethods": "All Payment Methods",
+    "allStatuses": "All Statuses",
+    "allTypes": "All Types",
+    "amount": "Amount",
+    "amountPlaceholder": "Enter amount",
+    "amountAndDate": "Amount and Date",
+    "categoriesAndProperties": "Categories and Properties",
+    "category": "Category",
+    "clearFilters": "Clear Filters",
+    "completed": "Completed",
+    "createFirstTransaction": "Create your first transaction",
+    "createNewTransaction": "Create new transaction",
+    "createQuickTransaction": "Quickly create a new transaction",
+    "createTransaction": "Create Transaction",
+    "currency": "Currency",
+    "date": "Date",
+    "dateRange": "Date Range",
+    "deleteConfirmDescription": "This action cannot be undone. The transaction will be permanently deleted.",
+    "deleteConfirmTitle": "Are you sure you want to delete this transaction?",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe this transaction...",
+    "editTransaction": "Edit Transaction",
+    "endDate": "End Date",
+    "enterTransactionInfo": "Enter transaction information",
+    "equivalent": "Equivalent in",
+    "expense": "Expense",
+    "failed": "Failed",
+    "filters": "Filters",
+    "income": "Income",
+    "loft": "Loft",
+    "netIncome": "Net Income",
+    "noDescription": "No description",
+    "noTransactions": "No transactions found",
+    "noTransactionsDescription": "Start by creating your first transaction to track your finances.",
+    "optional": "Optional",
+    "paymentDetails": "Payment Details",
+    "paymentMethod": "Payment Method",
+    "pending": "Pending",
+    "quickTransaction": "Quick Transaction",
+    "ratio": "Rate",
+    "referenceAmounts": "Reference Amounts",
+    "search": "Search",
+    "searchPlaceholder": "Search by description or ID...",
+    "selectedCurrency": "Selected Currency",
+    "startDate": "Start Date",
+    "status": "Status",
+    "subtitle": "Manage reference amounts for transaction categories to streamline data entry.",
+    "title": "Transactions",
+    "to": "to",
+    "totalExpenses": "Total Expenses",
+    "totalIncome": "Total Income",
+    "transactionCount": "Transaction Count",
+    "transactionDescription": "Transaction description",
+    "transactionDetails": "Transaction Details",
+    "transactionType": "Transaction Type",
+    "transactions": "transactions",
+    "transactionsList": "Transactions List",
+    "type": "Type",
+    "updateTransaction": "Update Transaction",
+    "updateTransactionInfo": "Update transaction information",
+    "original": "Original",
+    "loadingError": "Error loading reference amounts.",
+    "updateSuccess": "Reference amount updated successfully.",
+    "updateError": "Error updating reference amount.",
+    "fillAllFields": "Please fill in all required fields.",
+    "addError": "Error adding new reference amount.",
+    "referenceAmountsTitle": "Reference Amounts Management",
+    "add": "Add",
+    "addNewCategory": "Add New Reference",
+    "categoryLabel": "Category Name",
+    "categoryPlaceholder": "e.g., maintenance, cleaning",
+    "selectType": "Select a type",
+    "referenceAmountDZD": "Reference Amount (DZD)",
+    "addCategory": "Add Reference",
+    "expenses": "Expenses",
+    "howItWorks": "How it works?",
+    "howItWorksSteps": {
+      "step1": "Reference amounts pre-fill the amount when creating a new transaction.",
+      "step2": "Define a reference amount for each transaction category (income or expense).",
+      "step3": "When you select a category in the transaction form, the amount is auto-filled.",
+      "step4": "You can always modify the amount manually during transaction entry."
+    },
+    "edit": "Edit",
+    "enterAmount": "Please enter an amount.",
+    "save": "Save",
+    "categories": {
+      "maintenance": "Maintenance",
+      "cleaning": "Cleaning",
+      "repair": "Repair",
+      "plumbing": "Plumbing",
+      "electrical": "Electrical",
+      "painting": "Painting",
+      "security": "Security",
+      "inspection": "Inspection",
+      "utilities": "Utilities",
+      "insurance": "Insurance",
+      "taxes": "Taxes",
+      "supplies": "Supplies",
+      "rent": "Rent",
+      "deposit": "Deposit",
+      "late_fees": "Late Fees",
+      "parking": "Parking",
+      "services": "Services",
+      "other": "Other"
+    }
+  },
+  "unauthorized": {
+    "accessDenied": "Access Denied",
+    "backToDashboard": "Back to Dashboard",
+    "go_home": "Go Home",
+    "message": "You do not have permission to access this page.",
+    "noPermission": "No Permission",
+    "title": "Unauthorized"
+  },
+  "zoneAreas": {
+    "common": {
+      "error": "Error",
+      "success": "Success",
+      "saving": "Saving...",
+      "update": "Update",
+      "create": "Create",
+      "cancel": "Cancel",
+      "name": "Name"
+    },
+    "nav": {
+      "zoneAreas": "Zone Areas"
+    },
+    "settings": {
+      "zoneAreas": {
+        "addNew": "Add New Zone Area",
+        "updateZoneAreaInfo": "Update zone area information",
+        "createNewZoneArea": "Create a new zone area",
+        "existingZoneAreas": "Existing Zone Areas",
+        "totalZoneAreas": "Total: {count} zone areas",
+        "noZoneAreasFound": "No zone areas found",
+        "addFirstZoneArea": "Add your first zone area to get started",
+        "refreshError": "Error refreshing data"
+      }
+    },
+    "zoneAreas": {
+      "actions": "Actions",
+      "createZoneArea": "Create Zone Area",
+      "createSuccess": "Zone area created successfully",
+      "deleteConfirm": "Are you sure you want to delete this zone area?",
+      "deleteError": "Error deleting zone area.",
+      "deleteSuccess": "Zone area deleted successfully.",
+      "existingZoneAreas": "Existing Zone Areas",
+      "name": "Name",
+      "namePlaceholder": "Enter zone area name",
+      "noZoneAreasYet": "No zone areas found yet.",
+      "subtitle": "Manage geographic zones for your properties",
+      "updateSuccess": "Zone area updated successfully",
+      "updateZoneArea": "Update Zone Area"
+    }
+  },
+  "debug": {
+    "title": "Detailed Photo Upload Debug",
+    "description": "This debug analyzes each upload step to precisely identify where the problem occurs.",
+    "runDebug": "Run Detailed Debug",
+    "running": "Debug in progress...",
+    "success": "Debug successful!",
+    "problemDetected": "Problem detected",
+    "steps": "Debug Steps",
+    "viewDetails": "View technical details",
+    "recommendations": "Recommended Solutions",
+    "tableMissing": "loft_photos table missing",
+    "runMigration": "Run the migration",
+    "storageProblem": "Storage Problem",
+    "createBucket": "Create the 'loft-photos' bucket in Supabase Storage interface",
+    "dbProblem": "DB Connection Problem",
+    "checkEnvVars": "Check your Supabase environment variables",
+    "executedOn": "Debug executed on",
+    "unknownError": "Unknown error",
+    "networkError": "Unable to contact debug API",
+    "ok": "OK",
+    "error": "Error"
+  },
+  "audit": {
+    "auditDashboard": "Audit Dashboard",
+    "auditDashboardDescription": "View and filter audit logs for all actions performed in the system.",
+    "accessLevel": "Access Level",
+    "accessLevels": {
+      "full": "Full Access",
+      "assigned": "Assigned Access",
+      "none": "No Access",
+      "all": "All Access"
+    },
+    "auditHistory": "Audit History",
+    "auditHistoryFor": "Audit History for",
+    "actions": {
+      "created": "Created",
+      "updated": "Updated",
+      "deleted": "Deleted"
+    },
+    "tables": {
+      "transactions": "Transaction",
+      "tasks": "Task",
+      "reservations": "Reservation",
+      "lofts": "Loft"
+    },
+    "unknownUser": "Unknown User",
+    "changedFields": "Changed Fields",
+    "oldValue": "Old Value",
+    "newValue": "New Value",
+    "empty": "Empty",
+    "createdData": "Created Data",
+    "deletedData": "Deleted Data",
+    "metadata": "Metadata",
+    "ipAddress": "IP Address",
+    "userAgent": "User Agent",
+    "refresh": "Refresh",
+    "totalChanges": "Total Changes",
+    "created": "Created",
+    "updated": "Updated",
+    "deleted": "Deleted",
+    "users": "Users",
+    "filters": "Filters",
+    "clearFilters": "Clear Filters",
+    "action": "Action",
+    "allActions": "All Actions",
+    "user": "User",
+    "allUsers": "All Users",
+    "dateRange": "Date Range",
+    "showingResults": "Showing {filtered} of {total} results",
+    "noAuditLogs": "No Audit Logs",
+    "noMatchingLogs": "No Matching Logs",
+    "noAuditLogsDescription": "No changes have been recorded for this item yet.",
+    "tryAdjustingFilters": "Try adjusting your filters to see more results.",
+    "chronologicalOrder": "Chronological Order (newest first)",
+    "fetchError": "Failed to load audit logs",
+    "retry": "Retry",
+    "loadingAuditData": "Loading audit data...",
+    "totalLogs": "Total Logs",
+    "todayLogs": "Today's Logs",
+    "uniqueUsers": "Unique Users",
+    "topAction": "Top Action",
+    "none": "None",
+    "tableView": "Table View",
+    "timelineView": "Timeline View",
+    "search": "Search",
+    "searchPlaceholder": "Search logs...",
+    "searchDescription": "Search by user email, action, or table name",
+    "tableName": "Table Name",
+    "allTables": "All Tables",
+    "recordId": "Record ID",
+    "recordIdPlaceholder": "Enter record ID",
+    "dateRangeDescription": "Filter by date range",
+    "applyFilters": "Apply Filters",
+    "resetFilters": "Reset Filters",
+    "auditLogs": "Audit Logs",
+    "entries": "entries",
+    "selectAll": "Select All",
+    "timestamp": "Timestamp",
+    "table": "Table",
+    "changes": "Changes",
+    "actionsColumn": "Actions",
+    "showingEntries": "Showing {start} to {end} of {total} entries",
+    "selectedCount": "{count} selected",
+    "auditDetails": "Audit Details",
+    "auditTimeline": "Audit Timeline",
+    "selectedEntries": "{count} selected entries",
+    "filtersActive": "filters active",
+    "activeFiltersCount": "{count} active filter(s)",
+    "openMenu": "Open menu",
+    "exportSelected": "Export Selected",
+    "selectLog": "Select log",
+    "fieldsChanged": "Fields Changed",
+    "newRecord": "New record",
+    "recordDeleted": "Record deleted",
+    "noChanges": "No changes",
+    "viewDetails": "View Details",
+    "copyRecordId": "Copy Record ID",
+    "actionLabels": {
+      "created": "Created",
+      "updated": "Updated",
+      "deleted": "Deleted"
+    },
+    "actionTypes": {
+      "created": "Created",
+      "updated": "Updated",
+      "deleted": "Deleted",
+      "view": "View",
+      "export": "Export"
+    },
+    "times": "times",
+    "topActions": "Top Actions"
+  },
+  "booking": {
+    "form": {
+      "title": "Complete Your Reservation",
+      "description": "Please fill in your information to finalize your booking",
+      "step": "Step {current} of {total}",
+      "previous": "Previous",
+      "next": "Next",
+      "cancel": "Cancel",
+      "confirmBooking": "Confirm Booking",
+      "submitting": "Processing...",
+      "successMessage": "Reservation created successfully!",
+      "submitError": "An error occurred while creating your reservation",
+      "firstName": "First Name",
+      "firstNamePlaceholder": "Enter your first name",
+      "lastName": "Last Name",
+      "lastNamePlaceholder": "Enter your last name",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email address",
+      "phone": "Phone Number",
+      "phonePlaceholder": "Enter your phone number",
+      "nationality": "Nationality",
+      "nationalityPlaceholder": "Select your nationality",
+      "dateOfBirth": "Date of Birth",
+      "idNumber": "ID Number",
+      "idNumberPlaceholder": "Enter your ID number (optional)",
+      "idNumberDescription": "This information helps us verify your identity during check-in",
+      "emergencyContact": "Emergency Contact",
+      "emergencyContactName": "Contact Name",
+      "emergencyContactNamePlaceholder": "Full name",
+      "emergencyContactPhone": "Contact Phone",
+      "emergencyContactPhonePlaceholder": "Phone number",
+      "emergencyContactRelationship": "Relationship",
+      "emergencyContactRelationshipPlaceholder": "Select relationship",
+      "age": "Age",
+      "agePlaceholder": "Enter age",
+      "remove": "Remove",
+      "arrivalTime": "Preferred Arrival Time",
+      "arrivalTimePlaceholder": "Select your preferred arrival time",
+      "specialRequests": "Special Requests",
+      "specialRequestsPlaceholder": "Any special requests or preferences?",
+      "specialRequestsDescription": "Let us know if you have any special needs or requests",
+      "accessibilityNeeds": "Accessibility Needs",
+      "accessibilityNeedsPlaceholder": "Any accessibility requirements?",
+      "accessibilityNeedsDescription": "Please describe any accessibility accommodations needed",
+      "dietaryRestrictions": "Dietary Restrictions",
+      "dietaryRestrictionsPlaceholder": "Any dietary restrictions or allergies?",
+      "dietaryRestrictionsDescription": "Help us prepare for your stay",
+      "termsAcceptance": "I accept the terms and conditions",
+      "termsDescription": "By checking this box, you agree to our booking terms and conditions",
+      "privacyAcceptance": "I accept the privacy policy",
+      "privacyDescription": "By checking this box, you agree to our privacy policy",
+      "marketingConsent": "I would like to receive promotional offers",
+      "marketingDescription": "Receive exclusive deals and updates (optional)"
+    },
+    "steps": {
+      "guestInfo": {
+        "title": "Guest Information",
+        "description": "Primary guest details for the reservation"
+      },
+      "additionalGuests": {
+        "title": "Additional Guests",
+        "description": "Information about other guests",
+        "noGuests": "No additional guests for this reservation",
+        "addGuest": "Add Guest",
+        "guest": "Guest {number}"
+      },
+      "preferences": {
+        "title": "Preferences & Requests",
+        "description": "Special requests and preferences for your stay"
+      },
+      "review": {
+        "title": "Review & Confirm",
+        "description": "Please review your booking details before confirming"
+      }
+    },
+    "review": {
+      "bookingSummary": "Booking Summary",
+      "property": "Property",
+      "dates": "Dates",
+      "guests": "Guests",
+      "guestInformation": "Guest Information",
+      "primaryGuest": "Primary Guest",
+      "additionalGuests": "Additional Guests",
+      "pricingBreakdown": "Pricing Breakdown"
+    },
+    "pricing": {
+      "cleaningFee": "Cleaning Fee",
+      "serviceFee": "Service Fee",
+      "taxes": "Taxes & Fees",
+      "total": "Total"
+    },
+    "confirmation": {
+      "title": "Booking Confirmed!",
+      "subtitle": "Your reservation has been successfully created",
+      "emailSent": "Confirmation email sent successfully",
+      "emailError": "Failed to send confirmation email",
+      "emailConfirmation": "A confirmation email has been sent to {email}",
+      "referencecopied": "Booking reference copied to clipboard",
+      "copyError": "Failed to copy booking reference",
+      "reservationDetails": "Reservation Details",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "guest": "guest",
+      "guests": "guests",
+      "night": "night",
+      "nights": "nights",
+      "primaryGuest": "Primary Guest",
+      "additionalGuests": "Additional Guests",
+      "yearsOld": "years old",
+      "pricingBreakdown": "Pricing Breakdown",
+      "cleaningFee": "Cleaning Fee",
+      "serviceFee": "Service Fee",
+      "taxes": "Taxes & Fees",
+      "total": "Total",
+      "specialRequests": "Special Requests",
+      "nextSteps": "What Happens Next",
+      "nextStepsDescription": "Here's what you can expect after your booking",
+      "step1Title": "Confirmation Email",
+      "step1Description": "You'll receive a detailed confirmation email with all your booking information",
+      "step2Title": "Host Contact",
+      "step2Description": "Your host will contact you within 24 hours with check-in instructions",
+      "step3Title": "Pre-Arrival Information",
+      "step3Description": "You'll receive detailed arrival instructions and local recommendations",
+      "downloadConfirmation": "Download Confirmation",
+      "shareReservation": "Share Reservation",
+      "contactSupport": "Contact Support",
+      "continueBrowsing": "Continue Browsing",
+      "importantNote": "Important:",
+      "importantNoteDescription": "Please save your booking reference number for future reference and check-in",
+      "shareTitle": "My Loft Reservation",
+      "shareText": "I just booked {loftName}! Booking reference: {reference}",
+      "downloadSuccess": "Confirmation downloaded successfully",
+      "downloadError": "Failed to download confirmation",
+      "shareSuccess": "Reservation shared successfully",
+      "shareError": "Failed to share reservation",
+      "linkCopied": "Link copied to clipboard",
+      "loading": {
+        "title": "Loading Your Reservation",
+        "description": "Please wait while we retrieve your booking details..."
+      },
+      "error": {
+        "title": "Unable to Load Reservation",
+        "description": "We couldn't load your reservation details. Please try again.",
+        "retry": "Try Again",
+        "goHome": "Go Home"
+      },
+      "errors": {
+        "reservationNotFound": "Reservation not found",
+        "accessDenied": "Access denied to this reservation",
+        "loadingFailed": "Failed to load reservation details",
+        "unknownError": "An unknown error occurred"
+      },
+      "additionalInfo": "Keep your booking reference safe - you'll need it for check-in and any future inquiries about your reservation."
+    },
+    "success": {
+      "title": "Welcome to Your Loft Experience!",
+      "subtitle": "Your reservation for {loftName} is confirmed and we're excited to host you",
+      "bookingReference": "Booking Reference",
+      "confirmationCode": "Confirmation Code",
+      "emailSent": "A detailed confirmation has been sent to {email}",
+      "reservationSummary": "Your Reservation",
+      "dates": "Stay Dates",
+      "totalPaid": "Total Amount",
+      "whatHappensNext": "What Happens Next",
+      "whatHappensNextDescription": "Here's your step-by-step guide to your upcoming stay",
+      "step1Title": "Confirmation & Receipt",
+      "step1Description": "Check your email for the detailed confirmation and receipt",
+      "step2Title": "Host Introduction",
+      "step2Description": "Your host will reach out with a personal welcome and local tips",
+      "step3Title": "Check-in Instructions",
+      "step3Description": "Receive detailed arrival instructions and access information",
+      "step4Title": "Enjoy Your Stay",
+      "step4Description": "Check in and start enjoying your loft experience!",
+      "immediate": "Immediate",
+      "within24Hours": "Within 24 hours",
+      "beforeCheckIn": "Before check-in",
+      "protectionTitle": "Your Booking is Protected",
+      "protectionDescription": "We've got you covered with comprehensive protection and support",
+      "protection1": "Secure payment processing",
+      "protection2": "24/7 customer support",
+      "protection3": "Flexible cancellation policy",
+      "notificationsTitle": "Stay Updated",
+      "notificationsDescription": "Get real-time updates about your reservation",
+      "enableNotifications": "Enable Notifications",
+      "notificationsEnabled": "Notifications enabled successfully",
+      "notificationsError": "Failed to enable notifications",
+      "notificationsEnabledMessage": "You'll receive updates about your reservation",
+      "needHelp": "Need Help?",
+      "callUs": "Call Us",
+      "emailUs": "Email Us",
+      "liveChat": "Live Chat",
+      "available24_7": "Available 24/7",
+      "responseWithin2Hours": "Response within 2 hours",
+      "instantSupport": "Instant support",
+      "available9to21": "Available 9 AM - 9 PM",
+      "viewReservation": "View Reservation",
+      "bookAnother": "Book Another Loft",
+      "goHome": "Explore More",
+      "finalNoteTitle": "One More Thing",
+      "finalNoteDescription": "Don't forget to follow us on social media for travel tips and exclusive offers!"
+    }
+  },
+  "superuser": {
+    "navigation": {
+      "title": "Superuser Panel",
+      "dashboard": "Dashboard",
+      "dashboardDesc": "System overview",
+      "announcements": "Urgent Announcements",
+      "announcementsDesc": "Manage urgent announcements",
+      "userManagement": "User Management",
+      "userManagementDesc": "Manage all users",
+      "security": "Security & Audit",
+      "securityDesc": "Logs and monitoring",
+      "backup": "Backups",
+      "backupDesc": "Backup management",
+      "databaseCloner": "Database Cloner",
+      "databaseClonerDesc": "Clone database environments",
+      "maintenance": "Maintenance",
+      "maintenanceDesc": "Maintenance tools",
+      "configuration": "Configuration",
+      "configurationDesc": "System settings",
+      "settings": "Settings",
+      "settingsDesc": "Account and application settings",
+      "monitoring": "Monitoring",
+      "monitoringDesc": "System monitoring",
+      "archives": "Archives",
+      "archivesDesc": "Archived data",
+      "emergency": "Emergency Actions",
+      "emergencyLockdown": "Emergency Lockdown",
+      "emergencyAlerts": "Critical Alerts"
+    },
+    "dashboard": {
+      "title": "Superuser Dashboard",
+      "welcome": "Congratulations! You are now logged in as a superuser.",
+      "successMessage": "Success! The superuser authentication system is working correctly.",
+      "errorLoading": "Error loading dashboard",
+      "noData": "No data available",
+      "systemStatus": {
+        "title": "System Status"
+      },
+      "responseTime": "Response time",
+      "activeUsers": "Active Users",
+      "sessions": "Sessions",
+      "reservations": "Reservations",
+      "errorRate": "Error rate",
+      "backup": "Backup",
+      "lastBackup": "Last backup",
+      "overview": "Overview",
+      "securityAlerts": "Security Alerts",
+      "auditLog": "Audit Log",
+      "emergencyActions": "Emergency Actions",
+      "systemPerformance": "System Performance",
+      "database": "Database",
+      "avgResponseTime": "Average response time",
+      "quickActions": "Quick Actions",
+      "recentSecurityAlerts": "Recent Security Alerts",
+      "securityAlertsDescription": "Monitoring suspicious activities and unauthorized access attempts",
+      "noRecentAlerts": "No recent security alerts",
+      "resolve": "Resolve",
+      "recentAuditLog": "Recent Audit Log",
+      "auditLogDescription": "History of administrative actions and system modifications",
+      "noRecentAuditEntries": "No recent audit entries",
+      "emergencyActionsDescription": "Critical functions for system emergency management",
+      "emergencyWarning": "These actions may affect system operation. Use with caution.",
+      "emergencyLockdown": "Emergency Lockdown",
+      "emergencyBackup": "Emergency Backup",
+      "systemRestart": "System Restart",
+      "massLogout": "Mass Logout",
+      "cards": {
+        "userManagement": {
+          "title": "User Management",
+          "description": "Manage user accounts and their permissions"
+        },
+        "security": {
+          "title": "Security",
+          "description": "Security monitoring and alerts"
+        },
+        "audit": {
+          "title": "Audit",
+          "description": "Logs and action history"
+        },
+        "maintenance": {
+          "title": "Maintenance",
+          "description": "System maintenance tools"
+        },
+        "backup": {
+          "title": "Backups",
+          "description": "Backup management"
+        },
+        "databaseCloner": {
+          "title": "Database Cloner",
+          "description": "Clone database environments"
+        },
+        "configuration": {
+          "title": "Configuration",
+          "description": "System configuration"
+        }
+      },
+      "visitorStats": {
+        "totalVisitors": "Total Visitors",
+        "todayVisitors": "Today's Visitors",
+        "newToday": "New today",
+        "totalPageViews": "Total Page Views",
+        "todayViews": "Today",
+        "avgDuration": "Avg. Session Duration",
+        "perSession": "Per session",
+        "allTime": "All time"
+      }
+    },
+    "status": {
+      "systemStatus": "System Status",
+      "operational": "Operational",
+      "warning": "Warning",
+      "critical": "Critical",
+      "maintenance": "Maintenance",
+      "healthy": "Healthy",
+      "backup": {
+        "up_to_date": "Up to Date",
+        "pending": "Pending",
+        "outdated": "Outdated",
+        "failed": "Failed"
+      }
+    },
+    "stats": {
+      "quickStats": "Quick Stats",
+      "activeUsers": "Active users",
+      "openSessions": "Open sessions",
+      "lastBackup": "Last backup",
+      "systemLoad": "System load"
+    },
+    "user": {
+      "profile": "Superuser",
+      "access": "Full access",
+      "logout": "Logout"
+    },
+    "backup": {
+      "title": "Backup Management",
+      "subtitle": "Automatic and manual data backup system",
+      "totalEntries": "Total Entries",
+      "stats": {
+        "today": "Today",
+        "critical": "Critical",
+        "users": "Users",
+        "actions": "Actions",
+        "lastBackup": "Last Backup",
+        "nextBackup": "Next Backup",
+        "spaceUsed": "Space Used",
+        "of": "of",
+        "available": "available",
+        "automatic": "Automatic",
+        "dailyScheduled": "Scheduled daily backup",
+        "noBackup": "No backup",
+        "notAvailable": "N/A"
+      },
+      "lastBackup": "Last Backup",
+      "nextBackup": "Next Backup",
+      "spaceUsed": "Space Used",
+      "available": "available",
+      "automatic": "Automatic",
+      "scheduledDaily": "Scheduled daily backup",
+      "actions": {
+        "title": "Backup Actions",
+        "subtitle": "Create and manage manual backups",
+        "fullBackup": "Full Backup Now",
+        "incrementalBackup": "Incremental Backup",
+        "manualBackup": "Manual Backup",
+        "inProgress": "Backup in progress...",
+        "refresh": "Refresh",
+        "export": "Export CSV"
+      },
+      "history": {
+        "title": "Backup History",
+        "subtitle": "Recent backups",
+        "noBackups": "No backups available",
+        "view": "View"
+      },
+      "details": {
+        "title": "Backup Details",
+        "subtitle": "Complete information about the selected backup",
+        "id": "ID",
+        "type": "Type",
+        "status": "Status",
+        "size": "Size",
+        "started": "Started",
+        "completed": "Completed",
+        "filePath": "File Location",
+        "checksum": "Checksum (SHA-256)",
+        "verifyIntegrity": "Verify Integrity",
+        "notAvailable": "Not available"
+      },
+      "status": {
+        "completed": "Completed",
+        "inProgress": "In Progress",
+        "pending": "Pending",
+        "failed": "Failed",
+        "cancelled": "Cancelled"
+      },
+      "types": {
+        "full": "Full",
+        "incremental": "Incremental",
+        "manual": "Manual"
+      },
+      "messages": {
+        "loadError": "Failed to load backups",
+        "createError": "Failed to create backup",
+        "launched": "{type} backup launched successfully! ID: {id}",
+        "completed": "✅ Backup completed successfully! ({size})",
+        "failed": "❌ Backup failed: {error}",
+        "timeout": "⏱️ Timeout: Backup is taking too long. Check history.",
+        "verifySuccess": "✓ Backup is valid",
+        "verifyFailed": "✗ Backup is invalid",
+        "verifyError": "Verification failed",
+        "unknownError": "Unknown error"
+      }
+    },
+    "archives": {
+      "title": "Archive Management",
+      "subtitle": "Configure and manage automatic data archiving",
+      "stats": {
+        "totalArchived": "Total Archived",
+        "totalSize": "Total Size",
+        "activePolicies": "Active Policies",
+        "oldestArchive": "Oldest Archive",
+        "entries": "archived entries",
+        "diskSpace": "disk space",
+        "of": "of",
+        "total": "total",
+        "none": "None",
+        "date": "Date",
+        "never": "Never"
+      },
+      "actions": {
+        "refresh": "Refresh",
+        "newPolicy": "New Policy",
+        "createFirst": "Create First Policy"
+      },
+      "policies": {
+        "title": "Archive Policies",
+        "subtitle": "Manage automatic archiving rules for each table",
+        "noPolicies": "No archive policies configured",
+        "retention": "Retention",
+        "days": "days",
+        "frequency": "Frequency",
+        "archived": "Archived",
+        "entries": "entries",
+        "lastRun": "Last run"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "dialog": {
+        "addTitle": "New Archive Policy",
+        "addSubtitle": "Configure a new automatic archiving rule",
+        "editTitle": "Edit Archive Policy",
+        "editSubtitle": "Update policy configuration",
+        "table": "Table to Archive",
+        "selectTable": "Select a table",
+        "retention": "Retention Period (days)",
+        "retentionHelp": "Data older than this period will be archived",
+        "frequency": "Archiving Frequency",
+        "enableImmediately": "Enable immediately",
+        "enabled": "Enabled",
+        "cancel": "Cancel",
+        "create": "Create",
+        "save": "Save"
+      },
+      "messages": {
+        "loadError": "Failed to load policies",
+        "createError": "Failed to create policy",
+        "updateError": "Failed to update policy",
+        "deleteError": "Failed to delete policy",
+        "toggleError": "Failed to toggle status",
+        "archiveError": "Failed to archive",
+        "policyCreated": "✅ Archive policy created successfully",
+        "policyUpdated": "✅ Policy updated successfully",
+        "policyDeleted": "✅ Policy deleted successfully",
+        "policyEnabled": "✅ Policy enabled",
+        "policyDisabled": "✅ Policy disabled",
+        "archiveSuccess": "✅ {count} entries archived successfully",
+        "confirmDelete": "Are you sure you want to delete this archive policy?",
+        "unknownError": "Unknown error"
+      }
+    },
+    "userManagement": {
+      "title": "User Management",
+      "description": "Manage all users, roles and permissions in the system",
+      "table": {
+        "user": "User",
+        "role": "Role",
+        "status": "Status",
+        "lastLogin": "Last Login",
+        "createdAt": "Created",
+        "actions": "Actions",
+        "active": "Active",
+        "inactive": "Inactive",
+        "never": "Never"
+      },
+      "actions": {
+        "edit": "Edit",
+        "reset": "Reset",
+        "temp": "Temp",
+        "createUser": "New User",
+        "bulkActions": "Bulk Actions",
+        "deselectAll": "Deselect All"
+      },
+      "placeholders": {
+        "searchByNameOrEmail": "Search by name or email...",
+        "filterByRole": "Filter by role",
+        "filterByStatus": "Filter by status",
+        "emailVerified": "Email verified",
+        "leaveEmptyToKeep": "Leave empty to keep unchanged",
+        "fullUserName": "Full user name",
+        "emailExample": "email@example.com"
+      },
+      "messages": {
+        "passwordResetSuccess": "Password reset successfully. An email has been sent to the user.",
+        "tempPasswordGenerated": "Temporary password generated for user:",
+        "tempPasswordNote": "This password will be displayed only once. The user must change it on next login.",
+        "fillAllFields": "Please fill in all required fields",
+        "usersSelected": "user selected",
+        "usersSelectedPlural": "users selected",
+        "bulkActionSuccess": "Bulk action completed successfully",
+        "bulkActionFailed": "Bulk action failed"
+      },
+      "filters": {
+        "allRoles": "All roles",
+        "allStatuses": "All statuses",
+        "all": "All",
+        "verified": "Verified",
+        "unverified": "Unverified"
+      },
+      "labels": {
+        "selectAll": "Select all",
+        "emailNotVerified": "Email not verified",
+        "resetPassword": "Reset password",
+        "generateTempPassword": "Generate temporary password",
+        "role": "Role",
+        "activeAccount": "Active account",
+        "emailVerified": "Email verified"
+      },
+      "dialogs": {
+        "bulkActionsTitle": "Bulk Actions",
+        "bulkActionsDesc": "Select an action to apply to {count} selected users",
+        "editUserTitle": "Edit User",
+        "editUserDesc": "Edit the selected user's information",
+        "createUserTitle": "Create New User",
+        "createUserDesc": "Add a new user to the system",
+        "createUserButton": "Create User"
+      },
+      "bulkActions": {
+        "activateUsers": "Activate Users",
+        "deactivateUsers": "Deactivate Users",
+        "deleteUsers": "Delete Users"
+      }
+    },
+    "systemConfiguration": {
+      "title": "System Configuration",
+      "subtitle": "Manage system settings and global configurations",
+      "newConfiguration": "New Configuration",
+      "category": "Category",
+      "allCategories": "All categories",
+      "refresh": "Refresh",
+      "currentValue": "Current value:",
+      "previousValue": "Previous value:",
+      "modifiedBy": "Modified by",
+      "on": "on",
+      "requiresRestart": "Requires restart",
+      "sensitive": "Sensitive",
+      "addNewConfig": "Add a new system configuration",
+      "editConfig": "Edit Configuration",
+      "editingConfig": "Editing configuration:",
+      "configKey": "Configuration Key",
+      "dataType": "Data Type",
+      "value": "Value",
+      "description": "Description",
+      "isSensitive": "Sensitive data",
+      "requiresRestartLabel": "Requires restart",
+      "create": "Create",
+      "save": "Save",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "delete": "Delete",
+      "rollback": "Rollback",
+      "newValue": "New Value",
+      "restartWarning": "This configuration requires a system restart to take effect.",
+      "deleteConfirm": "Are you sure you want to delete this configuration? This action cannot be undone.",
+      "rollbackConfirm": "Are you sure you want to rollback this configuration to its previous value?",
+      "selectCategory": "Select a category",
+      "placeholders": {
+        "category": "e.g.: database, security, email",
+        "configKey": "e.g.: max_connections, timeout",
+        "description": "Description of this configuration",
+        "value": "value",
+        "booleanValue": "true or false",
+        "numberValue": "123",
+        "jsonValue": "{\"key\": \"value\"}"
+      }
+    }
+  },
+  "name": "Name",
+  "title": "Title",
+  "role": "Role",
+  "status": "Status",
+  "search": "Search",
+  "email": "Email",
+  "meta": {
+    "title": "Title"
+  },
+  "contact": {
+    "page": {
+      "title": "Contact Us",
+      "subtitle": "Our team is here to answer all your questions",
+      "responseTime": "Response within 24h",
+      "freeConsultation": "Free consultation"
+    },
+    "form": {
+      "sectionTitle": "Send us a message",
+      "sectionDescription": "Fill out the form below and we will get back to you as soon as possible",
+      "title": "Contact Form",
+      "description": "We are here to help you",
+      "name": "Full Name",
+      "namePlaceholder": "Enter your full name",
+      "email": "Email Address",
+      "emailPlaceholder": "your.email@example.com",
+      "phone": "Phone",
+      "phonePlaceholder": "+213 XX XX XX XX",
+      "preferredContact": "Preferred contact method",
+      "contactMethods": {
+        "email": "Email",
+        "phone": "Phone"
+      },
+      "subject": "Subject",
+      "subjectPlaceholder": "What is your message about?",
+      "message": "Your Message",
+      "messagePlaceholder": "Describe your request in detail...",
+      "consentText": "I agree to be contacted by Loft Algérie regarding my request",
+      "submit": "Send Message",
+      "privacyNotice": "Your data is protected and will never be shared with third parties"
+    },
+    "reasons": {
+      "title": "Why contact us?",
+      "description": "We are here to support you with all your needs",
+      "propertyManagement": {
+        "title": "Property Management",
+        "description": "Entrust us with managing your property",
+        "badge": "Popular"
+      },
+      "rentalServices": {
+        "title": "Rental Services",
+        "description": "Book your ideal loft",
+        "badge": "Fast"
+      },
+      "maintenance": {
+        "title": "Maintenance",
+        "description": "Technical assistance and upkeep",
+        "badge": "24/7"
+      },
+      "consultation": {
+        "title": "Consultation",
+        "description": "Free personalized advice",
+        "badge": "Free"
+      }
+    },
+    "info": {
+      "sectionTitle": "Our Contact Information",
+      "sectionDescription": "Multiple ways to reach us for your convenience",
+      "primary": "Primary",
+      "available": "Available",
+      "phone": {
+        "label": "Phone",
+        "primary": "Primary",
+        "available": "Available",
+        "number": "+213 56 03 62 543",
+        "description": "Call us for an immediate response"
+      },
+      "email": {
+        "label": "Email",
+        "primary": "Primary",
+        "available": "Available",
+        "address": "contact@loftalgerie.com",
+        "description": "Write to us, we respond within 24h"
+      },
+      "whatsapp": {
+        "label": "WhatsApp",
+        "available": "Available",
+        "number": "+213 56 03 62 543",
+        "description": "Contact us via WhatsApp"
+      },
+      "address": {
+        "label": "Address",
+        "full": "Algiers, Algeria",
+        "description": "Visit us by appointment",
+        "details": "Algiers, Algeria"
+      },
+      "clickToContact": "Click to contact",
+      "businessHours": "Business Hours",
+      "businessHoursDescription": "We are available every day",
+      "hours": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday",
+        "weekdayHours": "9:00 AM - 10:00 PM",
+        "saturdayHours": "9:00 AM - 10:00 PM",
+        "sundayHours": "9:00 AM - 10:00 PM"
+      },
+      "appointmentNote": "Appointment recommended",
+      "appointmentDescription": "Schedule an appointment for personalized consultation",
+      "emergency": {
+        "title": "Emergency",
+        "description": "For emergencies, contact us immediately",
+        "phone": "+213 56 03 62 543",
+        "availability": "Available 24/7"
+      },
+      "callNow": "Call Now",
+      "location": {
+        "title": "Our Location",
+        "description": "Visit us at our office"
+      },
+      "map": {
+        "placeholder": "Location Map",
+        "openInMaps": "Open in Google Maps"
+      },
+      "directions": {
+        "publicTransport": "Public Transport",
+        "publicTransportDetails": "Accessible by metro and bus",
+        "parking": "Parking",
+        "parkingDetails": "Free parking available"
+      }
+    },
+    "process": {
+      "title": "Our Response Process",
+      "description": "How we handle your request in 3 simple steps",
+      "step1": {
+        "title": "Reception",
+        "description": "We receive and analyze your message",
+        "time": "Immediate"
+      },
+      "step2": {
+        "title": "Analysis",
+        "description": "Our team studies your request in detail",
+        "time": "Within 2h"
+      },
+      "step3": {
+        "title": "Response",
+        "description": "We contact you with a tailored solution",
+        "time": "Within 24h"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "description": "Find quick answers to your questions",
+      "q1": {
+        "question": "What is your response time?",
+        "answer": "We commit to responding to all requests within 24 business hours. For emergencies, we are available 24/7 by phone."
+      },
+      "q2": {
+        "question": "Do you offer free consultations?",
+        "answer": "Yes, we offer a free initial consultation for all our services. Contact us to schedule an appointment."
+      },
+      "q3": {
+        "question": "How can I book a loft?",
+        "answer": "You can book directly on our online platform, by phone, or by contacting us through this form. Our team will guide you through the process."
+      },
+      "q4": {
+        "question": "What are your business hours?",
+        "answer": "We are available every day from 9 AM to 10 PM. For emergencies, our customer service is reachable 24/7."
+      }
+    }
+  },
+  "register": {
+    "title": "Title"
+  },
+  "currencies": {
+    "name": "Name",
+    "status": "Status"
+  },
+  "loading": "Loading...",
+  "callbackRequest": {
+    "form": {
+      "title": "Title",
+      "name": "Name"
+    }
+  },
+  "propertyInquiry": {
+    "form": {
+      "title": "Title",
+      "name": "Name",
+      "email": "Email"
+    }
+  },
+  "serviceInquiry": {
+    "form": {
+      "title": "Title",
+      "name": "Name",
+      "email": "Email"
+    }
+  },
+  "partner": {
+    "pricing": {
+      "title": "Title"
+    },
+    "availability": {
+      "title": "Title"
+    },
+    "properties": {
+      "name": "Name",
+      "loading": "Loading...",
+      "title": "Title",
+      "edit": "Edit"
+    },
+    "common": {
+      "cancel": "Cancel"
+    },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "properties": "My Properties",
+      "bookings": "Bookings",
+      "revenue": "Revenue",
+      "analytics": "Analytics",
+      "messages": "Messages",
+      "settings": "Settings",
+      "profile": "Profile",
+      "logout": "Logout"
+    },
+    "dashboard": {
+      "title": "Partner Dashboard",
+      "subtitle": "Manage your properties and track your performance",
+      "stats": {
+        "totalProperties": "Total Properties",
+        "activeProperties": "{count} active",
+        "bookings": "Bookings",
+        "upcomingBookings": "{count} upcoming",
+        "monthlyRevenue": "Monthly Revenue",
+        "occupancyRate": "Occupancy Rate",
+        "excellentRate": "Excellent rate",
+        "averageRating": "Average Rating",
+        "totalReviews": "{count} reviews"
+      },
+      "actions": {
+        "quickActions": "Quick Actions",
+        "addProperty": "Add Property",
+        "manageProperties": "Manage Properties",
+        "viewCalendar": "View Calendar",
+        "financialReports": "Financial Reports"
+      },
+      "properties": {
+        "title": "My Properties",
+        "viewAll": "View All",
+        "noProperties": "No properties",
+        "noPropertiesMessage": "Add your first property to start receiving bookings",
+        "status": {
+          "available": "Available",
+          "occupied": "Occupied",
+          "maintenance": "Maintenance"
+        },
+        "pricePerNight": "Price/night",
+        "bookingsCount": "Bookings",
+        "monthlyRevenue": "Revenue/month",
+        "occupancy": "Occupancy",
+        "nextBooking": "Next booking",
+        "filters": {
+          "filterByStatus": "Filter by status",
+          "allStatuses": "All statuses",
+          "sortBy": "Sort by",
+          "sortOptions": {
+            "name": "Name",
+            "revenue": "Revenue",
+            "occupancy": "Occupancy rate"
+          }
+        }
+      },
+      "bookings": {
+        "title": "Recent Bookings",
+        "noBookings": "No recent bookings",
+        "noBookingsMessage": "You haven't received any bookings yet. New bookings will appear here.",
+        "status": {
+          "pending": "Pending",
+          "confirmed": "Confirmed",
+          "cancelled": "Cancelled",
+          "completed": "Completed"
+        },
+        "paymentStatus": {
+          "pending": "Pending",
+          "paid": "Paid",
+          "refunded": "Refunded",
+          "failed": "Failed"
+        },
+        "filters": {
+          "allStatuses": "All statuses",
+          "dateRange": "Date range",
+          "noResults": "No bookings found",
+          "noResultsMessage": "No bookings match the selected filters.",
+          "clearFilters": "Clear filters"
+        }
+      },
+      "loading": "Loading your dashboard...",
+      "error": {
+        "title": "Loading Error",
+        "message": "An error occurred while loading data",
+        "retry": "Retry",
+        "boundary": {
+          "title": "Dashboard Error",
+          "partnerError": "A partner-specific error occurred while loading this page.",
+          "genericError": "Something went wrong with the partner dashboard. Our team has been notified.",
+          "errorId": "Error ID",
+          "errorIdHelp": "Please include this ID when contacting support",
+          "devDetails": "Development Error Details",
+          "stackTrace": "Stack Trace",
+          "tryAgain": "Try Again",
+          "goToDashboard": "Go to Dashboard",
+          "contactSupport": "Contact Support",
+          "persistHelp": "If this problem persists, please contact our support team with the error ID above."
+        },
+        "stats": {
+          "title": "Stats Loading Error",
+          "message": "Unable to load dashboard statistics",
+          "retry": "Retry"
+        },
+        "properties": {
+          "title": "Properties Loading Error",
+          "message": "Unable to load your properties",
+          "retry": "Retry"
+        },
+        "bookings": {
+          "title": "Bookings Loading Error",
+          "message": "Unable to load recent bookings",
+          "retry": "Retry"
+        },
+        "unauthorized": {
+          "title": "Unauthorized Access",
+          "message": "You don't have permission to access this page"
+        },
+        "generic": {
+          "title": "An Error Occurred",
+          "message": "Something went wrong. Please try again."
+        },
+        "network": {
+          "title": "Connection Error",
+          "message": "Unable to connect to the server. Please check your internet connection."
+        },
+        "timeout": {
+          "title": "Request Timeout",
+          "message": "The request took too long. Please try again."
+        },
+        "contactSupportMessage": "If the problem persists, contact our support team"
+      }
+    },
+    "branding": {
+      "title": "Partner Portal",
+      "subtitle": "Property Management"
+    },
+    "notifications": {
+      "newRegistration": {
+        "title": "New partnership request",
+        "message": "{company_name} has submitted a partnership request. Please review the request in the Pending Partners section."
+      },
+      "approved": {
+        "title": "Partnership request approved",
+        "message": "Congratulations! Your partnership request has been approved. You now have access to the full partner dashboard."
+      },
+      "rejected": {
+        "title": "Partnership request rejected",
+        "message": "Your partnership request has not been approved. {reason, select, other {For more information, please contact our team.}}"
+      }
+    }
+  },
+  "privacy": {
+    "cookies": {
+      "title": "Title"
+    },
+    "gdpr": {
+      "form": {
+        "title": "Title",
+        "email": "Email"
+      },
+      "requestTypes": {
+        "${type}": {
+          "name": "Name"
+        }
+      }
+    },
+    "dashboard": {
+      "stats": {
+        "active": "Active"
+      },
+      "title": "Title",
+      "overview": {
+        "rights": {
+          "title": "Title",
+          "delete": "Delete"
+        },
+        "data": {
+          "title": "Title"
+        }
+      },
+      "cookies": {
+        "title": "Title"
+      },
+      "payments": {
+        "title": "Title"
+      },
+      "legal": {
+        "title": "Title"
+      }
+    },
+    "settings": {
+      "dataProcessing": {
+        "title": "Title"
+      },
+      "communications": {
+        "title": "Title",
+        "email": "Email"
+      },
+      "dataRetention": {
+        "title": "Title"
+      },
+      "dataSharing": {
+        "title": "Title"
+      }
+    },
+    "payment": {
+      "title": "Title",
+      "security": {
+        "title": "Title"
+      },
+      "cancel": "Cancel"
+    }
+  },
+  "bookingHistory": {
+    "loading": "Loading...",
+    "title": "Title",
+    "search": "Search",
+    "status": "Status",
+    "guest": "Guest"
+  },
+  "pricing": {
+    "summary": {
+      "title": "Title"
+    }
+  },
+  "profileIntegration": {
+    "title": "Title"
+  },
+  "profileDashboard": {
+    "loading": "Loading...",
+    "member": "Member"
+  },
+  "profile": {
+    "loading": "Loading...",
+    "title": "Title",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "save": "Save",
+    "email": "Email"
+  },
+  "forms": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "validation": {
+      "email": "Email"
+    },
+    "actions": {
+      "save": "Save"
+    }
+  },
+  "ui": {
+    "toggleTheme": "Toggle Theme",
+    "userRole": "User Role"
+  },
+  "partnerRejected": {
+    "title": "Application Rejected",
+    "portalTitle": "Partner Portal",
+    "reasons": {
+      "title": "Common reasons for rejection",
+      "incomplete": "Incomplete or insufficient documentation",
+      "quality": "Property does not meet our quality standards",
+      "location": "Location not currently supported",
+      "verification": "Business information could not be verified"
+    },
+    "reapply": {
+      "title": "Want to reapply?",
+      "message": "You can submit a new application after addressing the issues mentioned in your rejection email. Contact our partner team for guidance on improving your application."
+    },
+    "help": "Need help with your application?",
+    "contact": "Contact our partner team",
+    "actions": {
+      "newApplication": "Submit New Application",
+      "backToLogin": "← Back to login"
+    }
+  },
+  "partnerSuspended": {
+    "title": "Account Suspended",
+    "reasons": {
+      "title": "Common reasons for suspension",
+      "terms": "Violation of partner terms and conditions",
+      "complaints": "Multiple guest complaints or poor ratings",
+      "standards": "Failure to maintain property standards",
+      "payment": "Outstanding payment or billing issues",
+      "fraud": "Suspicious or fraudulent activity"
+    },
+    "restoration": {
+      "title": "Account Restoration",
+      "message": "To restore your account, please contact our partner support team. We'll work with you to resolve any issues and get your account back in good standing."
+    },
+    "steps": {
+      "title": "Steps to resolve suspension",
+      "step1": "Contact our partner support team immediately",
+      "step2": "Review the specific reasons for suspension",
+      "step3": "Provide documentation or take corrective actions as required",
+      "step4": "Wait for account review and restoration"
+    },
+    "help": "Need immediate assistance?",
+    "contact": "Contact Partner Support",
+    "backToLogin": "← Back to login"
+  },
+  "partnerApplicationPending": {
+    "title": "Application Under Review",
+    "subtitle": "Your partnership application has been successfully submitted",
+    "nextSteps": {
+      "title": "Next Steps",
+      "step1": "Our team will review your application within 24-48 hours",
+      "step2": "We will verify the information provided",
+      "step3": "You will receive an email with the decision",
+      "step4": "If approved, you will be able to access the partner dashboard"
+    },
+    "help": {
+      "title": "Need help?",
+      "message": "If you have any questions about your application, please don't hesitate to contact us.",
+      "email": "partners@loft-algerie.com",
+      "phone": "+213 XXX XXX XXX"
+    },
+    "actions": {
+      "home": "Back to home",
+      "logout": "Log out"
+    }
+  },
+  "partnerPending": {
+    "title": "Pending Partners",
+    "description": "Manage pending partnership requests awaiting validation",
+    "loading": "Loading pending partners...",
+    "stats": {
+      "pending": "Pending",
+      "approvedToday": "Approved today",
+      "rejectedToday": "Rejected today"
+    },
+    "list": {
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "company": "Company",
+      "type": "Type",
+      "requestCreated": "Request created",
+      "viewDetails": "View details",
+      "approve": "Approve",
+      "reject": "Reject",
+      "processing": "Processing...",
+      "noPending": "No pending partners",
+      "noPendingMessage": "There are currently no partnership requests awaiting validation."
+    },
+    "status": {
+      "pending": "⏳ Pending"
+    },
+    "businessTypes": {
+      "company": "Company",
+      "individual": "Individual"
+    },
+    "actions": {
+      "confirmApprove": "Are you sure you want to approve this partner?",
+      "approveSuccess": "Partner approved successfully!",
+      "approveError": "Error approving partner",
+      "rejectReason": "Reason for rejection (optional):",
+      "rejectSuccess": "Partner rejected",
+      "rejectError": "Error rejecting partner"
+    },
+    "details": {
+      "title": "Partner Details",
+      "email": "Email",
+      "phone": "Phone",
+      "type": "Type",
+      "businessName": "Company Name",
+      "address": "Address",
+      "description": "Description",
+      "requestDate": "Request Date",
+      "approve": "Approve",
+      "reject": "Reject"
+    }
+  },
+  "partnerValidation": {
+    "header": {
+      "title": "Partner Validation"
+    },
+    "validation": {
+      "title": "Partner Validation",
+      "description": "Review and validate partner applications",
+      "loading": "Loading partners...",
+      "search": {
+        "placeholder": "Search by name, email or company..."
+      },
+      "stats": {
+        "total": "Total Partners",
+        "approved": "Approved",
+        "pending": "Pending",
+        "rejected": "Rejected"
+      },
+      "list": {
+        "title": "Partner List",
+        "noPartners": "No partners found",
+        "noPartnersMessage": "No partners match your search criteria",
+        "noPartnersRegistered": "No partners registered yet"
+      },
+      "status": {
+        "approved": "Approved",
+        "pending": "Pending",
+        "rejected": "Rejected"
+      },
+      "details": {
+        "title": "Partner Details",
+        "fullName": "Full Name",
+        "email": "Email",
+        "phone": "Phone",
+        "type": "Type",
+        "businessName": "Company Name",
+        "address": "Address",
+        "taxId": "Tax ID",
+        "validationNotes": "Validation Notes",
+        "addNotes": "Add notes about the validation...",
+        "approve": "Approve",
+        "reject": "Reject",
+        "selectPartner": "Select a partner",
+        "selectPartnerMessage": "Click on a partner in the list to view their details.",
+        "businessTypes": {
+          "company": "Company",
+          "individual": "Individual"
+        }
+      }
+    }
+  },
+  "databaseCloner": {
+    "title": "Database Cloner",
+    "description": "Clone your database environments safely",
+    "backToDashboard": "Back to Dashboard",
+    "steps": {
+      "select": "Select",
+      "validate": "Validate",
+      "options": "Options",
+      "clone": "Clone",
+      "results": "Results"
+    },
+    "selectEnvironment": {
+      "title": "Select Environments",
+      "source": "Source Environment",
+      "target": "Target Environment",
+      "selectSource": "Select source environment",
+      "selectTarget": "Select target environment",
+      "next": "Next",
+      "configured": "Configured",
+      "manual": "Manual",
+      "environmentName": "Environment Name",
+      "supabaseUrl": "Supabase URL",
+      "supabaseUrlPlaceholder": "https://xxxxx.supabase.co",
+      "anonKey": "Anon Key",
+      "anonKeyPlaceholder": "Optional for read operations",
+      "serviceKey": "Service Role Key",
+      "serviceKeyPlaceholder": "Required",
+      "postgresPassword": "PostgreSQL Password",
+      "required": "Required",
+      "findInSupabase": "Find in Supabase: Settings → Database → Connection string",
+      "environments": {
+        "production": "Production",
+        "test": "Test",
+        "development": "Development"
+      }
+    },
+    "validation": {
+      "title": "Connection Validation",
+      "validating": "Validating...",
+      "success": "Connections validated successfully",
+      "error": "Validation error",
+      "sourceStatus": "Source Status",
+      "targetStatus": "Target Status",
+      "back": "Back",
+      "next": "Next"
+    },
+    "options": {
+      "title": "Clone Options",
+      "createBackup": "Create Backup",
+      "createBackupDesc": "Create a backup of the target environment before cloning",
+      "anonymizeData": "Anonymize Data",
+      "anonymizeDataDesc": "Anonymize sensitive data during cloning",
+      "includeFunctions": "Include Functions",
+      "includeFunctionsDesc": "Clone database functions",
+      "includeTriggers": "Include Triggers",
+      "includeTriggersDesc": "Clone database triggers",
+      "dataOnly": "Data only",
+      "dataOnlyDesc": "Clone only data (no schema)",
+      "schemaOnly": "Schema only",
+      "schemaOnlyDesc": "Clone only schema (no data)",
+      "dropExisting": "Drop existing",
+      "dropExistingDesc": "Drop existing tables before cloning",
+      "excludeTables": "Exclude tables",
+      "excludeTablesDesc": "Tables to exclude from cloning (comma-separated)",
+      "back": "Back",
+      "startClone": "Start Clone"
+    },
+    "cloning": {
+      "title": "Cloning in Progress",
+      "progress": "Progress",
+      "currentStep": "Current step",
+      "cancel": "Cancel",
+      "steps": {
+        "preparing": "Preparing",
+        "dumping": "Dumping data",
+        "transferring": "Transferring",
+        "restoring": "Restoring",
+        "verifying": "Verifying",
+        "completed": "Completed"
+      }
+    },
+    "results": {
+      "title": "Clone Results",
+      "success": "Clone successful!",
+      "failed": "Clone failed",
+      "duration": "Duration",
+      "tablesCloned": "Tables cloned",
+      "rowsCloned": "Rows cloned",
+      "errors": "Errors",
+      "viewLogs": "View logs",
+      "newClone": "New Clone",
+      "backToDashboard": "Back to Dashboard"
+    },
+    "confirmation": {
+      "title": "Confirm Clone Operation",
+      "operationSummary": "Operation Summary",
+      "source": "Source",
+      "target": "Target",
+      "cloneOptions": "Clone Options",
+      "criticalWarning": "Critical Warning",
+      "thisOperationWill": "This operation will:",
+      "permanentlyDelete": "Permanently delete all data from {target}",
+      "replaceWith": "Replace it with data from {source}",
+      "takeSeveralMinutes": "Take several minutes to complete",
+      "cannotBeUndone": "Cannot be undone without a backup",
+      "makeSure": "Make absolutely sure you have selected the correct target database!",
+      "iUnderstand": "I understand that this will permanently delete all data from {target}",
+      "iHaveVerified": "I have verified that {target} is the correct target and I am ready to proceed.",
+      "back": "Back",
+      "startClone": "Start Clone Operation"
+    },
+    "errors": {
+      "unauthorized": "Unauthorized. Only superusers can access this feature.",
+      "sameEnvironment": "Source and target environments must be different",
+      "connectionFailed": "Database connection failed",
+      "cloneFailed": "Clone failed",
+      "operationNotFound": "Operation not found"
+    }
+  }
+}

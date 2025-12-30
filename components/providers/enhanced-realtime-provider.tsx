@@ -2,7 +2,15 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { useSupabase } from './supabase-provider'
-import { toast } from 'sonner'
+// Temporary - sonner disabled
+// import { toast } from 'sonner'
+
+// Temporary toast replacement
+const toast = {
+  error: (message: string) => console.error('Toast:', message),
+  success: (message: string) => console.log('Toast:', message),
+  info: (message: string) => console.info('Toast:', message),
+};
 import { useNotificationSound } from '@/lib/hooks/use-notification-sound'
 import { safeCallback } from '@/lib/utils/callback-safety'
 import { useTranslations } from 'next-intl'

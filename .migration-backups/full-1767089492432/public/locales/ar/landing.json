@@ -1,0 +1,69 @@
+{
+  "title": "لوفت الجزائر",
+  "description": "نظام إدارة عقارات شامل مع إنتاج تقارير PDF احترافية لتحسين عملياتك.",
+  "subtitle": "حسّن إدارة عقاراتك.",
+  "getStarted": "ابدأ الآن",
+  "signIn": "تسجيل الدخول",
+  "viewButton": "عرض ←",
+  "features": {
+    "title": "الميزات الرئيسية",
+    "property": {
+      "title": "إدارة عقارات بديهية",
+      "description": "أدر عدة عقارات بسهولة، من التفاصيل إلى الوثائق."
+    },
+    "financial": {
+      "title": "إدارة مالية شاملة",
+      "description": "تتبع الإيرادات والمصروفات وأنتج تقارير مالية مفصلة."
+    },
+    "tasks": {
+      "title": "إدارة مهام فعالة",
+      "description": "نظم مهام الصيانة وتوزيع الفرق بكل سهولة."
+    },
+    "notifications": {
+      "title": "إشعارات فورية",
+      "description": "احصل على تنبيهات فورية للمهام والفواتير والأحداث المهمة."
+    }
+  },
+  "sections": {
+    "reservations": {
+      "title": "الحجوزات",
+      "description": "أدر حجوزاتك والتوفر"
+    },
+    "availability": {
+      "title": "التوفر",
+      "description": "اعرض وأدر التوفر"
+    },
+    "tasks": {
+      "title": "المهام",
+      "description": "نظم مهام الصيانة"
+    },
+    "teams": {
+      "title": "الفرق",
+      "description": "أدر فرقك ومتعاونيك"
+    },
+    "owners": {
+      "title": "الملاك",
+      "description": "أدر علاقاتك مع الملاك"
+    },
+    "transactions": {
+      "title": "المعاملات",
+      "description": "تتبع الإيرادات والمصروفات"
+    },
+    "reports": {
+      "title": "التقارير",
+      "description": "أنتج تقارير احترافية"
+    }
+  },
+  "quickAccess": {
+    "title": "الوصول السريع",
+    "description": "الوصول مباشرة إلى الميزات الأكثر استخداماً",
+    "dashboard": "لوحة التحكم",
+    "conversations": "المحادثات",
+    "notifications": "الإشعارات",
+    "pdfReports": "تقارير PDF"
+  },
+  "systemStatus": {
+    "title": "النظام يعمل",
+    "description": "جميع الخدمات تعمل بشكل طبيعي. إنتاج تقارير PDF متاح."
+  }
+}

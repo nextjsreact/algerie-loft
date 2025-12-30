@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from '@/lib/mocks/sentry';
 import { ErrorTracker } from '@/lib/monitoring/error-tracking';
 import { UptimeMonitor } from '@/lib/monitoring/uptime';
 

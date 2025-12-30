@@ -81,7 +81,7 @@ const config: Config = {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("./lib/mocks/tailwindcss-animate.mjs")],
 } satisfies Config;
 
 export default config;

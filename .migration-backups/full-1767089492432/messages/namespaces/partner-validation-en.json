@@ -1,0 +1,60 @@
+{
+  "validation": {
+    "title": "Partner Validation",
+    "description": "Validate and manage platform partners",
+    "stats": {
+      "total": "Total partners",
+      "approved": "Approved",
+      "pending": "Pending",
+      "rejected": "Rejected"
+    },
+    "search": {
+      "placeholder": "Search partner by name, email or company..."
+    },
+    "list": {
+      "title": "Partner list",
+      "noPartners": "No partners found",
+      "noPartnersMessage": "No partners match your search.",
+      "noPartnersRegistered": "No partners registered yet."
+    },
+    "details": {
+      "title": "Partner details",
+      "selectPartner": "Select a partner",
+      "selectPartnerMessage": "Click on a partner in the list to see their details.",
+      "fullName": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "type": "Type",
+      "businessName": "Business name",
+      "address": "Address",
+      "taxId": "Tax ID",
+      "validationNotes": "Validation notes",
+      "validationNotesPlaceholder": "Add notes about the validation..."
+    },
+    "status": {
+      "approved": "Approved",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "verified": "Verified"
+    },
+    "businessType": {
+      "company": "Company",
+      "individual": "Individual"
+    },
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject"
+    }
+  },
+  "pending": {
+    "title": "Pending Partners",
+    "description": "Manage pending partnership requests",
+    "stats": {
+      "pending": "Pending",
+      "approvedToday": "Approved today",
+      "rejectedToday": "Rejected today"
+    },
+    "noPartners": "No pending partners",
+    "noPartnersMessage": "There are currently no pending partnership requests."
+  }
+}

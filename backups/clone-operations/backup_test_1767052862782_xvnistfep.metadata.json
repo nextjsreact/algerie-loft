@@ -1,0 +1,16 @@
+{
+  "id": "backup_test_1767052862782_xvnistfep",
+  "environmentId": "test-env-001",
+  "environmentName": "Test Environment",
+  "environmentType": "test",
+  "createdAt": "2025-12-30T00:01:02.783Z",
+  "size": 405,
+  "options": {
+    "includeSchema": true,
+    "includeData": true,
+    "compressionLevel": "medium"
+  },
+  "filePath": "C:\\Users\\SERVICE-INFO\\IA\\algerie-loft\\backups\\clone-operations\\backup_test_1767052862782_xvnistfep.backup",
+  "checksum": "1910dff5",
+  "isValid": true
+}

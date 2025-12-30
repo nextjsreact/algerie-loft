@@ -1,0 +1,204 @@
+{
+  "timestamp": "2025-12-28T21:03:58.121Z",
+  "environment": {
+    "nodeVersion": "v20.19.1",
+    "nextjsVersion": "16.1.1",
+    "platform": "win32",
+    "memory": {
+      "rss": 26206208,
+      "heapTotal": 4952064,
+      "heapUsed": 4425752,
+      "external": 1602128,
+      "arrayBuffers": 10515
+    }
+  },
+  "buildMetrics": {
+    "buildTime": -1,
+    "bundleSize": {
+      "totalSize": 0,
+      "jsSize": 0,
+      "cssSize": 0,
+      "imageSize": 0,
+      "translationSize": 0,
+      "largestChunks": []
+    },
+    "dependencies": {
+      "totalDependencies": 124,
+      "heavyDependencies": [
+        {
+          "name": "framer-motion",
+          "size": 0
+        },
+        {
+          "name": "recharts",
+          "size": 0
+        },
+        {
+          "name": "@radix-ui/react-dialog",
+          "size": 0
+        },
+        {
+          "name": "react-big-calendar",
+          "size": 0
+        }
+      ],
+      "outdatedPackages": []
+    }
+  },
+  "runtimeMetrics": {
+    "i18nPerformance": {
+      "locales": [
+        {
+          "locale": "fr",
+          "loadTime": 7.039499999999862,
+          "keyCount": 3343,
+          "fileSize": 174275
+        },
+        {
+          "locale": "en",
+          "loadTime": 4.677099999999882,
+          "keyCount": 3528,
+          "fileSize": 166753
+        },
+        {
+          "locale": "ar",
+          "loadTime": 4.512899999999945,
+          "keyCount": 3380,
+          "fileSize": 197810
+        }
+      ],
+      "averageLoadTime": 5.409833333333229,
+      "totalTranslationSize": 538838
+    },
+    "componentLoadTimes": [],
+    "criticalPaths": [
+      {
+        "path": "/",
+        "description": "Page d'accueil",
+        "loadTime": 0.9711999999999534,
+        "dependencies": [
+          "next-intl",
+          "supabase",
+          "framer-motion"
+        ],
+        "status": "working"
+      },
+      {
+        "path": "/auth/login",
+        "description": "Page de connexion",
+        "loadTime": 0.48460000000000036,
+        "dependencies": [
+          "next-intl",
+          "supabase",
+          "react-hook-form"
+        ],
+        "status": "working"
+      },
+      {
+        "path": "/dashboard",
+        "description": "Tableau de bord",
+        "loadTime": 0.4311999999999898,
+        "dependencies": [
+          "next-intl",
+          "supabase",
+          "recharts",
+          "@radix-ui"
+        ],
+        "status": "error",
+        "errorDetails": "Dépendances manquantes"
+      },
+      {
+        "path": "/lofts",
+        "description": "Liste des lofts",
+        "loadTime": 0.6069999999999709,
+        "dependencies": [
+          "next-intl",
+          "supabase",
+          "next/image"
+        ],
+        "status": "error",
+        "errorDetails": "Dépendances manquantes"
+      },
+      {
+        "path": "/reservations",
+        "description": "Gestion des réservations",
+        "loadTime": 0.9999000000000251,
+        "dependencies": [
+          "next-intl",
+          "supabase",
+          "react-big-calendar"
+        ],
+        "status": "working"
+      }
+    ]
+  },
+  "criticalFunctionalities": [
+    {
+      "name": "Supabase Client Initialization",
+      "description": "Initialisation du client Supabase",
+      "category": "auth",
+      "status": "pass",
+      "executionTime": 0.6504999999999654,
+      "details": "Configuration Supabase détectée",
+      "requirements": [
+        "5.1",
+        "5.2"
+      ]
+    },
+    {
+      "name": "Next-intl Configuration",
+      "description": "Configuration du système de traduction",
+      "category": "i18n",
+      "status": "pass",
+      "executionTime": 0.5220000000001619,
+      "details": "Configuration next-intl complète",
+      "requirements": [
+        "4.1",
+        "4.2"
+      ]
+    },
+    {
+      "name": "Database Schema Validation",
+      "description": "Validation du schéma de base de données",
+      "category": "database",
+      "status": "pass",
+      "executionTime": 1.6691000000000713,
+      "details": "Scripts de schéma détectés",
+      "requirements": [
+        "5.3",
+        "5.4"
+      ]
+    },
+    {
+      "name": "Radix UI Components",
+      "description": "Composants d'interface utilisateur",
+      "category": "ui",
+      "status": "pass",
+      "executionTime": 0.7595000000001164,
+      "details": "27 packages Radix UI détectés",
+      "requirements": [
+        "1.3",
+        "1.4"
+      ]
+    },
+    {
+      "name": "API Routes Functionality",
+      "description": "Fonctionnement des routes API",
+      "category": "api",
+      "status": "pass",
+      "executionTime": 0.30179999999995744,
+      "details": "Routes API détectées",
+      "requirements": [
+        "1.5",
+        "1.6"
+      ]
+    }
+  ],
+  "recommendations": [
+    "🌐 Implémenter le lazy loading des traductions par route",
+    "📦 Évaluer les alternatives plus légères pour les dépendances lourdes",
+    "🔍 Surveiller les Core Web Vitals après la migration",
+    "📊 Implémenter un monitoring continu des performances",
+    "🧪 Créer des tests de régression de performance"
+  ]
+}

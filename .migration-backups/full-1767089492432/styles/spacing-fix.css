@@ -1,0 +1,57 @@
+
+/* Corrections pour les problèmes d'espacement et de mélange de langues */
+
+/* Assurer un espacement correct entre les éléments de navigation */
+.sidebar-nav-item {
+  margin-bottom: 0.25rem !important;
+  padding: 0.5rem !important;
+  display: block !important;
+}
+
+/* Espacement pour les éléments de texte */
+.text-element {
+  margin-right: 0.25rem !important;
+  margin-left: 0.25rem !important;
+}
+
+/* Correction pour les badges et labels */
+.badge, .label {
+  margin: 0.125rem !important;
+  padding: 0.25rem 0.5rem !important;
+  display: inline-block !important;
+}
+
+/* Espacement pour les cartes et conteneurs */
+.card-content > * {
+  margin-bottom: 0.5rem !important;
+}
+
+.card-content > *:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Correction pour les éléments flex */
+.flex-container > * {
+  margin-right: 0.5rem !important;
+}
+
+.flex-container > *:last-child {
+  margin-right: 0 !important;
+}
+
+/* Correction spécifique pour les problèmes identifiés */
+.loft-detail-page * {
+  word-spacing: normal !important;
+  letter-spacing: normal !important;
+}
+
+/* Assurer que les éléments ne se collent pas */
+* + * {
+  margin-left: 0.125rem !important;
+}
+
+/* Correction pour les éléments de navigation */
+nav a, nav button {
+  margin: 0.125rem !important;
+  padding: 0.25rem 0.5rem !important;
+}

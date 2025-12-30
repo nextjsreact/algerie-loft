@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirection - Loft Algérie</title>
+    <meta http-equiv="refresh" content="0;url=/dashboard">
+    <script>
+        // Configuration immédiate du français
+        document.cookie = 'language=fr; path=/; max-age=31536000; SameSite=Lax';
+        localStorage.setItem('i18nextLng', 'fr');
+        
+        // Redirection immédiate
+        window.location.replace('/dashboard');
+    </script>
+</head>
+<body>
+    <p>Redirection vers l'application en français...</p>
+</body>
+</html>

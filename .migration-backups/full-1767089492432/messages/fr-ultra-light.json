@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "lofts": "Appartements",
+    "conversations": "Conversations",
+    "notifications": "Notifications",
+    "customers": "Clients",
+    "reservations": "Réservations",
+    "availability": "Disponibilité",
+    "tasks": "Tâches",
+    "teams": "Équipes",
+    "owners": "Propriétaires",
+    "transactions": "Transactions",
+    "reportsNav": "Rapports",
+    "settings": "Paramètres",
+    "loftManager": "Gestionnaire d'appartements",
+    "logout": "Déconnexion"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Sauvegarder",
+    "company": "Société"
+  },
+  "lofts": {
+    "editLoft": "Modifier l'appartement",
+    "available": "Disponible",
+    "occupied": "Occupé",
+    "maintenance": "Maintenance"
+  }
+}

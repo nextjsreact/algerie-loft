@@ -1,0 +1,40 @@
+{
+  "amount": "Amount",
+  "cancel": "Cancel",
+  "description": "Description",
+  "descriptionPlaceholder": "Enter bill description",
+  "due": "Due",
+  "errorMessage": "Failed to record payment. Please try again.",
+  "paymentDate": "Payment Date",
+  "paymentMethod": "Payment Method",
+  "recording": "Recording...",
+  "recordPayment": "Record Payment",
+  "selectPaymentMethod": "Select Payment Method",
+  "successMessage": "Payment recorded successfully.",
+  "title": "Bills",
+  "utilities": {
+    "eau": "Water Bill",
+    "energie": "Electricity Bill",
+    "telephone": "Telephone Bill",
+    "internet": "Internet Bill",
+    "tv": "TV Bill",
+    "gas": "Gas Bill"
+  },
+  "paymentModal": {
+    "title": "Record Payment"
+  },
+  "upcomingBills": "Upcoming Bills",
+  "overdueBills": "Overdue Bills",
+  "noUpcomingBills": "No upcoming bills",
+  "markPaid": "Mark as Paid",
+  "dueToday": "Due today",
+  "dueTomorrow": "Due tomorrow",
+  "dayOverdue": "1 day overdue",
+  "daysOverdue": "{{count}} days overdue",
+  "days": "days",
+  "noUpcomingBillsMessage": "No upcoming bills in the next 30 days",
+  "noOverdueBillsMessage": "No overdue bills - great job!",
+  "upcomingBillsTitle": "Upcoming Bills",
+  "overdueBillsTitle": "Overdue Bills",
+  "loadingError": "Failed to load bill alerts"
+}

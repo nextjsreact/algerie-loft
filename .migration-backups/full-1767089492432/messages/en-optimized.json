@@ -1,0 +1,598 @@
+{
+  "nav": {
+    "application": "Application",
+    "availability": "Availability",
+    "audit": "Audit",
+    "categories": "Categories",
+    "conversations": "Conversations",
+    "currencies": "Currencies",
+    "dashboard": "Dashboard",
+    "executive": "Executive",
+    "internetConnections": "Internet Connections",
+    "loftManager": "Loft Manager",
+    "lofts": "Lofts",
+    "owners": "Owners",
+    "customers": "Customers",
+    "notifications": "Notifications",
+    "paymentMethods": "Payment Methods",
+    "paymentMethodsNav": "Payment Methods",
+    "reports": "Reports",
+    "reportsNav": "Reports",
+    "reservations": "Reservations",
+    "settings": "Settings",
+    "tasks": "Tasks",
+    "teams": "Teams",
+    "toggleTheme": "Toggle theme",
+    "transactions": "Transactions",
+    "userPasswords": {
+      "common": {
+        "loading": "Loading..."
+      },
+      "title": "Title",
+      "userSelection": {
+        "title": "Title"
+      },
+      "passwordForm": {
+        "title": "Title"
+      },
+      "security": {
+        "title": "Title"
+      },
+      "roles": {
+        "admin": "Administrator",
+        "manager": "Manager",
+        "member": "Member",
+        "executive": "Executive"
+      }
+    },
+    "zoneAreas": "Geographic Zones",
+    "clients": "Clients",
+    "bookings": "Bookings",
+    "logout": "Logout"
+  },
+  "common": {
+    "actions": "Actions",
+    "all": "All",
+    "allOwners": "All Owners",
+    "allZones": "All Zones",
+    "ar": "Arabic",
+    "en": "English",
+    "fr": "French",
+    "cancel": "Cancel",
+    "clearFilters": "Clear Filters",
+    "back": "Back",
+    "saving": "Saving...",
+    "currencies": {
+      "da": "DA"
+    },
+    "date": "Date",
+    "edit": "Edit",
+    "error": "Error",
+    "success": "Success",
+    "loading": "Loading...",
+    "name": "Name",
+    "next": "Next",
+    "none": "None",
+    "of": "of",
+    "owners": {
+      "ownershipType": "Ownership Type"
+    },
+    "page": "Page",
+    "pickDateRange": "Pick a date range",
+    "previous": "Previous",
+    "results": "results",
+    "selectOption": "Select an option",
+    "showing": "Showing",
+    "systemError": "System Error",
+    "systemErrorDescription": "A system error occurred. Please try again.",
+    "time": "Time",
+    "to": "to",
+    "today": "Today",
+    "view": "View",
+    "notificationsEnabled": "🔔 Notifications enabled!",
+    "notificationsEnabledDescription": "You will now receive instant notifications for tasks and messages.",
+    "transfer": "Transfer",
+    "delete": "Delete",
+    "save": "Save",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "active": "Active",
+    "inactive": "Inactive",
+    "title": "Title",
+    "accountSettings": {
+      "title": "Title",
+      "email": "Email",
+      "role": "Role"
+    },
+    "passwordChange": {
+      "title": "Title"
+    },
+    "appInfo": {
+      "title": "Title",
+      "status": "Status"
+    },
+    "admin": {
+      "title": "Title"
+    },
+    "pricing": {
+      "title": "Title"
+    },
+    "rules": {
+      "title": "Title"
+    },
+    "status": "Status",
+    "common": {
+      "error": "Error",
+      "success": "Success"
+    },
+    "executive": "Executive",
+    "calendar": {
+      "title": "Title"
+    },
+    "upcoming": {
+      "title": "Title"
+    },
+    "available": "Available",
+    "modify": "Modify",
+    "company": "Company",
+    "individual": "Individual",
+    "percentages": "Percentages",
+    "amenityInfo": "Amenity Information"
+  },
+  "auth": {
+    "admin": "Admin",
+    "createAccount": "Create Account",
+    "demoAccounts": "Demo Accounts",
+    "email": "Email",
+    "enterEmail": "Enter your email",
+    "enterFullName": "Enter your full name",
+    "enterPassword": "Enter your password",
+    "forgotPassword": "Forgot password?",
+    "fullName": "Full Name",
+    "hasAccount": "Already have an account?",
+    "haveAccount": "Already have an account?",
+    "manager": "Manager",
+    "member": "Member",
+    "noAccount": "Don't have an account?",
+    "password": "Password",
+    "registrationFailed": "Registration failed. Please try again.",
+    "rememberMe": "Remember me",
+    "signIn": "Sign In",
+    "signInDescription": "Sign in to your account",
+    "signInToAccount": "Sign in to your account",
+    "signOut": "Sign Out",
+    "signUp": "Sign Up",
+    "signUpDescription": "Create a new account",
+    "signUpTitle": "Sign Up",
+    "signingIn": "Signing in...",
+    "signingUp": "Signing up...",
+    "unexpectedError": "An unexpected error occurred. Please try again.",
+    "welcomeBack": "Welcome back",
+    "passwordReset": {
+      "title": "Account Recovery",
+      "subtitle": "Enter your email address to receive instructions",
+      "cardTitle": "Password Recovery",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "sendButton": "Send Instructions",
+      "sendingButton": "Sending...",
+      "backToLogin": "Back to Login",
+      "footerText": "A secure recovery link will be sent to your email address",
+      "success": {
+        "title": "Instructions Sent",
+        "subtitle": "Check your email inbox",
+        "message": "Recovery instructions sent",
+        "description": "A secure recovery link has been sent to your email address. Follow the instructions to restore access to your account.",
+        "securityNote": "Valid for 60 minutes for your security",
+        "noEmailTitle": "Email not received?",
+        "noEmailDesc": "Check your spam folder or wait a few moments",
+        "tryAgain": "Try with another email address"
+      },
+      "newPassword": {
+        "title": "Account Security",
+        "subtitle": "Set a strong new password",
+        "cardTitle": "Security Configuration",
+        "passwordLabel": "Primary Password",
+        "passwordPlaceholder": "Enter your password",
+        "confirmLabel": "Password Confirmation",
+        "confirmPlaceholder": "Re-enter password",
+        "criteriaTitle": "Strength Criteria",
+        "criteria": {
+          "minLength": "8+ characters",
+          "lowercase": "Lowercase (a-z)",
+          "uppercase": "Uppercase (A-Z)",
+          "number": "Number (0-9)"
+        },
+        "updateButton": "Secure Account",
+        "updatingButton": "Updating...",
+        "footerText": "Your authentication data is encrypted and protected",
+        "success": {
+          "title": "Account Secured Successfully",
+          "subtitle": "Your authentication has been strengthened",
+          "message": "Authentication Enhanced",
+          "description": "Your account security has been successfully finalized. You can now access your space with your new credentials.",
+          "redirecting": "Redirecting to login...",
+          "footerText": "Keep your access credentials confidential"
+        }
+      }
+    },
+    "roleSelector": {
+      "title": "Choose your account type",
+      "subtitle": "Select the account type that matches your needs",
+      "continue": "Continue",
+      "client": {
+        "title": "Client",
+        "description": "I want to book lofts for my stays"
+      },
+      "partner": {
+        "title": "Partner",
+        "description": "I want to rent out my properties"
+      },
+      "employee": {
+        "title": "Employee",
+        "description": "I have an employee access code"
+      }
+    },
+    "clientRegistration": {
+      "title": "Client Registration",
+      "description": "Create your account to book lofts",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Your full name",
+      "email": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Minimum 8 characters",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Re-enter your password",
+      "submit": "Create my client account",
+      "benefits": "Instant access to loft search and booking"
+    },
+    "partnerRegistration": {
+      "title": "Partner Registration",
+      "description": "Join our network of real estate partners",
+      "step": "Step",
+      "nextStep": "Next Step",
+      "previousStep": "Previous Step",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Your full name",
+      "email": "Professional Email Address",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Minimum 8 characters",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Re-enter your password",
+      "businessType": "Business Type",
+      "individual": "Individual",
+      "company": "Company",
+      "businessName": "Company Name",
+      "businessNamePlaceholder": "Your company name",
+      "address": "Complete Address",
+      "addressPlaceholder": "Complete address of your home or business",
+      "phone": "Phone Number",
+      "phonePlaceholder": "+213 XX XX XX XX",
+      "taxId": "Tax ID (optional)",
+      "taxIdPlaceholder": "Tax identification number",
+      "verificationNotice": "Your account will be verified by our team before activation (24-48h).",
+      "submit": "Submit my application"
+    },
+    "clientRegistrationSuccess": {
+      "title": "Registration Successful!",
+      "subtitle": "Your client account has been created successfully",
+      "emailSent": "Confirmation email sent",
+      "nextSteps": "Check your email and click the confirmation link to activate your account.",
+      "whatNext": "What's next?",
+      "step1": "Check your email and confirm your account",
+      "step2": "Sign in to your client area",
+      "step3": "Start searching and booking lofts",
+      "continueToLogin": "Sign In",
+      "browseProperties": "Browse Properties",
+      "supportText": "Need help? Contact our customer support"
+    },
+    "register": {
+      "title": "Title"
+    },
+    "employeeAccess": {
+      "title": "Title",
+      "email": "Email",
+      "password": "Password"
+    },
+    "error": "Error",
+    "auth": {
+      "email": "Email",
+      "password": "Password",
+      "admin": "Administrator",
+      "manager": "Manager",
+      "member": "Member"
+    },
+    "role": "Role",
+    "executive": "Executive"
+  },
+  "lofts": {
+    "editLoft": "Edit loft",
+    "linkToAirbnb": "Link to Airbnb",
+    "loftInfoTitle": "Loft Information",
+    "pricePerNight": "Price per Night",
+    "owner": "Owner",
+    "description": "Description",
+    "available": "Available",
+    "occupied": "Occupied",
+    "maintenance": "Maintenance",
+    "details": {
+      "title": "Loft Details",
+      "pricePerNight": "Price per night",
+      "owner": "Owner",
+      "propertyType": "Property Type",
+      "description": "Description",
+      "amenities": "Amenities",
+      "gallery": "Photo Gallery",
+      "additionalInfo": "Additional Information",
+      "createdAt": "Created on",
+      "lastUpdated": "Last updated",
+      "edit": "Edit Apartment",
+      "auditHistory": "Audit History",
+      "apartmentInfo": "Apartment Information"
+    },
+    "additionalInfo": {
+      "airbnbId": "Airbnb ID",
+      "company": "Company",
+      "title": "Additional Information",
+      "percentages": "Percentages",
+      "photoGallery": "Photo Gallery",
+      "createdOn": "Created on",
+      "lastUpdated": "Last updated",
+      "owner": "Owner",
+      "phone": "Phone"
+    },
+    "billManagement": {
+      "billMarkedAsPaid": "{billType} bill marked as paid. Next due date calculated automatically.",
+      "cancel": "Cancel",
+      "title": "Bill Management",
+      "water": "Water",
+      "electricity": "Electricity",
+      "gas": "Gas",
+      "phone": "Phone",
+      "internet": "Internet",
+      "nextBills": "Next Bills",
+      "notSet": "Not Set",
+      "customerCode": "Customer Code",
+      "meterNumber": "Meter Number",
+      "correspondent": "Correspondent",
+      "clientNumber": "Client Number",
+      "pdlRef": "PDL Reference",
+      "frequency": "Frequency",
+      "noFrequencySet": "No frequency set",
+      "daysOverdue": "days overdue",
+      "dueToday": "Due Today",
+      "dueTomorrow": "Due Tomorrow",
+      "dueInDays": "Due in {days} days",
+      "due": "Due",
+      "pleaseEnterPaymentAmount": "Please enter a payment amount",
+      "markAsPaid": "Mark as Paid",
+      "noBillDueDatesSet": "No bill due dates set",
+      "editLoftToAddBillInfo": "Edit the loft to add bill frequencies and due dates",
+      "markBillAsPaid": "Mark {billType} Bill as Paid",
+      "paymentAmount": "Payment Amount",
+      "enterPaymentAmount": "Enter payment amount",
+      "processing": "Processing...",
+      "nextDueDateAutoCalculated": "Next due date will be automatically calculated based on {frequency} frequency.",
+      "currentDueDate": "Current Due Date",
+      "energy": "Energy",
+      "failedToMarkBillAsPaid": "Failed to mark bill as paid"
+    },
+    "photos": {
+      "addedBy": "Added by {name}",
+      "cancel": "Cancel",
+      "confirmDelete": "Confirm deletion",
+      "confirmDeleteDescription": "Are you sure you want to delete this photo? This action cannot be undone.",
+      "deleteError": "Error deleting photo",
+      "deletePhoto": "Delete photo",
+      "deleteSuccess": "Photo deleted",
+      "description": "Add photos to showcase your loft. Photos help clients better visualize the space.",
+      "downloadError": "Download error",
+      "downloadPhoto": "Download photo",
+      "dragDropText": "Drag your photos here or click to select",
+      "fileSize": "{size} MB",
+      "fileTooLarge": "{filename} is too large (max 5MB)",
+      "invalidFileType": "{filename} is not an image",
+      "loadError": "Error loading photos",
+      "mainPhoto": "Main photo",
+      "maxPhotosReached": "Maximum {max} photos allowed",
+      "noPhotos": "No photos available",
+      "noPhotosDescription": "Photos for this loft have not been added yet.",
+      "photoCount": "{count}/{max} photos",
+      "photoCount_many": "{count}/{max} photos",
+      "photoCount_one": "{count}/{max} photo",
+      "photoCount_other": "{count}/{max} photos",
+      "photoDownloaded": "Photo downloaded",
+      "photoGallery": "Photo gallery",
+      "photoViewer": "Photo viewer",
+      "photosAvailable": "{count} photo available",
+      "photosAvailable_plural": "{count} photos available",
+      "selectPhotos": "Select photos",
+      "supportedFormats": "Supported formats: JPG, PNG, WebP (max 5MB per photo)",
+      "thumbnails": "Thumbnails",
+      "title": "Loft Photos",
+      "uploadError": "Error uploading {filename}: {error}",
+      "uploadSuccess": "{filename} uploaded successfully",
+      "uploading": "Uploading...",
+      "viewPhoto": "View photo",
+      "willBeDeleted": "This photo will be permanently deleted"
+    }
+  },
+  "roles": {
+    "admin": "Administrator",
+    "executive": "Executive",
+    "guest": "Guest",
+    "manager": "Manager",
+    "member": "Member",
+    "owner": "Owner",
+    "user": "User"
+  },
+  "dashboard": {
+    "actionRequired": "Action Required",
+    "active": "Active",
+    "activeTasks": "Active Tasks",
+    "activeTeams": "Active Teams",
+    "addTransaction": "Add Transaction",
+    "allBillsCurrent": "All Bills Current",
+    "attentionNeeded": "Attention Needed",
+    "billAlerts": "Bill Alerts",
+    "billMonitoring": "Bill Monitoring",
+    "billsNeedAttention": "Bills Need Attention",
+    "bills": {
+      "due": "Due",
+      "title": "Bills"
+    },
+    "billsDueNow": "Bills Due Now",
+    "billsPastDue": "Bills Past Due",
+    "dayOverdue": "1 day overdue",
+    "days": "days",
+    "daysOverdue": "{count} days overdue",
+    "due": "Due",
+    "dueToday": "Due Today",
+    "excellent": "Excellent!",
+    "inProgress": "In Progress",
+    "latestTaskUpdates": "Latest Task Updates",
+    "lofts": {
+      "addLoft": "Add Loft"
+    },
+    "loftsWithBills": "Lofts with Bills",
+    "monthlyFinancialOverview": "Monthly Financial Overview",
+    "monthlyRevenue": "Monthly Revenue",
+    "next30Days": "Next 30 Days",
+    "nextDueDates": "Next due dates in 30 days",
+    "noOverdueBills": "No overdue bills - great job!",
+    "noRecentTasks": "No recent tasks",
+    "noUpcomingBills": "No upcoming bills",
+    "occupiedLofts": "Occupied Lofts",
+    "overdue": "Overdue",
+    "overdueBillsTitle": "Overdue Bills",
+    "pay": "Pay",
+    "pendingTasks": "You have {todo} tasks to do and {inProgress} tasks in progress.",
+    "quickActions": "Quick Actions",
+    "myRecentTasks": "My Recent Tasks",
+    "recentTasks": "Recent Tasks",
+    "revenueVsExpenses": "Revenue vs Expenses",
+    "subtitle": "Welcome to your property management dashboard",
+    "systemStatus": "System Status",
+    "tasks": {
+      "status": {
+        "completed": "Completed",
+        "inProgress": "In Progress",
+        "todo": "To Do"
+      }
+    },
+    "teams": "Teams",
+    "thisMonth": "This Month",
+    "title": "Algeria Loft - Apartment Management",
+    "toDo": "To Do",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "totalLofts": "Total Lofts",
+    "upToDate": "You're up to date!",
+    "upcoming": "Upcoming",
+    "upcomingBillsTitle": "Upcoming Bills",
+    "updated": "Updated",
+    "viewReports": "View Reports",
+    "welcomeBack": "Welcome back",
+    "myProfile": "My Profile",
+    "viewMyTasks": "View My Tasks",
+    "allCaughtUp": "You are all caught up!",
+    "noUrgentTasks": "No urgent tasks.",
+    "urgentTasks": "Urgent Tasks",
+    "noTasksAssigned": "No tasks assigned to you.",
+    "noTasksYet": "No tasks yet.",
+    "viewAllMyTasks": "View All My Tasks",
+    "completed": "Completed",
+    "secureViewMessage": "Secure Member View - Showing only your assigned tasks and relevant information",
+    "tasksVisible": "tasks visible",
+    "loftsAccessible": "lofts accessible",
+    "dismiss": "Dismiss",
+    "description": "Complete application for managing apartments, owners, transactions...",
+    "availableSections": "Available sections for your profile",
+    "access": "Access",
+    "sections": {
+      "apartments": {
+        "title": "🏢 Apartments",
+        "description": "Manage properties"
+      },
+      "reservations": {
+        "title": "📅 Reservations",
+        "description": "Manage reservations"
+      },
+      "availability": {
+        "title": "📋 Availability",
+        "description": "Manage availability"
+      },
+      "tasks": {
+        "title": "✅ Tasks",
+        "description": "Manage tasks"
+      },
+      "teams": {
+        "title": "👥 Teams",
+        "description": "Manage teams"
+      },
+      "platformSettings": {
+        "title": "⚙️ Platform Settings",
+        "description": "Platform configuration"
+      },
+      "owners": {
+        "title": "🏠 Owners",
+        "description": "Manage owners"
+      },
+      "transactions": {
+        "title": "💰 Transactions",
+        "description": "Financial management"
+      },
+      "detailedReports": {
+        "title": "📊 Detailed Reports",
+        "description": "Detailed operational reports"
+      },
+      "pendingPartners": {
+        "title": "🤝 Pending Partners",
+        "description": "Manage partnership requests"
+      },
+      "validatePartners": {
+        "title": "✅ Validate Partners",
+        "description": "Partner validation"
+      },
+      "openDisputes": {
+        "title": "⚠️ Open Disputes",
+        "description": "Manage ongoing disputes"
+      },
+      "manageDisputes": {
+        "title": "⚖️ Manage Disputes",
+        "description": "Dispute resolution"
+      }
+    },
+    "quickAccessItems": {
+      "conversations": {
+        "title": "💬 Conversations",
+        "description": "Messages and communications"
+      },
+      "notifications": {
+        "title": "🔔 Notifications",
+        "description": "Alerts and notifications"
+      },
+      "dashboard": {
+        "title": "📊 Dashboard",
+        "description": "Operational overview"
+      },
+      "detailedReports": {
+        "title": "📄 Detailed Reports",
+        "description": "Detailed operational reports"
+      }
+    },
+    "quickAccess": {
+      "title": "Quick Access"
+    },
+    "loading": "Loading...",
+    "error": "Error",
+    "noData": "No data",
+    "dashboard": {
+      "active": "Active",
+      "title": "Title"
+    }
+  }
+}

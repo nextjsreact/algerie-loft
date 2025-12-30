@@ -1,0 +1,119 @@
+{
+  "title": "Customer Management",
+  "subtitle": "Intelligent customer relationship management platform",
+  "loadingCustomers": "Loading customers...",
+  "searchCustomers": "Search for a customer...",
+  "newCustomer": "New Customer",
+  "noCustomersFound": "No customers found",
+  "noCustomersMessage": "No customers match your search criteria.",
+  "addFirstCustomer": "Start by adding your first customer.",
+  "addCustomer": "Add customer",
+  
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "email": "Email",
+  "phone": "Phone",
+  "status": "Status",
+  "notes": "Notes",
+  "actions": "Actions",
+  "createdAt": "Created on",
+  "updatedAt": "Updated on",
+  
+  "statusOptions": {
+    "active": "Active",
+    "prospect": "Prospect",
+    "former": "Former"
+  },
+  
+  "filters": {
+    "all": "All statuses",
+    "active": "Active",
+    "prospect": "Prospects",
+    "former": "Former"
+  },
+  
+  "viewModes": {
+    "grid": "Grid view",
+    "list": "List view"
+  },
+  
+  "stats": {
+    "totalClients": "Total Clients",
+    "activeClients": "Active Clients",
+    "prospects": "Prospects",
+    "formerClients": "Former",
+    "clientBase": "Client base",
+    "loyal": "Loyal",
+    "potential": "Potential",
+    "history": "History"
+  },
+  
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "contact": "Contact",
+    "call": "Call",
+    "email": "Send email",
+    "schedule": "Schedule appointment",
+    "addNote": "Add note",
+    "backToCustomers": "Back to customers"
+  },
+  
+  "detail": {
+    "profileTitle": "Customer Profile",
+    "contactInfo": "Contact Information",
+    "contactDescription": "Contact details and personal information",
+    "interactionHistory": "Interaction History",
+    "interactionDescription": "Timeline of exchanges",
+    "statistics": "Statistics",
+    "quickActions": "Quick Actions",
+    "satisfaction": "Satisfaction",
+    "interactions": "Interactions",
+    "reservations": "Reservations",
+    "clientSince": "Customer since",
+    "lastUpdate": "Last update",
+    "noInteractions": "No interactions recorded",
+    "futureInteractions": "Future interactions will appear here",
+    "clientCreated": "Customer created",
+    "profileCreated": "Customer profile was created in the system",
+    "customerNotFound": "Customer not found",
+    "customerNotFoundMessage": "The requested customer does not exist or has been deleted.",
+    "loadingProfile": "Loading customer profile..."
+  },
+  
+  "messages": {
+    "deleteConfirm": "Are you sure you want to delete {name}?",
+    "deleteSuccess": "{name} has been successfully deleted",
+    "deleteError": "Error during deletion: {error}",
+    "createSuccess": "Customer created successfully",
+    "createError": "Error creating customer",
+    "updateSuccess": "Customer updated successfully",
+    "updateError": "Error updating customer"
+  },
+  
+  "form": {
+    "createTitle": "New Customer",
+    "editTitle": "Edit Customer",
+    "firstNamePlaceholder": "Enter first name",
+    "lastNamePlaceholder": "Enter last name",
+    "emailPlaceholder": "example@email.com",
+    "phonePlaceholder": "+1 XXX XXX XXXX",
+    "notesPlaceholder": "Notes about the customer...",
+    "selectStatus": "Select a status",
+    "save": "Save",
+    "cancel": "Cancel",
+    "required": "This field is required",
+    "invalidEmail": "Invalid email",
+    "invalidPhone": "Invalid phone number"
+  },
+  
+  "hub": {
+    "title": "Customer Relationship Hub",
+    "intelligentPlatform": "Intelligent customer relationship management platform",
+    "analysisInProgress": "AI analysis in progress...",
+    "automaticOptimization": "Automatic optimization enabled",
+    "diversifiedPortfolio": "Diversified portfolio",
+    "excellentPerformance": "Excellent performance"
+  }
+}

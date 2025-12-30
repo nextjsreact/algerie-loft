@@ -1,0 +1,15 @@
+{
+  "common": {
+    "error": "Error",
+    "success": "Success"
+  },
+  "zoneAreas": {
+    "actions": "Actions",
+    "deleteConfirm": "Are you sure you want to delete this zone area?",
+    "deleteError": "Error deleting zone area.",
+    "deleteSuccess": "Zone area deleted successfully.",
+    "existingZoneAreas": "Existing Zone Areas",
+    "name": "Name",
+    "noZoneAreasYet": "No zone areas found yet."
+  }
+}

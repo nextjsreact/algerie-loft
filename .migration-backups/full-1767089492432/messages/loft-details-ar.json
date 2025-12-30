@@ -1,0 +1,95 @@
+{
+  "page": {
+    "title": "تفاصيل الشقة",
+    "editLoft": "تعديل الشقة",
+    "linkToAirbnb": "ربط بـ Airbnb",
+    "backToList": "العودة إلى القائمة"
+  },
+  "tabs": {
+    "details": "تفاصيل الشقة",
+    "auditHistory": "سجل المراجعة",
+    "photos": "الصور",
+    "bills": "الفواتير"
+  },
+  "status": {
+    "available": "متاح",
+    "occupied": "مشغول",
+    "maintenance": "صيانة",
+    "unavailable": "غير متاح"
+  },
+  "sections": {
+    "basicInfo": {
+      "title": "معلومات الشقة",
+      "pricePerNight": "السعر لكل ليلة",
+      "owner": "المالك",
+      "description": "الوصف",
+      "ownershipType": "نوع الملكية",
+      "company": "الشركة",
+      "percentages": "توزيع الإيرادات",
+      "companyShare": "حصة الشركة",
+      "ownerShare": "حصة المالك",
+      "phone": "الهاتف",
+      "notSet": "غير محدد"
+    },
+    "utilities": {
+      "title": "معلومات إضافية",
+      "water": "المياه",
+      "electricity": "الكهرباء",
+      "gas": "الغاز",
+      "internet": "الإنترنت",
+      "customerCode": "رمز العميل",
+      "meterNumber": "رقم العداد",
+      "correspondent": "المراسل",
+      "clientNumber": "رقم العميل",
+      "pdlRef": "مرجع PDL",
+      "contractCode": "رمز العقد",
+      "noInfo": "لا توجد معلومات متاحة"
+    },
+    "bills": {
+      "title": "إدارة الفواتير",
+      "nextBills": "الفواتير القادمة",
+      "frequency": "التكرار",
+      "dueDate": "تاريخ الاستحقاق",
+      "amount": "المبلغ",
+      "status": "الحالة",
+      "paid": "مدفوع",
+      "pending": "في الانتظار",
+      "overdue": "متأخر",
+      "noDueDatesSet": "لم يتم تعيين تواريخ استحقاق",
+      "editLoftToAddBillInfo": "قم بتعديل الشقة لإضافة معلومات الفواتير",
+      "frequencies": {
+        "monthly": "شهري",
+        "quarterly": "ربع سنوي",
+        "yearly": "سنوي",
+        "bimonthly": "كل شهرين",
+        "weekly": "أسبوعي"
+      }
+    },
+    "photos": {
+      "title": "معرض الصور",
+      "noPhotos": "لا توجد صور متاحة",
+      "noPhotosDescription": "لم تتم إضافة صور لهذه الشقة بعد.",
+      "mainPhoto": "الصورة الرئيسية",
+      "addPhotos": "إضافة صور"
+    },
+    "metadata": {
+      "title": "معلومات إضافية",
+      "createdOn": "تم الإنشاء في",
+      "lastUpdated": "آخر تحديث",
+      "airbnbId": "معرف Airbnb",
+      "internalId": "المعرف الداخلي"
+    }
+  },
+  "errors": {
+    "loftNotFound": "الشقة غير موجودة",
+    "noLoftFoundForId": "لم يتم العثور على شقة للمعرف",
+    "loadingError": "خطأ في التحميل",
+    "systemError": "خطأ في النظام",
+    "unexpectedError": "حدث خطأ غير متوقع"
+  },
+  "currency": {
+    "da": "دج",
+    "eur": "€",
+    "usd": "$"
+  }
+}

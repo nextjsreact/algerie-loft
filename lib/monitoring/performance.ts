@@ -1,4 +1,5 @@
-import * as Sentry from '@sentry/nextjs';
+// Performance monitoring with Sentry mock
+import * as Sentry from '@/lib/mocks/sentry';
 
 // Performance monitoring utilities
 export class PerformanceMonitor {

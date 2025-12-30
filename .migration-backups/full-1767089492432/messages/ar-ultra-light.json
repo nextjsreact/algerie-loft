@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "lofts": "الشقق",
+    "conversations": "المحادثات",
+    "notifications": "الإشعارات",
+    "customers": "العملاء",
+    "reservations": "الحجوزات",
+    "availability": "التوفر",
+    "tasks": "المهام",
+    "teams": "الفرق",
+    "owners": "الملاك",
+    "transactions": "المعاملات",
+    "reportsNav": "التقارير",
+    "settings": "الإعدادات",
+    "loftManager": "مدير الشقة",
+    "logout": "تسجيل الخروج"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "company": "شركة"
+  },
+  "lofts": {
+    "editLoft": "تعديل الشقة",
+    "available": "متاح",
+    "occupied": "مشغول",
+    "maintenance": "صيانة"
+  }
+}

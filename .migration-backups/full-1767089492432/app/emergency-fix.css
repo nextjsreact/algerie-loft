@@ -1,0 +1,81 @@
+/* SOLUTION D'URGENCE - ESPACEMENT FORCÉ PARTOUT */
+
+/* Forcer l'espacement sur TOUS les éléments */
+* {
+  word-spacing: 0.5rem !important;
+  letter-spacing: 0.1rem !important;
+  margin: 0.25rem !important;
+  padding: 0.125rem !important;
+}
+
+/* Espacement spécial pour les textes */
+span, p, div, a, button, li {
+  margin-right: 0.5rem !important;
+  margin-bottom: 0.25rem !important;
+  display: inline-block !important;
+  white-space: normal !important;
+}
+
+/* Forcer l'espacement dans la navigation */
+nav *, .sidebar *, [class*="nav"] *, [class*="sidebar"] * {
+  margin: 0.5rem !important;
+  padding: 0.25rem !important;
+}
+
+/* Correction pour les badges */
+.badge, [class*="badge"] {
+  margin: 0.5rem !important;
+  padding: 0.25rem 0.5rem !important;
+  display: inline-block !important;
+}
+
+/* Espacement pour les cartes */
+.card *, [class*="card"] * {
+  margin: 0.25rem !important;
+}
+
+/* Correction pour les boutons */
+button {
+  margin: 0.5rem !important;
+  padding: 0.5rem 1rem !important;
+}
+
+/* Espacement pour les listes */
+ul, ol {
+  padding-left: 2rem !important;
+}
+
+li {
+  margin: 0.5rem 0 !important;
+  padding: 0.25rem !important;
+}
+
+/* Correction pour les titres */
+h1, h2, h3, h4, h5, h6 {
+  margin: 1rem 0 !important;
+  padding: 0.5rem 0 !important;
+}
+
+/* Forcer l'espacement entre éléments adjacents */
+* + * {
+  margin-left: 0.5rem !important;
+}
+
+/* Correction spéciale pour les textes arabes */
+[lang="ar"] *, [dir="rtl"] * {
+  word-spacing: 1rem !important;
+  letter-spacing: 0.2rem !important;
+}
+
+/* Correction pour éviter que les éléments se chevauchent */
+body * {
+  position: relative !important;
+  z-index: auto !important;
+}
+
+/* Espacement minimum garanti */
+body {
+  line-height: 2 !important;
+  word-spacing: 0.5rem !important;
+  letter-spacing: 0.1rem !important;
+}

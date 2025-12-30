@@ -6,7 +6,15 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { AlertTriangle, X, CheckCircle } from "lucide-react"
-import { toast } from "sonner"
+// Temporary - sonner disabled
+// import { toast } from "sonner"
+
+// Temporary toast replacement
+const toast = {
+  error: (message: string) => console.error('Toast:', message),
+  success: (message: string) => console.log('Toast:', message),
+  info: (message: string) => console.info('Toast:', message),
+};
 // Removed next-intl dependency
 
 interface CriticalAlert {

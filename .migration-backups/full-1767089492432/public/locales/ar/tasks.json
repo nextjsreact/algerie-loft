@@ -1,0 +1,107 @@
+{
+  "title": "المهام",
+  "subtitle": "إدارة المهام المخصصة لك وتتبع تقدمها.",
+  "yourTasks": "مهامك",
+  "addTask": "إضافة مهمة",
+  "editTask": "تعديل المهمة",
+  "deleteTask": "حذف المهمة",
+  "viewTask": "عرض المهمة",
+  "createTask": "إنشاء مهمة",
+  "updateTask": "تحديث المهمة",
+  "updateStatus": "تحديث الحالة",
+  "cancel": "إلغاء",
+  "saving": "جاري الحفظ...",
+  
+  "taskDetails": "تفاصيل المهمة",
+  "taskTitle": "عنوان المهمة",
+  "taskDescription": "وصف المهمة",
+  "taskStatus": "حالة المهمة",
+  "taskDueDate": "تاريخ استحقاق المهمة",
+  "assignTo": "تعيين لـ",
+  "assignedTo": "مخصص لـ",
+  "noDueDate": "لا يوجد تاريخ استحقاق",
+  "noDescription": "لا يوجد وصف",
+  "noTasks": "لم يتم العثور على مهام",
+  "noTasksDescription": "لا توجد مهام تطابق معايير البحث.",
+  
+  "status": {
+    "todo": "قيد الانتظار",
+    "inProgress": "قيد التقدم",
+    "in_progress": "قيد التقدم",
+    "completed": "مكتملة",
+    "unknown": "غير معروف"
+  },
+  
+  "form": {
+    "addNewTask": "إضافة مهمة جديدة",
+    "createNewTask": "إنشاء مهمة جديدة",
+    "editTask": "تعديل المهمة",
+    "updateTaskStatus": "تحديث حالة المهمة",
+    "updateStatusDescription": "تحديث حالة المهمة ووصفها.",
+    "updateTaskInfo": "تحديث معلومات المهمة"
+  },
+  
+  "filters": {
+    "allStatuses": "جميع الحالات",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "filterByStatus": "تصفية حسب الحالة"
+  },
+  
+  "messages": {
+    "created_success": "تم إنشاء المهمة بنجاح.",
+    "updated_success": "تم تحديث المهمة بنجاح.",
+    "deleted_success": "تم حذف المهمة بنجاح.",
+    "delete_confirm": "هل أنت متأكد أنك تريد حذف هذه المهمة؟",
+    "createError": "خطأ في إنشاء المهمة.",
+    "createSuccess": "تم إنشاء المهمة بنجاح!",
+    "updateError": "خطأ في تحديث المهمة.",
+    "updateSuccess": "تم تحديث المهمة بنجاح!"
+  },
+  
+  "search": "بحث",
+  "searchPlaceholder": "البحث بالعنوان أو الوصف...",
+  "clearFilters": "مسح المرشحات",
+  "dateRange": "الاستحقاق",
+  "to": "إلى",
+  "allUsers": "جميع المستخدمين",
+  "tasksList": "قائمة المهام",
+  "createNewTask": "إنشاء مهمة جديدة",
+  "overdue": "متأخرة",
+  "myTasks": "مهامي",
+  "tasks": "مهام",
+  "inProgress": "قيد التقدم",
+  "assigned": "مخصصة",
+  "urgent": "عاجلة",
+  "fillTaskInformation": "املأ معلومات المهمة",
+  "memberCanOnlyUpdateStatus": "يمكن للأعضاء تحديث حالة ووصف المهام فقط.",
+  "dueDateFormat": "تاريخ الاستحقاق (يوم/شهر/سنة)",
+  
+  "associatedLoft": "الشقة المرتبطة",
+  "noLoftAssociated": "لا توجد شقة مرتبطة",
+  "noLoftAssociatedDescription": "هذه المهمة غير مرتبطة بأي شقة",
+  "loadingLofts": "جاري تحميل الشقق...",
+  "loftNotFound": "الشقة غير موجودة",
+  "allLofts": "جميع الشقق",
+  "loftDeleted": "تم حذف الشقة",
+  "loftDeletedDescription": "تم حذف الشقة المرتبطة بهذه المهمة",
+  "loftName": "اسم الشقة",
+  "loftAddress": "عنوان الشقة",
+  "viewLoftDetails": "عرض تفاصيل الشقة",
+  "reassignLoft": "إعادة تعيين شقة",
+  "assignLoft": "تعيين شقة",
+  
+  "table": {
+    "id": "المعرف",
+    "name": "الاسم",
+    "due_date": "تاريخ الاستحقاق",
+    "assigned_to": "مخصص لـ",
+    "status": "الحالة",
+    "actions": "الإجراءات"
+  },
+  
+  "filtersTitle": "المرشحات",
+  "conversations": {
+    "member1": "العضو 1"
+  }
+}

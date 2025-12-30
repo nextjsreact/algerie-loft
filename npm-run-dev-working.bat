@@ -1,0 +1,3 @@
+@echo off
+echo Demarrage avec Next.js du dossier loft-algerie-next16...
+"C:\Program Files\nodejs\node.exe" loft-algerie-next16\node_modules\next\dist\bin\next dev --port 3000

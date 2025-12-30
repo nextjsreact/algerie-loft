@@ -1,0 +1,112 @@
+/* CORRECTION NUCLÉAIRE - Espacement forcé pour tous les éléments */
+
+/* Forcer l'espacement entre TOUS les éléments */
+* {
+  word-spacing: 0.25rem !important;
+  letter-spacing: 0.05rem !important;
+}
+
+/* Espacement spécifique pour les éléments de navigation */
+nav * {
+  margin-right: 0.5rem !important;
+  margin-bottom: 0.25rem !important;
+  padding: 0.25rem !important;
+  display: inline-block !important;
+}
+
+/* Forcer l'espacement dans la sidebar */
+.sidebar * {
+  margin: 0.125rem !important;
+  padding: 0.125rem 0.25rem !important;
+}
+
+/* Espacement pour tous les textes */
+span, p, div, a, button {
+  margin-right: 0.25rem !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+}
+
+/* Correction spécifique pour les badges et labels */
+.badge, [class*="badge"] {
+  margin: 0.25rem !important;
+  padding: 0.25rem 0.5rem !important;
+  display: inline-block !important;
+  white-space: nowrap !important;
+}
+
+/* Forcer l'espacement dans les cartes */
+.card *, [class*="card"] * {
+  margin-bottom: 0.5rem !important;
+}
+
+/* Espacement pour les listes */
+ul li, ol li {
+  margin-bottom: 0.5rem !important;
+  padding: 0.25rem !important;
+}
+
+/* Correction pour les éléments flex */
+.flex *, [class*="flex"] * {
+  margin-right: 0.5rem !important;
+}
+
+/* Espacement pour les grilles */
+.grid *, [class*="grid"] * {
+  margin: 0.25rem !important;
+}
+
+/* Forcer l'espacement pour les boutons */
+button {
+  margin: 0.25rem !important;
+  padding: 0.5rem 1rem !important;
+}
+
+/* Correction pour les inputs */
+input, textarea, select {
+  margin: 0.25rem !important;
+  padding: 0.5rem !important;
+}
+
+/* Espacement pour les titres */
+h1, h2, h3, h4, h5, h6 {
+  margin: 1rem 0 0.5rem 0 !important;
+  padding: 0.25rem 0 !important;
+}
+
+/* Correction pour les icônes */
+svg {
+  margin-right: 0.5rem !important;
+}
+
+/* Forcer l'espacement dans les dropdowns */
+[role="menu"] *, [role="menuitem"] * {
+  margin: 0.125rem !important;
+  padding: 0.25rem 0.5rem !important;
+}
+
+/* Correction spécifique pour le problème observé */
+body * {
+  box-sizing: border-box !important;
+}
+
+/* Assurer que les éléments ne se chevauchent pas */
+* + * {
+  margin-left: 0.25rem !important;
+}
+
+/* Correction pour les éléments inline */
+span + span, a + a, button + button {
+  margin-left: 0.5rem !important;
+}
+
+/* Forcer la séparation des mots arabes */
+[lang="ar"] *, [dir="rtl"] * {
+  word-spacing: 0.5rem !important;
+  letter-spacing: 0.1rem !important;
+}
+
+/* Correction pour les textes français */
+[lang="fr"] *, [lang="en"] * {
+  word-spacing: 0.25rem !important;
+}

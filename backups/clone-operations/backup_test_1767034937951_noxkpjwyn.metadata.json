@@ -1,0 +1,16 @@
+{
+  "id": "backup_test_1767034937951_noxkpjwyn",
+  "environmentId": "test-env-001",
+  "environmentName": "Test Environment",
+  "environmentType": "test",
+  "createdAt": "2025-12-29T19:02:17.951Z",
+  "size": 405,
+  "options": {
+    "includeSchema": true,
+    "includeData": true,
+    "compressionLevel": "medium"
+  },
+  "filePath": "C:\\Users\\SERVICE-INFO\\IA\\algerie-loft\\backups\\clone-operations\\backup_test_1767034937951_noxkpjwyn.backup",
+  "checksum": "f463909",
+  "isValid": true
+}

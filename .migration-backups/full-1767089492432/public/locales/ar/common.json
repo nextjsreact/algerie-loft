@@ -1,0 +1,88 @@
+{
+  "currencies": {
+    "da": "دج"
+  },
+  "owners": {
+    "ownershipType": "نوع الملكية"
+  },
+  "selectOption": "اختر خياراً",
+  "saving": "جاري الحفظ...",
+  "error": "خطأ",
+  "systemError": "خطأ في النظام",
+  "view": "عرض",
+  "edit": "تعديل",
+  "cancel": "إلغاء",
+  "viewReports": "عرض التقارير",
+  "common": {
+    "name": "الاسم",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "actions": "الإجراءات",
+    "code": "الرمز",
+    "symbol": "الرمز",
+    "ratio": "المعدل",
+    "yes": "نعم",
+    "no": "لا",
+    "loading": "جاري التحميل...",
+    "copyId": "نسخ المعرف",
+    "success": "نجح",
+    "error": "خطأ"
+  },
+  "nav": {
+    "currencies": "العملات",
+    "categories": "الفئات",
+    "zoneAreas": "المناطق الجغرافية"
+  },
+  "settings": {
+    "categories": {
+      "subtitle": "إدارة فئات الإيرادات والمصروفات",
+      "addNew": "إضافة فئة جديدة",
+      "incomeCategories": "فئات الإيرادات",
+      "manageCategoriesIncome": "إدارة فئات الإيرادات",
+      "expenseCategories": "فئات المصروفات",
+      "manageCategoriesExpense": "إدارة فئات المصروفات",
+      "allCategories": "جميع الفئات",
+      "totalCategories": "{{count}} فئة",
+      "totalCategories_plural": "{{count}} فئة",
+      "description": "الوصف",
+      "noIncomeCategories": "لا توجد فئات إيرادات حتى الآن",
+      "noExpenseCategories": "لا توجد فئات مصروفات حتى الآن",
+      "deleteConfirm": "هل أنت متأكد من حذف هذه الفئة؟"
+    },
+    "currencies": {
+      "subtitle": "إدارة العملات وأسعار الصرف",
+      "addNew": "إضافة عملة جديدة",
+      "defaultCurrency": "العملة الافتراضية",
+      "defaultCurrencyDesc": "العملة الرئيسية المستخدمة في العمليات الحسابية",
+      "default": "افتراضي",
+      "allCurrencies": "جميع العملات",
+      "totalCurrencies": "{{count}} عملة",
+      "totalCurrencies_plural": "{{count}} عملة",
+      "setAsDefault": "تعيين كافتراضي"
+    },
+    "zoneAreas": {
+      "subtitle": "إدارة المناطق الجغرافية لعقاراتك",
+      "existingZoneAreas": "المناطق الجغرافية الحالية",
+      "totalZoneAreas": "{{count}} منطقة جغرافية",
+      "totalZoneAreas_plural": "{{count}} منطقة جغرافية",
+      "addNew": "إضافة منطقة جديدة",
+      "updateZoneAreaInfo": "تحديث معلومات المنطقة",
+      "createNewZoneArea": "إنشاء منطقة جغرافية جديدة",
+      "noZoneAreasFound": "لم يتم العثور على مناطق جغرافية",
+      "addFirstZoneArea": "أضف منطقتك الجغرافية الأولى",
+      "refreshError": "خطأ في تحديث المناطق"
+    }
+  },
+
+  "transactions": {
+    "income": "إيراد",
+    "expense": "مصروف"
+  },
+  "zoneAreas": {
+    "subtitle": "إدارة المناطق الجغرافية لعقاراتك",
+    "updateZoneArea": "تحديث المنطقة",
+    "createZoneArea": "إنشاء منطقة",
+    "updateSuccess": "تم تحديث المنطقة بنجاح",
+    "createSuccess": "تم إنشاء المنطقة بنجاح"
+  }
+}

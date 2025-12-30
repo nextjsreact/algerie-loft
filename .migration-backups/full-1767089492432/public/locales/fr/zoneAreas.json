@@ -1,0 +1,15 @@
+{
+  "common": {
+    "error": "Erreur",
+    "success": "Succès"
+  },
+  "zoneAreas": {
+    "actions": "Actions",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette zone géographique ?",
+    "deleteError": "Erreur lors de la suppression de la zone géographique.",
+    "deleteSuccess": "Zone géographique supprimée avec succès.",
+    "existingZoneAreas": "Zones géographiques existantes",
+    "name": "Nom",
+    "noZoneAreasYet": "Aucune zone géographique trouvée pour l'instant."
+  }
+}

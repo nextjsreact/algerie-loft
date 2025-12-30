@@ -1,0 +1,119 @@
+{
+  "title": "إدارة العملاء",
+  "subtitle": "منصة ذكية لإدارة علاقات العملاء",
+  "loadingCustomers": "جاري تحميل العملاء...",
+  "searchCustomers": "البحث عن عميل...",
+  "newCustomer": "عميل جديد",
+  "noCustomersFound": "لم يتم العثور على عملاء",
+  "noCustomersMessage": "لا يوجد عملاء يطابقون معايير البحث الخاصة بك.",
+  "addFirstCustomer": "ابدأ بإضافة عميلك الأول.",
+  "addCustomer": "إضافة عميل",
+  
+  "firstName": "الاسم الأول",
+  "lastName": "اسم العائلة",
+  "email": "البريد الإلكتروني",
+  "phone": "الهاتف",
+  "status": "الحالة",
+  "notes": "ملاحظات",
+  "actions": "الإجراءات",
+  "createdAt": "تم الإنشاء في",
+  "updatedAt": "تم التحديث في",
+  
+  "statusOptions": {
+    "active": "نشط",
+    "prospect": "محتمل",
+    "former": "سابق"
+  },
+  
+  "filters": {
+    "all": "جميع الحالات",
+    "active": "النشطون",
+    "prospect": "المحتملون",
+    "former": "السابقون"
+  },
+  
+  "viewModes": {
+    "grid": "عرض الشبكة",
+    "list": "عرض القائمة"
+  },
+  
+  "stats": {
+    "totalClients": "إجمالي العملاء",
+    "activeClients": "العملاء النشطون",
+    "prospects": "العملاء المحتملون",
+    "formerClients": "العملاء السابقون",
+    "clientBase": "قاعدة العملاء",
+    "loyal": "مخلصون",
+    "potential": "محتملون",
+    "history": "التاريخ"
+  },
+  
+  "actions": {
+    "view": "عرض",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "contact": "اتصال",
+    "call": "اتصال هاتفي",
+    "email": "إرسال بريد إلكتروني",
+    "schedule": "جدولة موعد",
+    "addNote": "إضافة ملاحظة",
+    "backToCustomers": "العودة إلى العملاء"
+  },
+  
+  "detail": {
+    "profileTitle": "ملف العميل",
+    "contactInfo": "معلومات الاتصال",
+    "contactDescription": "تفاصيل الاتصال والمعلومات الشخصية",
+    "interactionHistory": "تاريخ التفاعلات",
+    "interactionDescription": "الجدول الزمني للتبادلات",
+    "statistics": "الإحصائيات",
+    "quickActions": "الإجراءات السريعة",
+    "satisfaction": "الرضا",
+    "interactions": "التفاعلات",
+    "reservations": "الحجوزات",
+    "clientSince": "عميل منذ",
+    "lastUpdate": "آخر تحديث",
+    "noInteractions": "لم يتم تسجيل أي تفاعلات",
+    "futureInteractions": "ستظهر التفاعلات المستقبلية هنا",
+    "clientCreated": "تم إنشاء العميل",
+    "profileCreated": "تم إنشاء ملف العميل في النظام",
+    "customerNotFound": "العميل غير موجود",
+    "customerNotFoundMessage": "العميل المطلوب غير موجود أو تم حذفه.",
+    "loadingProfile": "جاري تحميل ملف العميل..."
+  },
+  
+  "messages": {
+    "deleteConfirm": "هل أنت متأكد من أنك تريد حذف {name}؟",
+    "deleteSuccess": "تم حذف {name} بنجاح",
+    "deleteError": "خطأ أثناء الحذف: {error}",
+    "createSuccess": "تم إنشاء العميل بنجاح",
+    "createError": "خطأ في إنشاء العميل",
+    "updateSuccess": "تم تحديث العميل بنجاح",
+    "updateError": "خطأ في تحديث العميل"
+  },
+  
+  "form": {
+    "createTitle": "عميل جديد",
+    "editTitle": "تعديل العميل",
+    "firstNamePlaceholder": "أدخل الاسم الأول",
+    "lastNamePlaceholder": "أدخل اسم العائلة",
+    "emailPlaceholder": "مثال@بريد.com",
+    "phonePlaceholder": "+213 XX XX XX XX",
+    "notesPlaceholder": "ملاحظات حول العميل...",
+    "selectStatus": "اختر حالة",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "required": "هذا الحقل مطلوب",
+    "invalidEmail": "بريد إلكتروني غير صحيح",
+    "invalidPhone": "رقم هاتف غير صحيح"
+  },
+  
+  "hub": {
+    "title": "مركز علاقات العملاء",
+    "intelligentPlatform": "منصة ذكية لإدارة علاقات العملاء",
+    "analysisInProgress": "تحليل الذكاء الاصطناعي قيد التقدم...",
+    "automaticOptimization": "تم تفعيل التحسين التلقائي",
+    "diversifiedPortfolio": "محفظة متنوعة",
+    "excellentPerformance": "أداء ممتاز"
+  }
+}

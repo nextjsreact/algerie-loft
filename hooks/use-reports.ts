@@ -3,11 +3,12 @@
  * ====================================
  * 
  * Hooks React pour récupérer les données et générer les rapports PDF
+ * Version mise à jour avec générateur HTML-to-PDF
  */
 
 import { useState, useCallback } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { PDFReportGenerator, type Transaction, type Loft, type Owner, type ReportOptions } from '@/lib/pdf-generator'
+import { HTMLPDFGenerator, type Transaction, type Loft, type Owner, type ReportOptions } from '@/lib/html-pdf-generator'
 import { toast } from 'sonner'
 
 export interface ReportFilters {
@@ -163,22 +164,11 @@ export function useReports() {
         ...options
       }
 
-      // Générer le PDF
-      const generator = new PDFReportGenerator()
-      const pdfBuffer = await generator.generateLoftReport(loft, transactions, reportOptions)
+      // Générer le rapport HTML
+      const generator = new HTMLPDFGenerator()
+      await generator.generateLoftReport(loft, transactions, reportOptions)
 
-      // Télécharger le fichier
-      const blob = new Blob([pdfBuffer], { type: 'application/pdf' })
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `rapport_loft_${loft.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-
-      toast.success('Rapport généré avec succès!')
+      toast.success('Rapport généré avec succès! Utilisez Ctrl+P pour imprimer en PDF.')
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue'
@@ -229,22 +219,11 @@ export function useReports() {
         ...options
       }
 
-      // Générer le PDF
-      const generator = new PDFReportGenerator()
-      const pdfBuffer = await generator.generateOwnerReport(owner, ownerLofts, transactions, reportOptions)
+      // Générer le rapport HTML
+      const generator = new HTMLPDFGenerator()
+      await generator.generateOwnerReport(owner, ownerLofts, transactions, reportOptions)
 
-      // Télécharger le fichier
-      const blob = new Blob([pdfBuffer], { type: 'application/pdf' })
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `rapport_proprietaire_${owner.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-
-      toast.success('Rapport généré avec succès!')
+      toast.success('Rapport généré avec succès! Utilisez Ctrl+P pour imprimer en PDF.')
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue'
@@ -284,22 +263,11 @@ export function useReports() {
         ...options
       }
 
-      // Générer le PDF
-      const generator = new PDFReportGenerator()
-      const pdfBuffer = await generator.generateGlobalReport(lofts, transactions, reportOptions)
+      // Générer le rapport HTML
+      const generator = new HTMLPDFGenerator()
+      await generator.generateGlobalReport(lofts, transactions, reportOptions)
 
-      // Télécharger le fichier
-      const blob = new Blob([pdfBuffer], { type: 'application/pdf' })
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `rapport_global_${new Date().toISOString().split('T')[0]}.pdf`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-
-      toast.success('Rapport généré avec succès!')
+      toast.success('Rapport généré avec succès! Utilisez Ctrl+P pour imprimer en PDF.')
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue'

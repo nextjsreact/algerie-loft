@@ -375,8 +375,12 @@ export default function AnnouncementsPage() {
                   required
                   min="1"
                   max="365"
-                  value={formData.duration_days}
-                  onChange={(e) => setFormData({ ...formData, duration_days: parseInt(e.target.value) })}
+                  value={formData.duration_days || ''}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const numValue = value === '' ? 0 : parseInt(value);
+                    setFormData({ ...formData, duration_days: isNaN(numValue) ? 1 : numValue });
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                 />
               </div>

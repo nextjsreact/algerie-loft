@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
+// Recharts temporairement désactivé pour éviter les erreurs d3-shape avec Next.js 16
+/*
 import {
   LineChart,
   Line,
@@ -19,6 +21,7 @@ import {
   Legend,
   ResponsiveContainer
 } from 'recharts'
+*/
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'

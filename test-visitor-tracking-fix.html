@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Fix Erreurs Tracking Visiteurs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .error-fixed {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .success {
+            background: #dcfce7;
+            border: 1px solid #16a34a;
+            color: #15803d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .improvement {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            color: #0c4a6e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .code {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix - Erreurs Tracking Visiteurs</h1>
+        
+        <div class="error-fixed">
+            <h2>❌ ERREURS CORRIGÉES</h2>
+            <p><strong>Erreur 1:</strong> TypeError: fetch failed - SocketError: other side closed</p>
+            <p><strong>Erreur 2:</strong> Timeouts de 52 secondes sur /api/track-visitor</p>
+            <p><strong>Cause:</strong> Pas de timeout configuré, connexions qui traînent</p>
+        </div>
+
+        <div class="success">
+            <h2>✅ SOLUTIONS APPLIQUÉES</h2>
+            <p><strong>Côté Client:</strong> AbortController avec timeout 10s</p>
+            <p><strong>Côté Serveur:</strong> Timeouts sur body parsing et DB</p>
+            <p><strong>Retry Logic:</strong> Nouvelle tentative après 30s si échec réseau</p>
+        </div>
+
+        <h2>🔧 Améliorations Côté Client (useVisitorTracking.ts)</h2>
+        <div class="improvement">
+            <h3>✅ Timeout avec AbortController</h3>
+            <div class="code">
+const controller = new AbortController();
+const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+const response = await fetch('/api/track-visitor', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  signal: controller.signal, // ✅ Timeout automatique
+  body: JSON.stringify({...})
+});
+            </div>
+        </div>
+
+        <div class="improvement">
+            <h3>✅ Gestion d'Erreurs Spécifiques</h3>
+            <div class="code">
+catch (error) {
+  if (error.name === 'AbortError') {
+    console.warn('Request timeout after 10s');
+  } else if (error.message.includes('SocketError')) {
+    console.warn('Network error, will retry later');
+    // Retry après 30 secondes
+    setTimeout(() => trackVisitor(), 30000);
+  }
+}
+            </div>
+        </div>
+
+        <h2>🔧 Améliorations Côté Serveur (route.ts)</h2>
+        <div class="improvement">
+            <h3>✅ Timeout sur Body Parsing</h3>
+            <div class="code">
+const timeoutPromise = new Promise((_, reject) => {
+  setTimeout(() => reject(new Error('Request timeout')), 5000);
+});
+
+const bodyPromise = request.json();
+const body = await Promise.race([bodyPromise, timeoutPromise]);
+            </div>
+        </div>
+
+        <div class="improvement">
+            <h3>✅ Timeout sur Base de Données</h3>
+            <div class="code">
+const dbPromise = supabase.rpc('record_visitor', {...});
+const dbTimeoutPromise = new Promise((_, reject) => {
+  setTimeout(() => reject(new Error('Database timeout')), 8000);
+});
+
+const { data, error } = await Promise.race([dbPromise, dbTimeoutPromise]);
+            </div>
+        </div>
+
+        <div class="success">
+            <h2>🎯 BÉNÉFICES</h2>
+            <ul>
+                <li>✅ <strong>Plus de blocages:</strong> Timeouts empêchent les requêtes infinies</li>
+                <li>✅ <strong>Meilleure UX:</strong> App ne se bloque plus sur erreurs réseau</li>
+                <li>✅ <strong>Retry automatique:</strong> Nouvelle tentative si échec temporaire</li>
+                <li>✅ <strong>Logs détaillés:</strong> Identification précise des problèmes</li>
+                <li>✅ <strong>Robustesse:</strong> Gestion des cas d'erreur spécifiques</li>
+                <li>✅ <strong>Performance:</strong> Pas d'attente de 52 secondes</li>
+            </ul>
+        </div>
+
+        <div class="improvement">
+            <h2>📊 Timeouts Configurés</h2>
+            <ul>
+                <li><strong>Client fetch:</strong> 10 secondes (AbortController)</li>
+                <li><strong>Server body parsing:</strong> 5 secondes</li>
+                <li><strong>Database query:</strong> 8 secondes</li>
+                <li><strong>Retry delay:</strong> 30 secondes si erreur réseau</li>
+            </ul>
+        </div>
+
+        <div style="background: #f0f9ff; border: 1px solid #0ea5e9; padding: 15px; border-radius: 8px; margin-top: 20px;">
+            <h3>🔍 POUR TESTER:</h3>
+            <p>1. Rechargez une page du site</p>
+            <p>2. Ouvrez les DevTools → Network</p>
+            <p>3. La requête /api/track-visitor ne devrait plus dépasser 10s</p>
+            <p>4. En cas d'erreur réseau, retry automatique après 30s</p>
+            <p>5. Plus d'erreurs "SocketError: other side closed" dans la console</p>
+        </div>
+    </div>
+</body>
+</html>

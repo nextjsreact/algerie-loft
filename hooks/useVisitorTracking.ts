@@ -69,9 +69,14 @@ export function useVisitorTracking(options: VisitorTrackingOptions = {}) {
     // Enregistrer la visite
     const trackVisitor = async () => {
       try {
+        // Ajouter un timeout pour éviter les blocages
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 secondes timeout
+
         const response = await fetch('/api/track-visitor', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
           body: JSON.stringify({
             sessionId,
             referrer: document.referrer || null,
@@ -81,6 +86,8 @@ export function useVisitorTracking(options: VisitorTrackingOptions = {}) {
             os: navigator.platform || 'Unknown'
           })
         });
+
+        clearTimeout(timeoutId);
 
         if (response.ok) {
           // Marquer comme tracké pour cette session
@@ -96,10 +103,29 @@ export function useVisitorTracking(options: VisitorTrackingOptions = {}) {
           }
         }
       } catch (error) {
-        // Silencieux - ne pas bloquer l'app si le tracking échoue
-        if (debug) {
-          console.error('[Visitor Tracking] Error:', error);
+        // Gestion spécifique des erreurs de réseau
+        if (error instanceof Error) {
+          if (error.name === 'AbortError') {
+            if (debug) {
+              console.warn('[Visitor Tracking] Request timeout after 10s');
+            }
+          } else if (error.message.includes('fetch failed') || error.message.includes('SocketError')) {
+            if (debug) {
+              console.warn('[Visitor Tracking] Network error, will retry later');
+            }
+            // Optionnel: programmer un retry après 30 secondes
+            setTimeout(() => {
+              if (!hasTracked.current && !sessionStorage.getItem('visitor_tracked')) {
+                trackVisitor();
+              }
+            }, 30000);
+          } else {
+            if (debug) {
+              console.error('[Visitor Tracking] Unexpected error:', error);
+            }
+          }
         }
+        // Silencieux - ne pas bloquer l'app si le tracking échoue
       }
     };
 

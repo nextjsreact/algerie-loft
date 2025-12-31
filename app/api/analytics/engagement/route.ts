@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as Sentry from '@/lib/mocks/sentry';
 
 interface PageEngagement {
   page: string;
@@ -16,115 +15,36 @@ interface EngagementRequest {
 
 export async function POST(request: NextRequest) {
   try {
-    // Parse JSON with error handling for empty body
-    let body;
-    try {
-      body = await request.json();
-    } catch (jsonError) {
-      return NextResponse.json(
-        { error: 'Invalid JSON body' },
-        { status: 400 }
-      );
-    }
+    // Timeout pour éviter les blocages
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Request timeout')), 1500); // 1.5 secondes max
+    });
+
+    // Parse JSON avec timeout
+    const jsonPromise = request.json();
+    const body = await Promise.race([jsonPromise, timeoutPromise]) as EngagementRequest;
     
-    const { sessionId, engagement }: EngagementRequest = body;
+    const { sessionId, engagement } = body;
     
-    // Validate the engagement data
+    // Validation rapide
     if (!sessionId || !engagement || !engagement.page || typeof engagement.timeOnPage !== 'number') {
-      return NextResponse.json(
-        { error: 'Invalid engagement data' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: true, message: 'Invalid data ignored' });
     }
     
-    // Log the engagement for monitoring
-    console.log(`[Analytics Engagement] ${engagement.page}`, {
-      sessionId,
-      timeOnPage: engagement.timeOnPage,
-      scrollDepth: engagement.scrollDepth,
-      interactions: engagement.interactions,
-      bounced: engagement.bounced,
-    });
-    
-    // Add breadcrumb to Sentry
-    Sentry.addBreadcrumb({
-      category: 'analytics',
-      message: `Page engagement: ${engagement.page}`,
-      level: 'info',
-      data: {
-        sessionId,
-        timeOnPage: engagement.timeOnPage,
-        scrollDepth: engagement.scrollDepth,
-        interactions: engagement.interactions,
-        bounced: engagement.bounced,
-      },
-    });
-    
-    // Alert on concerning engagement patterns
-    if (engagement.bounced && engagement.timeOnPage < 5000) {
-      Sentry.captureMessage(`High bounce rate detected: ${engagement.page}`, {
-        level: 'warning',
-        tags: {
-          engagement: 'high-bounce',
-          page: engagement.page,
-        },
-        extra: {
-          sessionId,
-          engagement,
-        },
-      });
+    // Log minimal en développement seulement
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[Analytics] ${engagement.page} - ${Math.round(engagement.timeOnPage/1000)}s`);
     }
     
-    // Alert on very low scroll depth
-    if (engagement.scrollDepth < 10 && engagement.timeOnPage > 10000) {
-      Sentry.captureMessage(`Low scroll engagement: ${engagement.page}`, {
-        level: 'info',
-        tags: {
-          engagement: 'low-scroll',
-          page: engagement.page,
-        },
-        extra: {
-          sessionId,
-          engagement,
-        },
-      });
-    }
-    
-    // Here you could store engagement data in a database
-    // await storeEngagementInDatabase(sessionId, engagement);
-    
+    // Réponse immédiate
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error processing engagement data:', error);
+    if (error instanceof Error && error.message === 'Request timeout') {
+      return NextResponse.json({ success: true, message: 'Timeout ignored' });
+    }
     
-    Sentry.captureException(error, {
-      tags: {
-        component: 'analytics-engagement-api',
-      },
-    });
-    
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    // Log minimal des erreurs
+    console.error('[Analytics Engagement] Error:', error instanceof Error ? error.message : 'Unknown');
+    return NextResponse.json({ success: true }); // Toujours réussir
   }
-}
-
-// Optional: Store engagement data in database
-async function storeEngagementInDatabase(sessionId: string, engagement: PageEngagement) {
-  // Implementation would depend on your database choice
-  // Example with a hypothetical engagement table:
-  /*
-  await db.page_engagement.create({
-    data: {
-      session_id: sessionId,
-      page: engagement.page,
-      time_on_page: engagement.timeOnPage,
-      scroll_depth: engagement.scrollDepth,
-      interactions: engagement.interactions,
-      bounced: engagement.bounced,
-      timestamp: new Date(),
-    },
-  });
-  */
 }

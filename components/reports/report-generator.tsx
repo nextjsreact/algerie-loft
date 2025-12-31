@@ -439,6 +439,12 @@ export function ReportGenerator() {
                   <Download className="w-4 h-4 mr-2" />
                   {isLoading ? t('generatingInProgress') : t('generateLoftReport')}
                 </Button>
+                
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <p className="text-sm text-blue-700">
+                    💡 Le rapport s'ouvrira dans une nouvelle fenêtre. Utilisez <strong>Ctrl+P</strong> (ou Cmd+P sur Mac) pour l'imprimer en PDF.
+                  </p>
+                </div>
               </TabsContent>
 
               {/* Rapport par propriétaire */}
@@ -467,6 +473,12 @@ export function ReportGenerator() {
                   <Download className="w-4 h-4 mr-2" />
                   {isLoading ? t('generatingInProgress') : t('generateOwnerReport')}
                 </Button>
+                
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <p className="text-sm text-blue-700">
+                    💡 Le rapport s'ouvrira dans une nouvelle fenêtre. Utilisez <strong>Ctrl+P</strong> (ou Cmd+P sur Mac) pour l'imprimer en PDF.
+                  </p>
+                </div>
               </TabsContent>
 
               {/* Rapport global */}
@@ -486,6 +498,12 @@ export function ReportGenerator() {
                   <Download className="w-4 h-4 mr-2" />
                   {isLoading ? t('generatingInProgress') : t('generateGlobalReport')}
                 </Button>
+                
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                  <p className="text-sm text-blue-700">
+                    💡 Le rapport s'ouvrira dans une nouvelle fenêtre. Utilisez <strong>Ctrl+P</strong> (ou Cmd+P sur Mac) pour l'imprimer en PDF.
+                  </p>
+                </div>
               </TabsContent>
             </Tabs>
 
@@ -505,6 +523,17 @@ export function ReportGenerator() {
           <CardTitle>{t('aboutPdfReports')}</CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+            <h4 className="font-semibold text-blue-800 mb-2">📋 Comment utiliser les rapports PDF</h4>
+            <ol className="text-sm text-blue-700 space-y-1">
+              <li>1. Configurez vos filtres et options de rapport</li>
+              <li>2. Cliquez sur "Générer le rapport" - une nouvelle fenêtre s'ouvrira</li>
+              <li>3. Dans la nouvelle fenêtre, utilisez <strong>Ctrl+P</strong> (ou Cmd+P sur Mac)</li>
+              <li>4. Sélectionnez "Enregistrer au format PDF" comme destination</li>
+              <li>5. Choisissez votre dossier de téléchargement et enregistrez</li>
+            </ol>
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div>
               <h4 className="font-medium mb-2">{t('loftReportTitle')}</h4>

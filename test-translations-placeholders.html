@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Traductions Placeholders</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; }
+        .label { font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Test des Placeholders en Arabe</h1>
+    
+    <div class="test-section">
+        <h2>Formulaire de test avec placeholders en arabe</h2>
+        
+        <div class="label">الاسم (Name)</div>
+        <input type="text" placeholder="اسم الفئة" />
+        
+        <div class="label">الوصف (Description)</div>
+        <textarea placeholder="وصف الفئة (اختياري)" rows="3"></textarea>
+        
+        <div class="label">اللون (Color)</div>
+        <input type="text" placeholder="#3B82F6" />
+        
+        <div class="label">الأيقونة (Icon)</div>
+        <input type="text" placeholder="مجلد" />
+    </div>
+    
+    <div class="test-section">
+        <h2>Test d'affichage des caractères arabes</h2>
+        <p>اسم الفئة - وصف الفئة (اختياري) - مجلد</p>
+    </div>
+    
+    <script>
+        // Test pour vérifier que les placeholders s'affichent correctement
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                console.log('Placeholder:', input.placeholder);
+            });
+        });
+    </script>
+</body>
+</html>

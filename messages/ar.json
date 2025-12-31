@@ -2232,7 +2232,9 @@
         "description": "الوصف",
         "descriptionPlaceholder": "وصف الفئة (اختياري)",
         "color": "اللون",
+        "colorPlaceholder": "#3B82F6",
         "icon": "الأيقونة",
+        "iconPlaceholder": "مجلد",
         "isActive": "فئة نشطة"
       },
       "status": {

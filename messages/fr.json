@@ -2210,7 +2210,9 @@
         "description": "Description",
         "descriptionPlaceholder": "Description de la catégorie (optionnel)",
         "color": "Couleur",
+        "colorPlaceholder": "#3B82F6",
         "icon": "Icône",
+        "iconPlaceholder": "folder",
         "isActive": "Catégorie active"
       },
       "status": {

@@ -136,7 +136,7 @@ export function CategoryEditForm({ category }: CategoryEditFormProps) {
                   <Input
                     value={formData.color}
                     onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
-                    placeholder="#3B82F6"
+                    placeholder={t('form.colorPlaceholder')}
                   />
                 </div>
               </div>
@@ -147,7 +147,7 @@ export function CategoryEditForm({ category }: CategoryEditFormProps) {
                   id="icon"
                   value={formData.icon}
                   onChange={(e) => setFormData(prev => ({ ...prev, icon: e.target.value }))}
-                  placeholder="folder"
+                  placeholder={t('form.iconPlaceholder')}
                 />
               </div>
             </div>

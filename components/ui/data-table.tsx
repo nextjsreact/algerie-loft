@@ -88,17 +88,17 @@ export function DataTable<TData, TValue>({
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+            {table.getHeaderGroups()?.map((headerGroup, index) => (
+              <TableRow key={headerGroup.id || `header-group-${index}`}>
+                {headerGroup.headers?.map((header, headerIndex) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id || `header-${headerIndex}`}>
                       {header.isPlaceholder
                         ? null
-                        : header.column.columnDef.header
+                        : header.column?.columnDef?.header
                         ? flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext?.()
                           )
                         : null}
                     </TableHead>
@@ -108,16 +108,18 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+            {table.getRowModel()?.rows?.length ? (
+              table.getRowModel().rows.map((row, rowIndex) => (
                 <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  key={row.id || `row-${rowIndex}`}
+                  data-state={row.getIsSelected?.() ? "selected" : undefined}
                   className="hover:bg-muted/50 transition-colors duration-200"
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  {row.getVisibleCells?.()?.map((cell, cellIndex) => (
+                    <TableCell key={cell.id || `cell-${cellIndex}`}>
+                      {cell.column?.columnDef?.cell && cell.getContext
+                        ? flexRender(cell.column.columnDef.cell, cell.getContext())
+                        : null}
                     </TableCell>
                   ))}
                 </TableRow>

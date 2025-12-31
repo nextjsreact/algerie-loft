@@ -5,41 +5,50 @@ import { Building2, ClipboardList, DollarSign, Users } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 interface StatsCardsProps {
-  stats: {
+  stats?: {
     totalLofts: number
     occupiedLofts: number
     activeTasks: number
     monthlyRevenue: number
     totalTeams: number
-  },
-  defaultCurrencySymbol: string // New prop
+  } | null,
+  defaultCurrencySymbol?: string
 }
 
-export function StatsCards({ stats, defaultCurrencySymbol }: StatsCardsProps) { // Destructure new prop
+export function StatsCards({ stats, defaultCurrencySymbol = "DA" }: StatsCardsProps) {
   const t = useTranslations('dashboard');
+  
+  // Provide default values if stats is null or undefined
+  const safeStats = stats || {
+    totalLofts: 0,
+    occupiedLofts: 0,
+    activeTasks: 0,
+    monthlyRevenue: 0,
+    totalTeams: 0
+  };
   
   const cards = [
     {
       title: t('totalLofts'),
-      value: stats.totalLofts,
+      value: safeStats.totalLofts,
       icon: Building2,
-      description: `${stats.occupiedLofts} ${t('occupiedLofts').toLowerCase()}`,
+      description: `${safeStats.occupiedLofts} ${t('occupiedLofts').toLowerCase()}`,
     },
     {
       title: t('activeTasks'),
-      value: stats.activeTasks,
+      value: safeStats.activeTasks,
       icon: ClipboardList,
       description: t('inProgress'),
     },
     {
       title: t('monthlyRevenue'),
-      value: `${defaultCurrencySymbol}${stats.monthlyRevenue.toLocaleString()}`, // Use new prop
+      value: `${defaultCurrencySymbol}${safeStats.monthlyRevenue.toLocaleString()}`,
       icon: DollarSign,
       description: t('thisMonth'),
     },
     {
       title: t('teams'),
-      value: stats.totalTeams,
+      value: safeStats.totalTeams,
       icon: Users,
       description: t('activeTeams'),
     },

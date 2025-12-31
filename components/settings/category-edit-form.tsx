@@ -33,10 +33,10 @@ export function CategoryEditForm({ category }: CategoryEditFormProps) {
   const router = useRouter()
   
   const [formData, setFormData] = useState({
-    name: category.name,
-    description: category.description,
-    color: category.color,
-    icon: category.icon,
+    name: category.name || '',
+    description: category.description || '',
+    color: category.color || '#3B82F6',
+    icon: category.icon || '',
     isActive: category.isActive
   })
   
@@ -107,6 +107,7 @@ export function CategoryEditForm({ category }: CategoryEditFormProps) {
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 placeholder={t('form.namePlaceholder')}
+                key={`name-${t('form.namePlaceholder')}`}
                 required
               />
             </div>
@@ -118,6 +119,7 @@ export function CategoryEditForm({ category }: CategoryEditFormProps) {
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 placeholder={t('form.descriptionPlaceholder')}
+                key={`description-${t('form.descriptionPlaceholder')}`}
                 rows={3}
               />
             </div>
@@ -137,6 +139,7 @@ export function CategoryEditForm({ category }: CategoryEditFormProps) {
                     value={formData.color}
                     onChange={(e) => setFormData(prev => ({ ...prev, color: e.target.value }))}
                     placeholder={t('form.colorPlaceholder')}
+                    key={`color-${t('form.colorPlaceholder')}`}
                   />
                 </div>
               </div>
@@ -148,6 +151,7 @@ export function CategoryEditForm({ category }: CategoryEditFormProps) {
                   value={formData.icon}
                   onChange={(e) => setFormData(prev => ({ ...prev, icon: e.target.value }))}
                   placeholder={t('form.iconPlaceholder')}
+                  key={`icon-${t('form.iconPlaceholder')}`}
                 />
               </div>
             </div>

@@ -53,13 +53,32 @@ export function UserProfilePage({ user, locale }: UserProfilePageProps) {
           description: 'Gestion de propriétés et partenariats'
         }
       case 'admin':
-      case 'manager':
-      case 'executive':
         return {
           label: 'Administrateur',
           color: 'bg-red-500',
           icon: Shield,
-          description: 'Administration de la plateforme'
+          description: 'Administration complète de la plateforme'
+        }
+      case 'manager':
+        return {
+          label: 'Manager',
+          color: 'bg-blue-500',
+          icon: Shield,
+          description: 'Gestion des opérations et équipes'
+        }
+      case 'executive':
+        return {
+          label: 'Exécutif',
+          color: 'bg-purple-500',
+          icon: Shield,
+          description: 'Direction et supervision'
+        }
+      case 'superuser':
+        return {
+          label: 'Superuser',
+          color: 'bg-purple-600',
+          icon: Shield,
+          description: 'Accès système complet et administration avancée'
         }
       default:
         return {

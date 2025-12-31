@@ -1013,6 +1013,14 @@
     "delete": "Supprimer"
   },
   "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Bienvenue sur votre tableau de bord de gestion immobilière",
+    "welcomeBack": "Bienvenue {name}",
+    "someDataError": "Certaines données n'ont pas pu être chargées",
+    "unableToLoadTasks": "Impossible de charger les tâches",
+    "unableToLoadData": "Impossible de charger les données du tableau de bord",
+    "errorLoadingYour": "Erreur lors du chargement de vos données",
+    "errorLoadingData": "Erreur lors du chargement des données",
     "actionRequired": "Action requise",
     "active": "Actif",
     "activeTasks": "Tâches actives",
@@ -1023,6 +1031,8 @@
     "billAlerts": "Alertes de factures",
     "billMonitoring": "Suivi des factures",
     "billsNeedAttention": "Les factures nécessitent une attention",
+    "markPaid": "Marquer payée",
+    "noAlerts": "Aucune alerte de facture urgente",
     "bills": {
       "due": "Dues",
       "title": "Factures"

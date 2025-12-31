@@ -44,7 +44,7 @@ export function DashboardWrapper({
   notifications,
   transactions
 }: DashboardWrapperProps) {
-  const t = useTranslations("dashboard");
+  const { t } = useTranslation("dashboard");
 
   // Use SmartDashboard for enhanced security and role-based routing
   if (useSmartDashboard && userId) {
@@ -96,9 +96,9 @@ export function DashboardWrapper({
     <div className="p-4 md:p-8">
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.title')}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
           <p className="text-muted-foreground">
-            {t('dashboard.subtitle')} - {t('dashboard.welcomeBack', { name: userName })}
+            {t('subtitle')} - {t('welcomeBack', { name: userName })}
           </p>
         </div>
 
@@ -106,7 +106,7 @@ export function DashboardWrapper({
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              {t('dashboard.someDataError')}: {errors.join(', ')}
+              {t('someDataError')}: {errors.join(', ')}
             </AlertDescription>
           </Alert>
         )}
@@ -125,7 +125,7 @@ export function DashboardWrapper({
             </Alert>
           }
         >
-          <StatsCards stats={stats} />
+          <StatsCards stats={stats} defaultCurrencySymbol="DA" />
         </RoleBasedAccess>
 
         {/* Role-based access control for financial components */}
@@ -150,49 +150,47 @@ export function DashboardWrapper({
           </div>
         </RoleBasedAccess>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          {/* Role-based access control for revenue chart */}
-          <RoleBasedAccess 
-            userRole={userRole as UserRole} 
-            resource="financial" 
-            action="read"
-            fallback={
-              <div className="lg:col-span-4">
-                <Alert>
-                  <Shield className="h-4 w-4" />
-                  <AlertDescription>
-                    Revenue information is not available for your role.
-                  </AlertDescription>
-                </Alert>
-              </div>
-            }
-          >
-            <div className="lg:col-span-4">
-              <RevenueChart monthlyRevenue={monthlyRevenue || []} />
+        {/* Role-based access control for revenue chart - FULL WIDTH */}
+        <RoleBasedAccess 
+          userRole={userRole as UserRole} 
+          resource="financial" 
+          action="read"
+          fallback={
+            <div className="w-full">
+              <Alert>
+                <Shield className="h-4 w-4" />
+                <AlertDescription>
+                  Revenue information is not available for your role.
+                </AlertDescription>
+              </Alert>
             </div>
-          </RoleBasedAccess>
+          }
+        >
+          <div className="w-full">
+            <RevenueChart monthlyRevenue={monthlyRevenue || []} />
+          </div>
+        </RoleBasedAccess>
 
-          {/* Tasks are available to most roles */}
-          <RoleBasedAccess 
-            userRole={userRole as UserRole} 
-            resource="tasks" 
-            action="read"
-            fallback={
-              <div className="lg:col-span-3">
-                <Alert>
-                  <Shield className="h-4 w-4" />
-                  <AlertDescription>
-                    Task information is not available for your role.
-                  </AlertDescription>
-                </Alert>
-              </div>
-            }
-          >
-            <div className="lg:col-span-3">
-              <RecentTasks tasks={recentTasks || []} />
+        {/* Tasks section below the chart */}
+        <RoleBasedAccess 
+          userRole={userRole as UserRole} 
+          resource="tasks" 
+          action="read"
+          fallback={
+            <div className="w-full">
+              <Alert>
+                <Shield className="h-4 w-4" />
+                <AlertDescription>
+                  Task information is not available for your role.
+                </AlertDescription>
+              </Alert>
             </div>
-          </RoleBasedAccess>
-        </div>
+          }
+        >
+          <div className="w-full">
+            <RecentTasks tasks={recentTasks || []} />
+          </div>
+        </RoleBasedAccess>
       </div>
     </div>
   )
@@ -207,15 +205,15 @@ export function DashboardError({
   error?: string;
   retry?: () => void;
 }) {
-  const t = useTranslations("dashboard");
+  const { t } = useTranslation("dashboard");
 
   const getErrorMessage = () => {
     switch (userRole) {
       case 'member':
-        return t('dashboard.unableToLoadTasks');
+        return t('unableToLoadTasks');
       case 'admin':
       case 'manager':
-        return t('dashboard.unableToLoadData');
+        return t('unableToLoadData');
       case 'executive':
         return 'Unable to load executive dashboard data';
       case 'guest':
@@ -245,9 +243,9 @@ export function DashboardError({
     <div className="p-4 md:p-8">
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('dashboard.title')}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
           <p className="text-muted-foreground">
-            {userRole === 'member' ? t('dashboard.errorLoadingYour') : t('dashboard.errorLoadingData')}
+            {userRole === 'member' ? t('errorLoadingYour') : t('errorLoadingData')}
           </p>
         </div>
 

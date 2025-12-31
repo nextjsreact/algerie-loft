@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Debug Revenue Chart - Graphique Manquant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            min-height: 100vh;
+        }
+        .debug-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 3px solid #f59e0b;
+        }
+        .debug-header {
+            text-align: center;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .issue-card {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .solution-card {
+            background: #f0fdf4;
+            border: 2px solid #10b981;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .code-debug {
+            background: #1f2937;
+            color: #f59e0b;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            border: 2px solid #f59e0b;
+        }
+        .test-steps {
+            background: #eff6ff;
+            border: 2px solid #3b82f6;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        .step {
+            margin: 15px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <div class="debug-header">
+            <h1>🔍 DEBUG: Graphique Revenue Chart Manquant</h1>
+            <p>Analyse du problème d'affichage du graphique des revenus</p>
+        </div>
+
+        <div class="issue-card">
+            <h2>🚨 Problème Identifié</h2>
+            <p><strong>Symptôme:</strong> L'utilisateur voit l'emplacement du graphique mais pas le graphique lui-même</p>
+            <p><strong>Composant concerné:</strong> RevenueChart dans le dashboard admin/manager</p>
+            <p><strong>Localisation:</strong> Section droite du dashboard, colonne lg:col-span-4</p>
+        </div>
+
+        <div class="solution-card">
+            <h2>✅ Analyse du Code RevenueChart</h2>
+            <p><strong>Statut:</strong> Le composant existe et contient du code fonctionnel</p>
+            
+            <h3>📊 Contenu du Composant:</h3>
+            <ul>
+                <li>✅ Cartes de résumé (Revenus, Dépenses, Bénéfice net)</li>
+                <li>✅ Graphique CSS avec barres vertes/rouges</li>
+                <li>✅ Tableau détaillé des données mensuelles</li>
+                <li>✅ Données par défaut si aucune donnée fournie</li>
+                <li>✅ Clés de traduction correctes</li>
+            </ul>
+
+            <h3>🔧 Configuration Actuelle:</h3>
+            <div class="code-debug">
+// RevenueChart reçoit les données
+&lt;RevenueChart monthlyRevenue={monthlyRevenue || []} /&gt;
+
+// Données par défaut dans le composant
+const chartData = monthlyRevenue.length > 0 ? monthlyRevenue : [
+  { month: 'Jan', revenue: 45000, expenses: 32000 },
+  { month: 'Fév', revenue: 52000, expenses: 35000 },
+  { month: 'Mar', revenue: 48000, expenses: 33000 },
+  { month: 'Avr', revenue: 61000, expenses: 40000 },
+  { month: 'Mai', revenue: 55000, expenses: 37000 },
+  { month: 'Jun', revenue: 67000, expenses: 42000 },
+];
+            </div>
+        </div>
+
+        <div class="test-steps">
+            <h2>🧪 Étapes de Diagnostic</h2>
+            
+            <div class="step">
+                <strong>Étape 1:</strong> Vérifier l'URL du dashboard
+                <div class="code-debug">http://localhost:3000/fr/dashboard</div>
+            </div>
+
+            <div class="step">
+                <strong>Étape 2:</strong> Ouvrir les outils de développement (F12)
+                <ul>
+                    <li>Onglet Console: Chercher des erreurs JavaScript</li>
+                    <li>Onglet Network: Vérifier si les ressources se chargent</li>
+                    <li>Onglet Elements: Inspecter la structure HTML</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <strong>Étape 3:</strong> Chercher l'élément RevenueChart dans le DOM
+                <ul>
+                    <li>Chercher: "Revenus vs Dépenses" (titre du graphique)</li>
+                    <li>Chercher: "Aperçu financier mensuel" (description)</li>
+                    <li>Chercher: classe "lg:col-span-4" (conteneur du graphique)</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <strong>Étape 4:</strong> Vérifier les erreurs possibles
+                <ul>
+                    <li>Erreurs de traduction (useTranslations vs useTranslation)</li>
+                    <li>Erreurs CSS (styles non appliqués)</li>
+                    <li>Erreurs de données (monthlyRevenue undefined)</li>
+                    <li>Erreurs de rendu (composant non monté)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="issue-card">
+            <h2>🤔 Causes Possibles</h2>
+            
+            <h3>1. Problème de Traduction</h3>
+            <p>Le composant utilise <code>useTranslations('dashboard')</code> mais pourrait avoir le même problème que les autres composants</p>
+            
+            <h3>2. Problème CSS</h3>
+            <p>Les styles Tailwind CSS pourraient ne pas s'appliquer correctement</p>
+            
+            <h3>3. Problème de Données</h3>
+            <p>Les données <code>monthlyRevenue</code> pourraient être undefined ou mal formatées</p>
+            
+            <h3>4. Problème de Rendu</h3>
+            <p>Le composant pourrait ne pas se rendre à cause d'une erreur silencieuse</p>
+        </div>
+
+        <div class="solution-card">
+            <h2>🔧 Solutions à Tester</h2>
+            
+            <h3>Solution 1: Corriger useTranslations → useTranslation</h3>
+            <div class="code-debug">
+// AVANT
+const t = useTranslations('dashboard');
+
+// APRÈS  
+const { t } = useTranslation('dashboard');
+            </div>
+            
+            <h3>Solution 2: Ajouter des logs de debug</h3>
+            <div class="code-debug">
+console.log('RevenueChart rendering with data:', monthlyRevenue);
+console.log('Chart data:', chartData);
+            </div>
+            
+            <h3>Solution 3: Simplifier le composant pour test</h3>
+            <div class="code-debug">
+// Version minimale pour test
+return (
+  &lt;Card&gt;
+    &lt;CardHeader&gt;
+      &lt;CardTitle&gt;📊 Test Graphique&lt;/CardTitle&gt;
+    &lt;/CardHeader&gt;
+    &lt;CardContent&gt;
+      &lt;div className="p-4 bg-blue-100 rounded"&gt;
+        &lt;h3&gt;Graphique de test visible !&lt;/h3&gt;
+        &lt;p&gt;Si vous voyez ceci, le composant fonctionne.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/CardContent&gt;
+  &lt;/Card&gt;
+);
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; padding: 20px; background: #1f2937; color: #f59e0b; border-radius: 10px;">
+            <h3>🎯 Action Immédiate</h3>
+            <p>Je vais maintenant corriger le problème useTranslations dans RevenueChart</p>
+            <p><strong>URL de test:</strong> http://localhost:3000/fr/dashboard</p>
+        </div>
+    </div>
+
+    <script>
+        console.log('🔍 Debug Revenue Chart - Analyse du problème graphique');
+        console.log('📊 Le graphique devrait afficher des barres vertes/rouges');
+        console.log('🔗 Testez sur: http://localhost:3000/fr/dashboard');
+    </script>
+</body>
+</html>

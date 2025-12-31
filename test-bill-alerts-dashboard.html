@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard Alertes Factures</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .alert {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+        .alert-info {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+            color: #1976d2;
+        }
+        .alert-success {
+            background-color: #e8f5e8;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+        .alert-warning {
+            background-color: #fff3e0;
+            border-color: #ff9800;
+            color: #f57c00;
+        }
+        .alert-error {
+            background-color: #ffebee;
+            border-color: #f44336;
+            color: #c62828;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-ok {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test Dashboard - Alertes Factures Manager/Admin</h1>
+        
+        <div class="alert alert-info">
+            <strong>Diagnostic :</strong> Les alertes de factures à échéance ont disparu du dashboard pour les profils manager et admin.
+        </div>
+
+        <div class="test-section">
+            <h3>📋 Problème Identifié</h3>
+            <div class="alert alert-warning">
+                <strong>Cause :</strong> Le SmartDashboard utilisait DashboardWrapper avec useSmartDashboard=true par défaut, créant une boucle ou un comportement inattendu qui empêchait l'affichage des alertes de factures.
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Solution Appliquée</h3>
+            <div class="alert alert-success">
+                <strong>Fix :</strong> Ajout du paramètre <code>useSmartDashboard={false}</code> dans AdminDashboardContainer pour forcer l'utilisation du dashboard legacy avec les alertes de factures.
+            </div>
+            
+            <div class="code-block">
+// Dans components/dashboard/smart-dashboard.tsx - AdminDashboardContainer
+&lt;DashboardWrapper
+  userRole={user.role}
+  userName={user.name || 'User'}
+  stats={data.stats}
+  recentTasks={data.recentTasks}
+  monthlyRevenue={data.monthlyRevenue}
+  userTasks={data.tasks}
+  errors={errors}
+  useSmartDashboard={false}  // ← AJOUTÉ
+/&gt;
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🎯 Composants Concernés</h3>
+            <ul>
+                <li><span class="status status-ok">✓</span> <strong>BillAlerts</strong> - components/dashboard/bill-alerts-original.tsx</li>
+                <li><span class="status status-ok">✓</span> <strong>DashboardWrapper</strong> - components/dashboard/dashboard-wrapper.tsx</li>
+                <li><span class="status status-ok">✓</span> <strong>SmartDashboard</strong> - components/dashboard/smart-dashboard.tsx</li>
+                <li><span class="status status-ok">✓</span> <strong>RoleBasedAccess</strong> - Permissions financial:read pour admin/manager</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🔍 Fonctions RPC Disponibles</h3>
+            <div class="alert alert-info">
+                Les fonctions suivantes sont disponibles dans la base de données :
+            </div>
+            <ul>
+                <li><code>get_upcoming_bills(days_ahead INTEGER)</code> - Factures à venir</li>
+                <li><code>get_overdue_bills()</code> - Factures en retard</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Permissions Vérifiées</h3>
+            <div class="code-block">
+manager: [
+  { resource: 'financial', action: 'read', scope: 'all' },
+  { resource: 'dashboard-financial', action: 'read', scope: 'all' },
+  // ... autres permissions
+]
+
+admin: [
+  { resource: '*', action: '*', scope: 'all' },
+  // Accès complet à tout
+]
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>✅ Résultat Attendu</h3>
+            <div class="alert alert-success">
+                Après cette correction, les profils <strong>manager</strong> et <strong>admin</strong> devraient voir à nouveau :
+                <ul>
+                    <li>📅 Les alertes de factures à échéance</li>
+                    <li>⚠️ Les factures en retard</li>
+                    <li>📊 Les statistiques de monitoring des factures</li>
+                    <li>💰 Les données financières complètes</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Test de Vérification</h3>
+            <div class="alert alert-info">
+                <strong>Pour tester :</strong>
+                <ol>
+                    <li>Connectez-vous avec un compte manager ou admin</li>
+                    <li>Accédez au dashboard principal</li>
+                    <li>Vérifiez la présence de la section "Alertes Factures"</li>
+                    <li>Vérifiez que les données financières s'affichent correctement</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="alert alert-warning">
+            <strong>Note :</strong> Si le problème persiste, vérifiez que les fonctions RPC sont bien déployées dans votre base de données Supabase et que les données de test existent dans la table <code>lofts</code> avec des dates d'échéance définies.
+        </div>
+    </div>
+
+    <script>
+        console.log('🔍 Test Dashboard Alertes Factures - Page chargée');
+        console.log('📋 Problème: Alertes de factures manquantes pour manager/admin');
+        console.log('🔧 Solution: useSmartDashboard={false} dans AdminDashboardContainer');
+        console.log('✅ Status: Correction appliquée');
+    </script>
+</body>
+</html>

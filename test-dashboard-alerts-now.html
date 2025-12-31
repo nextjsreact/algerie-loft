@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard Alertes - Après Redémarrage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .alert {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+        .alert-success {
+            background-color: #e8f5e8;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+        .alert-info {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+            color: #1976d2;
+        }
+        .alert-warning {
+            background-color: #fff3e0;
+            border-color: #ff9800;
+            color: #f57c00;
+        }
+        .step {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .code {
+            background-color: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Test Dashboard - Après Redémarrage Serveur</h1>
+        
+        <div class="alert alert-success">
+            <strong>✅ Serveur Redémarré :</strong> Le serveur Next.js a été redémarré avec succès. Les modifications du SmartDashboard sont maintenant actives.
+        </div>
+
+        <div class="step">
+            <h3>🎯 Ce qui devrait maintenant fonctionner</h3>
+            <p>Après le redémarrage, votre dashboard admin/manager devrait afficher :</p>
+            <ul>
+                <li>📅 <strong>Section "Alertes Factures"</strong> - Visible dans la partie financière</li>
+                <li>📊 <strong>Statistiques de monitoring des factures</strong></li>
+                <li>💰 <strong>Graphique des revenus</strong></li>
+                <li>📈 <strong>Cartes de statistiques complètes</strong></li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>🔍 Comment vérifier</h3>
+            <ol>
+                <li>Connectez-vous avec votre compte <strong>admin</strong> ou <strong>manager</strong></li>
+                <li>Accédez au dashboard principal : <code>http://localhost:3000/dashboard</code></li>
+                <li>Cherchez la section <strong>"Alertes Factures"</strong> dans la partie droite</li>
+                <li>Vérifiez que les composants financiers sont visibles</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>📋 Modification Appliquée</h3>
+            <p><strong>Fichier modifié :</strong> <span class="code">components/dashboard/smart-dashboard.tsx</span></p>
+            <p><strong>Ligne 310 :</strong> Ajout de <span class="code">useSmartDashboard={false}</span></p>
+            <p>Cette modification force l'utilisation du dashboard legacy qui contient les alertes de factures.</p>
+        </div>
+
+        <div class="alert alert-info">
+            <strong>💡 Si les alertes ne s'affichent toujours pas :</strong>
+            <ul>
+                <li>Vérifiez que vous êtes connecté avec un rôle <strong>admin</strong> ou <strong>manager</strong></li>
+                <li>Videz le cache du navigateur (Ctrl+F5)</li>
+                <li>Vérifiez la console du navigateur pour d'éventuelles erreurs</li>
+                <li>Les alertes peuvent être vides s'il n'y a pas de données de test dans la base</li>
+            </ul>
+        </div>
+
+        <div class="alert alert-warning">
+            <strong>📊 Données de Test :</strong>
+            Si la section "Alertes Factures" apparaît mais est vide avec le message "Aucune alerte de facture urgente", c'est normal - il faut des lofts avec des dates d'échéance dans la base de données pour voir des alertes.
+        </div>
+
+        <div class="step">
+            <h3>🚀 Prochaines Étapes</h3>
+            <p>Une fois que vous confirmez que la section apparaît :</p>
+            <ol>
+                <li>Testez avec des données réelles de lofts</li>
+                <li>Ajoutez des dates d'échéance aux factures</li>
+                <li>Vérifiez que les alertes s'affichent correctement</li>
+            </ol>
+        </div>
+
+        <div class="alert alert-success">
+            <strong>🎉 Résultat Attendu :</strong> La section "Alertes Factures" devrait maintenant être visible dans votre dashboard admin/manager, même si elle est vide faute de données de test.
+        </div>
+    </div>
+
+    <script>
+        console.log('🔄 Test Dashboard - Serveur redémarré');
+        console.log('✅ Modification SmartDashboard appliquée');
+        console.log('🎯 Vérifiez maintenant votre dashboard admin/manager');
+        
+        // Auto-refresh dans 30 secondes pour laisser le temps au serveur
+        setTimeout(() => {
+            console.log('🔄 Vous pouvez maintenant tester votre dashboard');
+        }, 30000);
+    </script>
+</body>
+</html>

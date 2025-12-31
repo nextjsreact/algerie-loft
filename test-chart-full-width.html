@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Graphique Revenus Full Width</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            background: #10b981;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .chart-info {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .success {
+            background: #dcfce7;
+            border: 1px solid #16a34a;
+            color: #15803d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Test - Graphique Revenus Full Width</h1>
+        
+        <div class="status">
+            <h2>✅ STATUT ACTUEL</h2>
+            <p><strong>Serveur:</strong> ✅ En cours d'exécution (npm run dev)</p>
+            <p><strong>Compilation:</strong> ✅ Aucune erreur</p>
+            <p><strong>Rôle utilisateur:</strong> ✅ Admin (accès complet)</p>
+            <p><strong>Dashboard:</strong> ✅ SmartDashboard actif</p>
+        </div>
+
+        <div class="chart-info">
+            <h2>📊 GRAPHIQUE REVENUS - CONFIGURATION ACTUELLE</h2>
+            <p><strong>Composant:</strong> RevenueChart (components/dashboard/revenue-chart.tsx)</p>
+            <p><strong>Layout:</strong> Full Width (w-full) dans DashboardWrapper</p>
+            <p><strong>Design:</strong> SVG moderne avec gradients et animations</p>
+            <p><strong>Données:</strong> 6 mois (Jan-Jun) avec revenus et dépenses</p>
+            <p><strong>Largeur SVG:</strong> viewBox="0 0 800 350" avec className="w-full h-80"</p>
+        </div>
+
+        <div class="success">
+            <h2>🎨 FONCTIONNALITÉS IMPLÉMENTÉES</h2>
+            <ul>
+                <li>✅ <strong>Full Width:</strong> Le graphique prend toute la largeur disponible</li>
+                <li>✅ <strong>Design Professionnel:</strong> Gradients, ombres, animations</li>
+                <li>✅ <strong>Légende:</strong> Revenus (vert) et Dépenses (rouge) avec indicateurs colorés</li>
+                <li>✅ <strong>Points Interactifs:</strong> Cercles avec hover effects</li>
+                <li>✅ <strong>Valeurs sur Points:</strong> Affichage des montants en k DA</li>
+                <li>✅ <strong>Grille:</strong> Lignes de référence pour faciliter la lecture</li>
+                <li>✅ <strong>Cartes Résumé:</strong> Revenus Total, Dépenses Total, Bénéfice Net</li>
+                <li>✅ <strong>Tableau Détaillé:</strong> Données mensuelles avec calculs</li>
+                <li>✅ <strong>Indicateur Performance:</strong> Badge de performance avec émojis</li>
+            </ul>
+        </div>
+
+        <div class="chart-info">
+            <h2>🔧 CONFIGURATION TECHNIQUE</h2>
+            <p><strong>Fichier principal:</strong> components/dashboard/revenue-chart.tsx</p>
+            <p><strong>Layout container:</strong> components/dashboard/dashboard-wrapper.tsx</p>
+            <p><strong>Routing:</strong> components/dashboard/smart-dashboard.tsx</p>
+            <p><strong>Largeur:</strong> w-full (100% de l'espace horizontal disponible)</p>
+            <p><strong>Hauteur:</strong> h-80 (320px) pour le SVG</p>
+            <p><strong>Responsive:</strong> ✅ Adaptatif sur tous les écrans</p>
+        </div>
+
+        <div class="success">
+            <h2>🎯 RÉSULTAT FINAL</h2>
+            <p><strong>Le graphique est maintenant:</strong></p>
+            <ul>
+                <li>🎨 <strong>Beau et professionnel</strong> avec design moderne</li>
+                <li>📏 <strong>Full Width</strong> - prend tout l'espace horizontal</li>
+                <li>📊 <strong>Percutant</strong> avec couleurs, gradients et animations</li>
+                <li>📋 <strong>Informatif</strong> avec légende, valeurs et résumés</li>
+                <li>⚡ <strong>Performant</strong> - SVG natif sans librairies externes</li>
+            </ul>
+        </div>
+
+        <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 15px; border-radius: 8px; margin-top: 20px;">
+            <h3>🔍 POUR VÉRIFIER:</h3>
+            <p>1. Allez sur <strong>http://localhost:3000/fr/dashboard</strong></p>
+            <p>2. Connectez-vous avec un compte admin/manager</p>
+            <p>3. Le graphique "📈 Analyse Financière" devrait occuper toute la largeur</p>
+            <p>4. Vous devriez voir les gradients, animations et légende colorée</p>
+        </div>
+    </div>
+</body>
+</html>
+</script>

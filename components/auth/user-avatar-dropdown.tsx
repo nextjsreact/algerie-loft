@@ -163,11 +163,23 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
           dashboard: `/${locale}/partner/dashboard`
         }
       case 'admin':
-      case 'manager':
-      case 'executive':
         return {
           label: tRoles('admin'),
           color: 'bg-red-500',
+          icon: Shield,
+          dashboard: `/${locale}/home`
+        }
+      case 'manager':
+        return {
+          label: tRoles('manager'),
+          color: 'bg-blue-500',
+          icon: Shield,
+          dashboard: `/${locale}/home`
+        }
+      case 'executive':
+        return {
+          label: tRoles('executive'),
+          color: 'bg-purple-500',
           icon: Shield,
           dashboard: `/${locale}/home`
         }

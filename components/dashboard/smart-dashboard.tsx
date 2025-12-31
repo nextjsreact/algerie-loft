@@ -318,6 +318,7 @@ function AdminDashboardContainer({
         monthlyRevenue={data.monthlyRevenue}
         userTasks={data.tasks}
         errors={errors}
+        useSmartDashboard={false}
       />
     </>
   );

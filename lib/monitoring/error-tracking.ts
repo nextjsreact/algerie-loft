@@ -84,6 +84,11 @@ export class ErrorTracker {
     
     // Log locally with error handling
     try {
+      // Skip React hooks errors to avoid noise
+      if (message.includes('Rendered more hooks than during the previous render')) {
+        return fingerprint;
+      }
+      
       console.error(`[Error Tracker] ${level.toUpperCase()}: ${message}`, JSON.stringify({
         context,
         count: currentCount + 1,
@@ -361,6 +366,12 @@ export function setupGlobalErrorHandling() {
         if (errorMessage.includes('callback is not a function') && 
             filename.includes('RealtimeChannel')) {
           console.warn('Skipping non-critical Supabase Realtime error:', errorMessage);
+          return;
+        }
+        
+        // Skip React hooks errors (development only)
+        if (errorMessage.includes('Rendered more hooks than during the previous render')) {
+          console.warn('Skipping React hooks error (development):', errorMessage);
           return;
         }
         

@@ -197,7 +197,10 @@ export function ResponsivePartnerLayout({ children, locale }: ResponsivePartnerL
                     {session.user.full_name || session.user.email?.split('@')[0] || 'Partenaire'}
                   </p>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
-                    {session.user.role === 'admin' ? 'Administrateur' : 'Partenaire'}
+                    {session.user.role === 'admin' ? 'Administrateur' : 
+                     session.user.role === 'manager' ? 'Manager' :
+                     session.user.role === 'executive' ? 'Exécutif' :
+                     session.user.role === 'superuser' ? 'Superuser' : 'Partenaire'}
                   </p>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/50 cursor-pointer hover:scale-105 transition-transform">

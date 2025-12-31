@@ -2191,7 +2191,41 @@
       "totalCategories": "Total: {count} categories",
       "updateCategoryInfo": "Update category information",
       "incomeCount": "{count} income",
-      "expenseCount": "{count} expenses"
+      "expenseCount": "{count} expenses",
+      "edit": {
+        "title": "Edit Category",
+        "description": "Edit this category information",
+        "back": "Back",
+        "basicInfo": "Basic Information",
+        "basicInfoDescription": "Edit the main category information",
+        "metadata": "Metadata",
+        "metadataDescription": "System information for this category",
+        "id": "ID",
+        "createdAt": "Created at",
+        "updatedAt": "Updated at",
+        "save": "Save",
+        "saving": "Saving...",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "confirmDelete": "Are you sure you want to delete this category? This action cannot be undone.",
+        "success": "Category updated successfully",
+        "error": "Error updating category",
+        "deleteSuccess": "Category deleted successfully",
+        "deleteError": "Error deleting category"
+      },
+      "form": {
+        "name": "Name",
+        "namePlaceholder": "Category name",
+        "description": "Description",
+        "descriptionPlaceholder": "Category description (optional)",
+        "color": "Color",
+        "icon": "Icon",
+        "isActive": "Active category"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
     },
     "currencies": {
       "addFirstCurrency": "Add your first currency to get started",

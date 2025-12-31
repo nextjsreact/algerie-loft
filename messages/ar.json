@@ -2204,7 +2204,41 @@
       "totalCategories": "المجموع: {count} فئات",
       "updateCategoryInfo": "تحديث معلومات الفئة",
       "incomeCount": "{count} دخل",
-      "expenseCount": "{count} مصروفات"
+      "expenseCount": "{count} مصروفات",
+      "edit": {
+        "title": "تعديل الفئة",
+        "description": "تعديل معلومات هذه الفئة",
+        "back": "رجوع",
+        "basicInfo": "المعلومات الأساسية",
+        "basicInfoDescription": "تعديل المعلومات الرئيسية للفئة",
+        "metadata": "البيانات الوصفية",
+        "metadataDescription": "معلومات النظام لهذه الفئة",
+        "id": "المعرف",
+        "createdAt": "تاريخ الإنشاء",
+        "updatedAt": "تاريخ التحديث",
+        "save": "حفظ",
+        "saving": "جاري الحفظ...",
+        "cancel": "إلغاء",
+        "delete": "حذف",
+        "confirmDelete": "هل أنت متأكد من حذف هذه الفئة؟ لا يمكن التراجع عن هذا الإجراء.",
+        "success": "تم تحديث الفئة بنجاح",
+        "error": "خطأ في تحديث الفئة",
+        "deleteSuccess": "تم حذف الفئة بنجاح",
+        "deleteError": "خطأ في حذف الفئة"
+      },
+      "form": {
+        "name": "الاسم",
+        "namePlaceholder": "اسم الفئة",
+        "description": "الوصف",
+        "descriptionPlaceholder": "وصف الفئة (اختياري)",
+        "color": "اللون",
+        "icon": "الأيقونة",
+        "isActive": "فئة نشطة"
+      },
+      "status": {
+        "active": "نشط",
+        "inactive": "غير نشط"
+      }
     },
     "currencies": {
       "addFirstCurrency": "أضف عملتك الأولى للبدء",

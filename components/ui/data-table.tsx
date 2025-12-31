@@ -95,10 +95,12 @@ export function DataTable<TData, TValue>({
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
+                        : header.column.columnDef.header
+                        ? flexRender(
                             header.column.columnDef.header,
                             header.getContext()
-                          )}
+                          )
+                        : null}
                     </TableHead>
                   )
                 })}

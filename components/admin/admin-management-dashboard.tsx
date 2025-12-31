@@ -20,7 +20,7 @@ import { useTranslations } from 'next-intl'
 import { UserManagement } from './user-management'
 import { PartnerVerificationManager } from './partner-verification-manager'
 import { BookingDisputeResolution } from './booking-dispute-resolution'
-import { ComprehensiveReporting } from './comprehensive-reporting'
+import { ComprehensiveReportingSimple } from './comprehensive-reporting-simple'
 
 interface AdminStats {
   totalUsers: number
@@ -220,7 +220,7 @@ export function AdminManagementDashboard() {
         </TabsContent>
 
         <TabsContent value="reports" className="space-y-6">
-          <ComprehensiveReporting />
+          <ComprehensiveReportingSimple />
         </TabsContent>
       </Tabs>
     </div>

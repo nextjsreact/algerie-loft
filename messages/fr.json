@@ -2182,7 +2182,41 @@
       "totalCategories": "Total : {count} catégories",
       "updateCategoryInfo": "Mettre à jour les informations de la catégorie",
       "incomeCount": "{count} revenus",
-      "expenseCount": "{count} dépenses"
+      "expenseCount": "{count} dépenses",
+      "edit": {
+        "title": "Modifier la catégorie",
+        "description": "Modifiez les informations de cette catégorie",
+        "back": "Retour",
+        "basicInfo": "Informations de base",
+        "basicInfoDescription": "Modifiez les informations principales de la catégorie",
+        "metadata": "Métadonnées",
+        "metadataDescription": "Informations système de la catégorie",
+        "id": "Identifiant",
+        "createdAt": "Créé le",
+        "updatedAt": "Modifié le",
+        "save": "Enregistrer",
+        "saving": "Enregistrement...",
+        "cancel": "Annuler",
+        "delete": "Supprimer",
+        "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette catégorie ? Cette action est irréversible.",
+        "success": "Catégorie mise à jour avec succès",
+        "error": "Erreur lors de la mise à jour de la catégorie",
+        "deleteSuccess": "Catégorie supprimée avec succès",
+        "deleteError": "Erreur lors de la suppression de la catégorie"
+      },
+      "form": {
+        "name": "Nom",
+        "namePlaceholder": "Nom de la catégorie",
+        "description": "Description",
+        "descriptionPlaceholder": "Description de la catégorie (optionnel)",
+        "color": "Couleur",
+        "icon": "Icône",
+        "isActive": "Catégorie active"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
     },
     "currencies": {
       "addFirstCurrency": "Ajoutez votre première devise pour commencer",

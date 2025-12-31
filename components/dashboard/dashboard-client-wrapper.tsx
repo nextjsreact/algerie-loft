@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { getSession } from "@/lib/auth"
 import { MemberDashboard } from "./member-dashboard"
-import { ModernDashboard } from "./modern-dashboard"
+import SimpleDashboard from "./dashboard-simple"
 import { AdminManagementDashboard } from "../admin/admin-management-dashboard"
 import type { AuthSession } from "@/lib/types"
 
@@ -127,7 +127,7 @@ export function DashboardClientWrapper() {
   if (session.user.role === 'admin' || session.user.role === 'manager') {
     return (
       <div className="space-y-8">
-        <ModernDashboard />
+        <SimpleDashboard />
         <div className="border-t pt-8">
           <AdminManagementDashboard />
         </div>
@@ -135,6 +135,6 @@ export function DashboardClientWrapper() {
     )
   }
 
-  // For other employee roles - use the existing ModernDashboard
-  return <ModernDashboard />
+  // For other employee roles - use the existing SimpleDashboard
+  return <SimpleDashboard />
 }

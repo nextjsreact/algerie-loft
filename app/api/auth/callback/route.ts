@@ -7,6 +7,8 @@ export async function GET(request: NextRequest) {
   const next = searchParams.get('next') ?? '/'
   const selectedRole = searchParams.get('role') ?? 'client'
 
+  console.log(`🔄 [OAuth Callback] Starting with params: code=${!!code}, next=${next}, role=${selectedRole}`)
+
   if (code) {
     const supabase = await createClient()
     
@@ -106,11 +108,33 @@ export async function GET(request: NextRequest) {
                 return NextResponse.redirect(`${origin}/${locale}/admin/superuser/dashboard?t=${timestamp}`)
               case 'executive':
                 return NextResponse.redirect(`${origin}/${locale}/executive?t=${timestamp}`)
+              case 'admin':
+                return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
+              case 'manager':
+                return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
+              case 'member':
+                return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
               default:
-                return NextResponse.redirect(`${origin}/${locale}/home?t=${timestamp}`)
+                return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
             }
           default:
-            return NextResponse.redirect(`${origin}${next}?t=${timestamp}`)
+            // Fallback: rediriger selon le rôle DB détecté
+            switch (actualDbRole) {
+              case 'client':
+                return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
+              case 'partner':
+                return NextResponse.redirect(`${origin}/${locale}/partner/dashboard?t=${timestamp}`)
+              case 'superuser':
+                return NextResponse.redirect(`${origin}/${locale}/admin/superuser/dashboard?t=${timestamp}`)
+              case 'executive':
+                return NextResponse.redirect(`${origin}/${locale}/executive?t=${timestamp}`)
+              case 'admin':
+              case 'manager':
+              case 'member':
+                return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
+              default:
+                return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
+            }
         }
       } else {
         console.error('OAuth callback error:', error)

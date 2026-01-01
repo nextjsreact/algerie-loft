@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, dateFnsLocalizer, View } from 'react-big-calendar';
+// import { Calendar, dateFnsLocalizer, View } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS, fr, ar } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTranslations, useLocale } from 'next-intl';
 import { Loader2, Calendar as CalendarIcon } from 'lucide-react';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+// import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { 
   getBlockedReasonKey, 
   formatBlockedEventTitle, 
@@ -227,13 +227,13 @@ export default function ReservationCalendar({
     return locales[lang] || enUS;
   };
 
-  const localizer = dateFnsLocalizer({
-    format: (date: Date, formatStr: string) => format(date, formatStr, { locale: getDateFnsLocale() }),
-    parse,
-    startOfWeek: (date: Date) => startOfWeek(date, { locale: getDateFnsLocale() }),
-    getDay,
-    locales,
-  });
+  // const localizer = dateFnsLocalizer({
+  //   format: (date: Date, formatStr: string) => format(date, formatStr, { locale: getDateFnsLocale() }),
+  //   parse,
+  //   startOfWeek: (date: Date) => startOfWeek(date, { locale: getDateFnsLocale() }),
+  //   getDay,
+  //   locales,
+  // });
 
   useEffect(() => {
     fetchReservations();
@@ -582,7 +582,14 @@ export default function ReservationCalendar({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="h-auto mb-4"> {/* Removed fixed height to allow dynamic sizing */}
+          <div className="h-96 flex items-center justify-center text-gray-500 border rounded-lg bg-gray-50">
+            <div className="text-center">
+              <CalendarIcon className="h-16 w-16 mx-auto mb-4 opacity-50" />
+              <p className="text-lg font-medium">Calendar View</p>
+              <p>Calendar will be available after dependency resolution</p>
+            </div>
+          </div>
+          {/* <div className="h-auto mb-4">
             <style>{customCalendarStyles}</style>
             <Calendar
               localizer={localizer}
@@ -617,7 +624,7 @@ export default function ReservationCalendar({
                 showMore: (total: number) => locale === 'fr' ? `Afficher plus (${total})` : locale === 'ar' ? `عرض المزيد (${total})` : `Show more (${total})`,
               }}
             />
-          </div>
+          </div> */}
           
           <div className="flex flex-wrap gap-2 mt-4">
             <div className="flex items-center gap-2">

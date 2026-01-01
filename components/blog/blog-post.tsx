@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { CalendarIcon, UserIcon, TagIcon } from 'lucide-react';
 import { BlogPost as BlogPostType } from '@/lib/services/blog-service';
 import { formatDate } from '@/lib/utils';
-import { PortableText } from '@portabletext/react';
+// import { PortableText } from '@portabletext/react';
 import { SocialShare } from './social-share';
 import { CommentSystem } from './comment-system';
 
@@ -149,7 +149,8 @@ export function BlogPost({ post, locale, enableComments = false }: BlogPostProps
 
       {/* Content */}
       <div className="prose prose-lg max-w-none mb-8">
-        {content && <PortableText value={content} components={portableTextComponents} />}
+        {/* {content && <PortableText value={content} components={portableTextComponents} />} */}
+        {content && <div className="prose prose-lg max-w-none">Blog content will be available after dependency resolution</div>}
       </div>
 
       {/* Tags */}

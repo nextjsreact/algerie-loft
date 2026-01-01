@@ -35,19 +35,6 @@ export default async function LoftsPage() {
     const isEmployee = ['admin', 'manager', 'executive', 'superuser'].includes(session.user.role);
     const isOwner = session.user.role === 'owner' || !isEmployee;
 
-    // 🔍 DEBUG : Afficher les informations de session
-    console.log('🔍 [DEBUG EXECUTIVE] Session user:', {
-      id: session.user.id,
-      email: session.user.email,
-      role: session.user.role,
-      full_name: session.user.full_name
-    });
-    console.log('🔍 [DEBUG EXECUTIVE] Flags:', {
-      isEmployee,
-      isOwner,
-      roleCheck: ['admin', 'manager', 'executive', 'superuser'].includes(session.user.role)
-    });
-
     let loftsData, ownersData, zoneAreasData;
 
     if (isEmployee) {

@@ -31,8 +31,8 @@ import {
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { BillPaymentModal } from "@/components/modals/bill-payment-modal";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
-import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+// import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
+// import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { format } from "date-fns";
 import { fr, ar, enUS } from "date-fns/locale";
 import { useTranslations, useLocale } from "next-intl";
@@ -720,7 +720,7 @@ export function ModernDashboard() {
             <CardDescription>{t("monthlyFinancialOverview")}</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer 
+            {/* <ChartContainer 
               config={{
                 revenue: {
                   label: "Revenus",
@@ -733,28 +733,13 @@ export function ModernDashboard() {
               }} 
               className="h-[300px]"
             >
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthlyRevenue}>
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="hsl(var(--chart-1))"
-                    strokeWidth={3}
-                    dot={{ fill: "hsl(var(--chart-1))", strokeWidth: 2, r: 4 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="expenses"
-                    stroke="hsl(var(--chart-2))"
-                    strokeWidth={3}
-                    dot={{ fill: "hsl(var(--chart-2))", strokeWidth: 2, r: 4 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+              <div className="flex items-center justify-center h-full text-gray-500">
+                <p>Chart will be available after dependency resolution</p>
+              </div>
+            </ChartContainer> */}
+            <div className="h-[300px] flex items-center justify-center text-gray-500 border rounded-lg bg-gray-50">
+              <p>Revenue chart will be available after dependency resolution</p>
+            </div>
           </CardContent>
         </Card>
 

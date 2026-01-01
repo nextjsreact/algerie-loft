@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification Configuration Supabase OAuth</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; }
+        .step { background: #f8f9fa; padding: 20px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #007bff; }
+        .critical { background: #fff3cd; border-left-color: #ffc107; }
+        .success { background: #d4edda; border-left-color: #28a745; }
+        .error { background: #f8d7da; border-left-color: #dc3545; }
+        .code { background: #e9ecef; padding: 10px; border-radius: 4px; font-family: monospace; margin: 10px 0; }
+        .checklist { list-style-type: none; padding: 0; }
+        .checklist li { padding: 5px 0; }
+        .checklist li:before { content: "☐ "; font-size: 18px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; margin: 5px; }
+        .btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Vérification Configuration Supabase OAuth</h1>
+    
+    <div class="critical step">
+        <h2>🚨 Action Immédiate Requise</h2>
+        <p><strong>Le problème est dans Supabase Dashboard, pas dans le code !</strong></p>
+        <p>Vos URLs OAuth pointent encore vers <code>localhost:3000</code> au lieu de <code>loftalgerie.com</code></p>
+    </div>
+
+    <div class="step">
+        <h2>📍 Étape 1: Accès Supabase</h2>
+        <a href="https://supabase.com/dashboard" target="_blank" class="btn">Ouvrir Supabase Dashboard</a>
+        <ul class="checklist">
+            <li>Connectez-vous à votre compte Supabase</li>
+            <li>Sélectionnez le projet: <strong>mhngbluefyucoesgcjoy</strong></li>
+            <li>Allez dans <strong>Authentication</strong> → <strong>URL Configuration</strong></li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h2>🎯 Étape 2: Site URL Principal</h2>
+        <p><strong>Champ: Site URL</strong></p>
+        <div class="code">
+            ❌ Ancien: http://localhost:3000<br>
+            ✅ Nouveau: https://loftalgerie.com
+        </div>
+    </div>
+
+    <div class="step">
+        <h2>🔄 Étape 3: Redirect URLs</h2>
+        <p><strong>Supprimez TOUTES les URLs localhost et remplacez par :</strong></p>
+        <div class="code">
+https://loftalgerie.com/api/auth/callback<br>
+https://loftalgerie.com/auth/callback<br>
+https://loftalgerie.com/api/auth/reset-password<br>
+https://loftalgerie.com/auth/reset-password<br>
+https://loftalgerie.com/login<br>
+https://loftalgerie.com/register<br>
+https://loftalgerie.com/dashboard<br>
+https://loftalgerie.com/client/dashboard<br>
+https://loftalgerie.com/partner/dashboard
+        </div>
+    </div>
+
+    <div class="step">
+        <h2>⚙️ Étape 4: Configuration Providers</h2>
+        <p><strong>Authentication → Providers</strong></p>
+        
+        <h4>Google OAuth:</h4>
+        <div class="code">
+            Authorized redirect URIs: https://loftalgerie.com/api/auth/callback
+        </div>
+        
+        <h4>GitHub OAuth:</h4>
+        <div class="code">
+            Authorization callback URL: https://loftalgerie.com/api/auth/callback
+        </div>
+    </div>
+
+    <div class="success step">
+        <h2>✅ Checklist de Vérification</h2>
+        <ul class="checklist">
+            <li>Site URL = <code>https://loftalgerie.com</code></li>
+            <li>Aucune URL localhost dans Redirect URLs</li>
+            <li>Toutes les URLs loftalgerie.com ajoutées</li>
+            <li>Google Provider configuré</li>
+            <li>GitHub Provider configuré</li>
+            <li>Configuration sauvegardée (bouton Save)</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h2>🧪 Test Final</h2>
+        <ol>
+            <li>Allez sur <a href="https://loftalgerie.com/login" target="_blank">https://loftalgerie.com/login</a></li>
+            <li>Sélectionnez un rôle (Client/Partner/Employee)</li>
+            <li>Cliquez sur "Google" ou "GitHub"</li>
+            <li><strong>✅ Vérifiez que l'URL reste sur loftalgerie.com</strong></li>
+            <li><strong>✅ Vérifiez la redirection vers le bon dashboard</strong></li>
+        </ol>
+    </div>
+
+    <div class="error step">
+        <h2>🚨 Si ça ne marche toujours pas</h2>
+        <ul>
+            <li>Vérifiez que vous avez bien sauvegardé dans Supabase</li>
+            <li>Attendez 2-3 minutes (propagation des changements)</li>
+            <li>Testez en mode navigation privée</li>
+            <li>Vérifiez les logs dans Supabase Authentication → Logs</li>
+        </ul>
+    </div>
+
+    <script>
+        console.log('🔧 Supabase OAuth Configuration Checker');
+        console.log('📋 Current domain:', window.location.hostname);
+        console.log('🎯 Target domain: loftalgerie.com');
+        
+        // Vérifier si on est sur le bon domaine
+        if (window.location.hostname === 'loftalgerie.com') {
+            console.log('✅ You are on the production domain!');
+        } else if (window.location.hostname === 'localhost') {
+            console.log('⚠️ You are on localhost - test on loftalgerie.com after config');
+        } else {
+            console.log('ℹ️ You are on:', window.location.hostname);
+        }
+    </script>
+</body>
+</html>

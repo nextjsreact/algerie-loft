@@ -116,3 +116,5 @@ $RECYCLE.BIN/
 
 *storybook.log
 storybook-static
+
+.vercel

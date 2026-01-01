@@ -75,16 +75,16 @@ async function compareLoftsData() {
     // Test: Try to insert a test record into DEV
     console.log('\n🧪 TESTING DEV DATABASE ACCESS...')
     try {
-      // First, check if loft_owners table has any records
+      // First, check if owners table has any records
       const { data: owners, error: ownersError } = await devClient
-        .from('loft_owners')
+        .from('owners')
         .select('id')
         .limit(1)
 
       if (ownersError) {
-        console.log(`❌ Cannot access loft_owners: ${ownersError.message}`)
+        console.log(`❌ Cannot access owners: ${ownersError.message}`)
       } else {
-        console.log(`✅ Found ${owners?.length || 0} loft_owners records`)
+        console.log(`✅ Found ${owners?.length || 0} owners records`)
         if (owners && owners.length > 0) {
           const ownerId = owners[0].id
           console.log(`🔍 Using owner_id: ${ownerId}`)
@@ -132,7 +132,7 @@ async function compareLoftsData() {
             console.log('🧹 Test record cleaned up')
           }
         } else {
-          console.log('❌ No loft_owners found, cannot test insert')
+          console.log('❌ No owners found, cannot test insert')
         }
       }
     } catch (testError) {
@@ -141,7 +141,7 @@ async function compareLoftsData() {
 
     // Check all tables in DEV database
     console.log('\n📊 CHECKING ALL TABLES IN DEV DATABASE...')
-    const tablesToCheck = ['lofts', 'loft_owners', 'currencies', 'categories', 'profiles', 'tasks']
+    const tablesToCheck = ['lofts', 'owners', 'currencies', 'categories', 'profiles', 'tasks']
     for (const table of tablesToCheck) {
       try {
         const { data, error } = await devClient

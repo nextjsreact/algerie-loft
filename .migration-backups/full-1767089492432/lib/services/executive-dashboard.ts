@@ -107,7 +107,7 @@ export async function getExecutiveMetrics(userId: string): Promise<ExecutiveMetr
     .from('lofts')
     .select(`
       *,
-      loft_owners (
+      owners (
         name,
         ownership_type
       )
@@ -118,10 +118,10 @@ export async function getExecutiveMetrics(userId: string): Promise<ExecutiveMetr
   const occupancyRate = totalLofts > 0 ? (occupiedLofts / totalLofts) * 100 : 0
 
   // Calculer les revenus par type de propriétaire
-  const companyRevenue = lofts?.filter(l => l.loft_owners?.ownership_type === 'company')
+  const companyRevenue = lofts?.filter(l => l.owners?.ownership_type === 'company')
     .reduce((sum, l) => sum + (Number(l.price_per_month) * (l.company_percentage / 100)), 0) || 0
     
-  const thirdPartyRevenue = lofts?.filter(l => l.loft_owners?.ownership_type === 'third_party')
+  const thirdPartyRevenue = lofts?.filter(l => l.owners?.ownership_type === 'third_party')
     .reduce((sum, l) => sum + (Number(l.price_per_month) * (l.company_percentage / 100)), 0) || 0
 
   // Récupérer les alertes critiques

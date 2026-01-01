@@ -74,7 +74,7 @@ class CompleteEnvironmentClone {
     'payment_methods',
     
     // Tables avec dépendances simples
-    'loft_owners',
+    'owners',
     'transaction_category_references',
     
     // Tables principales
@@ -235,7 +235,7 @@ class CompleteEnvironmentClone {
   private getTableDependencies(tableName: string): string[] {
     // Définir les dépendances connues basées sur le schéma
     const dependencies: { [key: string]: string[] } = {
-      'lofts': ['zone_areas', 'internet_connection_types', 'loft_owners'],
+      'lofts': ['zone_areas', 'internet_connection_types', 'owners'],
       'transactions': ['lofts', 'categories', 'currencies', 'payment_methods'],
       'tasks': ['profiles', 'teams', 'lofts'],
       'team_members': ['teams', 'profiles'],

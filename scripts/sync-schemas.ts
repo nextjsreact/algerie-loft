@@ -127,7 +127,7 @@ class SchemaSynchronizer {
     
     const tables = [
       'currencies', 'categories', 'zone_areas', 'internet_connection_types',
-      'payment_methods', 'loft_owners', 'lofts', 'profiles', 'teams',
+      'payment_methods', 'owners', 'lofts', 'profiles', 'teams',
       'team_members', 'tasks', 'transactions', 'transaction_category_references',
       'conversations', 'conversation_participants', 'messages', 'notifications', 'settings'
     ]

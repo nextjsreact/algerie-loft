@@ -3,7 +3,7 @@
  * ====================================
  * 
  * Hooks React pour récupérer les données et générer les rapports PDF
- * Version mise à jour avec générateur HTML-to-PDF
+ * Version adaptée pour utiliser les réservations comme source de données
  */
 
 import { useState, useCallback } from 'react'
@@ -25,108 +25,202 @@ export function useReports() {
   const [error, setError] = useState<string | null>(null)
   const supabase = createClient()
 
-  // Récupérer les données de base
+  // Récupérer les données de base (vraies tables)
   const fetchLofts = useCallback(async (): Promise<Loft[]> => {
-    const { data, error } = await supabase
-      .from('lofts')
-      .select(`
-        id,
-        name,
-        address,
-        price_per_night,
-        loft_owners (
-          name
-        )
-      `)
-      .order('name')
+    try {
+      console.log('🔍 [DEBUG] Début fetchLofts...')
+      
+      // Récupérer les lofts avec leurs propriétaires
+      const { data: loftsData, error: loftsError } = await supabase
+        .from('lofts')
+        .select(`
+          id,
+          name,
+          address,
+          price_per_night,
+          owner_id
+        `)
+        .order('name')
 
-    if (error) throw new Error(`Erreur lors de la récupération des lofts: ${error.message}`)
+      console.log('🔍 [DEBUG] Résultat requête lofts:', {
+        count: loftsData?.length || 0,
+        error: loftsError?.message,
+        sampleData: loftsData?.[0]
+      })
 
-    return data.map(loft => ({
-      id: loft.id,
-      name: loft.name,
-      address: loft.address,
-      price_per_month: loft.price_per_night,
-      owner_name: loft.loft_owners?.name || 'Propriétaire inconnu'
-    }))
+      if (loftsError) throw new Error(`Erreur lors de la récupération des lofts: ${loftsError.message}`)
+
+      // Récupérer les propriétaires de la table owners
+      const { data: ownersData, error: ownersError } = await supabase
+        .from('owners')
+        .select('id, name')
+
+      console.log('🔍 [DEBUG] Résultat requête owners dans fetchLofts:', {
+        count: ownersData?.length || 0,
+        error: ownersError?.message,
+        data: ownersData
+      })
+
+      if (ownersError) throw new Error(`Erreur lors de la récupération des propriétaires: ${ownersError.message}`)
+
+      // Créer un map des propriétaires pour un accès rapide
+      const ownersMap = new Map(ownersData?.map(owner => [owner.id, owner.name]) || [])
+
+      console.log('🔍 [DEBUG] Map des propriétaires:', Object.fromEntries(ownersMap))
+
+      const result = loftsData?.map(loft => ({
+        id: loft.id,
+        name: loft.name,
+        address: loft.address,
+        price_per_month: loft.price_per_night || 0,
+        owner_name: ownersMap.get(loft.owner_id) || 'Propriétaire inconnu'
+      })) || []
+
+      console.log('🔍 [DEBUG] Résultat final fetchLofts:', result.length, 'lofts')
+
+      return result
+    } catch (error) {
+      console.error('❌ [DEBUG] Error in fetchLofts:', error)
+      throw error
+    }
   }, [supabase])
 
   const fetchOwners = useCallback(async (): Promise<Owner[]> => {
-    const { data, error } = await supabase
-      .from('loft_owners')
-      .select(`
-        id,
-        name,
-        email,
-        phone,
-        lofts (count)
-      `)
-      .order('name')
+    try {
+      console.log('🔍 [DEBUG] Début fetchOwners...')
+      
+      // Récupérer les propriétaires de la table owners
+      const { data: ownersData, error: ownersError } = await supabase
+        .from('owners')
+        .select(`
+          id,
+          name,
+          email,
+          phone
+        `)
+        .order('name')
 
-    if (error) throw new Error(`Erreur lors de la récupération des propriétaires: ${error.message}`)
+      console.log('🔍 [DEBUG] Résultat requête owners:', {
+        count: ownersData?.length || 0,
+        error: ownersError?.message,
+        data: ownersData
+      })
 
-    return data.map(owner => ({
-      id: owner.id,
-      name: owner.name,
-      email: owner.email,
-      phone: owner.phone,
-      lofts_count: owner.lofts?.[0]?.count || 0
-    }))
+      if (ownersError) throw new Error(`Erreur lors de la récupération des propriétaires: ${ownersError.message}`)
+
+      // Compter les lofts pour chaque propriétaire
+      const { data: loftsData, error: loftsError } = await supabase
+        .from('lofts')
+        .select('owner_id')
+
+      console.log('🔍 [DEBUG] Résultat requête lofts pour comptage:', {
+        count: loftsData?.length || 0,
+        error: loftsError?.message,
+        ownerIds: loftsData?.map(l => l.owner_id)
+      })
+
+      if (loftsError) {
+        console.warn('Impossible de compter les lofts:', loftsError.message)
+      }
+
+      // Créer un map du nombre de lofts par propriétaire
+      const loftCounts = new Map<string, number>()
+      loftsData?.forEach(loft => {
+        if (loft.owner_id) {
+          loftCounts.set(loft.owner_id, (loftCounts.get(loft.owner_id) || 0) + 1)
+        }
+      })
+
+      console.log('🔍 [DEBUG] Comptage des lofts par propriétaire:', Object.fromEntries(loftCounts))
+
+      const result = ownersData?.map(owner => ({
+        id: owner.id,
+        name: owner.name,
+        email: owner.email,
+        phone: owner.phone,
+        lofts_count: loftCounts.get(owner.id) || 0
+      })) || []
+
+      console.log('🔍 [DEBUG] Résultat final fetchOwners:', result)
+
+      return result
+    } catch (error) {
+      console.error('❌ [DEBUG] Error in fetchOwners:', error)
+      throw error
+    }
   }, [supabase])
 
   const fetchTransactions = useCallback(async (filters: ReportFilters): Promise<Transaction[]> => {
-    let query = supabase
-      .from('transactions')
-      .select(`
-        id,
-        amount,
-        description,
-        transaction_type,
-        category,
-        date,
-        loft_id,
-        currency_id,
-        lofts (
+    try {
+      // Récupérer les transactions de la vraie table
+      let query = supabase
+        .from('transactions')
+        .select(`
           id,
-          name,
-          loft_owners (
-            name
-          )
-        )
-      `)
-      .gte('date', filters.startDate.toISOString())
-      .lte('date', filters.endDate.toISOString())
-      .order('date', { ascending: true })
+          amount,
+          description,
+          transaction_type,
+          category,
+          date,
+          loft_id,
+          currency_id
+        `)
+        .gte('date', filters.startDate.toISOString())
+        .lte('date', filters.endDate.toISOString())
+        .order('date', { ascending: true })
 
-    // Filtres optionnels
-    if (filters.loftId) {
-      query = query.eq('loft_id', filters.loftId)
+      // Filtres optionnels
+      if (filters.loftId) {
+        query = query.eq('loft_id', filters.loftId)
+      }
+
+      if (filters.category) {
+        query = query.eq('category', filters.category)
+      }
+
+      if (filters.transactionType && filters.transactionType !== 'all') {
+        query = query.eq('transaction_type', filters.transactionType)
+      }
+
+      const { data: transactionsData, error: transactionsError } = await query
+
+      if (transactionsError) throw new Error(`Erreur lors de la récupération des transactions: ${transactionsError.message}`)
+
+      // Récupérer les lofts et propriétaires pour enrichir les données
+      const { data: loftsData, error: loftsError } = await supabase
+        .from('lofts')
+        .select('id, name, owner_id')
+
+      // Récupérer les propriétaires de la table owners
+      const { data: ownersData, error: ownersError } = await supabase
+        .from('owners')
+        .select('id, name')
+
+      // Créer des maps pour un accès rapide
+      const loftsMap = new Map(loftsData?.map(loft => [loft.id, loft]) || [])
+      const ownersMap = new Map(ownersData?.map(owner => [owner.id, owner.name]) || [])
+
+      return transactionsData?.map(transaction => {
+        const loft = loftsMap.get(transaction.loft_id)
+        const ownerName = loft ? ownersMap.get(loft.owner_id) : undefined
+
+        return {
+          id: transaction.id,
+          amount: transaction.amount,
+          description: transaction.description || '',
+          transaction_type: transaction.transaction_type,
+          category: transaction.category || 'Non catégorisé',
+          date: transaction.date,
+          loft_id: transaction.loft_id,
+          loft_name: loft?.name || 'Loft inconnu',
+          owner_name: ownerName || 'Propriétaire inconnu',
+          currency: transaction.currency_id || 'DZD'
+        }
+      }) || []
+    } catch (error) {
+      console.error('Error in fetchTransactions:', error)
+      throw error
     }
-
-    if (filters.category) {
-      query = query.eq('category', filters.category)
-    }
-
-    if (filters.transactionType && filters.transactionType !== 'all') {
-      query = query.eq('transaction_type', filters.transactionType)
-    }
-
-    const { data, error } = await query
-
-    if (error) throw new Error(`Erreur lors de la récupération des transactions: ${error.message}`)
-
-    return data.map(transaction => ({
-      id: transaction.id,
-      amount: transaction.amount,
-      description: transaction.description || '',
-      transaction_type: transaction.transaction_type,
-      category: transaction.category || 'Non catégorisé',
-      date: transaction.date,
-      loft_id: transaction.loft_id,
-      loft_name: transaction.lofts?.name || 'Loft inconnu',
-      owner_name: transaction.lofts?.loft_owners?.name || 'Propriétaire inconnu',
-      currency: transaction.currency_id || 'DZD'
-    }))
   }, [supabase])
 
   // Générer un rapport par loft

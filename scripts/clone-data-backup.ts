@@ -83,7 +83,7 @@ class DataCloner {
       'payment_methods',
       
       // Tables de base
-      'loft_owners',
+      'owners',
       'lofts',
       
       // Tables de gestion
@@ -423,7 +423,7 @@ class DataCloner {
     const verificationQueries = [
       { name: 'Profiles', query: 'profiles', expected: '> 0' },
       { name: 'Lofts', query: 'lofts', expected: '> 0' },
-      { name: 'Loft Owners', query: 'loft_owners', expected: '> 0' },
+      { name: 'Owners', query: 'owners', expected: '> 0' },
       { name: 'Currencies', query: 'currencies', expected: '> 0' }
     ]
 

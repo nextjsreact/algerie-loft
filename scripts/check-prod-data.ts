@@ -55,7 +55,7 @@ async function checkProdData() {
 
     // Vérifier les propriétaires
     console.log('\n📋 PROPRIÉTAIRES EN PRODUCTION:')
-    const ownersResponse = await fetch(`${prodUrl}/rest/v1/loft_owners?select=*`, {
+    const ownersResponse = await fetch(`${prodUrl}/rest/v1/owners?select=*`, {
       headers: {
         'Authorization': `Bearer ${prodKey}`,
         'apikey': prodKey,

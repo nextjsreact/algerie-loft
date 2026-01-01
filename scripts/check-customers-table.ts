@@ -146,7 +146,7 @@ async function checkCustomersTable() {
     console.log('='.repeat(50))
 
     console.log('🔍 TABLES PRINCIPALES DANS DEV:')
-    const mainTables = ['lofts', 'loft_owners', 'profiles', 'categories', 'currencies', 'customers']
+    const mainTables = ['lofts', 'owners', 'profiles', 'categories', 'currencies', 'customers']
 
     for (const tableName of mainTables) {
       try {

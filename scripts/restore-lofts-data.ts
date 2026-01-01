@@ -23,7 +23,7 @@ async function restoreLoftsData() {
     console.log('📋 Récupération des données de référence...')
 
     const { data: owners, error: ownersError } = await client
-      .from('loft_owners')
+      .from('owners')
       .select('id, name')
       .limit(3)
 

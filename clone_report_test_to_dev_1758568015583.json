@@ -28,8 +28,8 @@
         "adaptations": [],
         "errors": []
       },
-      "loft_owners": {
-        "table": "loft_owners",
+      "owners": {
+        "table": "owners",
         "status": "success",
         "sourceCount": 3,
         "targetCount": 3,

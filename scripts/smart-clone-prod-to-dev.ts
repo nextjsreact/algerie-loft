@@ -46,7 +46,7 @@ async function smartCloneProdToDev() {
   const tablesToClone = [
     'zone_areas',
     'internet_connection_types', 
-    'loft_owners',
+    'owners',
     'lofts',
     'categories',
     'currencies',

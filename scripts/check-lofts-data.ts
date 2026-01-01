@@ -99,7 +99,7 @@ async function checkLoftsData() {
     
     // Vérifier les owners
     const { count: ownersCount } = await prodClient
-      .from('loft_owners')
+      .from('owners')
       .select('*', { count: 'exact', head: true })
     
     console.log(`👥 Propriétaires disponibles: ${ownersCount || 0}`)

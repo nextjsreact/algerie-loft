@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Session Context</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .result-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .success { border-color: #4CAF50; background-color: #f8fff8; }
+        .error { border-color: #f44336; background-color: #fff8f8; }
+        .warning { border-color: #FF9800; background-color: #fff8f0; }
+        h1 { color: #333; text-align: center; }
+        h2 { color: #555; margin-top: 0; }
+        pre {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #1976D2; }
+        .highlight { background: yellow; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Session & Context Executive</h1>
+        <p>Ce test va identifier pourquoi tu ne vois qu'un owner dans le dropdown.</p>
+        
+        <div id="session-info" class="result-section">
+            <h2>1️⃣ Informations de Session</h2>
+            <div id="session-content">Chargement...</div>
+        </div>
+
+        <div id="cookies-info" class="result-section">
+            <h2>2️⃣ Cookies & Contexte</h2>
+            <div id="cookies-content">Chargement...</div>
+        </div>
+
+        <div id="api-tests" class="result-section">
+            <h2>3️⃣ Tests API</h2>
+            <div id="api-content">Chargement...</div>
+        </div>
+
+        <div id="diagnosis" class="result-section" style="display: none;">
+            <h2>🎯 DIAGNOSTIC</h2>
+            <div id="diagnosis-content"></div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="runFullDiagnosis()">🔄 Relancer le Diagnostic</button>
+            <button onclick="clearCache()">🧹 Vider le Cache</button>
+        </div>
+    </div>
+
+    <script>
+        let sessionData = null;
+        let apiData = {};
+
+        async function testAPI(url, description) {
+            try {
+                const response = await fetch(url, { credentials: 'include' });
+                const data = await response.json();
+                return { success: response.ok, data, status: response.status, url };
+            } catch (error) {
+                return { success: false, error: error.message, status: 0, url };
+            }
+        }
+
+        function getCookies() {
+            const cookies = {};
+            document.cookie.split(';').forEach(cookie => {
+                const [name, value] = cookie.trim().split('=');
+                if (name) cookies[name] = decodeURIComponent(value || '');
+            });
+            return cookies;
+        }
+
+        async function checkSession() {
+            const sessionContent = document.getElementById('session-content');
+            
+            const test = await testAPI('/api/auth/session', 'Session API');
+            sessionData = test.data;
+            
+            if (test.success && test.data.isAuthenticated) {
+                const user = test.data.user;
+                sessionContent.innerHTML = `
+                    <div class="success">
+                        <h3>✅ Session Active</h3>
+                        <p><strong>Email:</strong> ${user.email}</p>
+                        <p><strong>Nom:</strong> ${user.full_name}</p>
+                        <p><strong>Rôle:</strong> <span class="highlight">${user.role}</span></p>
+                        <p><strong>ID:</strong> ${user.id}</p>
+                        <p><strong>Est Executive:</strong> ${user.role === 'executive' ? '✅ OUI' : '❌ NON'}</p>
+                    </div>
+                    <h4>Données complètes :</h4>
+                    <pre>${JSON.stringify(test.data, null, 2)}</pre>
+                `;
+            } else {
+                sessionContent.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Session Invalide</h3>
+                        <p>Erreur: ${test.error || 'Non authentifié'}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function checkCookies() {
+            const cookiesContent = document.getElementById('cookies-content');
+            const cookies = getCookies();
+            
+            const importantCookies = ['login_context', 'sb-access-token', 'sb-refresh-token'];
+            let cookieInfo = '<h3>🍪 Cookies Importants :</h3>';
+            
+            importantCookies.forEach(cookieName => {
+                const value = cookies[cookieName];
+                if (value) {
+                    cookieInfo += `<p><strong>${cookieName}:</strong> <span class="highlight">${value.substring(0, 50)}${value.length > 50 ? '...' : ''}</span></p>`;
+                } else {
+                    cookieInfo += `<p><strong>${cookieName}:</strong> <span style="color: red;">NON DÉFINI</span></p>`;
+                }
+            });
+            
+            cookieInfo += '<h4>Tous les cookies :</h4>';
+            cookieInfo += `<pre>${JSON.stringify(cookies, null, 2)}</pre>`;
+            
+            cookiesContent.innerHTML = cookieInfo;
+        }
+
+        async function testAPIs() {
+            const apiContent = document.getElementById('api-content');
+            apiContent.innerHTML = 'Tests en cours...';
+            
+            const tests = [
+                { url: '/api/debug/database', name: 'Database Debug' },
+                { url: '/api/lofts/availability', name: 'Lofts Availability' }
+            ];
+            
+            let results = '<h3>🔌 Résultats API :</h3>';
+            
+            for (const test of tests) {
+                const result = await testAPI(test.url, test.name);
+                apiData[test.name] = result;
+                
+                if (result.success) {
+                    results += `<div class="success">`;
+                    results += `<h4>✅ ${test.name}</h4>`;
+                    
+                    if (test.name === 'Lofts Availability' && result.data.filterOptions?.owners) {
+                        const owners = result.data.filterOptions.owners.filter(o => o.value !== 'all');
+                        results += `<p><strong>Owners dans dropdown:</strong> <span class="highlight">${owners.length}</span></p>`;
+                        if (owners.length <= 3) {
+                            results += '<p><strong>Liste des owners:</strong></p>';
+                            owners.forEach(owner => {
+                                results += `<p>- ${owner.label} (${owner.value})</p>`;
+                            });
+                        }
+                    }
+                    
+                    if (test.name === 'Database Debug' && result.data.data?.owners) {
+                        results += `<p><strong>Total owners en base:</strong> <span class="highlight">${result.data.data.owners.count}</span></p>`;
+                    }
+                    
+                    results += `</div>`;
+                } else {
+                    results += `<div class="error">`;
+                    results += `<h4>❌ ${test.name}</h4>`;
+                    results += `<p>Erreur: ${result.error}</p>`;
+                    results += `<p>Status: ${result.status}</p>`;
+                    results += `</div>`;
+                }
+            }
+            
+            apiContent.innerHTML = results;
+        }
+
+        function showDiagnosis() {
+            const diagnosisSection = document.getElementById('diagnosis');
+            const diagnosisContent = document.getElementById('diagnosis-content');
+            
+            let diagnosis = '';
+            
+            // Analyser les résultats
+            if (sessionData?.isAuthenticated && sessionData.user.role === 'executive') {
+                diagnosis += '<div class="success"><h3>✅ Session Executive Correcte</h3></div>';
+                
+                const availabilityData = apiData['Lofts Availability'];
+                if (availabilityData?.success) {
+                    const owners = availabilityData.data.filterOptions?.owners?.filter(o => o.value !== 'all') || [];
+                    
+                    if (owners.length === 1) {
+                        diagnosis += `
+                            <div class="error">
+                                <h3>🚨 PROBLÈME IDENTIFIÉ</h3>
+                                <p><strong>Le dropdown ne montre qu'un owner:</strong> ${owners[0]?.label}</p>
+                                <p><strong>Cause probable:</strong> Problème dans l'API /api/lofts/availability</p>
+                                <p><strong>Solution:</strong> L'API filtre incorrectement les owners pour les executives</p>
+                            </div>
+                        `;
+                    } else if (owners.length === 26) {
+                        diagnosis += '<div class="success"><h3>✅ Dropdown Fonctionne Correctement</h3></div>';
+                    } else {
+                        diagnosis += `
+                            <div class="warning">
+                                <h3>⚠️ Nombre d'owners inattendu</h3>
+                                <p>Attendu: 26, Reçu: ${owners.length}</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    diagnosis += '<div class="error"><h3>❌ API Availability Échouée</h3></div>';
+                }
+            } else {
+                diagnosis += '<div class="error"><h3>❌ Session Executive Invalide</h3></div>';
+            }
+            
+            diagnosisContent.innerHTML = diagnosis;
+            diagnosisSection.style.display = 'block';
+        }
+
+        async function clearCache() {
+            // Vider le localStorage
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Essayer de vider les cookies (limité côté client)
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+            });
+            
+            alert('Cache vidé ! Rechargez la page.');
+            window.location.reload();
+        }
+
+        async function runFullDiagnosis() {
+            await checkSession();
+            checkCookies();
+            await testAPIs();
+            showDiagnosis();
+        }
+
+        // Lancer le diagnostic au chargement
+        window.addEventListener('load', runFullDiagnosis);
+    </script>
+</body>
+</html>

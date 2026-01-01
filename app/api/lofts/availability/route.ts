@@ -69,7 +69,7 @@ export async function GET(request: Request) {
     });
 
     // 6. Fetch owners and zones
-    const { data: ownersData } = await supabase.from("loft_owners").select("id, name").order("name");
+    const { data: ownersData } = await supabase.from("owners").select("id, name").order("name");
     const { data: zoneAreasData } = await supabase.from("zone_areas").select("id, name").order("name");
     const ownersMap = new Map((ownersData || []).map(o => [o.id, o.name]));
     const zonesMap = new Map((zoneAreasData || []).map(z => [z.id, z.name]));

@@ -21,20 +21,20 @@ async function testOwnersData() {
 
   // Test 1: Check if table exists and get count
   const { count, error: countError } = await supabase
-    .from('loft_owners')
+    .from('owners')
     .select('*', { count: 'exact', head: true })
 
   if (countError) {
-    console.error('❌ Error accessing loft_owners table:', countError.message)
+    console.error('❌ Error accessing owners table:', countError.message)
     return
   }
 
-  console.log(`✅ Table loft_owners exists`)
+  console.log(`✅ Table owners exists`)
   console.log(`📊 Total owners: ${count}\n`)
 
   // Test 2: Get all owners
   const { data: owners, error: ownersError } = await supabase
-    .from('loft_owners')
+    .from('owners')
     .select('*')
     .order('created_at', { ascending: false })
 
@@ -54,7 +54,7 @@ async function testOwnersData() {
 
   // Test 3: Get owners with lofts
   const { data: ownersWithLofts, error: joinError } = await supabase
-    .from('loft_owners')
+    .from('owners')
     .select(`
       *,
       lofts (

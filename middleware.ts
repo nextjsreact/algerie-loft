@@ -1,47 +1,29 @@
-import { NextResponse, type NextRequest } from 'next/server';
-import createIntlMiddleware from 'next-intl/middleware';
+import { NextRequest, NextResponse } from 'next/server'
+import createMiddleware from 'next-intl/middleware'
 
-const intlMiddleware = createIntlMiddleware({
-  locales: ['fr', 'ar', 'en'],
+// Configuration next-intl
+const intlMiddleware = createMiddleware({
+  locales: ['fr', 'en', 'ar'],
   defaultLocale: 'fr',
-  localePrefix: 'always',
-  localeDetection: false,
-});
+  localePrefix: 'always'
+})
 
-export async function middleware(request: NextRequest) {
-  // Apply internationalization
-  const response = intlMiddleware(request);
+export default function middleware(request: NextRequest) {
+  // Appliquer le middleware d'internationalisation
+  const response = intlMiddleware(request)
   
-  // Add basic security headers
-  if (response instanceof NextResponse) {
-    response.headers.set('X-Content-Type-Options', 'nosniff');
-    response.headers.set('X-Frame-Options', 'DENY');
-    response.headers.set('X-XSS-Protection', '1; mode=block');
-  }
+  // Ajouter des headers de performance
+  response.headers.set('X-Middleware-Cache', 'optimized')
+  response.headers.set('X-Content-Type-Options', 'nosniff')
   
-  return response;
+  return response
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for static assets
-     * Use multiple patterns to avoid capturing groups
-     */
+    // Matcher optimisé pour éviter les fichiers statiques
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
     '/',
-    '/(fr|en|ar)/:path*',
-    '/dashboard/:path*',
-    '/admin/:path*',
-    '/auth/:path*',
-    '/public/:path*',
-    '/lofts/:path*',
-    '/owners/:path*',
-    '/transactions/:path*',
-    '/reports/:path*',
-    '/settings/:path*',
-    '/profile/:path*',
-    '/register/:path*',
-    '/client/:path*',
-    '/partner/:path*',
-  ],
-};
+    '/(fr|en|ar)/:path*'
+  ]
+}

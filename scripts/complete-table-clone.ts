@@ -109,7 +109,7 @@ async function completeTableClone() {
         console.log(`✅ ${tableName}: ${prodData.length} enregistrements lus de PROD`)
 
         // Afficher quelques exemples pour les tables importantes
-        if (['lofts', 'loft_owners', 'profiles', 'categories', 'currencies'].includes(tableName)) {
+        if (['lofts', 'owners', 'profiles', 'categories', 'currencies'].includes(tableName)) {
           console.log('📋 Exemples de données:')
           prodData.slice(0, 3).forEach((record, index) => {
             const name = record.name || record.email || record.title || record.id
@@ -172,7 +172,7 @@ async function completeTableClone() {
     console.log('\n🏠 VÉRIFICATION DES DONNÉES DANS DEV:')
     console.log('='.repeat(50))
 
-    const importantTables = ['lofts', 'loft_owners', 'profiles', 'categories', 'currencies', 'transactions', 'bills']
+    const importantTables = ['lofts', 'owners', 'profiles', 'categories', 'currencies', 'transactions', 'bills']
 
     for (const tableName of importantTables) {
       try {
@@ -220,7 +220,7 @@ async function completeTableClone() {
     }
 
     try {
-      const ownersResponse = await fetch(`${devUrl}/rest/v1/loft_owners?select=id,name,email&limit=3`, {
+      const ownersResponse = await fetch(`${devUrl}/rest/v1/owners?select=id,name,email&limit=3`, {
         headers: {
           'Authorization': `Bearer ${devKey}`,
           'apikey': devKey,

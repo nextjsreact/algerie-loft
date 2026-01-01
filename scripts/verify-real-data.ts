@@ -80,7 +80,7 @@ async function verifyRealData() {
 
     // PROD Owners
     console.log('📤 PRODUCTION PROPRIÉTAIRES:')
-    const prodOwnersResponse = await fetch(`${prodUrl}/rest/v1/loft_owners?select=id,name,email&limit=5`, {
+    const prodOwnersResponse = await fetch(`${prodUrl}/rest/v1/owners?select=id,name,email&limit=5`, {
       headers: {
         'Authorization': `Bearer ${prodKey}`,
         'apikey': prodKey,
@@ -100,7 +100,7 @@ async function verifyRealData() {
 
     // DEV Owners
     console.log('\n🎯 DEVELOPMENT PROPRIÉTAIRES:')
-    const devOwnersResponse = await fetch(`${devUrl}/rest/v1/loft_owners?select=id,name,email&limit=5`, {
+    const devOwnersResponse = await fetch(`${devUrl}/rest/v1/owners?select=id,name,email&limit=5`, {
       headers: {
         'Authorization': `Bearer ${devKey}`,
         'apikey': devKey,
@@ -259,7 +259,7 @@ async function verifyRealData() {
 
     const tables = [
       { name: 'lofts', prodQuery: 'name', devQuery: 'name' },
-      { name: 'loft_owners', prodQuery: 'name', devQuery: 'name' },
+      { name: 'owners', prodQuery: 'name', devQuery: 'name' },
       { name: 'categories', prodQuery: 'name', devQuery: 'name' },
       { name: 'internet_connection_types', prodQuery: 'name', devQuery: 'name' },
       { name: 'currencies', prodQuery: 'name', devQuery: 'name' }

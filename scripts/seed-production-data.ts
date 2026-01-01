@@ -20,7 +20,7 @@ async function seedProductionData() {
     // 1. Créer un propriétaire
     console.log('1️⃣ Création d\'un propriétaire...')
     const { data: owner, error: ownerError } = await supabase
-      .from('loft_owners')
+      .from('owners')
       .insert({
         name: 'Propriétaire Test',
         email: 'proprietaire@test.com',

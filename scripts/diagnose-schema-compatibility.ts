@@ -32,7 +32,7 @@ async function diagnoseSchemaCompatibility() {
     'user_sessions',
     'zone_areas',
     'internet_connection_types',
-    'loft_owners',
+    'owners',
     'lofts',
     'categories',
     'currencies',

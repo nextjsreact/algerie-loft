@@ -40,7 +40,7 @@ async function diagnoseAllEnvironments() {
   }
 
   const tablesToCheck = [
-    'zone_areas', 'internet_connection_types', 'loft_owners', 'lofts',
+    'zone_areas', 'internet_connection_types', 'owners', 'lofts',
     'categories', 'currencies', 'payment_methods', 'teams', 'team_members',
     'tasks', 'transactions', 'transaction_category_references', 'settings'
   ]

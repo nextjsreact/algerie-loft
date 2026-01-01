@@ -140,7 +140,7 @@ class TrueDatabaseCloner {
       'zone_areas',
       'internet_connection_types',
       'payment_methods',
-      'loft_owners',
+      'owners',
       'teams',
       'profiles',
       'lofts',
@@ -314,7 +314,7 @@ class TrueDatabaseCloner {
       }
       
       if (['categories', 'zone_areas', 'internet_connection_types', 'payment_methods', 
-           'loft_owners', 'teams', 'profiles', 'tasks', 'transactions', 
+           'owners', 'teams', 'profiles', 'tasks', 'transactions', 
            'transaction_category_references', 'settings', 'notifications'].includes(tableName)) {
         delete adapted.updated_at
       }

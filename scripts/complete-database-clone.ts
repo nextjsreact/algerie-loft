@@ -33,7 +33,7 @@ const ALL_TABLES = [
   'guest_communications',
   'internet_connection_types',
   'loft_availability',
-  'loft_owners',
+  'owners',
   'loft_photos',
   'lofts',
   'messages',
@@ -75,7 +75,7 @@ const TABLE_DEPENDENCIES = {
   
   // Tables lofts et propriétaires
   lofts: [
-    'loft_owners',
+    'owners',
     'lofts',
     'loft_photos',
     'loft_availability',

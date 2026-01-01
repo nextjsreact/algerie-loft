@@ -45,7 +45,7 @@ async function restoreEmergencyLofts() {
     // Récupérer les données de référence
     console.log('🔍 Récupération des données de référence...')
     
-    const { data: owners } = await prodClient.from('loft_owners').select('id, name')
+    const { data: owners } = await prodClient.from('owners').select('id, name')
     const { data: zones } = await prodClient.from('zone_areas').select('id, name')
     const { data: internetTypes } = await prodClient.from('internet_connection_types').select('id').limit(1)
 

@@ -38,7 +38,7 @@ export interface SchemaInfo {
 
 export class CloneEngine {
   private defaultTables = [
-    'zone_areas', 'internet_connection_types', 'loft_owners', 'lofts',
+    'zone_areas', 'internet_connection_types', 'owners', 'lofts',
     'categories', 'currencies', 'payment_methods', 'teams', 'team_members',
     'tasks', 'transaction_category_references', 'settings'
   ]
@@ -380,7 +380,7 @@ export class CloneEngine {
     const knownSchemas: Record<string, string[]> = {
       'zone_areas': ['id', 'name', 'created_at', 'updated_at'],
       'internet_connection_types': ['id', 'type', 'speed', 'provider', 'status', 'cost', 'created_at'],
-      'loft_owners': ['id', 'name', 'email', 'phone', 'address', 'ownership_type', 'created_at', 'updated_at'],
+      'owners': ['id', 'name', 'email', 'phone', 'address', 'ownership_type', 'created_at', 'updated_at'],
       'lofts': [
         'id', 'name', 'address', 'price_per_month', 'status', 'owner_id', 
         'zone_area_id', 'internet_connection_type_id', 'description',

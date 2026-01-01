@@ -156,8 +156,8 @@
           "Enregistrement: null value in column \"name\" of relation \"internet_connection_types\" violates not-null constraint"
         ]
       },
-      "loft_owners": {
-        "table": "loft_owners",
+      "owners": {
+        "table": "owners",
         "status": "success",
         "sourceCount": 10,
         "targetCount": 10,

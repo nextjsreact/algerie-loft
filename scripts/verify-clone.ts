@@ -154,7 +154,7 @@ class CloneVerifier {
 
       // Tables à vérifier
       const tablesToCheck = this.options.tables || [
-        'lofts', 'profiles', 'loft_owners', 'teams', 'team_members',
+        'lofts', 'profiles', 'owners', 'teams', 'team_members',
         'tasks', 'transactions', 'transaction_category_references',
         'currencies', 'categories', 'zone_areas', 'internet_connection_types',
         'payment_methods', 'settings', 'notifications', 'messages'

@@ -86,7 +86,7 @@ class FinalCloner {
       }
 
       // Nettoyer les propriétaires
-      if (table === 'loft_owners') {
+      if (table === 'owners') {
         if (!cleaned.name) cleaned.name = `Propriétaire ${index + 1}`
         if (!cleaned.email) cleaned.email = `owner${index + 1}@localhost`
       }
@@ -223,10 +223,10 @@ class FinalCloner {
       console.log('\n📋 ÉTAPE 2: PROPRIÉTAIRES')
       console.log('='.repeat(50))
 
-      const ownerData = await this.fetchTableData('loft_owners', this.sourceConfig)
+      const ownerData = await this.fetchTableData('owners', this.sourceConfig)
       if (ownerData.length > 0) {
-        const cleanedOwners = this.cleanData(ownerData, 'loft_owners')
-        const inserted = await this.insertTableData('loft_owners', cleanedOwners)
+        const cleanedOwners = this.cleanData(ownerData, 'owners')
+        const inserted = await this.insertTableData('owners', cleanedOwners)
         totalRecords += inserted
       }
 

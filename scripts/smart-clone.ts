@@ -22,7 +22,7 @@ async function smartClone() {
   const testKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
   const testClient = createClient(testUrl, testKey)
 
-  const tablesToClone = ['zone_areas', 'internet_connection_types', 'loft_owners', 'categories', 'currencies', 'payment_methods']
+  const tablesToClone = ['zone_areas', 'internet_connection_types', 'owners', 'categories', 'currencies', 'payment_methods']
 
   for (const tableName of tablesToClone) {
     console.log(`\n📋 Clonage intelligent: ${tableName}`)

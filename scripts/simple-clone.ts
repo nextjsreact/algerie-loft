@@ -101,7 +101,7 @@ class SimpleCloner {
       }
 
       // Nettoyer les propriétaires
-      if (table === 'loft_owners') {
+      if (table === 'owners') {
         if (!cleaned.name) cleaned.name = 'Propriétaire inconnu'
         if (!cleaned.email) cleaned.email = 'owner@unknown.com'
       }
@@ -228,7 +228,7 @@ class SimpleCloner {
         'zone_areas',
         'internet_connection_types',
         'payment_methods',
-        'loft_owners',
+        'owners',
         'teams',
         'profiles',
         'lofts',

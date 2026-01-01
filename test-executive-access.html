@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Accès Executive - Owners</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .success { border-color: #4CAF50; background-color: #f8fff8; }
+        .error { border-color: #f44336; background-color: #fff8f8; }
+        .loading { border-color: #2196F3; background-color: #f8f9ff; }
+        h1 { color: #333; text-align: center; }
+        h2 { color: #555; margin-top: 0; }
+        .status { font-weight: bold; margin-bottom: 10px; }
+        .success .status { color: #4CAF50; }
+        .error .status { color: #f44336; }
+        .loading .status { color: #2196F3; }
+        pre { background: #f0f0f0; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #1976D2; }
+        .data-preview {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .owner-item {
+            padding: 8px;
+            margin: 4px 0;
+            background: white;
+            border-radius: 4px;
+            border-left: 4px solid #2196F3;
+        }
+        .executive-badge {
+            background: #9C27B0;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Accès Executive - Owners</h1>
+        <div class="executive-badge">👔 EXECUTIVE ACCESS</div>
+        <p>Ce test vérifie que votre session executive peut accéder aux données owners.</p>
+        
+        <div id="test-session" class="test-section loading">
+            <h2>1️⃣ Vérification Session Executive</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="session-result"></div>
+        </div>
+
+        <div id="test-owners-direct" class="test-section loading">
+            <h2>2️⃣ Test Direct API Owners</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="owners-direct-result"></div>
+        </div>
+
+        <div id="test-lofts-availability" class="test-section loading">
+            <h2>3️⃣ Test API Lofts Availability (Dropdowns)</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="availability-result"></div>
+        </div>
+
+        <div id="test-page-data" class="test-section loading">
+            <h2>4️⃣ Simulation Page Lofts</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="page-result"></div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="runAllTests()">🔄 Relancer tous les tests</button>
+            <button onclick="window.location.href='/fr/lofts'">📋 Aller à la page Lofts</button>
+            <button onclick="window.location.href='/fr/admin'">⚙️ Dashboard Admin</button>
+        </div>
+    </div>
+
+    <script>
+        async function testAPI(url, description, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    credentials: 'include', // Important pour inclure les cookies de session
+                    ...options
+                });
+                const data = await response.json();
+                
+                return {
+                    success: response.ok,
+                    data: data,
+                    status: response.status,
+                    error: response.ok ? null : (data.error || 'Erreur inconnue')
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.message,
+                    status: 0
+                };
+            }
+        }
+
+        async function testSession() {
+            const section = document.getElementById('test-session');
+            const result = document.getElementById('session-result');
+            
+            const test = await testAPI('/api/auth/session', 'Session Executive');
+            
+            if (test.success && test.data.isAuthenticated) {
+                section.className = 'test-section success';
+                section.querySelector('.status').innerHTML = '✅ Session Executive Active';
+                
+                const user = test.data.user;
+                let html = \`
+                    <p><strong>Utilisateur:</strong> \${user.email}</p>
+                    <p><strong>Rôle:</strong> <span class="executive-badge">\${user.role.toUpperCase()}</span></p>
+                    <p><strong>ID:</strong> \${user.id}</p>
+                    <p><strong>Nom:</strong> \${user.full_name || 'N/A'}</p>
+                \`;
+                
+                if (test.data.permissions) {
+                    html += \`<p><strong>Permissions:</strong> \${test.data.permissions.join(', ')}</p>\`;
+                }
+                
+                result.innerHTML = html;
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Session Non Authentifiée';
+                result.innerHTML = \`
+                    <p><strong>Erreur:</strong> \${test.error || 'Non authentifié'}</p>
+                    <p><strong>Status:</strong> \${test.status}</p>
+                    <p>⚠️ Vous devez être connecté pour voir les owners</p>
+                \`;
+            }
+        }
+
+        async function testOwnersDirect() {
+            const section = document.getElementById('test-owners-direct');
+            const result = document.getElementById('owners-direct-result');
+            
+            const test = await testAPI('/api/debug/database', 'Owners Direct');
+            
+            if (test.success) {
+                const ownersData = test.data.data?.owners;
+                
+                if (ownersData && ownersData.count > 0) {
+                    section.className = 'test-section success';
+                    section.querySelector('.status').innerHTML = \`✅ \${ownersData.count} Owners Trouvés\`;
+                    
+                    let html = \`<p><strong>Total owners:</strong> \${ownersData.count}</p>\`;
+                    
+                    if (ownersData.data && ownersData.data.length > 0) {
+                        html += '<div class="data-preview"><strong>Liste des owners:</strong><br>';
+                        ownersData.data.forEach((owner, index) => {
+                            html += \`
+                                <div class="owner-item">
+                                    <strong>\${index + 1}. \${owner.name || owner.business_name || 'Sans nom'}</strong><br>
+                                    <small>ID: \${owner.id}</small><br>
+                                    <small>Type: \${owner.business_type || owner.ownership_type || 'N/A'}</small>
+                                </div>
+                            \`;
+                        });
+                        html += '</div>';
+                    }
+                    
+                    result.innerHTML = html;
+                } else {
+                    section.className = 'test-section error';
+                    section.querySelector('.status').innerHTML = '❌ Aucun Owner Trouvé';
+                    result.innerHTML = '<p>La base de données ne retourne aucun owner. Problème de permissions RLS ?</p>';
+                }
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Erreur API Database';
+                result.innerHTML = \`
+                    <p><strong>Erreur:</strong> \${test.error}</p>
+                    <p><strong>Status:</strong> \${test.status}</p>
+                \`;
+            }
+        }
+
+        async function testAvailability() {
+            const section = document.getElementById('test-lofts-availability');
+            const result = document.getElementById('availability-result');
+            
+            const test = await testAPI('/api/lofts/availability', 'Lofts Availability');
+            
+            if (test.success) {
+                section.className = 'test-section success';
+                section.querySelector('.status').innerHTML = '✅ API Availability Fonctionne';
+                
+                let html = \`<p><strong>Status:</strong> \${test.status}</p>\`;
+                
+                if (test.data.owners) {
+                    html += \`<p><strong>Owners pour dropdown:</strong> \${test.data.owners.length}</p>\`;
+                    
+                    if (test.data.owners.length > 0) {
+                        html += '<div class="data-preview"><strong>Owners disponibles pour dropdown:</strong><br>';
+                        test.data.owners.slice(0, 10).forEach((owner, index) => {
+                            html += \`
+                                <div class="owner-item">
+                                    \${index + 1}. \${owner.name} (ID: \${owner.id})
+                                </div>
+                            \`;
+                        });
+                        if (test.data.owners.length > 10) {
+                            html += \`<p><em>... et \${test.data.owners.length - 10} autres</em></p>\`;
+                        }
+                        html += '</div>';
+                    }
+                }
+                
+                if (test.data.zoneAreas) {
+                    html += \`<p><strong>Zone Areas:</strong> \${test.data.zoneAreas.length}</p>\`;
+                }
+                
+                result.innerHTML = html;
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Erreur API Availability';
+                result.innerHTML = \`
+                    <p><strong>Erreur:</strong> \${test.error}</p>
+                    <p><strong>Status:</strong> \${test.status}</p>
+                \`;
+            }
+        }
+
+        async function testPageData() {
+            const section = document.getElementById('test-page-data');
+            const result = document.getElementById('page-result');
+            
+            // Simuler ce que fait la page lofts
+            const tests = await Promise.all([
+                testAPI('/api/admin/lofts', 'Lofts avec relations'),
+                testAPI('/api/debug/database', 'Database pour owners')
+            ]);
+            
+            const loftsTest = tests[0];
+            const dbTest = tests[1];
+            
+            if (loftsTest.success && dbTest.success) {
+                section.className = 'test-section success';
+                section.querySelector('.status').innerHTML = '✅ Données Page Lofts OK';
+                
+                const loftsCount = Array.isArray(loftsTest.data) ? loftsTest.data.length : 0;
+                const ownersCount = dbTest.data.data?.owners?.count || 0;
+                
+                let html = \`
+                    <p><strong>Lofts trouvés:</strong> \${loftsCount}</p>
+                    <p><strong>Owners trouvés:</strong> \${ownersCount}</p>
+                \`;
+                
+                if (loftsCount > 0 && ownersCount > 0) {
+                    html += '<p>✅ <strong>Les dropdowns devraient fonctionner !</strong></p>';
+                    html += '<p>Si ce n\'est pas le cas, le problème est dans le composant React côté client.</p>';
+                } else {
+                    html += '<p>❌ Données manquantes pour les dropdowns</p>';
+                }
+                
+                result.innerHTML = html;
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Problème Données Page';
+                result.innerHTML = \`
+                    <p><strong>Lofts API:</strong> \${loftsTest.success ? 'OK' : loftsTest.error}</p>
+                    <p><strong>Database API:</strong> \${dbTest.success ? 'OK' : dbTest.error}</p>
+                \`;
+            }
+        }
+
+        async function runAllTests() {
+            // Reset all sections to loading
+            document.querySelectorAll('.test-section').forEach(section => {
+                section.className = 'test-section loading';
+                section.querySelector('.status').innerHTML = '⏳ Test en cours...';
+            });
+
+            // Run tests in sequence for better readability
+            await testSession();
+            await testOwnersDirect();
+            await testAvailability();
+            await testPageData();
+        }
+
+        // Run tests when page loads
+        window.addEventListener('load', runAllTests);
+    </script>
+</body>
+</html>

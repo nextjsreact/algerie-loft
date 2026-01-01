@@ -17,7 +17,7 @@ async function testClonedData() {
 
   // Tables à vérifier
   const tables = [
-    'zone_areas', 'internet_connection_types', 'loft_owners', 
+    'zone_areas', 'internet_connection_types', 'owners', 
     'categories', 'currencies', 'payment_methods', 'lofts'
   ]
 

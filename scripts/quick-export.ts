@@ -34,7 +34,7 @@ async function quickExport(environment: string) {
   )
 
   // Tables essentielles
-  const tables = ['lofts', 'loft_owners', 'profiles', 'transactions', 'currencies', 'categories']
+  const tables = ['lofts', 'owners', 'profiles', 'transactions', 'currencies', 'categories']
   const exportData: any = {
     environment: environment,
     timestamp: new Date().toISOString(),

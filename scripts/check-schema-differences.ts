@@ -32,7 +32,7 @@ async function checkSchemaDifferences() {
     // Tables essentielles à vérifier
     const essentialTables = [
       'currencies', 'categories', 'zone_areas', 'internet_connection_types',
-      'payment_methods', 'loft_owners', 'profiles', 'lofts'
+      'payment_methods', 'owners', 'profiles', 'lofts'
     ]
 
     console.log('\n📋 COMPARAISON DES SCHÉMAS')

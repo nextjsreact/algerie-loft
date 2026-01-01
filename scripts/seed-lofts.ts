@@ -40,7 +40,7 @@ async function seedLofts() {
 
     // Create some loft owners
     const { data: owners, error: ownersError } = await supabase
-      .from('loft_owners')
+      .from('owners')
       .insert([
         { 
           name: 'Ahmed Benali',

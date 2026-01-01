@@ -19,14 +19,14 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function migrateLoftOwners() {
-  console.log('📦 Migration de loft_owners vers owners...');
+  console.log('📦 Migration de owners vers owners...');
   
   const { data: loftOwners, error } = await supabase
-    .from('loft_owners')
+    .from('owners')
     .select('*');
 
   if (error) {
-    console.error('❌ Erreur lecture loft_owners:', error.message);
+    console.error('❌ Erreur lecture owners:', error.message);
     return 0;
   }
 
@@ -196,7 +196,7 @@ async function verifyMigration() {
   console.log('\n📊 Vérification de la migration...\n');
   
   const { count: loftOwnersCount } = await supabase
-    .from('loft_owners')
+    .from('owners')
     .select('*', { count: 'exact', head: true });
 
   const { count: partnerProfilesCount } = await supabase
@@ -220,7 +220,7 @@ async function verifyMigration() {
   console.log('┌─────────────────────────┬─────────┐');
   console.log('│ Métrique                │ Valeur  │');
   console.log('├─────────────────────────┼─────────┤');
-  console.log(`│ loft_owners             │ ${loftOwnersCount || 0}      │`);
+  console.log(`│ owners             │ ${loftOwnersCount || 0}      │`);
   console.log(`│ partner_profiles        │ ${partnerProfilesCount || 0}       │`);
   console.log(`│ Total attendu           │ ${(loftOwnersCount || 0) + (partnerProfilesCount || 0)}      │`);
   console.log('├─────────────────────────┼─────────┤');
@@ -251,7 +251,7 @@ async function executeMigration() {
     
     console.log('\n' + '═'.repeat(60));
     console.log('\n📈 Résumé de la migration:');
-    console.log(`  - ${loftOwnersMigrated} propriétaires de loft_owners migrés`);
+    console.log(`  - ${loftOwnersMigrated} propriétaires de owners migrés`);
     console.log(`  - ${partnersMigrated} partenaires de partner_profiles migrés`);
     console.log(`  - ${emailsUpdated} emails mis à jour depuis profiles`);
     

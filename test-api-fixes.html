@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Fixes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .success { border-color: #4CAF50; background-color: #f8fff8; }
+        .error { border-color: #f44336; background-color: #fff8f8; }
+        .loading { border-color: #2196F3; background-color: #f8f9ff; }
+        .warning { border-color: #FF9800; background-color: #fff8f0; }
+        h1 { color: #333; text-align: center; }
+        h2 { color: #555; margin-top: 0; }
+        .status { font-weight: bold; margin-bottom: 10px; }
+        .success .status { color: #4CAF50; }
+        .error .status { color: #f44336; }
+        .loading .status { color: #2196F3; }
+        .warning .status { color: #FF9800; }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #1976D2; }
+        .timing {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .fast { color: #4CAF50; font-weight: bold; }
+        .slow { color: #f44336; font-weight: bold; }
+        .medium { color: #FF9800; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Test des Corrections API</h1>
+        <p>Ce test vérifie que les corrections des problèmes d'API fonctionnent.</p>
+        
+        <div id="session-test" class="test-section loading">
+            <h2>1️⃣ API Session (Sécurité)</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="session-result"></div>
+        </div>
+
+        <div id="notifications-test" class="test-section loading">
+            <h2>2️⃣ API Notifications (Timeout)</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="notifications-result"></div>
+        </div>
+
+        <div id="conversations-test" class="test-section loading">
+            <h2>3️⃣ API Conversations (Performance)</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="conversations-result"></div>
+        </div>
+
+        <div id="summary" style="display: none;">
+            <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h3>📊 Résumé des Tests</h3>
+                <div id="summary-content"></div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="runAllTests()">🔄 Relancer tous les Tests</button>
+            <button onclick="window.location.reload()">🔄 Recharger la Page</button>
+        </div>
+    </div>
+
+    <script>
+        let testResults = {};
+
+        async function testAPI(url, description, expectedMaxTime = 3000) {
+            const startTime = Date.now();
+            try {
+                const response = await fetch(url, { credentials: 'include' });
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                
+                const data = await response.json();
+                
+                return {
+                    success: response.ok,
+                    data,
+                    status: response.status,
+                    duration,
+                    error: response.ok ? null : (data.error || 'Erreur inconnue')
+                };
+            } catch (error) {
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                
+                return {
+                    success: false,
+                    error: error.message,
+                    status: 0,
+                    duration
+                };
+            }
+        }
+
+        function formatTiming(duration) {
+            if (duration < 1000) {
+                return \`<span class="fast">\${duration}ms (Rapide ✅)</span>\`;
+            } else if (duration < 3000) {
+                return \`<span class="medium">\${duration}ms (Acceptable ⚠️)</span>\`;
+            } else {
+                return \`<span class="slow">\${duration}ms (Lent ❌)</span>\`;
+            }
+        }
+
+        async function testSession() {
+            const section = document.getElementById('session-test');
+            const result = document.getElementById('session-result');
+            
+            const test = await testAPI('/api/auth/session', 'Session API');
+            testResults.session = test;
+            
+            if (test.success) {
+                section.className = 'test-section success';
+                section.querySelector('.status').innerHTML = '✅ API Session OK';
+                
+                result.innerHTML = \`
+                    <p><strong>Statut:</strong> \${test.status}</p>
+                    <p><strong>Authentifié:</strong> \${test.data.isAuthenticated ? 'Oui' : 'Non'}</p>
+                    \${test.data.user ? \`<p><strong>Rôle:</strong> \${test.data.user.role}</p>\` : ''}
+                    <div class="timing">⏱️ Temps de réponse: \${formatTiming(test.duration)}</div>
+                \`;
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Erreur Session';
+                result.innerHTML = \`
+                    <p><strong>Erreur:</strong> \${test.error}</p>
+                    <p><strong>Statut:</strong> \${test.status}</p>
+                    <div class="timing">⏱️ Temps de réponse: \${formatTiming(test.duration)}</div>
+                \`;
+            }
+        }
+
+        async function testNotifications() {
+            const section = document.getElementById('notifications-test');
+            const result = document.getElementById('notifications-result');
+            
+            const test = await testAPI('/api/notifications/unread-count', 'Notifications API');
+            testResults.notifications = test;
+            
+            if (test.success) {
+                section.className = 'test-section success';
+                section.querySelector('.status').innerHTML = '✅ API Notifications OK';
+                
+                result.innerHTML = \`
+                    <p><strong>Statut:</strong> \${test.status}</p>
+                    <p><strong>Notifications non lues:</strong> \${test.data.count || 0}</p>
+                    <div class="timing">⏱️ Temps de réponse: \${formatTiming(test.duration)}</div>
+                    \${test.duration < 2000 ? '<p class="fast">✅ Timeout optimisé fonctionne!</p>' : '<p class="slow">⚠️ Encore lent, vérifiez les timeouts</p>'}
+                \`;
+            } else if (test.status === 401) {
+                section.className = 'test-section warning';
+                section.querySelector('.status').innerHTML = '⚠️ Non Authentifié';
+                result.innerHTML = \`
+                    <p><strong>Erreur:</strong> Non authentifié (normal si pas connecté)</p>
+                    <div class="timing">⏱️ Temps de réponse: \${formatTiming(test.duration)}</div>
+                \`;
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Erreur Notifications';
+                result.innerHTML = \`
+                    <p><strong>Erreur:</strong> \${test.error}</p>
+                    <p><strong>Statut:</strong> \${test.status}</p>
+                    <div class="timing">⏱️ Temps de réponse: \${formatTiming(test.duration)}</div>
+                \`;
+            }
+        }
+
+        async function testConversations() {
+            const section = document.getElementById('conversations-test');
+            const result = document.getElementById('conversations-result');
+            
+            const test = await testAPI('/api/conversations/unread-count', 'Conversations API');
+            testResults.conversations = test;
+            
+            if (test.success) {
+                section.className = 'test-section success';
+                section.querySelector('.status').innerHTML = '✅ API Conversations OK';
+                
+                result.innerHTML = \`
+                    <p><strong>Statut:</strong> \${test.status}</p>
+                    <p><strong>Conversations non lues:</strong> \${test.data.count || 0}</p>
+                    <div class="timing">⏱️ Temps de réponse: \${formatTiming(test.duration)}</div>
+                    \${test.duration < 3000 ? '<p class="fast">✅ Timeout optimisé fonctionne!</p>' : '<p class="slow">⚠️ Encore lent, vérifiez les timeouts</p>'}
+                \`;
+            } else if (test.status === 401) {
+                section.className = 'test-section warning';
+                section.querySelector('.status').innerHTML = '⚠️ Non Authentifié';
+                result.innerHTML = \`
+                    <p><strong>Erreur:</strong> Non authentifié (normal si pas connecté)</p>
+                    <div class="timing">⏱️ Temps de réponse: \${formatTiming(test.duration)}</div>
+                \`;
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Erreur Conversations';
+                result.innerHTML = \`
+                    <p><strong>Erreur:</strong> \${test.error}</p>
+                    <p><strong>Statut:</strong> \${test.status}</p>
+                    <div class="timing">⏱️ Temps de réponse: \${formatTiming(test.duration)}</div>
+                \`;
+            }
+        }
+
+        function showSummary() {
+            const summary = document.getElementById('summary');
+            const content = document.getElementById('summary-content');
+            
+            let totalTests = Object.keys(testResults).length;
+            let successfulTests = Object.values(testResults).filter(t => t.success || t.status === 401).length;
+            let averageTime = Object.values(testResults).reduce((sum, t) => sum + t.duration, 0) / totalTests;
+            
+            let summaryHTML = \`
+                <p><strong>Tests réussis:</strong> \${successfulTests}/\${totalTests}</p>
+                <p><strong>Temps moyen:</strong> \${formatTiming(Math.round(averageTime))}</p>
+            \`;
+            
+            if (averageTime < 2000) {
+                summaryHTML += '<p class="fast">🎉 Excellente performance! Les corrections fonctionnent.</p>';
+            } else if (averageTime < 5000) {
+                summaryHTML += '<p class="medium">⚠️ Performance acceptable, mais peut être améliorée.</p>';
+            } else {
+                summaryHTML += '<p class="slow">❌ Performance encore lente, vérifiez les corrections.</p>';
+            }
+            
+            content.innerHTML = summaryHTML;
+            summary.style.display = 'block';
+        }
+
+        async function runAllTests() {
+            // Reset
+            testResults = {};
+            document.querySelectorAll('.test-section').forEach(section => {
+                section.className = 'test-section loading';
+                section.querySelector('.status').innerHTML = '⏳ Test en cours...';
+            });
+            document.getElementById('summary').style.display = 'none';
+
+            // Run tests
+            await testSession();
+            await testNotifications();
+            await testConversations();
+            
+            // Show summary
+            showSummary();
+        }
+
+        // Run tests when page loads
+        window.addEventListener('load', runAllTests);
+    </script>
+</body>
+</html>

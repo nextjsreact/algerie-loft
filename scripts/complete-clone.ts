@@ -49,12 +49,12 @@ async function completeClone() {
       { name: 'payment_methods', dependencies: [], required: true },
 
       // Tables avec dépendances simples
-      { name: 'loft_owners', dependencies: [], required: true },
+      { name: 'owners', dependencies: [], required: true },
       { name: 'teams', dependencies: [], required: true },
       { name: 'profiles', dependencies: [], required: true },
 
       // Tables principales
-      { name: 'lofts', dependencies: ['currencies', 'categories', 'zone_areas', 'internet_connection_types', 'loft_owners'], required: true },
+      { name: 'lofts', dependencies: ['currencies', 'categories', 'zone_areas', 'internet_connection_types', 'owners'], required: true },
       { name: 'team_members', dependencies: ['teams', 'profiles'], required: true },
       { name: 'tasks', dependencies: ['profiles', 'lofts'], required: true },
       { name: 'transactions', dependencies: ['profiles', 'lofts'], required: true },
@@ -168,7 +168,7 @@ async function completeClone() {
             if (!cleaned.address) cleaned.address = `Adresse ${index + 1}`
           }
 
-          if (table.name === 'loft_owners') {
+          if (table.name === 'owners') {
             if (!cleaned.name) cleaned.name = `Propriétaire ${index + 1}`
             if (!cleaned.email) cleaned.email = `owner${index + 1}@localhost`
           }

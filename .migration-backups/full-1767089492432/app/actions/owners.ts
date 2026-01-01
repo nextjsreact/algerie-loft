@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 import type { Database } from "@/lib/types"
 import { createClient } from '@/utils/supabase/server' // Import the new createClient
 
-type LoftOwner = Database['public']['Tables']['loft_owners']['Row']
+type LoftOwner = Database['public']['Tables']['owners']['Row']
 
 export async function getOwners(): Promise<LoftOwner[]> {
   const supabase = await createClient() // Create client here

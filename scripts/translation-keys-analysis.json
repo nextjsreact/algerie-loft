@@ -10,11 +10,11 @@
     "*, currency:currencies(symbol)": [
       "*, currency:currencies(symbol)"
     ],
-    "*, loft_owners(name), zone_areas!lofts_zone_area_id_fkey(name)": [
-      "*, loft_owners(name), zone_areas!lofts_zone_area_id_fkey(name)"
+    "*, owners(name), zone_areas!lofts_zone_area_id_fkey(name)": [
+      "*, owners(name), zone_areas!lofts_zone_area_id_fkey(name)"
     ],
-    "*, owner:loft_owners(name)": [
-      "*, owner:loft_owners(name)"
+    "*, owner:owners(name)": [
+      "*, owner:owners(name)"
     ],
     "*, transactions(*)": [
       "*, transactions(*)"
@@ -1094,8 +1094,8 @@
     "*",
     "*, assigned_user:profiles(full_name), loft:lofts(name)",
     "*, currency:currencies(symbol)",
-    "*, loft_owners(name), zone_areas!lofts_zone_area_id_fkey(name)",
-    "*, owner:loft_owners(name)",
+    "*, owners(name), zone_areas!lofts_zone_area_id_fkey(name)",
+    "*, owner:owners(name)",
     "*, transactions(*)",
     ".",
     "/",

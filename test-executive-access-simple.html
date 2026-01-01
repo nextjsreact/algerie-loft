@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Executive Access - Simple</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .success { border-color: #4CAF50; background-color: #f8fff8; }
+        .error { border-color: #f44336; background-color: #fff8f8; }
+        .loading { border-color: #2196F3; background-color: #f8f9ff; }
+        h1 { color: #333; text-align: center; }
+        h2 { color: #555; margin-top: 0; }
+        .status { font-weight: bold; margin-bottom: 10px; }
+        .success .status { color: #4CAF50; }
+        .error .status { color: #f44336; }
+        .loading .status { color: #2196F3; }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #1976D2; }
+        .fix-button {
+            background: #f44336;
+            font-weight: bold;
+        }
+        .fix-button:hover { background: #d32f2f; }
+        pre {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test Executive Access - Simple</h1>
+        <p>Test rapide pour identifier le problème du dropdown executive.</p>
+        
+        <div id="session-test" class="test-section loading">
+            <h2>1️⃣ Session Utilisateur</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="session-result"></div>
+        </div>
+
+        <div id="owners-test" class="test-section loading">
+            <h2>2️⃣ Owners dans la Base</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="owners-result"></div>
+        </div>
+
+        <div id="dropdown-test" class="test-section loading">
+            <h2>3️⃣ Dropdown API</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="dropdown-result"></div>
+        </div>
+
+        <div id="fix-section" style="display: none;">
+            <div style="background: #ffebee; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <h3>🚨 PROBLÈME DÉTECTÉ</h3>
+                <p id="problem-description"></p>
+                <button id="fix-button" class="fix-button" onclick="fixProblem()">
+                    🔧 Corriger le Problème
+                </button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="runTests()">🔄 Relancer les Tests</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let problemData = null;
+
+        async function testAPI(url, description) {
+            try {
+                const response = await fetch(url, { credentials: 'include' });
+                const data = await response.json();
+                return { success: response.ok, data, status: response.status };
+            } catch (error) {
+                return { success: false, error: error.message, status: 0 };
+            }
+        }
+
+        async function testSession() {
+            const section = document.getElementById('session-test');
+            const result = document.getElementById('session-result');
+            
+            const test = await testAPI('/api/auth/session');
+            
+            if (test.success && test.data.isAuthenticated) {
+                currentUser = test.data.user;
+                section.className = 'test-section success';
+                section.querySelector('.status').innerHTML = '✅ Session Active';
+                
+                result.innerHTML = \`
+                    <p><strong>Email:</strong> \${currentUser.email}</p>
+                    <p><strong>Rôle:</strong> \${currentUser.role}</p>
+                    <p><strong>ID:</strong> \${currentUser.id}</p>
+                \`;
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Session Invalide';
+                result.innerHTML = '<p>Connectez-vous avec votre compte executive</p>';
+            }
+        }
+
+        async function testOwners() {
+            const section = document.getElementById('owners-test');
+            const result = document.getElementById('owners-result');
+            
+            const test = await testAPI('/api/debug/database');
+            
+            if (test.success && test.data.data?.owners) {
+                const owners = test.data.data.owners.data;
+                const linkedOwner = owners.find(owner => owner.user_id === currentUser?.id);
+                
+                if (linkedOwner) {
+                    // PROBLÈME TROUVÉ
+                    section.className = 'test-section error';
+                    section.querySelector('.status').innerHTML = '🚨 PROBLÈME DÉTECTÉ';
+                    
+                    problemData = { linkedOwner, allOwners: owners };
+                    
+                    result.innerHTML = \`
+                        <p><strong>Total owners:</strong> \${owners.length}</p>
+                        <p><strong>🚨 PROBLÈME:</strong> Votre utilisateur executive est lié à l'owner:</p>
+                        <div style="background: #ffcdd2; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                            <strong>\${linkedOwner.name}</strong> (ID: \${linkedOwner.id})<br>
+                            <small>user_id: \${linkedOwner.user_id}</small>
+                        </div>
+                        <p>Cela fait que la logique vous traite comme propriétaire au lieu d'employé!</p>
+                    \`;
+                    
+                    document.getElementById('fix-section').style.display = 'block';
+                    document.getElementById('problem-description').innerHTML = \`
+                        Votre utilisateur executive (\${currentUser.email}) est lié à l'owner "\${linkedOwner.name}".
+                        Cela cause le problème du dropdown qui ne montre qu'un seul owner.
+                    \`;
+                } else {
+                    section.className = 'test-section success';
+                    section.querySelector('.status').innerHTML = '✅ Pas de Lien Problématique';
+                    result.innerHTML = \`
+                        <p><strong>Total owners:</strong> \${owners.length}</p>
+                        <p>✅ Votre utilisateur n'est lié à aucun owner (correct)</p>
+                    \`;
+                }
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Erreur API';
+                result.innerHTML = \`<p>Erreur: \${test.error || 'API non disponible'}</p>\`;
+            }
+        }
+
+        async function testDropdown() {
+            const section = document.getElementById('dropdown-test');
+            const result = document.getElementById('dropdown-result');
+            
+            const test = await testAPI('/api/lofts/availability');
+            
+            if (test.success && test.data.filterOptions?.owners) {
+                const owners = test.data.filterOptions.owners.filter(o => o.value !== 'all');
+                
+                if (owners.length === 1) {
+                    section.className = 'test-section error';
+                    section.querySelector('.status').innerHTML = '🚨 Dropdown Problématique';
+                    result.innerHTML = \`
+                        <p><strong>Owners dans dropdown:</strong> \${owners.length} (devrait être 26+)</p>
+                        <p>🚨 Le dropdown ne montre qu'un seul owner: \${owners[0].label}</p>
+                    \`;
+                } else {
+                    section.className = 'test-section success';
+                    section.querySelector('.status').innerHTML = '✅ Dropdown OK';
+                    result.innerHTML = \`
+                        <p><strong>Owners dans dropdown:</strong> \${owners.length}</p>
+                        <p>✅ Le dropdown fonctionne correctement</p>
+                    \`;
+                }
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Erreur API Dropdown';
+                result.innerHTML = \`<p>Erreur: \${test.error || 'API non disponible'}</p>\`;
+            }
+        }
+
+        async function fixProblem() {
+            if (!problemData?.linkedOwner) {
+                alert('Aucun problème détecté à corriger');
+                return;
+            }
+
+            const confirmed = confirm(
+                \`Cette action va supprimer le lien entre votre utilisateur et l'owner "\${problemData.linkedOwner.name}".\\n\\n\` +
+                'Cela devrait corriger le problème du dropdown.\\n\\n' +
+                'Continuer ?'
+            );
+
+            if (!confirmed) return;
+
+            try {
+                const response = await fetch('/api/admin/fix-executive-access', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        userId: currentUser.id,
+                        action: 'remove_owner_link'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.fixed) {
+                    alert(\`✅ Correction réussie!\\n\\nOwners délinkés: \${data.removedOwners.join(', ')}\\n\\nRechargez la page pour tester.\`);
+                    window.location.reload();
+                } else {
+                    alert(\`❌ Erreur: \${data.message || 'Correction échouée'}\`);
+                }
+            } catch (error) {
+                alert(\`❌ Erreur réseau: \${error.message}\`);
+            }
+        }
+
+        async function runTests() {
+            // Reset
+            document.querySelectorAll('.test-section').forEach(section => {
+                section.className = 'test-section loading';
+                section.querySelector('.status').innerHTML = '⏳ Test en cours...';
+            });
+            document.getElementById('fix-section').style.display = 'none';
+
+            // Run tests
+            await testSession();
+            if (currentUser) {
+                await testOwners();
+                await testDropdown();
+            }
+        }
+
+        // Run tests when page loads
+        window.addEventListener('load', runTests);
+    </script>
+</body>
+</html>

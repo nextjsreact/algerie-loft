@@ -50,6 +50,7 @@ export function ReportGenerator() {
   const [lofts, setLofts] = useState<any[]>([])
   const [owners, setOwners] = useState<any[]>([])
   const [quickStats, setQuickStats] = useState<QuickStats | null>(null)
+  const [dataLoading, setDataLoading] = useState(true)
 
   // États pour les filtres
   const [filters, setFilters] = useState<ReportFilters>({
@@ -68,21 +69,50 @@ export function ReportGenerator() {
   // Charger les données initiales
   useEffect(() => {
     const loadData = async () => {
+      setDataLoading(true)
       try {
+        console.log('🔄 Chargement des vraies données depuis les tables lofts, owners et transactions...')
+        
         const [loftsData, ownersData] = await Promise.all([
-          fetchLofts(),
-          fetchOwners()
+          fetchLofts().catch(err => {
+            console.error('❌ Erreur fetchLofts:', err)
+            toast.error(`Erreur lors du chargement des lofts: ${err.message}`)
+            return []
+          }),
+          fetchOwners().catch(err => {
+            console.error('❌ Erreur fetchOwners:', err)
+            toast.error(`Erreur lors du chargement des propriétaires: ${err.message}`)
+            return []
+          })
         ])
+        
+        console.log('✅ Données chargées depuis les vraies tables:', { 
+          lofts: loftsData.length, 
+          owners: ownersData.length 
+        })
+        
         setLofts(loftsData)
         setOwners(ownersData)
+        
+        if (loftsData.length === 0) {
+          toast.warning('Aucun loft trouvé. Vérifiez les permissions RLS ou ajoutez des lofts.')
+        }
+        if (ownersData.length === 0) {
+          toast.warning('Aucun propriétaire trouvé. Vérifiez les permissions RLS ou ajoutez des propriétaires.')
+        } else {
+          toast.success(`${loftsData.length} lofts et ${ownersData.length} propriétaires chargés depuis la base de données`)
+        }
+        
       } catch (err) {
-        console.error('Erreur lors du chargement des données:', err)
-        toast.error(t('common:error'))
+        console.error('❌ Erreur générale lors du chargement des données:', err)
+        toast.error(`Erreur lors du chargement: ${err instanceof Error ? err.message : 'Erreur inconnue'}`)
+      } finally {
+        setDataLoading(false)
       }
     }
 
     loadData()
-  }, [fetchLofts, fetchOwners])
+  }, [fetchLofts, fetchOwners, t])
 
   // Mettre à jour les statistiques quand les filtres changent
   useEffect(() => {
@@ -92,6 +122,12 @@ export function ReportGenerator() {
         setQuickStats(stats)
       } catch (err) {
         console.error('Erreur lors du calcul des statistiques:', err)
+        setQuickStats({
+          totalIncome: 0,
+          totalExpenses: 0,
+          netResult: 0,
+          transactionCount: 0
+        })
       }
     }
 
@@ -180,7 +216,18 @@ export function ReportGenerator() {
 
       {/* Statistiques rapides améliorées */}
       {quickStats && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <>
+          <div className="mb-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-green-600">📊</span>
+              <h4 className="font-semibold text-green-800">Données de la base de données</h4>
+            </div>
+            <p className="text-sm text-green-700">
+              Les rapports utilisent les vraies données de vos tables <code>lofts</code>, <code>owners</code> et <code>transactions</code>.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200/50 dark:border-green-700/50 shadow-lg hover:shadow-xl transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -245,6 +292,7 @@ export function ReportGenerator() {
             </CardContent>
           </Card>
         </div>
+        </>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -421,14 +469,22 @@ export function ReportGenerator() {
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     onChange={(e) => setFilters(prev => ({ ...prev, loftId: e.target.value }))}
                     defaultValue=""
+                    disabled={dataLoading}
                   >
-                    <option value="">{t('chooseLoft')}</option>
+                    <option value="">
+                      {dataLoading ? 'Chargement...' : lofts.length === 0 ? 'Aucun loft disponible' : t('chooseLoft')}
+                    </option>
                     {lofts.map((loft) => (
                       <option key={loft.id} value={loft.id}>
                         {loft.name} - {loft.owner_name}
                       </option>
                     ))}
                   </select>
+                  {!dataLoading && lofts.length === 0 && (
+                    <p className="text-sm text-orange-600 mt-1">
+                      ⚠️ Aucun loft accessible. Vérifiez les permissions RLS ou l'authentification.
+                    </p>
+                  )}
                 </div>
 
                 <Button
@@ -455,14 +511,22 @@ export function ReportGenerator() {
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     onChange={(e) => setFilters(prev => ({ ...prev, ownerId: e.target.value }))}
                     defaultValue=""
+                    disabled={dataLoading}
                   >
-                    <option value="">{t('chooseOwner')}</option>
+                    <option value="">
+                      {dataLoading ? 'Chargement...' : owners.length === 0 ? 'Aucun propriétaire disponible' : t('chooseOwner')}
+                    </option>
                     {owners.map((owner) => (
                       <option key={owner.id} value={owner.id}>
                         {owner.name} ({owner.lofts_count} loft{owner.lofts_count > 1 ? 's' : ''})
                       </option>
                     ))}
                   </select>
+                  {!dataLoading && owners.length === 0 && (
+                    <p className="text-sm text-orange-600 mt-1">
+                      ⚠️ Aucun propriétaire accessible. Vérifiez les permissions RLS ou l'authentification.
+                    </p>
+                  )}
                 </div>
 
                 <Button

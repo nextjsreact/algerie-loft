@@ -89,7 +89,7 @@ class CloneValidator {
     const requiredTables = [
       'profiles', 'lofts', 'transactions', 'categories', 
       'currencies', 'zone_areas', 'internet_connection_types',
-      'loft_owners', 'teams', 'tasks', 'notifications'
+      'owners', 'teams', 'tasks', 'notifications'
     ]
 
     let tablesFound = 0
@@ -123,7 +123,7 @@ class CloneValidator {
       { table: 'zone_areas', name: 'Zones géographiques' },
       { table: 'categories', name: 'Catégories' },
       { table: 'currencies', name: 'Devises' },
-      { table: 'loft_owners', name: 'Propriétaires' },
+      { table: 'owners', name: 'Propriétaires' },
       { table: 'lofts', name: 'Lofts' }
     ]
 

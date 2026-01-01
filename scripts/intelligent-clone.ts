@@ -286,7 +286,7 @@ class IntelligentClone {
     const tablesToClone = [
       'zone_areas',
       'internet_connection_types', 
-      'loft_owners',
+      'owners',
       'categories',
       'currencies',
       'payment_methods',

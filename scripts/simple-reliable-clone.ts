@@ -17,7 +17,7 @@ async function simpleReliableClone() {
   // List of tables to clone (in dependency order)
   const tablesToClone = [
     'currencies', 'categories', 'zone_areas', 'internet_connection_types', 'payment_methods',
-    'loft_owners', 'profiles', 'lofts', 'team_members', 'tasks',
+    'owners', 'profiles', 'lofts', 'team_members', 'tasks',
     'transactions', 'transaction_category_references', 'settings',
     'notifications', 'messages', 'customers', 'loft_photos',
     'conversations', 'conversation_participants', 'user_sessions'

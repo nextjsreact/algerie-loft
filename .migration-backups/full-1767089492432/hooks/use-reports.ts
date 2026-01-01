@@ -33,7 +33,7 @@ export function useReports() {
         name,
         address,
         price_per_night,
-        loft_owners (
+        owners (
           name
         )
       `)
@@ -46,13 +46,13 @@ export function useReports() {
       name: loft.name,
       address: loft.address,
       price_per_month: loft.price_per_night,
-      owner_name: loft.loft_owners?.name || 'Propriétaire inconnu'
+      owner_name: loft.owners?.name || 'Propriétaire inconnu'
     }))
   }, [supabase])
 
   const fetchOwners = useCallback(async (): Promise<Owner[]> => {
     const { data, error } = await supabase
-      .from('loft_owners')
+      .from('owners')
       .select(`
         id,
         name,
@@ -88,7 +88,7 @@ export function useReports() {
         lofts (
           id,
           name,
-          loft_owners (
+          owners (
             name
           )
         )
@@ -123,7 +123,7 @@ export function useReports() {
       date: transaction.date,
       loft_id: transaction.loft_id,
       loft_name: transaction.lofts?.name || 'Loft inconnu',
-      owner_name: transaction.lofts?.loft_owners?.name || 'Propriétaire inconnu',
+      owner_name: transaction.lofts?.owners?.name || 'Propriétaire inconnu',
       currency: transaction.currency_id || 'DZD'
     }))
   }, [supabase])

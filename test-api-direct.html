@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test API Direct</title></head>
+<body>
+<h1>Test API Direct</h1>
+<button onclick="testAPI()">Tester les APIs</button>
+<div id="result"></div>
+
+<script>
+async function testAPI() {
+    const result = document.getElementById('result');
+    result.innerHTML = 'Test en cours...';
+    
+    try {
+        // Test session
+        const sessionResp = await fetch('/api/auth/session', { credentials: 'include' });
+        const sessionData = await sessionResp.json();
+        
+        // Test debug
+        const debugResp = await fetch('/api/debug/database', { credentials: 'include' });
+        const debugData = await debugResp.json();
+        
+        // Test dropdown
+        const dropdownResp = await fetch('/api/lofts/availability', { credentials: 'include' });
+        const dropdownData = await dropdownResp.json();
+        
+        result.innerHTML = `
+            <h3>Session:</h3>
+            <pre>${JSON.stringify(sessionData, null, 2)}</pre>
+            
+            <h3>Database:</h3>
+            <pre>${JSON.stringify(debugData, null, 2)}</pre>
+            
+            <h3>Dropdown:</h3>
+            <pre>${JSON.stringify(dropdownData.filterOptions?.owners || [], null, 2)}</pre>
+        `;
+    } catch (error) {
+        result.innerHTML = `Erreur: ${error.message}`;
+    }
+}
+</script>
+</body>
+</html>

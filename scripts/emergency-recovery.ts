@@ -103,7 +103,7 @@ async function emergencyRecovery() {
   ]
 
   // Récupérer les IDs des propriétaires et zones pour les assigner
-  const { data: owners } = await prodClient.from('loft_owners').select('id, name').limit(3)
+  const { data: owners } = await prodClient.from('owners').select('id, name').limit(3)
   const { data: zones } = await prodClient.from('zone_areas').select('id, name').limit(3)
   const { data: internetTypes } = await prodClient.from('internet_connection_types').select('id').limit(1)
 

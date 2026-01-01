@@ -39,7 +39,7 @@ async function completeDatabaseRestore() {
 
     const allTables = [
       'currencies', 'categories', 'zone_areas', 'internet_connection_types', 'payment_methods',
-      'loft_owners', 'profiles', 'lofts', 'transactions', 'bills', 'notifications',
+      'owners', 'profiles', 'lofts', 'transactions', 'bills', 'notifications',
       'conversations', 'messages', 'tasks', 'teams', 'availability', 'owners'
     ]
 
@@ -141,7 +141,7 @@ async function completeDatabaseRestore() {
     console.log('='.repeat(60))
 
     try {
-      const response = await fetch(`${prodUrl}/rest/v1/loft_owners?select=*`, {
+      const response = await fetch(`${prodUrl}/rest/v1/owners?select=*`, {
         headers: {
           'Authorization': `Bearer ${prodKey}`,
           'apikey': prodKey,
@@ -151,10 +151,10 @@ async function completeDatabaseRestore() {
 
       if (response.ok) {
         const owners = await response.json() as any[]
-        console.log(`✅ loft_owners: ${owners.length} propriétaires trouvés`)
+        console.log(`✅ owners: ${owners.length} propriétaires trouvés`)
 
         if (owners.length > 0) {
-          const insertResponse = await fetch(`${devUrl}/rest/v1/loft_owners`, {
+          const insertResponse = await fetch(`${devUrl}/rest/v1/owners`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${devKey}`,
@@ -165,15 +165,15 @@ async function completeDatabaseRestore() {
           })
 
           if (insertResponse.ok) {
-            console.log('✅ loft_owners: restaurés avec succès')
+            console.log('✅ owners: restaurés avec succès')
           } else {
             const errorText = await insertResponse.text()
-            console.warn(`⚠️  loft_owners: HTTP ${insertResponse.status} - ${errorText}`)
+            console.warn(`⚠️  owners: HTTP ${insertResponse.status} - ${errorText}`)
           }
         }
       }
     } catch (error) {
-      console.error('❌ loft_owners: erreur -', error)
+      console.error('❌ owners: erreur -', error)
     }
 
     // Étape 5: Restauration des profils (avec correction des enums)
@@ -360,7 +360,7 @@ async function completeDatabaseRestore() {
 
     const finalTables = [
       'currencies', 'categories', 'zone_areas', 'internet_connection_types', 'payment_methods',
-      'loft_owners', 'profiles', 'lofts', 'transactions', 'bills', 'notifications',
+      'owners', 'profiles', 'lofts', 'transactions', 'bills', 'notifications',
       'conversations', 'messages', 'tasks', 'teams', 'availability', 'owners'
     ]
 

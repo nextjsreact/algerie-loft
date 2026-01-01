@@ -60,7 +60,7 @@ async function checkProdLofts() {
     console.log('')
     console.log('🔍 Vérification d\'autres tables importantes:')
     
-    const tablesToCheck = ['loft_owners', 'transactions', 'profiles']
+    const tablesToCheck = ['owners', 'transactions', 'profiles']
     
     for (const table of tablesToCheck) {
       try {

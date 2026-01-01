@@ -26,7 +26,7 @@ async function showMigrationSummary() {
       .select('*', { count: 'exact', head: true });
 
     const { count: loftOwnersCount } = await supabase
-      .from('loft_owners')
+      .from('owners')
       .select('*', { count: 'exact', head: true });
 
     const { count: partnerProfilesCount } = await supabase
@@ -53,7 +53,7 @@ async function showMigrationSummary() {
     console.log('│ Table                              │ Nombre   │');
     console.log('├────────────────────────────────────┼──────────┤');
     console.log(`│ owners (nouvelle table unifiée)    │ ${String(ownersCount || 0).padStart(8)} │`);
-    console.log(`│ loft_owners (ancienne)             │ ${String(loftOwnersCount || 0).padStart(8)} │`);
+    console.log(`│ owners (ancienne)             │ ${String(loftOwnersCount || 0).padStart(8)} │`);
     console.log(`│ partner_profiles (ancienne)        │ ${String(partnerProfilesCount || 0).padStart(8)} │`);
     console.log('├────────────────────────────────────┼──────────┤');
     console.log(`│ Total attendu                      │ ${String((loftOwnersCount || 0) + (partnerProfilesCount || 0)).padStart(8)} │`);
@@ -82,7 +82,7 @@ async function showMigrationSummary() {
     // Étapes complétées
     console.log('✅ ÉTAPES COMPLÉTÉES\n');
     console.log('  [✓] Étape 1: Table owners créée');
-    console.log('  [✓] Étape 2: Données migrées (loft_owners + partner_profiles)');
+    console.log('  [✓] Étape 2: Données migrées (owners + partner_profiles)');
     console.log('  [✓] Étape 3: Colonne new_owner_id ajoutée dans lofts');
     console.log('  [✓] Étape 4: Code mis à jour (app/actions/owners.ts)');
     console.log('  [✓] Étape 5: Relation lofts -> owners fonctionnelle\n');

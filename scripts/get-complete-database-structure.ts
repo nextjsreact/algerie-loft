@@ -39,7 +39,7 @@ async function getCompleteDatabaseStructure() {
         'bills', 'categories', 'conversation_participants', 'conversations', 
         'critical_alerts', 'currencies', 'executive_metrics', 'executive_permissions',
         'guest_communications', 'internet_connection_types', 'loft_availability',
-        'loft_owners', 'loft_photos', 'lofts', 'messages', 'notifications',
+        'owners', 'loft_photos', 'lofts', 'messages', 'notifications',
         'payment_methods', 'pricing_rules', 'profiles', 'reservation_payments',
         'reservation_reviews', 'reservations', 'settings', 'task_category_references',
         'tasks', 'team_members', 'teams', 'transaction_category_references',

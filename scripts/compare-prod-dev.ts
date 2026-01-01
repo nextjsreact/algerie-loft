@@ -108,7 +108,7 @@ class ProdDevComparator {
       'zone_areas',
       'internet_connection_types',
       'payment_methods',
-      'loft_owners',
+      'owners',
       'lofts',
       'teams',
       'team_members',

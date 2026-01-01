@@ -28,7 +28,7 @@ async function debugClone() {
 
     // Étape 1: Vider les tables en DEV
     console.log('\n📋 ÉTAPE 1: NETTOYAGE DEV')
-    const tablesToClear = ['lofts', 'loft_owners', 'profiles', 'currencies', 'categories']
+    const tablesToClear = ['lofts', 'owners', 'profiles', 'currencies', 'categories']
 
     for (const table of tablesToClear) {
       try {
@@ -109,7 +109,7 @@ async function debugClone() {
     // Étape 3: Copier les propriétaires
     console.log('\n📋 ÉTAPE 3: PROPRIÉTAIRES')
 
-    const ownersResponse = await fetch(`${prodUrl}/rest/v1/loft_owners?select=*`, {
+    const ownersResponse = await fetch(`${prodUrl}/rest/v1/owners?select=*`, {
       headers: {
         'Authorization': `Bearer ${prodKey}`,
         'apikey': prodKey,
@@ -129,7 +129,7 @@ async function debugClone() {
           email: owner.email || `owner${index + 1}@localhost`
         }))
 
-        const insertResponse = await fetch(`${devUrl}/rest/v1/loft_owners`, {
+        const insertResponse = await fetch(`${devUrl}/rest/v1/owners`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${devKey}`,

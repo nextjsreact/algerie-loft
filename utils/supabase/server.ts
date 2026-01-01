@@ -18,30 +18,33 @@ export const createClient = async (useServiceRole?: boolean) => {
       },
       setAll(cookiesToSet: Array<{ name: string; value: string; options: object }>) {
         try {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          )
-        } catch (error) {
-          // Ignore cookie setting errors in read-only contexts (like layouts)
+          // Vérifier si nous sommes dans un contexte où on peut modifier les cookies
           if (process.env.NODE_ENV === 'development') {
-            console.warn('Cookie setting ignored in read-only context:', error);
+            // En développement, essayer de définir les cookies mais ignorer les erreurs
+            cookiesToSet.forEach(({ name, value, options }) => {
+              try {
+                cookieStore.set(name, value, options);
+              } catch (cookieError) {
+                // Ignorer silencieusement les erreurs de cookies en développement
+              }
+            });
           }
+        } catch (error) {
+          // Ignorer complètement les erreurs de cookies
         }
       },
     },
     auth: {
       ...(useServiceRole ? { persistSession: false } : {}),
-      // Suppress auth errors for unauthenticated users
       debug: false,
       detectSessionInUrl: false,
+      flowType: 'pkce'
     },
   };
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = useServiceRole ? process.env.SUPABASE_SERVICE_ROLE_KEY : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
-
-
   if (!supabaseUrl || !supabaseKey) {
     throw new Error('@supabase/ssr: Your project\'s URL and API key are required to create a Supabase client!\n\nCheck your Supabase project\'s API settings to find these values\n\nhttps://supabase.com/dashboard/project/_/settings/api')
   }
@@ -53,7 +56,7 @@ export const createClient = async (useServiceRole?: boolean) => {
   )
 }
 
-// Read-only client for layouts and other contexts where cookies cannot be set
+// Client read-only optimisé
 export const createReadOnlyClient = async (useServiceRole?: boolean) => {
   if (typeof window !== 'undefined') {
     return createBrowserClient();
@@ -68,14 +71,14 @@ export const createReadOnlyClient = async (useServiceRole?: boolean) => {
         return cookieStore.getAll()
       },
       setAll() {
-        // No-op for read-only contexts
+        // No-op pour les contextes read-only
       },
     },
     auth: {
       ...(useServiceRole ? { persistSession: false } : {}),
-      // Suppress auth errors for unauthenticated users
       debug: false,
       detectSessionInUrl: false,
+      flowType: 'pkce'
     },
   };
 
@@ -83,7 +86,7 @@ export const createReadOnlyClient = async (useServiceRole?: boolean) => {
   const supabaseKey = useServiceRole ? process.env.SUPABASE_SERVICE_ROLE_KEY : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
   if (!supabaseUrl || !supabaseKey) {
-    throw new Error('@supabase/ssr: Your project\'s URL and API key are required to create a Supabase client!\n\nCheck your Supabase project\'s API settings to find these values\n\nhttps://supabase.com/dashboard/project/_/settings/api')
+    throw new Error('@supabase/ssr: Your project\'s URL and API key are required to create a Supabase client!')
   }
 
   return createServerClient<Database>(

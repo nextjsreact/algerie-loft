@@ -15,7 +15,7 @@ async function listAllTables() {
     'profiles',
     'users', 
     'lofts',
-    'loft_owners',
+    'owners',
     'owners',
     'partner_profiles',
     'partners',

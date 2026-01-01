@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Executive Dropdown - Final</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .success { border-color: #4CAF50; background-color: #f8fff8; }
+        .error { border-color: #f44336; background-color: #fff8f8; }
+        .warning { border-color: #FF9800; background-color: #fff8f0; }
+        .loading { border-color: #2196F3; background-color: #f8f9ff; }
+        h1 { color: #333; text-align: center; }
+        h2 { color: #555; margin-top: 0; }
+        .status { font-weight: bold; margin-bottom: 10px; }
+        .success .status { color: #4CAF50; }
+        .error .status { color: #f44336; }
+        .warning .status { color: #FF9800; }
+        .loading .status { color: #2196F3; }
+        .data-preview {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .owner-item {
+            padding: 8px;
+            margin: 4px 0;
+            background: white;
+            border-radius: 4px;
+            border-left: 4px solid #2196F3;
+        }
+        .problem-owner {
+            border-left-color: #f44336 !important;
+            background-color: #ffebee !important;
+        }
+        .executive-badge {
+            background: #9C27B0;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .problem-badge {
+            background: #f44336;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #1976D2; }
+        button.danger {
+            background: #f44336;
+        }
+        button.danger:hover {
+            background: #d32f2f;
+        }
+        .solution-box {
+            background: #e3f2fd;
+            border: 1px solid #2196F3;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnostic Executive Dropdown - FINAL</h1>
+        <p>Ce test va identifier pourquoi votre profil executive ne voit qu'un seul owner.</p>
+        
+        <div id="test-session" class="test-section loading">
+            <h2>1️⃣ Session Executive</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="session-result"></div>
+        </div>
+
+        <div id="test-owners-link" class="test-section loading">
+            <h2>2️⃣ Vérification Lien User ↔ Owner</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="owners-link-result"></div>
+        </div>
+
+        <div id="test-dropdown-api" class="test-section loading">
+            <h2>3️⃣ Test API Dropdown</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="dropdown-api-result"></div>
+        </div>
+
+        <div id="solution-section" style="display: none;">
+            <div class="solution-box">
+                <h3>🔧 SOLUTION TROUVÉE</h3>
+                <p id="solution-text"></p>
+                <button id="fix-button" class="danger" onclick="fixExecutiveAccess()">
+                    🔧 Corriger Automatiquement
+                </button>
+                <button onclick="showManualFix()">
+                    📋 Instructions Manuelles
+                </button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="runAllTests()">🔄 Relancer tous les tests</button>
+            <button onclick="window.location.href='/fr/lofts'">📋 Aller à la page Lofts</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let problemOwner = null;
+
+        async function testAPI(url, description, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    credentials: 'include',
+                    ...options
+                });
+                const data = await response.json();
+                
+                return {
+                    success: response.ok,
+                    data: data,
+                    status: response.status,
+                    error: response.ok ? null : (data.error || 'Erreur inconnue')
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.message,
+                    status: 0
+                };
+            }
+        }
+
+        async function testSession() {
+            const section = document.getElementById('test-session');
+            const result = document.getElementById('session-result');
+            
+            const test = await testAPI('/api/auth/session', 'Session Executive');
+            
+            if (test.success && test.data.isAuthenticated) {
+                currentUser = test.data.user;
+                section.className = 'test-section success';
+                section.querySelector('.status').innerHTML = '✅ Session Executive Active';
+                
+                const user = test.data.user;
+                const isEmployee = ['admin', 'manager', 'executive', 'superuser'].includes(user.role);
+                
+                let html = \`
+                    <p><strong>Email:</strong> \${user.email}</p>
+                    <p><strong>Rôle:</strong> <span class="executive-badge">\${user.role.toUpperCase()}</span></p>
+                    <p><strong>ID:</strong> \${user.id}</p>
+                    <p><strong>Est Employé:</strong> \${isEmployee ? '✅ OUI' : '❌ NON'}</p>
+                \`;
+                
+                result.innerHTML = html;
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Session Non Authentifiée';
+                result.innerHTML = \`
+                    <p><strong>Erreur:</strong> \${test.error || 'Non authentifié'}</p>
+                    <p>⚠️ Connectez-vous avec votre compte executive</p>
+                \`;
+            }
+        }
+
+        async function testOwnersLink() {
+            const section = document.getElementById('test-owners-link');
+            const result = document.getElementById('owners-link-result');
+            
+            if (!currentUser) {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Pas de session';
+                result.innerHTML = '<p>Connectez-vous d\'abord</p>';
+                return;
+            }
+
+            const test = await testAPI('/api/debug/database', 'Database Owners');
+            
+            if (test.success) {
+                const ownersData = test.data.data?.owners;
+                
+                if (ownersData && ownersData.count > 0) {
+                    // Chercher si l'utilisateur executive est lié à un owner
+                    const linkedOwner = ownersData.data.find(owner => owner.user_id === currentUser.id);
+                    
+                    if (linkedOwner) {
+                        // PROBLÈME TROUVÉ !
+                        problemOwner = linkedOwner;
+                        section.className = 'test-section error';
+                        section.querySelector('.status').innerHTML = '🚨 PROBLÈME DÉTECTÉ !';
+                        
+                        let html = \`
+                            <div style="background: #ffebee; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                <h4 style="color: #d32f2f; margin: 0 0 10px 0;">🚨 PROBLÈME TROUVÉ</h4>
+                                <p><strong>Votre utilisateur executive est lié à l'owner :</strong></p>
+                                <div class="owner-item problem-owner">
+                                    <strong>\${linkedOwner.name || linkedOwner.business_name}</strong><br>
+                                    <small>ID: \${linkedOwner.id}</small><br>
+                                    <small>user_id: \${linkedOwner.user_id}</small> <span class="problem-badge">VOUS</span>
+                                </div>
+                                <p><strong>Conséquence :</strong> La logique vous traite comme propriétaire au lieu d'employé !</p>
+                            </div>
+                        \`;
+                        
+                        html += \`<p><strong>Total owners dans la base :</strong> \${ownersData.count}</p>\`;
+                        html += '<div class="data-preview"><strong>Tous les owners :</strong><br>';
+                        
+                        ownersData.data.forEach((owner, index) => {
+                            const isLinked = owner.user_id === currentUser.id;
+                            html += \`
+                                <div class="owner-item \${isLinked ? 'problem-owner' : ''}">
+                                    <strong>\${index + 1}. \${owner.name || owner.business_name || 'Sans nom'}</strong>
+                                    \${isLinked ? '<span class="problem-badge">VOUS</span>' : ''}<br>
+                                    <small>ID: \${owner.id}</small><br>
+                                    <small>user_id: \${owner.user_id || 'NULL'}</small>
+                                </div>
+                            \`;
+                        });
+                        html += '</div>';
+                        
+                        result.innerHTML = html;
+                        
+                        // Afficher la solution
+                        document.getElementById('solution-section').style.display = 'block';
+                        document.getElementById('solution-text').innerHTML = \`
+                            Votre utilisateur executive (<strong>\${currentUser.email}</strong>) est lié à l'owner 
+                            "<strong>\${linkedOwner.name}</strong>". Cela fait que la logique vous traite comme 
+                            propriétaire au lieu d'employé, d'où le dropdown avec un seul owner.
+                            <br><br>
+                            <strong>Solution :</strong> Supprimer le lien user_id pour cet owner.
+                        \`;
+                        
+                    } else {
+                        // Pas de lien trouvé
+                        section.className = 'test-section success';
+                        section.querySelector('.status').innerHTML = '✅ Pas de lien problématique';
+                        
+                        let html = \`
+                            <p>✅ Votre utilisateur executive n'est lié à aucun owner (correct)</p>
+                            <p><strong>Total owners :</strong> \${ownersData.count}</p>
+                            <p>Le problème est ailleurs...</p>
+                        \`;
+                        
+                        result.innerHTML = html;
+                    }
+                } else {
+                    section.className = 'test-section error';
+                    section.querySelector('.status').innerHTML = '❌ Aucun Owner';
+                    result.innerHTML = '<p>Aucun owner trouvé dans la base</p>';
+                }
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Erreur API';
+                result.innerHTML = \`<p>Erreur : \${test.error}</p>\`;
+            }
+        }
+
+        async function testDropdownAPI() {
+            const section = document.getElementById('test-dropdown-api');
+            const result = document.getElementById('dropdown-api-result');
+            
+            const test = await testAPI('/api/lofts/availability', 'Dropdown API');
+            
+            if (test.success) {
+                const ownersInDropdown = test.data.owners || [];
+                
+                if (ownersInDropdown.length === 1) {
+                    section.className = 'test-section error';
+                    section.querySelector('.status').innerHTML = '🚨 Dropdown Problématique';
+                    
+                    let html = \`
+                        <div style="background: #ffebee; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="color: #d32f2f; margin: 0 0 10px 0;">🚨 PROBLÈME CONFIRMÉ</h4>
+                            <p>Le dropdown ne retourne qu'un seul owner :</p>
+                            <div class="owner-item problem-owner">
+                                <strong>\${ownersInDropdown[0].name}</strong><br>
+                                <small>ID: \${ownersInDropdown[0].id}</small>
+                            </div>
+                            <p>En tant qu'executive, vous devriez voir TOUS les owners !</p>
+                        </div>
+                    \`;
+                    
+                    result.innerHTML = html;
+                } else {
+                    section.className = 'test-section success';
+                    section.querySelector('.status').innerHTML = \`✅ Dropdown OK (\${ownersInDropdown.length} owners)\`;
+                    
+                    let html = \`<p><strong>Owners dans le dropdown :</strong> \${ownersInDropdown.length}</p>\`;
+                    
+                    if (ownersInDropdown.length > 0) {
+                        html += '<div class="data-preview">';
+                        ownersInDropdown.forEach((owner, index) => {
+                            html += \`
+                                <div class="owner-item">
+                                    \${index + 1}. \${owner.name} (ID: \${owner.id})
+                                </div>
+                            \`;
+                        });
+                        html += '</div>';
+                    }
+                    
+                    result.innerHTML = html;
+                }
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Erreur API Dropdown';
+                result.innerHTML = \`<p>Erreur : \${test.error}</p>\`;
+            }
+        }
+
+        async function fixExecutiveAccess() {
+            if (!currentUser || !problemOwner) {
+                alert('Aucun problème détecté à corriger');
+                return;
+            }
+
+            const confirmed = confirm(
+                \`Cette action va supprimer le lien entre votre utilisateur executive et l'owner "\${problemOwner.name}".\\n\\n\` +
+                'Cela devrait corriger le problème du dropdown.\\n\\n' +
+                'Continuer ?'
+            );
+
+            if (!confirmed) return;
+
+            try {
+                const response = await fetch('/api/admin/fix-executive-access', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        userId: currentUser.id,
+                        action: 'remove_owner_link'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.fixed) {
+                    alert(\`Correction réussie !\\n\\nOwners délinkés : \${data.removedOwners.join(', ')}\\n\\nRechargez la page pour tester.\`);
+                    window.location.reload();
+                } else {
+                    alert(\`Erreur : \${data.message || 'Correction échouée'}\`);
+                }
+            } catch (error) {
+                alert(\`Erreur réseau : \${error.message}\`);
+            }
+        }
+
+        function showManualFix() {
+            if (!problemOwner) return;
+            
+            const instructions = \`
+Instructions pour correction manuelle :
+
+1. Connectez-vous à votre dashboard Supabase
+2. Allez dans l'éditeur SQL
+3. Exécutez cette requête :
+
+UPDATE owners 
+SET user_id = NULL 
+WHERE id = '\${problemOwner.id}';
+
+4. Rechargez votre page /fr/lofts
+5. Vous devriez maintenant voir tous les owners !
+            \`;
+            
+            alert(instructions);
+        }
+
+        async function runAllTests() {
+            // Reset
+            document.querySelectorAll('.test-section').forEach(section => {
+                section.className = 'test-section loading';
+                section.querySelector('.status').innerHTML = '⏳ Test en cours...';
+            });
+            document.getElementById('solution-section').style.display = 'none';
+
+            // Run tests
+            await testSession();
+            await testOwnersLink();
+            await testDropdownAPI();
+        }
+
+        // Run tests when page loads
+        window.addEventListener('load', runAllTests);
+    </script>
+</body>
+</html>

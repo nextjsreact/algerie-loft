@@ -17,10 +17,10 @@ async function backupTables() {
   console.log('💾 Backup des anciennes tables avant finalisation...\n');
 
   try {
-    // Backup loft_owners
-    console.log('1️⃣  Backup de loft_owners...');
+    // Backup owners
+    console.log('1️⃣  Backup de owners...');
     const { data: loftOwners, error: error1 } = await supabase
-      .from('loft_owners')
+      .from('owners')
       .select('*');
 
     if (error1) {

@@ -33,7 +33,7 @@ async function forceCleanClone() {
     // Tables essentielles à cloner
     const essentialTables = [
       'currencies', 'categories', 'zone_areas', 'internet_connection_types',
-      'payment_methods', 'loft_owners', 'profiles', 'lofts'
+      'payment_methods', 'owners', 'profiles', 'lofts'
     ]
 
     let totalRecords = 0
@@ -196,7 +196,7 @@ async function forceCleanClone() {
     console.log('='.repeat(60))
 
     try {
-      const response = await fetch(`${prodUrl}/rest/v1/loft_owners?select=*`, {
+      const response = await fetch(`${prodUrl}/rest/v1/owners?select=*`, {
         headers: {
           'Authorization': `Bearer ${prodKey}`,
           'apikey': prodKey,
@@ -206,7 +206,7 @@ async function forceCleanClone() {
 
       if (response.ok) {
         const owners = await response.json() as any[]
-        console.log(`✅ loft_owners: ${owners.length} propriétaires trouvés`)
+        console.log(`✅ owners: ${owners.length} propriétaires trouvés`)
 
         if (owners.length > 0) {
           const cleanedOwners = owners.map((owner, index) => ({
@@ -215,7 +215,7 @@ async function forceCleanClone() {
             email: owner.email || `owner${index + 1}@localhost`
           }))
 
-          const insertResponse = await fetch(`${devUrl}/rest/v1/loft_owners`, {
+          const insertResponse = await fetch(`${devUrl}/rest/v1/owners`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${devKey}`,
@@ -226,18 +226,18 @@ async function forceCleanClone() {
           })
 
           if (insertResponse.ok) {
-            console.log('✅ loft_owners: copiés avec succès')
+            console.log('✅ owners: copiés avec succès')
             totalRecords += cleanedOwners.length
             successCount++
           } else {
             const errorText = await insertResponse.text()
-            console.warn(`⚠️ loft_owners: HTTP ${insertResponse.status} - ${errorText}`)
+            console.warn(`⚠️ owners: HTTP ${insertResponse.status} - ${errorText}`)
             errorCount++
           }
         }
       }
     } catch (error) {
-      console.error('❌ loft_owners: erreur -', error)
+      console.error('❌ owners: erreur -', error)
       errorCount++
     }
 
@@ -409,7 +409,7 @@ async function forceCleanClone() {
     console.log(`❌ Tables échouées: ${errorCount}`)
 
     // Vérifier les tables principales
-    const finalTables = ['currencies', 'categories', 'loft_owners', 'profiles', 'lofts']
+    const finalTables = ['currencies', 'categories', 'owners', 'profiles', 'lofts']
 
     for (const tableName of finalTables) {
       try {

@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       .from('lofts')
       .select(`
         *,
-        owner:loft_owners(name),
+        owner:owners(name),
         partner:partners(id, business_name, verification_status),
         zone_area:zone_areas(name)
       `)

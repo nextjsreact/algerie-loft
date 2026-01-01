@@ -99,7 +99,7 @@ class CompleteTableSync {
       console.log(`   📊 ${sourceData.length} enregistrements à synchroniser`)
 
       // Vider la table cible (sauf pour certaines tables système)
-      if (!['settings', 'transaction_category_references', 'loft_owners'].includes(tableName)) {
+      if (!['settings', 'transaction_category_references', 'owners'].includes(tableName)) {
         const { error: deleteError } = await this.targetEnv.client
           .from(tableName)
           .delete()

@@ -45,7 +45,7 @@ async function realClone() {
     console.log('\n🗑️ SUPPRESSION COMPLÈTE DES DONNÉES EN DEV...')
 
     const tablesToClear = [
-      'lofts', 'loft_owners', 'profiles', 'teams', 'team_members',
+      'lofts', 'owners', 'profiles', 'teams', 'team_members',
       'tasks', 'transactions', 'transaction_category_references',
       'settings', 'notifications', 'messages', 'customers', 'loft_photos'
     ]
@@ -142,7 +142,7 @@ async function realClone() {
     // Étape 4: Copier les propriétaires
     console.log('\n📋 COPIE DES PROPRIÉTAIRES...')
 
-    const ownersResponse = await fetch(`${prodUrl}/rest/v1/loft_owners?select=*`, {
+    const ownersResponse = await fetch(`${prodUrl}/rest/v1/owners?select=*`, {
       headers: {
         'Authorization': `Bearer ${prodKey}`,
         'apikey': prodKey,
@@ -162,7 +162,7 @@ async function realClone() {
           email: owner.email || `owner${index + 1}@localhost`
         }))
 
-        const insertResponse = await fetch(`${devUrl}/rest/v1/loft_owners`, {
+        const insertResponse = await fetch(`${devUrl}/rest/v1/owners`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${devKey}`,
@@ -313,7 +313,7 @@ async function realClone() {
     const finalChecks = [
       { table: 'currencies', name: 'Currencies' },
       { table: 'categories', name: 'Categories' },
-      { table: 'loft_owners', name: 'Propriétaires' },
+      { table: 'owners', name: 'Propriétaires' },
       { table: 'profiles', name: 'Profils' },
       { table: 'lofts', name: 'Lofts' }
     ]

@@ -37,7 +37,7 @@ export async function getLoftsWithAvailability() {
       status,
       zone_area_id,
       owner_id,
-      owners!inner(
+      owners(
         id,
         name
       ),

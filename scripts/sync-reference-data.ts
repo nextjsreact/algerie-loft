@@ -112,7 +112,7 @@ class ReferenceDataSync {
 
     // Tables de référence qui fonctionnent bien
     const referenceTables = [
-      'loft_owners',
+      'owners',
       'transaction_category_references', 
       'settings'
     ]

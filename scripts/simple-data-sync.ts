@@ -137,7 +137,7 @@ class SimpleDataSync {
     // Tables avec dépendances (après les références)
     const dependentTables = [
       { name: 'profiles', columns: ['id', 'email', 'full_name', 'role', 'email_verified', 'created_at', 'updated_at'] },
-      { name: 'loft_owners' }, // Déjà synchronisé
+      { name: 'owners' }, // Déjà synchronisé
       { name: 'transaction_category_references' } // Déjà synchronisé
     ]
 

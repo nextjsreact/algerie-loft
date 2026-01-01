@@ -28,9 +28,9 @@ async function checkMigrationStatus() {
 
     const ownersExists = !ownersError;
 
-    // Vérifier loft_owners
+    // Vérifier owners
     const { count: loftOwnersCount, error: loftOwnersError } = await supabase
-      .from('loft_owners')
+      .from('owners')
       .select('*', { count: 'exact', head: true });
 
     // Vérifier partner_profiles
@@ -51,7 +51,7 @@ async function checkMigrationStatus() {
     console.log('│ Table                   │ Existe │ Nombre  │');
     console.log('├─────────────────────────┼────────┼─────────┤');
     console.log(`│ owners                  │ ${ownersExists ? '✅' : '❌'}     │ ${ownersCount || 0}       │`);
-    console.log(`│ loft_owners             │ ${!loftOwnersError ? '✅' : '❌'}     │ ${loftOwnersCount || 0}      │`);
+    console.log(`│ owners             │ ${!loftOwnersError ? '✅' : '❌'}     │ ${loftOwnersCount || 0}      │`);
     console.log(`│ partner_profiles        │ ${!partnerProfilesError ? '✅' : '❌'}     │ ${partnerProfilesCount || 0}       │`);
     console.log('└─────────────────────────┴────────┴─────────┘\n');
 

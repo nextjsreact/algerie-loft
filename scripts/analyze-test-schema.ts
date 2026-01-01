@@ -109,7 +109,7 @@ class SchemaAnalyzer {
     console.log('\n📊 ANALYSE DES DONNÉES EXISTANTES')
     console.log('='.repeat(40))
 
-    const tables = ['profiles', 'loft_owners', 'transaction_category_references', 'settings']
+    const tables = ['profiles', 'owners', 'transaction_category_references', 'settings']
 
     for (const tableName of tables) {
       try {

@@ -363,7 +363,7 @@ class AdaptiveCloner {
       'zone_areas',
       'internet_connection_types',
       'payment_methods',
-      'loft_owners',
+      'owners',
       'teams',
       'profiles',
       'lofts',

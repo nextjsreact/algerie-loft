@@ -222,7 +222,7 @@ export class PartnerSystemIntegration {
         .from('lofts')
         .select(`
           *,
-          loft_owners!inner (
+          owners (
             id,
             name
           ),

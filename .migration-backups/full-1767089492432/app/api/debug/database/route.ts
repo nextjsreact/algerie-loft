@@ -12,7 +12,7 @@ export async function GET() {
 
     // Check owners
     const { data: owners, error: ownersError, count: ownersCount } = await supabase
-      .from("loft_owners")
+      .from("owners")
       .select("*", { count: 'exact' })
 
     // Check zone areas

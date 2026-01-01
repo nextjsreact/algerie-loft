@@ -27,14 +27,14 @@ async function verifyMigration() {
     console.log('\n📋 Vérification des anciennes tables...\n');
     
     const { data: loftOwnersCheck, error: loftOwnersError } = await supabase
-      .from('loft_owners')
+      .from('owners')
       .select('id')
       .limit(1);
 
     if (loftOwnersError && loftOwnersError.code === '42P01') {
-      console.log('✅ Table loft_owners supprimée');
+      console.log('✅ Table owners supprimée');
     } else {
-      console.log('⚠️  Table loft_owners existe encore');
+      console.log('⚠️  Table owners existe encore');
     }
 
     const { data: partnerProfilesCheck, error: partnerProfilesError } = await supabase

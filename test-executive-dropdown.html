@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Executive Dropdown</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .success { border-color: #4CAF50; background-color: #f8fff8; }
+        .error { border-color: #f44336; background-color: #fff8f8; }
+        .warning { border-color: #FF9800; background-color: #fff8f0; }
+        .loading { border-color: #2196F3; background-color: #f8f9ff; }
+        h1 { color: #333; text-align: center; }
+        h2 { color: #555; margin-top: 0; }
+        .status { font-weight: bold; margin-bottom: 10px; }
+        .success .status { color: #4CAF50; }
+        .error .status { color: #f44336; }
+        .warning .status { color: #FF9800; }
+        .loading .status { color: #2196F3; }
+        pre { background: #f0f0f0; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #1976D2; }
+        .data-preview {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .owner-item {
+            padding: 8px;
+            margin: 4px 0;
+            background: white;
+            border-radius: 4px;
+            border-left: 4px solid #2196F3;
+        }
+        .executive-badge {
+            background: #9C27B0;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .problem-badge {
+            background: #f44336;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Executive Dropdown</h1>
+        <p>Ce test diagnostique pourquoi votre profil executive ne voit qu'un seul owner.</p>
+        
+        <div id="test-session" class="test-section loading">
+            <h2>1️⃣ Vérification Session Executive</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="session-result"></div>
+        </div>
+
+        <div id="test-owners-all" class="test-section loading">
+            <h2>2️⃣ Tous les Owners dans la Base</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="owners-all-result"></div>
+        </div>
+
+        <div id="test-logic" class="test-section loading">
+            <h2>3️⃣ Test de la Logique Employee vs Owner</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="logic-result"></div>
+        </div>
+
+        <div id="test-dropdown" class="test-section loading">
+            <h2>4️⃣ Test du Dropdown Actual</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="dropdown-result"></div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="runAllTests()">🔄 Relancer tous les tests</button>
+            <button onclick="window.location.href='/fr/lofts'">📋 Aller à la page Lofts</button>
+            <button onclick="fixExecutiveAccess()">🔧 Corriger l'accès Executive</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        async function testAPI(url, description, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    credentials: 'include',
+                    ...options
+                });
+                const data = await response.json();
+                
+                return {
+                    success: response.ok,
+                    data: data,
+                    status: response.status,
+                    error: response.ok ? null : (data.error || 'Erreur inconnue')
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.message,
+                    status: 0
+                };
+            }
+        }
+
+        async function testSession() {
+            const section = document.getElementById('test-session');
+            const result = document.getElementById('session-result');
+            
+            const test = await testAPI('/api/auth/session', 'Session Executive');
+            
+            if (test.success && test.data.isAuthenticated) {
+                currentUser = test.data.user;
+                section.className = 'test-section success';
+                section.querySelector('.status').innerHTML = '✅ Session Executive Active';
+                
+                const user = test.data.user;
+                const isEmployee = ['admin', 'manager', 'executive', 'superuser'].includes(user.role);
+                
+                let html = \`
+                    <p><strong>Email:</strong> \${user.email}</p>
+                    <p><strong>Rôle:</strong> <span class="executive-badge">\${user.role.toUpperCase()}</span></p>
+                    <p><strong>ID:</strong> \${user.id}</p>
+                    <p><strong>Est Employé:</strong> \${isEmployee ? '✅ OUI' : '❌ NON'}</p>
+                \`;
+                
+                if (!isEmployee) {
+                    html += '<p class="problem-badge">⚠️ PROBLÈME: Executive devrait être considéré comme employé!</p>';
+                }
+                
+                result.innerHTML = html;
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Session Non Authentifiée';
+                result.innerHTML = \`
+                    <p><strong>Erreur:</strong> \${test.error || 'Non authentifié'}</p>
+                    <p>⚠️ Vous devez être connecté pour ce test</p>
+                \`;
+            }
+        }
+
+        async function testOwnersAll() {
+            const section = document.getElementById('test-owners-all');
+            const result = document.getElementById('owners-all-result');
+            
+            const test = await testAPI('/api/debug/database', 'Tous les Owners');
+            
+            if (test.success) {
+                const ownersData = test.data.data?.owners;
+                
+                if (ownersData && ownersData.count > 0) {
+                    section.className = 'test-section success';
+                    section.querySelector('.status').innerHTML = \`✅ \${ownersData.count} Owners Trouvés\`;
+                    
+                    let html = \`<p><strong>Total owners dans la base:</strong> \${ownersData.count}</p>\`;
+                    
+                    if (ownersData.data && ownersData.data.length > 0) {
+                        html += '<div class="data-preview"><strong>Liste complète des owners:</strong><br>';
+                        
+                        let linkedToCurrentUser = null;
+                        
+                        ownersData.data.forEach((owner, index) => {
+                            const isLinked = currentUser && owner.user_id === currentUser.id;
+                            if (isLinked) linkedToCurrentUser = owner;
+                            
+                            html += \`
+                                <div class="owner-item \${isLinked ? 'style="border-left-color: #f44336;"' : ''}">
+                                    <strong>\${index + 1}. \${owner.name || owner.business_name || 'Sans nom'}</strong>
+                                    \${isLinked ? '<span class="problem-badge">VOUS</span>' : ''}<br>
+                                    <small>ID: \${owner.id}</small><br>
+                                    <small>user_id: \${owner.user_id || 'NULL'}</small><br>
+                                    <small>Type: \${owner.business_type || owner.ownership_type || 'N/A'}</small>
+                                </div>
+                            \`;
+                        });
+                        html += '</div>';
+                        
+                        if (linkedToCurrentUser) {
+                            html += \`
+                                <div style="background: #ffebee; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                                    <h4 style="color: #d32f2f; margin: 0 0 10px 0;">🚨 PROBLÈME DÉTECTÉ</h4>
+                                    <p>Votre utilisateur executive est lié à l'owner: <strong>\${linkedToCurrentUser.name}</strong></p>
+                                    <p>Cela explique pourquoi vous ne voyez qu'un seul owner dans le dropdown!</p>
+                                    <p><strong>Solution:</strong> Supprimez le lien user_id pour cet owner.</p>
+                                </div>
+                            \`;
+                        }
+                    }
+                    
+                    result.innerHTML = html;
+                } else {
+                    section.className = 'test-section error';
+                    section.querySelector('.status').innerHTML = '❌ Aucun Owner Trouvé';
+                    result.innerHTML = '<p>La base de données ne retourne aucun owner.</p>';
+                }
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Erreur API Database';
+                result.innerHTML = \`
+                    <p><strong>Erreur:</strong> \${test.error}</p>
+                    <p><strong>Status:</strong> \${test.status}</p>
+                \`;
+            }
+        }
+
+        async function testLogic() {
+            const section = document.getElementById('test-logic');
+            const result = document.getElementById('logic-result');
+            
+            if (!currentUser) {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Pas de session utilisateur';
+                result.innerHTML = '<p>Connectez-vous d\'abord</p>';
+                return;
+            }
+
+            // Simuler la logique de la page
+            const userRole = currentUser.role;
+            const isEmployee = ['admin', 'manager', 'executive', 'superuser'].includes(userRole);
+            const isOwner = userRole === 'owner' || !isEmployee;
+            
+            let html = \`
+                <p><strong>Rôle utilisateur:</strong> \${userRole}</p>
+                <p><strong>isEmployee:</strong> \${isEmployee ? '✅ TRUE' : '❌ FALSE'}</p>
+                <p><strong>isOwner:</strong> \${isOwner ? '✅ TRUE' : '❌ FALSE'}</p>
+            \`;
+            
+            if (isEmployee) {
+                section.className = 'test-section success';
+                section.querySelector('.status').innerHTML = '✅ Logique Correcte: EMPLOYÉ';
+                html += \`
+                    <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <h4 style="color: #2e7d32; margin: 0 0 10px 0;">✅ LOGIQUE CORRECTE</h4>
+                        <p>En tant qu'executive, vous devriez voir TOUS les owners</p>
+                        <p>Si ce n'est pas le cas, le problème est ailleurs</p>
+                    </div>
+                \`;
+            } else {
+                section.className = 'test-section warning';
+                section.querySelector('.status').innerHTML = '⚠️ Logique Incorrecte: PROPRIÉTAIRE';
+                html += \`
+                    <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        <h4 style="color: #f57c00; margin: 0 0 10px 0;">⚠️ LOGIQUE INCORRECTE</h4>
+                        <p>Executive devrait être traité comme EMPLOYÉ, pas propriétaire</p>
+                        <p>Vérifiez si votre user_id est lié à un owner</p>
+                    </div>
+                \`;
+            }
+            
+            result.innerHTML = html;
+        }
+
+        async function testDropdown() {
+            const section = document.getElementById('test-dropdown');
+            const result = document.getElementById('dropdown-result');
+            
+            const test = await testAPI('/api/lofts/availability', 'Dropdown API');
+            
+            if (test.success) {
+                section.className = 'test-section success';
+                section.querySelector('.status').innerHTML = '✅ API Dropdown Fonctionne';
+                
+                let html = \`<p><strong>Status:</strong> \${test.status}</p>\`;
+                
+                if (test.data.owners) {
+                    html += \`<p><strong>Owners dans le dropdown:</strong> \${test.data.owners.length}</p>\`;
+                    
+                    if (test.data.owners.length === 1) {
+                        html += \`
+                            <div style="background: #ffebee; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                                <h4 style="color: #d32f2f; margin: 0 0 10px 0;">🚨 PROBLÈME CONFIRMÉ</h4>
+                                <p>Vous ne voyez qu'un seul owner: <strong>\${test.data.owners[0].name}</strong></p>
+                                <p>En tant qu'executive, vous devriez voir tous les owners!</p>
+                            </div>
+                        \`;
+                    } else {
+                        html += '<div class="data-preview"><strong>Owners disponibles:</strong><br>';
+                        test.data.owners.forEach((owner, index) => {
+                            html += \`
+                                <div class="owner-item">
+                                    \${index + 1}. \${owner.name} (ID: \${owner.id})
+                                </div>
+                            \`;
+                        });
+                        html += '</div>';
+                    }
+                } else {
+                    html += '<p>❌ Aucun owner dans la réponse API</p>';
+                }
+                
+                result.innerHTML = html;
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Erreur API Dropdown';
+                result.innerHTML = \`
+                    <p><strong>Erreur:</strong> \${test.error}</p>
+                    <p><strong>Status:</strong> \${test.status}</p>
+                \`;
+            }
+        }
+
+        async function fixExecutiveAccess() {
+            if (!currentUser) {
+                alert('Connectez-vous d\'abord');
+                return;
+            }
+
+            const confirmed = confirm(
+                'Cette action va supprimer le lien entre votre utilisateur executive et tout owner dans la base.\\n\\n' +
+                'Cela devrait corriger le problème du dropdown.\\n\\n' +
+                'Continuer?'
+            );
+
+            if (!confirmed) return;
+
+            try {
+                // Appel à une API pour corriger le lien
+                const response = await fetch('/api/admin/fix-executive-access', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: currentUser.id,
+                        action: 'remove_owner_link'
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Correction appliquée! Rechargez la page pour tester.');
+                    window.location.reload();
+                } else {
+                    alert('Erreur lors de la correction. Contactez l\'administrateur.');
+                }
+            } catch (error) {
+                alert('Erreur réseau. Correction manuelle nécessaire.');
+                console.error('Fix error:', error);
+            }
+        }
+
+        async function runAllTests() {
+            // Reset all sections to loading
+            document.querySelectorAll('.test-section').forEach(section => {
+                section.className = 'test-section loading';
+                section.querySelector('.status').innerHTML = '⏳ Test en cours...';
+            });
+
+            // Run tests in sequence
+            await testSession();
+            await testOwnersAll();
+            await testLogic();
+            await testDropdown();
+        }
+
+        // Run tests when page loads
+        window.addEventListener('load', runAllTests);
+    </script>
+</body>
+</html>

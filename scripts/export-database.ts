@@ -79,7 +79,7 @@ class DatabaseExporter {
       'payment_methods',
       
       // Tables de base
-      'loft_owners',
+      'owners',
       'lofts',
       
       // Tables utilisateurs
@@ -128,7 +128,7 @@ class DatabaseExporter {
           airbnb_refresh_token: null
         }))
 
-      case 'loft_owners':
+      case 'owners':
         return data.map(record => ({
           ...record,
           email: record.email ? `owner${Math.random().toString(36).substr(2, 3)}@${this.environment}.local` : null,

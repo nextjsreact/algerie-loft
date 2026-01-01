@@ -5,7 +5,7 @@ import { MemberLoftsClientWrapper } from "@/components/lofts/member-lofts-client
 import { createClient } from '@/utils/supabase/server'
 
 type Loft = Database['public']['Tables']['lofts']['Row']
-type LoftOwner = Database['public']['Tables']['loft_owners']['Row']
+type LoftOwner = Database['public']['Tables']['owners']['Row']
 type ZoneArea = Database['public']['Tables']['zone_areas']['Row']
 
 export default async function LoftsPage() {
@@ -39,7 +39,7 @@ export default async function LoftsPage() {
 
     // Récupération des propriétaires
     const { data: ownersData, error: ownersError } = await supabase
-      .from("loft_owners")
+      .from("owners")
       .select("*")
       .order("name")
 

@@ -190,7 +190,7 @@ async function tableSyncClone() {
     let errorCount = 0
 
     // Tables prioritaires d'abord
-    const priorityTables = ['currencies', 'categories', 'zone_areas', 'internet_connection_types', 'payment_methods', 'loft_owners', 'profiles', 'lofts']
+    const priorityTables = ['currencies', 'categories', 'zone_areas', 'internet_connection_types', 'payment_methods', 'owners', 'profiles', 'lofts']
 
     for (const tableName of priorityTables) {
       if (!prodTableNames.includes(tableName)) continue
@@ -235,7 +235,7 @@ async function tableSyncClone() {
             if (!cleaned.address) cleaned.address = `Adresse ${index + 1}`
           }
 
-          if (tableName === 'loft_owners') {
+          if (tableName === 'owners') {
             if (!cleaned.name) cleaned.name = `Propriétaire ${index + 1}`
             if (!cleaned.email) cleaned.email = `owner${index + 1}@localhost`
           }
@@ -284,7 +284,7 @@ async function tableSyncClone() {
     console.log(`❌ Tables échouées: ${errorCount}`)
 
     // Vérifier les tables principales
-    const finalTables = ['currencies', 'categories', 'loft_owners', 'profiles', 'lofts']
+    const finalTables = ['currencies', 'categories', 'owners', 'profiles', 'lofts']
 
     for (const tableName of finalTables) {
       try {

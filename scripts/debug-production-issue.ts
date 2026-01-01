@@ -48,7 +48,7 @@ async function debugProductionIssue() {
     console.log('\n3️⃣ Test des dépendances...')
     
     const { data: owners, error: ownersError } = await supabase
-      .from('loft_owners')
+      .from('owners')
       .select('*')
     
     if (ownersError) {

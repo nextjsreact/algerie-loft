@@ -222,7 +222,7 @@ CREATE POLICY IF NOT EXISTS "Enable all for service role" ON public.loft_photos 
 
     const allTables = [
       'currencies', 'categories', 'zone_areas', 'internet_connection_types',
-      'payment_methods', 'loft_owners', 'teams', 'profiles', 'lofts',
+      'payment_methods', 'owners', 'teams', 'profiles', 'lofts',
       'team_members', 'tasks', 'transactions', 'transaction_category_references',
       'settings', 'notifications', 'customers', 'loft_photos'
     ]

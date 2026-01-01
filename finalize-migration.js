@@ -3,7 +3,7 @@
  * Ce script:
  * 1. Renomme new_owner_id en owner_id dans lofts
  * 2. Supprime les anciennes colonnes owner_id et partner_id
- * 3. Supprime les anciennes tables loft_owners et partner_profiles
+ * 3. Supprime les anciennes tables owners et partner_profiles
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -34,7 +34,7 @@ async function confirmAction() {
   console.log('  Cette opération va:');
   console.log('  1. Supprimer les colonnes owner_id et partner_id de lofts');
   console.log('  2. Renommer new_owner_id en owner_id');
-  console.log('  3. Supprimer les tables loft_owners et partner_profiles');
+  console.log('  3. Supprimer les tables owners et partner_profiles');
   console.log('\n');
   console.log('  ✅ Backup créé: backup-loft-owners.json, backup-partner-profiles.json');
   console.log('  ✅ 26 propriétaires dans la table owners');
@@ -111,8 +111,8 @@ async function finalizeMigration() {
   console.log('\n📋 ÉTAPE 3: Suppression des anciennes tables');
 
   success = await executeSQL(
-    '  Suppression de loft_owners',
-    'DROP TABLE IF EXISTS loft_owners CASCADE;'
+    '  Suppression de owners',
+    'DROP TABLE IF EXISTS owners CASCADE;'
   );
 
   success = await executeSQL(

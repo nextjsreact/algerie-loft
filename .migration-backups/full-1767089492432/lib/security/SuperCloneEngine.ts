@@ -15,13 +15,13 @@ export class SuperCloneEngine extends CloneEngine {
     // Tables de base sans dépendances
     'zone_areas',
     'internet_connection_types', 
-    'loft_owners',
+    'owners',
     'categories',
     'currencies',
     'payment_methods',
     
     // Tables avec dépendances
-    'lofts', // Dépend de zone_areas, internet_connection_types, loft_owners
+    'lofts', // Dépend de zone_areas, internet_connection_types, owners
     'teams', // Peut dépendre des utilisateurs
     'team_members', // Dépend de teams
     'tasks', // Dépend de lofts, teams, utilisateurs
@@ -189,7 +189,7 @@ export class SuperCloneEngine extends CloneEngine {
    */
   private async fixLofts(data: any[], target: Environment): Promise<any[]> {
     // Récupérer les IDs valides pour les relations
-    const { data: owners } = await target.client.from('loft_owners').select('id').limit(10)
+    const { data: owners } = await target.client.from('owners').select('id').limit(10)
     const { data: zones } = await target.client.from('zone_areas').select('id').limit(10)
     const { data: internetTypes } = await target.client.from('internet_connection_types').select('id').limit(10)
 

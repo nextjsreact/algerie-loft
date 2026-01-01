@@ -1,49 +1,54 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { requireRole } from '@/lib/auth'
 import { createClient } from '@/utils/supabase/server'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const session = await requireRole(['admin', 'executive', 'manager'])
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
-    // Check lofts
-    const { data: lofts, error: loftsError, count: loftsCount } = await supabase
-      .from("lofts")
-      .select("*", { count: 'exact' })
+    const supabase = await createClient(true) // Use service role
 
-    // Check owners
-    const { data: owners, error: ownersError, count: ownersCount } = await supabase
-      .from("loft_owners")
-      .select("*", { count: 'exact' })
+    // Get all owners with their user_id links
+    const { data: owners, error: ownersError } = await supabase
+      .from('owners')
+      .select('id, name, business_name, user_id, email, phone')
+      .order('name')
 
-    // Check zone areas
-    const { data: zoneAreas, error: zoneAreasError, count: zoneAreasCount } = await supabase
-      .from("zone_areas")
-      .select("*", { count: 'exact' })
+    if (ownersError) {
+      console.error('Error fetching owners:', ownersError)
+      return NextResponse.json({ error: 'Failed to fetch owners' }, { status: 500 })
+    }
+
+    // Get all lofts
+    const { data: lofts, error: loftsError } = await supabase
+      .from('lofts')
+      .select('id, name, owner_id')
+      .order('name')
+
+    if (loftsError) {
+      console.error('Error fetching lofts:', loftsError)
+      return NextResponse.json({ error: 'Failed to fetch lofts' }, { status: 500 })
+    }
 
     return NextResponse.json({
       success: true,
       data: {
-        lofts: {
-          count: loftsCount,
-          data: lofts,
-          error: loftsError
-        },
         owners: {
-          count: ownersCount,
-          data: owners,
-          error: ownersError
+          count: owners?.length || 0,
+          data: owners || []
         },
-        zoneAreas: {
-          count: zoneAreasCount,
-          data: zoneAreas,
-          error: zoneAreasError
+        lofts: {
+          count: lofts?.length || 0,
+          data: lofts || []
         }
       }
     })
+
   } catch (error) {
-    return NextResponse.json({
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 })
+    console.error('Error in debug database:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

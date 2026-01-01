@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dropdowns Owners - Loft Algérie</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .success { border-color: #4CAF50; background-color: #f8fff8; }
+        .error { border-color: #f44336; background-color: #fff8f8; }
+        .loading { border-color: #2196F3; background-color: #f8f9ff; }
+        h1 { color: #333; text-align: center; }
+        h2 { color: #555; margin-top: 0; }
+        .status { font-weight: bold; margin-bottom: 10px; }
+        .success .status { color: #4CAF50; }
+        .error .status { color: #f44336; }
+        .loading .status { color: #2196F3; }
+        pre { background: #f0f0f0; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #1976D2; }
+        .data-preview {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test des Dropdowns Owners</h1>
+        <p>Ce test vérifie que les APIs utilisent bien la table "owners" et que les dropdowns fonctionnent.</p>
+        
+        <div id="test-owners" class="test-section loading">
+            <h2>1️⃣ Test API Owners</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="owners-result"></div>
+        </div>
+
+        <div id="test-lofts" class="test-section loading">
+            <h2>2️⃣ Test API Lofts avec Owners</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="lofts-result"></div>
+        </div>
+
+        <div id="test-availability" class="test-section loading">
+            <h2>3️⃣ Test API Availability (Dropdowns)</h2>
+            <div class="status">⏳ Test en cours...</div>
+            <div id="availability-result"></div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="runAllTests()">🔄 Relancer tous les tests</button>
+            <button onclick="window.location.href='/fr/lofts'">📋 Aller à la page Lofts</button>
+        </div>
+    </div>
+
+    <script>
+        async function testAPI(url, description) {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    return {
+                        success: true,
+                        data: data,
+                        status: response.status
+                    };
+                } else {
+                    return {
+                        success: false,
+                        error: data.error || 'Erreur inconnue',
+                        status: response.status
+                    };
+                }
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.message,
+                    status: 0
+                };
+            }
+        }
+
+        async function testOwners() {
+            const section = document.getElementById('test-owners');
+            const result = document.getElementById('owners-result');
+            
+            const test = await testAPI('/api/debug/database', 'Owners API');
+            
+            if (test.success) {
+                section.className = 'test-section success';
+                section.querySelector('.status').innerHTML = '✅ API Owners fonctionne';
+                
+                let html = `<p><strong>Status:</strong> ${test.status}</p>`;
+                
+                if (test.data.owners) {
+                    html += `<p><strong>Nombre d'owners:</strong> ${test.data.owners.length}</p>`;
+                    if (test.data.owners.length > 0) {
+                        html += '<div class="data-preview"><strong>Exemples d\'owners:</strong><br>';
+                        test.data.owners.slice(0, 5).forEach(owner => {
+                            html += `• ${owner.name || owner.business_name || 'Sans nom'} (ID: ${owner.id})<br>`;
+                        });
+                        html += '</div>';
+                    }
+                } else {
+                    html += '<p>⚠️ Pas de données owners dans la réponse</p>';
+                }
+                
+                result.innerHTML = html;
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Erreur API Owners';
+                result.innerHTML = `
+                    <p><strong>Erreur:</strong> ${test.error}</p>
+                    <p><strong>Status:</strong> ${test.status}</p>
+                `;
+            }
+        }
+
+        async function testLofts() {
+            const section = document.getElementById('test-lofts');
+            const result = document.getElementById('lofts-result');
+            
+            const test = await testAPI('/api/admin/lofts', 'Lofts avec Owners');
+            
+            if (test.success) {
+                section.className = 'test-section success';
+                section.querySelector('.status').innerHTML = '✅ API Lofts avec Owners fonctionne';
+                
+                let html = `<p><strong>Status:</strong> ${test.status}</p>`;
+                
+                if (test.data && Array.isArray(test.data)) {
+                    html += `<p><strong>Nombre de lofts:</strong> ${test.data.length}</p>`;
+                    if (test.data.length > 0) {
+                        html += '<div class="data-preview"><strong>Exemples de lofts avec owners:</strong><br>';
+                        test.data.slice(0, 3).forEach(loft => {
+                            const ownerName = loft.owner?.name || 'Pas d\'owner';
+                            html += `• ${loft.name} → Owner: ${ownerName}<br>`;
+                        });
+                        html += '</div>';
+                    }
+                } else {
+                    html += '<p>⚠️ Format de données inattendu</p>';
+                }
+                
+                result.innerHTML = html;
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Erreur API Lofts';
+                result.innerHTML = `
+                    <p><strong>Erreur:</strong> ${test.error}</p>
+                    <p><strong>Status:</strong> ${test.status}</p>
+                `;
+            }
+        }
+
+        async function testAvailability() {
+            const section = document.getElementById('test-availability');
+            const result = document.getElementById('availability-result');
+            
+            const test = await testAPI('/api/lofts/availability', 'Availability avec Dropdowns');
+            
+            if (test.success) {
+                section.className = 'test-section success';
+                section.querySelector('.status').innerHTML = '✅ API Availability fonctionne';
+                
+                let html = `<p><strong>Status:</strong> ${test.status}</p>`;
+                
+                if (test.data) {
+                    if (test.data.owners) {
+                        html += `<p><strong>Owners pour dropdown:</strong> ${test.data.owners.length}</p>`;
+                    }
+                    if (test.data.zoneAreas) {
+                        html += `<p><strong>Zone Areas pour dropdown:</strong> ${test.data.zoneAreas.length}</p>`;
+                    }
+                    if (test.data.lofts) {
+                        html += `<p><strong>Lofts disponibles:</strong> ${test.data.lofts.length}</p>`;
+                    }
+                    
+                    if (test.data.owners && test.data.owners.length > 0) {
+                        html += '<div class="data-preview"><strong>Owners pour dropdown:</strong><br>';
+                        test.data.owners.slice(0, 5).forEach(owner => {
+                            html += `• ${owner.name} (ID: ${owner.id})<br>`;
+                        });
+                        html += '</div>';
+                    }
+                }
+                
+                result.innerHTML = html;
+            } else {
+                section.className = 'test-section error';
+                section.querySelector('.status').innerHTML = '❌ Erreur API Availability';
+                result.innerHTML = `
+                    <p><strong>Erreur:</strong> ${test.error}</p>
+                    <p><strong>Status:</strong> ${test.status}</p>
+                `;
+            }
+        }
+
+        async function runAllTests() {
+            // Reset all sections to loading
+            document.querySelectorAll('.test-section').forEach(section => {
+                section.className = 'test-section loading';
+                section.querySelector('.status').innerHTML = '⏳ Test en cours...';
+            });
+
+            // Run tests in parallel
+            await Promise.all([
+                testOwners(),
+                testLofts(),
+                testAvailability()
+            ]);
+        }
+
+        // Run tests when page loads
+        window.addEventListener('load', runAllTests);
+    </script>
+</body>
+</html>

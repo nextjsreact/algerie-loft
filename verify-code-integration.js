@@ -33,12 +33,12 @@ function searchInFiles(pattern, description) {
   }
 }
 
-// 1. Vérifier les références à loft_owners
-console.log('1️⃣  Recherche de références à "loft_owners"...');
-if (searchInFiles('loft_owners', 'Références à l\'ancienne table loft_owners')) {
-  console.log('   ❌ Trouvé des références à loft_owners\n');
+// 1. Vérifier les références à owners
+console.log('1️⃣  Recherche de références à "owners"...');
+if (searchInFiles('owners', 'Références à l\'ancienne table owners')) {
+  console.log('   ❌ Trouvé des références à owners\n');
 } else {
-  console.log('   ✅ Aucune référence à loft_owners\n');
+  console.log('   ✅ Aucune référence à owners\n');
 }
 
 // 2. Vérifier les références à partner_profiles
@@ -62,15 +62,15 @@ console.log('4️⃣  Vérification de app/actions/lofts.ts...');
 try {
   const loftsContent = fs.readFileSync('app/actions/lofts.ts', 'utf-8');
   
-  if (loftsContent.includes('loft_owners')) {
-    console.log('   ❌ Contient "loft_owners" - DOIT ÊTRE CORRIGÉ\n');
+  if (loftsContent.includes('owners')) {
+    console.log('   ❌ Contient "owners" - DOIT ÊTRE CORRIGÉ\n');
     issues.push({
-      description: 'app/actions/lofts.ts contient loft_owners',
+      description: 'app/actions/lofts.ts contient owners',
       file: 'app/actions/lofts.ts',
-      line: loftsContent.split('\n').findIndex(line => line.includes('loft_owners')) + 1
+      line: loftsContent.split('\n').findIndex(line => line.includes('owners')) + 1
     });
   } else {
-    console.log('   ✅ Pas de référence à loft_owners\n');
+    console.log('   ✅ Pas de référence à owners\n');
   }
 } catch (error) {
   console.log('   ⚠️  Impossible de lire le fichier\n');
@@ -126,7 +126,7 @@ if (issues.length === 0) {
   
   console.log('📝 Actions requises:');
   console.log('   1. Corriger les références trouvées');
-  console.log('   2. Remplacer loft_owners par owners');
+  console.log('   2. Remplacer owners par owners');
   console.log('   3. Supprimer les références à partner_id\n');
 }
 

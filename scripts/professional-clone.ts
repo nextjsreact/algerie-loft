@@ -328,7 +328,7 @@ class ProfessionalCloner {
       'customers', 'loft_photos', 'team_members', 'tasks', 'transactions',
       'transaction_category_references', 'notifications', 'messages',
       'conversations', 'conversation_participants', 'user_sessions',
-      'lofts', 'profiles', 'teams', 'loft_owners', 'settings',
+      'lofts', 'profiles', 'teams', 'owners', 'settings',
       'currencies', 'categories', 'zone_areas', 'internet_connection_types', 'payment_methods'
     ]
 
@@ -573,7 +573,7 @@ class ProfessionalCloner {
     // Tables à cloner dans l'ordre des dépendances
     const tablesToClone = [
       'currencies', 'categories', 'zone_areas', 'internet_connection_types', 'payment_methods',
-      'loft_owners', 'teams', 'profiles', 'lofts', 'team_members', 'tasks',
+      'owners', 'teams', 'profiles', 'lofts', 'team_members', 'tasks',
       'transactions', 'transaction_category_references', 'settings',
       'notifications', 'messages', 'customers', 'loft_photos',
       'conversations', 'conversation_participants', 'user_sessions'

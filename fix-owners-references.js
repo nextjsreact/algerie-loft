@@ -51,9 +51,9 @@ function fixFile(filePath, replacements) {
 console.log('1️⃣  Correction de app/actions/lofts.ts...');
 fixFile('app/actions/lofts.ts', [
   {
-    from: '.select("*, owner:loft_owners(name)")',
+    from: '.select("*, owner:owners(name)")',
     to: '.select("*, owner:owners(name)")',
-    description: 'Remplacer loft_owners par owners dans select'
+    description: 'Remplacer owners par owners dans select'
   }
 ]);
 
@@ -61,22 +61,22 @@ fixFile('app/actions/lofts.ts', [
 console.log('\n2️⃣  Correction de app/actions/availability.ts...');
 fixFile('app/actions/availability.ts', [
   {
-    from: "Database['public']['Tables']['loft_owners']['Row']",
+    from: "Database['public']['Tables']['owners']['Row']",
     to: "Database['public']['Tables']['owners']['Row']",
     description: 'Corriger le type TypeScript'
   },
   {
-    from: '.from("loft_owners")',
+    from: '.from("owners")',
     to: '.from("owners")',
-    description: 'Remplacer table loft_owners'
+    description: 'Remplacer table owners'
   },
   {
-    from: 'loft_owners!inner(',
-    to: 'owners!inner(',
+    from: 'owners(',
+    to: 'owners(',
     description: 'Corriger la jointure'
   },
   {
-    from: 'loft.loft_owners.name',
+    from: 'loft.owners.name',
     to: 'loft.owners.name',
     description: 'Corriger l\'accès au nom du propriétaire'
   }
@@ -122,7 +122,7 @@ console.log('💡 Si ces systèmes doivent aussi utiliser "owners",');
 console.log('   ils nécessitent une migration séparée.\n');
 
 console.log('═'.repeat(60));
-console.log('\n✅ Corrections des références loft_owners terminées!');
+console.log('\n✅ Corrections des références owners terminées!');
 console.log('\n📝 Prochaines étapes:');
 console.log('   1. Vérifier les fichiers modifiés');
 console.log('   2. Tester l\'application: npm run dev');

@@ -30,7 +30,7 @@ async function debugEditPage() {
 
     console.log('\n2️⃣ Test de récupération des propriétaires...')
     const { data: owners, error: ownersError } = await supabase
-      .from('loft_owners')
+      .from('owners')
       .select('*')
 
     if (ownersError) {
@@ -66,7 +66,7 @@ async function debugEditPage() {
     // Simuler ce que fait getOwners()
     console.log('   - Test getOwners()...')
     const { data: ownersAction, error: ownersActionError } = await supabase
-      .from('loft_owners')
+      .from('owners')
       .select('id, name, email, phone, created_at')
       .order('name')
 

@@ -49,7 +49,7 @@ class CompleteSyncDiagnosis {
   private environments: Map<string, Environment> = new Map()
   private expectedTables = [
     'profiles', 'user_sessions', 'zone_areas', 'internet_connection_types',
-    'loft_owners', 'lofts', 'categories', 'currencies', 'payment_methods',
+    'owners', 'lofts', 'categories', 'currencies', 'payment_methods',
     'teams', 'team_members', 'tasks', 'transactions', 'notifications',
     'transaction_category_references', 'settings', 'conversations',
     'conversation_participants', 'messages'

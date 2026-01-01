@@ -17,7 +17,7 @@ async function autoCloneMissingTables() {
   // Step 1: Get known tables from PROD by trying common table names
   console.log('📋 Recherche des tables dans PROD...');
   const commonTables = [
-    'customers', 'lofts', 'profiles', 'loft_owners', 'teams', 'tasks',
+    'customers', 'lofts', 'profiles', 'owners', 'teams', 'tasks',
     'transactions', 'notifications', 'messages', 'currencies', 'categories'
   ];
 

@@ -86,7 +86,7 @@ async function secureCloneProdToTest() {
     console.log('-' .repeat(50))
 
     const tablesToClone = [
-      'zone_areas', 'internet_connection_types', 'loft_owners', 'lofts',
+      'zone_areas', 'internet_connection_types', 'owners', 'lofts',
       'categories', 'currencies', 'payment_methods', 'teams', 'team_members',
       'tasks', 'transaction_category_references', 'settings'
     ]

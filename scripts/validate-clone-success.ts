@@ -43,7 +43,7 @@ class CloneValidator {
     'categories',
     'zone_areas',
     'payment_methods',
-    'loft_owners',
+    'owners',
     'lofts'
   ]
 
@@ -381,7 +381,7 @@ class CloneValidator {
       'zone_areas',
       'internet_connection_types',
       'payment_methods',
-      'loft_owners',
+      'owners',
       'teams',
       'profiles',
       'lofts',

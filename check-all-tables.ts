@@ -11,7 +11,7 @@ async function checkAllTables() {
   console.log('🔍 Checking all tables...\n')
 
   const tables = [
-    'loft_owners',
+    'owners',
     'lofts',
     'profiles',
     'users',

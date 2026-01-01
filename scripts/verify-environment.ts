@@ -38,7 +38,7 @@ async function verifyEnvironment(env: 'test' | 'dev' | 'prod' = 'test') {
   console.log('-' .repeat(40))
 
   const mainTables = [
-    'profiles', 'lofts', 'loft_owners', 'transactions', 
+    'profiles', 'lofts', 'owners', 'transactions', 
     'tasks', 'teams', 'notifications', 'messages',
     'currencies', 'categories', 'zone_areas', 'payment_methods'
   ]
@@ -126,7 +126,7 @@ async function verifyEnvironment(env: 'test' | 'dev' | 'prod' = 'test') {
   console.log('\n🎯 RÉSUMÉ FINAL')
   console.log('-' .repeat(40))
 
-  const criticalTables = ['profiles', 'lofts', 'loft_owners']
+  const criticalTables = ['profiles', 'lofts', 'owners']
   const allCriticalOK = criticalTables.every(table => 
     tableCounts[table] && tableCounts[table] !== 'ERROR' && tableCounts[table] > 0
   )

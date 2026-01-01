@@ -44,7 +44,7 @@ class AutoSmartClone {
     payment_methods: {
       updated_at: 'IGNORE'
     },
-    loft_owners: {
+    owners: {
       updated_at: 'IGNORE'
     },
     teams: {
@@ -334,7 +334,7 @@ class AutoSmartClone {
       'zone_areas',
       'internet_connection_types',
       'payment_methods',
-      'loft_owners',
+      'owners',
       'teams',
       'profiles',
       'lofts',

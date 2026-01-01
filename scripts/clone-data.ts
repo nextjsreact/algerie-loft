@@ -191,7 +191,7 @@ export class DataCloner {
         'transaction_category_references', 'notifications', 'messages',
 
         // Step 2: Clear main tables
-        'lofts', 'profiles', 'teams', 'loft_owners', 'settings',
+        'lofts', 'profiles', 'teams', 'owners', 'settings',
 
         // Step 3: Clear reference tables last
         'currencies', 'categories', 'zone_areas', 'internet_connection_types', 'payment_methods'
@@ -239,7 +239,7 @@ export class DataCloner {
     const commonTables = [
       'messages', 'notifications', 'tasks', 'team_members', 'transactions',
       'transaction_category_references', 'lofts', 'profiles', 'user_sessions',
-      'teams', 'loft_owners', 'settings', 'currencies', 'categories',
+      'teams', 'owners', 'settings', 'currencies', 'categories',
       'zone_areas', 'internet_connection_types', 'payment_methods'
     ]
 
@@ -307,7 +307,7 @@ export class DataCloner {
     // Manual cleanup without relying on FK disabling
     const tablesToClear = [
       'currencies', 'categories', 'zone_areas', 'internet_connection_types',
-      'payment_methods', 'loft_owners', 'teams', 'profiles', 'lofts',
+      'payment_methods', 'owners', 'teams', 'profiles', 'lofts',
       'team_members', 'tasks', 'transactions', 'transaction_category_references',
       'settings', 'notifications', 'messages'
     ]
@@ -383,12 +383,12 @@ export class DataCloner {
       'zone_areas',                    // No dependencies
       'internet_connection_types',    // No dependencies
       'payment_methods',              // No dependencies
-      'loft_owners',                   // Referenced by lofts
+      'owners',                   // Referenced by lofts
       'teams',                         // Referenced by team_members
 
       // Step 2: Import main tables (reference the above)
       'profiles',                      // Referenced by many tables
-      'lofts',                         // References loft_owners, categories, etc.
+      'lofts',                         // References owners, categories, etc.
       'team_members',                  // References teams, profiles
       'tasks',                         // References profiles, lofts
       'transactions',                  // References lofts, categories
@@ -563,7 +563,7 @@ export class DataCloner {
     this.initializeClients()
     const list = tables && tables.length ? tables : [
       'currencies','categories','zone_areas','internet_connection_types','payment_methods',
-      'loft_owners','lofts','teams','team_members','tasks','transactions',
+      'owners','lofts','teams','team_members','tasks','transactions',
       'transaction_category_references','settings','profiles','notifications','messages'
     ]
     console.log('\n🔎 Vérification post-clonage (counts):')

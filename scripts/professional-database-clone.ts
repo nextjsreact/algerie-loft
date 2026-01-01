@@ -65,7 +65,7 @@ async function professionalDatabaseClone() {
     // Liste complète des tables connues de votre application
     const knownTables = [
       'currencies', 'categories', 'zone_areas', 'internet_connection_types',
-      'payment_methods', 'loft_owners', 'profiles', 'lofts', 'transactions',
+      'payment_methods', 'owners', 'profiles', 'lofts', 'transactions',
       'bills', 'notifications', 'conversations', 'messages', 'tasks',
       'teams', 'availability', 'owners', 'customers', 'invoices',
       'payments', 'expenses', 'revenues', 'reports'
@@ -113,7 +113,7 @@ async function professionalDatabaseClone() {
 
     const tablesToClone = [
       'currencies', 'categories', 'zone_areas', 'internet_connection_types',
-      'payment_methods', 'loft_owners', 'profiles', 'lofts'
+      'payment_methods', 'owners', 'profiles', 'lofts'
     ]
 
     for (const tableName of tablesToClone) {
@@ -251,7 +251,7 @@ async function professionalDatabaseClone() {
 
     console.log('\n👥 PROPRIÉTAIRES DANS DEV:')
     try {
-      const ownersResponse = await fetch(`${devUrl}/rest/v1/loft_owners?select=id,name,email&limit=5`, {
+      const ownersResponse = await fetch(`${devUrl}/rest/v1/owners?select=id,name,email&limit=5`, {
         headers: {
           'Authorization': `Bearer ${devKey}`,
           'apikey': devKey,

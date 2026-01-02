@@ -112,8 +112,9 @@ export default async function LocalePage({ params }: LocalePageProps) {
           case 'admin':
           case 'manager':
           case 'member':
+            redirect(`/${locale}/dashboard`);
           default:
-            redirect(`/${locale}/home`);
+            redirect(`/${locale}/dashboard`);
         }
       } else {
         // Pas de contexte de connexion, utiliser le rôle DB (fallback)
@@ -135,8 +136,8 @@ export default async function LocalePage({ params }: LocalePageProps) {
           console.log('[ROOT PAGE] Redirecting to executive (fallback)');
           redirect(`/${locale}/executive`);
         } else if (['admin', 'manager', 'member'].includes(session.user.role)) {
-          console.log('[ROOT PAGE] Redirecting to home (fallback)');
-          redirect(`/${locale}/home`);
+          console.log('[ROOT PAGE] Redirecting to dashboard (fallback)');
+          redirect(`/${locale}/dashboard`);
         }
         // Si rôle inconnu, rester sur la page publique
         console.log('[ROOT PAGE] Unknown role, staying on public page');

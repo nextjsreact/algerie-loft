@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug OAuth Issue</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .debug-section { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #007bff; }
+        .error { background: #f8d7da; border-left-color: #dc3545; }
+        .warning { background: #fff3cd; border-left-color: #ffc107; }
+        .success { background: #d4edda; border-left-color: #28a745; }
+        .code { background: #e9ecef; padding: 10px; border-radius: 4px; font-family: monospace; margin: 10px 0; }
+        .btn { display: inline-block; padding: 8px 16px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 5px; }
+        .btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug OAuth Redirection Issue</h1>
+    
+    <div class="error debug-section">
+        <h3>❌ Problème Identifié</h3>
+        <p><strong>Symptôme :</strong> OAuth redirige vers la page d'accueil au lieu du dashboard</p>
+        <p><strong>Cause probable :</strong> Conflit entre la logique de redirection du callback OAuth et la page d'accueil</p>
+    </div>
+
+    <div class="debug-section">
+        <h3>🔍 Points de Diagnostic</h3>
+        <ol>
+            <li><strong>URL de callback :</strong> Vérifier que Supabase redirige bien vers <code>/api/auth/callback</code></li>
+            <li><strong>Paramètres URL :</strong> Vérifier que <code>role</code> et <code>next</code> sont présents</li>
+            <li><strong>Cookie creation :</strong> Vérifier que <code>login_context</code> est créé</li>
+            <li><strong>Page d'accueil :</strong> Vérifier qu'elle ne redirige pas incorrectement</li>
+        </ol>
+    </div>
+
+    <div class="warning debug-section">
+        <h3>⚠️ Problèmes Potentiels Identifiés</h3>
+        
+        <h4>1. Page d'accueil interfère</h4>
+        <p>La page <code>app/[locale]/page.tsx</code> a sa propre logique de redirection qui peut entrer en conflit.</p>
+        
+        <h4>2. Cookie timing</h4>
+        <p>Le cookie <code>login_context</code> n'est peut-être pas créé à temps ou pas lu correctement.</p>
+        
+        <h4>3. Redirection en boucle</h4>
+        <p>Possible conflit entre le callback et la page d'accueil.</p>
+    </div>
+
+    <div class="debug-section">
+        <h3>🧪 Tests à Effectuer</h3>
+        
+        <h4>Test 1: Vérifier l'URL de callback</h4>
+        <div class="code">
+1. Ouvrir les DevTools (F12)
+2. Aller sur /login
+3. Cliquer OAuth
+4. Vérifier l'URL finale dans Network tab
+5. Chercher: /api/auth/callback?code=...&role=...
+        </div>
+        
+        <h4>Test 2: Vérifier les cookies</h4>
+        <div class="code">
+1. Après OAuth, ouvrir DevTools
+2. Application tab → Cookies
+3. Chercher: login_context
+4. Vérifier la valeur (client/partner/employee)
+        </div>
+        
+        <h4>Test 3: Vérifier les logs</h4>
+        <div class="code">
+1. Ouvrir Console (F12)
+2. Faire OAuth login
+3. Chercher les logs: [OAuth Callback]
+4. Vérifier la logique de redirection
+        </div>
+    </div>
+
+    <div class="success debug-section">
+        <h3>🔧 Solutions à Tester</h3>
+        
+        <h4>Solution 1: Forcer la redirection dans le callback</h4>
+        <p>Modifier le callback pour éviter la page d'accueil complètement</p>
+        
+        <h4>Solution 2: Désactiver la redirection de la page d'accueil pour OAuth</h4>
+        <p>Ajouter une condition pour ignorer la redirection si on vient d'OAuth</p>
+        
+        <h4>Solution 3: Utiliser une page de callback dédiée</h4>
+        <p>Créer une page intermédiaire qui gère la redirection</p>
+    </div>
+
+    <div class="debug-section">
+        <h3>📋 Checklist de Debug</h3>
+        <ul>
+            <li>☐ Configuration Supabase vérifiée (URLs correctes)</li>
+            <li>☐ Paramètres URL du callback vérifiés</li>
+            <li>☐ Cookie login_context créé et lu</li>
+            <li>☐ Logs du callback examinés</li>
+            <li>☐ Conflit avec page d'accueil identifié</li>
+            <li>☐ Solution appliquée et testée</li>
+        </ul>
+    </div>
+
+    <div class="debug-section">
+        <h3>🔗 URLs de Test</h3>
+        <p><strong>Login :</strong> <a href="https://loftalgerie.com/login" target="_blank">https://loftalgerie.com/login</a></p>
+        <p><strong>Callback :</strong> <code>https://loftalgerie.com/api/auth/callback</code></p>
+        <p><strong>Dashboard Client :</strong> <a href="https://loftalgerie.com/fr/client/dashboard" target="_blank">https://loftalgerie.com/fr/client/dashboard</a></p>
+    </div>
+
+    <script>
+        console.log('🔍 OAuth Debug Page Loaded');
+        console.log('📍 Current URL:', window.location.href);
+        console.log('🍪 Current cookies:', document.cookie);
+        
+        // Vérifier les cookies OAuth
+        const cookies = document.cookie.split(';').map(c => c.trim());
+        const authCookies = cookies.filter(c => c.includes('sb-') || c.includes('login_context'));
+        console.log('🔐 Auth cookies:', authCookies);
+        
+        // Vérifier le localStorage Supabase
+        const supabaseSession = localStorage.getItem('sb-mhngbluefyucoesgcjoy-auth-token');
+        console.log('💾 Supabase session:', !!supabaseSession);
+        
+        if (supabaseSession) {
+            try {
+                const session = JSON.parse(supabaseSession);
+                console.log('👤 User email:', session.user?.email);
+                console.log('🎭 User role:', session.user?.user_metadata?.role);
+            } catch (e) {
+                console.log('❌ Error parsing session:', e);
+            }
+        }
+    </script>
+</body>
+</html>

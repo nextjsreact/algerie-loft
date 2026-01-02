@@ -74,11 +74,14 @@ export async function GET(request: NextRequest) {
         const timestamp = Date.now()
         
         console.log(`🔄 [OAuth Callback] Redirection logic: loginContext=${loginContext}, actualDbRole=${actualDbRole}, locale=${locale}`)
+        console.log(`🎯 [OAuth Callback] About to redirect based on context: ${loginContext}`)
         
         switch (loginContext) {
           case 'client':
+            console.log(`🚀 [OAuth Callback] Redirecting to client dashboard`)
             return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
           case 'partner':
+            console.log(`🚀 [OAuth Callback] Checking partner profile...`)
             // Check if partner has completed registration
             const { data: partnerProfile } = await supabase
               .from('partner_profiles')
@@ -104,9 +107,11 @@ export async function GET(request: NextRequest) {
               return NextResponse.redirect(`${origin}/${locale}/partner/suspended?t=${timestamp}`)
             } else {
               // Active or verified, redirect to dashboard
+              console.log(`🚀 [OAuth Callback] Redirecting to partner dashboard`)
               return NextResponse.redirect(`${origin}/${locale}/partner/dashboard?t=${timestamp}`)
             }
           case 'employee':
+            console.log(`🚀 [OAuth Callback] Redirecting employee with role: ${actualDbRole}`)
             // Pour les employés, utiliser le rôle DB
             switch (actualDbRole) {
               case 'superuser':
@@ -127,8 +132,10 @@ export async function GET(request: NextRequest) {
             console.log(`⚠️ [OAuth Callback] Fallback redirection for loginContext=${loginContext}, using actualDbRole=${actualDbRole}`)
             switch (actualDbRole) {
               case 'client':
+                console.log(`🚀 [OAuth Callback] Fallback: Redirecting to client dashboard`)
                 return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
               case 'partner':
+                console.log(`🚀 [OAuth Callback] Fallback: Redirecting to partner dashboard`)
                 return NextResponse.redirect(`${origin}/${locale}/partner/dashboard?t=${timestamp}`)
               case 'superuser':
                 return NextResponse.redirect(`${origin}/${locale}/admin/superuser/dashboard?t=${timestamp}`)
@@ -137,6 +144,7 @@ export async function GET(request: NextRequest) {
               case 'admin':
               case 'manager':
               case 'member':
+                console.log(`🚀 [OAuth Callback] Fallback: Redirecting to dashboard for role: ${actualDbRole}`)
                 return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
               default:
                 // Si vraiment aucun rôle détecté, rediriger vers client dashboard par défaut

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test OAuth Simple</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .result { margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test OAuth Simple</h1>
+    
+    <p><strong>URL actuelle:</strong> <span id="currentUrl"></span></p>
+    
+    <div>
+        <h2>Test OAuth</h2>
+        <button onclick="testGoogleOAuth()">🔵 Test Google OAuth</button>
+        <button onclick="testGitHubOAuth()">⚫ Test GitHub OAuth</button>
+    </div>
+    
+    <div id="results"></div>
+    
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2'
+        
+        const supabaseUrl = 'https://mhngbluefyucoesgcjoy.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1obmdibHVlZnl1Y29lc2djam95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxMzE3MjIsImV4cCI6MjA2MTcwNzcyMn0.buEObYOAzS8eCKZ6tti0gER1Xh1pjmEAMbDJVnX5WDU'
+        
+        const supabase = createClient(supabaseUrl, supabaseKey)
+        
+        document.getElementById('currentUrl').textContent = window.location.origin
+        
+        window.testGoogleOAuth = async function() {
+            const results = document.getElementById('results')
+            const redirectUrl = `${window.location.origin}/api/auth/callback?next=/fr&role=client`
+            
+            results.innerHTML += `<div class="result">
+                <h3>🔵 Test Google OAuth</h3>
+                <p><strong>Redirect URL:</strong> ${redirectUrl}</p>
+                <p>🔄 Initiation OAuth Google...</p>
+            </div>`
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: redirectUrl
+                    }
+                })
+                
+                if (error) {
+                    results.innerHTML += `<div class="result" style="background: #ffebee;">
+                        <p style="color: red;">❌ Erreur: ${error.message}</p>
+                    </div>`
+                } else {
+                    results.innerHTML += `<div class="result" style="background: #e8f5e8;">
+                        <p style="color: green;">✅ OAuth initié - redirection en cours...</p>
+                    </div>`
+                }
+            } catch (err) {
+                results.innerHTML += `<div class="result" style="background: #ffebee;">
+                    <p style="color: red;">❌ Exception: ${err.message}</p>
+                </div>`
+            }
+        }
+        
+        window.testGitHubOAuth = async function() {
+            const results = document.getElementById('results')
+            const redirectUrl = `${window.location.origin}/api/auth/callback?next=/fr&role=client`
+            
+            results.innerHTML += `<div class="result">
+                <h3>⚫ Test GitHub OAuth</h3>
+                <p><strong>Redirect URL:</strong> ${redirectUrl}</p>
+                <p>🔄 Initiation OAuth GitHub...</p>
+            </div>`
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'github',
+                    options: {
+                        redirectTo: redirectUrl
+                    }
+                })
+                
+                if (error) {
+                    results.innerHTML += `<div class="result" style="background: #ffebee;">
+                        <p style="color: red;">❌ Erreur: ${error.message}</p>
+                    </div>`
+                } else {
+                    results.innerHTML += `<div class="result" style="background: #e8f5e8;">
+                        <p style="color: green;">✅ OAuth initié - redirection en cours...</p>
+                    </div>`
+                }
+            } catch (err) {
+                results.innerHTML += `<div class="result" style="background: #ffebee;">
+                    <p style="color: red;">❌ Exception: ${err.message}</p>
+                </div>`
+            }
+        }
+    </script>
+</body>
+</html>

@@ -76,33 +76,33 @@ export async function GET(request: NextRequest) {
         console.log(`🔄 [OAuth Callback] Redirection logic: loginContext=${loginContext}, actualDbRole=${actualDbRole}, locale=${locale}`)
         console.log(`🎯 [OAuth Callback] About to redirect based on context: ${loginContext}`)
         
-        // SOLUTION DIRECTE: Rediriger immédiatement selon le rôle sans switch complexe
-        if (loginContext === 'client' || actualDbRole === 'client') {
-          console.log(`🚀 [OAuth Callback] DIRECT REDIRECT to client dashboard`)
-          return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
+        // SOLUTION BRUTALE - FORCER LA REDIRECTION
+        console.log(`🔄 [OAuth Callback] FORCING REDIRECT - Role: ${actualDbRole}, Context: ${loginContext}`)
+        
+        // Redirection forcée selon le rôle DB uniquement
+        if (actualDbRole === 'client') {
+          console.log(`🚀 FORCING CLIENT REDIRECT`)
+          return NextResponse.redirect(`${origin}/fr/client/dashboard`)
         }
         
-        if (loginContext === 'partner' || actualDbRole === 'partner') {
-          console.log(`🚀 [OAuth Callback] DIRECT REDIRECT to partner dashboard`)
-          return NextResponse.redirect(`${origin}/${locale}/partner/dashboard?t=${timestamp}`)
+        if (actualDbRole === 'partner') {
+          console.log(`🚀 FORCING PARTNER REDIRECT`)
+          return NextResponse.redirect(`${origin}/fr/partner/dashboard`)
         }
         
-        if (loginContext === 'employee' || ['admin', 'manager', 'member', 'executive', 'superuser'].includes(actualDbRole)) {
-          if (actualDbRole === 'superuser') {
-            console.log(`🚀 [OAuth Callback] DIRECT REDIRECT to superuser dashboard`)
-            return NextResponse.redirect(`${origin}/${locale}/admin/superuser/dashboard?t=${timestamp}`)
-          } else if (actualDbRole === 'executive') {
-            console.log(`🚀 [OAuth Callback] DIRECT REDIRECT to executive`)
-            return NextResponse.redirect(`${origin}/${locale}/executive?t=${timestamp}`)
-          } else {
-            console.log(`🚀 [OAuth Callback] DIRECT REDIRECT to dashboard`)
-            return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
-          }
+        if (actualDbRole === 'executive') {
+          console.log(`🚀 FORCING EXECUTIVE REDIRECT`)
+          return NextResponse.redirect(`${origin}/fr/executive`)
         }
         
-        // Fallback ultime - toujours rediriger vers client dashboard
-        console.log(`🚨 [OAuth Callback] FALLBACK REDIRECT to client dashboard`)
-        return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
+        if (['admin', 'manager', 'member', 'superuser'].includes(actualDbRole)) {
+          console.log(`🚀 FORCING EMPLOYEE REDIRECT`)
+          return NextResponse.redirect(`${origin}/fr/dashboard`)
+        }
+        
+        // Fallback absolu
+        console.log(`🚀 FORCING FALLBACK REDIRECT`)
+        return NextResponse.redirect(`${origin}/fr/client/dashboard`)
       } else {
         console.error('OAuth callback error:', error)
         return NextResponse.redirect(`${origin}/login?error=oauth_failed`)

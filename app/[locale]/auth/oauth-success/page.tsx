@@ -78,50 +78,80 @@ export default function OAuthSuccessPage({ params }: OAuthSuccessPageProps) {
         }
         
         console.log('🍪 OAuth Success - Login context final:', loginContext)
+        console.log('🔍 OAuth Success - Actual user role:', actualUserRole)
         setStatus('🎯 Détermination de la redirection...')
         
         // ÉTAPE 4: Redirection (EXACTEMENT comme email/password)
-        let redirectPath = `/${locale}/client/dashboard` // Fallback
+        let redirectPath = `/${locale}/dashboard` // Fallback pour employés
         
-        if (loginContext) {
-          // Rediriger selon le CONTEXTE DE CONNEXION (priorité)
-          switch (loginContext) {
-            case 'client':
-              redirectPath = `/${locale}/client/dashboard`
-              break
-            case 'partner':
-              redirectPath = `/${locale}/partner/dashboard`
-              break
-            case 'employee':
-              // Pour les employés, utiliser le rôle DB
-              switch (actualUserRole) {
-                case 'superuser':
-                  redirectPath = `/${locale}/admin/superuser/dashboard`
-                  break
-                case 'executive':
-                  redirectPath = `/${locale}/executive`
-                  break
-                default:
-                  redirectPath = `/${locale}/dashboard`
-              }
-              break
-            default:
-              redirectPath = `/${locale}/dashboard`
-          }
-        } else {
-          // Fallback: utiliser le rôle DB
+        console.log('🔄 OAuth Success - Début logique redirection')
+        console.log('🔄 OAuth Success - loginContext:', loginContext)
+        console.log('🔄 OAuth Success - actualUserRole:', actualUserRole)
+        
+        // Priorité 1: Si l'utilisateur est un employé, utiliser son rôle DB
+        const isEmployee = ['admin', 'manager', 'member', 'executive', 'superuser'].includes(actualUserRole);
+        
+        if (isEmployee) {
+          console.log('✅ OAuth Success - Utilisateur identifié comme employé')
           switch (actualUserRole) {
-            case 'client':
-              redirectPath = `/${locale}/client/dashboard`
-              break
-            case 'partner':
-              redirectPath = `/${locale}/partner/dashboard`
+            case 'superuser':
+              redirectPath = `/${locale}/admin/superuser/dashboard`
+              console.log('🚀 OAuth Success - Redirection superuser:', redirectPath)
               break
             case 'executive':
               redirectPath = `/${locale}/executive`
+              console.log('🚀 OAuth Success - Redirection executive:', redirectPath)
+              break
+            case 'admin':
+              redirectPath = `/${locale}/dashboard`
+              console.log('🚀 OAuth Success - Redirection admin:', redirectPath)
+              break
+            case 'manager':
+              redirectPath = `/${locale}/dashboard`
+              console.log('🚀 OAuth Success - Redirection manager:', redirectPath)
+              break
+            case 'member':
+              redirectPath = `/${locale}/dashboard`
+              console.log('🚀 OAuth Success - Redirection member:', redirectPath)
               break
             default:
               redirectPath = `/${locale}/dashboard`
+              console.log('🚀 OAuth Success - Redirection employé par défaut:', redirectPath)
+          }
+        } else {
+          // Priorité 2: Pour les non-employés, utiliser le contexte ou le rôle DB
+          console.log('ℹ️ OAuth Success - Utilisateur non-employé, utilisation contexte/rôle')
+          
+          if (loginContext && loginContext !== 'employee') {
+            // Utiliser le contexte sélectionné
+            switch (loginContext) {
+              case 'client':
+                redirectPath = `/${locale}/client/dashboard`
+                console.log('🚀 OAuth Success - Redirection client (contexte):', redirectPath)
+                break
+              case 'partner':
+                redirectPath = `/${locale}/partner/dashboard`
+                console.log('🚀 OAuth Success - Redirection partner (contexte):', redirectPath)
+                break
+              default:
+                redirectPath = `/${locale}/client/dashboard`
+                console.log('🚀 OAuth Success - Redirection par défaut (contexte):', redirectPath)
+            }
+          } else {
+            // Utiliser le rôle DB
+            switch (actualUserRole) {
+              case 'client':
+                redirectPath = `/${locale}/client/dashboard`
+                console.log('🚀 OAuth Success - Redirection client (rôle DB):', redirectPath)
+                break
+              case 'partner':
+                redirectPath = `/${locale}/partner/dashboard`
+                console.log('🚀 OAuth Success - Redirection partner (rôle DB):', redirectPath)
+                break
+              default:
+                redirectPath = `/${locale}/client/dashboard`
+                console.log('🚀 OAuth Success - Redirection par défaut (rôle DB):', redirectPath)
+            }
           }
         }
         

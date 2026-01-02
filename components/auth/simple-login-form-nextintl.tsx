@@ -387,10 +387,53 @@ export function SimpleLoginFormNextIntl() {
                   onClick={async () => {
                     setIsLoading(true)
                     try {
+                      // ÉTAPE 1: Créer le contexte AVANT OAuth (comme email/password)
+                      let loginContext: string | undefined
+                      if (typeof window !== 'undefined') {
+                        loginContext = document.cookie.split('; ').find(row => row.startsWith('login_context='))?.split('=')[1]
+                      }
+                      
+                      if (!loginContext && selectedRole) {
+                        const contextMap: Record<string, string> = {
+                          'client': 'client',
+                          'partner': 'partner',
+                          'admin': 'employee'
+                        }
+                        loginContext = contextMap[selectedRole] || 'employee'
+                        console.log(`🎯 OAuth Google - Contexte déterminé: ${selectedRole} -> ${loginContext}`)
+                      } else if (loginContext) {
+                        console.log(`🎯 OAuth Google - Contexte existant: ${loginContext}`)
+                      } else {
+                        loginContext = 'employee'
+                        console.log('🎯 OAuth Google - Contexte par défaut: employee')
+                      }
+                      
+                      // ÉTAPE 2: Créer le cookie côté serveur (comme email/password)
+                      try {
+                        const contextResponse = await fetch('/api/auth/set-login-context', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ context: loginContext })
+                        })
+                        
+                        if (contextResponse.ok) {
+                          console.log(`✅ OAuth Google - Cookie login_context=${loginContext} créé côté SERVEUR`)
+                        } else {
+                          console.warn('⚠️ OAuth Google - Échec création cookie serveur, utilisation client fallback')
+                          document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+                        }
+                      } catch (apiError) {
+                        console.warn('⚠️ OAuth Google - API cookie indisponible, utilisation client fallback:', apiError)
+                        document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+                      }
+                      
+                      // ÉTAPE 3: OAuth avec redirection vers une page de traitement
+                      console.log('🔄 OAuth Google - Initiation avec contexte:', loginContext)
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'google',
                         options: {
-                          redirectTo: `${window.location.origin}/api/auth/callback?next=/${locale}&role=${selectedRole || 'client'}`
+                          // Rediriger vers une page spéciale qui reproduit le flux email/password
+                          redirectTo: `${window.location.origin}/${locale}/auth/oauth-success?context=${loginContext}`
                         }
                       })
                       if (error) {
@@ -432,10 +475,53 @@ export function SimpleLoginFormNextIntl() {
                   onClick={async () => {
                     setIsLoading(true)
                     try {
+                      // ÉTAPE 1: Créer le contexte AVANT OAuth (comme email/password)
+                      let loginContext: string | undefined
+                      if (typeof window !== 'undefined') {
+                        loginContext = document.cookie.split('; ').find(row => row.startsWith('login_context='))?.split('=')[1]
+                      }
+                      
+                      if (!loginContext && selectedRole) {
+                        const contextMap: Record<string, string> = {
+                          'client': 'client',
+                          'partner': 'partner',
+                          'admin': 'employee'
+                        }
+                        loginContext = contextMap[selectedRole] || 'employee'
+                        console.log(`🎯 OAuth GitHub - Contexte déterminé: ${selectedRole} -> ${loginContext}`)
+                      } else if (loginContext) {
+                        console.log(`🎯 OAuth GitHub - Contexte existant: ${loginContext}`)
+                      } else {
+                        loginContext = 'employee'
+                        console.log('🎯 OAuth GitHub - Contexte par défaut: employee')
+                      }
+                      
+                      // ÉTAPE 2: Créer le cookie côté serveur (comme email/password)
+                      try {
+                        const contextResponse = await fetch('/api/auth/set-login-context', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ context: loginContext })
+                        })
+                        
+                        if (contextResponse.ok) {
+                          console.log(`✅ OAuth GitHub - Cookie login_context=${loginContext} créé côté SERVEUR`)
+                        } else {
+                          console.warn('⚠️ OAuth GitHub - Échec création cookie serveur, utilisation client fallback')
+                          document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+                        }
+                      } catch (apiError) {
+                        console.warn('⚠️ OAuth GitHub - API cookie indisponible, utilisation client fallback:', apiError)
+                        document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+                      }
+                      
+                      // ÉTAPE 3: OAuth avec redirection vers une page de traitement
+                      console.log('🔄 OAuth GitHub - Initiation avec contexte:', loginContext)
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'github',
                         options: {
-                          redirectTo: `${window.location.origin}/api/auth/callback?next=/${locale}&role=${selectedRole || 'client'}`
+                          // Rediriger vers une page spéciale qui reproduit le flux email/password
+                          redirectTo: `${window.location.origin}/${locale}/auth/oauth-success?context=${loginContext}`
                         }
                       })
                       if (error) {

@@ -82,7 +82,7 @@ export default function OAuthSuccessPage({ params }: OAuthSuccessPageProps) {
         setStatus('🎯 Détermination de la redirection...')
         
         // ÉTAPE 4: Redirection (EXACTEMENT comme email/password)
-        let redirectPath = `/${locale}/dashboard` // Fallback pour employés
+        let redirectPath = `/${locale}/home` // Fallback pour employés
         
         console.log('🔄 OAuth Success - Début logique redirection')
         console.log('🔄 OAuth Success - loginContext:', loginContext)
@@ -103,20 +103,20 @@ export default function OAuthSuccessPage({ params }: OAuthSuccessPageProps) {
               console.log('🚀 OAuth Success - Redirection executive:', redirectPath)
               break
             case 'admin':
-              redirectPath = `/${locale}/dashboard`
-              console.log('🚀 OAuth Success - Redirection admin:', redirectPath)
+              redirectPath = `/${locale}/home`
+              console.log('🚀 OAuth Success - Redirection admin vers home:', redirectPath)
               break
             case 'manager':
-              redirectPath = `/${locale}/dashboard`
-              console.log('🚀 OAuth Success - Redirection manager:', redirectPath)
+              redirectPath = `/${locale}/home`
+              console.log('🚀 OAuth Success - Redirection manager vers home:', redirectPath)
               break
             case 'member':
-              redirectPath = `/${locale}/dashboard`
-              console.log('🚀 OAuth Success - Redirection member:', redirectPath)
+              redirectPath = `/${locale}/home`
+              console.log('🚀 OAuth Success - Redirection member vers home:', redirectPath)
               break
             default:
-              redirectPath = `/${locale}/dashboard`
-              console.log('🚀 OAuth Success - Redirection employé par défaut:', redirectPath)
+              redirectPath = `/${locale}/home`
+              console.log('🚀 OAuth Success - Redirection employé par défaut vers home:', redirectPath)
           }
         } else {
           // Priorité 2: Pour les non-employés, utiliser le contexte ou le rôle DB

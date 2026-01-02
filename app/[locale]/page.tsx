@@ -2,6 +2,7 @@ import FusionDualAudienceHomepage from '@/components/homepage/FusionDualAudience
 import { Metadata } from 'next';
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import { OAuthRedirectHandler } from '@/components/auth/oauth-redirect-handler';
 
 interface LocalePageProps {
   params: Promise<{ locale: string }>;
@@ -81,12 +82,11 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
 export default async function LocalePage({ params }: LocalePageProps) {
   const { locale } = await params;
   
-  // REDIRECTION DÉSACTIVÉE TEMPORAIREMENT POUR TESTER OAUTH
-  // La page d'accueil n'intercepte plus les utilisateurs connectés
-  
-  // Utilisateurs connectés et non connectés voient la page publique
   return (
     <>
+      {/* Gestionnaire de redirection OAuth */}
+      <OAuthRedirectHandler locale={locale} />
+      
       {/* Schema.org JSON-LD pour SEO */}
       <script
         type="application/ld+json"

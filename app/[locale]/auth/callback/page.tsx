@@ -86,33 +86,45 @@ export default async function AuthCallbackPage({
       case 'client':
         console.log(`🚀 [Auth Callback Page] Redirecting to client dashboard`)
         redirect(`/${locale}/client/dashboard`)
+        break;
       case 'partner':
         console.log(`🚀 [Auth Callback Page] Redirecting to partner dashboard`)
         redirect(`/${locale}/partner/dashboard`)
+        break;
       case 'employee':
         switch (actualDbRole) {
           case 'superuser':
             redirect(`/${locale}/admin/superuser/dashboard`)
+            break;
           case 'executive':
             redirect(`/${locale}/executive`)
+            break;
           default:
             redirect(`/${locale}/dashboard`)
+            break;
         }
+        break;
       default:
         // Fallback basé sur le rôle DB
         console.log(`⚠️ [Auth Callback Page] Fallback redirection for role: ${actualDbRole}`)
         switch (actualDbRole) {
           case 'client':
             redirect(`/${locale}/client/dashboard`)
+            break;
           case 'partner':
             redirect(`/${locale}/partner/dashboard`)
+            break;
           case 'superuser':
             redirect(`/${locale}/admin/superuser/dashboard`)
+            break;
           case 'executive':
             redirect(`/${locale}/executive`)
+            break;
           default:
             redirect(`/${locale}/dashboard`)
+            break;
         }
+        break;
     }
   } catch (err) {
     console.error(`❌ [Auth Callback Page] Exception:`, err)

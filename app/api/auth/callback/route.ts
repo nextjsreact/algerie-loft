@@ -76,82 +76,33 @@ export async function GET(request: NextRequest) {
         console.log(`🔄 [OAuth Callback] Redirection logic: loginContext=${loginContext}, actualDbRole=${actualDbRole}, locale=${locale}`)
         console.log(`🎯 [OAuth Callback] About to redirect based on context: ${loginContext}`)
         
-        switch (loginContext) {
-          case 'client':
-            console.log(`🚀 [OAuth Callback] Redirecting to client dashboard`)
-            return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
-          case 'partner':
-            console.log(`🚀 [OAuth Callback] Checking partner profile...`)
-            // Check if partner has completed registration
-            const { data: partnerProfile } = await supabase
-              .from('partner_profiles')
-              .select('id, verification_status')
-              .eq('user_id', data.user.id)
-              .single();
-            
-            if (!partnerProfile) {
-              // No partner profile, redirect to registration
-              console.log(`✅ [OAuth Callback] Partner has no profile, redirecting to registration`);
-              return NextResponse.redirect(`${origin}/${locale}/partner/register?t=${timestamp}`)
-            } else if (partnerProfile.verification_status === 'pending') {
-              // Pending approval, redirect to pending page
-              console.log(`✅ [OAuth Callback] Partner status is pending, redirecting to pending page`);
-              return NextResponse.redirect(`${origin}/${locale}/partner/application-pending?t=${timestamp}`)
-            } else if (partnerProfile.verification_status === 'rejected') {
-              // Rejected, redirect to rejected page
-              console.log(`✅ [OAuth Callback] Partner status is rejected, redirecting to rejected page`);
-              return NextResponse.redirect(`${origin}/${locale}/partner/rejected?t=${timestamp}`)
-            } else if (partnerProfile.verification_status === 'suspended') {
-              // Suspended, redirect to suspended page
-              console.log(`✅ [OAuth Callback] Partner status is suspended, redirecting to suspended page`);
-              return NextResponse.redirect(`${origin}/${locale}/partner/suspended?t=${timestamp}`)
-            } else {
-              // Active or verified, redirect to dashboard
-              console.log(`🚀 [OAuth Callback] Redirecting to partner dashboard`)
-              return NextResponse.redirect(`${origin}/${locale}/partner/dashboard?t=${timestamp}`)
-            }
-          case 'employee':
-            console.log(`🚀 [OAuth Callback] Redirecting employee with role: ${actualDbRole}`)
-            // Pour les employés, utiliser le rôle DB
-            switch (actualDbRole) {
-              case 'superuser':
-                return NextResponse.redirect(`${origin}/${locale}/admin/superuser/dashboard?t=${timestamp}`)
-              case 'executive':
-                return NextResponse.redirect(`${origin}/${locale}/executive?t=${timestamp}`)
-              case 'admin':
-                return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
-              case 'manager':
-                return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
-              case 'member':
-                return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
-              default:
-                return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
-            }
-          default:
-            // Fallback: rediriger selon le rôle DB détecté
-            console.log(`⚠️ [OAuth Callback] Fallback redirection for loginContext=${loginContext}, using actualDbRole=${actualDbRole}`)
-            switch (actualDbRole) {
-              case 'client':
-                console.log(`🚀 [OAuth Callback] Fallback: Redirecting to client dashboard`)
-                return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
-              case 'partner':
-                console.log(`🚀 [OAuth Callback] Fallback: Redirecting to partner dashboard`)
-                return NextResponse.redirect(`${origin}/${locale}/partner/dashboard?t=${timestamp}`)
-              case 'superuser':
-                return NextResponse.redirect(`${origin}/${locale}/admin/superuser/dashboard?t=${timestamp}`)
-              case 'executive':
-                return NextResponse.redirect(`${origin}/${locale}/executive?t=${timestamp}`)
-              case 'admin':
-              case 'manager':
-              case 'member':
-                console.log(`🚀 [OAuth Callback] Fallback: Redirecting to dashboard for role: ${actualDbRole}`)
-                return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
-              default:
-                // Si vraiment aucun rôle détecté, rediriger vers client dashboard par défaut
-                console.log(`🚨 [OAuth Callback] No role detected, defaulting to client dashboard`)
-                return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
-            }
+        // SOLUTION DIRECTE: Rediriger immédiatement selon le rôle sans switch complexe
+        if (loginContext === 'client' || actualDbRole === 'client') {
+          console.log(`🚀 [OAuth Callback] DIRECT REDIRECT to client dashboard`)
+          return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
         }
+        
+        if (loginContext === 'partner' || actualDbRole === 'partner') {
+          console.log(`🚀 [OAuth Callback] DIRECT REDIRECT to partner dashboard`)
+          return NextResponse.redirect(`${origin}/${locale}/partner/dashboard?t=${timestamp}`)
+        }
+        
+        if (loginContext === 'employee' || ['admin', 'manager', 'member', 'executive', 'superuser'].includes(actualDbRole)) {
+          if (actualDbRole === 'superuser') {
+            console.log(`🚀 [OAuth Callback] DIRECT REDIRECT to superuser dashboard`)
+            return NextResponse.redirect(`${origin}/${locale}/admin/superuser/dashboard?t=${timestamp}`)
+          } else if (actualDbRole === 'executive') {
+            console.log(`🚀 [OAuth Callback] DIRECT REDIRECT to executive`)
+            return NextResponse.redirect(`${origin}/${locale}/executive?t=${timestamp}`)
+          } else {
+            console.log(`🚀 [OAuth Callback] DIRECT REDIRECT to dashboard`)
+            return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
+          }
+        }
+        
+        // Fallback ultime - toujours rediriger vers client dashboard
+        console.log(`🚨 [OAuth Callback] FALLBACK REDIRECT to client dashboard`)
+        return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
       } else {
         console.error('OAuth callback error:', error)
         return NextResponse.redirect(`${origin}/login?error=oauth_failed`)

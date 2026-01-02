@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test OAuth Simple</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .step { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #f8d7da; }
+        .success { background: #d4edda; }
+        .code { background: #e9ecef; padding: 10px; border-radius: 4px; font-family: monospace; margin: 10px 0; }
+        .btn { display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; margin: 5px; cursor: pointer; border: none; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test OAuth Simple - Diagnostic Direct</h1>
+    
+    <div class="step">
+        <h3>📍 Étape 1: Vérifier l'URL actuelle</h3>
+        <div class="code" id="current-url"></div>
+    </div>
+
+    <div class="step">
+        <h3>🔍 Étape 2: Vérifier les paramètres URL</h3>
+        <div class="code" id="url-params"></div>
+    </div>
+
+    <div class="step">
+        <h3>🍪 Étape 3: Vérifier les cookies</h3>
+        <div class="code" id="cookies-info"></div>
+    </div>
+
+    <div class="step">
+        <h3>🧪 Étape 4: Test de redirection manuelle</h3>
+        <p>Testez les redirections manuellement :</p>
+        <button class="btn" onclick="testRedirect('client')">Test Client Dashboard</button>
+        <button class="btn" onclick="testRedirect('partner')">Test Partner Dashboard</button>
+        <button class="btn" onclick="testRedirect('employee')">Test Employee Dashboard</button>
+    </div>
+
+    <div class="step">
+        <h3>🔧 Étape 5: Forcer la création du cookie</h3>
+        <p>Créer manuellement le cookie login_context :</p>
+        <button class="btn" onclick="setCookie('client')">Set Client Context</button>
+        <button class="btn" onclick="setCookie('partner')">Set Partner Context</button>
+        <button class="btn" onclick="setCookie('employee')">Set Employee Context</button>
+    </div>
+
+    <div class="step">
+        <h3>📋 Résultats des tests</h3>
+        <div id="test-results"></div>
+    </div>
+
+    <script>
+        function log(message) {
+            const results = document.getElementById('test-results');
+            const div = document.createElement('div');
+            div.innerHTML = `<p><strong>${new Date().toLocaleTimeString()}</strong>: ${message}</p>`;
+            results.appendChild(div);
+            console.log(message);
+        }
+
+        function displayCurrentInfo() {
+            // URL actuelle
+            document.getElementById('current-url').textContent = window.location.href;
+            
+            // Paramètres URL
+            const params = new URLSearchParams(window.location.search);
+            let paramsText = 'Paramètres URL:\n';
+            for (const [key, value] of params) {
+                paramsText += `${key}: ${value}\n`;
+            }
+            if (params.size === 0) {
+                paramsText += 'Aucun paramètre URL';
+            }
+            document.getElementById('url-params').textContent = paramsText;
+            
+            // Cookies
+            const cookies = document.cookie.split(';').map(c => c.trim());
+            let cookiesText = 'Cookies:\n';
+            cookies.forEach(cookie => {
+                if (cookie.includes('login_context') || cookie.includes('sb-')) {
+                    cookiesText += `${cookie}\n`;
+                }
+            });
+            if (cookies.length === 0 || !cookiesText.includes('login_context')) {
+                cookiesText += '\n❌ Cookie login_context non trouvé';
+            }
+            document.getElementById('cookies-info').textContent = cookiesText;
+        }
+
+        function testRedirect(role) {
+            log(`🧪 Test de redirection pour le rôle: ${role}`);
+            
+            const locale = 'fr';
+            let targetUrl;
+            
+            switch (role) {
+                case 'client':
+                    targetUrl = `/${locale}/client/dashboard`;
+                    break;
+                case 'partner':
+                    targetUrl = `/${locale}/partner/dashboard`;
+                    break;
+                case 'employee':
+                    targetUrl = `/${locale}/dashboard`;
+                    break;
+                default:
+                    targetUrl = `/${locale}/dashboard`;
+            }
+            
+            log(`📍 Redirection vers: ${targetUrl}`);
+            
+            // Test si la page existe
+            fetch(targetUrl, { method: 'HEAD' })
+                .then(response => {
+                    if (response.ok) {
+                        log(`✅ Page ${targetUrl} accessible`);
+                        // Rediriger après 2 secondes
+                        setTimeout(() => {
+                            window.location.href = targetUrl;
+                        }, 2000);
+                    } else {
+                        log(`❌ Page ${targetUrl} non accessible (${response.status})`);
+                    }
+                })
+                .catch(err => {
+                    log(`❌ Erreur lors du test de ${targetUrl}: ${err.message}`);
+                });
+        }
+
+        function setCookie(context) {
+            log(`🍪 Création du cookie login_context=${context}`);
+            
+            // Créer le cookie
+            document.cookie = `login_context=${context}; path=/; max-age=${60*60*24*7}; SameSite=Lax`;
+            
+            // Vérifier que le cookie a été créé
+            setTimeout(() => {
+                if (document.cookie.includes(`login_context=${context}`)) {
+                    log(`✅ Cookie login_context=${context} créé avec succès`);
+                    displayCurrentInfo(); // Rafraîchir l'affichage des cookies
+                } else {
+                    log(`❌ Échec de la création du cookie login_context=${context}`);
+                }
+            }, 100);
+        }
+
+        // Vérifier si on est sur une page de callback
+        function checkIfCallbackPage() {
+            const url = window.location.href;
+            const isCallback = url.includes('/auth/callback') || url.includes('/api/auth/callback');
+            
+            if (isCallback) {
+                log('📍 Vous êtes sur une page de callback OAuth');
+                
+                // Vérifier les paramètres
+                const params = new URLSearchParams(window.location.search);
+                const code = params.get('code');
+                const role = params.get('role');
+                const error = params.get('error');
+                
+                if (error) {
+                    log(`❌ Erreur OAuth: ${error}`);
+                } else if (code) {
+                    log(`✅ Code OAuth reçu: ${code.substring(0, 20)}...`);
+                    log(`🎭 Rôle sélectionné: ${role || 'Non spécifié'}`);
+                } else {
+                    log(`⚠️ Page de callback sans code OAuth`);
+                }
+            } else {
+                log('📍 Vous n\'êtes pas sur une page de callback');
+            }
+        }
+
+        // Auto-run au chargement
+        window.onload = function() {
+            displayCurrentInfo();
+            checkIfCallbackPage();
+            log('🔍 Page de test OAuth chargée');
+        };
+    </script>
+</body>
+</html>

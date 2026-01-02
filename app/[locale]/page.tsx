@@ -81,102 +81,10 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
 export default async function LocalePage({ params }: LocalePageProps) {
   const { locale } = await params;
   
-  // DÉSACTIVER TEMPORAIREMENT LA REDIRECTION AUTO POUR TESTER OAUTH
-  // TODO: Réactiver après avoir résolu OAuth
+  // REDIRECTION DÉSACTIVÉE TEMPORAIREMENT POUR TESTER OAUTH
+  // La page d'accueil n'intercepte plus les utilisateurs connectés
   
-  /*
-  // Check for auth cookies first to avoid unnecessary Supabase calls
-  const { cookies } = await import('next/headers');
-  const cookieStore = await cookies();
-  const hasAuthCookie = cookieStore.getAll().some(cookie => 
-    cookie.name.startsWith('sb-') && cookie.name.includes('-auth-token')
-  );
-  
-  // Only check session if auth cookies exist
-  if (hasAuthCookie) {
-    const session = await getSession();
-    
-    if (session) {
-      const loginContext = cookieStore.get('login_context')?.value;
-      
-      console.log('[ROOT PAGE] User logged in with context:', loginContext, 'role:', session.user.role);
-      
-      // Rediriger selon le CONTEXTE DE CONNEXION, pas le rôle DB
-      if (loginContext === 'client') {
-        redirect(`/${locale}/client/dashboard`);
-      } else if (loginContext === 'partner') {
-        redirect(`/${locale}/partner/dashboard`);
-      } else if (loginContext === 'employee') {
-        // Pour les employés, utiliser le rôle pour déterminer l'interface
-        switch (session.user.role) {
-          case 'superuser':
-            redirect(`/${locale}/admin/superuser/dashboard`);
-          case 'executive':
-            redirect(`/${locale}/executive`);
-          case 'admin':
-          case 'manager':
-          case 'member':
-            redirect(`/${locale}/dashboard`);
-          default:
-            redirect(`/${locale}/dashboard`);
-        }
-      } else {
-        // Pas de contexte de connexion, utiliser le rôle DB (fallback)
-        console.log('[ROOT PAGE] ⚠️ No login context found! Using role fallback for role:', session.user.role);
-        console.log('[ROOT PAGE] User email:', session.user.email);
-        console.log('[ROOT PAGE] All cookies:', cookieStore.getAll().map(c => c.name));
-        
-        // IMPORTANT: Rediriger selon le rôle DB
-        if (session.user.role === 'client') {
-          console.log('[ROOT PAGE] Redirecting to client dashboard (fallback)');
-          redirect(`/${locale}/client/dashboard`);
-        } else if (session.user.role === 'partner') {
-          console.log('[ROOT PAGE] Redirecting to partner dashboard (fallback)');
-          redirect(`/${locale}/partner/dashboard`);
-        } else if (session.user.role === 'superuser') {
-          console.log('[ROOT PAGE] Redirecting to superuser dashboard (fallback)');
-          redirect(`/${locale}/admin/superuser/dashboard`);
-        } else if (session.user.role === 'executive') {
-          console.log('[ROOT PAGE] Redirecting to executive (fallback)');
-          redirect(`/${locale}/executive`);
-        } else if (['admin', 'manager', 'member'].includes(session.user.role)) {
-          console.log('[ROOT PAGE] Redirecting to dashboard (fallback)');
-          redirect(`/${locale}/dashboard`);
-        }
-        // Si rôle inconnu, rester sur la page publique
-        console.log('[ROOT PAGE] Unknown role, staying on public page');
-      }
-    }
-  }
-  */
-        console.log('[ROOT PAGE] ⚠️ No login context found! Using role fallback for role:', session.user.role);
-        console.log('[ROOT PAGE] User email:', session.user.email);
-        console.log('[ROOT PAGE] All cookies:', cookieStore.getAll().map(c => c.name));
-        
-        // IMPORTANT: Rediriger selon le rôle DB
-        if (session.user.role === 'client') {
-          console.log('[ROOT PAGE] Redirecting to client dashboard (fallback)');
-          redirect(`/${locale}/client/dashboard`);
-        } else if (session.user.role === 'partner') {
-          console.log('[ROOT PAGE] Redirecting to partner dashboard (fallback)');
-          redirect(`/${locale}/partner/dashboard`);
-        } else if (session.user.role === 'superuser') {
-          console.log('[ROOT PAGE] Redirecting to superuser dashboard (fallback)');
-          redirect(`/${locale}/admin/superuser/dashboard`);
-        } else if (session.user.role === 'executive') {
-          console.log('[ROOT PAGE] Redirecting to executive (fallback)');
-          redirect(`/${locale}/executive`);
-        } else if (['admin', 'manager', 'member'].includes(session.user.role)) {
-          console.log('[ROOT PAGE] Redirecting to dashboard (fallback)');
-          redirect(`/${locale}/dashboard`);
-        }
-        // Si rôle inconnu, rester sur la page publique
-        console.log('[ROOT PAGE] Unknown role, staying on public page');
-      }
-    }
-  }
-  
-  // Utilisateurs non connectés voient la page publique
+  // Utilisateurs connectés et non connectés voient la page publique
   return (
     <>
       {/* Schema.org JSON-LD pour SEO */}

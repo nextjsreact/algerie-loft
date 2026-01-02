@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
         const { detectUserRole } = await import('@/lib/auth/role-detection');
         const actualDbRole = await detectUserRole(data.user.id, data.user.email);
         console.log('✅ Actual DB role detected:', actualDbRole)
+        console.log('📝 Selected role from URL:', selectedRole)
         
         // Créer le cookie login_context
         const { cookies } = await import('next/headers')
@@ -32,6 +33,8 @@ export async function GET(request: NextRequest) {
         
         // Si l'utilisateur est un employé (admin, manager, etc.), il peut choisir son contexte
         const isEmployee = ['admin', 'manager', 'member', 'executive', 'superuser'].includes(actualDbRole);
+        
+        console.log(`🔍 [OAuth Callback] isEmployee=${isEmployee}, actualDbRole=${actualDbRole}, selectedRole=${selectedRole}`)
         
         if (isEmployee) {
           // Un employé peut se connecter comme client, partner ou employee
@@ -50,9 +53,9 @@ export async function GET(request: NextRequest) {
           } else if (actualDbRole === 'partner') {
             loginContext = 'partner';
           } else {
-            loginContext = 'employee'; // Fallback
+            loginContext = 'client'; // Fallback pour les nouveaux utilisateurs
           }
-          console.log(`✅ Non-employee forced to their context: ${loginContext}`);
+          console.log(`✅ Non-employee forced to their context: ${loginContext} (actualDbRole: ${actualDbRole})`);
         }
         
         // Créer le cookie côté serveur
@@ -69,6 +72,8 @@ export async function GET(request: NextRequest) {
         // Rediriger selon le CONTEXTE DE CONNEXION (basé sur le rôle DB)
         const locale = next.replace('/', '') || 'fr'
         const timestamp = Date.now()
+        
+        console.log(`🔄 [OAuth Callback] Redirection logic: loginContext=${loginContext}, actualDbRole=${actualDbRole}, locale=${locale}`)
         
         switch (loginContext) {
           case 'client':
@@ -119,6 +124,7 @@ export async function GET(request: NextRequest) {
             }
           default:
             // Fallback: rediriger selon le rôle DB détecté
+            console.log(`⚠️ [OAuth Callback] Fallback redirection for loginContext=${loginContext}, using actualDbRole=${actualDbRole}`)
             switch (actualDbRole) {
               case 'client':
                 return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
@@ -133,7 +139,9 @@ export async function GET(request: NextRequest) {
               case 'member':
                 return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
               default:
-                return NextResponse.redirect(`${origin}/${locale}/dashboard?t=${timestamp}`)
+                // Si vraiment aucun rôle détecté, rediriger vers client dashboard par défaut
+                console.log(`🚨 [OAuth Callback] No role detected, defaulting to client dashboard`)
+                return NextResponse.redirect(`${origin}/${locale}/client/dashboard?t=${timestamp}`)
             }
         }
       } else {

@@ -1,86 +1,136 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test OAuth Redirect Fix</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        .test-case { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
-        .success { background: #d4edda; border-left: 4px solid #28a745; }
-        .info { background: #d1ecf1; border-left: 4px solid #17a2b8; }
-        .warning { background: #fff3cd; border-left: 4px solid #ffc107; }
-        code { background: #f8f9fa; padding: 2px 4px; border-radius: 3px; }
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <h1>🔧 Test OAuth Redirect Fix</h1>
+    <h1>Test OAuth Redirect Fix</h1>
     
-    <div class="info test-case">
-        <h3>✅ Problème Résolu</h3>
-        <p><strong>Avant :</strong> OAuth redirige vers la page d'accueil au lieu du dashboard</p>
-        <p><strong>Après :</strong> OAuth redirige vers le bon dashboard selon le rôle</p>
+    <div class="test-section info">
+        <h2>Configuration actuelle</h2>
+        <p><strong>URL actuelle:</strong> <span id="currentUrl"></span></p>
+        <p><strong>Environnement:</strong> <span id="environment"></span></p>
     </div>
-
-    <div class="test-case">
-        <h3>🎯 Redirections OAuth Corrigées</h3>
-        <ul>
-            <li><strong>Client :</strong> <code>/client/dashboard</code></li>
-            <li><strong>Partner :</strong> <code>/partner/dashboard</code> (ou pages de statut)</li>
-            <li><strong>Admin/Manager/Member :</strong> <code>/dashboard</code></li>
-            <li><strong>Executive :</strong> <code>/executive</code></li>
-            <li><strong>Superuser :</strong> <code>/admin/superuser/dashboard</code></li>
-        </ul>
+    
+    <div class="test-section">
+        <h2>Test 1: Vérification des URLs de redirection</h2>
+        <div id="urlTest"></div>
     </div>
-
-    <div class="success test-case">
-        <h3>🔄 Logique de Redirection Améliorée</h3>
-        <ol>
-            <li><strong>Détection du rôle DB :</strong> Le système détecte le vrai rôle depuis la base de données</li>
-            <li><strong>Contexte de connexion :</strong> Utilise le paramètre <code>role</code> de l'URL OAuth</li>
-            <li><strong>Redirection intelligente :</strong> Combine rôle DB + contexte choisi</li>
-            <li><strong>Fallback robuste :</strong> Si aucun contexte, utilise le rôle DB directement</li>
-        </ol>
+    
+    <div class="test-section">
+        <h2>Test 2: OAuth avec différents rôles</h2>
+        <button onclick="testOAuth('client')">Test OAuth Client</button>
+        <button onclick="testOAuth('partner')">Test OAuth Partner</button>
+        <button onclick="testOAuth('admin')">Test OAuth Admin</button>
+        <div id="oauthResults"></div>
     </div>
-
-    <div class="test-case">
-        <h3>🧪 Tests à Effectuer</h3>
-        <ol>
-            <li><strong>Connexion OAuth Google :</strong>
-                <ul>
-                    <li>Sélectionnez "Client" → Doit aller vers <code>/client/dashboard</code></li>
-                    <li>Sélectionnez "Partner" → Doit aller vers <code>/partner/dashboard</code></li>
-                    <li>Sélectionnez "Employee" → Doit aller vers le dashboard approprié selon le rôle</li>
-                </ul>
-            </li>
-            <li><strong>Connexion OAuth GitHub :</strong> Même logique que Google</li>
-            <li><strong>Comparaison :</strong> Vérifiez que OAuth et email/password redirigent au même endroit</li>
-        </ol>
+    
+    <div class="test-section">
+        <h2>Test 3: Vérification du middleware</h2>
+        <button onclick="testMiddleware()">Test Middleware</button>
+        <div id="middlewareResults"></div>
     </div>
-
-    <div class="warning test-case">
-        <h3>⚠️ Points d'Attention</h3>
-        <ul>
-            <li><strong>Configuration Supabase :</strong> Assurez-vous que les redirect URLs sont configurées avec <code>loftalgerie.com</code></li>
-            <li><strong>Cookies :</strong> Le cookie <code>login_context</code> est créé correctement</li>
-            <li><strong>Logs :</strong> Vérifiez les logs de la console pour le debug</li>
-        </ul>
-    </div>
-
-    <div class="info test-case">
-        <h3>📝 URLs de Test</h3>
-        <p><strong>Production :</strong> <code>https://loftalgerie.com/login</code></p>
-        <p><strong>Local :</strong> <code>http://localhost:3000/login</code></p>
-    </div>
-
-    <script>
-        console.log('🔧 OAuth Redirect Fix Test Page Loaded');
-        console.log('📋 Test Steps:');
-        console.log('1. Go to login page');
-        console.log('2. Select role (Client/Partner/Employee)');
-        console.log('3. Click OAuth login (Google/GitHub)');
-        console.log('4. Verify redirect to correct dashboard');
-        console.log('5. Compare with email/password login');
+    
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2'
+        
+        const supabaseUrl = 'https://mhngbluefyucoesgcjoy.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1obmdibHVlZnl1Y29lc2djam95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxMzE3MjIsImV4cCI6MjA2MTcwNzcyMn0.buEObYOAzS8eCKZ6tti0gER1Xh1pjmEAMbDJVnX5WDU'
+        
+        const supabase = createClient(supabaseUrl, supabaseKey)
+        
+        // Initialisation
+        document.getElementById('currentUrl').textContent = window.location.origin
+        document.getElementById('environment').textContent = window.location.hostname === 'localhost' ? 'Développement' : 'Production'
+        
+        // Test 1: URLs de redirection
+        const urlTest = document.getElementById('urlTest')
+        const currentOrigin = window.location.origin
+        const expectedUrls = [
+            `${currentOrigin}/api/auth/callback`,
+            'https://loftalgerie.com/api/auth/callback'
+        ]
+        
+        urlTest.innerHTML = '<h3>URLs de redirection attendues:</h3>'
+        expectedUrls.forEach(url => {
+            urlTest.innerHTML += `<p>✓ ${url}</p>`
+        })
+        
+        // Test OAuth function
+        window.testOAuth = async function(role) {
+            const results = document.getElementById('oauthResults')
+            results.innerHTML += `<h3>Test OAuth pour rôle: ${role}</h3>`
+            
+            const redirectUrl = `${currentOrigin}/api/auth/callback?next=/fr&role=${role}`
+            results.innerHTML += `<p><strong>URL de redirection:</strong> ${redirectUrl}</p>`
+            
+            try {
+                results.innerHTML += '<p>🔄 Tentative OAuth Google...</p>'
+                
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: redirectUrl
+                    }
+                })
+                
+                if (error) {
+                    results.innerHTML += `<p style="color: red;">❌ Erreur: ${error.message}</p>`
+                } else {
+                    results.innerHTML += '<p style="color: green;">✅ OAuth initié - redirection en cours...</p>'
+                }
+            } catch (err) {
+                results.innerHTML += `<p style="color: red;">❌ Exception: ${err.message}</p>`
+            }
+        }
+        
+        // Test Middleware function
+        window.testMiddleware = async function() {
+            const results = document.getElementById('middlewareResults')
+            results.innerHTML = '<h3>Test du middleware</h3>'
+            
+            try {
+                // Test 1: Route API auth
+                results.innerHTML += '<p>🔄 Test route /api/auth/callback...</p>'
+                const response1 = await fetch('/api/auth/callback', { method: 'HEAD' })
+                results.innerHTML += `<p>Status: ${response1.status} - ${response1.status === 400 ? '✅ Route accessible' : '❌ Route bloquée'}</p>`
+                
+                // Test 2: Route normale
+                results.innerHTML += '<p>🔄 Test route normale...</p>'
+                const response2 = await fetch('/fr', { method: 'HEAD' })
+                results.innerHTML += `<p>Status: ${response2.status} - ${response2.status === 200 ? '✅ Route normale OK' : '❌ Problème route'}</p>`
+                
+            } catch (err) {
+                results.innerHTML += `<p style="color: red;">❌ Erreur test middleware: ${err.message}</p>`
+            }
+        }
+        
+        // Instructions
+        const instructions = document.createElement('div')
+        instructions.className = 'test-section info'
+        instructions.innerHTML = `
+            <h2>Instructions pour corriger OAuth</h2>
+            <ol>
+                <li><strong>Ajouter dans Supabase Redirect URLs:</strong>
+                    <ul>
+                        <li>http://localhost:3000/api/auth/callback</li>
+                        <li>https://localhost:3000/api/auth/callback (si HTTPS local)</li>
+                    </ul>
+                </li>
+                <li><strong>Vérifier que le middleware exclut /api/auth/</strong></li>
+                <li><strong>Tester OAuth avec les boutons ci-dessus</strong></li>
+                <li><strong>Vérifier les logs du callback dans la console</strong></li>
+            </ol>
+        `
+        document.body.appendChild(instructions)
     </script>
 </body>
 </html>

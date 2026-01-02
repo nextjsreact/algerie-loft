@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test OAuth Production Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test OAuth Production Debug</h1>
+    
+    <div class="test-section info">
+        <h2>Configuration Production Actuelle</h2>
+        <p><strong>Domaine:</strong> https://loftalgerie.com</p>
+        <p><strong>Environment:</strong> Production (Vercel)</p>
+        <p><strong>Callback URL configuré:</strong> https://loftalgerie.com/api/auth/callback</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>🧪 Test OAuth avec logs détaillés</h2>
+        <p>Cliquez sur un bouton pour tester OAuth. Regardez la console pour les logs.</p>
+        
+        <button onclick="testOAuthDetailed('google', 'client')">🔵 Google - Client</button>
+        <button onclick="testOAuthDetailed('google', 'partner')">🔵 Google - Partner</button>
+        <button onclick="testOAuthDetailed('google', 'admin')">🔵 Google - Admin</button>
+        <br><br>
+        <button onclick="testOAuthDetailed('github', 'client')">⚫ GitHub - Client</button>
+        <button onclick="testOAuthDetailed('github', 'partner')">⚫ GitHub - Partner</button>
+        <button onclick="testOAuthDetailed('github', 'admin')">⚫ GitHub - Admin</button>
+        
+        <div id="oauthResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔧 Diagnostic de configuration</h2>
+        <button onclick="runDiagnostic()">Lancer le diagnostic</button>
+        <div id="diagnosticResults"></div>
+    </div>
+    
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2'
+        
+        const supabaseUrl = 'https://mhngbluefyucoesgcjoy.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1obmdibHVlZnl1Y29lc2djam95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxMzE3MjIsImV4cCI6MjA2MTcwNzcyMn0.buEObYOAzS8eCKZ6tti0gER1Xh1pjmEAMbDJVnX5WDU'
+        
+        const supabase = createClient(supabaseUrl, supabaseKey)
+        
+        window.testOAuthDetailed = async function(provider, role) {
+            const results = document.getElementById('oauthResults')
+            const timestamp = new Date().toLocaleTimeString()
+            
+            results.innerHTML += `<div class="test-section">
+                <h3>🚀 Test ${provider.toUpperCase()} - ${role} (${timestamp})</h3>
+            `
+            
+            // Construction de l'URL de redirection
+            const baseUrl = 'https://loftalgerie.com'
+            const callbackUrl = `${baseUrl}/api/auth/callback`
+            const fullRedirectUrl = `${callbackUrl}?next=/fr&role=${role}`
+            
+            console.log(`🔄 [OAuth Test] Provider: ${provider}, Role: ${role}`)
+            console.log(`🔄 [OAuth Test] Callback URL: ${callbackUrl}`)
+            console.log(`🔄 [OAuth Test] Full redirect URL: ${fullRedirectUrl}`)
+            
+            results.innerHTML += `<p><strong>URL de redirection:</strong> <code>${fullRedirectUrl}</code></p>`
+            
+            try {
+                results.innerHTML += '<p>🔄 Initiation OAuth...</p>'
+                
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: provider,
+                    options: {
+                        redirectTo: fullRedirectUrl,
+                        queryParams: {
+                            access_type: 'offline',
+                            prompt: 'consent'
+                        }
+                    }
+                })
+                
+                if (error) {
+                    console.error(`❌ [OAuth Error]`, error)
+                    results.innerHTML += `<p style="color: red;">❌ <strong>Erreur:</strong> ${error.message}</p>`
+                    results.innerHTML += `<pre>${JSON.stringify(error, null, 2)}</pre>`
+                } else {
+                    console.log(`✅ [OAuth Success]`, data)
+                    results.innerHTML += '<p style="color: green;">✅ <strong>OAuth initié avec succès!</strong></p>'
+                    results.innerHTML += '<p>🔄 Redirection vers le provider en cours...</p>'
+                    results.innerHTML += `<p><em>Vous devriez être redirigé vers ${provider} puis vers votre callback.</em></p>`
+                }
+            } catch (err) {
+                console.error(`❌ [OAuth Exception]`, err)
+                results.innerHTML += `<p style="color: red;">❌ <strong>Exception:</strong> ${err.message}</p>`
+            }
+            
+            results.innerHTML += '</div>'
+        }
+        
+        window.runDiagnostic = async function() {
+            const results = document.getElementById('diagnosticResults')
+            results.innerHTML = '<h3>🔍 Diagnostic en cours...</h3>'
+            
+            // Test 1: Vérifier l'accès au callback
+            try {
+                results.innerHTML += '<p>🔄 Test 1: Vérification de l\'accès au callback...</p>'
+                const response = await fetch('/api/auth/callback', { 
+                    method: 'GET',
+                    redirect: 'manual'
+                })
+                results.innerHTML += `<p>Status callback: ${response.status} ${response.statusText}</p>`
+                
+                if (response.status === 400) {
+                    results.innerHTML += '<p style="color: green;">✅ Route callback accessible (erreur 400 normale sans code OAuth)</p>'
+                } else {
+                    results.innerHTML += `<p style="color: orange;">⚠️ Status inattendu: ${response.status}</p>`
+                }
+            } catch (err) {
+                results.innerHTML += `<p style="color: red;">❌ Erreur accès callback: ${err.message}</p>`
+            }
+            
+            // Test 2: Vérifier la session actuelle
+            try {
+                results.innerHTML += '<p>🔄 Test 2: Vérification de la session...</p>'
+                const { data: { session }, error } = await supabase.auth.getSession()
+                
+                if (session) {
+                    results.innerHTML += '<p style="color: green;">✅ Session active trouvée</p>'
+                    results.innerHTML += `<p>Utilisateur: ${session.user.email}</p>`
+                } else {
+                    results.innerHTML += '<p style="color: blue;">ℹ️ Aucune session active (normal si pas connecté)</p>'
+                }
+                
+                if (error) {
+                    results.innerHTML += `<p style="color: red;">❌ Erreur session: ${error.message}</p>`
+                }
+            } catch (err) {
+                results.innerHTML += `<p style="color: red;">❌ Exception session: ${err.message}</p>`
+            }
+            
+            // Test 3: Configuration URLs
+            results.innerHTML += '<h4>📋 Configuration URLs Supabase</h4>'
+            results.innerHTML += '<p><strong>URLs configurées dans Supabase:</strong></p>'
+            results.innerHTML += '<ul>'
+            results.innerHTML += '<li>✅ https://loftalgerie.com/api/auth/callback</li>'
+            results.innerHTML += '<li>✅ https://loftalgerie.com/auth/reset-password</li>'
+            results.innerHTML += '</ul>'
+            
+            results.innerHTML += '<p><strong>Site URL:</strong> https://loftalgerie.com</p>'
+            
+            // Recommandations
+            results.innerHTML += '<h4>💡 Recommandations</h4>'
+            results.innerHTML += '<div class="info">'
+            results.innerHTML += '<p><strong>Si OAuth redirige vers la page principale au lieu du dashboard:</strong></p>'
+            results.innerHTML += '<ol>'
+            results.innerHTML += '<li>Vérifiez que le callback /api/auth/callback fonctionne</li>'
+            results.innerHTML += '<li>Regardez les logs Vercel pour voir si le callback est appelé</li>'
+            results.innerHTML += '<li>Vérifiez que le middleware n\'interfère pas</li>'
+            results.innerHTML += '<li>Testez avec les boutons ci-dessus</li>'
+            results.innerHTML += '</ol>'
+            results.innerHTML += '</div>'
+        }
+        
+        // Auto-run diagnostic on load
+        setTimeout(() => {
+            runDiagnostic()
+        }, 1000)
+    </script>
+</body>
+</html>

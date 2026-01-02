@@ -1,272 +1,93 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test OAuth Debug - Diagnostic Réel</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; }
-        .step { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #007bff; }
-        .error { background: #f8d7da; border-left-color: #dc3545; }
-        .success { background: #d4edda; border-left-color: #28a745; }
-        .warning { background: #fff3cd; border-left-color: #ffc107; }
-        .code { background: #e9ecef; padding: 10px; border-radius: 4px; font-family: monospace; margin: 10px 0; white-space: pre-wrap; }
-        .btn { display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; margin: 5px; }
-        .btn:hover { background: #0056b3; }
-        #results { margin-top: 20px; }
-    </style>
+    <title>Test OAuth Debug - Real</title>
 </head>
 <body>
-    <h1>🔍 Diagnostic OAuth Réel - Étape par Étape</h1>
+    <h1>Test OAuth Debug - Configuration Réelle</h1>
     
-    <div class="error step">
-        <h3>❌ Problème Persistant</h3>
-        <p>OAuth continue de rediriger vers la page d'accueil au lieu du dashboard</p>
-        <p><strong>Diagnostic nécessaire :</strong> Vérifier chaque étape du flux OAuth</p>
-    </div>
-
-    <div class="step">
-        <h3>🔍 Étape 1: Vérifier la Configuration Supabase</h3>
-        <p>Vérifiez dans Supabase Dashboard → Authentication → URL Configuration :</p>
-        <div class="code">Site URL: https://loftalgerie.com
-Redirect URLs:
-- https://loftalgerie.com/fr/auth/callback
-- https://loftalgerie.com/en/auth/callback
-- https://loftalgerie.com/ar/auth/callback</div>
-        <button class="btn" onclick="checkSupabaseConfig()">Vérifier Config Supabase</button>
-    </div>
-
-    <div class="step">
-        <h3>🔍 Étape 2: Tester l'URL de Redirection OAuth</h3>
-        <p>Simuler le clic OAuth pour voir l'URL générée :</p>
-        <button class="btn" onclick="testOAuthURL()">Tester URL OAuth</button>
-        <div id="oauth-url-result"></div>
-    </div>
-
-    <div class="step">
-        <h3>🔍 Étape 3: Vérifier les Cookies</h3>
-        <p>Vérifier si les cookies sont créés correctement :</p>
-        <button class="btn" onclick="checkCookies()">Vérifier Cookies</button>
-        <div id="cookies-result"></div>
-    </div>
-
-    <div class="step">
-        <h3>🔍 Étape 4: Tester la Session Supabase</h3>
-        <p>Vérifier si la session Supabase est active :</p>
-        <button class="btn" onclick="checkSupabaseSession()">Vérifier Session</button>
-        <div id="session-result"></div>
-    </div>
-
-    <div class="step">
-        <h3>🔍 Étape 5: Diagnostic Complet</h3>
-        <p>Exécuter tous les tests en une fois :</p>
-        <button class="btn" onclick="runFullDiagnostic()">Diagnostic Complet</button>
-        <div id="full-diagnostic-result"></div>
-    </div>
-
-    <div class="warning step">
-        <h3>⚠️ Actions Correctives Possibles</h3>
-        <div id="corrective-actions">
-            <p>Les actions correctives apparaîtront ici après le diagnostic...</p>
-        </div>
-    </div>
-
     <div id="results"></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // Configuration Supabase
-        const supabaseUrl = 'https://mhngbluefyucoesgcjoy.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1obmdibHVlZnl1Y29lc2djam95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxMzE3MjIsImV4cCI6MjA2MTcwNzcyMn0.buEObYOAzS8eCKZ6tti0gER1Xh1pjmEAMbDJVnX5WDU';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-        function log(message, type = 'info') {
-            const results = document.getElementById('results');
-            const div = document.createElement('div');
-            div.className = `step ${type}`;
-            div.innerHTML = `<p><strong>${new Date().toLocaleTimeString()}</strong>: ${message}</p>`;
-            results.appendChild(div);
-            console.log(`[${type.toUpperCase()}] ${message}`);
-        }
-
-        function checkSupabaseConfig() {
-            log('🔍 Vérification de la configuration Supabase...', 'info');
-            
-            const currentDomain = window.location.hostname;
-            const expectedDomain = 'loftalgerie.com';
-            
-            if (currentDomain === expectedDomain) {
-                log('✅ Domaine correct: ' + currentDomain, 'success');
-            } else {
-                log('⚠️ Domaine actuel: ' + currentDomain + ' (attendu: ' + expectedDomain + ')', 'warning');
-            }
-            
-            // Vérifier l'URL Supabase
-            log('📍 URL Supabase: ' + supabaseUrl, 'info');
-            log('🔑 Clé Supabase: ' + supabaseKey.substring(0, 20) + '...', 'info');
-            
-            document.getElementById('oauth-url-result').innerHTML = `
-                <div class="code">Domaine actuel: ${currentDomain}
-URL Supabase: ${supabaseUrl}
-Status: ${currentDomain === expectedDomain ? '✅ OK' : '⚠️ Vérifier'}</div>
-            `;
-        }
-
-        function testOAuthURL() {
-            log('🔍 Test de l\'URL OAuth...', 'info');
-            
-            const locale = 'fr';
-            const role = 'client';
-            const expectedURL = `${window.location.origin}/${locale}/auth/callback?role=${role}`;
-            
-            log('📍 URL de redirection attendue: ' + expectedURL, 'info');
-            
-            // Simuler la génération d'URL OAuth
-            const oauthParams = new URLSearchParams({
-                response_type: 'code',
-                client_id: 'google-client-id',
-                redirect_uri: expectedURL,
-                scope: 'openid email profile'
-            });
-            
-            const simulatedOAuthURL = `https://accounts.google.com/oauth/authorize?${oauthParams}`;
-            
-            document.getElementById('oauth-url-result').innerHTML = `
-                <div class="code">URL de callback générée: ${expectedURL}
-URL OAuth simulée: ${simulatedOAuthURL}</div>
-            `;
-            
-            log('✅ URL OAuth générée avec succès', 'success');
-        }
-
-        function checkCookies() {
-            log('🔍 Vérification des cookies...', 'info');
-            
-            const cookies = document.cookie.split(';').map(c => c.trim());
-            const authCookies = cookies.filter(c => c.includes('sb-') || c.includes('login_context'));
-            
-            log('🍪 Cookies trouvés: ' + cookies.length, 'info');
-            log('🔐 Cookies d\'auth: ' + authCookies.length, 'info');
-            
-            const loginContext = cookies.find(c => c.startsWith('login_context='));
-            
-            let result = `<div class="code">Tous les cookies (${cookies.length}):
-${cookies.join('\n')}
-
-Cookies d'authentification (${authCookies.length}):
-${authCookies.join('\n')}
-
-Login Context: ${loginContext || 'Non trouvé'}</div>`;
-            
-            document.getElementById('cookies-result').innerHTML = result;
-            
-            if (loginContext) {
-                log('✅ Cookie login_context trouvé: ' + loginContext, 'success');
-            } else {
-                log('❌ Cookie login_context manquant', 'error');
-            }
-        }
-
-        async function checkSupabaseSession() {
-            log('🔍 Vérification de la session Supabase...', 'info');
-            
+    
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2'
+        
+        const supabaseUrl = 'https://mhngbluefyucoesgcjoy.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1obmdibHVlZnl1Y29lc2djam95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYxMzE3MjIsImV4cCI6MjA2MTcwNzcyMn0.buEObYOAzS8eCKZ6tti0gER1Xh1pjmEAMbDJVnX5WDU'
+        
+        const supabase = createClient(supabaseUrl, supabaseKey)
+        
+        const results = document.getElementById('results')
+        
+        // Test 1: Vérifier la configuration OAuth actuelle
+        results.innerHTML += '<h2>Test 1: Configuration OAuth</h2>'
+        
+        const currentUrl = window.location.origin
+        const testRedirectUrl = `${currentUrl}/api/auth/callback?next=/fr&role=client`
+        
+        results.innerHTML += `<p><strong>URL de redirection testée:</strong> ${testRedirectUrl}</p>`
+        
+        // Test 2: Simuler OAuth Google
+        const googleButton = document.createElement('button')
+        googleButton.textContent = 'Test OAuth Google'
+        googleButton.onclick = async () => {
             try {
-                const { data: { session }, error } = await supabase.auth.getSession();
+                results.innerHTML += '<p>🔄 Tentative OAuth Google...</p>'
+                
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: testRedirectUrl
+                    }
+                })
                 
                 if (error) {
-                    log('❌ Erreur session: ' + error.message, 'error');
-                    document.getElementById('session-result').innerHTML = `
-                        <div class="code error">Erreur: ${error.message}</div>
-                    `;
-                    return;
-                }
-                
-                if (session) {
-                    log('✅ Session active pour: ' + session.user.email, 'success');
-                    
-                    // Vérifier le rôle
-                    const userRole = session.user.user_metadata?.role || 'Non défini';
-                    log('👤 Rôle utilisateur: ' + userRole, 'info');
-                    
-                    document.getElementById('session-result').innerHTML = `
-                        <div class="code success">✅ Session active
-Email: ${session.user.email}
-ID: ${session.user.id}
-Rôle: ${userRole}
-Créée: ${new Date(session.user.created_at).toLocaleString()}
-Expire: ${new Date(session.expires_at * 1000).toLocaleString()}</div>
-                    `;
+                    results.innerHTML += `<p style="color: red;">❌ Erreur OAuth: ${error.message}</p>`
                 } else {
-                    log('❌ Aucune session active', 'error');
-                    document.getElementById('session-result').innerHTML = `
-                        <div class="code error">❌ Aucune session Supabase active</div>
-                    `;
+                    results.innerHTML += '<p style="color: green;">✅ OAuth initié avec succès</p>'
+                    results.innerHTML += `<p>URL de redirection configurée: ${testRedirectUrl}</p>`
                 }
             } catch (err) {
-                log('❌ Exception session: ' + err.message, 'error');
-                document.getElementById('session-result').innerHTML = `
-                    <div class="code error">Exception: ${err.message}</div>
-                `;
+                results.innerHTML += `<p style="color: red;">❌ Exception: ${err.message}</p>`
             }
         }
-
-        async function runFullDiagnostic() {
-            log('🚀 Démarrage du diagnostic complet...', 'info');
-            
-            // Nettoyer les résultats précédents
-            document.getElementById('results').innerHTML = '';
-            
-            // Exécuter tous les tests
-            checkSupabaseConfig();
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            testOAuthURL();
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            checkCookies();
-            await new Promise(resolve => setTimeout(resolve, 500));
-            
-            await checkSupabaseSession();
-            
-            // Générer les actions correctives
-            generateCorrectiveActions();
-            
-            log('✅ Diagnostic complet terminé', 'success');
+        
+        // Test 3: Simuler OAuth GitHub
+        const githubButton = document.createElement('button')
+        githubButton.textContent = 'Test OAuth GitHub'
+        githubButton.onclick = async () => {
+            try {
+                results.innerHTML += '<p>🔄 Tentative OAuth GitHub...</p>'
+                
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'github',
+                    options: {
+                        redirectTo: testRedirectUrl
+                    }
+                })
+                
+                if (error) {
+                    results.innerHTML += `<p style="color: red;">❌ Erreur OAuth: ${error.message}</p>`
+                } else {
+                    results.innerHTML += '<p style="color: green;">✅ OAuth initié avec succès</p>'
+                    results.innerHTML += `<p>URL de redirection configurée: ${testRedirectUrl}</p>`
+                }
+            } catch (err) {
+                results.innerHTML += `<p style="color: red;">❌ Exception: ${err.message}</p>`
+            }
         }
-
-        function generateCorrectiveActions() {
-            const currentDomain = window.location.hostname;
-            const hasSession = document.getElementById('session-result').innerHTML.includes('✅ Session active');
-            const hasLoginContext = document.cookie.includes('login_context=');
-            
-            let actions = '<h4>🔧 Actions Correctives Recommandées:</h4><ul>';
-            
-            if (currentDomain !== 'loftalgerie.com') {
-                actions += '<li><strong>Domaine:</strong> Testez sur https://loftalgerie.com au lieu de ' + currentDomain + '</li>';
-            }
-            
-            if (!hasSession) {
-                actions += '<li><strong>Session:</strong> Connectez-vous d\'abord avec email/password pour tester</li>';
-            }
-            
-            if (!hasLoginContext) {
-                actions += '<li><strong>Cookie:</strong> Le cookie login_context n\'est pas créé - problème dans le callback</li>';
-            }
-            
-            actions += '<li><strong>Supabase:</strong> Vérifiez que les Redirect URLs sont configurées dans Supabase Dashboard</li>';
-            actions += '<li><strong>Logs:</strong> Vérifiez les logs de la console lors du test OAuth</li>';
-            actions += '<li><strong>Network:</strong> Vérifiez l\'onglet Network des DevTools pour voir les redirections</li>';
-            actions += '</ul>';
-            
-            document.getElementById('corrective-actions').innerHTML = actions;
-        }
-
-        // Auto-run au chargement de la page
-        window.onload = function() {
-            log('🔍 Page de diagnostic chargée', 'info');
-            log('📍 URL actuelle: ' + window.location.href, 'info');
-            log('🌐 Domaine: ' + window.location.hostname, 'info');
-        };
+        
+        results.appendChild(googleButton)
+        results.appendChild(githubButton)
+        
+        // Afficher les URLs de redirection configurées dans Supabase
+        results.innerHTML += '<h2>URLs de redirection Supabase</h2>'
+        results.innerHTML += '<p>Selon votre capture d\'écran:</p>'
+        results.innerHTML += '<ul>'
+        results.innerHTML += '<li>https://loftalgerie.com/api/auth/callback</li>'
+        results.innerHTML += '<li>https://loftalgerie.com/auth/reset-password</li>'
+        results.innerHTML += '</ul>'
+        results.innerHTML += '<p><strong>Problème potentiel:</strong> Manque localhost pour le développement</p>'
+        
     </script>
 </body>
 </html>

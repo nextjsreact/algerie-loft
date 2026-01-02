@@ -6,6 +6,9 @@ import { MemberDashboard } from "./member-dashboard"
 import SimpleDashboard from "./dashboard-simple"
 import { AdminManagementDashboard } from "../admin/admin-management-dashboard"
 import { SmartDashboard } from "./smart-dashboard"
+import { AppSidebar } from "@/components/app-sidebar"
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import { Separator } from "@/components/ui/separator"
 import type { AuthSession } from "@/lib/types"
 
 // Separate components for each role to ensure stable hook usage
@@ -184,5 +187,25 @@ export function DashboardClientWrapper() {
     return <SimpleDashboard />
   }
 
-  return <DashboardComponent />
+  // Wrap with SidebarProvider and AppSidebar for proper layout
+  return (
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full">
+        <AppSidebar />
+        <SidebarInset>
+          {/* Mobile header with trigger button */}
+          <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4 md:hidden">
+            <SidebarTrigger />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <h1 className="text-lg font-semibold">Dashboard</h1>
+          </header>
+          
+          {/* Main content */}
+          <main className="flex-1">
+            <DashboardComponent />
+          </main>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
+  )
 }

@@ -5,9 +5,8 @@ import { getSession } from "@/lib/auth"
 import type { AuthSession } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { AppSidebar } from "@/components/app-sidebar"
+import { Sidebar } from "@/components/layout/sidebar-nextintl"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
-import { Separator } from "@/components/ui/separator"
 import { 
   Building2, 
   Calendar, 
@@ -354,25 +353,26 @@ export function HomePageClient() {
     )
   }
 
-  // Wrap with SidebarProvider and AppSidebar for proper layout (same as dashboard)
+  // Wrap with traditional layout (same as main app layout)
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full">
-        <AppSidebar />
-        <SidebarInset>
-          {/* Mobile header with trigger button */}
-          <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4 md:hidden">
-            <SidebarTrigger />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <h1 className="text-lg font-semibold">Accueil</h1>
-          </header>
-          
-          {/* Main content */}
-          <main className="flex-1">
-            <HomePageContent session={session} />
-          </main>
-        </SidebarInset>
+    <div className="flex min-h-screen w-full">
+      <div className="hidden md:flex md:w-72 md:flex-shrink-0 md:z-10">
+        <Sidebar user={session.user} unreadCount={0} />
       </div>
-    </SidebarProvider>
+      <div className="flex flex-1 flex-col min-w-0 relative">
+        {/* Mobile header - always shows burger menu */}
+        <header className="flex h-16 items-center justify-between bg-gray-900 px-4 md:hidden z-50">
+          <div className="flex items-center gap-2">
+            <Home className="h-6 w-6 text-white" />
+            <span className="text-lg font-semibold text-white">Accueil</span>
+          </div>
+        </header>
+        
+        {/* Main content */}
+        <main className="flex-1 overflow-y-auto relative z-0 px-6 pb-6 pt-6 md:px-8 md:pb-8">
+          <HomePageContent session={session} />
+        </main>
+      </div>
+    </div>
   )
 }

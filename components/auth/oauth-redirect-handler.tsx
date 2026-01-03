@@ -78,7 +78,7 @@ export function OAuthRedirectHandler({ locale }: OAuthRedirectHandlerProps) {
               } else if (userRole === 'executive') {
                 redirectPath = `/${locale}/executive`
               } else if (['admin', 'manager', 'member', 'superuser'].includes(userRole)) {
-                redirectPath = `/${locale}/dashboard`
+                redirectPath = `/${locale}/home`
               }
               
               console.log('🚀 [OAuth Handler] Redirecting to:', redirectPath)

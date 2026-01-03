@@ -427,13 +427,13 @@ export function SimpleLoginFormNextIntl() {
                         document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
                       }
                       
-                      // ÉTAPE 3: OAuth avec redirection vers une page de traitement
+                      // ÉTAPE 3: OAuth avec redirection directe vers /home
                       console.log('🔄 OAuth Google - Initiation avec contexte:', loginContext)
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'google',
                         options: {
-                          // Rediriger vers une page spéciale qui reproduit le flux email/password
-                          redirectTo: `${window.location.origin}/${locale}/auth/oauth-success?context=${loginContext}`
+                          // Rediriger directement vers /home au lieu de oauth-success
+                          redirectTo: `${window.location.origin}/${locale}/home`
                         }
                       })
                       if (error) {
@@ -515,13 +515,13 @@ export function SimpleLoginFormNextIntl() {
                         document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
                       }
                       
-                      // ÉTAPE 3: OAuth avec redirection vers une page de traitement
+                      // ÉTAPE 3: OAuth avec redirection directe vers /home
                       console.log('🔄 OAuth GitHub - Initiation avec contexte:', loginContext)
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'github',
                         options: {
-                          // Rediriger vers une page spéciale qui reproduit le flux email/password
-                          redirectTo: `${window.location.origin}/${locale}/auth/oauth-success?context=${loginContext}`
+                          // Rediriger directement vers /home au lieu de oauth-success
+                          redirectTo: `${window.location.origin}/${locale}/home`
                         }
                       })
                       if (error) {

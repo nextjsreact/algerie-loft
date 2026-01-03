@@ -6,7 +6,8 @@ import type { AuthSession } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Sidebar } from "@/components/layout/sidebar-nextintl"
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import { DesktopHeader } from "@/components/layout/desktop-header"
+import { MobileHeader } from "@/components/layout/mobile-header"
 import { 
   Building2, 
   Calendar, 
@@ -360,16 +361,19 @@ export function HomePageClient() {
         <Sidebar user={session.user} unreadCount={0} />
       </div>
       <div className="flex flex-1 flex-col min-w-0 relative">
+        {/* Desktop header - always visible on desktop */}
+        <div className="hidden md:block fixed top-0 right-0 left-0 z-20 md:left-72">
+          <DesktopHeader />
+        </div>
+        
         {/* Mobile header - always shows burger menu */}
-        <header className="flex h-16 items-center justify-between bg-gray-900 px-4 md:hidden z-50">
-          <div className="flex items-center gap-2">
-            <Home className="h-6 w-6 text-white" />
-            <span className="text-lg font-semibold text-white">Accueil</span>
-          </div>
-        </header>
+        <MobileHeader 
+          user={session.user} 
+          showLogo={false} 
+        />
         
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto relative z-0 px-6 pb-6 pt-6 md:px-8 md:pb-8">
+        <main className="flex-1 overflow-y-auto relative z-0 px-6 pb-6 pt-28 md:px-8 md:pb-8 md:pt-36 lg:px-12 lg:pb-12">
           <HomePageContent session={session} />
         </main>
       </div>

@@ -35,6 +35,7 @@ interface ClientProvidersProps {
 export default function ClientProviders({ children, session, unreadCount, locale, messages, hideSidebar = false }: ClientProvidersProps) {
   const pathname = usePathname()
   const [renderKey, setRenderKey] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
   
   // Use custom hook for sidebar visibility logic
   const { shouldHideSidebar, isAuthPage, isPublicPage } = useSidebarVisibility({
@@ -52,6 +53,15 @@ export default function ClientProviders({ children, session, unreadCount, locale
     debug: false // Set to true for debugging
   });
   
+  // Wait a bit for session to load (especially for OAuth)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 1000) // Wait 1 second for session to stabilize
+    
+    return () => clearTimeout(timer)
+  }, [])
+  
   // Debug logs
   useEffect(() => {
     console.log('[ClientProviders] Debug:', {
@@ -59,14 +69,34 @@ export default function ClientProviders({ children, session, unreadCount, locale
       pathname,
       shouldHideSidebar,
       isAuthPage,
-      isPublicPage
+      isPublicPage,
+      isLoading,
+      hasSession: !!session
     })
-  }, [session?.user?.role, pathname, shouldHideSidebar, isAuthPage, isPublicPage])
+  }, [session?.user?.role, pathname, shouldHideSidebar, isAuthPage, isPublicPage, isLoading])
   
   // Force re-render when pathname or user role changes
   useEffect(() => {
     setRenderKey(prev => prev + 1)
   }, [pathname, session?.user?.role, shouldHideSidebar])
+
+   // Show loading state while waiting for session
+   if (isLoading) {
+     return (
+       <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos">
+         <ThemeProvider
+           attribute="class"
+           defaultTheme="system"
+           enableSystem
+           disableTransitionOnChange
+         >
+           <div className="flex items-center justify-center min-h-screen">
+             <div className="text-lg">Chargement...</div>
+           </div>
+         </ThemeProvider>
+       </NextIntlClientProvider>
+     )
+   }
 
    return (
      <>

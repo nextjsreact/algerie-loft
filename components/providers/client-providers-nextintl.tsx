@@ -53,14 +53,25 @@ export default function ClientProviders({ children, session, unreadCount, locale
     debug: false // Set to true for debugging
   });
   
-  // Wait a bit for session to load (especially for OAuth)
+  // Wait for session to load properly (especially for OAuth)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 1000) // Wait 1 second for session to stabilize
+    let timer: NodeJS.Timeout
     
-    return () => clearTimeout(timer)
-  }, [])
+    // If we already have a session, no need to wait
+    if (session?.user?.id) {
+      setIsLoading(false)
+      return
+    }
+    
+    // Otherwise wait up to 3 seconds for session to load
+    timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 3000)
+    
+    return () => {
+      if (timer) clearTimeout(timer)
+    }
+  }, [session?.user?.id])
   
   // Debug logs
   useEffect(() => {

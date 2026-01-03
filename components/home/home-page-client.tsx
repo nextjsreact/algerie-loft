@@ -6,8 +6,6 @@ import type { AuthSession } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { AppSidebar } from "@/components/app-sidebar"
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
-import { Separator } from "@/components/ui/separator"
 import { 
   Building2, 
   Calendar, 
@@ -354,25 +352,10 @@ export function HomePageClient() {
     )
   }
 
-  // Wrap with SidebarProvider and AppSidebar for proper layout (same as dashboard)
+  // Use main layout sidebar instead of own sidebar - let ClientProviders handle it
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full">
-        <AppSidebar />
-        <SidebarInset>
-          {/* Mobile header with trigger button */}
-          <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4 md:hidden">
-            <SidebarTrigger />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <h1 className="text-lg font-semibold">Accueil</h1>
-          </header>
-          
-          {/* Main content */}
-          <main className="flex-1">
-            <HomePageContent session={session} />
-          </main>
-        </SidebarInset>
-      </div>
-    </SidebarProvider>
+    <div className="min-h-screen">
+      <HomePageContent session={session} />
+    </div>
   )
 }

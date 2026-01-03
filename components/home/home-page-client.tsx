@@ -226,16 +226,16 @@ function HomePageContent({ session }: { session: AuthSession }) {
   const quickAccess = session ? getQuickAccessItems(session.user.role) : []
 
   return (
-    <div className="space-y-8 p-6 bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+    <div className="space-y-8 p-4 md:p-6 lg:p-8 bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
       {/* Header */}
       <div className="space-y-2">
         <div className="flex items-center gap-3">
           <Home className="h-8 w-8 text-blue-600" />
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             {t('title')}
           </h1>
         </div>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-base md:text-lg text-muted-foreground">
           {t('description')}
         </p>
         
@@ -254,21 +254,21 @@ function HomePageContent({ session }: { session: AuthSession }) {
       <div className="space-y-6">
         <div>
           <div className="mb-4">
-            <h2 className="text-2xl font-bold text-gray-800">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-800">
               {t('availableSections')}
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
             {mainSections.map((section, index) => (
               <Link key={index} href={section.href}>
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group">
-                  <CardContent className="p-6">
+                <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group h-full">
+                  <CardContent className="p-4 md:p-6 h-full flex flex-col">
                     <div className={`w-12 h-12 bg-gradient-to-r ${section.color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                       <section.icon className="h-6 w-6 text-white" />
                     </div>
-                    <h3 className="font-bold text-gray-900 mb-2">{section.title}</h3>
-                    <p className="text-sm text-gray-600 mb-3">{section.description}</p>
-                    <div className="flex items-center text-blue-600 text-sm font-medium group-hover:text-blue-700">
+                    <h3 className="font-bold text-gray-900 mb-2 text-sm md:text-base">{section.title}</h3>
+                    <p className="text-xs md:text-sm text-gray-600 mb-3 flex-1">{section.description}</p>
+                    <div className="flex items-center text-blue-600 text-xs md:text-sm font-medium group-hover:text-blue-700">
                       {t('access')} <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </CardContent>
@@ -280,21 +280,21 @@ function HomePageContent({ session }: { session: AuthSession }) {
 
         {/* Quick Access */}
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">{t('quickAccess.title')}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-4">{t('quickAccess.title')}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
             {quickAccess.map((item, index) => (
               <Link key={index} href={item.href}>
                 <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group bg-white/80 backdrop-blur-sm">
-                  <CardContent className="p-4">
+                  <CardContent className="p-3 md:p-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-gray-100 to-gray-200 rounded-lg flex items-center justify-center group-hover:from-blue-100 group-hover:to-blue-200 transition-colors">
-                        <item.icon className="h-5 w-5 text-gray-600 group-hover:text-blue-600" />
+                      <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-gray-100 to-gray-200 rounded-lg flex items-center justify-center group-hover:from-blue-100 group-hover:to-blue-200 transition-colors flex-shrink-0">
+                        <item.icon className="h-4 w-4 md:h-5 md:w-5 text-gray-600 group-hover:text-blue-600" />
                       </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 text-sm">{item.title}</h3>
-                        <p className="text-xs text-gray-600">{item.description}</p>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 text-xs md:text-sm truncate">{item.title}</h3>
+                        <p className="text-xs text-gray-600 truncate">{item.description}</p>
                       </div>
-                      <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
+                      <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all flex-shrink-0" />
                     </div>
                   </CardContent>
                 </Card>

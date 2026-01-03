@@ -5,6 +5,9 @@ import { getSession } from "@/lib/auth"
 import type { AuthSession } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { AppSidebar } from "@/components/app-sidebar"
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import { Separator } from "@/components/ui/separator"
 import { 
   Building2, 
   Calendar, 
@@ -29,43 +32,9 @@ import {
 import Link from "next/link"
 import { useTranslations, useLocale } from "next-intl"
 
-export function HomePageClient() {
-  const [session, setSession] = useState<AuthSession | null>(null)
-  const [loading, setLoading] = useState(true)
+function HomePageContent({ session }: { session: AuthSession }) {
   const t = useTranslations('dashboard')
   const locale = useLocale()
-
-  useEffect(() => {
-    async function fetchSession() {
-      try {
-        const sessionData = await getSession()
-        setSession(sessionData)
-      } catch (error) {
-        console.error('Failed to fetch session:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchSession()
-  }, [])
-
-
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Chargement de la page d'accueil...</div>
-      </div>
-    )
-  }
-
-  if (!session) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Veuillez vous connecter pour accéder à la page d'accueil.</div>
-      </div>
-    )
-  }
 
   // Sections communes pour Admin, Manager et Member uniquement
   const commonSections = [
@@ -348,5 +317,62 @@ export function HomePageClient() {
         </Card>
       </div>
     </div>
+  )
+}
+
+export function HomePageClient() {
+  const [session, setSession] = useState<AuthSession | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchSession() {
+      try {
+        const sessionData = await getSession()
+        setSession(sessionData)
+      } catch (error) {
+        console.error('Failed to fetch session:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchSession()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Chargement de la page d'accueil...</div>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Veuillez vous connecter pour accéder à la page d'accueil.</div>
+      </div>
+    )
+  }
+
+  // Wrap with SidebarProvider and AppSidebar for proper layout (same as dashboard)
+  return (
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full">
+        <AppSidebar />
+        <SidebarInset>
+          {/* Mobile header with trigger button */}
+          <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4 md:hidden">
+            <SidebarTrigger />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <h1 className="text-lg font-semibold">Accueil</h1>
+          </header>
+          
+          {/* Main content */}
+          <main className="flex-1">
+            <HomePageContent session={session} />
+          </main>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   )
 }

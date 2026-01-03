@@ -68,6 +68,13 @@ export function OAuthRedirectHandler({ locale }: OAuthRedirectHandlerProps) {
                 console.log('🍪 [OAuth Handler] Login context from cookie:', loginContext)
               }
               
+              // Si c'est un employé, forcer le contexte employee
+              if (['admin', 'manager', 'member', 'executive', 'superuser'].includes(userRole)) {
+                loginContext = 'employee'
+                document.cookie = `login_context=employee; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+                console.log('🍪 [OAuth Handler] Set login_context=employee for employee role')
+              }
+              
               // Rediriger selon le rôle et le contexte
               let redirectPath = `/${locale}/client/dashboard` // Fallback
               

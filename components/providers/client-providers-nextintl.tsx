@@ -32,10 +32,97 @@ interface ClientProvidersProps {
   hideSidebar?: boolean;
 }
 
-export default function ClientProviders({ children, session, unreadCount, locale, messages, hideSidebar = false }: ClientProvidersProps) {
+export default function ClientProviders({ children, session: serverSession, unreadCount, locale, messages, hideSidebar = false }: ClientProvidersProps) {
   const pathname = usePathname()
   const [renderKey, setRenderKey] = useState(0)
-  const [isLoading, setIsLoading] = useState(true)
+  const [clientSession, setClientSession] = useState(serverSession)
+  const [isLoading, setIsLoading] = useState(!serverSession?.user?.id)
+  
+  // Get session client-side (especially important for OAuth)
+  useEffect(() => {
+    async function getClientSession() {
+      try {
+        const { getSession } = await import('@/lib/auth')
+        const session = await getSession()
+        setClientSession(session)
+        console.log('✅ [ClientProviders] Client session fetched:', !!session?.user?.id)
+      } catch (error) {
+        console.error('❌ [ClientProviders] Failed to get client session:', error)
+        setClientSession(serverSession) // Fallback to server session
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    // If we have server session, use it immediately
+    if (serverSession?.user?.id) {
+      setClientSession(serverSession)
+      setIsLoading(false)
+      console.log('✅ [ClientProviders] Using server session:', serverSession.user.email)
+    } else {
+      // Check if we're on an OAuth callback page or have OAuth params
+      const hasOAuthParams = window.location.search.includes('access_token') || 
+                            window.location.hash.includes('access_token') ||
+                            window.location.pathname.includes('oauth-success')
+      
+      if (hasOAuthParams) {
+        console.log('🔄 [ClientProviders] OAuth detected, fetching session...')
+        // For OAuth, fetch session but don't show loading screen
+        setIsLoading(false) // Show layout immediately
+        getClientSession()
+      } else {
+        // For regular pages without session, get session client-side
+        getClientSession()
+      }
+    }
+  }, [serverSession])
+  
+  // Use client session instead of server session
+  const session = clientSession
+  
+  // Additional effect to handle OAuth session updates
+  useEffect(() => {
+    // Listen for OAuth session ready event
+    const handleOAuthSessionReady = async (event: CustomEvent) => {
+      console.log('🎉 [ClientProviders] OAuth session ready event received')
+      const { session: oauthSession } = event.detail
+      if (oauthSession?.user?.id) {
+        setClientSession(oauthSession)
+        setRenderKey(prev => prev + 1) // Force re-render
+        console.log('✅ [ClientProviders] OAuth session applied:', oauthSession.user.email)
+      }
+    }
+
+    // Listen for session changes (OAuth completion)
+    const handleSessionChange = async () => {
+      if (!clientSession?.user?.id && !isLoading) {
+        console.log('🔄 [ClientProviders] Checking for updated session...')
+        try {
+          const { getSession } = await import('@/lib/auth')
+          const newSession = await getSession()
+          if (newSession?.user?.id && newSession.user.id !== clientSession?.user?.id) {
+            console.log('✅ [ClientProviders] Session updated:', newSession.user.email)
+            setClientSession(newSession)
+            setRenderKey(prev => prev + 1) // Force re-render
+          }
+        } catch (error) {
+          console.error('❌ [ClientProviders] Session check failed:', error)
+        }
+      }
+    }
+
+    // Add event listener for OAuth session ready
+    window.addEventListener('oauth-session-ready', handleOAuthSessionReady as EventListener)
+
+    // Check for session updates periodically for OAuth scenarios
+    const interval = setInterval(handleSessionChange, 2000)
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('oauth-session-ready', handleOAuthSessionReady as EventListener)
+      clearInterval(interval)
+    }
+  }, [clientSession?.user?.id, isLoading])
   
   // Use custom hook for sidebar visibility logic
   const { shouldHideSidebar, isAuthPage, isPublicPage } = useSidebarVisibility({
@@ -53,26 +140,6 @@ export default function ClientProviders({ children, session, unreadCount, locale
     debug: false // Set to true for debugging
   });
   
-  // Wait for session to load properly (especially for OAuth)
-  useEffect(() => {
-    let timer: NodeJS.Timeout
-    
-    // If we already have a session, no need to wait
-    if (session?.user?.id) {
-      setIsLoading(false)
-      return
-    }
-    
-    // Otherwise wait up to 3 seconds for session to load
-    timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 3000)
-    
-    return () => {
-      if (timer) clearTimeout(timer)
-    }
-  }, [session?.user?.id])
-  
   // Debug logs
   useEffect(() => {
     console.log('[ClientProviders] Debug:', {
@@ -82,17 +149,18 @@ export default function ClientProviders({ children, session, unreadCount, locale
       isAuthPage,
       isPublicPage,
       isLoading,
-      hasSession: !!session
+      hasSession: !!session,
+      sessionSource: serverSession?.user?.id ? 'server' : 'client'
     })
-  }, [session?.user?.role, pathname, shouldHideSidebar, isAuthPage, isPublicPage, isLoading])
+  }, [session?.user?.role, pathname, shouldHideSidebar, isAuthPage, isPublicPage, isLoading, serverSession?.user?.id])
   
   // Force re-render when pathname or user role changes
   useEffect(() => {
     setRenderKey(prev => prev + 1)
   }, [pathname, session?.user?.role, shouldHideSidebar])
 
-   // Show loading state while waiting for session
-   if (isLoading) {
+   // Show loading state only for non-OAuth scenarios
+   if (isLoading && !pathname?.includes('oauth-success')) {
      return (
        <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos">
          <ThemeProvider

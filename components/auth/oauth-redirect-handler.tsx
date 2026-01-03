@@ -28,21 +28,16 @@ export function OAuthRedirectHandler({ locale }: OAuthRedirectHandlerProps) {
         if (session && session.user) {
           console.log('✅ [OAuth Handler] OAuth session detected for:', session.user.email)
           
-          // Vérifier si c'est une nouvelle session (OAuth récent)
-          const sessionAge = Date.now() - new Date(session.user.created_at).getTime()
-          const isRecentSession = sessionAge < 60000 // Moins d'1 minute
-          
-          console.log('🕐 [OAuth Handler] Session age:', sessionAge, 'ms, isRecent:', isRecentSession)
-          
-          // Ou vérifier s'il y a des paramètres OAuth dans l'URL
+          // Vérifier s'il y a des paramètres OAuth dans l'URL
           const urlParams = new URLSearchParams(window.location.search)
           const hasOAuthParams = urlParams.has('access_token') || urlParams.has('refresh_token') || 
-                                 window.location.hash.includes('access_token')
+                                 window.location.hash.includes('access_token') ||
+                                 window.location.pathname.includes('oauth-success')
           
           console.log('🔍 [OAuth Handler] OAuth params in URL:', hasOAuthParams)
           
-          if (isRecentSession || hasOAuthParams) {
-            console.log('🎯 [OAuth Handler] Redirecting OAuth user...')
+          if (hasOAuthParams) {
+            console.log('🎯 [OAuth Handler] Processing OAuth redirect...')
             
             // Récupérer le rôle de l'utilisateur depuis la DB
             try {
@@ -95,8 +90,15 @@ export function OAuthRedirectHandler({ locale }: OAuthRedirectHandlerProps) {
                 window.history.replaceState({}, document.title, `/${locale}`)
               }
               
-              // Redirection
-              router.push(redirectPath)
+              // Trigger a custom event to notify ClientProviders
+              window.dispatchEvent(new CustomEvent('oauth-session-ready', { 
+                detail: { session, userRole } 
+              }))
+              
+              // Small delay to allow ClientProviders to update
+              setTimeout(() => {
+                router.push(redirectPath)
+              }, 500)
               
             } catch (profileErr) {
               console.error('❌ [OAuth Handler] Profile fetch error:', profileErr)

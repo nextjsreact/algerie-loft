@@ -4,13 +4,14 @@ import { getCurrency } from "@/app/actions/currencies"
 import { EditCurrencyForm } from "@/components/settings/edit-currency-form"
 
 type Props = {
-  params: {
+  params: Promise<{
     locale: string
     id: string
-  }
+  }>
 }
 
-export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params
   const t = await getTranslations({ locale, namespace: "settings.currencies" })
 
   return {
@@ -18,7 +19,8 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
   }
 }
 
-export default async function EditCurrencyPage({ params: { locale, id } }: Props) {
+export default async function EditCurrencyPage({ params }: Props) {
+  const { locale, id } = await params
   const t = await getTranslations({ locale, namespace: "settings.currencies" })
 
   try {

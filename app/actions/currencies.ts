@@ -47,20 +47,26 @@ export async function getCurrency(id: string) {
   }
 }
 
-export async function createCurrency(formData: FormData) {
+export async function createCurrency(currencyData: {
+  name: string
+  code: string
+  symbol: string
+  ratio: number
+  is_default: boolean
+}) {
   const supabase = await createClient()
   try {
-    const currencyData = {
-      code: formData.get('code') as string,
-      name: formData.get('name') as string,
-      symbol: formData.get('symbol') as string,
-      exchange_rate: parseFloat(formData.get('exchange_rate') as string),
-      is_default: formData.get('is_default') === 'true'
+    const insertData = {
+      code: currencyData.code,
+      name: currencyData.name,
+      symbol: currencyData.symbol,
+      ratio: currencyData.ratio,
+      is_default: currencyData.is_default
     }
 
     const { data, error } = await supabase
       .from("currencies")
-      .insert([currencyData])
+      .insert([insertData])
       .select()
       .single()
     
@@ -76,20 +82,24 @@ export async function createCurrency(formData: FormData) {
   }
 }
 
-export async function updateCurrency(id: string, formData: FormData) {
+export async function updateCurrency(id: string, currencyData: {
+  name: string
+  code: string
+  symbol: string
+  ratio: number
+}) {
   const supabase = await createClient()
   try {
-    const currencyData = {
-      code: formData.get('code') as string,
-      name: formData.get('name') as string,
-      symbol: formData.get('symbol') as string,
-      exchange_rate: parseFloat(formData.get('exchange_rate') as string),
-      is_default: formData.get('is_default') === 'true'
+    const updateData = {
+      code: currencyData.code,
+      name: currencyData.name,
+      symbol: currencyData.symbol,
+      ratio: currencyData.ratio
     }
 
     const { data, error } = await supabase
       .from("currencies")
-      .update(currencyData)
+      .update(updateData)
       .eq("id", id)
       .select()
       .single()

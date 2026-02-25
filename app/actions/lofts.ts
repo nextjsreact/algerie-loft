@@ -131,14 +131,17 @@ export async function updateLoft(id: string, data: Omit<Loft, "id" | "created_at
       ])
     )
 
-    console.log('Cleaned data:', cleanedData)
+    // Remove fields that don't exist in the database
+    const { partner_id, ...validData } = cleanedData as any
+
+    console.log('Cleaned data:', validData)
 
     const supabase = await createClient()
     console.log('Supabase client created')
     
     const { data: updateResult, error } = await supabase
       .from("lofts")
-      .update(cleanedData)
+      .update(validData)
       .eq("id", id)
       .select()
 

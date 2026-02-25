@@ -24,14 +24,14 @@ export function EditLoftFormWrapper({ loft, owners, zoneAreas, internetConnectio
         }, 1500)
       } else {
         toast.error(tCommon('error'), {
-          description: tLofts('updateError'),
+          description: result?.error || tLofts('updateError'),
           duration: 5000,
         })
       }
     } catch (error) {
       console.error('Error updating loft:', error)
       toast.error(tCommon('systemError'), {
-        description: tLofts('systemErrorDescription'),
+        description: error instanceof Error ? error.message : tLofts('systemErrorDescription'),
         duration: 6000,
       })
     }

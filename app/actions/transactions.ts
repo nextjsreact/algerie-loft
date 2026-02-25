@@ -6,9 +6,9 @@ import { transactionSchema } from "@/lib/validations"
 import type { Database } from "@/lib/types"
 import { getCurrencies } from "@/app/actions/currencies"
 import { createClient } from '@/utils/supabase/server'
+import { createClientWithAudit } from '@/utils/supabase/server-with-audit'
 import { currencyConversionService } from "@/lib/services/currency-conversion"
 import { logger } from "@/lib/logger"
-// Audit context removed - triggers work automatically
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
 
@@ -112,7 +112,7 @@ export async function createTransaction(data: unknown) {
     }
   }
 
-  const supabase = await createClient()
+  const supabase = await createClientWithAudit()
   const { error } = await supabase.from("transactions").insert({
     ...validatedData,
     loft_id: validatedData.loft_id || null,
@@ -137,7 +137,7 @@ export async function updateTransaction(id: string, data: unknown) {
   const validatedData = transactionSchema.parse(data)
 
   // Get current transaction to compare changes
-  const supabase = await createClient()
+  const supabase = await createClientWithAudit()
   const { data: currentTransaction, error: fetchError } = await supabase
     .from("transactions")
     .select("*")
@@ -247,7 +247,7 @@ export async function updateTransaction(id: string, data: unknown) {
 export async function deleteTransaction(id: string) {
   const session = await requireRole(["admin"])
 
-  const supabase = await createClient()
+  const supabase = await createClientWithAudit()
   const { error } = await supabase.from("transactions").delete().eq("id", id)
 
   if (error) {

@@ -16,6 +16,7 @@ import {
   notifyTaskDeletion 
 } from '@/lib/services/task-notifications'
 import { unstable_noStore as noStore } from 'next/cache';
+import { withAudit } from '@/lib/audit-helper'
 
 type Task = Database['public']['Tables']['tasks']['Row']
 

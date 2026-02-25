@@ -11,16 +11,23 @@ import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
 interface DatePickerWithRangeProps {
-  date: DateRange | undefined
-  onDateChange: (date: DateRange | undefined) => void
+  date?: DateRange | undefined
+  onDateChange?: (date: DateRange | undefined) => void
+  value?: DateRange | undefined
+  onChange?: (date: DateRange | undefined) => void
   className?: string
 }
 
 export function DatePickerWithRange({
   date,
   onDateChange,
+  value,
+  onChange,
   className
 }: DatePickerWithRangeProps) {
+  // Support both prop naming conventions
+  const selectedDate = value ?? date
+  const handleDateChange = onChange ?? onDateChange
   return (
     <div className={cn('grid gap-2', className)}>
       <Popover>
@@ -30,19 +37,19 @@ export function DatePickerWithRange({
             variant={'outline'}
             className={cn(
               'w-full justify-start text-left font-normal',
-              !date && 'text-muted-foreground'
+              !selectedDate && 'text-muted-foreground'
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
             <span className="truncate">
-              {date?.from ? (
-                date.to ? (
+              {selectedDate?.from ? (
+                selectedDate.to ? (
                   <>
-                    {format(date.from, 'dd MMM yyyy', { locale: fr })} -{' '}
-                    {format(date.to, 'dd MMM yyyy', { locale: fr })}
+                    {format(selectedDate.from, 'dd MMM yyyy', { locale: fr })} -{' '}
+                    {format(selectedDate.to, 'dd MMM yyyy', { locale: fr })}
                   </>
                 ) : (
-                  format(date.from, 'dd MMM yyyy', { locale: fr })
+                  format(selectedDate.from, 'dd MMM yyyy', { locale: fr })
                 )
               ) : (
                 'Sélectionner une période'
@@ -54,9 +61,9 @@ export function DatePickerWithRange({
           <Calendar
             initialFocus
             mode="range"
-            defaultMonth={date?.from}
-            selected={date}
-            onSelect={onDateChange}
+            defaultMonth={selectedDate?.from}
+            selected={selectedDate}
+            onSelect={handleDateChange}
             numberOfMonths={2}
             locale={fr}
           />

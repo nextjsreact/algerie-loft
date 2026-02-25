@@ -171,10 +171,8 @@ export function useRealtimeConversations(
       )
       .subscribe()
 
-    // Request notification permission
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission()
-    }
+    // Don't auto-request notification permission - let user trigger it
+    // Notification permission will be requested when user interacts with notification settings
 
     return () => {
       messagesSubscription.unsubscribe()

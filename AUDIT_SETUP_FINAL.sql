@@ -1,7 +1,10 @@
--- Create wrapper functions in public schema that call audit schema functions
--- This is needed because Supabase RPC only works with public schema
+-- ============================================
+-- SCRIPT SQL COMPLET POUR ACTIVER L'AUDIT
+-- ============================================
+-- Exécute ce script dans Supabase SQL Editor
+-- ============================================
 
--- Wrapper for set_audit_user_context
+-- 1. Créer les fonctions wrapper dans le schéma public
 CREATE OR REPLACE FUNCTION public.set_audit_user_context(
     p_user_id UUID,
     p_user_email VARCHAR(255) DEFAULT NULL
@@ -12,7 +15,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Wrapper for clear_audit_user_context
 CREATE OR REPLACE FUNCTION public.clear_audit_user_context()
 RETURNS VOID AS $$
 BEGIN
@@ -20,16 +22,23 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Create a view in public schema for audit_logs
+-- 2. Créer une vue dans le schéma public pour audit_logs
 CREATE OR REPLACE VIEW public.audit_logs AS
 SELECT * FROM audit.audit_logs;
 
--- Grant permissions
+-- 3. Donner les permissions
 GRANT EXECUTE ON FUNCTION public.set_audit_user_context(UUID, VARCHAR) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.clear_audit_user_context() TO authenticated;
 GRANT SELECT ON public.audit_logs TO authenticated;
 
--- Add comments
+-- 4. Ajouter des commentaires
 COMMENT ON FUNCTION public.set_audit_user_context IS 'Wrapper function to set audit context - calls audit.set_audit_user_context';
 COMMENT ON FUNCTION public.clear_audit_user_context IS 'Wrapper function to clear audit context - calls audit.clear_audit_user_context';
 COMMENT ON VIEW public.audit_logs IS 'View of audit.audit_logs table for Supabase client access';
+
+-- ============================================
+-- FIN DU SCRIPT
+-- ============================================
+-- Après avoir exécuté ce script, teste:
+-- https://www.loftalgerie.com/api/test-audit
+-- ============================================

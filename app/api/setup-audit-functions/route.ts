@@ -50,9 +50,14 @@ export async function POST() {
       END;
       $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-      -- Grant execute permissions
+      -- Create a view in public schema for audit_logs
+      CREATE OR REPLACE VIEW public.audit_logs AS
+      SELECT * FROM audit.audit_logs;
+
+      -- Grant permissions
       GRANT EXECUTE ON FUNCTION public.set_audit_user_context(UUID, VARCHAR) TO authenticated;
       GRANT EXECUTE ON FUNCTION public.clear_audit_user_context() TO authenticated;
+      GRANT SELECT ON public.audit_logs TO authenticated;
     `
 
     // Execute SQL using Supabase SQL editor or direct connection

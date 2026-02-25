@@ -4,9 +4,7 @@ import { requireRole } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import type { Database } from "@/lib/types"
 import { createClient } from '@/utils/supabase/server'
-import { createClientWithAudit } from '@/utils/supabase/server-with-audit'
 import { unstable_noStore as noStore } from 'next/cache';
-import { logger } from '@/lib/logger'
 
 type Loft = Database['public']['Tables']['lofts']['Row']
 
@@ -28,12 +26,10 @@ export async function getLofts() {
 export async function deleteLoft(id: string) {
   const session = await requireRole(["admin"])
 
-  const supabase = await createClientWithAudit()
+  const supabase = await createClient()
   
   try {
-    logger.info("Deleting loft", { id })
-
-    // Récupérer les informations du loft avant suppression pour l'audit
+    // Récupérer les informations du loft avant suppression
     const { data: loftToDelete, error: fetchError } = await supabase
       .from("lofts")
       .select("*")
@@ -41,7 +37,7 @@ export async function deleteLoft(id: string) {
       .single()
 
     if (fetchError) {
-      logger.error("Error fetching loft for deletion", { error: fetchError, id })
+      console.error("Error fetching loft for deletion:", fetchError)
       throw new Error("Loft non trouvé")
     }
 
@@ -49,7 +45,7 @@ export async function deleteLoft(id: string) {
       throw new Error("Loft non trouvé")
     }
 
-    // Vérifier s'il y a des dépendances qui pourraient empêcher la suppression
+    // Vérifier s'il y a des dépendances
     const { data: relatedTasks } = await supabase
       .from("tasks")
       .select("id")
@@ -62,7 +58,6 @@ export async function deleteLoft(id: string) {
       .eq("loft_id", id)
       .limit(1)
 
-    // Si il y a des dépendances, informer l'utilisateur
     if (relatedTasks?.length || relatedTransactions?.length) {
       const dependencies = []
       if (relatedTasks?.length) dependencies.push("tâches")
@@ -71,7 +66,7 @@ export async function deleteLoft(id: string) {
       throw new Error(`Impossible de supprimer ce loft car il est lié à des ${dependencies.join(", ")}. Veuillez d'abord supprimer ou modifier ces éléments.`)
     }
 
-    // Supprimer d'abord les photos associées (si elles existent)
+    // Supprimer les photos associées
     await supabase
       .from("loft_photos")
       .delete()
@@ -90,14 +85,13 @@ export async function deleteLoft(id: string) {
       .eq("id", id)
 
     if (deleteError) {
-      logger.error("Error deleting loft", { error: deleteError, id })
+      console.error("Error deleting loft:", deleteError)
       throw new Error(`Erreur lors de la suppression: ${deleteError.message}`)
     }
 
-    logger.info("Loft deleted successfully", { id })
     return { success: true }
   } catch (error) {
-    logger.error("Error in deleteLoft", { error, id })
+    console.error("Error in deleteLoft:", error)
     throw error
   }
 }
@@ -122,8 +116,6 @@ export async function getLoft(id: string): Promise<Loft | null> {
 export async function updateLoft(id: string, data: Omit<Loft, "id" | "created_at" | "updated_at">): Promise<{ success: boolean; error?: string }> {
   await requireRole(["admin", "manager"])
 
-  logger.info("Updating loft", { id, data })
-
   // Clean up empty strings to prevent UUID errors
   const cleanedData = Object.fromEntries(
     Object.entries(data).map(([key, value]) => [
@@ -133,20 +125,17 @@ export async function updateLoft(id: string, data: Omit<Loft, "id" | "created_at
     ])
   )
 
-  logger.info("Cleaned data for loft update", { id, cleanedData })
-
-  const supabase = await createClientWithAudit()
+  const supabase = await createClient()
   const { error } = await supabase
     .from("lofts")
     .update(cleanedData)
     .eq("id", id)
 
   if (error) {
-    logger.error("Error updating loft", { error, id, data: cleanedData })
+    console.error("Error updating loft:", error)
     return { success: false, error: error.message }
   }
 
-  logger.info("Loft updated successfully", { id })
   return { success: true }
 }
 
@@ -158,8 +147,6 @@ interface CreateLoftResult {
 export async function createLoft(data: Omit<Loft, "id" | "created_at" | "updated_at">): Promise<CreateLoftResult> {
   await requireRole(["admin"])
 
-  logger.info("Creating loft", { data })
-
   // Clean up empty strings to prevent UUID errors
   const cleanedData = Object.fromEntries(
     Object.entries(data).map(([key, value]) => [
@@ -169,7 +156,7 @@ export async function createLoft(data: Omit<Loft, "id" | "created_at" | "updated
     ])
   )
 
-  const supabase = await createClientWithAudit()
+  const supabase = await createClient()
   const { data: newLoft, error } = await supabase
     .from("lofts")
     .insert(cleanedData)
@@ -177,11 +164,10 @@ export async function createLoft(data: Omit<Loft, "id" | "created_at" | "updated
     .single()
 
   if (error) {
-    logger.error("Error creating loft", { error, data: cleanedData })
+    console.error("Error creating loft:", error)
     throw error
   }
-
-  logger.info("Loft created successfully", { loftId: newLoft.id })
+    
   return {
     success: true,
     loftId: newLoft.id

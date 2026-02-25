@@ -114,29 +114,51 @@ export async function getLoft(id: string): Promise<Loft | null> {
 }
 
 export async function updateLoft(id: string, data: Omit<Loft, "id" | "created_at" | "updated_at">): Promise<{ success: boolean; error?: string }> {
-  await requireRole(["admin", "manager"])
+  console.log('=== updateLoft SERVER ACTION ===')
+  console.log('ID:', id)
+  console.log('Data received:', data)
+  
+  try {
+    await requireRole(["admin", "manager"])
+    console.log('Role check passed')
 
-  // Clean up empty strings to prevent UUID errors
-  const cleanedData = Object.fromEntries(
-    Object.entries(data).map(([key, value]) => [
-      key,
-      // Convert empty strings to null for UUID fields and other nullable fields
-      value === "" ? null : value
-    ])
-  )
+    // Clean up empty strings to prevent UUID errors
+    const cleanedData = Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [
+        key,
+        // Convert empty strings to null for UUID fields and other nullable fields
+        value === "" ? null : value
+      ])
+    )
 
-  const supabase = await createClient()
-  const { error } = await supabase
-    .from("lofts")
-    .update(cleanedData)
-    .eq("id", id)
+    console.log('Cleaned data:', cleanedData)
 
-  if (error) {
-    console.error("Error updating loft:", error)
-    return { success: false, error: error.message }
+    const supabase = await createClient()
+    console.log('Supabase client created')
+    
+    const { data: updateResult, error } = await supabase
+      .from("lofts")
+      .update(cleanedData)
+      .eq("id", id)
+      .select()
+
+    console.log('Update result:', updateResult)
+    console.log('Update error:', error)
+
+    if (error) {
+      console.error("Error updating loft:", error)
+      return { success: false, error: error.message }
+    }
+
+    console.log('Update successful!')
+    return { success: true }
+  } catch (error) {
+    console.error('=== updateLoft EXCEPTION ===', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    }
   }
-
-  return { success: true }
 }
 
 interface CreateLoftResult {

@@ -132,8 +132,8 @@ export default function RootLayout({
                 }
               })();
               
-              // Register service worker for offline support
-              if ('serviceWorker' in navigator) {
+              // Register service worker for offline support (only on HTTPS or localhost)
+              if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
                 window.addEventListener('load', function() {
                   navigator.serviceWorker.register('/sw.js')
                     .then(function(registration) {

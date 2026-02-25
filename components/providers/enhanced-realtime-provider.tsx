@@ -238,16 +238,8 @@ export function EnhancedRealtimeProvider({ children, userId }: EnhancedRealtimeP
     window.addEventListener('online', handleOnline)
     window.addEventListener('offline', handleOffline)
 
-    // Request notification permission
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          toast.success('🔔 Notifications enabled!', {
-            description: 'You\'ll now receive instant notifications for tasks and messages.'
-          })
-        }
-      })
-    }
+    // Don't auto-request notification permission - let user trigger it
+    // Notification permission will be requested when user interacts with notification settings
 
     // Set up periodic refresh (every 30 seconds as backup)
     const refreshInterval = setInterval(refreshCounts, 30000)

@@ -132,18 +132,8 @@ export default function RootLayout({
                 }
               })();
               
-              // Register service worker for offline support (only on HTTPS or localhost)
-              if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                      console.log('SW registered: ', registration);
-                    })
-                    .catch(function(registrationError) {
-                      console.log('SW registration failed: ', registrationError);
-                    });
-                });
-              }
+              // Service Worker disabled - causes issues on some pages
+              // Re-enable only if needed for offline support
             `,
           }}
         />

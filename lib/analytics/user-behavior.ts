@@ -340,6 +340,9 @@ export class UserBehaviorAnalytics {
 
   // Send event to custom analytics API
   private async sendEventToAPI(event: UserEvent) {
+    // Silently fail if analytics API is not available
+    if (typeof window === 'undefined') return;
+    
     try {
       await fetch('/api/analytics/events', {
         method: 'POST',
@@ -352,12 +355,15 @@ export class UserBehaviorAnalytics {
         }),
       });
     } catch (error) {
-      console.error('Failed to send event to analytics API:', error);
+      // Silently ignore network errors for analytics
     }
   }
 
   // Send engagement data to API
   private async sendEngagementToAPI(engagement: PageEngagement) {
+    // Silently fail if analytics API is not available
+    if (typeof window === 'undefined') return;
+    
     try {
       await fetch('/api/analytics/engagement', {
         method: 'POST',
@@ -370,13 +376,15 @@ export class UserBehaviorAnalytics {
         }),
       });
     } catch (error) {
-      console.error('Failed to send engagement to analytics API:', error);
+      // Silently ignore network errors for analytics
     }
   }
 
   // Send complete session data
   private async sendSessionData() {
     if (!this.session) return;
+    // Silently fail if analytics API is not available
+    if (typeof window === 'undefined') return;
 
     try {
       await fetch('/api/analytics/session', {
@@ -387,7 +395,7 @@ export class UserBehaviorAnalytics {
         body: JSON.stringify(this.session),
       });
     } catch (error) {
-      console.error('Failed to send session data:', error);
+      // Silently ignore network errors for analytics
     }
   }
 

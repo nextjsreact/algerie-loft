@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -44,7 +43,6 @@ interface BackupStats {
 }
 
 export function BackupManager() {
-  const t = useTranslations('superuser.backup');
   const [backups, setBackups] = useState<BackupRecord[]>([]);
   const [stats, setStats] = useState<BackupStats>({
     totalSize: 0,
@@ -67,7 +65,7 @@ export function BackupManager() {
       const response = await fetch('/api/superuser/backup?action=history&limit=10');
       
       if (!response.ok) {
-        throw new Error(t('messages.loadError'));
+        throw new Error('Erreur lors du chargement des sauvegardes');
       }
 
       const data = await response.json();
@@ -88,7 +86,7 @@ export function BackupManager() {
       
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('messages.unknownError'));
+      setError(err instanceof Error ? err.message : 'Erreur inconnue');
     } finally {
       setLoading(false);
     }

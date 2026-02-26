@@ -88,20 +88,15 @@ export async function createBackup(
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const randomSuffix = crypto.randomBytes(4).toString('hex');
     
-    // Convert storage_location to proper path (handle both /backups and backups)
-    const path = require('path');
-    let storageDir = config.storage_location;
-    if (storageDir.startsWith('/')) {
-      storageDir = storageDir.substring(1); // Remove leading slash
-    }
+    // For Vercel/serverless environments, use Supabase Storage path
+    // Format: backups/YYYY-MM/filename.sql
+    const date = new Date();
+    const yearMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    const fileName = `${type.toLowerCase()}_${timestamp}_${randomSuffix}.sql`;
+    const filePath = `backups/${yearMonth}/${fileName}`;
     
-    // Make it relative to current working directory
-    const absoluteStorageDir = path.resolve(process.cwd(), storageDir);
-    const filePath = path.join(absoluteStorageDir, `${type.toLowerCase()}_${timestamp}_${randomSuffix}.sql`);
-    
-    console.log(`📁 Storage location: ${config.storage_location}`);
-    console.log(`📁 Resolved path: ${absoluteStorageDir}`);
-    console.log(`📄 Full file path: ${filePath}`);
+    console.log(`📁 Storage location: Supabase Storage`);
+    console.log(`📄 File path: ${filePath}`);
 
     // Determine tables to include
     let tablesToInclude = options.tables || [];
@@ -572,8 +567,6 @@ async function executeBackup(
   }
 ): Promise<void> {
   const supabase = await createClient(true);
-  const fs = require('fs').promises;
-  const path = require('path');
   
   try {
     // Update status to IN_PROGRESS
@@ -596,18 +589,14 @@ async function executeBackup(
       throw new Error('Backup record not found');
     }
 
-    const outputFile = backupRecord.file_path;
+    const outputPath = backupRecord.file_path;
     
-    // Ensure backup directory exists
-    const backupDir = path.dirname(outputFile);
-    await fs.mkdir(backupDir, { recursive: true });
-
     // Get database credentials from environment
     const dbUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const dbPassword = process.env.SUPABASE_DB_PASSWORD || process.env.DATABASE_PASSWORD;
     
     if (!dbUrl || !dbPassword) {
-      throw new Error('Database credentials not found. Please set SUPABASE_DB_PASSWORD in .env.local');
+      throw new Error('Database credentials not found. Please set SUPABASE_DB_PASSWORD in environment variables');
     }
 
     // Parse Supabase URL to get project reference
@@ -621,32 +610,32 @@ async function executeBackup(
     const cloner = new PgDumpCloner();
 
     // Prepare credentials in the format expected by PgDumpCloner
-    // Use POOLER for IPv4 compatibility (same as cloning system)
     const credentials = {
-      url: dbUrl,  // Note: 'url' not 'projectUrl'
+      url: dbUrl,
       anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
       serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
       password: dbPassword,
-      host: `aws-0-eu-central-1.pooler.supabase.com`,  // Use pooler (IPv4)
-      port: 6543  // Pooler port
+      host: `aws-0-eu-central-1.pooler.supabase.com`,
+      port: 6543
     };
 
     console.log(`🚀 Starting backup using PgDumpCloner for ${projectRef}...`);
 
     // Execute dump using the proven cloner logic
-    // This handles DNS resolution, IPv6/IPv4, retries, etc.
     const connection = cloner['parseSupabaseCredentials'](credentials);
     
-    // Create temporary directory
+    // Create temporary directory for local dump
     const os = require('os');
-    const tempDir = path.join(os.tmpdir(), 'supabase-cloner');
+    const path = require('path');
+    const fs = require('fs').promises;
+    const tempDir = path.join(os.tmpdir(), 'supabase-backup');
     await fs.mkdir(tempDir, { recursive: true });
     
     const timestamp = Date.now();
     
     console.log(`📦 Creating complete backup (auth + storage + public)...`);
     
-    // Step 1: Dump auth and storage schemas (data only, like cloning)
+    // Step 1: Dump auth and storage schemas (data only)
     console.log(`📝 Step 1/2: Dumping auth and storage data...`);
     const systemTempFile = path.join(tempDir, `backup_system_${timestamp}.sql`);
     const systemDumpOptions = {
@@ -680,30 +669,28 @@ async function executeBackup(
     console.log(`✅ System schemas dumped: ${(systemStats.size / 1024).toFixed(2)} KB`);
     
     // Step 2: Dump user schemas (public, audit, and any custom schemas)
-    console.log(`📝 Step 2/2: Dumping user schemas (public, audit, custom) (schema + data)...`);
+    console.log(`📝 Step 2/2: Dumping user schemas (public, audit, custom)...`);
     const userTempFile = path.join(tempDir, `backup_user_${timestamp}.sql`);
     const userDumpOptions = {
       verbose: true,
       clean: true,
       ifExists: true,
-      // Only exclude Supabase system schemas, keep all user schemas
       excludeSchemas: [
-        'auth',           // Handled separately
-        'storage',        // Handled separately
-        'realtime',       // Supabase managed
-        'extensions',     // Supabase managed
-        'graphql',        // Supabase managed
-        'graphql_public', // Supabase managed
-        'vault',          // Supabase managed
-        'pgbouncer',      // Supabase managed
-        'pgsodium',       // Supabase managed
-        'pgsodium_masks', // Supabase managed
-        'supabase_functions', // Supabase managed
-        'supabase_migrations' // Supabase managed
+        'auth',
+        'storage',
+        'realtime',
+        'extensions',
+        'graphql',
+        'graphql_public',
+        'vault',
+        'pgbouncer',
+        'pgsodium',
+        'pgsodium_masks',
+        'supabase_functions',
+        'supabase_migrations'
       ]
     };
 
-    // If specific tables requested, only dump those
     if (tables && tables.length > 0) {
       userDumpOptions['includeTables'] = tables.map(t => `public.${t}`);
     }
@@ -712,17 +699,15 @@ async function executeBackup(
     const userStats = await fs.stat(userTempFile);
     console.log(`✅ User schemas dumped: ${(userStats.size / 1024 / 1024).toFixed(2)} MB`);
     
-    // Step 3: Merge both files into final backup
-    console.log(`📋 Merging dumps into final backup: ${outputFile}...`);
+    // Step 3: Merge both files
+    console.log(`📋 Merging dumps...`);
     const systemContent = await fs.readFile(systemTempFile, 'utf8');
     const userContent = await fs.readFile(userTempFile, 'utf8');
     
-    // Combine with separator
     const finalContent = `-- =====================================================
 -- COMPLETE DATABASE BACKUP
 -- Generated: ${new Date().toISOString()}
--- Includes: auth (data), storage (data), all user schemas (schema + data)
--- User schemas: public, audit, and any custom schemas
+-- Backup ID: ${backupId}
 -- =====================================================
 
 -- =====================================================
@@ -733,41 +718,43 @@ ${systemContent}
 
 -- =====================================================
 -- PART 2: USER SCHEMAS (SCHEMA + DATA)
--- Includes: public, audit, and any custom schemas
 -- =====================================================
 
 ${userContent}
 `;
     
-    await fs.writeFile(outputFile, finalContent, 'utf8');
+    // Upload to Supabase Storage instead of local filesystem
+    console.log(`☁️ Uploading backup to Supabase Storage: ${outputPath}...`);
     
-    // Verify final file
-    const finalStats = await fs.stat(outputFile);
-    const totalSize = systemStats.size + userStats.size;
-    console.log(`✅ Complete backup created: ${outputFile}`);
-    console.log(`📊 Total size: ${(finalStats.size / 1024 / 1024).toFixed(2)} MB`);
-    console.log(`   - Auth/Storage: ${(systemStats.size / 1024).toFixed(2)} KB`);
-    console.log(`   - User schemas (public, audit, custom): ${(userStats.size / 1024 / 1024).toFixed(2)} MB`);
+    const { data: uploadData, error: uploadError } = await supabase
+      .storage
+      .from('backups')
+      .upload(outputPath, Buffer.from(finalContent, 'utf8'), {
+        contentType: 'application/sql',
+        upsert: true
+      });
+
+    if (uploadError) {
+      throw new Error(`Failed to upload backup to storage: ${uploadError.message}`);
+    }
+
+    const fileSize = Buffer.byteLength(finalContent, 'utf8');
+    console.log(`✅ Backup uploaded to Supabase Storage`);
+    console.log(`📊 Total size: ${(fileSize / 1024 / 1024).toFixed(2)} MB`);
     
     // Clean up temp files
     await fs.unlink(systemTempFile).catch(() => {});
     await fs.unlink(userTempFile).catch(() => {});
 
-    // Get file stats
-    const stats = await fs.stat(outputFile);
-    const fileSize = stats.size;
-    console.log(`📊 File size: ${fileSize} bytes (${(fileSize / 1024 / 1024).toFixed(2)} MB)`);
-
     // Calculate checksum
     console.log(`🔐 Calculating checksum...`);
-    const fileBuffer = await fs.readFile(outputFile);
-    const checksum = crypto.createHash('sha256').update(fileBuffer).digest('hex');
+    const checksum = crypto.createHash('sha256').update(finalContent).digest('hex');
     console.log(`✅ Checksum: ${checksum}`);
 
     // Calculate compression ratio if compression was enabled
     let compressionRatio = 0;
     if (options.compression) {
-      compressionRatio = 25; // Typical SQL compression ratio
+      compressionRatio = 25;
     }
 
     // Update backup record as completed
@@ -783,7 +770,7 @@ ${userContent}
       })
       .eq('id', backupId);
 
-    console.log(`✅ Backup ${backupId} completed successfully: ${outputFile} (${(fileSize / 1024 / 1024).toFixed(2)} MB)`);
+    console.log(`✅ Backup ${backupId} completed successfully`);
 
   } catch (error) {
     console.error(`❌ Backup ${backupId} execution failed:`, error);

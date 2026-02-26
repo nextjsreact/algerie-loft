@@ -2441,6 +2441,51 @@
     "partnerManagementDesc": "Vérifier et approuver les candidatures de partenaires",
     "managePartners": "Gérer les partenaires"
   },
+  "partnersPage": {
+    "title": "Gestion des Partenaires",
+    "description": "Gérez les demandes de partenariat et les statuts des partenaires",
+    "loading": "Chargement des partenaires...",
+    "loadingError": "Erreur chargement partners",
+    "status": {
+      "pending": "En attente",
+      "verified": "Vérifié",
+      "approved": "Approuvé",
+      "rejected": "Rejeté",
+      "suspended": "Suspendu"
+    },
+    "businessType": {
+      "company": "Entreprise",
+      "individual": "Particulier"
+    },
+    "stats": {
+      "pending": "En attente",
+      "verified": "Vérifiés",
+      "rejected": "Rejetés",
+      "suspended": "Suspendus"
+    },
+    "tabs": {
+      "all": "Tous",
+      "pending": "En attente",
+      "verified": "Vérifiés",
+      "rejected": "Rejetés",
+      "suspended": "Suspendus"
+    },
+    "actions": {
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "reactivate": "Réactiver",
+      "suspend": "Suspendre",
+      "details": "Détails"
+    },
+    "fields": {
+      "email": "Email",
+      "phone": "Téléphone",
+      "address": "Adresse",
+      "createdAt": "Créé le",
+      "notProvided": "Non renseigné"
+    },
+    "rejectionReason": "Raison du rejet"
+  },
   "tasks": {
     "addTask": "Ajouter une tâche",
     "add_task": "Ajouter une tâche",

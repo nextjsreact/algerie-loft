@@ -2440,6 +2440,51 @@
     "partnerManagementDesc": "Review and approve partner applications",
     "managePartners": "Manage Partners"
   },
+  "partnersPage": {
+    "title": "Partner Management",
+    "description": "Manage partnership requests and partner statuses",
+    "loading": "Loading partners...",
+    "loadingError": "Error loading partners",
+    "status": {
+      "pending": "Pending",
+      "verified": "Verified",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "suspended": "Suspended"
+    },
+    "businessType": {
+      "company": "Company",
+      "individual": "Individual"
+    },
+    "stats": {
+      "pending": "Pending",
+      "verified": "Verified",
+      "rejected": "Rejected",
+      "suspended": "Suspended"
+    },
+    "tabs": {
+      "all": "All",
+      "pending": "Pending",
+      "verified": "Verified",
+      "rejected": "Rejected",
+      "suspended": "Suspended"
+    },
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "reactivate": "Reactivate",
+      "suspend": "Suspend",
+      "details": "Details"
+    },
+    "fields": {
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "createdAt": "Created on",
+      "notProvided": "Not provided"
+    },
+    "rejectionReason": "Rejection reason"
+  },
   "tasks": {
     "addTask": "Add Task",
     "add_task": "Add Task",

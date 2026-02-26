@@ -2453,6 +2453,51 @@
     "partnerManagementDesc": "مراجعة والموافقة على طلبات الشركاء",
     "managePartners": "إدارة الشركاء"
   },
+  "partnersPage": {
+    "title": "إدارة الشركاء",
+    "description": "إدارة طلبات الشراكة وحالات الشركاء",
+    "loading": "جاري تحميل الشركاء...",
+    "loadingError": "خطأ في تحميل الشركاء",
+    "status": {
+      "pending": "قيد الانتظار",
+      "verified": "تم التحقق",
+      "approved": "تمت الموافقة",
+      "rejected": "مرفوض",
+      "suspended": "معلق"
+    },
+    "businessType": {
+      "company": "شركة",
+      "individual": "فرد"
+    },
+    "stats": {
+      "pending": "قيد الانتظار",
+      "verified": "تم التحقق",
+      "rejected": "مرفوض",
+      "suspended": "معلق"
+    },
+    "tabs": {
+      "all": "الكل",
+      "pending": "قيد الانتظار",
+      "verified": "تم التحقق",
+      "rejected": "مرفوض",
+      "suspended": "معلق"
+    },
+    "actions": {
+      "approve": "موافقة",
+      "reject": "رفض",
+      "reactivate": "إعادة تفعيل",
+      "suspend": "تعليق",
+      "details": "التفاصيل"
+    },
+    "fields": {
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "address": "العنوان",
+      "createdAt": "تم الإنشاء في",
+      "notProvided": "غير محدد"
+    },
+    "rejectionReason": "سبب الرفض"
+  },
   "tasks": {
     "addTask": "إضافة مهمة",
     "add_task": "إضافة مهمة",

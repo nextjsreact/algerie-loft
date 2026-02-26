@@ -36,7 +36,7 @@ interface Partner {
 }
 
 export function PartnersManagement() {
-  const t = useTranslations();
+  const t = useTranslations('partnersPage');
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
@@ -76,11 +76,11 @@ export function PartnersManagement() {
 
   const getStatusBadge = (status: Partner['verification_status']) => {
     const statusConfig = {
-      pending: { label: 'En attente', variant: 'secondary' as const, icon: Clock },
-      verified: { label: 'Vérifié', variant: 'default' as const, icon: CheckCircle },
-      approved: { label: 'Approuvé', variant: 'default' as const, icon: CheckCircle },
-      rejected: { label: 'Rejeté', variant: 'destructive' as const, icon: XCircle },
-      suspended: { label: 'Suspendu', variant: 'outline' as const, icon: Ban }
+      pending: { label: t('status.pending'), variant: 'secondary' as const, icon: Clock },
+      verified: { label: t('status.verified'), variant: 'default' as const, icon: CheckCircle },
+      approved: { label: t('status.approved'), variant: 'default' as const, icon: CheckCircle },
+      rejected: { label: t('status.rejected'), variant: 'destructive' as const, icon: XCircle },
+      suspended: { label: t('status.suspended'), variant: 'outline' as const, icon: Ban }
     };
 
     const config = statusConfig[status] || statusConfig.pending;
@@ -106,7 +106,7 @@ export function PartnersManagement() {
               className="flex items-center gap-1"
             >
               <CheckCircle className="h-4 w-4" />
-              Approuver
+              {t('actions.approve')}
             </Button>
             <Button
               size="sm"
@@ -115,7 +115,7 @@ export function PartnersManagement() {
               className="flex items-center gap-1"
             >
               <XCircle className="h-4 w-4" />
-              Rejeter
+              {t('actions.reject')}
             </Button>
           </>
         );
@@ -129,7 +129,7 @@ export function PartnersManagement() {
             className="flex items-center gap-1"
           >
             <RefreshCw className="h-4 w-4" />
-            Réactiver
+            {t('actions.reactivate')}
           </Button>
         );
       
@@ -143,7 +143,7 @@ export function PartnersManagement() {
             className="flex items-center gap-1"
           >
             <Ban className="h-4 w-4" />
-            Suspendre
+            {t('actions.suspend')}
           </Button>
         );
       
@@ -156,7 +156,7 @@ export function PartnersManagement() {
             className="flex items-center gap-1"
           >
             <RefreshCw className="h-4 w-4" />
-            Réactiver
+            {t('actions.reactivate')}
           </Button>
         );
       
@@ -177,7 +177,7 @@ export function PartnersManagement() {
           <div className="flex-1">
             <CardTitle className="text-lg">{partner.business_name}</CardTitle>
             <CardDescription className="mt-1">
-              {partner.business_type === 'company' ? 'Entreprise' : 'Particulier'}
+              {partner.business_type === 'company' ? t('businessType.company') : t('businessType.individual')}
             </CardDescription>
           </div>
           {getStatusBadge(partner.verification_status)}
@@ -187,7 +187,7 @@ export function PartnersManagement() {
         <div className="space-y-3">
           <div className="text-sm space-y-1">
             <p className="text-muted-foreground">
-              📧 {partner.email || 'Non renseigné'}
+              📧 {partner.email || t('fields.notProvided')}
             </p>
             <p className="text-muted-foreground">
               📱 {partner.phone}
@@ -196,7 +196,7 @@ export function PartnersManagement() {
               📍 {partner.address}
             </p>
             <p className="text-muted-foreground text-xs">
-              📅 Créé le {new Date(partner.created_at).toLocaleDateString('fr-FR')}
+              📅 {t('fields.createdAt')} {new Date(partner.created_at).toLocaleDateString()}
             </p>
           </div>
 
@@ -205,7 +205,7 @@ export function PartnersManagement() {
               <div className="flex items-start gap-2">
                 <AlertCircle className="h-4 w-4 text-destructive mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-destructive">Raison du rejet</p>
+                  <p className="text-sm font-medium text-destructive">{t('rejectionReason')}</p>
                   <p className="text-sm text-muted-foreground mt-1">
                     {partner.rejection_reason}
                   </p>
@@ -222,7 +222,7 @@ export function PartnersManagement() {
               className="flex items-center gap-1"
             >
               <Eye className="h-4 w-4" />
-              Détails
+              {t('actions.details')}
             </Button>
             {getActionButtons(partner)}
           </div>
@@ -236,7 +236,7 @@ export function PartnersManagement() {
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4 text-muted-foreground" />
-          <p className="text-muted-foreground">Chargement des partenaires...</p>
+          <p className="text-muted-foreground">{t('loading')}</p>
         </div>
       </div>
     );
@@ -250,9 +250,9 @@ export function PartnersManagement() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Gestion des Partenaires</h1>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Gérez les demandes de partenariat et les statuts des partenaires
+          {t('description')}
         </p>
       </div>
 
@@ -260,7 +260,7 @@ export function PartnersManagement() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              En attente
+              {t('stats.pending')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -270,7 +270,7 @@ export function PartnersManagement() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Vérifiés
+              {t('stats.verified')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -280,7 +280,7 @@ export function PartnersManagement() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Rejetés
+              {t('stats.rejected')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -290,7 +290,7 @@ export function PartnersManagement() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Suspendus
+              {t('stats.suspended')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -302,19 +302,19 @@ export function PartnersManagement() {
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="all">
-            Tous ({partners.length})
+            {t('tabs.all')} ({partners.length})
           </TabsTrigger>
           <TabsTrigger value="pending">
-            En attente ({pendingCount})
+            {t('tabs.pending')} ({pendingCount})
           </TabsTrigger>
           <TabsTrigger value="verified">
-            Vérifiés ({verifiedCount})
+            {t('tabs.verified')} ({verifiedCount})
           </TabsTrigger>
           <TabsTrigger value="rejected">
-            Rejetés ({rejectedCount})
+            {t('tabs.rejected')} ({rejectedCount})
           </TabsTrigger>
           <TabsTrigger value="suspended">
-            Suspendus ({suspendedCount})
+            {t('tabs.suspended')} ({suspendedCount})
           </TabsTrigger>
         </TabsList>
 

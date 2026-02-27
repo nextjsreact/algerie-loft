@@ -20,6 +20,7 @@
     "list-users": "tsx scripts/fix-user-role.ts list",
     "backup": "node scripts/create-backup.cjs FULL",
     "backup:manual": "node scripts/create-backup.cjs MANUAL",
+    "backup:complete": "node scripts/create-complete-backup-v2.cjs",
     "start": "next start",
     "test": "node test-runner.js",
     "test:watch": "jest --watch",

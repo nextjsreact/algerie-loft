@@ -103,6 +103,7 @@ backup/
 backups/*.sql
 backups/*.gz
 backups/*.zip
+backups/complete_backup_*/
 !backups/README.md
 !backups/clone-operations/
 *.backup

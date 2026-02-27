@@ -64,7 +64,7 @@ export function LoftPhotos({ loftId }: LoftPhotosProps) {
           loftId={loftId}
           existingPhotos={formattedPhotos}
           onPhotosChange={handlePhotosChange}
-          maxPhotos={10}
+          maxPhotos={15}
         />
       </CardContent>
     </Card>

@@ -28,7 +28,7 @@ export function PhotoUpload({
   loftId,
   existingPhotos = [],
   onPhotosChange,
-  maxPhotos = 10,
+  maxPhotos = 15,
 }: PhotoUploadProps) {
   const t = useTranslations("lofts");
   const [photos, setPhotos] = useState<LoftPhoto[]>(existingPhotos);

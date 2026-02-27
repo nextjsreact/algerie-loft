@@ -484,7 +484,7 @@ export function PropertyForm({ property, mode, onSuccess, onCancel }: PropertyFo
                     {property?.id ? (
                       <PhotoUpload
                         loftId={property.id}
-                        maxPhotos={10}
+                        maxPhotos={15}
                       />
                     ) : (
                       <div className="text-center py-8 text-muted-foreground">

@@ -591,6 +591,13 @@ async function executeBackup(
 
     const outputPath = backupRecord.file_path;
     
+    // Check if running on Vercel (serverless environment without pg_dump)
+    const isVercel = process.env.VERCEL === '1';
+    
+    if (isVercel) {
+      throw new Error('Automated backups are not available on Vercel. Please use Supabase Dashboard to create backups manually, or run backups from a local environment with PostgreSQL tools installed.');
+    }
+    
     // Get database credentials from environment
     const dbUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const dbPassword = process.env.SUPABASE_DB_PASSWORD || process.env.DATABASE_PASSWORD;

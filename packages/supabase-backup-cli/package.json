@@ -1,0 +1,49 @@
+{
+  "name": "supabase-backup-cli",
+  "version": "1.0.0",
+  "description": "Complete backup and restore solution for Supabase databases with storage files",
+  "main": "dist/index.js",
+  "bin": {
+    "supabase-backup": "./bin/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "supabase",
+    "backup",
+    "restore",
+    "database",
+    "postgresql",
+    "storage",
+    "cli"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/supabase-backup-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/supabase-backup-cli/issues"
+  },
+  "homepage": "https://github.com/yourusername/supabase-backup-cli#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.50.0",
+    "commander": "^12.0.0",
+    "dotenv": "^17.0.0",
+    "ora": "^8.0.0",
+    "chalk": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "pg": "^8.0.0"
+  }
+}

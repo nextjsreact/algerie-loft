@@ -88,14 +88,24 @@ export async function createBackup(
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const randomSuffix = crypto.randomBytes(4).toString('hex');
     
-    // For Vercel/serverless environments, use Supabase Storage path
-    // Format: backups/YYYY-MM/filename.sql
-    const date = new Date();
-    const yearMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-    const fileName = `${type.toLowerCase()}_${timestamp}_${randomSuffix}.sql`;
-    const filePath = `backups/${yearMonth}/${fileName}`;
+    // Check if running on Vercel
+    const isVercel = process.env.VERCEL === '1';
     
-    console.log(`📁 Storage location: Supabase Storage`);
+    let filePath: string;
+    if (isVercel) {
+      // Vercel: Use Supabase Storage path (but will fail with message)
+      const date = new Date();
+      const yearMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const fileName = `${type.toLowerCase()}_${timestamp}_${randomSuffix}.sql`;
+      filePath = `backups/${yearMonth}/${fileName}`;
+    } else {
+      // Local: Use local filesystem path
+      const path = require('path');
+      const backupDir = path.resolve(process.cwd(), 'backups');
+      filePath = path.join(backupDir, `${type.toLowerCase()}_${timestamp}_${randomSuffix}.sql`);
+    }
+    
+    console.log(`📁 Storage location: ${isVercel ? 'Supabase Storage (Vercel)' : 'Local filesystem'}`);
     console.log(`📄 File path: ${filePath}`);
 
     // Determine tables to include
@@ -706,8 +716,8 @@ async function executeBackup(
     const userStats = await fs.stat(userTempFile);
     console.log(`✅ User schemas dumped: ${(userStats.size / 1024 / 1024).toFixed(2)} MB`);
     
-    // Step 3: Merge both files
-    console.log(`📋 Merging dumps...`);
+    // Step 3: Merge both files and save
+    console.log(`📋 Merging dumps into final backup...`);
     const systemContent = await fs.readFile(systemTempFile, 'utf8');
     const userContent = await fs.readFile(userTempFile, 'utf8');
     
@@ -730,24 +740,15 @@ ${systemContent}
 ${userContent}
 `;
     
-    // Upload to Supabase Storage instead of local filesystem
-    console.log(`☁️ Uploading backup to Supabase Storage: ${outputPath}...`);
+    // Save to local file (works in local environment)
+    console.log(`💾 Saving backup to: ${outputPath}...`);
+    const backupDir = path.dirname(outputPath);
+    await fs.mkdir(backupDir, { recursive: true });
+    await fs.writeFile(outputPath, finalContent, 'utf8');
     
-    const { data: uploadData, error: uploadError } = await supabase
-      .storage
-      .from('backups')
-      .upload(outputPath, Buffer.from(finalContent, 'utf8'), {
-        contentType: 'application/sql',
-        upsert: true
-      });
-
-    if (uploadError) {
-      throw new Error(`Failed to upload backup to storage: ${uploadError.message}`);
-    }
-
-    const fileSize = Buffer.byteLength(finalContent, 'utf8');
-    console.log(`✅ Backup uploaded to Supabase Storage`);
-    console.log(`📊 Total size: ${(fileSize / 1024 / 1024).toFixed(2)} MB`);
+    const finalStats = await fs.stat(outputPath);
+    console.log(`✅ Complete backup created: ${outputPath}`);
+    console.log(`📊 Total size: ${(finalStats.size / 1024 / 1024).toFixed(2)} MB`);
     
     // Clean up temp files
     await fs.unlink(systemTempFile).catch(() => {});
@@ -755,7 +756,8 @@ ${userContent}
 
     // Calculate checksum
     console.log(`🔐 Calculating checksum...`);
-    const checksum = crypto.createHash('sha256').update(finalContent).digest('hex');
+    const fileBuffer = await fs.readFile(outputPath);
+    const checksum = crypto.createHash('sha256').update(fileBuffer).digest('hex');
     console.log(`✅ Checksum: ${checksum}`);
 
     // Calculate compression ratio if compression was enabled
@@ -770,7 +772,7 @@ ${userContent}
       .update({
         status: 'COMPLETED',
         completed_at: new Date().toISOString(),
-        file_size: fileSize,
+        file_size: finalStats.size,
         checksum: checksum,
         compression_ratio: compressionRatio,
         updated_at: new Date().toISOString()

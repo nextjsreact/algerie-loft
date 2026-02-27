@@ -1,104 +1,144 @@
-# 📦 Répertoire des Sauvegardes
+# Système de Backup Complet
 
-Ce dossier contient les sauvegardes de la base de données créées par le système de backup superuser.
+Ce dossier contient les backups complets de la base de données et des fichiers storage.
 
-## 📁 Structure
+## 📦 Créer un Backup Complet
 
-```
-backups/
-├── full_2024-01-29T10-30-00-000Z_a1b2c3d4.sql      # Sauvegarde complète
-├── incremental_2024-01-29T14-00-00-000Z_b2c3d4e5.sql  # Sauvegarde incrémentale
-├── manual_2024-01-29T16-45-00-000Z_c3d4e5f6.sql    # Sauvegarde manuelle
-└── clone-operations/                                # Opérations de clonage
-```
-
-## 🔧 Format des Fichiers
-
-- **Nom** : `{type}_{timestamp}_{random}.sql`
-- **Type** : `full`, `incremental`, `manual`
-- **Format** : SQL dump créé avec `pg_dump`
-- **Compression** : Optionnelle (gzip)
-
-## 📊 Types de Sauvegardes
-
-### 1. Sauvegarde Complète (FULL)
-- Exporte toutes les tables de la base de données
-- Inclut le schéma et les données
-- Recommandé : quotidien
-
-### 2. Sauvegarde Incrémentale (INCREMENTAL)
-- Exporte uniquement les modifications depuis la dernière sauvegarde
-- Plus rapide et moins volumineuse
-- Recommandé : plusieurs fois par jour
-
-### 3. Sauvegarde Manuelle (MANUAL)
-- Déclenchée manuellement par un superuser
-- Utile avant des opérations critiques
-- Peut cibler des tables spécifiques
-
-## 🔐 Sécurité
-
-- ⚠️ **Ne jamais commiter ce dossier dans Git**
-- Les fichiers contiennent des données sensibles
-- Accès restreint aux superusers uniquement
-- Chiffrement optionnel disponible
-
-## 🗑️ Rétention
-
-- **Par défaut** : 30 jours
-- **Configurable** : via `system_configurations`
-- **Nettoyage automatique** : des sauvegardes expirées
-
-## 📝 Utilisation
-
-### Créer une sauvegarde
 ```bash
-# Via l'interface web
-http://localhost:3000/fr/admin/superuser/backup
-
-# Via l'API
-POST /api/superuser/backup
-{
-  "action": "create",
-  "type": "FULL",
-  "compression": true
-}
+yarn backup:complete
 ```
 
-### Restaurer une sauvegarde
+Le backup inclut:
+- ✅ Dump SQL complet (toutes les tables et schémas)
+- ✅ Tous les fichiers storage (photos, documents, PDFs)
+- ✅ Configuration et métadonnées
+- ✅ Script de restauration automatique
+- ✅ Checksums pour vérification d'intégrité
+
+Le backup sera créé dans: `backups/complete_backup_[timestamp]/`
+
+## 🔄 Restaurer un Backup
+
+### Option 1: Commande rapide
 ```bash
-# Avec psql
-psql "postgresql://user:pass@host:5432/db" < backup_file.sql
-
-# Ou via l'interface web (à venir)
+yarn backup:restore complete_backup_2026-02-27T14-33-45-045Z
 ```
 
-## 🛠️ Prérequis
+### Option 2: Depuis le dossier du backup
+```bash
+cd backups/complete_backup_2026-02-27T14-33-45-045Z
+node restore.cjs
+```
 
-- PostgreSQL client tools installés (`pg_dump`, `psql`)
-- Variables d'environnement configurées :
+La restauration:
+- ✅ Restaure la base de données SQL complète
+- ✅ Upload tous les fichiers storage vers Supabase
+- ✅ Vérifie l'intégrité avec les checksums
+- ⚠️  ATTENTION: Écrase la base de données cible!
+
+## 🔀 Cloner vers un Autre Environnement
+
+### Cloner vers TEST
+```bash
+node scripts/clone-backup-to-env.cjs complete_backup_2026-02-27T14-33-45-045Z test
+```
+
+### Cloner vers DEV
+```bash
+node scripts/clone-backup-to-env.cjs complete_backup_2026-02-27T14-33-45-045Z dev
+```
+
+**Prérequis:**
+- Fichier `.env.test` ou `.env.dev` avec les credentials de la cible
+- Variables requises:
   - `NEXT_PUBLIC_SUPABASE_URL`
-  - `SUPABASE_DB_PASSWORD` ou `DATABASE_PASSWORD`
+  - `SUPABASE_DB_PASSWORD`
+  - `SUPABASE_SERVICE_ROLE_KEY`
 
-## 📈 Monitoring
+## 📋 Structure d'un Backup
 
-Les sauvegardes sont enregistrées dans la table `backup_records` :
-- Statut en temps réel
-- Taille des fichiers
-- Checksums pour vérification d'intégrité
-- Logs d'erreurs
+```
+complete_backup_2026-02-27T14-33-45-045Z/
+├── database.sql          # Dump SQL complet
+├── storage/              # Fichiers storage
+│   ├── loft-photos/      # Photos des lofts
+│   ├── documents/        # Documents
+│   ├── reports/          # Rapports
+│   └── backups/          # Anciens backups SQL
+├── config.json           # Métadonnées du backup
+├── restore.cjs           # Script de restauration
+├── checksums.json        # Checksums pour vérification
+└── README.md             # Instructions
+```
 
-## 🔍 Vérification d'Intégrité
+## ⚙️ Configuration Requise
 
-Chaque sauvegarde inclut :
-- **Checksum SHA-256** : pour détecter la corruption
-- **Taille du fichier** : pour validation
-- **Ratio de compression** : pour statistiques
+### Variables d'environnement (.env.local)
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_DB_PASSWORD=your_database_password
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+```
+
+### Outils requis
+- Node.js (v18+)
+- PostgreSQL client tools (`psql`, `pg_dump`)
+- Yarn package manager
+
+## 🚨 Important
+
+1. **Ne jamais commiter les backups dans Git**
+   - Les backups contiennent des données sensibles
+   - Ils sont automatiquement exclus via `.gitignore`
+
+2. **Backups en production (Vercel)**
+   - Les backups automatiques ne fonctionnent PAS sur Vercel
+   - Utilisez toujours la commande en LOCAL: `yarn backup:complete`
+
+3. **Sécurité**
+   - Les backups contiennent des tokens OAuth et données sensibles
+   - Stockez-les dans un endroit sécurisé
+   - Ne les partagez jamais publiquement
+
+4. **Restauration**
+   - La restauration ÉCRASE la base de données cible
+   - Toujours faire un backup avant de restaurer
+   - Testez d'abord sur l'environnement DEV ou TEST
+
+## 📊 Historique des Backups
+
+Les backups sont listés dans l'interface web:
+- URL: `/admin/superuser/backup`
+- Affiche les 10 derniers backups
+- Statut, taille, date de création
+- Détails complets de chaque backup
+
+## 🔧 Dépannage
+
+### Erreur: "pg_dump not found"
+Installez PostgreSQL client tools:
+- Windows: https://www.postgresql.org/download/windows/
+- Ajoutez PostgreSQL bin au PATH
+
+### Erreur: "Database credentials not found"
+Vérifiez que `SUPABASE_DB_PASSWORD` est défini dans `.env.local`
+
+### Erreur: "SUPABASE_SERVICE_ROLE_KEY not found"
+Le service role key est requis pour uploader les fichiers storage.
+Ajoutez-le dans `.env.local`
+
+### Storage files not uploading
+- Vérifiez que les buckets existent dans Supabase
+- Vérifiez les permissions RLS sur les buckets
+- Le script crée automatiquement les buckets manquants
 
 ## 📞 Support
 
-En cas de problème :
-1. Vérifier les logs dans `superuser_audit_logs`
-2. Consulter la table `backup_records`
-3. Vérifier que `pg_dump` est installé et accessible
-4. Vérifier les permissions du dossier `backups/`
+Pour toute question ou problème:
+1. Vérifiez les logs de la commande
+2. Consultez la documentation Supabase
+3. Vérifiez les permissions de votre compte
+
+---
+
+**Dernière mise à jour:** 27/02/2026

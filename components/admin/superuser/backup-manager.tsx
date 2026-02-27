@@ -248,48 +248,115 @@ export function BackupManager() {
 
       {/* Actions and History */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+        {/* Instructions Card */}
+        <Card className="border-l-4 border-l-amber-500">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Database className="h-5 w-5" />
-              Créer une Sauvegarde
+              <AlertTriangle className="h-5 w-5 text-amber-600" />
+              Comment créer une sauvegarde
             </CardTitle>
             <CardDescription>
-              Créez une nouvelle sauvegarde de la base de données
+              Les sauvegardes automatiques ne fonctionnent pas sur Vercel
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button 
-              className="w-full" 
-              size="lg"
-              onClick={() => createBackup('FULL')}
-              disabled={creating}
-            >
-              {creating ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Création en cours...
-                </>
-              ) : (
-                <>
-                  <Database className="h-4 w-4 mr-2" />
-                  Sauvegarde Complète
-                </>
-              )}
-            </Button>
-            <Button 
-              variant="outline" 
-              className="w-full"
-              onClick={() => createBackup('MANUAL')}
-              disabled={creating}
-            >
-              {creating ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <CheckCircle className="h-4 w-4 mr-2" />
-              )}
-              Sauvegarde Manuelle
-            </Button>
+            <Alert className="border-amber-500 bg-amber-50">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
+              <AlertDescription className="text-amber-800">
+                <strong>Important:</strong> Les boutons ci-dessous ne fonctionnent pas en production (Vercel). 
+                Utilisez la méthode manuelle en local.
+              </AlertDescription>
+            </Alert>
+
+            <div className="space-y-3 text-sm">
+              <div>
+                <h4 className="font-semibold mb-2 flex items-center gap-2">
+                  <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">1</span>
+                  Ouvrir un terminal en local
+                </h4>
+                <p className="text-muted-foreground ml-8">
+                  Ouvrez PowerShell ou CMD dans le dossier du projet
+                </p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-2 flex items-center gap-2">
+                  <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">2</span>
+                  Lancer la commande de backup
+                </h4>
+                <div className="ml-8 space-y-2">
+                  <code className="block bg-slate-900 text-green-400 p-3 rounded font-mono text-xs">
+                    yarn backup:complete
+                  </code>
+                  <p className="text-muted-foreground text-xs">
+                    Cette commande crée un backup complet incluant:
+                  </p>
+                  <ul className="text-xs text-muted-foreground list-disc list-inside ml-2 space-y-1">
+                    <li>Dump SQL complet (toutes les tables)</li>
+                    <li>Tous les fichiers storage (photos, documents)</li>
+                    <li>Configuration et métadonnées</li>
+                    <li>Script de restauration automatique</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-2 flex items-center gap-2">
+                  <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">3</span>
+                  Localisation du backup
+                </h4>
+                <div className="ml-8">
+                  <p className="text-muted-foreground mb-2">Le backup sera créé dans:</p>
+                  <code className="block bg-slate-50 dark:bg-slate-900 text-xs p-2 rounded border break-all">
+                    C:\Users\SERVICE-INFO\IA\algerie-loft\backups\complete_backup_[timestamp]\
+                  </code>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-2 flex items-center gap-2">
+                  <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">4</span>
+                  Restauration
+                </h4>
+                <div className="ml-8 space-y-2">
+                  <p className="text-muted-foreground mb-2">Pour restaurer un backup:</p>
+                  <code className="block bg-slate-900 text-green-400 p-3 rounded font-mono text-xs">
+                    yarn backup:restore complete_backup_[timestamp]
+                  </code>
+                  <p className="text-muted-foreground text-xs mt-2">
+                    Ou depuis le dossier du backup:
+                  </p>
+                  <code className="block bg-slate-900 text-green-400 p-3 rounded font-mono text-xs">
+                    cd backups\complete_backup_[timestamp]<br/>
+                    node restore.cjs
+                  </code>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-2 flex items-center gap-2">
+                  <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">5</span>
+                  Clonage vers un autre environnement
+                </h4>
+                <div className="ml-8 space-y-2">
+                  <p className="text-muted-foreground mb-2">Pour cloner vers TEST ou DEV:</p>
+                  <code className="block bg-slate-900 text-green-400 p-3 rounded font-mono text-xs">
+                    yarn backup:clone-to-test complete_backup_[timestamp] test<br/>
+                    yarn backup:clone-to-dev complete_backup_[timestamp] dev
+                  </code>
+                  <p className="text-muted-foreground text-xs mt-2">
+                    Nécessite les fichiers .env.test ou .env.dev avec les credentials de la cible
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <Alert className="border-blue-500 bg-blue-50">
+              <CheckCircle className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-blue-800 text-xs">
+                <strong>Prérequis:</strong> Assurez-vous que <code className="bg-blue-100 px-1 rounded">SUPABASE_DB_PASSWORD</code> est défini dans votre fichier <code className="bg-blue-100 px-1 rounded">.env.local</code>
+              </AlertDescription>
+            </Alert>
           </CardContent>
         </Card>
 

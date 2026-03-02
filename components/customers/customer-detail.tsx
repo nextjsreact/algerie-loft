@@ -260,6 +260,7 @@ export function CustomerDetail({ customer }: CustomerDetailProps) {
 
             {/* Documents du client */}
             <CustomerDocuments customerId={customer.id} />
+          </div>
 
           {/* Sidebar avec statistiques */}
           <div className="space-y-8">

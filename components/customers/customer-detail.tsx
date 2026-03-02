@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Customer } from '@/lib/actions/customers';
+import { CustomerDocuments } from './customer-documents';
 import { 
   ArrowLeft,
   Mail,
@@ -256,7 +257,9 @@ export function CustomerDetail({ customer }: CustomerDetailProps) {
                 </CardContent>
               </Card>
             </div>
-          </div>
+
+            {/* Documents du client */}
+            <CustomerDocuments customerId={customer.id} />
 
           {/* Sidebar avec statistiques */}
           <div className="space-y-8">

@@ -1938,6 +1938,8 @@
     },
     "netResult": "Net Result",
     "other": "Other",
+    "noDataAvailable": "No data available",
+    "addTransactionsToSeeReports": "Add transactions to see financial reports",
     "ownerReportInfo": "• Owner information\n• List of all their lofts\n• Performance per loft\n• Global summary",
     "ownerReportTitle": "Owner Report",
     "pageTitle": "Reports and Analytics",

@@ -8,43 +8,48 @@ import { useTranslations } from 'next-intl'
 import { RoleBasedAccess } from '@/components/auth/role-based-access'
 import { useEffect, useState } from 'react'
 import { getSession } from '@/lib/auth'
+import { getReportsData } from '@/app/actions/reports'
 import type { AuthSession } from '@/lib/types'
 
-// Mock data - replace with real data from your API
-const mockLoftRevenue = [
-  { name: "Loft Artistique Hydra", revenue: 45000, expenses: 12000, net_profit: 33000 },
-  { name: "Loft Moderne Centre-Ville", revenue: 38000, expenses: 15000, net_profit: 23000 },
-  { name: "Loft Industriel Kouba", revenue: 42000, expenses: 18000, net_profit: 24000 },
-  { name: "Loft Luxueux Alger", revenue: 55000, expenses: 20000, net_profit: 35000 },
-  { name: "Loft Cosy Bab Ezzouar", revenue: 35000, expenses: 10000, net_profit: 25000 }
-]
+interface LoftRevenue {
+  name: string
+  revenue: number
+  expenses: number
+  net_profit: number
+}
 
-const mockMonthlyRevenue = [
-  { month: "Jan", revenue: 215000, expenses: 75000 },
-  { month: "Fév", revenue: 198000, expenses: 68000 },
-  { month: "Mar", revenue: 225000, expenses: 82000 },
-  { month: "Avr", revenue: 242000, expenses: 89000 },
-  { month: "Mai", revenue: 258000, expenses: 95000 },
-  { month: "Jun", revenue: 235000, expenses: 78000 }
-]
+interface MonthlyRevenue {
+  month: string
+  revenue: number
+  expenses: number
+}
 
 export default function ReportsPage() {
   const t = useTranslations()
   const [session, setSession] = useState<AuthSession | null>(null)
   const [loading, setLoading] = useState(true)
+  const [loftRevenue, setLoftRevenue] = useState<LoftRevenue[]>([])
+  const [monthlyRevenue, setMonthlyRevenue] = useState<MonthlyRevenue[]>([])
 
   useEffect(() => {
-    async function fetchSession() {
+    async function fetchData() {
       try {
         const sessionData = await getSession()
         setSession(sessionData)
+        
+        if (sessionData) {
+          // Fetch real data from database
+          const reportsData = await getReportsData()
+          setLoftRevenue(reportsData.loftRevenue)
+          setMonthlyRevenue(reportsData.monthlyRevenue)
+        }
       } catch (error) {
-        console.error('Failed to fetch session:', error)
+        console.error('Failed to fetch data:', error)
       } finally {
         setLoading(false)
       }
     }
-    fetchSession()
+    fetchData()
   }, [])
 
   if (loading) {
@@ -133,10 +138,18 @@ export default function ReportsPage() {
 
             <TabsContent value="analytics" className="space-y-8">
               <div className="rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-xl p-6">
-                <ReportsWrapper 
-                  loftRevenue={mockLoftRevenue} 
-                  monthlyRevenue={mockMonthlyRevenue} 
-                />
+                {loftRevenue.length === 0 && monthlyRevenue.length === 0 ? (
+                  <div className="text-center py-12">
+                    <BarChart3 className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-500 text-lg">{t('reports.noDataAvailable')}</p>
+                    <p className="text-gray-400 text-sm mt-2">{t('reports.addTransactionsToSeeReports')}</p>
+                  </div>
+                ) : (
+                  <ReportsWrapper 
+                    loftRevenue={loftRevenue} 
+                    monthlyRevenue={monthlyRevenue} 
+                  />
+                )}
               </div>
             </TabsContent>
 

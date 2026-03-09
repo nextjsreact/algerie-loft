@@ -1938,6 +1938,8 @@
       "generated_success": "Rapport généré avec succès."
     },
     "netResult": "Résultat net",
+    "noDataAvailable": "Aucune donnée disponible",
+    "addTransactionsToSeeReports": "Ajoutez des transactions pour voir les rapports financiers",
     "other": "Autre",
     "ownerReportInfo": "• Informations sur le propriétaire\n• Liste de tous ses appartements\n• Performance par appartement\n• Résumé global",
     "ownerReportTitle": "Rapport de propriétaire",

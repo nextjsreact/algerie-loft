@@ -1951,6 +1951,8 @@
       "generated_success": "تم إنشاء التقرير بنجاح."
     },
     "netResult": "النتيجة الصافية",
+    "noDataAvailable": "لا توجد بيانات متاحة",
+    "addTransactionsToSeeReports": "أضف معاملات لرؤية التقارير المالية",
     "other": "أخرى",
     "ownerReportInfo": "• معلومات المالك\n• قائمة بجميع شققهم\n• الأداء لكل شقة\n• ملخص عالمي",
     "ownerReportTitle": "تقرير المالك",

@@ -26,9 +26,13 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8']
 export default function ReportChartsWrapper({ loftRevenue, monthlyRevenue }: ReportChartsWrapperProps) {
   const t = useTranslations("analytics")
 
-  // Calculer les valeurs max pour le scaling
-  const maxRevenue = Math.max(...loftRevenue.map(item => Math.max(item.revenue, item.expenses, item.net_profit)))
-  const maxMonthlyValue = Math.max(...monthlyRevenue.map(item => Math.max(item.revenue, item.expenses)))
+  // Calculer les valeurs max pour le scaling (avec valeur par défaut pour éviter -Infinity)
+  const maxRevenue = loftRevenue.length > 0 
+    ? Math.max(...loftRevenue.map(item => Math.max(item.revenue, item.expenses, item.net_profit)), 1)
+    : 1
+  const maxMonthlyValue = monthlyRevenue.length > 0
+    ? Math.max(...monthlyRevenue.map(item => Math.max(item.revenue, item.expenses)), 1)
+    : 1
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -302,7 +306,8 @@ export default function ReportChartsWrapper({ loftRevenue, monthlyRevenue }: Rep
           <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-xl border shadow-lg">
             <div className="space-y-3">
               {loftRevenue.slice(0, 5).map((item, index) => {
-                const percentage = (item.net_profit / loftRevenue[0]?.net_profit) * 100;
+                const topProfit = loftRevenue[0]?.net_profit || 1; // Éviter division par zéro
+                const percentage = topProfit > 0 ? (item.net_profit / topProfit) * 100 : 0;
                 return (
                   <div key={index} className="flex items-center justify-between p-3 bg-white rounded-lg border shadow-sm">
                     <div className="flex items-center gap-3">

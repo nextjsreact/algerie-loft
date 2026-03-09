@@ -16,7 +16,7 @@ export default async function OwnersPage() {
   // Récupérer tous les lofts pour compter
   const { data: allLofts } = await supabase
     .from("lofts")
-    .select("id, owner_id, price_per_night, price_per_month")
+    .select("id, owner_id, price_per_night")
 
   console.log('=== DEBUG OWNERS PAGE ===')
   console.log('Total owners:', ownersData?.length || 0)
@@ -37,9 +37,9 @@ export default async function OwnersPage() {
     )
     const loft_count = ownerLofts.length
     
-    // Calculer la valeur mensuelle totale en utilisant price_per_month ou price_per_night * 30
+    // Calculer la valeur mensuelle totale en utilisant price_per_night * 30
     const total_monthly_value = ownerLofts.reduce((sum: number, loft: any) => {
-      const monthlyPrice = loft.price_per_month || (loft.price_per_night ? loft.price_per_night * 30 : 0)
+      const monthlyPrice = loft.price_per_night ? loft.price_per_night * 30 : 0
       return sum + (monthlyPrice || 0)
     }, 0)
     

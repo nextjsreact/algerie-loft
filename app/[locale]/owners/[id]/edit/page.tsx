@@ -43,11 +43,18 @@ export default async function EditOwnerPage({ params }: { params: Promise<{ id: 
     const owner = {
       id: ownerData.id,
       name: ownerData.name || ownerData.business_name || '',
-      ownership_type: ownerData.ownership_type || (ownerData.business_type === 'company' ? 'company' : 'third_party'),
-      email: ownerData.email || '',
-      phone: ownerData.phone || '',
-      address: ownerData.address || '',
+      ownership_type: (ownerData.ownership_type || (ownerData.business_type === 'company' ? 'company' : 'third_party')) as 'company' | 'third_party',
+      email: ownerData.email || undefined,
+      phone: ownerData.phone || undefined,
+      address: ownerData.address || undefined,
     }
+
+    console.log('Owner data loaded for edit:', { 
+      id: owner.id, 
+      name: owner.name, 
+      email: owner.email,
+      hasEmail: !!ownerData.email 
+    })
 
     return (
       <OwnerForm 

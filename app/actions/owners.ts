@@ -35,9 +35,11 @@ export async function updateOwner(id: string, formData: FormData) {
     .update({
       name: data.name.toString().trim(),
       business_name: data.name.toString().trim(),
-      phone: data.phone?.toString().trim() || '',
-      address: data.address?.toString().trim() || '',
-      business_type: business_type === 'company' ? 'company' : 'individual'
+      email: data.email?.toString().trim() || null,
+      phone: data.phone?.toString().trim() || null,
+      address: data.address?.toString().trim() || null,
+      business_type: business_type === 'company' ? 'company' : 'individual',
+      ownership_type: business_type === 'company' ? 'company' : 'third_party'
     })
     .eq("id", id)
 
@@ -81,8 +83,9 @@ export async function createOwner(formData: FormData) {
     .insert({
       name: name,
       business_name: name,
-      phone: data.phone?.toString().trim() || '',
-      address: data.address?.toString().trim() || '',
+      email: data.email?.toString().trim() || null,
+      phone: data.phone?.toString().trim() || null,
+      address: data.address?.toString().trim() || null,
       business_type: ownership_type === 'company' ? 'company' : 'individual',
       ownership_type: ownership_type === 'company' ? 'company' : 'third_party',
       verification_status: 'verified'

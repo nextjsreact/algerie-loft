@@ -18,6 +18,12 @@ export default async function OwnersPage() {
     .from("lofts")
     .select("id, new_owner_id, owner_id, partner_id, price_per_night, price_per_month")
 
+  console.log('=== DEBUG OWNERS PAGE ===')
+  console.log('Total owners:', ownersData?.length || 0)
+  console.log('Total lofts:', allLofts?.length || 0)
+  console.log('Sample loft:', allLofts?.[0])
+  console.log('Sample owner:', ownersData?.[0])
+
   if (error) {
     console.error("Error fetching owners:", error.message, error.details, error.hint)
     // Si la table n'existe pas ou est vide, retourner un tableau vide
@@ -39,6 +45,21 @@ export default async function OwnersPage() {
       const monthlyPrice = loft.price_per_month || (loft.price_per_night ? loft.price_per_night * 30 : 0)
       return sum + (monthlyPrice || 0)
     }, 0)
+    
+    // Log pour le premier owner pour debug
+    if (owner.id === ownersData[0]?.id) {
+      console.log('First owner debug:', {
+        owner_id: owner.id,
+        owner_name: owner.name,
+        matching_lofts: ownerLofts.length,
+        sample_loft_ids: ownerLofts.slice(0, 3).map(l => ({ 
+          id: l.id, 
+          new_owner_id: l.new_owner_id, 
+          owner_id: l.owner_id, 
+          partner_id: l.partner_id 
+        }))
+      })
+    }
     
     // Les champs sont maintenant directement compatibles
     return {

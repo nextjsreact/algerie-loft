@@ -16,7 +16,7 @@ export default async function OwnersPage() {
   // Récupérer tous les lofts pour compter
   const { data: allLofts } = await supabase
     .from("lofts")
-    .select("id, new_owner_id, price_per_night")
+    .select("id, new_owner_id, owner_id, partner_id, price_per_night")
 
   if (error) {
     console.error("Error fetching owners:", error.message, error.details, error.hint)
@@ -26,7 +26,12 @@ export default async function OwnersPage() {
 
   const owners = (ownersData || []).map((owner: any) => {
     // Compter les lofts associés à ce propriétaire
-    const ownerLofts = (allLofts || []).filter((loft: any) => loft.new_owner_id === owner.id)
+    // Vérifier new_owner_id, owner_id et partner_id pour compatibilité
+    const ownerLofts = (allLofts || []).filter((loft: any) => 
+      loft.new_owner_id === owner.id || 
+      loft.owner_id === owner.id || 
+      loft.partner_id === owner.id
+    )
     const loft_count = ownerLofts.length
     const total_monthly_value = ownerLofts.reduce((sum: number, loft: any) => {
       return sum + (loft.price_per_night || 0) * 30

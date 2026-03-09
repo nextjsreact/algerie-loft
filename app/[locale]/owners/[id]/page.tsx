@@ -32,7 +32,7 @@ export default async function OwnerDetailPage({ params }: OwnerDetailPageProps) 
   const { data: lofts } = await supabase
     .from("lofts")
     .select("id, name, address, price_per_night, status")
-    .eq("new_owner_id", id)
+    .eq("owner_id", id)
 
   const ownerLofts = lofts || []
   const totalMonthlyValue = ownerLofts.reduce((sum, loft) => sum + (loft.price_per_night || 0) * 30, 0)

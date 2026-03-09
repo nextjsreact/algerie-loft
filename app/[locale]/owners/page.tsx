@@ -16,7 +16,7 @@ export default async function OwnersPage() {
   // Récupérer tous les lofts pour compter
   const { data: allLofts } = await supabase
     .from("lofts")
-    .select("id, new_owner_id, owner_id, price_per_night, price_per_month")
+    .select("id, owner_id, price_per_night, price_per_month")
 
   console.log('=== DEBUG OWNERS PAGE ===')
   console.log('Total owners:', ownersData?.length || 0)
@@ -31,10 +31,8 @@ export default async function OwnersPage() {
   }
 
   const owners = (ownersData || []).map((owner: any) => {
-    // Compter les lofts associés à ce propriétaire
-    // Vérifier new_owner_id et owner_id pour compatibilité
+    // Compter les lofts associés à ce propriétaire via owner_id
     const ownerLofts = (allLofts || []).filter((loft: any) => 
-      loft.new_owner_id === owner.id || 
       loft.owner_id === owner.id
     )
     const loft_count = ownerLofts.length
@@ -53,7 +51,6 @@ export default async function OwnersPage() {
         matching_lofts: ownerLofts.length,
         sample_loft_ids: ownerLofts.slice(0, 3).map(l => ({ 
           id: l.id, 
-          new_owner_id: l.new_owner_id, 
           owner_id: l.owner_id
         }))
       })

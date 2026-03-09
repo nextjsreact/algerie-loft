@@ -40,14 +40,14 @@ export async function getReportsData() {
       .from("transactions")
       .select("equivalent_amount_default_currency")
       .eq("loft_id", loft.id)
-      .eq("type", "income")
+      .eq("transaction_type", "income")
 
     // Get expenses (expense transactions)
     const { data: expensesData } = await supabase
       .from("transactions")
       .select("equivalent_amount_default_currency")
       .eq("loft_id", loft.id)
-      .eq("type", "expense")
+      .eq("transaction_type", "expense")
 
     const revenue = revenueData?.reduce((sum, t) => sum + (t.equivalent_amount_default_currency || 0), 0) || 0
     const expenses = expensesData?.reduce((sum, t) => sum + (t.equivalent_amount_default_currency || 0), 0) || 0
@@ -76,7 +76,7 @@ export async function getReportsData() {
     const { data: revenueData } = await supabase
       .from("transactions")
       .select("equivalent_amount_default_currency")
-      .eq("type", "income")
+      .eq("transaction_type", "income")
       .gte("date", date.toISOString())
       .lt("date", nextDate.toISOString())
 
@@ -84,7 +84,7 @@ export async function getReportsData() {
     const { data: expensesData } = await supabase
       .from("transactions")
       .select("equivalent_amount_default_currency")
-      .eq("type", "expense")
+      .eq("transaction_type", "expense")
       .gte("date", date.toISOString())
       .lt("date", nextDate.toISOString())
 

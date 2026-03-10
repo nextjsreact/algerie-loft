@@ -35,22 +35,35 @@ export async function getReportsData() {
 
   // Calculate revenue and expenses per loft
   const loftRevenuePromises = (lofts || []).map(async (loft) => {
-    // Get revenue (income transactions)
+    // Get revenue (income transactions) with currency info
     const { data: revenueData } = await supabase
       .from("transactions")
-      .select("equivalent_amount_default_currency")
+      .select("amount, equivalent_amount_default_currency, ratio_at_transaction, currency_id")
       .eq("loft_id", loft.id)
       .eq("transaction_type", "income")
 
-    // Get expenses (expense transactions)
+    // Get expenses (expense transactions) with currency info
     const { data: expensesData } = await supabase
       .from("transactions")
-      .select("equivalent_amount_default_currency")
+      .select("amount, equivalent_amount_default_currency, ratio_at_transaction, currency_id")
       .eq("loft_id", loft.id)
       .eq("transaction_type", "expense")
 
-    const revenue = revenueData?.reduce((sum, t) => sum + (t.equivalent_amount_default_currency || 0), 0) || 0
-    const expenses = expensesData?.reduce((sum, t) => sum + (t.equivalent_amount_default_currency || 0), 0) || 0
+    // Calculate revenue with fallback conversion
+    const revenue = revenueData?.reduce((sum, t) => {
+      // Use equivalent_amount_default_currency if available, otherwise calculate from amount and ratio
+      const convertedAmount = t.equivalent_amount_default_currency || 
+                             (t.ratio_at_transaction ? t.amount * t.ratio_at_transaction : t.amount)
+      return sum + (convertedAmount || 0)
+    }, 0) || 0
+
+    // Calculate expenses with fallback conversion
+    const expenses = expensesData?.reduce((sum, t) => {
+      // Use equivalent_amount_default_currency if available, otherwise calculate from amount and ratio
+      const convertedAmount = t.equivalent_amount_default_currency || 
+                             (t.ratio_at_transaction ? t.amount * t.ratio_at_transaction : t.amount)
+      return sum + (convertedAmount || 0)
+    }, 0) || 0
 
     return {
       name: loft.name,
@@ -72,24 +85,35 @@ export async function getReportsData() {
     
     const monthName = date.toLocaleDateString('fr-FR', { month: 'short' })
     
-    // Get revenue for this month
+    // Get revenue for this month with currency info
     const { data: revenueData } = await supabase
       .from("transactions")
-      .select("equivalent_amount_default_currency")
+      .select("amount, equivalent_amount_default_currency, ratio_at_transaction, currency_id")
       .eq("transaction_type", "income")
       .gte("date", date.toISOString())
       .lt("date", nextDate.toISOString())
 
-    // Get expenses for this month
+    // Get expenses for this month with currency info
     const { data: expensesData } = await supabase
       .from("transactions")
-      .select("equivalent_amount_default_currency")
+      .select("amount, equivalent_amount_default_currency, ratio_at_transaction, currency_id")
       .eq("transaction_type", "expense")
       .gte("date", date.toISOString())
       .lt("date", nextDate.toISOString())
 
-    const revenue = revenueData?.reduce((sum, t) => sum + (t.equivalent_amount_default_currency || 0), 0) || 0
-    const expenses = expensesData?.reduce((sum, t) => sum + (t.equivalent_amount_default_currency || 0), 0) || 0
+    // Calculate revenue with fallback conversion
+    const revenue = revenueData?.reduce((sum, t) => {
+      const convertedAmount = t.equivalent_amount_default_currency || 
+                             (t.ratio_at_transaction ? t.amount * t.ratio_at_transaction : t.amount)
+      return sum + (convertedAmount || 0)
+    }, 0) || 0
+
+    // Calculate expenses with fallback conversion
+    const expenses = expensesData?.reduce((sum, t) => {
+      const convertedAmount = t.equivalent_amount_default_currency || 
+                             (t.ratio_at_transaction ? t.amount * t.ratio_at_transaction : t.amount)
+      return sum + (convertedAmount || 0)
+    }, 0) || 0
 
     monthlyRevenueData.push({
       month: monthName.charAt(0).toUpperCase() + monthName.slice(1),

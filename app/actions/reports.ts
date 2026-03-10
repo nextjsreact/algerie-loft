@@ -103,16 +103,31 @@ export async function getReportsData() {
 
     // Calculate revenue with fallback conversion
     const revenue = revenueData?.reduce((sum, t) => {
-      const convertedAmount = t.equivalent_amount_default_currency || 
-                             (t.ratio_at_transaction ? t.amount * t.ratio_at_transaction : t.amount)
-      return sum + (convertedAmount || 0)
+      // Use equivalent_amount_default_currency if available
+      if (t.equivalent_amount_default_currency) {
+        return sum + t.equivalent_amount_default_currency
+      }
+      // If ratio exists, divide amount by ratio to get default currency amount
+      // (ratio is typically: 1 default currency = X foreign currency)
+      if (t.ratio_at_transaction && t.ratio_at_transaction !== 0) {
+        return sum + (t.amount / t.ratio_at_transaction)
+      }
+      // Fallback to original amount
+      return sum + (t.amount || 0)
     }, 0) || 0
 
     // Calculate expenses with fallback conversion
     const expenses = expensesData?.reduce((sum, t) => {
-      const convertedAmount = t.equivalent_amount_default_currency || 
-                             (t.ratio_at_transaction ? t.amount * t.ratio_at_transaction : t.amount)
-      return sum + (convertedAmount || 0)
+      // Use equivalent_amount_default_currency if available
+      if (t.equivalent_amount_default_currency) {
+        return sum + t.equivalent_amount_default_currency
+      }
+      // If ratio exists, divide amount by ratio to get default currency amount
+      if (t.ratio_at_transaction && t.ratio_at_transaction !== 0) {
+        return sum + (t.amount / t.ratio_at_transaction)
+      }
+      // Fallback to original amount
+      return sum + (t.amount || 0)
     }, 0) || 0
 
     monthlyRevenueData.push({

@@ -35,35 +35,23 @@ export async function getReportsData() {
 
   // Calculate revenue and expenses per loft
   const loftRevenuePromises = (lofts || []).map(async (loft) => {
-    // Get revenue (income transactions) with currency info
+    // Get revenue (income transactions) - use equivalent_amount_default_currency
     const { data: revenueData } = await supabase
       .from("transactions")
-      .select("amount, equivalent_amount_default_currency, ratio_at_transaction, currency_id")
+      .select("equivalent_amount_default_currency")
       .eq("loft_id", loft.id)
       .eq("transaction_type", "income")
 
-    // Get expenses (expense transactions) with currency info
+    // Get expenses (expense transactions) - use equivalent_amount_default_currency
     const { data: expensesData } = await supabase
       .from("transactions")
-      .select("amount, equivalent_amount_default_currency, ratio_at_transaction, currency_id")
+      .select("equivalent_amount_default_currency")
       .eq("loft_id", loft.id)
       .eq("transaction_type", "expense")
 
-    // Calculate revenue with fallback conversion
-    const revenue = revenueData?.reduce((sum, t) => {
-      // Use equivalent_amount_default_currency if available, otherwise calculate from amount and ratio
-      const convertedAmount = t.equivalent_amount_default_currency || 
-                             (t.ratio_at_transaction ? t.amount * t.ratio_at_transaction : t.amount)
-      return sum + (convertedAmount || 0)
-    }, 0) || 0
-
-    // Calculate expenses with fallback conversion
-    const expenses = expensesData?.reduce((sum, t) => {
-      // Use equivalent_amount_default_currency if available, otherwise calculate from amount and ratio
-      const convertedAmount = t.equivalent_amount_default_currency || 
-                             (t.ratio_at_transaction ? t.amount * t.ratio_at_transaction : t.amount)
-      return sum + (convertedAmount || 0)
-    }, 0) || 0
+    // Sum using equivalent_amount_default_currency (already converted at transaction time)
+    const revenue = revenueData?.reduce((sum, t) => sum + (t.equivalent_amount_default_currency || 0), 0) || 0
+    const expenses = expensesData?.reduce((sum, t) => sum + (t.equivalent_amount_default_currency || 0), 0) || 0
 
     return {
       name: loft.name,
@@ -85,50 +73,25 @@ export async function getReportsData() {
     
     const monthName = date.toLocaleDateString('fr-FR', { month: 'short' })
     
-    // Get revenue for this month with currency info
+    // Get revenue for this month - use equivalent_amount_default_currency
     const { data: revenueData } = await supabase
       .from("transactions")
-      .select("amount, equivalent_amount_default_currency, ratio_at_transaction, currency_id")
+      .select("equivalent_amount_default_currency")
       .eq("transaction_type", "income")
       .gte("date", date.toISOString())
       .lt("date", nextDate.toISOString())
 
-    // Get expenses for this month with currency info
+    // Get expenses for this month - use equivalent_amount_default_currency
     const { data: expensesData } = await supabase
       .from("transactions")
-      .select("amount, equivalent_amount_default_currency, ratio_at_transaction, currency_id")
+      .select("equivalent_amount_default_currency")
       .eq("transaction_type", "expense")
       .gte("date", date.toISOString())
       .lt("date", nextDate.toISOString())
 
-    // Calculate revenue with fallback conversion
-    const revenue = revenueData?.reduce((sum, t) => {
-      // Use equivalent_amount_default_currency if available
-      if (t.equivalent_amount_default_currency) {
-        return sum + t.equivalent_amount_default_currency
-      }
-      // If ratio exists, divide amount by ratio to get default currency amount
-      // (ratio is typically: 1 default currency = X foreign currency)
-      if (t.ratio_at_transaction && t.ratio_at_transaction !== 0) {
-        return sum + (t.amount / t.ratio_at_transaction)
-      }
-      // Fallback to original amount
-      return sum + (t.amount || 0)
-    }, 0) || 0
-
-    // Calculate expenses with fallback conversion
-    const expenses = expensesData?.reduce((sum, t) => {
-      // Use equivalent_amount_default_currency if available
-      if (t.equivalent_amount_default_currency) {
-        return sum + t.equivalent_amount_default_currency
-      }
-      // If ratio exists, divide amount by ratio to get default currency amount
-      if (t.ratio_at_transaction && t.ratio_at_transaction !== 0) {
-        return sum + (t.amount / t.ratio_at_transaction)
-      }
-      // Fallback to original amount
-      return sum + (t.amount || 0)
-    }, 0) || 0
+    // Sum using equivalent_amount_default_currency (already converted at transaction time)
+    const revenue = revenueData?.reduce((sum, t) => sum + (t.equivalent_amount_default_currency || 0), 0) || 0
+    const expenses = expensesData?.reduce((sum, t) => sum + (t.equivalent_amount_default_currency || 0), 0) || 0
 
     monthlyRevenueData.push({
       month: monthName.charAt(0).toUpperCase() + monthName.slice(1),

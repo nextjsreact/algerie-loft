@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     const validatedFilters: AuditFilters = {};
     
     if (filters.tableName) {
-      const validTables = ['transactions', 'tasks', 'reservations', 'lofts'];
+      const validTables = ['transactions', 'tasks', 'reservations', 'lofts', 'owners'];
       if (!validTables.includes(filters.tableName)) {
         return NextResponse.json(
           { error: "Nom de table invalide", validTables },

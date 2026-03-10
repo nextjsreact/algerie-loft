@@ -3115,7 +3115,8 @@
       "transactions": "معاملة",
       "tasks": "مهمة",
       "reservations": "حجز",
-      "lofts": "شقة"
+      "lofts": "شقة",
+      "owners": "مالك"
     },
     "unknownUser": "مستخدم غير معروف",
     "changedFields": "الحقول المتغيرة",

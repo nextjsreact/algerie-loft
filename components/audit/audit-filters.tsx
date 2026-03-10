@@ -111,7 +111,8 @@ export function AuditFilters({
     { value: 'transactions', label: t('tables.transactions') },
     { value: 'tasks', label: t('tables.tasks') },
     { value: 'reservations', label: t('tables.reservations') },
-    { value: 'lofts', label: t('tables.lofts') }
+    { value: 'lofts', label: t('tables.lofts') },
+    { value: 'owners', label: t('tables.owners') }
   ]
 
   // Available actions

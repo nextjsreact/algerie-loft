@@ -232,7 +232,7 @@ describe('Audit Entity API Endpoint Tests', () => {
       const mockSession = { user: { id: 'admin-1', role: 'admin' } }
       mockRequireAuthAPI.mockResolvedValue(mockSession)
 
-      const validTables = ['transactions', 'tasks', 'reservations', 'lofts']
+      const validTables = ['transactions', 'tasks', 'reservations', 'lofts', 'owners']
       const mockAuditHistory = []
       mockGetEntityAuditHistory.mockResolvedValue(mockAuditHistory)
 

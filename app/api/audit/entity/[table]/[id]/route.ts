@@ -4,7 +4,7 @@ import { AuditService } from "@/lib/services/audit-service";
 import type { AuditableTable } from "@/lib/types";
 
 // Valid table names for audit
-const VALID_TABLES: AuditableTable[] = ['transactions', 'tasks', 'reservations', 'lofts'];
+const VALID_TABLES: AuditableTable[] = ['transactions', 'tasks', 'reservations', 'lofts', 'owners'];
 
 /**
  * GET /api/audit/entity/[table]/[id]

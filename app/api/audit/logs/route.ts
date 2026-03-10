@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     const filters: AuditFilters = {};
     
     if (searchParams.get('tableName')) {
-      const validTables = ['transactions', 'tasks', 'reservations', 'lofts'];
+      const validTables = ['transactions', 'tasks', 'reservations', 'lofts', 'owners'];
       const tableName = searchParams.get('tableName')!;
       if (!validTables.includes(tableName)) {
         return NextResponse.json(

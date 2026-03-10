@@ -384,7 +384,7 @@ export interface BookingSearchParams {
 
 // Audit system types
 export type AuditAction = 'INSERT' | 'UPDATE' | 'DELETE';
-export type AuditableTable = 'transactions' | 'tasks' | 'reservations' | 'lofts';
+export type AuditableTable = 'transactions' | 'tasks' | 'reservations' | 'lofts' | 'owners';
 
 export interface AuditLog {
   id: string;

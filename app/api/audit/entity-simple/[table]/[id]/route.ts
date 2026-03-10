@@ -58,7 +58,7 @@ export async function GET(
     }
 
     // Validate table
-    const validTables = ['transactions', 'tasks', 'reservations', 'lofts'];
+    const validTables = ['transactions', 'tasks', 'reservations', 'lofts', 'owners'];
     if (!validTables.includes(table)) {
       console.log('❌ Invalid table');
       return NextResponse.json({

@@ -74,7 +74,7 @@ const createMockLogs = (count: number): AuditLog[] => {
     timestamp: new Date(2024, 0, i + 1, 10, 30).toISOString(),
     userEmail: `user${i}@example.com`,
     action: ['INSERT', 'UPDATE', 'DELETE'][i % 3] as any,
-    tableName: ['transactions', 'tasks', 'reservations', 'lofts'][i % 4]
+    tableName: ['transactions', 'tasks', 'reservations', 'lofts', 'owners'][i % 5]
   }))
 }
 

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 interface AuditExampleProps {
-  entityType: 'transactions' | 'tasks' | 'reservations' | 'lofts'
+  entityType: 'transactions' | 'tasks' | 'reservations' | 'lofts' | 'owners'
   entityId: string
   entityName?: string
 }

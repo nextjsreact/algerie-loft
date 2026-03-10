@@ -16,7 +16,7 @@ async function testAuditEntityAPI() {
   try {
     // Test 1: Validate table names
     console.log('✅ Test 1: Valid table names')
-    const validTables: AuditableTable[] = ['transactions', 'tasks', 'reservations', 'lofts']
+    const validTables: AuditableTable[] = ['transactions', 'tasks', 'reservations', 'lofts', 'owners']
     console.log('Valid tables:', validTables)
     
     // Test 2: UUID validation

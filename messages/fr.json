@@ -3103,7 +3103,8 @@
       "transactions": "Transaction",
       "tasks": "Tâche",
       "reservations": "Réservation",
-      "lofts": "Loft"
+      "lofts": "Loft",
+      "owners": "Propriétaire"
     },
     "unknownUser": "Utilisateur inconnu",
     "changedFields": "Champs modifiés",

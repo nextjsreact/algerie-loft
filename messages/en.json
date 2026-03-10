@@ -3102,7 +3102,8 @@
       "transactions": "Transaction",
       "tasks": "Task",
       "reservations": "Reservation",
-      "lofts": "Loft"
+      "lofts": "Loft",
+      "owners": "Owner"
     },
     "unknownUser": "Unknown User",
     "changedFields": "Changed Fields",

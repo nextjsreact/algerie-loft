@@ -152,12 +152,13 @@ export function useReports() {
 
   const fetchTransactions = useCallback(async (filters: ReportFilters): Promise<Transaction[]> => {
     try {
-      // Récupérer les transactions de la vraie table
+      // Récupérer les transactions de la vraie table avec le montant converti
       let query = supabase
         .from('transactions')
         .select(`
           id,
           amount,
+          equivalent_amount_default_currency,
           description,
           transaction_type,
           category,
@@ -206,7 +207,8 @@ export function useReports() {
 
         return {
           id: transaction.id,
-          amount: transaction.amount,
+          // Utiliser equivalent_amount_default_currency (montant déjà converti en DZD)
+          amount: transaction.equivalent_amount_default_currency || transaction.amount,
           description: transaction.description || '',
           transaction_type: transaction.transaction_type,
           category: transaction.category || 'Non catégorisé',
@@ -214,7 +216,7 @@ export function useReports() {
           loft_id: transaction.loft_id,
           loft_name: loft?.name || 'Loft inconnu',
           owner_name: ownerName || 'Propriétaire inconnu',
-          currency: transaction.currency_id || 'DZD'
+          currency: 'DZD' // Toujours DZD car on utilise equivalent_amount_default_currency
         }
       }) || []
     } catch (error) {

@@ -630,10 +630,10 @@ export function SimpleTransactionsPage({
                           </div>
                           
                           {/* Section droite: Montant et actions */}
-                          <div className="flex items-center justify-between lg:justify-end gap-4 lg:gap-6 border-t lg:border-t-0 lg:border-l pt-4 lg:pt-0 lg:pl-6">
+                          <div className="flex items-center justify-between lg:justify-end gap-3 lg:gap-4 border-t lg:border-t-0 lg:border-l pt-4 lg:pt-0 lg:pl-4 lg:max-w-md">
                             {/* Montant */}
-                            <div className="text-right flex-shrink-0">
-                              <div className={`text-2xl font-bold ${transaction.transaction_type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                            <div className="text-right flex-shrink-0 min-w-[140px] max-w-[180px]">
+                              <div className={`text-lg font-bold ${transaction.transaction_type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                                 {transaction.transaction_type === 'income' ? '+' : '-'}
                                 {formatAmount(transaction.equivalent_amount_default_currency || transaction.amount)} {defaultCurrencySymbol}
                               </div>

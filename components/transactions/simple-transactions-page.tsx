@@ -556,71 +556,98 @@ export function SimpleTransactionsPage({
                   
                   return (
                     <Card key={transaction.id} className="border-0 shadow-md bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300 group">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-3">
-                              <div className={`p-2 rounded-full ${transaction.transaction_type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
+                      <CardContent className="p-6">
+                        <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6">
+                          {/* Section gauche: Informations principales */}
+                          <div className="flex-1 min-w-0">
+                            {/* En-tête de la transaction */}
+                            <div className="flex items-start gap-3 mb-4">
+                              <div className={`p-3 rounded-full flex-shrink-0 ${transaction.transaction_type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
                                 {transaction.transaction_type === 'income' ? 
-                                  <TrendingUp className="h-4 w-4 text-green-600" /> : 
-                                  <TrendingDown className="h-4 w-4 text-red-600" />
+                                  <TrendingUp className="h-5 w-5 text-green-600" /> : 
+                                  <TrendingDown className="h-5 w-5 text-red-600" />
                                 }
                               </div>
-                              <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">
-                                {transaction.description || t('noDescription')}
-                              </h3>
-                              <Badge className={`${getStatusColor(transaction.status)} border`}>
-                                <div className="flex items-center gap-1">
-                                  {getStatusIcon(transaction.status)}
-                                  {t(transaction.status)}
-                                </div>
-                              </Badge>
+                              <div className="flex-1 min-w-0">
+                                <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg mb-2 truncate">
+                                  {transaction.description || t('noDescription')}
+                                </h3>
+                                <Badge className={`${getStatusColor(transaction.status)} border`}>
+                                  <div className="flex items-center gap-1">
+                                    {getStatusIcon(transaction.status)}
+                                    <span className="text-xs font-medium">{t(transaction.status)}</span>
+                                  </div>
+                                </Badge>
+                              </div>
                             </div>
                             
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            {/* Détails de la transaction */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3 text-sm">
                               <div className="flex items-center gap-2">
-                                <Calendar className="h-3 w-3 text-gray-400 dark:text-gray-500" />
-                                <span className="font-medium text-gray-700 dark:text-gray-300">{t('date')}:</span> 
-                                <span className="text-gray-600 dark:text-gray-400">{new Date(transaction.date).toLocaleDateString('fr-FR')}</span>
+                                <Calendar className="h-4 w-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                                <div className="flex flex-col min-w-0">
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">{t('date')}</span>
+                                  <span className="font-medium text-gray-700 dark:text-gray-300 truncate">
+                                    {new Date(transaction.date).toLocaleDateString('fr-FR')}
+                                  </span>
+                                </div>
                               </div>
+                              
                               <div className="flex items-center gap-2">
-                                <Tag className="h-3 w-3 text-gray-400 dark:text-gray-500" />
-                                <span className="font-medium text-gray-700 dark:text-gray-300">{t('category')}:</span> 
-                                <span className="text-gray-600 dark:text-gray-400">{transaction.category}</span>
+                                <Tag className="h-4 w-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                                <div className="flex flex-col min-w-0">
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">{t('category')}</span>
+                                  <span className="font-medium text-gray-700 dark:text-gray-300 truncate">
+                                    {transaction.category}
+                                  </span>
+                                </div>
                               </div>
+                              
                               {loft && (
                                 <div className="flex items-center gap-2">
-                                  <Building className="h-3 w-3 text-gray-400 dark:text-gray-500" />
-                                  <span className="font-medium text-gray-700 dark:text-gray-300">{t('loft')}:</span> 
-                                  <span className="text-gray-600 dark:text-gray-400">{loft.name}</span>
+                                  <Building className="h-4 w-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                                  <div className="flex flex-col min-w-0">
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">{t('loft')}</span>
+                                    <span className="font-medium text-gray-700 dark:text-gray-300 truncate">
+                                      {loft.name}
+                                    </span>
+                                  </div>
                                 </div>
                               )}
+                              
                               {paymentMethod && (
                                 <div className="flex items-center gap-2">
-                                  <CreditCard className="h-3 w-3 text-gray-400 dark:text-gray-500" />
-                                  <span className="font-medium text-gray-700 dark:text-gray-300">{t('paymentMethod')}:</span> 
-                                  <span className="text-gray-600 dark:text-gray-400">{paymentMethod.name}</span>
+                                  <CreditCard className="h-4 w-4 text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                                  <div className="flex flex-col min-w-0">
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">{t('paymentMethod')}</span>
+                                    <span className="font-medium text-gray-700 dark:text-gray-300 truncate">
+                                      {paymentMethod.name}
+                                    </span>
+                                  </div>
                                 </div>
                               )}
                             </div>
                           </div>
                           
-                          <div className="flex items-center gap-4">
-                            <div className="text-right">
-                              <div className={`text-xl font-bold ${transaction.transaction_type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                          {/* Section droite: Montant et actions */}
+                          <div className="flex items-center justify-between lg:justify-end gap-4 lg:gap-6 border-t lg:border-t-0 lg:border-l pt-4 lg:pt-0 lg:pl-6">
+                            {/* Montant */}
+                            <div className="text-right flex-shrink-0">
+                              <div className={`text-2xl font-bold ${transaction.transaction_type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                                 {transaction.transaction_type === 'income' ? '+' : '-'}
                                 {formatAmount(transaction.equivalent_amount_default_currency || transaction.amount)} {defaultCurrencySymbol}
                               </div>
                               {transaction.equivalent_amount_default_currency && 
                                transaction.equivalent_amount_default_currency !== transaction.amount && (
-                                <div className="text-xs text-gray-500">
+                                <div className="text-xs text-gray-500 mt-1">
                                   {t('original')}: {formatAmount(transaction.amount)} {currencies.find(c => c.id === transaction.currency_id)?.symbol || defaultCurrencySymbol}
                                 </div>
                               )}
                             </div>
                             
-                            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                              <Button variant="outline" size="sm" asChild>
+                            {/* Boutons d'action */}
+                            <div className="flex gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0">
+                              <Button variant="outline" size="sm" asChild className="hover:bg-blue-50">
                                 <Link href={`/transactions/${transaction.id}`}>
                                   <Eye className="h-4 w-4" />
                                 </Link>
@@ -628,7 +655,7 @@ export function SimpleTransactionsPage({
                               
                               {session.user.role === "admin" && (
                                 <>
-                                  <Button variant="outline" size="sm" asChild>
+                                  <Button variant="outline" size="sm" asChild className="hover:bg-blue-50">
                                     <Link href={`/transactions/${transaction.id}/edit`}>
                                       <Edit className="h-4 w-4" />
                                     </Link>

@@ -219,7 +219,6 @@ export default function ReservationCalendar({
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [availability, setAvailability] = useState<any[]>([]);
-  const [view, setView] = useState<View>('month');
   const [date, setDate] = useState(new Date());
 
   const getDateFnsLocale = () => {
@@ -553,78 +552,113 @@ export default function ReservationCalendar({
               <CalendarIcon className="h-5 w-5" />
               {t('calendar.title')}
             </CardTitle>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setView('month')}
-                className={view === 'month' ? 'bg-primary text-primary-foreground' : ''}
-              >
-                {t('calendar.month')}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setView('week')}
-                className={view === 'week' ? 'bg-primary text-primary-foreground' : ''}
-              >
-                {t('calendar.week')}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setView('day')}
-                className={view === 'day' ? 'bg-primary text-primary-foreground' : ''}
-              >
-                {t('calendar.day')}
-              </Button>
-            </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="h-96 flex items-center justify-center text-gray-500 border rounded-lg bg-gray-50">
-            <div className="text-center">
-              <CalendarIcon className="h-16 w-16 mx-auto mb-4 opacity-50" />
-              <p className="text-lg font-medium">Calendar View</p>
-              <p>Calendar will be available after dependency resolution</p>
+          {/* Custom month-view calendar */}
+          <div className="mb-4">
+            {/* Navigation */}
+            <div className="flex items-center justify-between mb-3">
+              <button
+                onClick={() => setDate(d => new Date(d.getFullYear(), d.getMonth() - 1, 1))}
+                className="p-1.5 rounded hover:bg-gray-100 transition-colors"
+              >
+                ‹
+              </button>
+              <span className="font-semibold text-gray-800">
+                {format(date, 'MMMM yyyy', { locale: getDateFnsLocale() })}
+              </span>
+              <button
+                onClick={() => setDate(d => new Date(d.getFullYear(), d.getMonth() + 1, 1))}
+                className="p-1.5 rounded hover:bg-gray-100 transition-colors"
+              >
+                ›
+              </button>
             </div>
+
+            {/* Day headers */}
+            <div className="grid grid-cols-7 mb-1">
+              {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(d => (
+                <div key={d} className="text-center text-xs font-medium text-gray-500 py-1">{d}</div>
+              ))}
+            </div>
+
+            {/* Calendar grid */}
+            {(() => {
+              const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+              const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+              // Start from Monday
+              const startDay = (monthStart.getDay() + 6) % 7;
+              const totalCells = Math.ceil((startDay + monthEnd.getDate()) / 7) * 7;
+              const cells = Array.from({ length: totalCells }, (_, i) => {
+                const dayNum = i - startDay + 1;
+                return dayNum >= 1 && dayNum <= monthEnd.getDate()
+                  ? new Date(date.getFullYear(), date.getMonth(), dayNum)
+                  : null;
+              });
+
+              const weeks: (Date | null)[][] = [];
+              for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+
+              return weeks.map((week, wi) => (
+                <div key={wi} className="grid grid-cols-7 border-t border-gray-100">
+                  {week.map((day, di) => {
+                    if (!day) return <div key={di} className="min-h-[80px] bg-gray-50/50" />;
+
+                    const dayStr = format(day, 'yyyy-MM-dd');
+                    const today = format(new Date(), 'yyyy-MM-dd') === dayStr;
+
+                    // Find events that span this day
+                    const dayEvents = events.filter(ev => {
+                      const start = format(ev.start, 'yyyy-MM-dd');
+                      const end = format(new Date(ev.end.getTime() - 1), 'yyyy-MM-dd'); // end is exclusive
+                      return dayStr >= start && dayStr <= end;
+                    });
+
+                    return (
+                      <div
+                        key={di}
+                        className={`min-h-[80px] p-1 border-l border-gray-100 cursor-pointer hover:bg-blue-50/30 transition-colors ${today ? 'bg-blue-50' : ''}`}
+                        onClick={() => onDateSelect?.(day, new Date(day.getTime() + 86400000))}
+                      >
+                        <div className={`text-xs font-medium mb-1 w-6 h-6 flex items-center justify-center rounded-full ${today ? 'bg-blue-600 text-white' : 'text-gray-700'}`}>
+                          {day.getDate()}
+                        </div>
+                        <div className="space-y-0.5">
+                          {dayEvents.slice(0, 3).map((ev, ei) => {
+                            const colors: Record<string, string> = {
+                              confirmed: 'bg-green-500',
+                              pending: 'bg-yellow-500',
+                              cancelled: 'bg-red-400',
+                              completed: 'bg-gray-400',
+                              maintenance: 'bg-orange-500',
+                              renovation: 'bg-blue-500',
+                              personal: 'bg-purple-500',
+                              blocked: 'bg-gray-300',
+                            };
+                            const color = colors[ev.status] || 'bg-blue-400';
+                            return (
+                              <div
+                                key={ei}
+                                className={`${color} text-white text-[10px] px-1 py-0.5 rounded truncate cursor-pointer`}
+                                title={ev.title}
+                                onClick={e => { e.stopPropagation(); handleSelectEvent(ev); }}
+                              >
+                                {ev.title}
+                              </div>
+                            );
+                          })}
+                          {dayEvents.length > 3 && (
+                            <div className="text-[10px] text-gray-500 pl-1">+{dayEvents.length - 3}</div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ));
+            })()}
           </div>
-          {/* <div className="h-auto mb-4">
-            <style>{customCalendarStyles}</style>
-            <Calendar
-              localizer={localizer}
-              events={events}
-              startAccessor="start"
-              endAccessor="end"
-              view={view}
-              onView={setView}
-              date={date}
-              onNavigate={setDate}
-              onSelectEvent={handleSelectEvent}
-              onSelectSlot={handleSelectSlot}
-              selectable
-              eventPropGetter={eventStyleGetter}
-              culture={locale}
-              messages={{
-                next: locale === 'fr' ? 'Suivant' : locale === 'ar' ? 'التالي' : 'Next',
-                previous: locale === 'fr' ? 'Précédent' : locale === 'ar' ? 'السابق' : 'Previous',
-                today: locale === 'fr' ? 'Aujourd\'hui' : locale === 'ar' ? 'اليوم' : 'Today',
-                month: locale === 'fr' ? 'Mois' : locale === 'ar' ? 'شهر' : 'Month',
-                week: locale === 'fr' ? 'Semaine' : locale === 'ar' ? 'أسبوع' : 'Week',
-                day: locale === 'fr' ? 'Jour' : locale === 'ar' ? 'يوم' : 'Day',
-                agenda: locale === 'fr' ? 'Agenda' : locale === 'ar' ? 'جدول الأعمال' : 'Agenda',
-                date: locale === 'fr' ? 'Date' : locale === 'ar' ? 'التاريخ' : 'Date',
-                time: locale === 'fr' ? 'Heure' : locale === 'ar' ? 'الوقت' : 'Time',
-                event: locale === 'fr' ? 'Événement' : locale === 'ar' ? 'حدث' : 'Event',
-                noEventsInRange: locale === 'fr' ? 'Aucun événement dans cette plage' : locale === 'ar' ? 'لا توجد أحداث في هذا النطاق' : 'No events in this range',
-                allDay: locale === 'fr' ? 'Toute la journée' : locale === 'ar' ? 'طوال اليوم' : 'All Day',
-                work_week: locale === 'fr' ? 'Semaine de travail' : locale === 'ar' ? 'أسبوع العمل' : 'Work Week',
-                yesterday: locale === 'fr' ? 'Hier' : locale === 'ar' ? 'أمس' : 'Yesterday',
-                tomorrow: locale === 'fr' ? 'Demain' : locale === 'ar' ? 'غداً' : 'Tomorrow',
-                showMore: (total: number) => locale === 'fr' ? `Afficher plus (${total})` : locale === 'ar' ? `عرض المزيد (${total})` : `Show more (${total})`,
-              }}
-            />
-          </div> */}
           
           <div className="flex flex-wrap gap-2 mt-4">
             <div className="flex items-center gap-2">

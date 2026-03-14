@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Customer, createCustomer, updateCustomer } from '@/lib/actions/customers';
+import type { Customer } from '@/lib/actions/customers';
 import { toast } from 'sonner';
 
 interface CustomerFormProps {
@@ -40,27 +40,33 @@ export function CustomerForm({ customer }: CustomerFormProps) {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      data.append(key, value);
-    });
+    try {
+      const url = customer?.id ? `/api/customers/${customer.id}` : '/api/customers';
+      const method = customer?.id ? 'PUT' : 'POST';
 
-    let result;
-    if (customer?.id) {
-      result = await updateCustomer(customer.id, data);
-    } else {
-      result = await createCustomer(data);
-    }
-
-    if (result?.success) {
-      toast.success(customer ? t('updateSuccess') : t('createSuccess'));
-      router.push('/customers');
-    } else {
-      toast.error(customer ? t('updateError') : t('createError'), {
-        description: result?.message || t('unknownError'),
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
+
+      const result = await response.json();
+
+      if (!response.ok || result.error) {
+        toast.error(customer ? t('updateError') : t('createError'), {
+          description: result.error || t('unknownError'),
+        });
+      } else {
+        toast.success(customer ? t('updateSuccess') : t('createSuccess'));
+        router.push('/customers');
+      }
+    } catch (error) {
+      toast.error(t('createError'), {
+        description: error instanceof Error ? error.message : t('unknownError'),
+      });
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   return (

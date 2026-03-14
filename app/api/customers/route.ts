@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requireAuthAPI } from "@/lib/auth"
 import { createClient } from "@/utils/supabase/server"
+import { randomUUID } from "crypto"
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,6 +25,7 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient(true)
     const { data, error } = await supabase.from("customers").insert({
+      id: randomUUID(),
       first_name,
       last_name,
       email,

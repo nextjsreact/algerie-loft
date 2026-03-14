@@ -16,7 +16,7 @@ export async function PUT(
     const body = await request.json()
     const { first_name, last_name, email, phone, status, notes } = body
 
-    const supabase = await createClient()
+    const supabase = await createClient(true)
     const { error } = await supabase.from("customers").update({
       first_name,
       last_name,
@@ -52,7 +52,7 @@ export async function DELETE(
     }
 
     const { id } = await params
-    const supabase = await createClient()
+    const supabase = await createClient(true)
     const { error } = await supabase.from("customers").delete().eq("id", id)
 
     if (error) {

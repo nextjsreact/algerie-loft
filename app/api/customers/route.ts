@@ -9,14 +9,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 })
     }
 
-    const body = await request.json()
+    let body: any
+    try {
+      body = await request.json()
+    } catch {
+      return NextResponse.json({ error: "Corps de requête invalide" }, { status: 400 })
+    }
+
     const { first_name, last_name, email, phone, status, notes } = body
 
     if (!first_name || !last_name || !email) {
-      return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400 })
+      return NextResponse.json({ error: "Champs obligatoires manquants (prénom, nom, email)" }, { status: 400 })
     }
 
-    const supabase = await createClient()
+    const supabase = await createClient(true)
     const { data, error } = await supabase.from("customers").insert({
       first_name,
       last_name,
@@ -27,16 +33,14 @@ export async function POST(request: NextRequest) {
     }).select().single()
 
     if (error) {
-      console.error("Error creating customer:", error)
+      console.error("Supabase error creating customer:", error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
     return NextResponse.json({ success: true, data })
   } catch (error) {
-    console.error("Error in POST /api/customers:", error)
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Erreur serveur" },
-      { status: 500 }
-    )
+    const msg = error instanceof Error ? error.message : String(error)
+    console.error("Error in POST /api/customers:", msg)
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }

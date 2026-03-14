@@ -193,7 +193,7 @@ export default function ReservationForm({
                   <SelectTrigger>
                     <SelectValue placeholder={t('reservations.form.selectLoft')} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent position="popper" sideOffset={4} className="max-h-60 overflow-y-auto">
                     {lofts.map((loft) => (
                       <SelectItem key={loft.id} value={loft.id}>
                         {loft.name} - {loft.price_per_night} DZD/night

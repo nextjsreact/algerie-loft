@@ -78,7 +78,7 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
     setIsDialogOpen(true)
   }
 
-  const displayData = selectedLoft ? data.filter(loft => loft.id === selectedLoft) : data
+  const displayData = selectedLoft ? data.filter(loft => loft.id === selectedLoft.id) : data
 
   if (isLoading) {
     return (

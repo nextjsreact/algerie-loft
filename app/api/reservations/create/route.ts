@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
-import { requireAuthAPI } from "@/lib/auth"
 import { createClient } from "@/utils/supabase/server"
 import { randomUUID } from "crypto"
 import { revalidatePath } from "next/cache"
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await requireAuthAPI()
-    if (!session) {
-      return NextResponse.json({ error: "Non authentifié" }, { status: 401 })
-    }
-
     const body = await request.json()
     const {
       loft_id, guest_name, guest_email, guest_phone, guest_nationality,

@@ -1,21 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
-import { getSession } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getSession()
-    if (!session) {
-      return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
-    }
-
     const { searchParams } = new URL(request.url)
     const loftId = searchParams.get('loft_id')
     const status = searchParams.get('status')
 
-    const supabase = await createClient(true) // service role to bypass RLS
+    const supabase = await createClient(true) // service role — no auth needed
 
     let query = supabase
       .from('reservations')

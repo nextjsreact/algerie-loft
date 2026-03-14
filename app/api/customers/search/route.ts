@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAuthAPI } from "@/lib/auth";
 import { createClient } from "@/utils/supabase/server";
 import { PostgrestError } from "@supabase/supabase-js";
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await requireAuthAPI();
-
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const supabase = await createClient(true); // service role to bypass RLS
+    const supabase = await createClient(true);
     const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');
     const phone = searchParams.get('phone');

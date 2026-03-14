@@ -503,7 +503,7 @@ function ReservationsPageContent() {
               </CardHeader>
               <CardContent className="p-0">
                 {allReservations.length === 0 ? (
-                  <div className="p-12 text-center text-gray-500">{t('upcomingReservations.noReservations')}</div>
+                  <div className="p-12 text-center text-gray-500">{t('upcoming.empty')}</div>
                 ) : (
                   <div className="divide-y divide-gray-100">
                     {allReservations.map((res) => (

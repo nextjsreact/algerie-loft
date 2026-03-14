@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const supabase = await createClient();
+    const supabase = await createClient(true); // service role to bypass RLS
     const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');
     const phone = searchParams.get('phone');

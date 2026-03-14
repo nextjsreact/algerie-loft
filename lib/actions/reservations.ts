@@ -383,7 +383,7 @@ const blockDatesSchema = z.object({
 
 export async function blockDates(prevState: any, formData: FormData): Promise<ActionResult> {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient(true); // service role to bypass RLS
     
     const validatedData = blockDatesSchema.parse({
       loft_id: formData.get('loft_id'),
@@ -501,7 +501,7 @@ export async function blockDates(prevState: any, formData: FormData): Promise<Ac
 
 export async function unblockDates(prevState: any, formData: FormData): Promise<ActionResult> {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient(true); // service role to bypass RLS
     
     const loft_id = formData.get('loft_id') as string;
     const start_date = formData.get('start_date') as string;
@@ -593,7 +593,7 @@ export async function sendGuestMessage(prevState: any, formData: FormData): Prom
 }
 
 export async function getRecentReservations(): Promise<ActionResult<any[]>> {
-  const supabase = await createClient();
+  const supabase = await createClient(true);
 
   const { data, error } = await supabase
     .from('reservations')
@@ -628,7 +628,7 @@ export async function getReservationStats(): Promise<ActionResult<{
   monthlyRevenueLastMonth: number;
   occupancyRateLastMonth: number;
 }>> {
-  const supabase = await createClient();
+  const supabase = await createClient(true);
   const today = new Date();
   const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1).toISOString();
   const currentMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString();

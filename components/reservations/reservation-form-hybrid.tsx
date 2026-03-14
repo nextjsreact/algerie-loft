@@ -357,7 +357,7 @@ export default function ReservationFormHybrid({
                     <SelectTrigger className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500">
                       <SelectValue placeholder={t('form.selectLoft')} />
                     </SelectTrigger>
-                    <SelectContent position="popper" sideOffset={4}>
+                    <SelectContent className="z-[9999] max-h-60 overflow-y-auto" position="popper" sideOffset={4}>
                       {lofts.map((loft) => (
                         <SelectItem key={loft.id} value={loft.id} className="py-3">
                           <div className="flex items-center justify-between w-full">
@@ -568,15 +568,11 @@ export default function ReservationFormHybrid({
                         }
                       }}
                       required
-                      disabled={isSearchingCustomer || !!(foundCustomer && foundCustomer.email === guestEmail)}
                       className="h-12 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 pr-10"
                       placeholder={t('form.emailPlaceholder')}
                     />
                     {isSearchingCustomer && (
                       <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 animate-spin" />
-                    )}
-                    {searchAttempted && !foundCustomer && guestEmail && !isSearchingCustomer && (
-                      <Badge variant="destructive" className="absolute right-3 top-1/2 -translate-y-1/2">Not Found</Badge>
                     )}
                   </div>
                 </div>
@@ -600,15 +596,11 @@ export default function ReservationFormHybrid({
                         }
                       }}
                       required
-                      disabled={isSearchingCustomer || !!(foundCustomer && foundCustomer.phone === guestPhone)}
                       className="h-12 border-gray-300 focus:border-green-500 focus:ring-green-500 pr-10"
                       placeholder={t('form.phonePlaceholder')}
                     />
                     {isSearchingCustomer && (
                       <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 animate-spin" />
-                    )}
-                    {searchAttempted && !foundCustomer && guestPhone && !isSearchingCustomer && (
-                      <Badge variant="destructive" className="absolute right-3 top-1/2 -translate-y-1/2">Not Found</Badge>
                     )}
                   </div>
                 </div>

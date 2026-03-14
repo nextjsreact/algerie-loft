@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useTransition, useActionState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useTranslations } from 'next-intl';
 import { Loader2, Calendar, Users, CreditCard, CheckCircle, AlertCircle, Star, Building2, Search } from 'lucide-react';
 import { format, addDays } from 'date-fns';
-import { createReservation } from '@/lib/actions/reservations';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Customer } from '@/types/customer';
@@ -61,7 +60,8 @@ export default function ReservationFormHybrid({
   const [lofts, setLofts] = useState<Loft[]>([]);
   const [availabilityData, setAvailabilityData] = useState<AvailabilityData | null>(null);
   const [checkingAvailability, setCheckingAvailability] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
+  const [state, setState] = useState<{ success?: boolean; error?: string; details?: string[] } | null>(null);
   
   // Form state management
   const [selectedLoft, setSelectedLoft] = useState(initialLoftId || '');
@@ -83,8 +83,7 @@ export default function ReservationFormHybrid({
   const [taxesInput, setTaxesInput] = useState<number | ''>('');
   const [totalAmountInput, setTotalAmountInput] = useState<number | ''>('');
 
-  // Server action state
-  const [state, formAction] = useActionState(createReservation, null);
+  // No server action state needed - using fetch API
 
   const selectedLoftData = lofts.find(l => l.id === selectedLoft);
   const nights = availabilityData?.nights || 0;
@@ -241,20 +240,49 @@ export default function ReservationFormHybrid({
     }
   }, []);
 
-  const handleSubmit = (formData: FormData) => {
-    // Validate required fields before submission
-    if (!selectedLoft || !checkInDate || !checkOutDate || checkInDate === '' || checkOutDate === '') {
-      console.error('Missing required fields:', { selectedLoft, checkInDate, checkOutDate });
-      return;
-    }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedLoft || !checkInDate || !checkOutDate) return;
+    if (!availabilityData?.available) return;
 
-    if (!availabilityData?.available) {
-      return;
-    }
+    setIsPending(true);
+    setState(null);
 
-    startTransition(() => {
-      formAction(formData);
-    });
+    try {
+      const response = await fetch('/api/reservations/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          loft_id: selectedLoft,
+          guest_name: guestName,
+          guest_email: guestEmail,
+          guest_phone: guestPhone,
+          guest_nationality: guestNationality,
+          guest_count: guestCount,
+          check_in_date: checkInDate,
+          check_out_date: checkOutDate,
+          customer_id: foundCustomer?.id || null,
+          base_price: basePriceInput || 0,
+          cleaning_fee: cleaningFeeInput || 0,
+          service_fee: serviceFeeInput || 0,
+          taxes: taxesInput || 0,
+          total_amount: totalAmountInput || 0,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || result.error) {
+        setState({ error: result.error || 'Erreur lors de la création de la réservation' });
+      } else {
+        setState({ success: true });
+        setTimeout(() => onSuccess?.(), 1500);
+      }
+    } catch (error) {
+      setState({ error: error instanceof Error ? error.message : 'Erreur serveur' });
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
@@ -272,21 +300,7 @@ export default function ReservationFormHybrid({
           </CardTitle>
         </CardHeader>
         <CardContent className="p-8">
-          <form action={handleSubmit} className="space-y-6">
-            {/* Hidden fields for server action */}
-            <input type="hidden" name="loft_id" value={selectedLoft} />
-            <input type="hidden" name="guest_count" value={guestCount} />
-            <input type="hidden" name="check_in_date" value={checkInDate} />
-            <input type="hidden" name="check_out_date" value={checkOutDate} />
-            <input type="hidden" name="guest_email" value={guestEmail} />
-            <input type="hidden" name="guest_phone" value={guestPhone} />
-            <input type="hidden" name="guest_name" value={guestName} />
-            <input type="hidden" name="guest_nationality" value={guestNationality} />
-            <input type="hidden" name="base_price" value={String(basePriceInput)} />
-            <input type="hidden" name="cleaning_fee" value={String(cleaningFeeInput)} />
-            <input type="hidden" name="service_fee" value={String(serviceFeeInput)} />
-            <input type="hidden" name="taxes" value={String(taxesInput)} />
-            <input type="hidden" name="total_amount" value={String(totalAmountInput)} />
+          <form onSubmit={handleSubmit} className="space-y-6">
 
             {/* Display server action errors */}
             {state?.error && (

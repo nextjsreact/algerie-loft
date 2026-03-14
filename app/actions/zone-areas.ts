@@ -15,7 +15,7 @@ export async function getZoneAreas(): Promise<ZoneArea[]> {
 
   if (error) {
     console.error("Error getting zone areas:", error);
-    throw error;
+    return []; // Ne pas throw, retourner un tableau vide
   }
 
   return data;

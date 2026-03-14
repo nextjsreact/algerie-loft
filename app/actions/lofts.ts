@@ -2,6 +2,7 @@
 
 import { requireRole } from "@/lib/auth"
 import { redirect } from "next/navigation"
+import { revalidatePath } from "next/cache"
 import type { Database } from "@/lib/types"
 import { createClient } from '@/utils/supabase/server'
 import { unstable_noStore as noStore } from 'next/cache';
@@ -94,9 +95,7 @@ export async function deleteLoft(id: string) {
     console.error("Error in deleteLoft:", error)
     throw error
   }
-}
-
-export async function getLoft(id: string): Promise<Loft | null> {
+}export async function getLoft(id: string): Promise<Loft | null> {
   noStore();
   const supabase = await createClient() // Create client here
   const { data: loft, error } = await supabase
@@ -177,9 +176,15 @@ export async function updateLoft(id: string, data: Omit<Loft, "id" | "created_at
       return { success: false, error: error.message }
     }
 
+    revalidatePath(`/lofts/${id}/edit`)
+    revalidatePath(`/lofts/${id}`)
+    revalidatePath('/lofts')
     console.log('Update successful!')
     return { success: true }
   } catch (error) {
+    // Re-throw Next.js redirect/notFound errors - they must not be caught
+    if (error instanceof Error && error.message === 'NEXT_REDIRECT') throw error
+    if ((error as any)?.digest?.startsWith('NEXT_REDIRECT')) throw error
     console.error('=== updateLoft EXCEPTION ===', error)
     return { 
       success: false, 

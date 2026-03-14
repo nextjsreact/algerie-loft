@@ -21,8 +21,8 @@ export default async function EditLoftPage({ params }: { params: Promise<{ id: s
   }
 
   const owners = await getOwners()
-  const zoneAreas = await getZoneAreas()
-  const { data: internetConnectionTypesData, error: internetConnectionTypesError } = await getInternetConnectionTypes()
+  const zoneAreas = await getZoneAreas().catch(() => [])
+  const { data: internetConnectionTypesData } = await getInternetConnectionTypes()
   
   const internetConnectionTypes = internetConnectionTypesData || []
 

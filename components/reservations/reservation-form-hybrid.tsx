@@ -259,7 +259,7 @@ export default function ReservationFormHybrid({
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
-      <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-blue-50/30 overflow-hidden">
+      <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-blue-50/30">
         <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white pb-8">
           <CardTitle className="flex items-center gap-3 text-2xl">
             <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
@@ -343,7 +343,7 @@ export default function ReservationFormHybrid({
                     <SelectTrigger className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500">
                       <SelectValue placeholder={t('form.selectLoft')} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent position="popper" sideOffset={4}>
                       {lofts.map((loft) => (
                         <SelectItem key={loft.id} value={loft.id} className="py-3">
                           <div className="flex items-center justify-between w-full">

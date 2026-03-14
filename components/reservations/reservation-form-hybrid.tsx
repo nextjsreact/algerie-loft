@@ -136,8 +136,8 @@ export default function ReservationFormHybrid({
 
   // Handle successful reservation creation
   useEffect(() => {
-    if (state?.success && state.data) {
-      onSuccess?.(state.data);
+    if (state?.success) {
+      onSuccess?.();
     }
   }, [state, onSuccess]);
 
@@ -178,6 +178,7 @@ export default function ReservationFormHybrid({
   };
 
   const fetchCustomer = useCallback(async (query: string, type: 'email' | 'phone') => {
+    if (!query.trim()) return;
     setIsSearchingCustomer(true);
     try {
       const params = new URLSearchParams({ [type]: query });
@@ -186,21 +187,20 @@ export default function ReservationFormHybrid({
         const data = await response.json();
         const customer = data.customer;
         if (customer) {
-          // Pre-fill fields only if customer found
           setFoundCustomer(customer);
-          setGuestName(`${customer.first_name || ''} ${customer.last_name || ''}`.trim());
-          setGuestEmail(customer.email || '');
-          setGuestPhone(customer.phone || '');
-          setGuestNationality(customer.nationality || '');
+          // Only fill fields that are currently empty — never overwrite what user typed
+          const fullName = `${customer.first_name || ''} ${customer.last_name || ''}`.trim();
+          if (!guestName) setGuestName(fullName);
+          if (!guestNationality) setGuestNationality(customer.nationality || '');
+          // Don't overwrite email/phone — user just typed one of them
         }
-        // If not found, do nothing - let user fill freely
       }
     } catch (error) {
       console.error('Error fetching customer:', error);
     } finally {
       setIsSearchingCustomer(false);
     }
-  }, []);
+  }, [guestName, guestNationality]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -319,7 +319,7 @@ export default function ReservationFormHybrid({
                     <SelectTrigger className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500">
                       <SelectValue placeholder={t('form.selectLoft')} />
                     </SelectTrigger>
-                    <SelectContent className="z-[9999] max-h-60 overflow-y-auto" position="popper" sideOffset={4}>
+                    <SelectContent className="z-[9999] max-h-60 overflow-y-auto" position="popper" sideOffset={4} avoidCollisions={false}>
                       {lofts.map((loft) => (
                         <SelectItem key={loft.id} value={loft.id} className="py-3">
                           <div className="flex items-center justify-between w-full">
@@ -636,7 +636,7 @@ export default function ReservationFormHybrid({
               </Button>
               <Button
                 type="submit"
-                disabled={isPending || !availabilityData?.available}
+                disabled={isPending || availabilityData?.available === false}
                 className="px-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
               >
                 {isPending ? (

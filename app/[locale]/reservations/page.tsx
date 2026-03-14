@@ -55,14 +55,16 @@ function ReservationsPageContent() {
 
   const [allReservations, setAllReservations] = useState<any[]>([]);
 
-  // Fetch all reservations for list tab
+  // Fetch all reservations for list tab (via API to bypass RLS)
   const fetchAllReservations = useCallback(async () => {
-    const supabase = createClient();
-    const { data } = await supabase
-      .from('reservations')
-      .select('id, guest_name, guest_email, check_in_date, check_out_date, status, total_amount, lofts(name)')
-      .order('created_at', { ascending: false });
-    if (data) setAllReservations(data);
+    try {
+      const response = await fetch('/api/reservations');
+      if (!response.ok) return;
+      const data = await response.json();
+      if (data.reservations) setAllReservations(data.reservations);
+    } catch (error) {
+      console.error('Error fetching reservations:', error);
+    }
   }, []);
 
   useEffect(() => {

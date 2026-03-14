@@ -1,23 +1,24 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
+import { revalidatePath } from 'next/cache';
 
-// Type definitions for Customer based on the actual database schema
 export type Customer = {
   id: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  full_name: string | null;
   phone: string | null;
-  address: string | null;
+  status: 'prospect' | 'active' | 'former';
+  notes: string | null;
+  current_loft_id: string | null;
   created_at: string;
   updated_at: string;
 };
 
-// Function to fetch all customers
 export async function getCustomers(): Promise<Customer[]> {
-  const supabase = createClient();
-  const client = await supabase;
-  const { data, error } = await client.from('customers').select('*');
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('customers').select('*').order('created_at', { ascending: false });
   if (error) {
     console.error('Error fetching customers:', error);
     return [];
@@ -25,35 +26,33 @@ export async function getCustomers(): Promise<Customer[]> {
   return data;
 }
 
-// Function to fetch a single customer by ID
 export async function getCustomerById(id: string): Promise<Customer | null> {
-  const supabase = createClient();
-  const client = await supabase;
-  const { data, error } = await client.from('customers').select('*').eq('id', id).single();
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('customers').select('*').eq('id', id).single();
   if (error) {
-    console.error(`Error fetching customer with ID ${id}:`, error);
+    console.error(`Error fetching customer ${id}:`, error);
     return null;
   }
   return data;
 }
 
-// Function to create a new customer
 export async function createCustomer(formData: FormData): Promise<{ success: boolean; message?: string }> {
-  const { revalidatePath } = await import('next/cache');
-  const { redirect } = await import('next/navigation');
-  const supabase = createClient();
-  const client = await supabase;
+  const supabase = await createClient();
 
+  const first_name = formData.get('first_name') as string;
+  const last_name = formData.get('last_name') as string;
   const email = formData.get('email') as string;
-  const full_name = formData.get('full_name') as string | undefined;
-  const phone = formData.get('phone') as string | undefined;
-  const address = formData.get('address') as string | undefined;
+  const phone = (formData.get('phone') as string) || null;
+  const status = (formData.get('status') as string) || 'prospect';
+  const notes = (formData.get('notes') as string) || null;
 
-  const { error } = await client.from('customers').insert({
+  const { error } = await supabase.from('customers').insert({
+    first_name,
+    last_name,
     email,
-    full_name: full_name || null,
-    phone: phone || null,
-    address: address || null,
+    phone,
+    status,
+    notes,
   });
 
   if (error) {
@@ -62,53 +61,46 @@ export async function createCustomer(formData: FormData): Promise<{ success: boo
   }
 
   revalidatePath('/customers');
-  redirect('/customers');
-  return { success: true }; // Should not be reached due to redirect
+  return { success: true };
 }
 
-// Function to update an existing customer
 export async function updateCustomer(id: string, formData: FormData): Promise<{ success: boolean; message?: string }> {
-  const { revalidatePath } = await import('next/cache');
-  const { redirect } = await import('next/navigation');
-  const supabase = createClient();
-  const client = await supabase;
+  const supabase = await createClient();
 
+  const first_name = formData.get('first_name') as string;
+  const last_name = formData.get('last_name') as string;
   const email = formData.get('email') as string;
-  const full_name = formData.get('full_name') as string | undefined;
-  const phone = formData.get('phone') as string | undefined;
-  const address = formData.get('address') as string | undefined;
+  const phone = (formData.get('phone') as string) || null;
+  const status = (formData.get('status') as string) || 'prospect';
+  const notes = (formData.get('notes') as string) || null;
 
-  const { error } = await client.from('customers').update({
+  const { error } = await supabase.from('customers').update({
+    first_name,
+    last_name,
     email,
-    full_name: full_name || null,
-    phone: phone || null,
-    address: address || null,
+    phone,
+    status,
+    notes,
   }).eq('id', id);
 
   if (error) {
-    console.error(`Error updating customer with ID ${id}:`, error);
+    console.error(`Error updating customer ${id}:`, error);
     return { success: false, message: error.message };
   }
 
   revalidatePath('/customers');
-  redirect('/customers');
-  return { success: true }; // Should not be reached due to redirect
+  return { success: true };
 }
 
-// Function to delete a customer
 export async function deleteCustomer(id: string): Promise<{ success: boolean; message?: string }> {
-  const { revalidatePath } = await import('next/cache');
-  const { redirect } = await import('next/navigation');
-  const supabase = createClient();
-  const client = await supabase;
-  const { error } = await client.from('customers').delete().eq('id', id);
+  const supabase = await createClient();
+  const { error } = await supabase.from('customers').delete().eq('id', id);
 
   if (error) {
-    console.error(`Error deleting customer with ID ${id}:`, error);
+    console.error(`Error deleting customer ${id}:`, error);
     return { success: false, message: error.message };
   }
 
   revalidatePath('/customers');
-  redirect('/customers');
-  return { success: true }; // Should not be reached due to redirect
+  return { success: true };
 }

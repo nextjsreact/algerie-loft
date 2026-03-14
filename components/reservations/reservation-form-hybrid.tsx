@@ -179,62 +179,24 @@ export default function ReservationFormHybrid({
 
   const fetchCustomer = useCallback(async (query: string, type: 'email' | 'phone') => {
     setIsSearchingCustomer(true);
-    setSearchAttempted(true);
-    
     try {
       const params = new URLSearchParams({ [type]: query });
       const response = await fetch(`/api/customers/search?${params}`);
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('API Error fetching customer:', errorData.error);
-        setFoundCustomer(null);
-        // Clear fields if no customer found
-        if (type === 'email') {
-          setGuestPhone('');
-          setGuestName('');
-          setGuestNationality('');
-        } else if (type === 'phone') {
-          setGuestEmail('');
-          setGuestName('');
-          setGuestNationality('');
-        }
-      } else {
+      if (response.ok) {
         const data = await response.json();
         const customer = data.customer;
-        setFoundCustomer(customer);
         if (customer) {
-          setGuestName(`${customer.first_name || ''} ${customer.last_name || ''}`);
+          // Pre-fill fields only if customer found
+          setFoundCustomer(customer);
+          setGuestName(`${customer.first_name || ''} ${customer.last_name || ''}`.trim());
           setGuestEmail(customer.email || '');
           setGuestPhone(customer.phone || '');
           setGuestNationality(customer.nationality || '');
-        } else {
-          // Only clear fields if no customer was found after a search (and not just initially empty)
-          // Also, only clear the field that was NOT used for the search
-          if (type === 'email') {
-            setGuestPhone(''); // Clear phone if email not found
-            setGuestName('');
-            setGuestNationality('');
-          } else if (type === 'phone') {
-            setGuestEmail(''); // Clear email if phone not found
-            setGuestName('');
-            setGuestNationality('');
-          }
         }
+        // If not found, do nothing - let user fill freely
       }
     } catch (error) {
       console.error('Error fetching customer:', error);
-      setFoundCustomer(null);
-      // Clear fields on error
-      if (type === 'email') {
-        setGuestPhone('');
-        setGuestName('');
-        setGuestNationality('');
-      } else if (type === 'phone') {
-        setGuestEmail('');
-        setGuestName('');
-        setGuestNationality('');
-      }
     } finally {
       setIsSearchingCustomer(false);
     }

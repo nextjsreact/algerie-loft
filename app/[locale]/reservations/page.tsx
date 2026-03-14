@@ -51,7 +51,21 @@ function ReservationsPageContent() {
   const [reservationStats, setReservationStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const searchParams = useSearchParams();
+  const [allReservations, setAllReservations] = useState<any[]>([]);
+
+  // Fetch all reservations for list tab
+  const fetchAllReservations = useCallback(async () => {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from('reservations')
+      .select('id, guest_name, guest_email, check_in_date, check_out_date, status, total_amount, lofts(name)')
+      .order('created_at', { ascending: false });
+    if (data) setAllReservations(data);
+  }, []);
+
+  useEffect(() => {
+    fetchAllReservations();
+  }, [fetchAllReservations, refreshKey]);
 
   const locales = {
     'en': enUS,
@@ -145,13 +159,19 @@ function ReservationsPageContent() {
   const handleCreateSuccess = useCallback(() => {
     setShowCreateForm(false);
     setSelectedDates(null);
-    const redirectUrl = searchParams.get('redirectUrl');
-    if (redirectUrl) {
-      window.location.href = redirectUrl;
-    } else {
-      window.location.reload();
-    }
-  }, [searchParams]);
+    toast.success('Réservation créée avec succès', {
+      description: 'La réservation a été enregistrée.'
+    });
+    setRefreshKey(prev => prev + 1);
+    fetchAllReservations();
+    // Re-fetch recent activities
+    getRecentReservations().then(result => {
+      if (result.success) setRecentActivities(result.data || []);
+    });
+    getReservationStats().then(result => {
+      if (result.success) setReservationStats(result.data);
+    });
+  }, [fetchAllReservations]);
 
   const handleStatusUpdate = useCallback(async (reservationId: string, status: 'pending' | 'confirmed' | 'cancelled' | 'completed') => {
     try {
@@ -475,26 +495,47 @@ function ReservationsPageContent() {
                 <CardTitle className="flex items-center gap-3">
                   <List className="h-5 w-5" />
                   {t('list.title')}
-                  <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
-                    {t('comingSoon')}
-                  </Badge>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-12">
-                <div className="text-center space-y-4">
-                  <div className="mx-auto w-24 h-24 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full flex items-center justify-center">
-                    <List className="h-12 w-12 text-emerald-600" />
+              <CardContent className="p-0">
+                {allReservations.length === 0 ? (
+                  <div className="p-12 text-center text-gray-500">{t('upcomingReservations.noReservations')}</div>
+                ) : (
+                  <div className="divide-y divide-gray-100">
+                    {allReservations.map((res) => (
+                      <div key={res.id} className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedReservation(res)}>
+                        <div className="flex items-center gap-4">
+                          <div className={`p-2 rounded-full ${
+                            res.status === 'confirmed' ? 'bg-green-100' :
+                            res.status === 'completed' ? 'bg-blue-100' :
+                            res.status === 'pending' ? 'bg-yellow-100' : 'bg-red-100'
+                          }`}>
+                            {res.status === 'confirmed' ? <CheckCircle className="h-4 w-4 text-green-600" /> :
+                             res.status === 'completed' ? <Calendar className="h-4 w-4 text-blue-600" /> :
+                             res.status === 'pending' ? <Clock className="h-4 w-4 text-yellow-600" /> :
+                             <AlertCircle className="h-4 w-4 text-red-600" />}
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">{res.guest_name}</p>
+                            <p className="text-sm text-gray-500">{res.lofts?.name} • {res.check_in_date} → {res.check_out_date}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Badge variant={
+                            res.status === 'confirmed' ? 'default' :
+                            res.status === 'completed' ? 'secondary' :
+                            res.status === 'cancelled' ? 'destructive' : 'outline'
+                          }>
+                            {t(`status.${res.status}`)}
+                          </Badge>
+                          {res.total_amount > 0 && (
+                            <span className="text-sm font-semibold text-gray-700">{res.total_amount.toLocaleString()} {defaultCurrencySymbol}</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900">{t('list.advancedTitle')}</h3>
-                  <p className="text-gray-600 max-w-md mx-auto">
-                    {t('list.advancedDescription')}
-                  </p>
-                  <div className="flex justify-center gap-2 pt-4">
-                    <Badge variant="outline" className="border-emerald-200 text-emerald-700">{t('list.advancedFilters')}</Badge>
-                    <Badge variant="outline" className="border-teal-200 text-teal-700">{t('list.bulkActions')}</Badge>
-                    <Badge variant="outline" className="border-blue-200 text-blue-700">{t('list.exportOptions')}</Badge>
-                  </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

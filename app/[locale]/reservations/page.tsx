@@ -51,6 +51,8 @@ function ReservationsPageContent() {
   const [reservationStats, setReservationStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const searchParams = useSearchParams();
+
   const [allReservations, setAllReservations] = useState<any[]>([]);
 
   // Fetch all reservations for list tab

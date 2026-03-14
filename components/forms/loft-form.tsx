@@ -611,16 +611,20 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
                         duration: 2000,
                       })
                       
-                      // Importer et utiliser l'action de suppression
-                      const { deleteLoft } = await import('@/app/actions/lofts')
-                      const result = await deleteLoft(loft.id)
+                      const response = await fetch(`/api/lofts/${loft.id}/delete`, {
+                        method: 'DELETE',
+                      })
+                      const result = await response.json()
+
+                      if (!response.ok || result.error) {
+                        throw new Error(result.error || 'Erreur lors de la suppression')
+                      }
                       
                       toast.success(`🗑️ ${t('loftDeletedSuccess', { name: loft.name })}`, {
                         description: t('loftDataDeleted'),
                         duration: 4000,
                       })
                       
-                      // Rediriger vers la liste des lofts
                       setTimeout(() => {
                         router.push("/lofts")
                       }, 1500)

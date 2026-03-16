@@ -1,18 +1,7 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/utils/supabase/client'
-// Temporary - sonner disabled
-// import { toast } from 'sonner'
-
-// Temporary toast replacement
-const toast = {
-  error: (message: string) => console.error('Toast:', message),
-  success: (message: string) => console.log('Toast:', message),
-  info: (message: string) => console.info('Toast:', message),
-};
-import { useNotificationSound } from '@/lib/hooks/use-notification-sound'
-import { useTranslations } from 'next-intl'
 
 interface NotificationContextType {
   unreadCount: number
@@ -32,157 +21,90 @@ export function useNotifications() {
 
 export function NotificationProvider({ children, userId }: { children: React.ReactNode, userId: string }) {
   const [unreadCount, setUnreadCount] = useState(0)
-  const { playNotificationSound } = useNotificationSound()
-  
-  // Safe translation hook with error handling
-  let t: any;
-  try {
-    t = useTranslations('notifications');
-  } catch (error) {
-    t = (key: string) => key; // Fallback
-  }
-  
   const supabase = createClient()
-  
-  const refreshNotifications = async () => {
-    if (!userId) return;
-    
-    try {
-      const { count, error } = await supabase
-        .from('notifications')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId)
-        .eq('is_read', false)
 
-      if (!error) {
+  // Fetch unread count via API (uses service role — bypasses RLS)
+  const refreshNotifications = useCallback(async () => {
+    if (!userId) return
+    try {
+      const res = await fetch('/api/notifications/unread-count', { cache: 'no-store' })
+      if (res.ok) {
+        const { count } = await res.json()
         setUnreadCount(count || 0)
-        console.log(`📊 Notification count updated: ${count}`)
       }
-    } catch (error) {
-      console.error('Failed to fetch notifications count:', error)
+    } catch (err) {
+      console.error('Failed to fetch notification count:', err)
     }
-  }
+  }, [userId])
 
-  const markAllAsRead = async () => {
-    if (!userId) return;
+  // Mark all as read via API (uses service role)
+  const markAllAsRead = useCallback(async () => {
+    if (!userId) return
     try {
-      await supabase
-        .from('notifications')
-        .update({ is_read: true })
-        .eq('user_id', userId)
-        .eq('is_read', false)
-
+      await fetch('/api/notifications/mark-all-read', { method: 'POST' })
       setUnreadCount(0)
-    } catch (error) {
-      console.error('Failed to mark notifications as read:', error)
+    } catch (err) {
+      console.error('Failed to mark all as read:', err)
     }
-  }
+  }, [userId])
 
   useEffect(() => {
-    if (!userId) return;
-    
+    if (!userId) return
+
     // Initial fetch
     refreshNotifications()
 
-    // Set up real-time subscription with error handling
+    // Real-time subscription for new notifications
     let subscription: any = null
-    
     try {
-      // Check if WebSocket is available
-      if (typeof window === 'undefined' || !window.WebSocket) {
-        console.warn('WebSocket not available, skipping real-time notifications')
-        return
-      }
-
       subscription = supabase
-        .channel('notification-count')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${userId}`
-        },
-        async (payload) => {
-          console.log('🔔 New notification received:', payload)
-          
-          // Update count
-          setUnreadCount(prev => prev + 1)
-          
-          // Play sound
-          const notificationType = (payload.new as any).type || 'info'
-          playNotificationSound(notificationType as any)
-          
-          // Show toast
-          const notification = payload.new as any
-          toast[notificationType as 'success' | 'info' | 'warning' | 'error' || 'info'](notification.title, {
-            description: notification.message,
-            duration: 6000,
-            action: notification.link ? {
-              label: t('view'),
-              onClick: () => {
-                window.location.href = notification.link
-              }
-            } : undefined
-          })
-          
-          // Force UI update
-          document.dispatchEvent(new CustomEvent('notification-received', { detail: notification }))
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${userId}`
-        },
-        async (payload) => {
-          console.log('🔔 Notification updated:', payload)
-          
-          // If notification was marked as read, decrease count
-          const oldNotification = payload.old as any
-          const newNotification = payload.new as any
-          
-          if (!oldNotification.is_read && newNotification.is_read) {
-            setUnreadCount(prev => Math.max(0, prev - 1))
+        .channel(`notifications-${userId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'notifications',
+            filter: `user_id=eq.${userId}`
+          },
+          (payload) => {
+            console.log('🔔 New notification received:', payload.new)
+            setUnreadCount(prev => prev + 1)
+            // Dispatch event so other components can react
+            document.dispatchEvent(new CustomEvent('notification-received', { detail: payload.new }))
           }
-        }
-      )
-      .subscribe((status, error) => {
-        if (status === 'SUBSCRIBED') {
-          console.log('✅ Notification subscription active')
-        }
-        if (error) {
-          console.warn('WebSocket subscription error (non-critical):', error)
-        }
-      })
-    } catch (error) {
-      console.warn('Failed to set up real-time notifications (non-critical):', error)
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'notifications',
+            filter: `user_id=eq.${userId}`
+          },
+          (payload) => {
+            const oldN = payload.old as any
+            const newN = payload.new as any
+            if (!oldN.is_read && newN.is_read) {
+              setUnreadCount(prev => Math.max(0, prev - 1))
+            }
+          }
+        )
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            console.log('✅ Notification realtime subscription active')
+          }
+        })
+    } catch (err) {
+      console.warn('Realtime subscription failed (non-critical):', err)
     }
 
     return () => {
       if (subscription) {
-        try {
-          // Supabase realtime unsubscribe
-          supabase.removeChannel(subscription)
-        } catch (error) {
-          console.warn('WebSocket unsubscribe error (non-critical):', error)
-        }
+        supabase.removeChannel(subscription).catch(() => {})
       }
     }
-  }, [userId, supabase, playNotificationSound])
-
-  // Return default context if no userId
-  if (!userId) {
-    return (
-      <NotificationContext.Provider value={{ unreadCount: 0, refreshNotifications: async () => {}, markAllAsRead: async () => {} }}>
-        {children}
-      </NotificationContext.Provider>
-    )
-  }
+  }, [userId])
 
   return (
     <NotificationContext.Provider value={{ unreadCount, refreshNotifications, markAllAsRead }}>

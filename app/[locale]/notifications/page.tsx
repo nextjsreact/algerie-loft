@@ -1,23 +1,63 @@
-import React from 'react';
-import { getNotifications } from '@/app/actions/notifications';
-import { getSession } from '@/lib/auth';
-import { NotificationsWrapper } from '@/components/notifications/notifications-wrapper';
-import { redirect } from 'next/navigation';
+'use client'
 
-export default async function NotificationsPage() {
-  const session = await getSession();
+import { useEffect, useState } from 'react'
+import { NotificationsWrapper } from '@/components/notifications/notifications-wrapper'
+import { useNotifications } from '@/components/providers/notification-context'
 
-  if (!session) {
-    redirect('/login');
+export default function NotificationsPage() {
+  const [notifications, setNotifications] = useState<any[]>([])
+  const [session, setSession] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const { refreshNotifications } = useNotifications()
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        // Get session
+        const sessionRes = await fetch('/api/auth/session')
+        if (!sessionRes.ok) {
+          window.location.href = '/login'
+          return
+        }
+        const sessionData = await sessionRes.json()
+        setSession(sessionData)
+
+        // Get notifications
+        const notifRes = await fetch('/api/notifications', { cache: 'no-store' })
+        if (notifRes.ok) {
+          const { notifications: notifs } = await notifRes.json()
+          setNotifications(notifs || [])
+        }
+      } catch (err) {
+        console.error('Error loading notifications page:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    load()
+
+    // Refresh when new notification arrives
+    const handler = () => load()
+    document.addEventListener('notification-received', handler)
+    return () => document.removeEventListener('notification-received', handler)
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+      </div>
+    )
   }
 
-  const { data: initialNotifications } = await getNotifications(session.user.id);
+  if (!session) return null
 
   return (
-    <NotificationsWrapper 
-      notifications={initialNotifications || []} 
-      userRole={session.user.role as any}
-      userId={session.user.id}
+    <NotificationsWrapper
+      notifications={notifications}
+      userRole={session.user?.role || 'employee'}
+      userId={session.user?.id || ''}
     />
-  );
+  )
 }

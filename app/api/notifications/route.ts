@@ -27,20 +27,8 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Transform to match expected format
-    const transformedNotifications = notifications?.map(notif => ({
-      id: notif.id,
-      type: notif.type || 'system',
-      title: notif.title,
-      message: notif.message,
-      timestamp: notif.created_at,
-      read: notif.is_read,
-      priority: 'medium',
-      actionUrl: notif.type === 'partner_registration' ? '/partner/pending' : undefined,
-      actionLabel: notif.type === 'partner_registration' ? 'Voir les demandes' : undefined
-    })) || []
-
-    return NextResponse.json({ notifications: transformedNotifications })
+    // Return raw notifications matching the Notification type
+    return NextResponse.json({ notifications: notifications || [] })
 
   } catch (error) {
     console.error('Error fetching notifications:', error)

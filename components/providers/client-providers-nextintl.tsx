@@ -217,14 +217,9 @@ export default function ClientProviders({ children, session: serverSession, unre
                          <Sidebar user={session.user} unreadCount={unreadCount} />
                        </div>
                      )}
-                     <div className="flex flex-1 flex-col min-w-0 relative">
-                       {/* Desktop header - always visible on desktop */}
-                       <div className={cn(
-                         "hidden md:block fixed top-0 right-0 left-0 z-20",
-                         !shouldHideSidebar && "md:left-72"
-                       )}>
-                         <DesktopHeader />
-                       </div>
+                     <div className="flex flex-1 flex-col min-w-0">
+                       {/* Desktop header - sticky, in normal flow */}
+                       <DesktopHeader />
                        
                        {/* Mobile header - always shows burger menu */}
                        <MobileHeader 
@@ -232,7 +227,7 @@ export default function ClientProviders({ children, session: serverSession, unre
                          showLogo={shouldHideSidebar} 
                        />
                        
-                       <main className="flex-1 overflow-y-auto relative z-0 md:pt-16">
+                       <main className="flex-1 overflow-y-auto relative z-0">
                          {children}
                        </main>
                      </div>

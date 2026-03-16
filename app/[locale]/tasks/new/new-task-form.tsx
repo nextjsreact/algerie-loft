@@ -1,7 +1,6 @@
 'use client'
 
 import { TaskForm } from '@/components/forms/task-form'
-import { createTask } from '@/app/actions/tasks'
 import { TaskFormData, TaskStatusUpdateData } from '@/lib/validations'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -21,20 +20,28 @@ export default function NewTaskForm({ users }: NewTaskFormProps) {
   const handleCreateTask = async (data: TaskFormData | TaskStatusUpdateData) => {
     setIsSubmitting(true)
     try {
-      await createTask(data)
+      const res = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Erreur serveur')
+      }
+
       toast({
         title: `✅ ${t('common.success')}`,
         description: `${t('tasks.title')} "${'title' in data ? data.title : 'Task'}" ${t('tasks.createSuccess')}`,
         duration: 3000,
       })
-      setTimeout(() => {
-        router.push("/tasks")
-      }, 1000)
-    } catch (error) {
+      router.push('/tasks')
+    } catch (error: any) {
       console.error('Error creating task:', error)
       toast({
         title: `❌ ${t('common.error')}`,
-        description: t('tasks.createError'),
+        description: error.message || t('tasks.createError'),
         variant: "destructive",
         duration: 5000,
       })

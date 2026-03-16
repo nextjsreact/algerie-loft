@@ -73,9 +73,10 @@ export async function getUnreadNotificationsCount(
 
 export async function getNotifications(
   userId: string,
-  supabaseClient?: SupabaseClient<Database> // Optional Supabase client
+  supabaseClient?: SupabaseClient<Database>
 ): Promise<{ data: Notification[] | null; error: any }> {
-  const supabase = supabaseClient || await createClient();
+  // Use service role to bypass RLS — filter by user_id manually
+  const supabase = supabaseClient || await createClient(true);
   const { data, error } = await supabase
     .from('notifications')
     .select('*')

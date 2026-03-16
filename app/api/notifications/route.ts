@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@/utils/supabase/server'
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    
-    // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    // Use anon client to get current user identity
+    const anonSupabase = await createClient()
+    const { data: { user }, error: authError } = await anonSupabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 
-    // Get notifications from database
+    // Use service role to fetch notifications (bypass RLS)
+    const supabase = await createClient(true)
     const { data: notifications, error: notifError } = await supabase
       .from('notifications')
       .select('*')

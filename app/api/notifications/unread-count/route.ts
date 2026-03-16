@@ -25,9 +25,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ count: cached.count })
     }
 
+    // Use service role to bypass RLS for counting
+    const serviceSupabase = await createClient(true)
+
     try {
       // Quick count query with shorter timeout (1.5s)
-      const countPromise = supabase
+      const countPromise = serviceSupabase
         .from('notifications')
         .select('id', { count: 'exact', head: true })
         .eq('user_id', userId)
@@ -37,7 +40,7 @@ export async function GET(request: NextRequest) {
         setTimeout(() => reject(new Error('Query timeout')), 1500)
       )
 
-      const { count, error } = await Promise.race([countPromise, timeoutPromise])
+      const { count, error } = await Promise.race([countPromise, timeoutPromise]) as any
 
       if (error) {
         if (error.code === '42P01' || error.message?.includes('does not exist')) {

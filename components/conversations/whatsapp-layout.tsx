@@ -78,7 +78,7 @@ export function WhatsAppLayout({
   }, [isResizing])
 
   return (
-    <div className="flex h-[calc(100vh-10rem)] bg-[#f0f2f5] dark:bg-[#111b21] overflow-hidden rounded-lg border border-[#e9edef] dark:border-[#313d45]">
+    <div className="flex h-screen md:h-[calc(100vh-4rem)] bg-[#f0f2f5] dark:bg-[#111b21] overflow-hidden md:rounded-lg md:border border-[#e9edef] dark:border-[#313d45]">
       {/* Sidebar des conversations */}
       <div 
         className={cn(

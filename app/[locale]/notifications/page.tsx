@@ -14,6 +14,10 @@ export default async function NotificationsPage() {
   const { data: initialNotifications } = await getNotifications(session.user.id);
 
   return (
-    <NotificationsWrapper notifications={initialNotifications || []} />
+    <NotificationsWrapper 
+      notifications={initialNotifications || []} 
+      userRole={session.user.role as any}
+      userId={session.user.id}
+    />
   );
 }

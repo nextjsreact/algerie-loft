@@ -341,57 +341,33 @@ export default function NotificationsListOptimized({
     }
   }, [getNotificationPriority])
 
-  // Memoized translation functions
+  // Memoized translation functions — support both new (title/message) and old (title_key/message_key) formats
   const translateTitle = useCallback((notification: any) => {
-    return t(notification.title_key, notification.title_payload)
+    // New format: direct text stored in title column
+    if (notification.title) return notification.title;
+    // Old format: translation key
+    if (notification.title_key) {
+      try { return t(notification.title_key, notification.title_payload) } catch { return notification.title_key }
+    }
+    return '';
   }, [t])
 
   const translateMessage = useCallback(async (notification: any) => {
-    // Prioritize message_payload if available, otherwise try to parse old message_key
+    // New format: direct text stored in message column
+    if (notification.message) return notification.message;
+    // Old format: translation key with payload
     if (notification.message_payload && notification.message_key) {
-      // Ensure message_payload has required variables, provide fallbacks if missing
       const payload = { ...notification.message_payload };
       if (notification.message_key === 'notificationReadMessage') {
         if (!payload.taskTitle) payload.taskTitle = 'Unknown Task';
         if (!payload.userName || payload.userName === 'unknownUser') payload.userName = t('unknownUser');
       }
-      return t(notification.message_key, payload);
+      try { return t(notification.message_key, payload) } catch { return notification.message_key }
     }
-
-    // Handle raw message keys that were stored in database without proper payload
-    if (notification.message_key === 'taskStatusUpdatedMessage') {
-      let taskTitle = t('task');
-      let newStatus = t('updated');
-
-      // Try to fetch actual task title from database
-      if (notification.link) {
-        const taskIdMatch = notification.link.match(/\/tasks\/([^\/]+)/);
-        if (taskIdMatch) {
-          try {
-            // Fetch task data from Supabase
-            const { createClient } = await import('@/utils/supabase/client');
-            const supabase = createClient();
-            const { data: task } = await supabase
-              .from('tasks')
-              .select('title')
-              .eq('id', taskIdMatch[1])
-              .single();
-
-            if (task?.title) {
-              taskTitle = task.title;
-            }
-          } catch (error) {
-            console.warn('Failed to fetch task title:', error);
-            // Fallback to generic title
-            taskTitle = `${t('task')} ${taskIdMatch[1].slice(0, 8)}...`;
-          }
-        }
-      }
-
-      return t('taskStatusUpdatedMessage', { taskTitle, newStatus });
+    if (notification.message_key) {
+      return parseAndTranslateOldMessage(notification.message_key);
     }
-
-    return parseAndTranslateOldMessage(notification.message_key);
+    return '';
   }, [t, parseAndTranslateOldMessage])
 
   const translateBadge = useCallback((key: string) => {

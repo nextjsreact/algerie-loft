@@ -99,7 +99,8 @@ export async function POST(request: NextRequest) {
           : `"${validatedData.title}" vous a été assignée par ${assignedBy}${loftName ? ` (${loftName})` : ''}`;
 
         // Insert notification directly with service role — no Server Action chain
-        const { error: notifError } = await supabase
+        console.log('📬 Inserting notification for user:', validatedData.assigned_to, { titleText, messageText });
+        const { data: notifData, error: notifError } = await supabase
           .from('notifications')
           .insert({
             user_id: validatedData.assigned_to,
@@ -110,13 +111,14 @@ export async function POST(request: NextRequest) {
             sender_id: session.user.id,
             is_read: false,
             created_at: new Date().toISOString(),
-          });
+          })
+          .select();
 
         if (notifError) {
-          console.error('Notification error:', notifError);
+          console.error('❌ Notification insert error:', JSON.stringify(notifError));
           // Don't fail the request — task was created successfully
         } else {
-          console.log('✅ Task assignment notification sent to:', validatedData.assigned_to);
+          console.log('✅ Task assignment notification sent to:', validatedData.assigned_to, notifData);
         }
       } catch (notifErr) {
         console.error('Failed to send notification:', notifErr);

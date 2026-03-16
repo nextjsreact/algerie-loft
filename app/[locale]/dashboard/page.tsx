@@ -8,9 +8,7 @@ export default async function DashboardPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen">
-        <DashboardClientWrapper />
-      </div>
+      <DashboardClientWrapper />
     </ErrorBoundary>
   )
 }

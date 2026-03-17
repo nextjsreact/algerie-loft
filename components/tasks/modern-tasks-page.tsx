@@ -33,6 +33,7 @@ import {
 } from "lucide-react"
 import { useTaskManagement } from "@/hooks/use-task-management"
 import { useRouter } from "next/navigation"
+import { toast } from "@/components/ui/use-toast"
 
 interface Task {
   id: string
@@ -78,16 +79,37 @@ export function ModernTasksPage({
   const locale = useLocale()
   const router = useRouter()
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [localTasks, setLocalTasks] = useState(tasks)
 
-  const handleDeleteTask = async (taskId: string) => {
-    if (!confirm(t('confirmDelete') || 'Supprimer cette tâche ?')) return
+  const handleDeleteTask = async (taskId: string, taskTitle: string) => {
+    if (!confirm(t('confirmDelete') || `Supprimer la tâche "${taskTitle}" ?`)) return
     setDeletingId(taskId)
     try {
       const res = await fetch(`/api/tasks/${taskId}`, { method: 'DELETE' })
-      if (res.ok) router.refresh()
-      else console.error('Delete failed')
+      if (res.ok) {
+        // Remove from local state immediately — no page reload needed
+        setLocalTasks(prev => prev.filter(t => t.id !== taskId))
+        toast({
+          title: '✅ Tâche supprimée',
+          description: `"${taskTitle}" a été supprimée avec succès.`,
+          duration: 3000,
+        })
+      } else {
+        const err = await res.json()
+        toast({
+          title: '❌ Erreur',
+          description: err.error || 'Impossible de supprimer la tâche.',
+          variant: 'destructive',
+          duration: 4000,
+        })
+      }
     } catch (e) {
-      console.error(e)
+      toast({
+        title: '❌ Erreur',
+        description: 'Une erreur réseau est survenue.',
+        variant: 'destructive',
+        duration: 4000,
+      })
     } finally {
       setDeletingId(null)
     }
@@ -115,7 +137,7 @@ export function ModernTasksPage({
     getTaskPermissions,
     updateFilters,
     currentFilters
-  } = useTaskManagement(tasks, {
+  } = useTaskManagement(localTasks, {
     userRole,
     userId: currentUserId,
     assignedLoftIds: [], // Could be populated from user's loft assignments
@@ -645,7 +667,7 @@ export function ModernTasksPage({
                               variant="outline"
                               size="sm"
                               className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 shrink-0"
-                              onClick={() => handleDeleteTask(task.id)}
+                              onClick={() => handleDeleteTask(task.id, task.title)}
                               disabled={deletingId === task.id}
                             >
                               <Trash2 className="h-3 w-3" />

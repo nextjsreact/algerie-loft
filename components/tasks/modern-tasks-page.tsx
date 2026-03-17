@@ -33,7 +33,7 @@ import {
 } from "lucide-react"
 import { useTaskManagement } from "@/hooks/use-task-management"
 import { useRouter } from "next/navigation"
-import { toast } from "@/components/ui/use-toast"
+import { toast } from "sonner"
 
 interface Task {
   id: string
@@ -86,30 +86,17 @@ export function ModernTasksPage({
     setDeletingId(taskId)
     try {
       const res = await fetch(`/api/tasks/${taskId}`, { method: 'DELETE' })
+      const data = await res.json()
       if (res.ok) {
-        // Remove from local state immediately — no page reload needed
         setLocalTasks(prev => prev.filter(t => t.id !== taskId))
-        toast({
-          title: '✅ Tâche supprimée',
-          description: `"${taskTitle}" a été supprimée avec succès.`,
-          duration: 3000,
-        })
+        toast.success(`"${taskTitle}" supprimée avec succès.`)
       } else {
-        const err = await res.json()
-        toast({
-          title: '❌ Erreur',
-          description: err.error || 'Impossible de supprimer la tâche.',
-          variant: 'destructive',
-          duration: 4000,
-        })
+        console.error('Delete failed:', data)
+        toast.error(data.error || 'Impossible de supprimer la tâche.')
       }
     } catch (e) {
-      toast({
-        title: '❌ Erreur',
-        description: 'Une erreur réseau est survenue.',
-        variant: 'destructive',
-        duration: 4000,
-      })
+      console.error('Delete error:', e)
+      toast.error('Une erreur réseau est survenue.')
     } finally {
       setDeletingId(null)
     }

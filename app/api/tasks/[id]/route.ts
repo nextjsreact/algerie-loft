@@ -115,13 +115,23 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-  const session = await requireAuthAPI()
-  if (!session) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
-  if (session.user.role !== 'admin') return NextResponse.json({ error: 'Permission refusée' }, { status: 403 })
+  const anonSupabase = await createClient()
+  const { data: { user }, error: authError } = await anonSupabase.auth.getUser()
+  if (authError || !user) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
 
+  // Fetch profile to check role
   const supabase = await createClient(true)
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role, full_name')
+    .eq('id', user.id)
+    .single()
 
-  // Fetch task before deleting to know who was assigned
+  if (!profile || profile.role !== 'admin') {
+    return NextResponse.json({ error: 'Permission refusée — admin uniquement' }, { status: 403 })
+  }
+
+  // Fetch task before deleting
   const { data: task } = await supabase
     .from('tasks')
     .select('id, title, assigned_to, user_id')
@@ -130,7 +140,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 
   if (!task) return NextResponse.json({ error: 'Tâche introuvable' }, { status: 404 })
 
-  // Delete all notifications linked to this task (avoids orphan links to 404)
+  // Delete all notifications linked to this task
   await supabase
     .from('notifications')
     .delete()
@@ -141,8 +151,8 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   // Notify the assigned employee if different from the deleter
-  if (task.assigned_to && task.assigned_to !== session.user.id) {
-    const deleterName = session.user.full_name || 'Admin'
+  if (task.assigned_to && task.assigned_to !== user.id) {
+    const deleterName = profile.full_name || 'Admin'
     await supabase.from('notifications').insert({
       user_id: task.assigned_to,
       title: 'Tâche supprimée',
@@ -151,7 +161,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       message_key: 'taskDeletedMessage',
       type: 'warning',
       link: '/tasks',
-      sender_id: session.user.id,
+      sender_id: user.id,
       is_read: false,
       created_at: new Date().toISOString(),
     })

@@ -2517,6 +2517,7 @@
     "createTask": "Create Task",
     "dateRange": "Due Date",
     "delete_task": "Delete Task",
+    "confirmDelete": "Are you sure you want to delete this task?",
     "dueDateFormat": "Due Date: {date}",
     "editTask": "Edit Task",
     "edit_task": "Edit Task",

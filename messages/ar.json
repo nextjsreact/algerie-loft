@@ -2530,6 +2530,7 @@
     "createTask": "إنشاء مهمة",
     "dateRange": "تاريخ الاستحقاق",
     "delete_task": "حذف المهمة",
+    "confirmDelete": "هل أنت متأكد من حذف هذه المهمة؟",
     "dueDateFormat": "تاريخ الاستحقاق: {date}",
     "editTask": "تعديل المهمة",
     "edit_task": "تعديل المهمة",

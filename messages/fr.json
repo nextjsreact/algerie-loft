@@ -2518,6 +2518,7 @@
     "createTask": "Créer une tâche",
     "dateRange": "Date d'échéance",
     "delete_task": "Supprimer la tâche",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cette tâche ?",
     "dueDateFormat": "Date d'échéance : {date}",
     "editTask": "Modifier la tâche",
     "edit_task": "Modifier la tâche",

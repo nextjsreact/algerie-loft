@@ -82,7 +82,7 @@ export function ModernTasksPage({
   const [localTasks, setLocalTasks] = useState(tasks)
 
   const handleDeleteTask = async (taskId: string, taskTitle: string) => {
-    if (!confirm(t('confirmDelete') || `Supprimer la tâche "${taskTitle}" ?`)) return
+    if (!window.confirm(`Supprimer la tâche "${taskTitle}" ?`)) return
     setDeletingId(taskId)
     try {
       const res = await fetch(`/api/tasks/${taskId}`, { method: 'DELETE' })

@@ -1,7 +1,7 @@
 'use client'
 
 import { TaskForm } from '@/components/forms/task-form'
-import { getTask, updateTask } from '@/app/actions/tasks'
+import { getTask } from '@/app/actions/tasks'
 import { TaskFormData, TaskStatusUpdateData } from '@/lib/validations'
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
@@ -23,33 +23,35 @@ export default function EditTaskForm({ initialTask, users }: EditTaskFormProps) 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
-    // If initialTask is provided, we don't need to fetch it again on the client side
-    // This useEffect is primarily for cases where initialTask might be null from the server
-    // or to re-fetch if the ID changes for some reason (though not typical for edit pages)
     if (!initialTask && id) {
       getTask(id).then(setTask)
     }
   }, [id, initialTask])
 
   const handleUpdateTask = async (data: TaskFormData | TaskStatusUpdateData) => {
-    console.log("handleUpdateTask called with data:", data);
     if (!id) return
     setIsSubmitting(true)
     try {
-      await updateTask(id, data)
+      const res = await fetch(`/api/tasks/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Erreur serveur')
+      }
       toast({
         title: `✅ ${t('common.success')}`,
         description: `${t('tasks.title')} "${'title' in data ? data.title : task?.title}" ${t('tasks.updateSuccess')}`,
         duration: 3000,
       })
-      setTimeout(() => {
-        router.push(`/tasks/${id}`)
-      }, 1000)
-    } catch (error) {
+      setTimeout(() => router.push(`/tasks/${id}`), 1000)
+    } catch (error: any) {
       console.error(error)
       toast({
         title: `❌ ${t('common.error')}`,
-        description: t('tasks.updateError'),
+        description: error.message || t('tasks.updateError'),
         variant: "destructive",
         duration: 5000,
       })

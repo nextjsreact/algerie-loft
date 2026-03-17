@@ -1697,7 +1697,18 @@
       "title": "Optimized Version Active",
       "description": "Using batch operations, memoization, and React optimization techniques."
     },
-    "status": "Status"
+    "status": "Status",
+    "taskCompletedAlert": "Task Completed",
+    "taskCompletedAlertMessage": "Task \"{taskTitle}\" has been marked as completed.",
+    "taskStatusUpdated": "Task Status Updated",
+    "partner": {
+      "notifications": {
+        "rejected": {
+          "title": "Application Rejected",
+          "message": "Your partner application has been rejected."
+        }
+      }
+    }
   },
   "owners": {
     "addFirstOwner": "Add Owner",

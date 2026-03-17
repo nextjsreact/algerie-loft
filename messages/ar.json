@@ -1714,7 +1714,18 @@
       "title": "نسخة محسّنة نشطة",
       "description": "باستخدام عمليات الدُفعات، والتخزين المؤقت، وتقنيات تحسين React."
     },
-    "status": "الحالة"
+    "status": "الحالة",
+    "taskCompletedAlert": "تمت المهمة",
+    "taskCompletedAlertMessage": "تم تحديد المهمة \"{taskTitle}\" كمكتملة.",
+    "taskStatusUpdated": "تم تحديث حالة المهمة",
+    "partner": {
+      "notifications": {
+        "rejected": {
+          "title": "تم رفض الطلب",
+          "message": "تم رفض طلبك كشريك."
+        }
+      }
+    }
   },
   "owners": {
     "addFirstOwner": "إضافة مالك",

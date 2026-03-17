@@ -1698,7 +1698,18 @@
       "title": "Version optimisée active",
       "description": "Utilisation des opérations par lots, de la mémoïsation et des techniques d'optimisation React."
     },
-    "status": "Statut"
+    "status": "Statut",
+    "taskCompletedAlert": "Tâche terminée",
+    "taskCompletedAlertMessage": "La tâche \"{taskTitle}\" a été marquée comme terminée.",
+    "taskStatusUpdated": "Statut de tâche mis à jour",
+    "partner": {
+      "notifications": {
+        "rejected": {
+          "title": "Candidature rejetée",
+          "message": "Votre candidature en tant que partenaire a été rejetée."
+        }
+      }
+    }
   },
   "owners": {
     "addFirstOwner": "Ajouter un propriétaire",

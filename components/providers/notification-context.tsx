@@ -54,7 +54,10 @@ export function NotificationProvider({ children, userId }: { children: React.Rea
     // Initial fetch
     refreshNotifications()
 
-    // Real-time subscription for new notifications
+    // Poll every 10 seconds as reliable fallback
+    const pollInterval = setInterval(refreshNotifications, 10_000)
+
+    // Real-time subscription for instant updates
     let subscription: any = null
     try {
       subscription = supabase
@@ -70,7 +73,6 @@ export function NotificationProvider({ children, userId }: { children: React.Rea
           (payload) => {
             console.log('🔔 New notification received:', payload.new)
             setUnreadCount(prev => prev + 1)
-            // Dispatch event so other components can react
             document.dispatchEvent(new CustomEvent('notification-received', { detail: payload.new }))
           }
         )
@@ -100,6 +102,7 @@ export function NotificationProvider({ children, userId }: { children: React.Rea
     }
 
     return () => {
+      clearInterval(pollInterval)
       if (subscription) {
         supabase.removeChannel(subscription).catch(() => {})
       }

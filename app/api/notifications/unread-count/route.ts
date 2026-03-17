@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 
 // Simple in-memory cache for notification counts
 const notificationCache = new Map<string, { count: number, timestamp: number }>()
-const CACHE_DURATION = 30 * 1000 // 30 seconds
+const CACHE_DURATION = 5 * 1000 // 5 seconds only
 
 export async function GET(request: NextRequest) {
   try {

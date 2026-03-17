@@ -21,88 +21,63 @@ export function useNotifications() {
 
 export function NotificationProvider({ children, userId }: { children: React.ReactNode, userId: string }) {
   const [unreadCount, setUnreadCount] = useState(0)
-  // Use a ref so closures always see the latest value without stale captures
-  const blockUntilRef = useRef<number>(0)
   const supabase = createClient()
 
-  const isBlocked = () => Date.now() < blockUntilRef.current
-
-  // Fetch unread count via API (uses service role — bypasses RLS)
-  const refreshNotifications = useCallback(async () => {
-    if (!userId || isBlocked()) return
+  const fetchCount = useCallback(async () => {
+    if (!userId) return
     try {
       const res = await fetch('/api/notifications/unread-count', { cache: 'no-store' })
       if (res.ok) {
         const { count } = await res.json()
-        setUnreadCount(count || 0)
+        setUnreadCount(count ?? 0)
       }
     } catch (err) {
       console.error('Failed to fetch notification count:', err)
     }
   }, [userId])
 
-  // Mark all as read via API (uses service role)
+  const refreshNotifications = fetchCount
+
   const markAllAsRead = useCallback(async () => {
     if (!userId) return
-    // Optimistic: set to 0 immediately
+    // Optimistic: zero immediately
     setUnreadCount(0)
-    // Block all updates (poll + realtime) for 15 seconds
-    // This covers: the API call + read-receipt inserts + any realtime events
-    blockUntilRef.current = Date.now() + 15_000
-    try {
-      await fetch('/api/notifications/mark-all-read', { method: 'POST' })
-    } catch (err) {
-      console.error('Failed to mark all as read:', err)
-    }
-  }, [userId])
+    await fetch('/api/notifications/mark-all-read', { method: 'POST' })
+    // Re-fetch after a short delay to confirm DB state
+    setTimeout(fetchCount, 2000)
+  }, [userId, fetchCount])
 
   useEffect(() => {
     if (!userId) return
 
-    // Initial fetch
-    refreshNotifications()
+    fetchCount()
 
-    // Poll every 10 seconds as reliable fallback
-    const pollInterval = setInterval(refreshNotifications, 10_000)
+    // Poll every 15 seconds
+    const pollInterval = setInterval(fetchCount, 15_000)
 
-    // Real-time subscription for instant updates
+    // Realtime: only listen for INSERT (new notifications coming in)
     let subscription: any = null
     try {
       subscription = supabase
-        .channel(`notifications-${userId}`)
+        .channel(`notif-${userId}`)
         .on(
           'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'notifications',
-            filter: `user_id=eq.${userId}`
-          },
+          { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` },
           (payload) => {
-            // Skip all realtime events during block window
-            if (isBlocked()) return
             const notif = payload.new as any
-            console.log('🔔 New notification received:', notif)
+            console.log('🔔 Realtime INSERT:', notif.title_key)
             setUnreadCount(prev => prev + 1)
             document.dispatchEvent(new CustomEvent('notification-received', { detail: notif }))
           }
         )
-        // Do NOT handle UPDATE events — they cause double-decrement when mark-all-read fires
-        // The poll handles eventual consistency
-        .subscribe((status) => {
-          if (status === 'SUBSCRIBED') {
-            console.log('✅ Notification realtime subscription active')
-          }
-        })
+        .subscribe()
     } catch (err) {
-      console.warn('Realtime subscription failed (non-critical):', err)
+      console.warn('Realtime subscription failed:', err)
     }
 
     return () => {
       clearInterval(pollInterval)
-      if (subscription) {
-        supabase.removeChannel(subscription).catch(() => {})
-      }
+      if (subscription) supabase.removeChannel(subscription).catch(() => {})
     }
   }, [userId])
 

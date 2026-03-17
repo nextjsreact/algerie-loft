@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Bell, CheckCheck } from "lucide-react"
 import { Notification, UserRole } from "@/lib/types"
+import { useState } from "react"
 
 interface NotificationsWrapperProps {
   notifications: Notification[]
@@ -14,6 +15,7 @@ interface NotificationsWrapperProps {
   userId: string
   assignedTaskIds?: string[]
   onNotificationRead?: (id: string) => Promise<void>
+  onMarkAllRead?: () => Promise<void>
 }
 
 export function NotificationsWrapper({ 
@@ -22,15 +24,38 @@ export function NotificationsWrapper({
   userId, 
   assignedTaskIds = [],
   onNotificationRead,
+  onMarkAllRead,
 }: NotificationsWrapperProps) {
   const t = useTranslations("notifications")
   const { unreadCount, markAllAsRead, refreshNotifications } = useNotifications()
+  const [localNotifications, setLocalNotifications] = useState(notifications)
+  const [isMarking, setIsMarking] = useState(false)
 
-  const unreadNotifications = notifications.filter(n => !n.is_read)
+  const unreadCount_local = localNotifications.filter(n => !n.is_read).length
 
   const handleMarkAllAsRead = async () => {
-    await markAllAsRead()
-    await refreshNotifications()
+    if (isMarking) return
+    setIsMarking(true)
+
+    // Optimistically mark all as read in local state immediately
+    setLocalNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
+
+    try {
+      await markAllAsRead()
+      if (onMarkAllRead) await onMarkAllRead()
+    } catch (err) {
+      console.error('Failed to mark all as read:', err)
+    } finally {
+      setIsMarking(false)
+    }
+  }
+
+  // Sync when parent passes new notifications (initial load)
+  // but only if we haven't locally modified them
+  const [synced, setSynced] = useState(false)
+  if (!synced && notifications.length > 0) {
+    setLocalNotifications(notifications)
+    setSynced(true)
   }
 
   return (
@@ -46,16 +71,17 @@ export function NotificationsWrapper({
           </div>
         </div>
         <div className="flex items-center gap-3">
-          {unreadCount > 0 && (
+          {unreadCount_local > 0 && (
             <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-              {t('unreadCount', { count: unreadCount })}
+              {t('unreadCount', { count: unreadCount_local })}
             </Badge>
           )}
-          {unreadNotifications.length > 0 && (
+          {unreadCount_local > 0 && (
             <Button 
               onClick={handleMarkAllAsRead}
               variant="outline"
               size="sm"
+              disabled={isMarking}
               className="flex items-center gap-2"
             >
               <CheckCheck className="h-4 w-4" />
@@ -66,7 +92,7 @@ export function NotificationsWrapper({
       </div>
       
       <NotificationsListOptimized 
-        notifications={notifications}
+        notifications={localNotifications}
         userRole={userRole}
         userId={userId}
         assignedTaskIds={assignedTaskIds}

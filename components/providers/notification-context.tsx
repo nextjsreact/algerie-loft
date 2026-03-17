@@ -21,11 +21,14 @@ export function useNotifications() {
 
 export function NotificationProvider({ children, userId }: { children: React.ReactNode, userId: string }) {
   const [unreadCount, setUnreadCount] = useState(0)
+  const [blockPoll, setBlockPoll] = useState(false)
   const supabase = createClient()
+
+  const [blockPoll, setBlockPoll] = useState(false)
 
   // Fetch unread count via API (uses service role — bypasses RLS)
   const refreshNotifications = useCallback(async () => {
-    if (!userId) return
+    if (!userId || blockPoll) return
     try {
       const res = await fetch('/api/notifications/unread-count', { cache: 'no-store' })
       if (res.ok) {
@@ -35,14 +38,18 @@ export function NotificationProvider({ children, userId }: { children: React.Rea
     } catch (err) {
       console.error('Failed to fetch notification count:', err)
     }
-  }, [userId])
+  }, [userId, blockPoll])
 
   // Mark all as read via API (uses service role)
   const markAllAsRead = useCallback(async () => {
     if (!userId) return
     try {
-      await fetch('/api/notifications/mark-all-read', { method: 'POST' })
+      // Set count to 0 immediately
       setUnreadCount(0)
+      // Block polling for 5s to prevent read-receipt notifications from bumping count back up
+      setBlockPoll(true)
+      setTimeout(() => setBlockPoll(false), 5000)
+      await fetch('/api/notifications/mark-all-read', { method: 'POST' })
     } catch (err) {
       console.error('Failed to mark all as read:', err)
     }
@@ -71,9 +78,12 @@ export function NotificationProvider({ children, userId }: { children: React.Rea
             filter: `user_id=eq.${userId}`
           },
           (payload) => {
-            console.log('🔔 New notification received:', payload.new)
+            const notif = payload.new as any
+            console.log('🔔 New notification received:', notif)
+            // Don't increment count for read-receipt notifications we triggered ourselves
+            // (those are sent TO the sender, not to us — but just in case)
             setUnreadCount(prev => prev + 1)
-            document.dispatchEvent(new CustomEvent('notification-received', { detail: payload.new }))
+            document.dispatchEvent(new CustomEvent('notification-received', { detail: notif }))
           }
         )
         .on(

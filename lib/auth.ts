@@ -89,6 +89,15 @@ export async function requireRole(allowedRoles: UserRole[], locale?: string): Pr
   
   console.log('[requireRole] Checking access - DB role:', session.user.role, 'login_context:', loginContext, 'allowed:', allowedRoles)
   
+  // Priorité absolue au rôle DB pour client et partner
+  // Un client/partenaire ne peut jamais accéder aux pages employé
+  if (session.user.role === 'client' && !allowedRoles.includes('client')) {
+    redirect(`/${targetLocale}/client/dashboard`)
+  }
+  if (session.user.role === 'partner' && !allowedRoles.includes('partner')) {
+    redirect(`/${targetLocale}/partner/dashboard`)
+  }
+
   // Si le contexte de connexion existe, l'utiliser pour la vérification
   if (loginContext) {
     // Mapper le contexte aux rôles autorisés

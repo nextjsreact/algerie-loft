@@ -161,40 +161,32 @@ export function SimpleLoginFormNextIntl() {
         console.log('🍪 Login context final:', loginContext)
         
         const redirectParam = searchParams.get('redirect')
-        
-        // If we have a return URL, redirect there
-        if (returnUrl) {
-          window.location.href = decodeURIComponent(returnUrl)
-        } else if (redirectParam) {
-          // If we have a specific redirect, use it
-          window.location.href = `/${locale}${redirectParam}`
-        } else if (loginContext) {
-          // Rediriger selon le CONTEXTE DE CONNEXION (priorité)
-          switch (loginContext) {
-            case 'client':
-              window.location.href = `/${locale}/client/dashboard`
-              break
-            case 'partner':
-              window.location.href = `/${locale}/partner/dashboard`
-              break
-            case 'employee':
-              // Pour les employés, utiliser le rôle DB
-              switch (actualUserRole) {
-                case 'superuser':
-                  window.location.href = `/${locale}/admin/superuser/dashboard`
-                  break
-                case 'executive':
-                  window.location.href = `/${locale}/executive`
-                  break
-                default:
-                  window.location.href = `/${locale}/home`
-              }
-              break
-            default:
-              window.location.href = `/${locale}/home`
+
+        // Le rôle DB est toujours prioritaire pour client et partner
+        // Un client/partenaire ne peut jamais atterrir sur /home (page employé)
+        const getRedirectUrl = (): string => {
+          if (returnUrl) return decodeURIComponent(returnUrl)
+          if (redirectParam) return `/${locale}${redirectParam}`
+
+          // Priorité absolue au rôle DB pour client et partner
+          if (actualUserRole === 'client') return `/${locale}/client/dashboard`
+          if (actualUserRole === 'partner') return `/${locale}/partner/dashboard`
+
+          // Pour les employés, utiliser le contexte de connexion puis le rôle DB
+          switch (actualUserRole) {
+            case 'superuser': return `/${locale}/admin/superuser/dashboard`
+            case 'executive': return `/${locale}/executive`
+            case 'admin':
+            case 'manager':
+            case 'member': return `/${locale}/home`
+            default: return `/${locale}/home`
           }
-        } else {
-          // Fallback: utiliser le rôle DB
+        }
+
+        window.location.href = getRedirectUrl()
+
+        // Code mort conservé pour référence — ne sera jamais atteint
+        if (false) {
           switch (actualUserRole) {
             case 'client':
               window.location.href = `/${locale}/client/dashboard`

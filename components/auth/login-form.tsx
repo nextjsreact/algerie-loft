@@ -50,16 +50,18 @@ export function LoginForm() {
         document.cookie = `login_context=employee; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
         console.log('✅ Cookie login_context=employee créé')
         
-        // Redirection basée sur le rôle de l'employé
+        // Redirection basée sur le rôle DB — priorité absolue pour client et partner
         const role = result.user.role
-        let redirectPath = "/fr/home" // Par défaut
-        
-        if (role === 'superuser') {
+        let redirectPath = "/fr/home"
+
+        if (role === 'client') {
+          redirectPath = "/fr/client/dashboard"
+        } else if (role === 'partner') {
+          redirectPath = "/fr/partner/dashboard"
+        } else if (role === 'superuser') {
           redirectPath = "/fr/admin/superuser/dashboard"
         } else if (role === 'executive') {
           redirectPath = "/fr/executive"
-        } else if (role === 'admin' || role === 'manager' || role === 'member') {
-          redirectPath = "/fr/home"
         }
         
         router.push(redirectPath)

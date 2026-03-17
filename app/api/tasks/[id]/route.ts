@@ -120,8 +120,42 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   if (session.user.role !== 'admin') return NextResponse.json({ error: 'Permission refusée' }, { status: 403 })
 
   const supabase = await createClient(true)
+
+  // Fetch task before deleting to know who was assigned
+  const { data: task } = await supabase
+    .from('tasks')
+    .select('id, title, assigned_to, user_id')
+    .eq('id', params.id)
+    .single()
+
+  if (!task) return NextResponse.json({ error: 'Tâche introuvable' }, { status: 404 })
+
+  // Delete all notifications linked to this task (avoids orphan links to 404)
+  await supabase
+    .from('notifications')
+    .delete()
+    .eq('link', `/tasks/${params.id}`)
+
+  // Delete the task
   const { error } = await supabase.from('tasks').delete().eq('id', params.id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  // Notify the assigned employee if different from the deleter
+  if (task.assigned_to && task.assigned_to !== session.user.id) {
+    const deleterName = session.user.full_name || 'Admin'
+    await supabase.from('notifications').insert({
+      user_id: task.assigned_to,
+      title: 'Tâche supprimée',
+      message: `La tâche "${task.title}" qui vous était assignée a été supprimée par ${deleterName}.`,
+      title_key: 'taskDeleted',
+      message_key: 'taskDeletedMessage',
+      type: 'warning',
+      link: '/tasks',
+      sender_id: session.user.id,
+      is_read: false,
+      created_at: new Date().toISOString(),
+    })
+  }
 
   return NextResponse.json({ success: true })
 }

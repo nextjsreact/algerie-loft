@@ -21,16 +21,20 @@ export function useNotifications() {
 
 export function NotificationProvider({ children, userId }: { children: React.ReactNode, userId: string }) {
   const [unreadCount, setUnreadCount] = useState(0)
-  const supabase = createClient()
+  // Track if we've already set up subscriptions — prevents re-setup on re-renders
+  const initializedRef = useRef<string | null>(null)
+  const supabaseRef = useRef(createClient())
 
   const fetchCount = useCallback(async () => {
     if (!userId) return
     try {
-      const res = await fetch('/api/notifications/unread-count', { cache: 'no-store' })
-      if (res.ok) {
-        const { count } = await res.json()
-        setUnreadCount(count ?? 0)
-      }
+      const { count } = await supabaseRef.current
+        .from('notifications')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('is_read', false)
+        .then(r => ({ count: r.count ?? 0 }))
+      setUnreadCount(count)
     } catch (err) {
       console.error('Failed to fetch notification count:', err)
     }
@@ -42,44 +46,52 @@ export function NotificationProvider({ children, userId }: { children: React.Rea
     if (!userId) return
     // Optimistic: zero immediately
     setUnreadCount(0)
-    await fetch('/api/notifications/mark-all-read', { method: 'POST' })
-    // Re-fetch after a short delay to confirm DB state
-    setTimeout(fetchCount, 2000)
+    try {
+      await supabaseRef.current
+        .from('notifications')
+        .update({ is_read: true, read_at: new Date().toISOString() })
+        .eq('user_id', userId)
+        .eq('is_read', false)
+    } catch (err) {
+      console.error('Failed to mark all as read:', err)
+      // Revert on error
+      fetchCount()
+    }
   }, [userId, fetchCount])
 
   useEffect(() => {
     if (!userId) return
+    // Only initialize once per userId — prevents re-setup on parent re-renders
+    if (initializedRef.current === userId) return
+    initializedRef.current = userId
+
+    const supabase = supabaseRef.current
 
     fetchCount()
 
-    // Poll every 15 seconds
-    const pollInterval = setInterval(fetchCount, 15_000)
+    // Poll every 30 seconds as fallback
+    const pollInterval = setInterval(fetchCount, 30_000)
 
-    // Realtime: only listen for INSERT (new notifications coming in)
-    let subscription: any = null
-    try {
-      subscription = supabase
-        .channel(`notif-${userId}`)
-        .on(
-          'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` },
-          (payload) => {
-            const notif = payload.new as any
-            console.log('🔔 Realtime INSERT:', notif.title_key)
-            setUnreadCount(prev => prev + 1)
-            document.dispatchEvent(new CustomEvent('notification-received', { detail: notif }))
-          }
-        )
-        .subscribe()
-    } catch (err) {
-      console.warn('Realtime subscription failed:', err)
-    }
+    // Realtime: listen for INSERT only (new notifications)
+    const subscription = supabase
+      .channel(`notif-count-${userId}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` },
+        (payload) => {
+          console.log('🔔 New notification:', (payload.new as any).title_key)
+          setUnreadCount(prev => prev + 1)
+          document.dispatchEvent(new CustomEvent('notification-received', { detail: payload.new }))
+        }
+      )
+      .subscribe()
 
     return () => {
       clearInterval(pollInterval)
-      if (subscription) supabase.removeChannel(subscription).catch(() => {})
+      supabase.removeChannel(subscription).catch(() => {})
+      initializedRef.current = null
     }
-  }, [userId])
+  }, [userId, fetchCount])
 
   return (
     <NotificationContext.Provider value={{ unreadCount, refreshNotifications, markAllAsRead }}>

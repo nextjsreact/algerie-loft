@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Bell, CheckCheck } from "lucide-react"
 import { Notification, UserRole } from "@/lib/types"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 
 interface NotificationsWrapperProps {
   notifications: Notification[]
@@ -27,9 +27,18 @@ export function NotificationsWrapper({
   onMarkAllRead,
 }: NotificationsWrapperProps) {
   const t = useTranslations("notifications")
-  const { unreadCount, markAllAsRead, refreshNotifications } = useNotifications()
-  const [localNotifications, setLocalNotifications] = useState(notifications)
+  const { markAllAsRead } = useNotifications()
+  const [localNotifications, setLocalNotifications] = useState<Notification[]>([])
   const [isMarking, setIsMarking] = useState(false)
+  const initialSynced = useRef(false)
+
+  // Only sync from parent on initial load (when data first arrives)
+  useEffect(() => {
+    if (!initialSynced.current && notifications.length > 0) {
+      setLocalNotifications(notifications)
+      initialSynced.current = true
+    }
+  }, [notifications])
 
   const unreadCount_local = localNotifications.filter(n => !n.is_read).length
 
@@ -45,17 +54,17 @@ export function NotificationsWrapper({
       if (onMarkAllRead) await onMarkAllRead()
     } catch (err) {
       console.error('Failed to mark all as read:', err)
+      // Revert on error
+      setLocalNotifications(notifications)
     } finally {
       setIsMarking(false)
     }
   }
 
-  // Sync when parent passes new notifications (initial load)
-  // but only if we haven't locally modified them
-  const [synced, setSynced] = useState(false)
-  if (!synced && notifications.length > 0) {
-    setLocalNotifications(notifications)
-    setSynced(true)
+  const handleNotificationRead = async (id: string) => {
+    // Optimistically mark as read locally
+    setLocalNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
+    if (onNotificationRead) await onNotificationRead(id)
   }
 
   return (
@@ -96,7 +105,7 @@ export function NotificationsWrapper({
         userRole={userRole}
         userId={userId}
         assignedTaskIds={assignedTaskIds}
-        onNotificationRead={onNotificationRead}
+        onNotificationRead={handleNotificationRead}
       />
     </div>
   )

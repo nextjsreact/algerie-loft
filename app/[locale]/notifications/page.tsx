@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { NotificationsWrapper } from '@/components/notifications/notifications-wrapper'
 import { useNotifications } from '@/components/providers/notification-context'
 
@@ -8,38 +8,35 @@ export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<any[]>([])
   const [session, setSession] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const { refreshNotifications } = useNotifications()
+  const initialLoadDone = useRef(false)
+
+  const loadNotifications = async () => {
+    try {
+      const sessionRes = await fetch('/api/auth/session')
+      if (!sessionRes.ok) {
+        window.location.href = '/login'
+        return
+      }
+      const sessionData = await sessionRes.json()
+      setSession(sessionData)
+
+      const notifRes = await fetch('/api/notifications', { cache: 'no-store' })
+      if (notifRes.ok) {
+        const { notifications: notifs } = await notifRes.json()
+        setNotifications(notifs || [])
+      }
+    } catch (err) {
+      console.error('Error loading notifications page:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        // Get session
-        const sessionRes = await fetch('/api/auth/session')
-        if (!sessionRes.ok) {
-          window.location.href = '/login'
-          return
-        }
-        const sessionData = await sessionRes.json()
-        setSession(sessionData)
-
-        // Get notifications
-        const notifRes = await fetch('/api/notifications', { cache: 'no-store' })
-        if (notifRes.ok) {
-          const { notifications: notifs } = await notifRes.json()
-          setNotifications(notifs || [])
-        }      } catch (err) {
-        console.error('Error loading notifications page:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    load()
-
-    // Refresh when new notification arrives
-    const handler = () => load()
-    document.addEventListener('notification-received', handler)
-    return () => document.removeEventListener('notification-received', handler)
+    if (initialLoadDone.current) return
+    initialLoadDone.current = true
+    loadNotifications()
+    // No event listener here — we don't want re-fetches overwriting local state
   }, [])
 
   if (loading) {
@@ -59,12 +56,7 @@ export default function NotificationsPage() {
       userId={session.user?.id || ''}
       onNotificationRead={async (id: string) => {
         await fetch(`/api/notifications/${id}/read`, { method: 'POST' })
-        // Refresh list
-        const res = await fetch('/api/notifications', { cache: 'no-store' })
-        if (res.ok) {
-          const { notifications: notifs } = await res.json()
-          setNotifications(notifs || [])
-        }
+        // Don't re-fetch — wrapper handles local state update
       }}
     />
   )

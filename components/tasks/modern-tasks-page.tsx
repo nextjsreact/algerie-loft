@@ -568,42 +568,46 @@ export function ModernTasksPage({
                   return (
                     <Card key={task.id} className={`border-0 shadow-md bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm hover:shadow-lg transition-all duration-300 group ${getPriorityColor(task)}`}>
                       <CardHeader className="pb-3">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <div className={`p-1.5 rounded-full ${task.status === 'completed' ? 'bg-green-100' : task.status === 'in_progress' ? 'bg-blue-100' : 'bg-gray-100'}`}>
-                                {getStatusIcon(task.status)}
-                              </div>
-                              <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate flex-1">
-                                {task.title}
-                              </CardTitle>
+                        <div className="space-y-2">
+                          {/* Title row */}
+                          <div className="flex items-start gap-2">
+                            <div className={`p-1.5 rounded-full shrink-0 mt-0.5 ${task.status === 'completed' ? 'bg-green-100' : task.status === 'in_progress' ? 'bg-blue-100' : 'bg-gray-100'}`}>
+                              {getStatusIcon(task.status)}
+                            </div>
+                            <CardTitle className="text-base font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 leading-tight flex-1">
+                              {task.title}
+                            </CardTitle>
+                            <div className="flex items-center gap-1 shrink-0">
                               {task.loft && (
                                 <div className="p-1 bg-blue-50 rounded-full" title={`${t('associatedLoft')}: ${task.loft.name}`}>
                                   <Building2 className="h-3 w-3 text-blue-600" />
                                 </div>
                               )}
                               {task.isOrphaned && (
-                                <div className="p-1 bg-red-50 rounded-full" title={`${t('loftDeleted')} (ID: ${task.orphanedLoftId})`}>
+                                <div className="p-1 bg-red-50 rounded-full" title={`${t('loftDeleted')}`}>
                                   <AlertCircle className="h-3 w-3 text-red-600" />
                                 </div>
                               )}
                             </div>
+                          </div>
+                          {/* Status + date row */}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Badge className={`${getStatusColor(task.status)} border text-xs`}>
+                              <div className="flex items-center gap-1">
+                                {getStatusIcon(task.status)}
+                                {getStatusText(task.status)}
+                              </div>
+                            </Badge>
                             {task.due_date && (
-                              <div className="flex items-center gap-2 text-sm">
-                                <Calendar className="h-3 w-3 text-gray-400 dark:text-gray-500" />
-                                <span className={`${isOverdue ? 'text-red-600 font-medium' : 'text-gray-600 dark:text-gray-400'}`}>
+                              <div className="flex items-center gap-1 text-xs">
+                                <Calendar className="h-3 w-3 text-gray-400 shrink-0" />
+                                <span className={isOverdue ? 'text-red-600 font-medium' : 'text-gray-500'}>
                                   {new Date(task.due_date).toLocaleDateString(locale === 'ar' ? 'ar-DZ' : locale === 'en' ? 'en-US' : 'fr-FR')}
                                   {isOverdue && ` (${t('overdue')})`}
                                 </span>
                               </div>
                             )}
                           </div>
-                          <Badge className={`${getStatusColor(task.status)} border`}>
-                            <div className="flex items-center gap-1">
-                              {getStatusIcon(task.status)}
-                              {getStatusText(task.status)}
-                            </div>
-                          </Badge>
                         </div>
                       </CardHeader>
                       
@@ -647,18 +651,18 @@ export function ModernTasksPage({
                         </div>
 
                         {/* Actions */}
-                        <div className="flex items-center gap-2 pt-1 flex-wrap">
-                          <Button variant="outline" size="sm" className="flex-1 min-w-0" asChild>
+                        <div className="flex items-center gap-2 pt-1">
+                          <Button variant="outline" size="sm" className="flex-1" asChild>
                             <Link href={`/tasks/${task.id}`}>
                               <Eye className="h-3 w-3 mr-1 shrink-0" />
-                              <span className="truncate">{t('viewDetails')}</span>
+                              {t('view')}
                             </Link>
                           </Button>
                           {(userRole === 'admin' || userRole === 'manager') && (
-                            <Button variant="outline" size="sm" className="flex-1 min-w-0" asChild>
+                            <Button variant="outline" size="sm" className="flex-1" asChild>
                               <Link href={`/tasks/${task.id}/edit`}>
                                 <Edit className="h-3 w-3 mr-1 shrink-0" />
-                                <span className="truncate">{t('editTask')}</span>
+                                {t('edit')}
                               </Link>
                             </Button>
                           )}
@@ -666,7 +670,7 @@ export function ModernTasksPage({
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 shrink-0"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 px-2 shrink-0"
                               onClick={() => handleDeleteTask(task.id, task.title)}
                               disabled={deletingId === task.id}
                             >

@@ -113,3 +113,15 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
   return NextResponse.json({ task: updated })
 }
+
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  const session = await requireAuthAPI()
+  if (!session) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+  if (session.user.role !== 'admin') return NextResponse.json({ error: 'Permission refusée' }, { status: 403 })
+
+  const supabase = await createClient(true)
+  const { error } = await supabase.from('tasks').delete().eq('id', params.id)
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  return NextResponse.json({ success: true })
+}

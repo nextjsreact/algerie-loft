@@ -31,8 +31,8 @@ import {
   CheckCircle2,
   Building2
 } from "lucide-react"
-import { TaskActions } from "./task-actions"
 import { useTaskManagement } from "@/hooks/use-task-management"
+import { useRouter } from "next/navigation"
 
 interface Task {
   id: string
@@ -76,6 +76,22 @@ export function ModernTasksPage({
   const tCommon = useTranslations("common")
   const tAvailability = useTranslations("availability")
   const locale = useLocale()
+  const router = useRouter()
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  const handleDeleteTask = async (taskId: string) => {
+    if (!confirm(t('confirmDelete') || 'Supprimer cette tâche ?')) return
+    setDeletingId(taskId)
+    try {
+      const res = await fetch(`/api/tasks/${taskId}`, { method: 'DELETE' })
+      if (res.ok) router.refresh()
+      else console.error('Delete failed')
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   // Function to translate task status
   const getStatusText = (status: string) => {
@@ -609,11 +625,33 @@ export function ModernTasksPage({
                         </div>
 
                         {/* Actions */}
-                        <TaskActions 
-                          task={task}
-                          userRole={userRole}
-                          currentUserId={currentUserId}
-                        />
+                        <div className="flex items-center gap-2 pt-1 flex-wrap">
+                          <Button variant="outline" size="sm" className="flex-1 min-w-0" asChild>
+                            <Link href={`/tasks/${task.id}`}>
+                              <Eye className="h-3 w-3 mr-1 shrink-0" />
+                              <span className="truncate">{t('viewDetails')}</span>
+                            </Link>
+                          </Button>
+                          {(userRole === 'admin' || userRole === 'manager') && (
+                            <Button variant="outline" size="sm" className="flex-1 min-w-0" asChild>
+                              <Link href={`/tasks/${task.id}/edit`}>
+                                <Edit className="h-3 w-3 mr-1 shrink-0" />
+                                <span className="truncate">{t('editTask')}</span>
+                              </Link>
+                            </Button>
+                          )}
+                          {userRole === 'admin' && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 shrink-0"
+                              onClick={() => handleDeleteTask(task.id)}
+                              disabled={deletingId === task.id}
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          )}
+                        </div>
                       </CardContent>
                     </Card>
                   )

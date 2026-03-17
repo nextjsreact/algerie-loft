@@ -6,30 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import Link from "next/link"
 import { useTranslations, useLocale } from "next-intl"
 import { 
-  Plus, 
-  Search,
-  Filter,
-  Eye,
-  Edit,
-  Trash2,
-  CheckCircle,
-  Clock,
-  AlertCircle,
-  Calendar,
-  User,
-  BarChart3,
-  Sparkles,
-  RefreshCw,
-  Target,
-  Users,
-  TrendingUp,
-  ListTodo,
-  PlayCircle,
-  CheckCircle2,
-  Building2
+  Plus, Search, Filter, Eye, Edit, Trash2, CheckCircle, Clock,
+  AlertCircle, Calendar, User, BarChart3, Sparkles, RefreshCw,
+  Target, Users, TrendingUp, ListTodo, PlayCircle, CheckCircle2, Building2, Bell
 } from "lucide-react"
 import { useTaskManagement } from "@/hooks/use-task-management"
 import { useRouter } from "next/navigation"
@@ -80,22 +70,34 @@ export function ModernTasksPage({
   const router = useRouter()
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [localTasks, setLocalTasks] = useState(tasks)
+  const [deleteDialog, setDeleteDialog] = useState<{ task: Task; assignedUser: User | undefined } | null>(null)
 
-  const handleDeleteTask = async (taskId: string, taskTitle: string) => {
-    if (!window.confirm(`Supprimer la tâche "${taskTitle}" ?`)) return
-    setDeletingId(taskId)
+  const statusLabels: Record<string, string> = {
+    todo: 'À faire',
+    in_progress: 'En cours',
+    completed: 'Terminée',
+  }
+
+  const openDeleteDialog = (task: Task) => {
+    const assignedUser = users.find(u => u.id === task.assigned_to)
+    setDeleteDialog({ task, assignedUser })
+  }
+
+  const confirmDelete = async () => {
+    if (!deleteDialog) return
+    const { task } = deleteDialog
+    setDeleteDialog(null)
+    setDeletingId(task.id)
     try {
-      const res = await fetch(`/api/tasks/${taskId}`, { method: 'DELETE' })
+      const res = await fetch(`/api/tasks/${task.id}`, { method: 'DELETE' })
       const data = await res.json()
       if (res.ok) {
-        setLocalTasks(prev => prev.filter(t => t.id !== taskId))
-        toast.success(`"${taskTitle}" supprimée avec succès.`)
+        setLocalTasks(prev => prev.filter(t => t.id !== task.id))
+        toast.success(`Tâche "${task.title}" supprimée.`)
       } else {
-        console.error('Delete failed:', data)
         toast.error(data.error || 'Impossible de supprimer la tâche.')
       }
     } catch (e) {
-      console.error('Delete error:', e)
       toast.error('Une erreur réseau est survenue.')
     } finally {
       setDeletingId(null)
@@ -227,6 +229,7 @@ export function ModernTasksPage({
   }
 
   return (
+    <>
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4 sm:p-6 md:p-8">
       <div className="mx-auto max-w-7xl space-y-8">
         
@@ -658,7 +661,7 @@ export function ModernTasksPage({
                               variant="outline"
                               size="sm"
                               className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 px-2 shrink-0"
-                              onClick={() => handleDeleteTask(task.id, task.title)}
+                              onClick={() => openDeleteDialog(task)}
                               disabled={deletingId === task.id}
                             >
                               <Trash2 className="h-3 w-3" />
@@ -675,5 +678,53 @@ export function ModernTasksPage({
         </Card>
       </div>
     </div>
+
+    {/* Delete confirmation dialog */}
+    <Dialog open={!!deleteDialog} onOpenChange={(open) => { if (!open) setDeleteDialog(null) }}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-red-600">
+            <Trash2 className="h-5 w-5" />
+            Supprimer la tâche
+          </DialogTitle>
+          <DialogDescription asChild>
+            <div className="space-y-3 pt-2">
+              <p>Êtes-vous sûr de vouloir supprimer cette tâche ?</p>
+              {deleteDialog && (
+                <div className="bg-gray-50 rounded-lg p-3 space-y-2 text-sm">
+                  <div className="font-semibold text-gray-900">{deleteDialog.task.title}</div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    <span>Statut : <span className="font-medium">{statusLabels[deleteDialog.task.status] || deleteDialog.task.status}</span></span>
+                  </div>
+                  {deleteDialog.assignedUser && (
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <User className="h-3.5 w-3.5" />
+                      <span>Assignée à : <span className="font-medium">{deleteDialog.assignedUser.full_name}</span></span>
+                    </div>
+                  )}
+                  {deleteDialog.assignedUser && (
+                    <div className="flex items-center gap-2 text-orange-600 bg-orange-50 rounded p-2 mt-1">
+                      <Bell className="h-3.5 w-3.5 shrink-0" />
+                      <span><span className="font-medium">{deleteDialog.assignedUser.full_name}</span> recevra une notification de suppression.</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="gap-2">
+          <Button variant="outline" onClick={() => setDeleteDialog(null)}>
+            Annuler
+          </Button>
+          <Button variant="destructive" onClick={confirmDelete}>
+            <Trash2 className="h-4 w-4 mr-2" />
+            Supprimer
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  </>
   )
 }

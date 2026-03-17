@@ -16,7 +16,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
   const { data: task, error: taskErr } = await supabase
     .from('tasks')
-    .select('id, title, user_id, assigned_to, status')
+    .select('id, title, assigned_to, status, created_by')
     .eq('id', id)
     .single()
 
@@ -35,7 +35,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     return NextResponse.json({ error: updateErr.message }, { status: 500 })
   }
 
-  if (task.user_id && task.user_id !== session.user.id) {
+  if (task.created_by && task.created_by !== session.user.id) {
     const statusLabels: Record<string, string> = {
       todo: 'À faire',
       in_progress: 'En cours',

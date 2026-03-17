@@ -19,7 +19,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
   const { data: existing, error: fetchErr } = await supabase
     .from('tasks')
-    .select('id, title, assigned_to, due_date, status, user_id, loft_id')
+    .select('id, title, assigned_to, due_date, status, loft_id')
     .eq('id', id)
     .single()
 
@@ -120,7 +120,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
   const { data: task } = await supabase
     .from('tasks')
-    .select('id, title, assigned_to, user_id')
+    .select('id, title, assigned_to')
     .eq('id', id)
     .single()
 

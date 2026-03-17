@@ -21,12 +21,15 @@ export function useNotifications() {
 
 export function NotificationProvider({ children, userId }: { children: React.ReactNode, userId: string }) {
   const [unreadCount, setUnreadCount] = useState(0)
-  const blockPollRef = useRef(false)
+  // Use a ref so closures always see the latest value without stale captures
+  const blockUntilRef = useRef<number>(0)
   const supabase = createClient()
+
+  const isBlocked = () => Date.now() < blockUntilRef.current
 
   // Fetch unread count via API (uses service role — bypasses RLS)
   const refreshNotifications = useCallback(async () => {
-    if (!userId || blockPollRef.current) return
+    if (!userId || isBlocked()) return
     try {
       const res = await fetch('/api/notifications/unread-count', { cache: 'no-store' })
       if (res.ok) {
@@ -41,12 +44,12 @@ export function NotificationProvider({ children, userId }: { children: React.Rea
   // Mark all as read via API (uses service role)
   const markAllAsRead = useCallback(async () => {
     if (!userId) return
+    // Optimistic: set to 0 immediately
+    setUnreadCount(0)
+    // Block all updates (poll + realtime) for 15 seconds
+    // This covers: the API call + read-receipt inserts + any realtime events
+    blockUntilRef.current = Date.now() + 15_000
     try {
-      // Set count to 0 immediately (optimistic)
-      setUnreadCount(0)
-      // Block polling AND realtime increments for 8s to prevent read-receipt bounce
-      blockPollRef.current = true
-      setTimeout(() => { blockPollRef.current = false }, 8000)
       await fetch('/api/notifications/mark-all-read', { method: 'POST' })
     } catch (err) {
       console.error('Failed to mark all as read:', err)
@@ -76,30 +79,16 @@ export function NotificationProvider({ children, userId }: { children: React.Rea
             filter: `user_id=eq.${userId}`
           },
           (payload) => {
+            // Skip all realtime events during block window
+            if (isBlocked()) return
             const notif = payload.new as any
             console.log('🔔 New notification received:', notif)
-            // Skip increment if we just marked all as read (prevents bounce)
-            if (blockPollRef.current) return
             setUnreadCount(prev => prev + 1)
             document.dispatchEvent(new CustomEvent('notification-received', { detail: notif }))
           }
         )
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'notifications',
-            filter: `user_id=eq.${userId}`
-          },
-          (payload) => {
-            const oldN = payload.old as any
-            const newN = payload.new as any
-            if (!oldN.is_read && newN.is_read) {
-              setUnreadCount(prev => Math.max(0, prev - 1))
-            }
-          }
-        )
+        // Do NOT handle UPDATE events — they cause double-decrement when mark-all-read fires
+        // The poll handles eventual consistency
         .subscribe((status) => {
           if (status === 'SUBSCRIBED') {
             console.log('✅ Notification realtime subscription active')

@@ -15,6 +15,7 @@ interface NotificationsListProps {
   userRole: UserRole
   userId: string
   assignedTaskIds?: string[]
+  onNotificationRead?: (id: string) => Promise<void>
 }
 
 // Component to handle async message translation
@@ -127,7 +128,8 @@ export default function NotificationsListOptimized({
   notifications, 
   userRole, 
   userId, 
-  assignedTaskIds = [] 
+  assignedTaskIds = [],
+  onNotificationRead,
 }: NotificationsListProps) {
   const t = useTranslations("notifications")
   const tTasks = useTranslations("tasks")
@@ -265,16 +267,15 @@ export default function NotificationsListOptimized({
     }
   }, [refreshNotifications])
 
-  // Mark all unread filtered notifications as read when component mounts
+  // Mark unread notifications as read when component mounts (calls onNotificationRead for each)
   useEffect(() => {
-    const unreadIds = filteredNotifications
-      .filter(n => !n.is_read)
-      .map(n => n.id)
-    
-    if (unreadIds.length > 0) {
+    const unreadIds = filteredNotifications.filter(n => !n.is_read).map(n => n.id)
+    if (unreadIds.length > 0 && onNotificationRead) {
+      unreadIds.forEach(id => onNotificationRead(id).catch(console.error))
+    } else if (unreadIds.length > 0) {
       batchMarkAsRead(unreadIds)
     }
-  }, []) // Empty dependency array - only run once on mount
+  }, []) // Only on mount
 
   // Memoized icon getter with priority support
   const getNotificationIcon = useCallback((notification: Notification) => {

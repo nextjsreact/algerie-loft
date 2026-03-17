@@ -24,7 +24,6 @@ import {
 } from 'lucide-react'
 import { TaskPermissionService } from '@/lib/services/task-permissions'
 import { UserRole, Task } from '@/lib/types'
-import { updateTask } from '@/app/actions/tasks'
 import { toast } from 'sonner'
 
 interface TaskStatusUpdaterProps {
@@ -55,22 +54,28 @@ export function TaskStatusUpdater({
 
     setIsUpdating(true)
     try {
-      await updateTask(task.id, { status: newStatus })
+      const res = await fetch(`/api/tasks/${task.id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Erreur serveur')
+      }
       setSelectedStatus(newStatus)
       onStatusUpdate?.(newStatus)
-      
-      // Show success message based on status
+
       const statusMessages = {
         'todo': t('statusUpdatedToTodo'),
         'in_progress': t('statusUpdatedToInProgress'),
         'completed': t('statusUpdatedToCompleted')
       }
-      
       toast.success(statusMessages[newStatus as keyof typeof statusMessages] || t('statusUpdated'))
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to update task status:', error)
       toast.error(t('failedToUpdateStatus'))
-      setSelectedStatus(task.status) // Reset to original status
+      setSelectedStatus(task.status)
     } finally {
       setIsUpdating(false)
     }

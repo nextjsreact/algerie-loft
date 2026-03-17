@@ -27,8 +27,7 @@ export default function NotificationsPage() {
         if (notifRes.ok) {
           const { notifications: notifs } = await notifRes.json()
           setNotifications(notifs || [])
-        }
-      } catch (err) {
+        }      } catch (err) {
         console.error('Error loading notifications page:', err)
       } finally {
         setLoading(false)
@@ -58,6 +57,15 @@ export default function NotificationsPage() {
       notifications={notifications}
       userRole={session.user?.role || 'employee'}
       userId={session.user?.id || ''}
+      onNotificationRead={async (id: string) => {
+        await fetch(`/api/notifications/${id}/read`, { method: 'POST' })
+        // Refresh list
+        const res = await fetch('/api/notifications', { cache: 'no-store' })
+        if (res.ok) {
+          const { notifications: notifs } = await res.json()
+          setNotifications(notifs || [])
+        }
+      }}
     />
   )
 }

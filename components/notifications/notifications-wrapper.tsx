@@ -13,18 +13,25 @@ interface NotificationsWrapperProps {
   userRole: UserRole
   userId: string
   assignedTaskIds?: string[]
+  onNotificationRead?: (id: string) => Promise<void>
 }
 
 export function NotificationsWrapper({ 
   notifications, 
   userRole, 
   userId, 
-  assignedTaskIds = [] 
+  assignedTaskIds = [],
+  onNotificationRead,
 }: NotificationsWrapperProps) {
   const t = useTranslations("notifications")
-  const { unreadCount, markAllAsRead } = useNotifications()
+  const { unreadCount, markAllAsRead, refreshNotifications } = useNotifications()
 
   const unreadNotifications = notifications.filter(n => !n.is_read)
+
+  const handleMarkAllAsRead = async () => {
+    await markAllAsRead()
+    await refreshNotifications()
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -46,7 +53,7 @@ export function NotificationsWrapper({
           )}
           {unreadNotifications.length > 0 && (
             <Button 
-              onClick={markAllAsRead}
+              onClick={handleMarkAllAsRead}
               variant="outline"
               size="sm"
               className="flex items-center gap-2"
@@ -63,6 +70,7 @@ export function NotificationsWrapper({
         userRole={userRole}
         userId={userId}
         assignedTaskIds={assignedTaskIds}
+        onNotificationRead={onNotificationRead}
       />
     </div>
   )

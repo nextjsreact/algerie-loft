@@ -106,6 +106,8 @@ export async function POST(request: NextRequest) {
             user_id: validatedData.assigned_to,
             title: titleText,
             message: messageText,
+            title_key: 'newTaskAssigned',
+            message_key: 'newTaskAssignedMessage',
             type: 'info',
             link: `/tasks/${newTask.id}`,
             sender_id: session.user.id,

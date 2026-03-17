@@ -1024,6 +1024,11 @@
     "billAlerts": "تنبيهات الفواتير",
     "billMonitoring": "مراقبة الفواتير",
     "billsNeedAttention": "الفواتير تحتاج إلى اهتمام",
+    "markPaid": "تحديد كمدفوع",
+    "noAlerts": "لا توجد تنبيهات فواتير عاجلة",
+    "upcoming": "قادم",
+    "today": "اليوم",
+    "tomorrow": "غداً",
     "bills": {
       "due": "مستحقة",
       "title": "الفواتير"

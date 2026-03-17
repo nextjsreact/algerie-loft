@@ -1022,6 +1022,11 @@
     "billAlerts": "Bill Alerts",
     "billMonitoring": "Bill Monitoring",
     "billsNeedAttention": "Bills Need Attention",
+    "markPaid": "Mark as Paid",
+    "noAlerts": "No urgent bill alerts",
+    "upcoming": "Upcoming",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
     "bills": {
       "due": "Due",
       "title": "Bills"

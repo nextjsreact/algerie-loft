@@ -21,8 +21,9 @@ import { withAudit } from '@/lib/audit-helper'
 type Task = Database['public']['Tables']['tasks']['Row']
 
 export async function getTasks() {
+  noStore();
   const session = await requireRole(["admin", "manager", "member"])
-  const supabase = await createClient()
+  const supabase = await createClient(true)
   
   // Get all tasks first (we'll filter them using the data filter service)
   const { data: allTasks, error } = await supabase

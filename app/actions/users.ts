@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import type { User } from '@/lib/types'
 
 export async function getUsers(): Promise<User[]> {
-  const supabase = await createClient()
+  const supabase = await createClient(true)
   const { data: users, error } = await supabase
     .from('profiles')
     .select('*')

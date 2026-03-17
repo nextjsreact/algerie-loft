@@ -8,7 +8,7 @@ import { AlertTriangle, Calendar, Clock, CheckCircle } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { BillPaymentModal } from "@/components/modals/bill-payment-modal";
-import { useTranslation } from "@/lib/i18n/context";
+import { useTranslations } from "next-intl";
 
 interface BillAlert {
   loft_id: string;
@@ -21,19 +21,16 @@ interface BillAlert {
   days_overdue?: number;
 }
 
-const getUtilityLabel = (utilityType: string, t: any) => {
-  switch (utilityType) {
-    case "eau":
-      return t("utilities.eau");
-    case "energie":
-      return t("utilities.energie");
-    case "telephone":
-      return t("utilities.telephone");
-    case "internet":
-      return t("utilities.internet");
-    default:
-      return utilityType;
-  }
+const getUtilityLabel = (utilityType: string, tBills: any) => {
+  const labels: Record<string, string> = {
+    eau: tBills("utilities.eau"),
+    energie: tBills("utilities.energie"),
+    telephone: tBills("utilities.telephone"),
+    internet: tBills("utilities.internet"),
+    tv: tBills("utilities.tv"),
+    gas: tBills("utilities.gas"),
+  };
+  return labels[utilityType] || utilityType;
 };
 
 const UTILITY_COLORS = {
@@ -44,7 +41,8 @@ const UTILITY_COLORS = {
 };
 
 export function BillAlerts() {
-  const { t } = useTranslation('dashboard')
+  const t = useTranslations('dashboard');
+  const tBills = useTranslations('bills');
   const [upcomingBills, setUpcomingBills] = useState<BillAlert[]>([]);
   const [overdueBills, setOverdueBills] = useState<BillAlert[]>([]);
   const [loading, setLoading] = useState(true);
@@ -175,7 +173,7 @@ export function BillAlerts() {
                       <div>
                         <div className="font-medium">{bill.loft_name}</div>
                         <div className="text-sm text-gray-600">
-                          {getUtilityLabel(bill.utility_type, t)} - {t('due')}:{" "}
+                          {getUtilityLabel(bill.utility_type, tBills)} - {t('due')}:{" "}
                           {new Date(bill.due_date).toLocaleDateString()}
                         </div>
                       </div>
@@ -213,7 +211,7 @@ export function BillAlerts() {
                       <div>
                         <div className="font-medium">{bill.loft_name}</div>
                         <div className="text-sm text-gray-600">
-                          {getUtilityLabel(bill.utility_type, t)} - {t('due')}:{" "}
+                          {getUtilityLabel(bill.utility_type, tBills)} - {t('due')}:{" "}
                           {new Date(bill.due_date).toLocaleDateString()}
                         </div>
                       </div>

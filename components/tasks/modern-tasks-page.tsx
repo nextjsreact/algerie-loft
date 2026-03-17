@@ -94,6 +94,7 @@ export function ModernTasksPage({
       if (res.ok) {
         setLocalTasks(prev => prev.filter(t => t.id !== task.id))
         toast.success(`Tâche "${task.title}" supprimée.`)
+        router.refresh()
       } else {
         toast.error(data.error || 'Impossible de supprimer la tâche.')
       }

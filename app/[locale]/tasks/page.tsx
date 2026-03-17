@@ -3,6 +3,8 @@ import { getTasks } from "@/app/actions/tasks"
 import { getUsers } from "@/app/actions/users"
 import { ModernTasksPage } from "@/components/tasks/modern-tasks-page"
 
+export const dynamic = 'force-dynamic'
+
 export default async function TasksPage() {
   try {
     const session = await requireRole(["admin", "manager", "member"])

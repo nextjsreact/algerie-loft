@@ -3,7 +3,8 @@ import { createClient } from '@/utils/supabase/server'
 import { requireAuthAPI } from '@/lib/auth'
 import { taskSchema } from '@/lib/validations'
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const session = await requireAuthAPI()
   if (!session) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
 
@@ -16,25 +17,23 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
   const supabase = await createClient(true)
 
-  // Fetch existing task to compare changes
   const { data: existing, error: fetchErr } = await supabase
     .from('tasks')
     .select('id, title, assigned_to, due_date, status, user_id, loft_id')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (fetchErr || !existing) {
     return NextResponse.json({ error: 'Tâche introuvable' }, { status: 404 })
   }
 
-  // Update the task
   const { data: updated, error: updateErr } = await supabase
     .from('tasks')
     .update({
       ...validatedData,
       due_date: validatedData.due_date ? new Date(validatedData.due_date).toISOString() : null,
     })
-    .eq('id', params.id)
+    .eq('id', id)
     .select()
     .single()
 
@@ -42,12 +41,10 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     return NextResponse.json({ error: updateErr.message }, { status: 500 })
   }
 
-  // Determine who to notify (current assignee or new assignee)
   const newAssignedTo = validatedData.assigned_to || null
   const oldAssignedTo = existing.assigned_to || null
   const updaterName = session.user.full_name || 'Manager'
 
-  // Get loft name if needed
   let loftName: string | undefined
   const loftId = validatedData.loft_id || existing.loft_id
   if (loftId) {
@@ -57,7 +54,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
   const notifications: Array<{ user_id: string; title: string; message: string }> = []
 
-  // Case 1: Task reassigned to a new person
   if (newAssignedTo && newAssignedTo !== oldAssignedTo && newAssignedTo !== session.user.id) {
     notifications.push({
       user_id: newAssignedTo,
@@ -66,10 +62,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     })
   }
 
-  // Case 2: Task modified — notify current assignee (if not the updater)
   const assigneeToNotify = newAssignedTo || oldAssignedTo
   if (assigneeToNotify && assigneeToNotify !== session.user.id && newAssignedTo === oldAssignedTo) {
-    // Build a description of what changed
     const changes: string[] = []
     if (validatedData.title !== existing.title) changes.push(`titre: "${validatedData.title}"`)
     if (validatedData.due_date && new Date(validatedData.due_date).toISOString() !== existing.due_date) {
@@ -81,30 +75,22 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
     if (loftName && validatedData.loft_id !== existing.loft_id) changes.push(`appartement: ${loftName}`)
 
-    if (changes.length > 0) {
-      notifications.push({
-        user_id: assigneeToNotify,
-        title: 'Tâche modifiée',
-        message: `${updaterName} a modifié la tâche "${validatedData.title}" : ${changes.join(', ')}`,
-      })
-    } else {
-      // Generic update notification even if we can't detect specific changes
-      notifications.push({
-        user_id: assigneeToNotify,
-        title: 'Tâche modifiée',
-        message: `${updaterName} a mis à jour la tâche "${validatedData.title}"${loftName ? ` (${loftName})` : ''}`,
-      })
-    }
+    notifications.push({
+      user_id: assigneeToNotify,
+      title: 'Tâche modifiée',
+      message: changes.length > 0
+        ? `${updaterName} a modifié la tâche "${validatedData.title}" : ${changes.join(', ')}`
+        : `${updaterName} a mis à jour la tâche "${validatedData.title}"${loftName ? ` (${loftName})` : ''}`,
+    })
   }
 
-  // Insert all notifications
   for (const notif of notifications) {
     await supabase.from('notifications').insert({
       ...notif,
       title_key: 'taskUpdated',
       message_key: 'taskUpdatedMessage',
       type: 'info',
-      link: `/tasks/${params.id}`,
+      link: `/tasks/${id}`,
       sender_id: session.user.id,
       is_read: false,
       created_at: new Date().toISOString(),
@@ -114,12 +100,13 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   return NextResponse.json({ task: updated })
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+
   const anonSupabase = await createClient()
   const { data: { user }, error: authError } = await anonSupabase.auth.getUser()
   if (authError || !user) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
 
-  // Fetch profile to check role
   const supabase = await createClient(true)
   const { data: profile } = await supabase
     .from('profiles')
@@ -131,26 +118,19 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     return NextResponse.json({ error: 'Permission refusée — admin uniquement' }, { status: 403 })
   }
 
-  // Fetch task before deleting
   const { data: task } = await supabase
     .from('tasks')
     .select('id, title, assigned_to, user_id')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (!task) return NextResponse.json({ error: 'Tâche introuvable' }, { status: 404 })
 
-  // Delete all notifications linked to this task
-  await supabase
-    .from('notifications')
-    .delete()
-    .eq('link', `/tasks/${params.id}`)
+  await supabase.from('notifications').delete().eq('link', `/tasks/${id}`)
 
-  // Delete the task
-  const { error } = await supabase.from('tasks').delete().eq('id', params.id)
+  const { error } = await supabase.from('tasks').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Notify the assigned employee if different from the deleter
   if (task.assigned_to && task.assigned_to !== user.id) {
     const deleterName = profile.full_name || 'Admin'
     await supabase.from('notifications').insert({

@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { requireAuthAPI } from '@/lib/auth'
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const session = await requireAuthAPI()
   if (!session) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
 
@@ -13,22 +14,20 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
   const supabase = await createClient(true)
 
-  // Fetch the task to get creator and title
   const { data: task, error: taskErr } = await supabase
     .from('tasks')
     .select('id, title, user_id, assigned_to, status')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (taskErr || !task) {
     return NextResponse.json({ error: 'Tâche introuvable' }, { status: 404 })
   }
 
-  // Update the task status
   const { data: updated, error: updateErr } = await supabase
     .from('tasks')
     .update({ status })
-    .eq('id', params.id)
+    .eq('id', id)
     .select()
     .single()
 
@@ -36,7 +35,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     return NextResponse.json({ error: updateErr.message }, { status: 500 })
   }
 
-  // Notify the task creator if different from the person updating
   if (task.user_id && task.user_id !== session.user.id) {
     const statusLabels: Record<string, string> = {
       todo: 'À faire',
@@ -53,7 +51,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       title_key: 'taskStatusUpdated',
       message_key: 'taskStatusUpdatedMessage',
       type: 'info',
-      link: `/tasks/${task.id}`,
+      link: `/tasks/${id}`,
       sender_id: session.user.id,
       is_read: false,
       created_at: new Date().toISOString(),

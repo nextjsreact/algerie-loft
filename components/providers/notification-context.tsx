@@ -47,14 +47,14 @@ export function NotificationProvider({ children, userId }: { children: React.Rea
     // Optimistic: zero immediately
     setUnreadCount(0)
     try {
-      await supabaseRef.current
-        .from('notifications')
-        .update({ is_read: true, read_at: new Date().toISOString() })
-        .eq('user_id', userId)
-        .eq('is_read', false)
+      // Must use API route — direct Supabase client is blocked by RLS
+      const res = await fetch('/api/notifications/mark-all-read', { method: 'POST' })
+      if (!res.ok) {
+        console.error('mark-all-read failed:', await res.text())
+        fetchCount() // revert
+      }
     } catch (err) {
       console.error('Failed to mark all as read:', err)
-      // Revert on error
       fetchCount()
     }
   }, [userId, fetchCount])

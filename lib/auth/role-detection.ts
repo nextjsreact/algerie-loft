@@ -36,15 +36,15 @@ export async function detectUserRole(userId: string, userEmail: string | null): 
       return 'client';
     }
 
-    // Step 3: Check partner_profiles table — property owners who registered as partners
-    const { data: partnerProfile } = await supabase
-      .from('partner_profiles')
+    // Step 3: Check owners table — partners (property owners)
+    const { data: owner } = await supabase
+      .from('owners')
       .select('id')
-      .eq('user_id', userId)
+      .eq('id', userId)
       .single();
 
-    if (partnerProfile) {
-      console.log(`[ROLE DETECTION] User ${userId} found in partner_profiles → role: partner`);
+    if (owner) {
+      console.log(`[ROLE DETECTION] User ${userId} found in owners table → role: partner`);
       return 'partner';
     }
 

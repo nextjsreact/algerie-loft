@@ -11,7 +11,7 @@ export async function GET() {
   const [{ data: profile }, { data: customer }, { data: partner }] = await Promise.all([
     supabase.from('profiles').select('role, full_name').eq('id', user.id).single(),
     supabase.from('customers').select('id, email').eq('id', user.id).single(),
-    supabase.from('partner_profiles').select('id').eq('user_id', user.id).single(),
+    supabase.from('owners').select('id').eq('id', user.id).single(),
   ])
 
   const detectedRole = await detectUserRole(user.id, user.email ?? null)
@@ -21,7 +21,7 @@ export async function GET() {
     email: user.email,
     inProfilesTable: profile ? { role: profile.role, name: profile.full_name } : null,
     inCustomersTable: !!customer,
-    inPartnerProfilesTable: !!partner,
+    inOwnersTable: !!partner,
     detectedRole,
   })
 }

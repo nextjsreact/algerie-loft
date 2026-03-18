@@ -61,9 +61,7 @@ export async function detectUserRole(userId: string, userEmail: string | null, l
         first_name: firstName,
         last_name: rest.join(' ') || firstName,
         email: userEmail || profile?.email || '',
-        status: 'active',
-        preferences: { language: 'fr', currency: 'DZD', notifications: { email: true, sms: false, marketing: false } },
-        created_by: userId,
+        status: 'prospect',
       }).select().single();
       return 'client';
     }

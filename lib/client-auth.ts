@@ -150,8 +150,7 @@ export async function loginClientComplete(data: ClientLoginData): Promise<{
         })
       } catch (err) {
         console.error('Failed to create customer record on login:', err)
-      }
-    } else if (!customerError) {
+      }    } else if (!customerError) {
       // Update last login
       await supabase
         .from('customers')

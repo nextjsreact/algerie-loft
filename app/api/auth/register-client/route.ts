@@ -21,13 +21,7 @@ export async function POST(request: NextRequest) {
         first_name: firstName,
         last_name: lastName,
         email: email,
-        status: 'active',
-        preferences: {
-          language: 'fr',
-          currency: 'DZD',
-          notifications: { email: true, sms: false, marketing: false }
-        },
-        created_by: userId,
+        status: 'prospect',
       })
       .select()
       .single()

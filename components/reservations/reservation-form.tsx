@@ -165,6 +165,11 @@ export default function ReservationForm({
     }
   };
 
+  const [loftSearch, setLoftSearch] = useState('')
+  const filteredLofts = lofts.filter(l =>
+    l.name.toLowerCase().includes(loftSearch.toLowerCase())
+  )
+
   const selectedLoft = lofts.find(l => l.id === watchedValues[0]);
   const nights = watchedValues[1] && watchedValues[2] 
     ? Math.ceil((new Date(watchedValues[2]).getTime() - new Date(watchedValues[1]).getTime()) / (1000 * 60 * 60 * 24))
@@ -189,12 +194,26 @@ export default function ReservationForm({
                   value={watchedValues[0]}
                   onValueChange={(value) => setValue('loft_id', value)}
                   disabled={!!loftId}
+                  onOpenChange={(open) => { if (!open) setLoftSearch('') }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder={t('reservations.form.selectLoft')} />
                   </SelectTrigger>
                   <SelectContent position="popper" sideOffset={4} className="max-h-60 overflow-y-auto">
-                    {lofts.map((loft) => (
+                    <div className="px-2 py-1.5 sticky top-0 bg-white z-10">
+                      <Input
+                        placeholder="Rechercher un loft..."
+                        value={loftSearch}
+                        onChange={e => setLoftSearch(e.target.value)}
+                        onClick={e => e.stopPropagation()}
+                        onKeyDown={e => e.stopPropagation()}
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                    {filteredLofts.length === 0 && (
+                      <div className="px-2 py-4 text-sm text-center text-muted-foreground">Aucun loft trouvé</div>
+                    )}
+                    {filteredLofts.map((loft) => (
                       <SelectItem key={loft.id} value={loft.id}>
                         {loft.name} - {loft.price_per_night} DZD/night
                       </SelectItem>

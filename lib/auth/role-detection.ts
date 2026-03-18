@@ -36,7 +36,7 @@ export async function detectUserRole(userId: string, userEmail: string | null): 
       return 'client';
     }
 
-    // Step 3: Check partner_profiles table
+    // Step 3: Check partner_profiles table — property owners who registered as partners
     const { data: partnerProfile } = await supabase
       .from('partner_profiles')
       .select('id')

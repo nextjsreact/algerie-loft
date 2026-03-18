@@ -3,8 +3,10 @@ import { ErrorBoundary } from "@/components/error-boundary"
 import { HomePageClient } from "@/components/home/home-page-client"
 import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
+import { unstable_noStore as noStore } from "next/cache"
 
 export default async function HomePage() {
+  noStore()
   const session = await requireAuth();
 
   // Check login_context cookie — if user chose client or partner, redirect them

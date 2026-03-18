@@ -4,102 +4,109 @@ import { createClient } from '@/utils/supabase/server';
 import type { UserRole } from '@/lib/types';
 
 /**
- * Enhanced role detection for OAuth and other authentication methods
+ * Enhanced role detection — multi-role architecture
+ * A user can be in multiple tables simultaneously (customers, owners, profiles).
+ * The login_context cookie determines which role to use for the current session.
  */
 
 export async function detectUserRole(userId: string, userEmail: string | null): Promise<UserRole> {
   try {
-    const supabase = await createClient(true); // Use service role for full access
-    
-    // Step 1: Check if user has a superuser profile (highest priority)
+    const supabase = await createClient(true);
+
+    // Read login_context cookie to determine which role the user chose at login
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    const loginContext = cookieStore.get('login_context')?.value;
+
+    console.log(`[ROLE DETECTION] User ${userId}, loginContext: ${loginContext}`);
+
+    // Superuser always takes priority regardless of context
     const { data: superuserProfile } = await supabase
       .from('superuser_profiles')
       .select('id, is_active')
       .eq('user_id', userId)
       .eq('is_active', true)
       .single();
-    
+
     if (superuserProfile) {
-      console.log(`[ROLE DETECTION] User ${userId} detected as superuser via profile`);
+      console.log(`[ROLE DETECTION] User ${userId} → superuser`);
       return 'superuser';
     }
-    
-    // Step 2: Check customers table — real end-users who book lofts
-    const { data: customer } = await supabase
-      .from('customers')
-      .select('id')
-      .eq('id', userId)
-      .single();
 
-    if (customer) {
-      console.log(`[ROLE DETECTION] User ${userId} found in customers table → role: client`);
-      return 'client';
+    // Route based on login_context chosen at login
+    if (loginContext === 'client') {
+      // Verify user is actually in customers table
+      const { data: customer } = await supabase
+        .from('customers')
+        .select('id')
+        .eq('id', userId)
+        .single();
+      if (customer) {
+        console.log(`[ROLE DETECTION] User ${userId} → client (via login_context)`);
+        return 'client';
+      }
+      console.log(`[ROLE DETECTION] User ${userId} chose client but not in customers table`);
     }
 
-    // Step 3: Check owners table — partners (property owners)
-    const { data: owner } = await supabase
-      .from('owners')
-      .select('id')
-      .eq('id', userId)
-      .single();
-
-    if (owner) {
-      console.log(`[ROLE DETECTION] User ${userId} found in owners table → role: partner`);
-      return 'partner';
+    if (loginContext === 'partner') {
+      // Verify user is actually in owners table
+      const { data: owner } = await supabase
+        .from('owners')
+        .select('id')
+        .eq('id', userId)
+        .single();
+      if (owner) {
+        console.log(`[ROLE DETECTION] User ${userId} → partner (via login_context)`);
+        return 'partner';
+      }
+      console.log(`[ROLE DETECTION] User ${userId} chose partner but not in owners table`);
     }
 
-    // Step 4: Check profiles table for employee roles
+    // For employee context (or no context), use profiles table role
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', userId)
       .single();
-    
-    if (profile?.role) {
-      console.log(`[ROLE DETECTION] User ${userId} has profile role: ${profile.role}`);
-      
-      // If user is admin, double-check for superuser privileges
+
+    if (profile?.role && profile.role !== 'member') {
+      // Check admin → superuser upgrade
       if (profile.role === 'admin') {
         const { data: superuserCheck } = await supabase
           .from('superuser_profiles')
-          .select('id, is_active')
+          .select('id')
           .eq('user_id', userId)
           .eq('is_active', true)
           .single();
-        
-        if (superuserCheck) {
-          console.log(`[ROLE DETECTION] Admin user ${userId} upgraded to superuser`);
-          return 'superuser';
-        }
+        if (superuserCheck) return 'superuser';
       }
-      
-      // Ignore 'client' role in profiles table — real clients are in customers table
-      // A profiles entry with role='client' is a mistake, treat as member
-      if (profile.role === 'client') {
-        console.log(`[ROLE DETECTION] User ${userId} has role=client in profiles but NOT in customers — treating as member`);
-        return 'member';
-      }
-      
+      console.log(`[ROLE DETECTION] User ${userId} → ${profile.role} (from profiles)`);
       return profile.role as UserRole;
     }
-    
-    // Step 5: Email-based role detection (fallback for employees)
-    if (userEmail) {
-      const emailRole = detectRoleFromEmail(userEmail);
-      if (emailRole !== 'guest' && emailRole !== 'client') {
-        console.log(`[ROLE DETECTION] User ${userId} role detected from email: ${emailRole}`);
-        await createUserProfile(userId, emailRole, userEmail);
-        return emailRole;
-      }
+
+    // profile.role is 'member' (default from trigger) — check if user has other roles
+    // If no login_context was set, try to infer the best role
+    const [{ data: customer }, { data: owner }] = await Promise.all([
+      supabase.from('customers').select('id').eq('id', userId).single(),
+      supabase.from('owners').select('id').eq('id', userId).single(),
+    ]);
+
+    if (customer && !owner) {
+      console.log(`[ROLE DETECTION] User ${userId} → client (only in customers, no context)`);
+      return 'client';
     }
-    
-    // Step 6: Default — unknown user, safe fallback
-    console.log(`[ROLE DETECTION] User ${userId} not found in any table, defaulting to member`);
+    if (owner && !customer) {
+      console.log(`[ROLE DETECTION] User ${userId} → partner (only in owners, no context)`);
+      return 'partner';
+    }
+
+    // User is in multiple tables but no login_context — default to member (employee)
+    console.log(`[ROLE DETECTION] User ${userId} → member (fallback)`);
     return 'member';
-    
+
   } catch (error) {
     console.error('[ROLE DETECTION] Error detecting user role:', error);
-    return 'member'; // Safe fallback
+    return 'member';
   }
 }
 

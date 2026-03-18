@@ -114,11 +114,11 @@ export function SimpleLoginFormNextIntl() {
           console.error('Exception getting user profile:', profileErr)
         }
         
-        // Set login_context cookie based on actual DB role — always overwrite any stale cookie
-        const loginContext = (actualUserRole === 'client' || actualUserRole === 'partner')
-          ? actualUserRole
+        // Set login_context cookie based on user's selection in the form
+        const loginContext = selectedRole === 'client' ? 'client'
+          : selectedRole === 'partner' ? 'partner'
           : 'employee'
-        
+
         try {
           const contextResponse = await fetch('/api/auth/set-login-context', {
             method: 'POST',
@@ -138,15 +138,14 @@ export function SimpleLoginFormNextIntl() {
           if (returnUrl) return decodeURIComponent(returnUrl)
           if (redirectParam) return `/${locale}${redirectParam}`
 
-          if (actualUserRole === 'client') return `/${locale}/client/dashboard`
-          if (actualUserRole === 'partner') return `/${locale}/partner/dashboard`
+          // Redirect based on user's chosen context
+          if (loginContext === 'client') return `/${locale}/client/dashboard`
+          if (loginContext === 'partner') return `/${locale}/partner/dashboard`
 
+          // Employee — use actual DB role for sub-routing
           switch (actualUserRole) {
             case 'superuser': return `/${locale}/admin/superuser/dashboard`
             case 'executive': return `/${locale}/executive`
-            case 'admin':
-            case 'manager':
-            case 'member': return `/${locale}/home`
             default: return `/${locale}/home`
           }
         }

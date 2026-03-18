@@ -62,12 +62,29 @@ export async function registerClientComplete(data: ClientRegistrationData): Prom
       return { success: false, error: 'User creation failed' }
     }
 
-    // The customer record will be created by database triggers
-    // or can be created later when the user first logs in
-    
+    // Create customer record via API route (service role needed to bypass RLS)
+    try {
+      const baseUrl = typeof window !== 'undefined'
+        ? window.location.origin
+        : process.env.NEXT_PUBLIC_APP_URL || 'https://www.loftalgerie.com'
+
+      await fetch(`${baseUrl}/api/auth/register-client`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: authData.user.id,
+          email: authData.user.email,
+          fullName: data.fullName,
+        })
+      })
+    } catch (err) {
+      console.error('Failed to create customer record:', err)
+      // Don't fail registration — customer record can be created on first login
+    }
+
     return { 
       success: true, 
-      requiresEmailVerification: !authData.session // If no session, email verification required
+      requiresEmailVerification: !authData.session
     }
 
   } catch (error) {
@@ -119,35 +136,20 @@ export async function loginClientComplete(data: ClientLoginData): Promise<{
       .single()
 
     if (customerError && customerError.code === 'PGRST116') {
-      // Customer record doesn't exist, create it
-      const fullName = authData.user.user_metadata?.full_name || 'Client'
-      const [firstName, ...lastNameParts] = fullName.split(' ')
-      const lastName = lastNameParts.join(' ') || firstName
-
-      const { error: insertError } = await supabase
-        .from('customers')
-        .insert({
-          id: authData.user.id,
-          first_name: firstName,
-          last_name: lastName,
-          email: authData.user.email!,
-          status: 'active',
-          email_verified: authData.user.email_confirmed_at ? true : false,
-          preferences: {
-            language: 'fr',
-            currency: 'DZD',
-            notifications: {
-              email: true,
-              sms: false,
-              marketing: false
-            }
-          },
-          created_by: authData.user.id,
-          last_login: new Date().toISOString()
+      // Customer record doesn't exist, create it via API route
+      try {
+        const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
+        await fetch(`${baseUrl}/api/auth/register-client`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: authData.user.id,
+            email: authData.user.email,
+            fullName: authData.user.user_metadata?.full_name || 'Client',
+          })
         })
-
-      if (insertError) {
-        console.error('Failed to create customer record on login:', insertError)
+      } catch (err) {
+        console.error('Failed to create customer record on login:', err)
       }
     } else if (!customerError) {
       // Update last login

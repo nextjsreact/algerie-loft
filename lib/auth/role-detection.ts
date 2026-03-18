@@ -51,7 +51,21 @@ export async function detectUserRole(userId: string, userEmail: string | null, l
         console.log(`[ROLE DETECTION] User ${userId} → client (via login_context)`);
         return 'client';
       }
-      console.log(`[ROLE DETECTION] User ${userId} chose client but not in customers table`);
+      // Not in customers yet — create the record and return client
+      console.log(`[ROLE DETECTION] User ${userId} chose client, creating customers record`);
+      const { data: profile } = await supabase.from('profiles').select('full_name, email').eq('id', userId).single();
+      const fullName = profile?.full_name || userEmail?.split('@')[0] || 'Client';
+      const [firstName, ...rest] = fullName.split(' ');
+      await supabase.from('customers').insert({
+        id: userId,
+        first_name: firstName,
+        last_name: rest.join(' ') || firstName,
+        email: userEmail || profile?.email || '',
+        status: 'active',
+        preferences: { language: 'fr', currency: 'DZD', notifications: { email: true, sms: false, marketing: false } },
+        created_by: userId,
+      }).select().single();
+      return 'client';
     }
 
     if (loginContext === 'partner') {

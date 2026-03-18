@@ -120,17 +120,16 @@ export function SimpleLoginFormNextIntl() {
           : 'employee'
 
         try {
-          const contextResponse = await fetch('/api/auth/set-login-context', {
+          await fetch('/api/auth/set-login-context', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ context: loginContext })
           })
-          if (!contextResponse.ok) {
-            document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
-          }
         } catch {
-          document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+          // ignore
         }
+        // Also set client-side as backup
+        document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
 
         const redirectParam = searchParams.get('redirect')
 

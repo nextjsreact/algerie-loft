@@ -17,7 +17,18 @@ export async function getSession(): Promise<AuthSession | null> {
 
   // Use enhanced role detection
   const { detectUserRole } = await import('@/lib/auth/role-detection');
-  const role = await detectUserRole(user.id, user.email);
+  
+  // Read login_context cookie here and pass it to detectUserRole
+  let loginContext: string | undefined;
+  try {
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    loginContext = cookieStore.get('login_context')?.value;
+  } catch {
+    // ignore
+  }
+  
+  const role = await detectUserRole(user.id, user.email, loginContext);
   
   // Get user profile for display name
   let full_name = user.user_metadata?.full_name || user.email?.split('@')[0] || null;

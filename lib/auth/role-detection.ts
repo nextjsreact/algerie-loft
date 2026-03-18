@@ -9,14 +9,20 @@ import type { UserRole } from '@/lib/types';
  * The login_context cookie determines which role to use for the current session.
  */
 
-export async function detectUserRole(userId: string, userEmail: string | null): Promise<UserRole> {
+export async function detectUserRole(userId: string, userEmail: string | null, loginContext?: string): Promise<UserRole> {
   try {
     const supabase = await createClient(true);
 
-    // Read login_context cookie to determine which role the user chose at login
-    const { cookies } = await import('next/headers');
-    const cookieStore = await cookies();
-    const loginContext = cookieStore.get('login_context')?.value;
+    // If loginContext not passed, try reading from cookie
+    if (!loginContext) {
+      try {
+        const { cookies } = await import('next/headers');
+        const cookieStore = await cookies();
+        loginContext = cookieStore.get('login_context')?.value;
+      } catch {
+        // ignore — may not be available in all contexts
+      }
+    }
 
     console.log(`[ROLE DETECTION] User ${userId}, loginContext: ${loginContext}`);
 

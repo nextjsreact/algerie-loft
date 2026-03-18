@@ -24,7 +24,31 @@ export async function detectUserRole(userId: string, userEmail: string | null): 
       return 'superuser';
     }
     
-    // Step 2: Check profiles table for existing role
+    // Step 2: Check customers table — real end-users who book lofts
+    const { data: customer } = await supabase
+      .from('customers')
+      .select('id')
+      .eq('id', userId)
+      .single();
+
+    if (customer) {
+      console.log(`[ROLE DETECTION] User ${userId} found in customers table → role: client`);
+      return 'client';
+    }
+
+    // Step 3: Check partner_profiles table
+    const { data: partnerProfile } = await supabase
+      .from('partner_profiles')
+      .select('id')
+      .eq('user_id', userId)
+      .single();
+
+    if (partnerProfile) {
+      console.log(`[ROLE DETECTION] User ${userId} found in partner_profiles → role: partner`);
+      return 'partner';
+    }
+
+    // Step 4: Check profiles table for employee roles
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
@@ -49,27 +73,29 @@ export async function detectUserRole(userId: string, userEmail: string | null): 
         }
       }
       
+      // Ignore 'client' role in profiles table — real clients are in customers table
+      // A profiles entry with role='client' is a mistake, treat as member
+      if (profile.role === 'client') {
+        console.log(`[ROLE DETECTION] User ${userId} has role=client in profiles but NOT in customers — treating as member`);
+        return 'member';
+      }
+      
       return profile.role as UserRole;
     }
     
-    // Step 3: Email-based role detection (fallback)
+    // Step 5: Email-based role detection (fallback for employees)
     if (userEmail) {
       const emailRole = detectRoleFromEmail(userEmail);
-      if (emailRole !== 'guest') {
+      if (emailRole !== 'guest' && emailRole !== 'client') {
         console.log(`[ROLE DETECTION] User ${userId} role detected from email: ${emailRole}`);
-        
-        // Create profile with detected role
         await createUserProfile(userId, emailRole, userEmail);
-        
         return emailRole;
       }
     }
     
-    // Step 4: Default role assignment (client for regular users)
-    console.log(`[ROLE DETECTION] User ${userId} assigned default role: client`);
-    await createUserProfile(userId, 'client', userEmail);
-    
-    return 'client';
+    // Step 6: Default — unknown user, safe fallback
+    console.log(`[ROLE DETECTION] User ${userId} not found in any table, defaulting to member`);
+    return 'member';
     
   } catch (error) {
     console.error('[ROLE DETECTION] Error detecting user role:', error);

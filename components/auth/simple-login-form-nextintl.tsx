@@ -72,48 +72,7 @@ export function SimpleLoginFormNextIntl() {
     try {
       console.log('🔐 Tentative de connexion avec:', data.email)
       
-      // ÉTAPE 1: Déterminer le contexte de connexion AVANT la connexion
-      let loginContext: string | undefined
-      if (typeof window !== 'undefined') {
-        loginContext = document.cookie.split('; ').find(row => row.startsWith('login_context='))?.split('=')[1]
-      }
-      
-      // Si pas de cookie existant, utiliser le rôle sélectionné dans le formulaire
-      if (!loginContext && selectedRole) {
-        const contextMap: Record<string, string> = {
-          'client': 'client',
-          'partner': 'partner',
-          'admin': 'employee'
-        }
-        loginContext = contextMap[selectedRole] || 'employee'
-        console.log(`🎯 Contexte déterminé depuis sélection: ${selectedRole} -> ${loginContext}`)
-      } else if (loginContext) {
-        console.log(`🎯 Contexte existant depuis cookie: ${loginContext}`)
-      } else {
-        loginContext = 'employee'
-        console.log('🎯 Contexte par défaut: employee')
-      }
-      
-      // ÉTAPE 2: Créer le cookie côté SERVEUR via API
-      try {
-        const contextResponse = await fetch('/api/auth/set-login-context', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ context: loginContext })
-        })
-        
-        if (contextResponse.ok) {
-          console.log(`✅ Cookie login_context=${loginContext} créé côté SERVEUR`)
-        } else {
-          console.warn('⚠️ Échec création cookie serveur, utilisation client fallback')
-          document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
-        }
-      } catch (apiError) {
-        console.warn('⚠️ API cookie indisponible, utilisation client fallback:', apiError)
-        document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
-      }
-      
-      // ÉTAPE 3: Connexion Supabase
+      // ÉTAPE 1: Connexion Supabase
       const timeoutPromise = new Promise((_, reject) => 
         setTimeout(() => reject(new Error('Timeout de connexion (10s)')), 10000)
       )
@@ -137,7 +96,6 @@ export function SimpleLoginFormNextIntl() {
 
       if (signInData.user && signInData.session) {
         console.log('✅ Connexion réussie:', signInData.user.email)
-        console.log('✅ Session établie - redirection...')
         
         // Get the user's actual role from the profiles table
         let actualUserRole = null;
@@ -151,28 +109,38 @@ export function SimpleLoginFormNextIntl() {
           if (!profileError && profile) {
             actualUserRole = profile.role;
             console.log('✅ User actual role from database:', actualUserRole)
-          } else {
-            console.log('⚠️ No profile found in database')
           }
         } catch (profileErr) {
           console.error('Exception getting user profile:', profileErr)
         }
         
-        console.log('🍪 Login context final:', loginContext)
+        // Set login_context cookie based on actual DB role — always overwrite any stale cookie
+        const loginContext = (actualUserRole === 'client' || actualUserRole === 'partner')
+          ? actualUserRole
+          : 'employee'
         
+        try {
+          const contextResponse = await fetch('/api/auth/set-login-context', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ context: loginContext })
+          })
+          if (!contextResponse.ok) {
+            document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+          }
+        } catch {
+          document.cookie = `login_context=${loginContext}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
+        }
+
         const redirectParam = searchParams.get('redirect')
 
-        // Le rôle DB est toujours prioritaire pour client et partner
-        // Un client/partenaire ne peut jamais atterrir sur /home (page employé)
         const getRedirectUrl = (): string => {
           if (returnUrl) return decodeURIComponent(returnUrl)
           if (redirectParam) return `/${locale}${redirectParam}`
 
-          // Priorité absolue au rôle DB pour client et partner
           if (actualUserRole === 'client') return `/${locale}/client/dashboard`
           if (actualUserRole === 'partner') return `/${locale}/partner/dashboard`
 
-          // Pour les employés, utiliser le contexte de connexion puis le rôle DB
           switch (actualUserRole) {
             case 'superuser': return `/${locale}/admin/superuser/dashboard`
             case 'executive': return `/${locale}/executive`
@@ -184,21 +152,6 @@ export function SimpleLoginFormNextIntl() {
         }
 
         window.location.href = getRedirectUrl()
-
-        // Code mort conservé pour référence — ne sera jamais atteint
-        if (false) {
-          switch (actualUserRole) {
-            case 'client':
-              window.location.href = `/${locale}/client/dashboard`
-              break
-            case 'partner':
-              window.location.href = `/${locale}/partner/dashboard`
-              break
-            default:
-              window.location.href = `/${locale}/home`
-          }
-        }
-        // Ne pas appeler setIsLoading(false) ici car on redirige
       } else {
         console.warn('⚠️ Pas de session dans la réponse')
         setError("Erreur d'authentification - session non établie")

@@ -82,45 +82,20 @@ export async function requireRole(allowedRoles: UserRole[], locale?: string): Pr
     redirect(`/${targetLocale}/login`)
   }
 
-  // Vérifier le contexte de connexion en priorité
-  const { cookies } = await import('next/headers')
-  const cookieStore = await cookies()
-  const loginContext = cookieStore.get('login_context')?.value
+  const dbRole = session.user.role;
+  console.log('[requireRole] Checking access - DB role:', dbRole, 'allowed:', allowedRoles)
   
-  console.log('[requireRole] Checking access - DB role:', session.user.role, 'login_context:', loginContext, 'allowed:', allowedRoles)
-  
-  // Priorité absolue au rôle DB pour client et partner
-  // Un client/partenaire ne peut jamais accéder aux pages employé
-  if (session.user.role === 'client' && !allowedRoles.includes('client')) {
+  // DB role is always the absolute authority — no cookie can override it
+  if (dbRole === 'client' && !allowedRoles.includes('client')) {
     redirect(`/${targetLocale}/client/dashboard`)
   }
-  if (session.user.role === 'partner' && !allowedRoles.includes('partner')) {
+  if (dbRole === 'partner' && !allowedRoles.includes('partner')) {
     redirect(`/${targetLocale}/partner/dashboard`)
   }
 
-  // Si le contexte de connexion existe, l'utiliser pour la vérification
-  if (loginContext) {
-    // Mapper le contexte aux rôles autorisés
-    const contextRoleMap: Record<string, UserRole> = {
-      'client': 'client',
-      'partner': 'partner',
-      'employee': session.user.role // Pour les employés, utiliser le rôle DB
-    }
-    
-    const effectiveRole = contextRoleMap[loginContext] || session.user.role
-    console.log('[requireRole] Effective role from context:', effectiveRole)
-    
-    if (!allowedRoles.includes(effectiveRole)) {
-      console.log('[requireRole] Access denied - effective role not in allowed roles')
-      redirect(`/${targetLocale}/unauthorized`)
-    }
-  } else {
-    // Fallback: utiliser le rôle DB si pas de contexte
-    console.log('[requireRole] No login context, using DB role')
-    if (!allowedRoles.includes(session.user.role)) {
-      console.log('[requireRole] Access denied - DB role not in allowed roles')
-      redirect(`/${targetLocale}/unauthorized`)
-    }
+  if (!allowedRoles.includes(dbRole)) {
+    console.log('[requireRole] Access denied - DB role not in allowed roles')
+    redirect(`/${targetLocale}/unauthorized`)
   }
 
   return session
@@ -501,22 +476,7 @@ export async function getSessionReadOnly(): Promise<AuthSession | null> {
   // Use enhanced role detection (read-only version)
   const { detectUserRole } = await import('@/lib/auth/role-detection');
   const dbRole = await detectUserRole(user.id, user.email);
-  
-  // Check login context to determine effective role
-  const { cookies } = await import('next/headers');
-  const cookieStore = await cookies();
-  const loginContext = cookieStore.get('login_context')?.value;
-  
-  // Determine effective role based on login context
-  let effectiveRole = dbRole;
-  if (loginContext) {
-    const contextRoleMap: Record<string, UserRole> = {
-      'client': 'client',
-      'partner': 'partner',
-      'employee': dbRole // For employees, use DB role
-    };
-    effectiveRole = contextRoleMap[loginContext] || dbRole;
-  }
+  // DB role is always the source of truth — login_context cookie does not override it
   
   // Get user profile for display name
   let full_name = user.user_metadata?.full_name || user.email?.split('@')[0] || null;
@@ -548,7 +508,7 @@ export async function getSessionReadOnly(): Promise<AuthSession | null> {
       id: user.id,
       email: user.email ?? null,
       full_name: full_name,
-      role: effectiveRole, // Use effective role instead of DB role
+      role: dbRole,
       created_at: user.created_at,
       updated_at: user.updated_at ?? null
     },

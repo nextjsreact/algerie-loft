@@ -14,6 +14,15 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Customer } from '@/types/customer';
 
+interface Currency {
+  id: string
+  code: string
+  symbol: string
+  name: string
+  ratio: number      // ratio vs DA (e.g. EUR: 145 means 1 EUR = 145 DA)
+  is_default: boolean
+}
+
 interface Loft {
   id: string;
   name: string;
@@ -77,6 +86,11 @@ export default function ReservationFormHybrid({
   const [searchAttempted, setSearchAttempted] = useState(false);
   const [loftSearch, setLoftSearch] = useState('');
 
+  // Currency state
+  const [currencies, setCurrencies] = useState<Currency[]>([]);
+  const [selectedCurrencyId, setSelectedCurrencyId] = useState<string>('');
+  const [selectedCurrency, setSelectedCurrency] = useState<Currency | null>(null);
+
   // Pricing state
   const [basePriceInput, setBasePriceInput] = useState<number | ''>('');
   const [cleaningFeeInput, setCleaningFeeInput] = useState<number | ''>(0);
@@ -91,6 +105,7 @@ export default function ReservationFormHybrid({
 
   useEffect(() => {
     fetchLofts();
+    fetchCurrencies();
   }, []);
 
   useEffect(() => {
@@ -153,6 +168,22 @@ export default function ReservationFormHybrid({
     }
   };
 
+  const fetchCurrencies = async () => {
+    try {
+      const res = await fetch('/api/currencies');
+      if (!res.ok) return;
+      const data: Currency[] = await res.json();
+      setCurrencies(data);
+      const def = data.find(c => c.is_default) || data[0];
+      if (def) {
+        setSelectedCurrencyId(def.id);
+        setSelectedCurrency(def);
+      }
+    } catch (error) {
+      console.error('Error fetching currencies:', error);
+    }
+  };
+
   const checkAvailabilityAndPricing = async () => {
     if (!selectedLoft || !checkInDate || !checkOutDate) return;
     
@@ -203,6 +234,18 @@ export default function ReservationFormHybrid({
     }
   }, [guestName, guestNationality]);
 
+  const handleCurrencyChange = (currencyId: string) => {
+    setSelectedCurrencyId(currencyId);
+    const cur = currencies.find(c => c.id === currencyId) || null;
+    setSelectedCurrency(cur);
+  };
+
+  // Convert amount from selected currency to DA
+  const toDA = (amount: number): number => {
+    if (!selectedCurrency || selectedCurrency.is_default) return amount;
+    return Math.round(amount * selectedCurrency.ratio);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedLoft || !checkInDate || !checkOutDate) return;
@@ -225,11 +268,11 @@ export default function ReservationFormHybrid({
           check_in_date: checkInDate,
           check_out_date: checkOutDate,
           customer_id: foundCustomer?.id || null,
-          base_price: basePriceInput || 0,
-          cleaning_fee: cleaningFeeInput || 0,
-          service_fee: serviceFeeInput || 0,
-          taxes: taxesInput || 0,
-          total_amount: totalAmountInput || 0,
+          base_price: toDA(Number(basePriceInput) || 0),
+          cleaning_fee: toDA(Number(cleaningFeeInput) || 0),
+          service_fee: toDA(Number(serviceFeeInput) || 0),
+          taxes: toDA(Number(taxesInput) || 0),
+          total_amount: toDA(Number(totalAmountInput) || 0),
         }),
       });
 
@@ -455,63 +498,103 @@ export default function ReservationFormHybrid({
                     </div>
                     
                     <div className="bg-white/80 rounded-lg p-4 space-y-3">
-                      <h5 className="font-medium text-gray-900 mb-3">Pricing Breakdown</h5>
+                      <div className="flex items-center justify-between mb-3">
+                        <h5 className="font-medium text-gray-900">Pricing Breakdown</h5>
+                        {/* Currency selector */}
+                        <div className="flex items-center gap-2">
+                          <Label className="text-xs text-gray-500">Devise</Label>
+                          <Select value={selectedCurrencyId} onValueChange={handleCurrencyChange}>
+                            <SelectTrigger className="h-8 w-32 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {currencies.map(c => (
+                                <SelectItem key={c.id} value={c.id} className="text-xs">
+                                  {c.symbol} {c.code}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      {selectedCurrency && !selectedCurrency.is_default && (
+                        <p className="text-xs text-amber-600 bg-amber-50 rounded px-2 py-1">
+                          Saisie en {selectedCurrency.code} — converti en DA au taux 1 {selectedCurrency.code} = {selectedCurrency.ratio} DA
+                        </p>
+                      )}
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between items-center py-1">
                           <Label htmlFor="base_price" className="text-gray-600">{t('form.basePrice')} ({nights} nights)</Label>
-                          <Input
-                            type="number"
-                            name="base_price_input"
-                            value={String(basePriceInput)}
-                            onChange={(e) => setBasePriceInput(parseFloat(e.target.value))}
-                            className="w-32 text-right"
-                            disabled={!availabilityData?.available}
-                          />
+                          <div className="flex items-center gap-1">
+                            {selectedCurrency && <span className="text-xs text-gray-400">{selectedCurrency.symbol}</span>}
+                            <Input
+                              type="number"
+                              name="base_price_input"
+                              value={String(basePriceInput)}
+                              onChange={(e) => setBasePriceInput(parseFloat(e.target.value))}
+                              className="w-32 text-right"
+                              disabled={!availabilityData?.available}
+                            />
+                          </div>
                         </div>
                         <div className="flex justify-between items-center py-1">
                           <Label htmlFor="cleaning_fee" className="text-gray-600">{t('form.cleaningFee')}</Label>
-                          <Input
-                            type="number"
-                            name="cleaning_fee_input"
-                            value={String(cleaningFeeInput)}
-                            onChange={(e) => setCleaningFeeInput(parseFloat(e.target.value))}
-                            className="w-32 text-right"
-                            disabled={!availabilityData?.available}
-                          />
+                          <div className="flex items-center gap-1">
+                            {selectedCurrency && <span className="text-xs text-gray-400">{selectedCurrency.symbol}</span>}
+                            <Input
+                              type="number"
+                              name="cleaning_fee_input"
+                              value={String(cleaningFeeInput)}
+                              onChange={(e) => setCleaningFeeInput(parseFloat(e.target.value))}
+                              className="w-32 text-right"
+                              disabled={!availabilityData?.available}
+                            />
+                          </div>
                         </div>
                         <div className="flex justify-between items-center py-1">
                           <Label htmlFor="service_fee" className="text-gray-600">{t('form.serviceFee')}</Label>
-                          <Input
-                            type="number"
-                            name="service_fee_input"
-                            value={String(serviceFeeInput)}
-                            onChange={(e) => setServiceFeeInput(parseFloat(e.target.value))}
-                            className="w-32 text-right"
-                            disabled={!availabilityData?.available}
-                          />
+                          <div className="flex items-center gap-1">
+                            {selectedCurrency && <span className="text-xs text-gray-400">{selectedCurrency.symbol}</span>}
+                            <Input
+                              type="number"
+                              name="service_fee_input"
+                              value={String(serviceFeeInput)}
+                              onChange={(e) => setServiceFeeInput(parseFloat(e.target.value))}
+                              className="w-32 text-right"
+                              disabled={!availabilityData?.available}
+                            />
+                          </div>
                         </div>
                         <div className="flex justify-between items-center py-1">
                           <Label htmlFor="taxes" className="text-gray-600">{t('form.taxes')}</Label>
-                          <Input
-                            type="number"
-                            name="taxes_input"
-                            value={String(taxesInput)}
-                            onChange={(e) => setTaxesInput(parseFloat(e.target.value))}
-                            className="w-32 text-right"
-                            disabled={!availabilityData?.available}
-                          />
+                          <div className="flex items-center gap-1">
+                            {selectedCurrency && <span className="text-xs text-gray-400">{selectedCurrency.symbol}</span>}
+                            <Input
+                              type="number"
+                              name="taxes_input"
+                              value={String(taxesInput)}
+                              onChange={(e) => setTaxesInput(parseFloat(e.target.value))}
+                              className="w-32 text-right"
+                              disabled={!availabilityData?.available}
+                            />
+                          </div>
                         </div>
                         <hr className="my-3" />
                         <div className="flex justify-between items-center py-2 bg-green-100 rounded-lg px-3">
                           <Label htmlFor="total_amount" className="font-semibold text-green-800">{t('form.total')}</Label>
-                          <Input
-                            type="number"
-                            name="total_amount_input"
-                            value={String(totalAmountInput)}
-                            className="w-32 text-right text-xl font-bold text-green-800"
-                            disabled={!availabilityData?.available}
-                            readOnly // Make it read-only
-                          />
+                          <div className="text-right">
+                            <Input
+                              type="number"
+                              name="total_amount_input"
+                              value={String(totalAmountInput)}
+                              className="w-32 text-right text-xl font-bold text-green-800"
+                              disabled={!availabilityData?.available}
+                              readOnly
+                            />
+                            {selectedCurrency && !selectedCurrency.is_default && (
+                              <p className="text-xs text-gray-500 mt-1">= {toDA(Number(totalAmountInput) || 0).toLocaleString()} DA</p>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>

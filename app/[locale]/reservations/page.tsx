@@ -26,6 +26,7 @@ import {
 import ReservationCalendar from '@/components/reservations/reservation-calendar';
 import ReservationFormHybrid from '@/components/reservations/reservation-form-hybrid';
 import AvailabilityManager from '@/components/reservations/availability-manager';
+import { ReservationEditDialog } from '@/components/reservations/reservation-edit-dialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/utils/supabase/client';
@@ -50,6 +51,8 @@ function ReservationsPageContent() {
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
   const [reservationStats, setReservationStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [editReservation, setEditReservation] = useState<any>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   const searchParams = useSearchParams();
 
@@ -705,6 +708,18 @@ function ReservationsPageContent() {
                 )}
 
                 <div className="flex justify-end gap-4">
+                  {selectedReservation.status !== 'cancelled' && selectedReservation.status !== 'completed' && (
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setEditReservation(selectedReservation);
+                        setShowEditDialog(true);
+                        setSelectedReservation(null);
+                      }}
+                    >
+                      ✏️ Modifier les dates / montant
+                    </Button>
+                  )}
                   {selectedReservation.status === 'pending' && (
                     <>
                       <Button onClick={() => handleStatusUpdate(selectedReservation.id, 'confirmed')}>
@@ -740,6 +755,16 @@ function ReservationsPageContent() {
             )}
           </DialogContent>
         </Dialog>
+        {/* Edit Reservation Dialog */}
+        <ReservationEditDialog
+          reservation={editReservation}
+          open={showEditDialog}
+          onOpenChange={setShowEditDialog}
+          onSuccess={() => {
+            setRefreshKey(prev => prev + 1);
+            fetchAllReservations();
+          }}
+        />
       </div>
     </div>
   );

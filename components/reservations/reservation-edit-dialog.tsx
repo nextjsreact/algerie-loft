@@ -276,11 +276,19 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
                 <span className="text-xs text-amber-700 flex-1">1 {selectedCurrencyCode} =</span>
                 <Input
                   type="number"
-                  min="0.0001"
-                  step="0.01"
-                  value={String(customRatio)}
-                  onChange={(e) => setCustomRatio(parseFloat(e.target.value) || '')}
+                  step="any"
+                  value={customRatio === '' ? '' : String(customRatio)}
+                  onChange={(e) => {
+                    const v = parseFloat(e.target.value)
+                    setCustomRatio(isNaN(v) ? '' : v)
+                  }}
+                  onBlur={() => {
+                    if (customRatio === '' || Number(customRatio) <= 0) {
+                      setCustomRatio(selectedCurrency?.ratio ?? 1)
+                    }
+                  }}
                   className="h-7 w-24 text-xs text-right border-amber-300"
+                  placeholder={String(selectedCurrency?.ratio ?? 1)}
                 />
                 <span className="text-xs text-amber-700">DA</span>
               </div>

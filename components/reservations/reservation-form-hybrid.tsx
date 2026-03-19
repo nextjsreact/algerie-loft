@@ -79,7 +79,7 @@ export default function ReservationFormHybrid({
 
   // Pricing state
   const [basePriceInput, setBasePriceInput] = useState<number | ''>('');
-  const [cleaningFeeInput, setCleaningFeeInput] = useState<number | ''>('');
+  const [cleaningFeeInput, setCleaningFeeInput] = useState<number | ''>(0);
   const [serviceFeeInput, setServiceFeeInput] = useState<number | ''>('');
   const [taxesInput, setTaxesInput] = useState<number | ''>('');
   const [totalAmountInput, setTotalAmountInput] = useState<number | ''>('');
@@ -102,7 +102,7 @@ export default function ReservationFormHybrid({
   useEffect(() => {
     if (availabilityData?.pricing) {
       setBasePriceInput(availabilityData.pricing.base_price);
-      setCleaningFeeInput(availabilityData.pricing.cleaning_fee);
+      setCleaningFeeInput(0); // cleaning fee always 0 by default
       setServiceFeeInput(availabilityData.pricing.service_fee);
       setTaxesInput(availabilityData.pricing.taxes);
       setTotalAmountInput(availabilityData.pricing.total_amount); // This will be overwritten by the calculation effect
@@ -550,7 +550,6 @@ export default function ReservationFormHybrid({
                           fetchCustomer(guestEmail, 'email');
                         }
                       }}
-                      required
                       className="h-12 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 pr-10"
                       placeholder={t('form.emailPlaceholder')}
                     />
@@ -597,7 +596,6 @@ export default function ReservationFormHybrid({
                     name="guest_name"
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
-                    required
                     className="h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                     placeholder={t('form.fullNamePlaceholder')}
                   />
@@ -612,7 +610,6 @@ export default function ReservationFormHybrid({
                     name="guest_nationality"
                     value={guestNationality}
                     onChange={(e) => setGuestNationality(e.target.value)}
-                    required
                     className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                     placeholder={t('form.nationalityPlaceholder')}
                   />

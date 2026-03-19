@@ -12,9 +12,9 @@ export async function POST(request: NextRequest) {
       customer_id, base_price, cleaning_fee, service_fee, taxes, total_amount,
     } = body
 
-    // Basic validation
-    if (!loft_id || !guest_name || !guest_email || !check_in_date || !check_out_date) {
-      return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400 })
+    // Basic validation — only phone is required for guest info
+    if (!loft_id || !guest_phone || !check_in_date || !check_out_date) {
+      return NextResponse.json({ error: "Champs obligatoires manquants (loft, téléphone, dates)" }, { status: 400 })
     }
 
     const checkIn = new Date(check_in_date)
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     let resolvedCustomerId = customer_id
 
     if (!resolvedCustomerId) {
-      // Try to find existing customer by email
+      // Try to find existing customer by email or phone
       if (guest_email) {
         const { data: existing } = await supabase
           .from('customers')
@@ -56,10 +56,19 @@ export async function POST(request: NextRequest) {
         if (existing) resolvedCustomerId = existing.id
       }
 
+      if (!resolvedCustomerId && guest_phone) {
+        const { data: existing } = await supabase
+          .from('customers')
+          .select('id')
+          .eq('phone', guest_phone)
+          .single()
+        if (existing) resolvedCustomerId = existing.id
+      }
+
       // Create new customer if not found
       if (!resolvedCustomerId) {
         const nameParts = (guest_name || '').split(' ')
-        const first_name = nameParts[0] || ''
+        const first_name = nameParts[0] || 'Invité'
         const last_name = nameParts.slice(1).join(' ') || ''
 
         const { data: newCustomer, error: customerError } = await supabase
@@ -68,7 +77,7 @@ export async function POST(request: NextRequest) {
             id: randomUUID(),
             first_name,
             last_name,
-            email: guest_email,
+            email: guest_email || null,
             phone: guest_phone || null,
             status: 'active',
           })

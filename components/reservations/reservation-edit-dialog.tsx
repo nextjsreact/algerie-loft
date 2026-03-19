@@ -7,9 +7,19 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Loader2, Calendar, AlertCircle, CheckCircle } from 'lucide-react'
 import { format, addDays } from 'date-fns'
 import { toast } from 'sonner'
+
+interface Currency {
+  id: string
+  code: string
+  name: string
+  symbol: string
+  ratio: number
+  is_default: boolean
+}
 
 interface ReservationEditDialogProps {
   reservation: {
@@ -44,6 +54,31 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
   const [checkingAvail, setCheckingAvail] = useState(false)
   const [availOk, setAvailOk] = useState<boolean | null>(null)
 
+  // Currency state
+  const [currencies, setCurrencies] = useState<Currency[]>([])
+  const [selectedCurrencyCode, setSelectedCurrencyCode] = useState('DZD')
+  const selectedCurrency = currencies.find(c => c.code === selectedCurrencyCode)
+  const isDefaultCurrency = !selectedCurrency || selectedCurrency.is_default
+
+  // Convert from selected currency to DA
+  const toDA = (amount: number) => {
+    if (!selectedCurrency || selectedCurrency.is_default) return amount
+    return Math.round(amount * selectedCurrency.ratio)
+  }
+
+  // Fetch currencies on mount
+  useEffect(() => {
+    fetch('/api/currencies')
+      .then(r => r.json())
+      .then(data => {
+        const list: Currency[] = data.currencies || data || []
+        setCurrencies(list)
+        const def = list.find(c => c.is_default)
+        if (def) setSelectedCurrencyCode(def.code)
+      })
+      .catch(() => {})
+  }, [])
+
   // Populate form when reservation changes
   useEffect(() => {
     if (reservation) {
@@ -55,18 +90,21 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
       setTaxes(reservation.taxes ?? 0)
       setError('')
       setAvailOk(null)
+      // Reset to default currency when opening
+      const def = currencies.find(c => c.is_default)
+      if (def) setSelectedCurrencyCode(def.code)
     }
   }, [reservation])
 
   // Recalculate total
   useEffect(() => {
-    const t = (Number(basePrice) || 0) + (Number(cleaningFee) || 0) + (Number(serviceFee) || 0) + (Number(taxes) || 0)
-    setTotal(t)
+    const sum = (Number(basePrice) || 0) + (Number(cleaningFee) || 0) + (Number(serviceFee) || 0) + (Number(taxes) || 0)
+    setTotal(sum)
   }, [basePrice, cleaningFee, serviceFee, taxes])
 
   // Check availability when dates change
   useEffect(() => {
-    if (!reservation || !checkIn || !checkOut || checkIn === reservation.check_in_date && checkOut === reservation.check_out_date) {
+    if (!reservation || !checkIn || !checkOut || (checkIn === reservation.check_in_date && checkOut === reservation.check_out_date)) {
       setAvailOk(null)
       return
     }
@@ -76,7 +114,6 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
       try {
         const res = await fetch(`/api/availability?loft_id=${reservation.loft_id}&check_in_date=${checkIn}&check_out_date=${checkOut}`)
         const data = await res.json()
-        // availability check doesn't know about current reservation — conflicts handled server-side
         setAvailOk(data.available !== false)
       } catch {
         setAvailOk(null)
@@ -92,6 +129,8 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
     ? Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24))
     : 0
 
+  const totalDA = isDefaultCurrency ? total : toDA(total)
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!reservation) return
@@ -104,11 +143,11 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
         body: JSON.stringify({
           check_in_date: checkIn,
           check_out_date: checkOut,
-          base_price: Number(basePrice) || 0,
-          cleaning_fee: Number(cleaningFee) || 0,
-          service_fee: Number(serviceFee) || 0,
-          taxes: Number(taxes) || 0,
-          total_amount: total,
+          base_price: toDA(Number(basePrice) || 0),
+          cleaning_fee: toDA(Number(cleaningFee) || 0),
+          service_fee: toDA(Number(serviceFee) || 0),
+          taxes: toDA(Number(taxes) || 0),
+          total_amount: totalDA,
         }),
       })
       const data = await res.json()
@@ -127,6 +166,8 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
   }
 
   if (!reservation) return null
+
+  const currencySymbol = selectedCurrency?.symbol || 'DA'
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -183,28 +224,57 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
 
           {/* Pricing */}
           <div className="space-y-3 border rounded-lg p-4 bg-gray-50">
-            <p className="text-sm font-medium text-gray-700">{t('edit.pricing')}</p>
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium text-gray-700">{t('edit.pricing')}</p>
+              {/* Currency selector */}
+              {currencies.length > 1 && (
+                <Select value={selectedCurrencyCode} onValueChange={setSelectedCurrencyCode}>
+                  <SelectTrigger className="w-28 h-7 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {currencies.map(c => (
+                      <SelectItem key={c.code} value={c.code} className="text-xs">
+                        {c.symbol} {c.code}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+
+            {!isDefaultCurrency && (
+              <p className="text-xs text-amber-600">
+                {t('edit.currencyNote', { code: selectedCurrencyCode, ratio: selectedCurrency?.ratio })}
+              </p>
+            )}
+
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label className="text-xs">{t('edit.basePrice')}</Label>
+                <Label className="text-xs">{t('edit.basePrice')} ({currencySymbol})</Label>
                 <Input type="number" min="0" value={String(basePrice)} onChange={(e) => setBasePrice(parseFloat(e.target.value) || 0)} />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">{t('edit.cleaningFee')}</Label>
+                <Label className="text-xs">{t('edit.cleaningFee')} ({currencySymbol})</Label>
                 <Input type="number" min="0" value={String(cleaningFee)} onChange={(e) => setCleaningFee(parseFloat(e.target.value) || 0)} />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">{t('edit.serviceFee')}</Label>
+                <Label className="text-xs">{t('edit.serviceFee')} ({currencySymbol})</Label>
                 <Input type="number" min="0" value={String(serviceFee)} onChange={(e) => setServiceFee(parseFloat(e.target.value) || 0)} />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">{t('edit.taxes')}</Label>
+                <Label className="text-xs">{t('edit.taxes')} ({currencySymbol})</Label>
                 <Input type="number" min="0" value={String(taxes)} onChange={(e) => setTaxes(parseFloat(e.target.value) || 0)} />
               </div>
             </div>
             <div className="flex justify-between items-center pt-2 border-t font-semibold">
               <span>{t('edit.total')}</span>
-              <span className="text-blue-700">{total.toLocaleString()} DA</span>
+              <div className="text-right">
+                <span className="text-blue-700">{total.toLocaleString()} {currencySymbol}</span>
+                {!isDefaultCurrency && (
+                  <p className="text-xs text-muted-foreground font-normal">= {totalDA.toLocaleString()} DA</p>
+                )}
+              </div>
             </div>
           </div>
 

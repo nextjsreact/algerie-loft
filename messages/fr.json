@@ -2111,7 +2111,7 @@
       "checking": "Vérification...",
       "available": "Disponible",
       "notAvailable": "Dates non disponibles",
-      "pricing": "Tarification (DA)",
+      "pricing": "Tarification",
       "basePrice": "Prix de base",
       "cleaningFee": "Frais de nettoyage",
       "serviceFee": "Frais de service",
@@ -2121,7 +2121,8 @@
       "save": "Enregistrer",
       "cancel": "Annuler",
       "success": "Réservation modifiée avec succès",
-      "editButton": "✏️ Modifier les dates / montant"
+      "editButton": "✏️ Modifier les dates / montant",
+      "currencyNote": "Saisie en {code} — converti en DA au taux 1 {code} = {ratio} DA"
     },
     "guestSatisfaction": "satisfaction des clients",
     "guests": "Invités",

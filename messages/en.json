@@ -2115,7 +2115,7 @@
       "checking": "Checking...",
       "available": "Available",
       "notAvailable": "Dates not available",
-      "pricing": "Pricing (DA)",
+      "pricing": "Pricing",
       "basePrice": "Base Price",
       "cleaningFee": "Cleaning Fee",
       "serviceFee": "Service Fee",
@@ -2125,7 +2125,8 @@
       "save": "Save",
       "cancel": "Cancel",
       "success": "Reservation updated successfully",
-      "editButton": "✏️ Edit dates / amount"
+      "editButton": "✏️ Edit dates / amount",
+      "currencyNote": "Input in {code} — converted to DA at rate 1 {code} = {ratio} DA"
     },
     "guestSatisfaction": "guestSatisfaction",
     "guests": "Guests",

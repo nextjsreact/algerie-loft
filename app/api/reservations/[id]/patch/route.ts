@@ -42,14 +42,11 @@ export async function PATCH(
       return NextResponse.json({ error: 'Ces dates sont déjà réservées pour ce loft' }, { status: 409 })
     }
 
-    const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24))
-
     const { data: updated, error: updateErr } = await supabase
       .from('reservations')
       .update({
         check_in_date,
         check_out_date,
-        nights,
         base_price: base_price ?? null,
         cleaning_fee: cleaning_fee ?? 0,
         service_fee: service_fee ?? 0,

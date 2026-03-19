@@ -94,9 +94,30 @@ export async function requireRole(allowedRoles: UserRole[], locale?: string): Pr
   }
 
   const dbRole = session.user.role;
-  console.log('[requireRole] Checking access - DB role:', dbRole, 'allowed:', allowedRoles)
   
-  // DB role is always the absolute authority — no cookie can override it
+  // Also check login_context cookie directly as fallback
+  let loginContext: string | undefined;
+  try {
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    loginContext = cookieStore.get('login_context')?.value;
+  } catch { /* ignore */ }
+  
+  console.log('[requireRole] DB role:', dbRole, 'loginContext:', loginContext, 'allowed:', allowedRoles)
+  
+  // If login_context matches an allowed role, grant access
+  if (loginContext === 'client' && allowedRoles.includes('client')) return session
+  if (loginContext === 'partner' && allowedRoles.includes('partner')) return session
+
+  // Block client/partner from employee pages
+  if (loginContext === 'client' && !allowedRoles.includes('client')) {
+    redirect(`/${targetLocale}/client/dashboard`)
+  }
+  if (loginContext === 'partner' && !allowedRoles.includes('partner')) {
+    redirect(`/${targetLocale}/partner/dashboard`)
+  }
+
+  // DB role checks for employees
   if (dbRole === 'client' && !allowedRoles.includes('client')) {
     redirect(`/${targetLocale}/client/dashboard`)
   }

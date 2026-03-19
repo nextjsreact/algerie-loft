@@ -717,7 +717,7 @@ function ReservationsPageContent() {
                         setSelectedReservation(null);
                       }}
                     >
-                      ✏️ Modifier les dates / montant
+                      ✏️ {t('edit.editButton')}
                     </Button>
                   )}
                   {selectedReservation.status === 'pending' && (

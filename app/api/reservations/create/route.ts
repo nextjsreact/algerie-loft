@@ -99,10 +99,10 @@ export async function POST(request: NextRequest) {
       .insert({
         loft_id,
         guest_id: resolvedCustomerId || null,
-        guest_name,
-        guest_email,
+        guest_name: guest_name || '',
+        guest_email: guest_email || '',
         guest_phone: guest_phone || null,
-        guest_nationality: guest_nationality || null,
+        guest_nationality: guest_nationality || '',
         guest_count: guest_count || 1,
         check_in_date,
         check_out_date,

@@ -105,11 +105,27 @@ export async function requireRole(allowedRoles: UserRole[], locale?: string): Pr
   
   console.log('[requireRole] DB role:', dbRole, 'loginContext:', loginContext, 'allowed:', allowedRoles)
   
-  // If login_context matches an allowed role, grant access
-  if (loginContext === 'client' && allowedRoles.includes('client')) return session
-  if (loginContext === 'partner' && allowedRoles.includes('partner')) return session
+  // If login_context matches an allowed role, verify against DB tables
+  if (loginContext === 'client' && allowedRoles.includes('client')) {
+    // Verify user is actually in customers table
+    try {
+      const { createClient: createSvc } = await import('@/utils/supabase/server')
+      const svc = await createSvc(true)
+      const { data: customer } = await svc.from('customers').select('id').eq('id', session.user.id).single()
+      if (customer) return session
+      // Not in customers — fall through to DB role check
+    } catch { /* ignore */ }
+  }
+  if (loginContext === 'partner' && allowedRoles.includes('partner')) {
+    try {
+      const { createClient: createSvc } = await import('@/utils/supabase/server')
+      const svc = await createSvc(true)
+      const { data: owner } = await svc.from('owners').select('id').eq('id', session.user.id).single()
+      if (owner) return session
+    } catch { /* ignore */ }
+  }
 
-  // Block client/partner from employee pages
+  // Block client/partner from employee pages based on cookie
   if (loginContext === 'client' && !allowedRoles.includes('client')) {
     redirect(`/${targetLocale}/client/dashboard`)
   }

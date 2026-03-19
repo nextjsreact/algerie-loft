@@ -367,7 +367,7 @@ export default function ReservationFormHybrid({
                     <SelectContent className="z-[9999] max-h-72" position="popper" sideOffset={4} avoidCollisions={false}>
                       <div className="px-2 py-1.5 sticky top-0 bg-white z-10 border-b">
                         <Input
-                          placeholder="Rechercher un loft..."
+                          placeholder={t('form.searchLoft')}
                           value={loftSearch}
                           onChange={(e) => setLoftSearch(e.target.value)}
                           onClick={(e) => e.stopPropagation()}
@@ -378,7 +378,7 @@ export default function ReservationFormHybrid({
                       </div>
                       <div className="overflow-y-auto max-h-52">
                         {lofts.filter(l => l.name.toLowerCase().includes(loftSearch.toLowerCase())).length === 0 ? (
-                          <div className="px-2 py-4 text-sm text-center text-muted-foreground">Aucun loft trouvé</div>
+                          <div className="px-2 py-4 text-sm text-center text-muted-foreground">{t('form.noLoftFound')}</div>
                         ) : (
                           lofts
                             .filter(l => l.name.toLowerCase().includes(loftSearch.toLowerCase()))
@@ -493,16 +493,16 @@ export default function ReservationFormHybrid({
                       </div>
                       <div>
                         <h4 className="font-semibold text-green-800">{t('form.available')}</h4>
-                        <p className="text-sm text-green-600">Perfect! Your selected dates are available for booking.</p>
+                        <p className="text-sm text-green-600">{t('form.availableMessage')}</p>
                       </div>
                     </div>
                     
                     <div className="bg-white/80 rounded-lg p-4 space-y-3">
                       <div className="flex items-center justify-between mb-3">
-                        <h5 className="font-medium text-gray-900">Pricing Breakdown</h5>
+                        <h5 className="font-medium text-gray-900">{t('form.pricingBreakdown')}</h5>
                         {/* Currency selector */}
                         <div className="flex items-center gap-2">
-                          <Label className="text-xs text-gray-500">Devise</Label>
+                          <Label className="text-xs text-gray-500">{t('form.currency')}</Label>
                           <Select value={selectedCurrencyId} onValueChange={handleCurrencyChange}>
                             <SelectTrigger className="h-8 w-32 text-xs">
                               <SelectValue />
@@ -519,7 +519,7 @@ export default function ReservationFormHybrid({
                       </div>
                       {selectedCurrency && !selectedCurrency.is_default && (
                         <p className="text-xs text-amber-600 bg-amber-50 rounded px-2 py-1">
-                          Saisie en {selectedCurrency.code} — converti en DA au taux 1 {selectedCurrency.code} = {selectedCurrency.ratio} DA
+                          {t('form.currencyConversionNote', { code: selectedCurrency.code, ratio: selectedCurrency.ratio })}
                         </p>
                       )}
                       <div className="space-y-2 text-sm">
@@ -592,7 +592,7 @@ export default function ReservationFormHybrid({
                               readOnly
                             />
                             {selectedCurrency && !selectedCurrency.is_default && (
-                              <p className="text-xs text-gray-500 mt-1">= {toDA(Number(totalAmountInput) || 0).toLocaleString()} DA</p>
+                              <p className="text-xs text-gray-500 mt-1">{t('form.convertedAmount', { amount: toDA(Number(totalAmountInput) || 0).toLocaleString() })}</p>
                             )}
                           </div>
                         </div>

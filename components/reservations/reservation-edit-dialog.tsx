@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -30,6 +31,7 @@ interface ReservationEditDialogProps {
 }
 
 export function ReservationEditDialog({ reservation, open, onOpenChange, onSuccess }: ReservationEditDialogProps) {
+  const t = useTranslations('reservations')
   const [checkIn, setCheckIn] = useState('')
   const [checkOut, setCheckOut] = useState('')
   const [basePrice, setBasePrice] = useState<number | ''>(0)
@@ -111,14 +113,14 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
       })
       const data = await res.json()
       if (!res.ok || data.error) {
-        setError(data.error || 'Erreur lors de la modification')
+        setError(data.error || t('edit.notAvailable'))
       } else {
-        toast.success('Réservation modifiée avec succès')
+        toast.success(t('edit.success'))
         onOpenChange(false)
         onSuccess()
       }
     } catch {
-      setError('Erreur serveur')
+      setError(t('edit.notAvailable'))
     } finally {
       setLoading(false)
     }
@@ -132,7 +134,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-blue-600" />
-            Modifier la réservation
+            {t('edit.title')}
           </DialogTitle>
           <p className="text-sm text-muted-foreground">
             {reservation.lofts?.name} — {reservation.guest_name}
@@ -150,7 +152,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
           {/* Dates */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Arrivée</Label>
+              <Label>{t('edit.checkIn')}</Label>
               <Input
                 type="date"
                 value={checkIn}
@@ -160,7 +162,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
               />
             </div>
             <div className="space-y-2">
-              <Label>Départ</Label>
+              <Label>{t('edit.checkOut')}</Label>
               <Input
                 type="date"
                 value={checkOut}
@@ -173,45 +175,45 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
 
           {/* Nights + availability indicator */}
           <div className="flex items-center gap-3 text-sm">
-            {nights > 0 && <span className="text-muted-foreground">{nights} nuit{nights > 1 ? 's' : ''}</span>}
-            {checkingAvail && <span className="flex items-center gap-1 text-blue-600"><Loader2 className="h-3 w-3 animate-spin" /> Vérification...</span>}
-            {availOk === true && <span className="flex items-center gap-1 text-green-600"><CheckCircle className="h-3 w-3" /> Disponible</span>}
-            {availOk === false && <span className="flex items-center gap-1 text-red-600"><AlertCircle className="h-3 w-3" /> Dates non disponibles</span>}
+            {nights > 0 && <span className="text-muted-foreground">{nights} {nights > 1 ? t('edit.nights_plural', { count: nights }) : t('edit.nights', { count: nights })}</span>}
+            {checkingAvail && <span className="flex items-center gap-1 text-blue-600"><Loader2 className="h-3 w-3 animate-spin" /> {t('edit.checking')}</span>}
+            {availOk === true && <span className="flex items-center gap-1 text-green-600"><CheckCircle className="h-3 w-3" /> {t('edit.available')}</span>}
+            {availOk === false && <span className="flex items-center gap-1 text-red-600"><AlertCircle className="h-3 w-3" /> {t('edit.notAvailable')}</span>}
           </div>
 
           {/* Pricing */}
           <div className="space-y-3 border rounded-lg p-4 bg-gray-50">
-            <p className="text-sm font-medium text-gray-700">Tarification (DA)</p>
+            <p className="text-sm font-medium text-gray-700">{t('edit.pricing')}</p>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label className="text-xs">Prix de base</Label>
+                <Label className="text-xs">{t('edit.basePrice')}</Label>
                 <Input type="number" min="0" value={String(basePrice)} onChange={(e) => setBasePrice(parseFloat(e.target.value) || 0)} />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">Frais de nettoyage</Label>
+                <Label className="text-xs">{t('edit.cleaningFee')}</Label>
                 <Input type="number" min="0" value={String(cleaningFee)} onChange={(e) => setCleaningFee(parseFloat(e.target.value) || 0)} />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">Frais de service</Label>
+                <Label className="text-xs">{t('edit.serviceFee')}</Label>
                 <Input type="number" min="0" value={String(serviceFee)} onChange={(e) => setServiceFee(parseFloat(e.target.value) || 0)} />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">Taxes</Label>
+                <Label className="text-xs">{t('edit.taxes')}</Label>
                 <Input type="number" min="0" value={String(taxes)} onChange={(e) => setTaxes(parseFloat(e.target.value) || 0)} />
               </div>
             </div>
             <div className="flex justify-between items-center pt-2 border-t font-semibold">
-              <span>Total</span>
+              <span>{t('edit.total')}</span>
               <span className="text-blue-700">{total.toLocaleString()} DA</span>
             </div>
           </div>
 
           <div className="flex justify-end gap-3 pt-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
-              Annuler
+              {t('edit.cancel')}
             </Button>
             <Button type="submit" disabled={loading || availOk === false}>
-              {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Enregistrement...</> : 'Enregistrer'}
+              {loading ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" />{t('edit.saving')}</> : t('edit.save')}
             </Button>
           </div>
         </form>

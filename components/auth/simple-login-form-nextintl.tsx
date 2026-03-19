@@ -307,9 +307,12 @@ export function SimpleLoginFormNextIntl() {
                 </Link>
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full" disabled={isLoading || !selectedRole}>
                 {isLoading ? t('signingIn') : t('signIn')}
               </Button>
+              {!selectedRole && (
+                <p className="text-sm text-center text-amber-600">Veuillez sélectionner votre profil ci-dessus</p>
+              )}
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">

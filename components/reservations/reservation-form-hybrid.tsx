@@ -75,6 +75,7 @@ export default function ReservationFormHybrid({
   const [foundCustomer, setFoundCustomer] = useState<Customer | null>(null);
   const [isSearchingCustomer, setIsSearchingCustomer] = useState(false);
   const [searchAttempted, setSearchAttempted] = useState(false);
+  const [loftSearch, setLoftSearch] = useState('');
 
   // Pricing state
   const [basePriceInput, setBasePriceInput] = useState<number | ''>('');
@@ -315,21 +316,41 @@ export default function ReservationFormHybrid({
                     value={selectedLoft}
                     onValueChange={setSelectedLoft}
                     disabled={!!initialLoftId}
+                    onOpenChange={(open) => { if (!open) setLoftSearch('') }}
                   >
                     <SelectTrigger className="h-12 border-gray-300 focus:border-purple-500 focus:ring-purple-500">
                       <SelectValue placeholder={t('form.selectLoft')} />
                     </SelectTrigger>
-                    <SelectContent className="z-[9999] max-h-60 overflow-y-auto" position="popper" sideOffset={4} avoidCollisions={false}>
-                      {lofts.map((loft) => (
-                        <SelectItem key={loft.id} value={loft.id} className="py-3">
-                          <div className="flex items-center justify-between w-full">
-                            <span className="font-medium">{loft.name}</span>
-                            <Badge variant="outline" className="ml-2">
-                              {loft.price_per_night} {defaultCurrencySymbol || 'DZD'}/night
-                            </Badge>
-                          </div>
-                        </SelectItem>
-                      ))}
+                    <SelectContent className="z-[9999] max-h-72" position="popper" sideOffset={4} avoidCollisions={false}>
+                      <div className="px-2 py-1.5 sticky top-0 bg-white z-10 border-b">
+                        <Input
+                          placeholder="Rechercher un loft..."
+                          value={loftSearch}
+                          onChange={(e) => setLoftSearch(e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => e.stopPropagation()}
+                          className="h-8 text-sm"
+                          autoComplete="off"
+                        />
+                      </div>
+                      <div className="overflow-y-auto max-h-52">
+                        {lofts.filter(l => l.name.toLowerCase().includes(loftSearch.toLowerCase())).length === 0 ? (
+                          <div className="px-2 py-4 text-sm text-center text-muted-foreground">Aucun loft trouvé</div>
+                        ) : (
+                          lofts
+                            .filter(l => l.name.toLowerCase().includes(loftSearch.toLowerCase()))
+                            .map((loft) => (
+                              <SelectItem key={loft.id} value={loft.id} className="py-3">
+                                <div className="flex items-center justify-between w-full">
+                                  <span className="font-medium">{loft.name}</span>
+                                  <Badge variant="outline" className="ml-2">
+                                    {loft.price_per_night} {defaultCurrencySymbol || 'DZD'}/night
+                                  </Badge>
+                                </div>
+                              </SelectItem>
+                            ))
+                        )}
+                      </div>
                     </SelectContent>
                   </Select>
                 </div>

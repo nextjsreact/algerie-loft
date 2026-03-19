@@ -715,13 +715,13 @@ export default function ReservationCalendar({
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium">{reservation.guest_name}</span>
+                      <span className="font-medium">{reservation.lofts.name}</span>
                       <Badge className={getStatusColor(reservation.status)}>
                         {t(`status.${reservation.status}` as const)}
                       </Badge>
                     </div>
                     <div className="text-sm text-gray-600">
-                      {reservation.lofts.name} • {format(new Date(reservation.check_in_date), 'MMM dd', { locale: getDateFnsLocale() })} - {format(new Date(reservation.check_out_date), 'MMM dd', { locale: getDateFnsLocale() })}
+                      {reservation.guest_name} • {format(new Date(reservation.check_in_date), 'MMM dd', { locale: getDateFnsLocale() })} - {format(new Date(reservation.check_out_date), 'MMM dd', { locale: getDateFnsLocale() })}
                     </div>
                   </div>
                   <div className="text-right">

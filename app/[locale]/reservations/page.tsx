@@ -523,8 +523,8 @@ function ReservationsPageContent() {
                              <AlertCircle className="h-4 w-4 text-red-600" />}
                           </div>
                           <div>
-                            <p className="font-medium text-gray-900">{res.guest_name}</p>
-                            <p className="text-sm text-gray-500">{res.lofts?.name} • {res.check_in_date} → {res.check_out_date}</p>
+                            <p className="font-medium text-gray-900">{res.lofts?.name}</p>
+                            <p className="text-sm text-gray-500">{res.guest_name} • {res.check_in_date} → {res.check_out_date}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">

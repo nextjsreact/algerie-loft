@@ -2118,7 +2118,8 @@
       "convertedAmount": "= {amount} دج",
       "pricingBreakdown": "تفصيل الأسعار",
       "availableMessage": "ممتاز! التواريخ المحددة متاحة للحجز.",
-      "title": "العنوان"
+      "pricePerNight": "السعر / ليلة",
+      "nights": "ليالٍ"
     },
     "edit": {
       "title": "تعديل الحجز",
@@ -2140,7 +2141,9 @@
       "cancel": "إلغاء",
       "success": "تم تعديل الحجز بنجاح",
       "editButton": "✏️ تعديل التواريخ / المبلغ",
-      "currencyNote": "الإدخال بـ {code} — يُحوَّل إلى دج بسعر 1 {code} = {ratio} دج"
+      "currencyNote": "الإدخال بـ {code} — يُحوَّل إلى دج بسعر 1 {code} = {ratio} دج",
+      "pricePerNight": "السعر / ليلة",
+      "nightsLabel": "ليالٍ"
     },
     "guestSatisfaction": "رضا الضيوف",
     "guests": "الضيوف",

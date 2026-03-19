@@ -33,6 +33,9 @@ interface ReservationEditDialogProps {
     taxes?: number
     total_amount?: number
     guest_name?: string
+    currency_code?: string
+    currency_ratio?: number
+    price_per_night_input?: number
     lofts?: { name: string }
   } | null
   open: boolean
@@ -44,6 +47,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
   const t = useTranslations('reservations')
   const [checkIn, setCheckIn] = useState('')
   const [checkOut, setCheckOut] = useState('')
+  const [pricePerNight, setPricePerNight] = useState<number | ''>('')
   const [basePrice, setBasePrice] = useState<number | ''>(0)
   const [cleaningFee, setCleaningFee] = useState<number | ''>(0)
   const [serviceFee, setServiceFee] = useState<number | ''>(0)
@@ -57,13 +61,15 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
   // Currency state
   const [currencies, setCurrencies] = useState<Currency[]>([])
   const [selectedCurrencyCode, setSelectedCurrencyCode] = useState('DZD')
+  const [customRatio, setCustomRatio] = useState<number | ''>(1)
+
   const selectedCurrency = currencies.find(c => c.code === selectedCurrencyCode)
   const isDefaultCurrency = !selectedCurrency || selectedCurrency.is_default
+  const effectiveRatio = Number(customRatio) || selectedCurrency?.ratio || 1
 
-  // Convert from selected currency to DA
   const toDA = (amount: number) => {
-    if (!selectedCurrency || selectedCurrency.is_default) return amount
-    return Math.round(amount * selectedCurrency.ratio)
+    if (isDefaultCurrency) return amount
+    return Math.round(amount * effectiveRatio)
   }
 
   // Fetch currencies on mount
@@ -73,28 +79,58 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
       .then(data => {
         const list: Currency[] = data.currencies || data || []
         setCurrencies(list)
-        const def = list.find(c => c.is_default)
-        if (def) setSelectedCurrencyCode(def.code)
       })
       .catch(() => {})
   }, [])
 
   // Populate form when reservation changes
   useEffect(() => {
-    if (reservation) {
-      setCheckIn(reservation.check_in_date)
-      setCheckOut(reservation.check_out_date)
+    if (!reservation || !open) return
+    setCheckIn(reservation.check_in_date)
+    setCheckOut(reservation.check_out_date)
+    setError('')
+    setAvailOk(null)
+
+    // Restore original currency if stored
+    const origCode = reservation.currency_code || 'DZD'
+    const origRatio = reservation.currency_ratio || 1
+    setSelectedCurrencyCode(origCode)
+    setCustomRatio(origRatio)
+
+    // If we have a stored per-night price, use it; otherwise derive from base_price / nights
+    if (reservation.price_per_night_input) {
+      setPricePerNight(reservation.price_per_night_input)
+    } else {
+      setPricePerNight('')
+    }
+
+    // Show amounts in original currency (divide by ratio to get back to foreign currency)
+    const ratio = origRatio || 1
+    const isDefault = origCode === 'DZD' || origCode === ''
+    if (isDefault) {
       setBasePrice(reservation.base_price ?? 0)
       setCleaningFee(reservation.cleaning_fee ?? 0)
       setServiceFee(reservation.service_fee ?? 0)
       setTaxes(reservation.taxes ?? 0)
-      setError('')
-      setAvailOk(null)
-      // Reset to default currency when opening
-      const def = currencies.find(c => c.is_default)
-      if (def) setSelectedCurrencyCode(def.code)
+    } else {
+      // Convert stored DA amounts back to original currency for display
+      setBasePrice(reservation.base_price ? Math.round((reservation.base_price / ratio) * 100) / 100 : 0)
+      setCleaningFee(reservation.cleaning_fee ? Math.round((reservation.cleaning_fee / ratio) * 100) / 100 : 0)
+      setServiceFee(reservation.service_fee ? Math.round((reservation.service_fee / ratio) * 100) / 100 : 0)
+      setTaxes(reservation.taxes ? Math.round((reservation.taxes / ratio) * 100) / 100 : 0)
     }
-  }, [reservation])
+  }, [reservation, open])
+
+  // Auto-calculate base price from per-night × nights
+  const nights = checkIn && checkOut
+    ? Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24))
+    : 0
+
+  useEffect(() => {
+    if (pricePerNight !== '' && nights > 0) {
+      setBasePrice(Number(pricePerNight) * nights)
+    }
+  }, [pricePerNight, nights])
 
   // Recalculate total
   useEffect(() => {
@@ -125,10 +161,6 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
     return () => clearTimeout(timer)
   }, [checkIn, checkOut, reservation])
 
-  const nights = checkIn && checkOut
-    ? Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24))
-    : 0
-
   const totalDA = isDefaultCurrency ? total : toDA(total)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -148,6 +180,9 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
           service_fee: toDA(Number(serviceFee) || 0),
           taxes: toDA(Number(taxes) || 0),
           total_amount: totalDA,
+          currency_code: selectedCurrency?.code || 'DZD',
+          currency_ratio: effectiveRatio,
+          price_per_night_input: pricePerNight !== '' ? Number(pricePerNight) : null,
         }),
       })
       const data = await res.json()
@@ -167,11 +202,11 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
 
   if (!reservation) return null
 
-  const currencySymbol = selectedCurrency?.symbol || 'DA'
+  const sym = selectedCurrency?.symbol || 'DA'
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5 text-blue-600" />
@@ -182,7 +217,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
           </p>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-5 pt-2">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-2">
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
@@ -194,27 +229,15 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>{t('edit.checkIn')}</Label>
-              <Input
-                type="date"
-                value={checkIn}
-                onChange={(e) => { setCheckIn(e.target.value); setAvailOk(null) }}
-                min={format(new Date(), 'yyyy-MM-dd')}
-                required
-              />
+              <Input type="date" value={checkIn} onChange={(e) => { setCheckIn(e.target.value); setAvailOk(null) }} min={format(new Date(), 'yyyy-MM-dd')} required />
             </div>
             <div className="space-y-2">
               <Label>{t('edit.checkOut')}</Label>
-              <Input
-                type="date"
-                value={checkOut}
-                onChange={(e) => { setCheckOut(e.target.value); setAvailOk(null) }}
-                min={checkIn ? format(addDays(new Date(checkIn), 1), 'yyyy-MM-dd') : undefined}
-                required
-              />
+              <Input type="date" value={checkOut} onChange={(e) => { setCheckOut(e.target.value); setAvailOk(null) }} min={checkIn ? format(addDays(new Date(checkIn), 1), 'yyyy-MM-dd') : undefined} required />
             </div>
           </div>
 
-          {/* Nights + availability indicator */}
+          {/* Nights + availability */}
           <div className="flex items-center gap-3 text-sm">
             {nights > 0 && <span className="text-muted-foreground">{nights} {nights > 1 ? t('edit.nights_plural', { count: nights }) : t('edit.nights', { count: nights })}</span>}
             {checkingAvail && <span className="flex items-center gap-1 text-blue-600"><Loader2 className="h-3 w-3 animate-spin" /> {t('edit.checking')}</span>}
@@ -224,11 +247,15 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
 
           {/* Pricing */}
           <div className="space-y-3 border rounded-lg p-4 bg-gray-50">
+            {/* Header: label + currency selector */}
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-gray-700">{t('edit.pricing')}</p>
-              {/* Currency selector */}
               {currencies.length > 1 && (
-                <Select value={selectedCurrencyCode} onValueChange={setSelectedCurrencyCode}>
+                <Select value={selectedCurrencyCode} onValueChange={(code) => {
+                  setSelectedCurrencyCode(code)
+                  const cur = currencies.find(c => c.code === code)
+                  setCustomRatio(cur?.ratio ?? 1)
+                }}>
                   <SelectTrigger className="w-28 h-7 text-xs">
                     <SelectValue />
                   </SelectTrigger>
@@ -243,34 +270,67 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
               )}
             </div>
 
+            {/* Editable exchange rate */}
             {!isDefaultCurrency && (
-              <p className="text-xs text-amber-600">
-                {t('edit.currencyNote', { code: selectedCurrencyCode, ratio: selectedCurrency?.ratio })}
-              </p>
+              <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+                <span className="text-xs text-amber-700 flex-1">1 {selectedCurrencyCode} =</span>
+                <Input
+                  type="number"
+                  min="0.0001"
+                  step="0.01"
+                  value={String(customRatio)}
+                  onChange={(e) => setCustomRatio(parseFloat(e.target.value) || '')}
+                  className="h-7 w-24 text-xs text-right border-amber-300"
+                />
+                <span className="text-xs text-amber-700">DA</span>
+              </div>
             )}
+
+            {/* Per-night input */}
+            <div className="flex items-center justify-between py-1 bg-blue-50 rounded px-2">
+              <Label className="text-blue-700 font-medium text-xs">
+                {t('edit.pricePerNight')} × {nights} {t('edit.nightsLabel')}
+              </Label>
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-gray-400">{sym}</span>
+                <Input
+                  type="number"
+                  min="0"
+                  value={String(pricePerNight)}
+                  onChange={(e) => {
+                    const pn = parseFloat(e.target.value) || 0
+                    setPricePerNight(pn || '')
+                    if (nights > 0) setBasePrice(pn * nights)
+                  }}
+                  className="w-24 text-right h-7 text-xs"
+                  placeholder="0"
+                />
+              </div>
+            </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label className="text-xs">{t('edit.basePrice')} ({currencySymbol})</Label>
-                <Input type="number" min="0" value={String(basePrice)} onChange={(e) => setBasePrice(parseFloat(e.target.value) || 0)} />
+                <Label className="text-xs">{t('edit.basePrice')} ({sym})</Label>
+                <Input type="number" min="0" value={String(basePrice)} onChange={(e) => { setBasePrice(parseFloat(e.target.value) || 0); setPricePerNight('') }} className="h-8 text-xs" />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">{t('edit.cleaningFee')} ({currencySymbol})</Label>
-                <Input type="number" min="0" value={String(cleaningFee)} onChange={(e) => setCleaningFee(parseFloat(e.target.value) || 0)} />
+                <Label className="text-xs">{t('edit.cleaningFee')} ({sym})</Label>
+                <Input type="number" min="0" value={String(cleaningFee)} onChange={(e) => setCleaningFee(parseFloat(e.target.value) || 0)} className="h-8 text-xs" />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">{t('edit.serviceFee')} ({currencySymbol})</Label>
-                <Input type="number" min="0" value={String(serviceFee)} onChange={(e) => setServiceFee(parseFloat(e.target.value) || 0)} />
+                <Label className="text-xs">{t('edit.serviceFee')} ({sym})</Label>
+                <Input type="number" min="0" value={String(serviceFee)} onChange={(e) => setServiceFee(parseFloat(e.target.value) || 0)} className="h-8 text-xs" />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">{t('edit.taxes')} ({currencySymbol})</Label>
-                <Input type="number" min="0" value={String(taxes)} onChange={(e) => setTaxes(parseFloat(e.target.value) || 0)} />
+                <Label className="text-xs">{t('edit.taxes')} ({sym})</Label>
+                <Input type="number" min="0" value={String(taxes)} onChange={(e) => setTaxes(parseFloat(e.target.value) || 0)} className="h-8 text-xs" />
               </div>
             </div>
+
             <div className="flex justify-between items-center pt-2 border-t font-semibold">
               <span>{t('edit.total')}</span>
               <div className="text-right">
-                <span className="text-blue-700">{total.toLocaleString()} {currencySymbol}</span>
+                <span className="text-blue-700">{total.toLocaleString()} {sym}</span>
                 {!isDefaultCurrency && (
                   <p className="text-xs text-muted-foreground font-normal">= {totalDA.toLocaleString()} DA</p>
                 )}

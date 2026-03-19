@@ -8,7 +8,7 @@ export async function PATCH(
   try {
     const { id } = await params
     const body = await request.json()
-    const { check_in_date, check_out_date, base_price, cleaning_fee, service_fee, taxes, total_amount } = body
+    const { check_in_date, check_out_date, base_price, cleaning_fee, service_fee, taxes, total_amount, currency_code, currency_ratio, price_per_night_input } = body
 
     if (!id) return NextResponse.json({ error: 'ID requis' }, { status: 400 })
     if (!check_in_date || !check_out_date) return NextResponse.json({ error: 'Dates requises' }, { status: 400 })
@@ -52,6 +52,9 @@ export async function PATCH(
         service_fee: service_fee ?? 0,
         taxes: taxes ?? 0,
         total_amount: total_amount ?? null,
+        currency_code: currency_code || 'DZD',
+        currency_ratio: currency_ratio || 1,
+        price_per_night_input: price_per_night_input ?? null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)

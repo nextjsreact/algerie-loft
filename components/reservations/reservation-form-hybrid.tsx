@@ -90,8 +90,10 @@ export default function ReservationFormHybrid({
   const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [selectedCurrencyId, setSelectedCurrencyId] = useState<string>('');
   const [selectedCurrency, setSelectedCurrency] = useState<Currency | null>(null);
+  const [customRatio, setCustomRatio] = useState<number | ''>(''); // editable exchange rate
 
   // Pricing state
+  const [pricePerNightInput, setPricePerNightInput] = useState<number | ''>(''); // per-night input
   const [basePriceInput, setBasePriceInput] = useState<number | ''>('');
   const [cleaningFeeInput, setCleaningFeeInput] = useState<number | ''>(0);
   const [serviceFeeInput, setServiceFeeInput] = useState<number | ''>('');
@@ -178,6 +180,7 @@ export default function ReservationFormHybrid({
       if (def) {
         setSelectedCurrencyId(def.id);
         setSelectedCurrency(def);
+        setCustomRatio(def.ratio);
       }
     } catch (error) {
       console.error('Error fetching currencies:', error);
@@ -238,12 +241,20 @@ export default function ReservationFormHybrid({
     setSelectedCurrencyId(currencyId);
     const cur = currencies.find(c => c.id === currencyId) || null;
     setSelectedCurrency(cur);
+    setCustomRatio(cur?.ratio ?? 1);
+    // Recalculate base price from per-night if set
+    if (pricePerNightInput !== '' && nights > 0) {
+      setBasePriceInput(Number(pricePerNightInput) * nights);
+    }
   };
+
+  // Effective ratio: user can override
+  const effectiveRatio = Number(customRatio) || selectedCurrency?.ratio || 1;
 
   // Convert amount from selected currency to DA
   const toDA = (amount: number): number => {
     if (!selectedCurrency || selectedCurrency.is_default) return amount;
-    return Math.round(amount * selectedCurrency.ratio);
+    return Math.round(amount * effectiveRatio);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -273,6 +284,10 @@ export default function ReservationFormHybrid({
           service_fee: toDA(Number(serviceFeeInput) || 0),
           taxes: toDA(Number(taxesInput) || 0),
           total_amount: toDA(Number(totalAmountInput) || 0),
+          // Currency tracking
+          currency_code: selectedCurrency?.code || 'DZD',
+          currency_ratio: effectiveRatio,
+          price_per_night_input: pricePerNightInput !== '' ? Number(pricePerNightInput) : null,
         }),
       });
 
@@ -498,9 +513,9 @@ export default function ReservationFormHybrid({
                     </div>
                     
                     <div className="bg-white/80 rounded-lg p-4 space-y-3">
-                      <div className="flex items-center justify-between mb-3">
+                      {/* Header: title + currency selector */}
+                      <div className="flex items-center justify-between mb-1">
                         <h5 className="font-medium text-gray-900">{t('form.pricingBreakdown')}</h5>
-                        {/* Currency selector */}
                         <div className="flex items-center gap-2">
                           <Label className="text-xs text-gray-500">{t('form.currency')}</Label>
                           <Select value={selectedCurrencyId} onValueChange={handleCurrencyChange}>
@@ -517,82 +532,92 @@ export default function ReservationFormHybrid({
                           </Select>
                         </div>
                       </div>
+
+                      {/* Editable exchange rate (only for non-default currency) */}
                       {selectedCurrency && !selectedCurrency.is_default && (
-                        <p className="text-xs text-amber-600 bg-amber-50 rounded px-2 py-1">
-                          {t('form.currencyConversionNote', { code: selectedCurrency.code, ratio: selectedCurrency.ratio })}
-                        </p>
+                        <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+                          <span className="text-xs text-amber-700 flex-1">
+                            1 {selectedCurrency.code} =
+                          </span>
+                          <Input
+                            type="number"
+                            min="0.0001"
+                            step="0.01"
+                            value={String(customRatio)}
+                            onChange={(e) => setCustomRatio(parseFloat(e.target.value) || '')}
+                            className="h-7 w-24 text-xs text-right border-amber-300"
+                          />
+                          <span className="text-xs text-amber-700">DA</span>
+                        </div>
                       )}
+
                       <div className="space-y-2 text-sm">
-                        <div className="flex justify-between items-center py-1">
-                          <Label htmlFor="base_price" className="text-gray-600">{t('form.basePrice')} ({nights} nights)</Label>
+                        {/* Per-night input → auto-calculates base price */}
+                        <div className="flex justify-between items-center py-1 bg-blue-50 rounded px-2">
+                          <Label className="text-blue-700 font-medium text-xs">
+                            {t('form.pricePerNight')} × {nights} {t('form.nights')}
+                          </Label>
                           <div className="flex items-center gap-1">
-                            {selectedCurrency && <span className="text-xs text-gray-400">{selectedCurrency.symbol}</span>}
+                            <span className="text-xs text-gray-400">{selectedCurrency?.symbol || 'DA'}</span>
                             <Input
                               type="number"
-                              name="base_price_input"
+                              min="0"
+                              value={String(pricePerNightInput)}
+                              onChange={(e) => {
+                                const pn = parseFloat(e.target.value) || 0;
+                                setPricePerNightInput(pn || '');
+                                if (nights > 0) setBasePriceInput(pn * nights);
+                              }}
+                              className="w-28 text-right h-8 text-xs"
+                              placeholder="0"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center py-1">
+                          <Label className="text-gray-600">{t('form.basePrice')} ({nights} {t('form.nights')})</Label>
+                          <div className="flex items-center gap-1">
+                            <span className="text-xs text-gray-400">{selectedCurrency?.symbol || 'DA'}</span>
+                            <Input
+                              type="number"
                               value={String(basePriceInput)}
-                              onChange={(e) => setBasePriceInput(parseFloat(e.target.value))}
-                              className="w-32 text-right"
-                              disabled={!availabilityData?.available}
+                              onChange={(e) => { setBasePriceInput(parseFloat(e.target.value) || 0); setPricePerNightInput(''); }}
+                              className="w-28 text-right h-8 text-xs"
                             />
                           </div>
                         </div>
                         <div className="flex justify-between items-center py-1">
-                          <Label htmlFor="cleaning_fee" className="text-gray-600">{t('form.cleaningFee')}</Label>
+                          <Label className="text-gray-600">{t('form.cleaningFee')}</Label>
                           <div className="flex items-center gap-1">
-                            {selectedCurrency && <span className="text-xs text-gray-400">{selectedCurrency.symbol}</span>}
-                            <Input
-                              type="number"
-                              name="cleaning_fee_input"
-                              value={String(cleaningFeeInput)}
-                              onChange={(e) => setCleaningFeeInput(parseFloat(e.target.value))}
-                              className="w-32 text-right"
-                              disabled={!availabilityData?.available}
-                            />
+                            <span className="text-xs text-gray-400">{selectedCurrency?.symbol || 'DA'}</span>
+                            <Input type="number" value={String(cleaningFeeInput)} onChange={(e) => setCleaningFeeInput(parseFloat(e.target.value) || 0)} className="w-28 text-right h-8 text-xs" />
                           </div>
                         </div>
                         <div className="flex justify-between items-center py-1">
-                          <Label htmlFor="service_fee" className="text-gray-600">{t('form.serviceFee')}</Label>
+                          <Label className="text-gray-600">{t('form.serviceFee')}</Label>
                           <div className="flex items-center gap-1">
-                            {selectedCurrency && <span className="text-xs text-gray-400">{selectedCurrency.symbol}</span>}
-                            <Input
-                              type="number"
-                              name="service_fee_input"
-                              value={String(serviceFeeInput)}
-                              onChange={(e) => setServiceFeeInput(parseFloat(e.target.value))}
-                              className="w-32 text-right"
-                              disabled={!availabilityData?.available}
-                            />
+                            <span className="text-xs text-gray-400">{selectedCurrency?.symbol || 'DA'}</span>
+                            <Input type="number" value={String(serviceFeeInput)} onChange={(e) => setServiceFeeInput(parseFloat(e.target.value) || 0)} className="w-28 text-right h-8 text-xs" />
                           </div>
                         </div>
                         <div className="flex justify-between items-center py-1">
-                          <Label htmlFor="taxes" className="text-gray-600">{t('form.taxes')}</Label>
+                          <Label className="text-gray-600">{t('form.taxes')}</Label>
                           <div className="flex items-center gap-1">
-                            {selectedCurrency && <span className="text-xs text-gray-400">{selectedCurrency.symbol}</span>}
-                            <Input
-                              type="number"
-                              name="taxes_input"
-                              value={String(taxesInput)}
-                              onChange={(e) => setTaxesInput(parseFloat(e.target.value))}
-                              className="w-32 text-right"
-                              disabled={!availabilityData?.available}
-                            />
+                            <span className="text-xs text-gray-400">{selectedCurrency?.symbol || 'DA'}</span>
+                            <Input type="number" value={String(taxesInput)} onChange={(e) => setTaxesInput(parseFloat(e.target.value) || 0)} className="w-28 text-right h-8 text-xs" />
                           </div>
                         </div>
-                        <hr className="my-3" />
+                        <hr className="my-2" />
                         <div className="flex justify-between items-center py-2 bg-green-100 rounded-lg px-3">
-                          <Label htmlFor="total_amount" className="font-semibold text-green-800">{t('form.total')}</Label>
+                          <Label className="font-semibold text-green-800">{t('form.total')}</Label>
                           <div className="text-right">
-                            <Input
-                              type="number"
-                              name="total_amount_input"
-                              value={String(totalAmountInput)}
-                              className="w-32 text-right text-xl font-bold text-green-800"
-                              disabled={!availabilityData?.available}
-                              readOnly
-                            />
+                            <span className="text-lg font-bold text-green-800">
+                              {Number(totalAmountInput).toLocaleString()} {selectedCurrency?.symbol || 'DA'}
+                            </span>
                             {selectedCurrency && !selectedCurrency.is_default && (
-                              <p className="text-xs text-gray-500 mt-1">{t('form.convertedAmount', { amount: toDA(Number(totalAmountInput) || 0).toLocaleString() })}</p>
+                              <p className="text-xs text-gray-500 mt-0.5">
+                                {t('form.convertedAmount', { amount: toDA(Number(totalAmountInput) || 0).toLocaleString() })}
+                              </p>
                             )}
                           </div>
                         </div>

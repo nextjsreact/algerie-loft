@@ -10,6 +10,7 @@ export async function POST(request: NextRequest) {
       loft_id, guest_name, guest_email, guest_phone, guest_nationality,
       guest_count, check_in_date, check_out_date, special_requests,
       customer_id, base_price, cleaning_fee, service_fee, taxes, total_amount,
+      currency_code, currency_ratio, price_per_night_input,
     } = body
 
     // Basic validation — only phone is required for guest info
@@ -114,6 +115,9 @@ export async function POST(request: NextRequest) {
         total_amount: total_amount || 0,
         status: 'pending',
         payment_status: 'pending',
+        currency_code: currency_code || 'DZD',
+        currency_ratio: currency_ratio || 1,
+        price_per_night_input: price_per_night_input || null,
       })
       .select('*, lofts:loft_id(id, name, address, price_per_night)')
       .single()

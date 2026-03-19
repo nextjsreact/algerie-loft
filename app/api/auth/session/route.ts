@@ -120,7 +120,10 @@ export async function DELETE(request: NextRequest) {
     // Nettoyer le cache
     sessionCache.clear();
 
-    return NextResponse.json({ success: true });
+    // Clear login_context cookie
+    const response = NextResponse.json({ success: true });
+    response.cookies.set('login_context', '', { maxAge: 0, path: '/' });
+    return response;
   } catch (error) {
     console.error('Logout API error:', error);
     return NextResponse.json(

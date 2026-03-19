@@ -106,6 +106,8 @@ export function UserAvatarDropdown({ locale }: UserAvatarDropdownProps) {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut()
+      // Clear login_context cookie on logout
+      document.cookie = 'login_context=; path=/; max-age=0; SameSite=Lax'
       router.push(`/${locale}`)
     } catch (error) {
       console.error('Logout error:', error)

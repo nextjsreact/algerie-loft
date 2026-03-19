@@ -5,8 +5,13 @@ import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
 import { unstable_noStore as noStore } from "next/cache"
 
-export default async function HomePage() {
+interface HomePageProps {
+  params: Promise<{ locale: string }>
+}
+
+export default async function HomePage({ params }: HomePageProps) {
   noStore()
+  const { locale } = await params
   const session = await requireAuth();
 
   // Check login_context cookie — if user chose client or partner, redirect them
@@ -14,13 +19,13 @@ export default async function HomePage() {
   const loginContext = cookieStore.get('login_context')?.value;
 
   if (loginContext === 'client' || session.user.role === 'client') {
-    redirect('/fr/client/dashboard')
+    redirect(`/${locale}/client/dashboard`)
   }
   if (loginContext === 'partner' || session.user.role === 'partner') {
-    redirect('/fr/partner/dashboard')
+    redirect(`/${locale}/partner/dashboard`)
   }
   if (session.user.role === 'executive') {
-    redirect('/fr/executive');
+    redirect(`/${locale}/executive`);
   }
 
   return (

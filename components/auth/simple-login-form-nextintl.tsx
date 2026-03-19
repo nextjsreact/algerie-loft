@@ -36,24 +36,11 @@ export function SimpleLoginFormNextIntl() {
   // Utilisation de next-intl au lieu de useSimpleTranslation
   const t = useTranslations('auth')
 
-  // Initialize selected role from URL parameter or cookie
+  // Initialize selected role from URL parameter only (never from stale cookie)
   useEffect(() => {
-    // Vérifier d'abord le cookie login_context (côté client uniquement)
-    if (typeof window !== 'undefined') {
-      const loginContext = document.cookie.split('; ').find(row => row.startsWith('login_context='))?.split('=')[1]
-      if (loginContext) {
-        // Mapper le contexte au rôle du sélecteur
-        const roleMap: Record<string, string> = {
-          'client': 'client',
-          'partner': 'partner',
-          'employee': 'admin'
-        }
-        setSelectedRole(roleMap[loginContext] || null)
-        console.log(`🎯 Rôle pré-sélectionné depuis cookie: ${loginContext} -> ${roleMap[loginContext]}`)
-      } else if (roleParam) {
-        setSelectedRole(roleParam)
-        console.log(`🎯 Rôle pré-sélectionné depuis URL: ${roleParam}`)
-      }
+    if (roleParam) {
+      setSelectedRole(roleParam)
+      console.log(`🎯 Rôle pré-sélectionné depuis URL: ${roleParam}`)
     }
   }, [roleParam])
 

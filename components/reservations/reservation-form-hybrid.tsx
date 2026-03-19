@@ -103,9 +103,9 @@ export default function ReservationFormHybrid({
     if (availabilityData?.pricing) {
       setBasePriceInput(availabilityData.pricing.base_price);
       setCleaningFeeInput(0); // cleaning fee always 0 by default
-      setServiceFeeInput(availabilityData.pricing.service_fee);
-      setTaxesInput(availabilityData.pricing.taxes);
-      setTotalAmountInput(availabilityData.pricing.total_amount); // This will be overwritten by the calculation effect
+      setServiceFeeInput(0);  // service fee always 0 by default
+      setTaxesInput(0);       // taxes always 0 by default
+      // total will be recalculated by the effect below
     } else {
       let currentBasePrice = 0;
       if (selectedLoftData) {

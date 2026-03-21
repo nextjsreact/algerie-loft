@@ -170,9 +170,9 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
               {bookings.map((booking) => (
                 <Card key={booking.id} className="overflow-hidden hover:shadow-xl transition-shadow">
                   <div className="relative h-48">
-                    {booking.lofts?.loft_photos?.[0]?.photo_url ? (
+                    {booking.lofts?.loft_photos?.[0]?.url ? (
                       <Image
-                        src={booking.lofts.loft_photos[0].photo_url}
+                        src={booking.lofts.loft_photos[0].url}
                         alt={booking.lofts.name}
                         fill
                         className="object-cover"
@@ -234,9 +234,9 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
             {lofts.map((loft) => (
               <Card key={loft.id} className="overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
                 <div className="relative h-56 group">
-                  {loft.loft_photos?.[0]?.photo_url ? (
+                  {loft.loft_photos?.[0]?.url ? (
                     <Image
-                      src={loft.loft_photos[0].photo_url}
+                      src={loft.loft_photos[0].url}
                       alt={loft.name}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-300"

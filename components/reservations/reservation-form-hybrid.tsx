@@ -105,9 +105,19 @@ export default function ReservationFormHybrid({
   const selectedLoftData = lofts.find(l => l.id === selectedLoft);
   const nights = availabilityData?.nights || 0;
 
+  const [isEmployee, setIsEmployee] = useState(false);
+
   useEffect(() => {
     fetchLofts();
     fetchCurrencies();
+    // Check user role — employees can book past dates
+    fetch('/api/auth/session')
+      .then(r => r.json())
+      .then(data => {
+        const role = data?.user?.role;
+        setIsEmployee(role === 'employee' || role === 'admin');
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -459,7 +469,7 @@ export default function ReservationFormHybrid({
                     type="date"
                     value={checkInDate}
                     onChange={(e) => setCheckInDate(e.target.value)}
-                    min={format(new Date(), 'yyyy-MM-dd')}
+                    min={isEmployee ? undefined : format(new Date(), 'yyyy-MM-dd')}
                     placeholder="jj/mm/aaaa"
                     className="h-12 border-gray-300 focus:border-green-500 focus:ring-green-500"
                   />
@@ -474,7 +484,7 @@ export default function ReservationFormHybrid({
                     type="date"
                     value={checkOutDate}
                     onChange={(e) => setCheckOutDate(e.target.value)}
-                    min={checkInDate ? format(addDays(new Date(checkInDate), 1), 'yyyy-MM-dd') : format(addDays(new Date(), 1), 'yyyy-MM-dd')}
+                    min={isEmployee ? (checkInDate ? format(addDays(new Date(checkInDate), 1), 'yyyy-MM-dd') : undefined) : (checkInDate ? format(addDays(new Date(checkInDate), 1), 'yyyy-MM-dd') : format(addDays(new Date(), 1), 'yyyy-MM-dd'))}
                     placeholder="jj/mm/aaaa"
                     className="h-12 border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
                   />

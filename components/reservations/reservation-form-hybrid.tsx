@@ -90,15 +90,15 @@ export default function ReservationFormHybrid({
   const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [selectedCurrencyId, setSelectedCurrencyId] = useState<string>('');
   const [selectedCurrency, setSelectedCurrency] = useState<Currency | null>(null);
-  const [customRatio, setCustomRatio] = useState<number | ''>(''); // editable exchange rate
+  const [customRatio, setCustomRatio] = useState<string>(''); // editable exchange rate (string to allow "65.0")
 
-  // Pricing state
-  const [pricePerNightInput, setPricePerNightInput] = useState<number | ''>(''); // per-night input
-  const [basePriceInput, setBasePriceInput] = useState<number | ''>('');
-  const [cleaningFeeInput, setCleaningFeeInput] = useState<number | ''>(0);
-  const [serviceFeeInput, setServiceFeeInput] = useState<number | ''>('');
-  const [taxesInput, setTaxesInput] = useState<number | ''>('');
-  const [totalAmountInput, setTotalAmountInput] = useState<number | ''>('');
+  // Pricing state — all strings to allow decimal input like "65.09"
+  const [pricePerNightInput, setPricePerNightInput] = useState<string>('');
+  const [basePriceInput, setBasePriceInput] = useState<string>('');
+  const [cleaningFeeInput, setCleaningFeeInput] = useState<string>('0');
+  const [serviceFeeInput, setServiceFeeInput] = useState<string>('');
+  const [taxesInput, setTaxesInput] = useState<string>('');
+  const [totalAmountInput, setTotalAmountInput] = useState<string>('');
 
   // No server action state needed - using fetch API
 
@@ -128,11 +128,10 @@ export default function ReservationFormHybrid({
 
   useEffect(() => {
     if (availabilityData?.pricing) {
-      setBasePriceInput(availabilityData.pricing.base_price);
-      setCleaningFeeInput(0); // cleaning fee always 0 by default
-      setServiceFeeInput(0);  // service fee always 0 by default
-      setTaxesInput(0);       // taxes always 0 by default
-      // total will be recalculated by the effect below
+      setBasePriceInput(String(availabilityData.pricing.base_price));
+      setCleaningFeeInput('0');
+      setServiceFeeInput('0');
+      setTaxesInput('0');
     } else {
       let currentBasePrice = 0;
       if (selectedLoftData) {
@@ -145,21 +144,21 @@ export default function ReservationFormHybrid({
         }
       }
 
-      setBasePriceInput(currentBasePrice);
-      setCleaningFeeInput(0);
-      setServiceFeeInput(0);
-      setTaxesInput(0);
-      setTotalAmountInput(0); // Initialize to 0, will be updated by calculation effect
+      setBasePriceInput(String(currentBasePrice));
+      setCleaningFeeInput('0');
+      setServiceFeeInput('0');
+      setTaxesInput('0');
+      setTotalAmountInput('0');
     }
   }, [availabilityData, selectedLoftData, checkInDate, checkOutDate]);
 
   // Calculate total amount whenever its components change
   useEffect(() => {
-    const total = (parseFloat(String(basePriceInput)) || 0) +
-                  (parseFloat(String(cleaningFeeInput)) || 0) +
-                  (parseFloat(String(serviceFeeInput)) || 0) +
-                  (parseFloat(String(taxesInput)) || 0);
-    setTotalAmountInput(total);
+    const total = (parseFloat(basePriceInput) || 0) +
+                  (parseFloat(cleaningFeeInput) || 0) +
+                  (parseFloat(serviceFeeInput) || 0) +
+                  (parseFloat(taxesInput) || 0);
+    setTotalAmountInput(String(total));
   }, [basePriceInput, cleaningFeeInput, serviceFeeInput, taxesInput]);
 
   // Handle successful reservation creation
@@ -190,7 +189,7 @@ export default function ReservationFormHybrid({
       if (def) {
         setSelectedCurrencyId(def.id);
         setSelectedCurrency(def);
-        setCustomRatio(def.ratio);
+        setCustomRatio(String(def.ratio));
       }
     } catch (error) {
       console.error('Error fetching currencies:', error);
@@ -251,15 +250,14 @@ export default function ReservationFormHybrid({
     setSelectedCurrencyId(currencyId);
     const cur = currencies.find(c => c.id === currencyId) || null;
     setSelectedCurrency(cur);
-    setCustomRatio(cur?.ratio ?? 1);
-    // Recalculate base price from per-night if set
+    setCustomRatio(String(cur?.ratio ?? 1));
     if (pricePerNightInput !== '' && nights > 0) {
-      setBasePriceInput(Number(pricePerNightInput) * nights);
+      setBasePriceInput(String(parseFloat(pricePerNightInput) * nights));
     }
   };
 
   // Effective ratio: user can override
-  const effectiveRatio = Number(customRatio) || selectedCurrency?.ratio || 1;
+  const effectiveRatio = parseFloat(customRatio) || selectedCurrency?.ratio || 1;
 
   // Convert amount from selected currency to DA
   const toDA = (amount: number): number => {
@@ -289,15 +287,15 @@ export default function ReservationFormHybrid({
           check_in_date: checkInDate,
           check_out_date: checkOutDate,
           customer_id: foundCustomer?.id || null,
-          base_price: toDA(Number(basePriceInput) || 0),
-          cleaning_fee: toDA(Number(cleaningFeeInput) || 0),
-          service_fee: toDA(Number(serviceFeeInput) || 0),
-          taxes: toDA(Number(taxesInput) || 0),
-          total_amount: toDA(Number(totalAmountInput) || 0),
+          base_price: toDA(parseFloat(basePriceInput) || 0),
+          cleaning_fee: toDA(parseFloat(cleaningFeeInput) || 0),
+          service_fee: toDA(parseFloat(serviceFeeInput) || 0),
+          taxes: toDA(parseFloat(taxesInput) || 0),
+          total_amount: toDA(parseFloat(totalAmountInput) || 0),
           // Currency tracking
           currency_code: selectedCurrency?.code || 'DZD',
           currency_ratio: effectiveRatio,
-          price_per_night_input: pricePerNightInput !== '' ? Number(pricePerNightInput) : null,
+          price_per_night_input: pricePerNightInput !== '' ? parseFloat(pricePerNightInput) : null,
         }),
       });
 
@@ -552,15 +550,11 @@ export default function ReservationFormHybrid({
                           <Input
                             type="number"
                             step="any"
-                            value={customRatio === '' ? '' : String(customRatio)}
-                            onChange={(e) => {
-                              const v = parseFloat(e.target.value)
-                              setCustomRatio(isNaN(v) ? '' : v)
-                            }}
+                            value={customRatio}
+                            onChange={(e) => setCustomRatio(e.target.value)}
                             onBlur={() => {
-                              if (customRatio === '' || Number(customRatio) <= 0) {
-                                setCustomRatio(selectedCurrency?.ratio ?? 1)
-                              }
+                              const v = parseFloat(customRatio);
+                              if (isNaN(v) || v <= 0) setCustomRatio(String(selectedCurrency?.ratio ?? 1));
                             }}
                             className="h-7 w-24 text-xs text-right border-amber-300"
                             placeholder={String(selectedCurrency?.ratio ?? 1)}
@@ -580,11 +574,12 @@ export default function ReservationFormHybrid({
                             <Input
                               type="number"
                               min="0"
-                              value={String(pricePerNightInput)}
+                              step="any"
+                              value={pricePerNightInput}
                               onChange={(e) => {
-                                const pn = parseFloat(e.target.value) || 0;
-                                setPricePerNightInput(pn || '');
-                                if (nights > 0) setBasePriceInput(pn * nights);
+                                setPricePerNightInput(e.target.value);
+                                const pn = parseFloat(e.target.value);
+                                if (!isNaN(pn) && nights > 0) setBasePriceInput(String(pn * nights));
                               }}
                               className="w-28 text-right h-8 text-xs"
                               placeholder="0"
@@ -598,8 +593,9 @@ export default function ReservationFormHybrid({
                             <span className="text-xs text-gray-400">{selectedCurrency?.symbol || 'DA'}</span>
                             <Input
                               type="number"
-                              value={String(basePriceInput)}
-                              onChange={(e) => { setBasePriceInput(parseFloat(e.target.value) || 0); setPricePerNightInput(''); }}
+                              step="any"
+                              value={basePriceInput}
+                              onChange={(e) => { setBasePriceInput(e.target.value); setPricePerNightInput(''); }}
                               className="w-28 text-right h-8 text-xs"
                             />
                           </div>
@@ -608,21 +604,21 @@ export default function ReservationFormHybrid({
                           <Label className="text-gray-600">{t('form.cleaningFee')}</Label>
                           <div className="flex items-center gap-1">
                             <span className="text-xs text-gray-400">{selectedCurrency?.symbol || 'DA'}</span>
-                            <Input type="number" value={String(cleaningFeeInput)} onChange={(e) => setCleaningFeeInput(parseFloat(e.target.value) || 0)} className="w-28 text-right h-8 text-xs" />
+                            <Input type="number" step="any" value={cleaningFeeInput} onChange={(e) => setCleaningFeeInput(e.target.value)} className="w-28 text-right h-8 text-xs" />
                           </div>
                         </div>
                         <div className="flex justify-between items-center py-1">
                           <Label className="text-gray-600">{t('form.serviceFee')}</Label>
                           <div className="flex items-center gap-1">
                             <span className="text-xs text-gray-400">{selectedCurrency?.symbol || 'DA'}</span>
-                            <Input type="number" value={String(serviceFeeInput)} onChange={(e) => setServiceFeeInput(parseFloat(e.target.value) || 0)} className="w-28 text-right h-8 text-xs" />
+                            <Input type="number" step="any" value={serviceFeeInput} onChange={(e) => setServiceFeeInput(e.target.value)} className="w-28 text-right h-8 text-xs" />
                           </div>
                         </div>
                         <div className="flex justify-between items-center py-1">
                           <Label className="text-gray-600">{t('form.taxes')}</Label>
                           <div className="flex items-center gap-1">
                             <span className="text-xs text-gray-400">{selectedCurrency?.symbol || 'DA'}</span>
-                            <Input type="number" value={String(taxesInput)} onChange={(e) => setTaxesInput(parseFloat(e.target.value) || 0)} className="w-28 text-right h-8 text-xs" />
+                            <Input type="number" step="any" value={taxesInput} onChange={(e) => setTaxesInput(e.target.value)} className="w-28 text-right h-8 text-xs" />
                           </div>
                         </div>
                         <hr className="my-2" />
@@ -630,11 +626,11 @@ export default function ReservationFormHybrid({
                           <Label className="font-semibold text-green-800">{t('form.total')}</Label>
                           <div className="text-right">
                             <span className="text-lg font-bold text-green-800">
-                              {Number(totalAmountInput).toLocaleString()} {selectedCurrency?.symbol || 'DA'}
+                              {(parseFloat(totalAmountInput) || 0).toLocaleString()} {selectedCurrency?.symbol || 'DA'}
                             </span>
                             {selectedCurrency && !selectedCurrency.is_default && (
                               <p className="text-xs text-gray-500 mt-0.5">
-                                {t('form.convertedAmount', { amount: toDA(Number(totalAmountInput) || 0).toLocaleString() })}
+                                {t('form.convertedAmount', { amount: toDA(parseFloat(totalAmountInput) || 0).toLocaleString() })}
                               </p>
                             )}
                           </div>

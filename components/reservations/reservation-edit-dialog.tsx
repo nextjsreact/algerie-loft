@@ -148,7 +148,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
       setCheckingAvail(true)
       setAvailOk(null)
       try {
-        const res = await fetch(`/api/availability?loft_id=${reservation.loft_id}&check_in_date=${checkIn}&check_out_date=${checkOut}`)
+        const res = await fetch(`/api/availability?loft_id=${reservation.loft_id}&check_in_date=${checkIn}&check_out_date=${checkOut}&exclude_id=${reservation.id}`)
         const data = await res.json()
         setAvailOk(data.available !== false)
       } catch {

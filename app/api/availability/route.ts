@@ -182,20 +182,39 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      // Check availability using the database function
-      const { data: isAvailable, error: availabilityError } = await supabase
-        .rpc('check_loft_availability', {
-          p_loft_id: loft_id,
-          p_check_in: check_in_date,
-          p_check_out: check_out_date,
-        });
+      // If exclude_id is provided (editing an existing reservation), do a direct SQL check
+      // to avoid the RPC counting the reservation itself as a conflict
+      const excludeId = queryParams.exclude_id;
+      let isAvailable: boolean;
 
-      if (availabilityError) {
-        console.error('Error checking availability:', availabilityError);
-        return NextResponse.json(
-          { error: 'Failed to check availability' },
-          { status: 500 }
-        );
+      if (excludeId) {
+        const query = supabase
+          .from('reservations')
+          .select('id')
+          .eq('loft_id', loft_id)
+          .neq('id', excludeId)
+          .in('status', ['confirmed', 'pending'])
+          .or(`and(check_in_date.lt.${check_out_date},check_out_date.gt.${check_in_date})`);
+
+        const { data: conflicts } = await query;
+        isAvailable = !conflicts || conflicts.length === 0;
+      } else {
+        // Check availability using the database function
+        const { data, error: availabilityError } = await supabase
+          .rpc('check_loft_availability', {
+            p_loft_id: loft_id,
+            p_check_in: check_in_date,
+            p_check_out: check_out_date,
+          });
+
+        if (availabilityError) {
+          console.error('Error checking availability:', availabilityError);
+          return NextResponse.json(
+            { error: 'Failed to check availability' },
+            { status: 500 }
+          );
+        }
+        isAvailable = data;
       }
 
       // Get pricing if available

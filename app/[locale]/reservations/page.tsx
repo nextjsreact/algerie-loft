@@ -5,6 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTranslations, useLocale } from 'next-intl';
 import {
@@ -21,7 +23,10 @@ import {
   Star,
   MapPin,
   Sparkles,
-  Loader2
+  Loader2,
+  Search,
+  X,
+  Filter
 } from 'lucide-react';
 import ReservationCalendar from '@/components/reservations/reservation-calendar';
 import ReservationFormHybrid from '@/components/reservations/reservation-form-hybrid';
@@ -57,6 +62,13 @@ function ReservationsPageContent() {
   const searchParams = useSearchParams();
 
   const [allReservations, setAllReservations] = useState<any[]>([]);
+
+  // Filter states for list tab
+  const [filterSearch, setFilterSearch] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterLoft, setFilterLoft] = useState('all');
+  const [filterDateFrom, setFilterDateFrom] = useState('');
+  const [filterDateTo, setFilterDateTo] = useState('');
 
   // Fetch all reservations for list tab (via API to bypass RLS)
   const fetchAllReservations = useCallback(async () => {
@@ -497,52 +509,147 @@ function ReservationsPageContent() {
           </TabsContent>
 
           <TabsContent value="list" className="space-y-6">
+            {/* Filters */}
+            <Card className="border-0 shadow-lg bg-white/90 backdrop-blur-sm">
+              <CardContent className="p-4">
+                <div className="flex flex-wrap gap-3 items-end">
+                  {/* Search */}
+                  <div className="relative flex-1 min-w-[200px]">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      placeholder="Rechercher invité ou loft..."
+                      value={filterSearch}
+                      onChange={(e) => setFilterSearch(e.target.value)}
+                      className="pl-9 h-10"
+                    />
+                  </div>
+                  {/* Status filter */}
+                  <Select value={filterStatus} onValueChange={setFilterStatus}>
+                    <SelectTrigger className="w-[160px] h-10">
+                      <SelectValue placeholder="Statut" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Tous les statuts</SelectItem>
+                      <SelectItem value="pending">{t('status.pending')}</SelectItem>
+                      <SelectItem value="confirmed">{t('status.confirmed')}</SelectItem>
+                      <SelectItem value="completed">{t('status.completed')}</SelectItem>
+                      <SelectItem value="cancelled">{t('status.cancelled')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {/* Loft filter */}
+                  <Select value={filterLoft} onValueChange={setFilterLoft}>
+                    <SelectTrigger className="w-[180px] h-10">
+                      <SelectValue placeholder="Appartement" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Tous les apparts</SelectItem>
+                      {lofts.map(l => (
+                        <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {/* Date from */}
+                  <Input
+                    type="date"
+                    value={filterDateFrom}
+                    onChange={(e) => setFilterDateFrom(e.target.value)}
+                    className="w-[150px] h-10"
+                    title="Date d'arrivée depuis"
+                  />
+                  {/* Date to */}
+                  <Input
+                    type="date"
+                    value={filterDateTo}
+                    onChange={(e) => setFilterDateTo(e.target.value)}
+                    className="w-[150px] h-10"
+                    title="Date d'arrivée jusqu'à"
+                  />
+                  {/* Reset */}
+                  {(filterSearch || filterStatus !== 'all' || filterLoft !== 'all' || filterDateFrom || filterDateTo) && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => { setFilterSearch(''); setFilterStatus('all'); setFilterLoft('all'); setFilterDateFrom(''); setFilterDateTo(''); }}
+                      className="h-10 text-gray-500 hover:text-gray-700"
+                    >
+                      <X className="h-4 w-4 mr-1" />
+                      Réinitialiser
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
             <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
                 <CardTitle className="flex items-center gap-3">
                   <List className="h-5 w-5" />
                   {t('list.title')}
+                  <Badge variant="secondary" className="bg-white/20 text-white border-white/30 ml-auto">
+                    {(() => {
+                      const filtered = allReservations.filter(res => {
+                        if (filterSearch && !res.lofts?.name?.toLowerCase().includes(filterSearch.toLowerCase()) && !res.guest_name?.toLowerCase().includes(filterSearch.toLowerCase())) return false;
+                        if (filterStatus !== 'all' && res.status !== filterStatus) return false;
+                        if (filterLoft !== 'all' && res.loft_id !== filterLoft) return false;
+                        if (filterDateFrom && res.check_in_date < filterDateFrom) return false;
+                        if (filterDateTo && res.check_in_date > filterDateTo) return false;
+                        return true;
+                      });
+                      return filtered.length;
+                    })()}
+                  </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
-                {allReservations.length === 0 ? (
-                  <div className="p-12 text-center text-gray-500">{t('upcoming.empty')}</div>
-                ) : (
-                  <div className="divide-y divide-gray-100">
-                    {allReservations.map((res) => (
-                      <div key={res.id} className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedReservation(res)}>
-                        <div className="flex items-center gap-4">
-                          <div className={`p-2 rounded-full ${
-                            res.status === 'confirmed' ? 'bg-green-100' :
-                            res.status === 'completed' ? 'bg-blue-100' :
-                            res.status === 'pending' ? 'bg-yellow-100' : 'bg-red-100'
-                          }`}>
-                            {res.status === 'confirmed' ? <CheckCircle className="h-4 w-4 text-green-600" /> :
-                             res.status === 'completed' ? <Calendar className="h-4 w-4 text-blue-600" /> :
-                             res.status === 'pending' ? <Clock className="h-4 w-4 text-yellow-600" /> :
-                             <AlertCircle className="h-4 w-4 text-red-600" />}
+                {(() => {
+                  const filtered = allReservations.filter(res => {
+                    if (filterSearch && !res.lofts?.name?.toLowerCase().includes(filterSearch.toLowerCase()) && !res.guest_name?.toLowerCase().includes(filterSearch.toLowerCase())) return false;
+                    if (filterStatus !== 'all' && res.status !== filterStatus) return false;
+                    if (filterLoft !== 'all' && res.loft_id !== filterLoft) return false;
+                    if (filterDateFrom && res.check_in_date < filterDateFrom) return false;
+                    if (filterDateTo && res.check_in_date > filterDateTo) return false;
+                    return true;
+                  });
+                  if (filtered.length === 0) return (
+                    <div className="p-12 text-center text-gray-500">{t('upcoming.empty')}</div>
+                  );
+                  return (
+                    <div className="divide-y divide-gray-100">
+                      {filtered.map((res) => (
+                        <div key={res.id} className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedReservation(res)}>
+                          <div className="flex items-center gap-4">
+                            <div className={`p-2 rounded-full ${
+                              res.status === 'confirmed' ? 'bg-green-100' :
+                              res.status === 'completed' ? 'bg-blue-100' :
+                              res.status === 'pending' ? 'bg-yellow-100' : 'bg-red-100'
+                            }`}>
+                              {res.status === 'confirmed' ? <CheckCircle className="h-4 w-4 text-green-600" /> :
+                               res.status === 'completed' ? <Calendar className="h-4 w-4 text-blue-600" /> :
+                               res.status === 'pending' ? <Clock className="h-4 w-4 text-yellow-600" /> :
+                               <AlertCircle className="h-4 w-4 text-red-600" />}
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">{res.lofts?.name}</p>
+                              <p className="text-sm text-gray-500">{res.guest_name} • {res.check_in_date} → {res.check_out_date}</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-medium text-gray-900">{res.lofts?.name}</p>
-                            <p className="text-sm text-gray-500">{res.guest_name} • {res.check_in_date} → {res.check_out_date}</p>
+                          <div className="flex items-center gap-3">
+                            <Badge variant={
+                              res.status === 'confirmed' ? 'default' :
+                              res.status === 'completed' ? 'secondary' :
+                              res.status === 'cancelled' ? 'destructive' : 'outline'
+                            }>
+                              {t(`status.${res.status}`)}
+                            </Badge>
+                            {res.total_amount > 0 && (
+                              <span className="text-sm font-semibold text-gray-700">{res.total_amount.toLocaleString()} {defaultCurrencySymbol}</span>
+                            )}
                           </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                          <Badge variant={
-                            res.status === 'confirmed' ? 'default' :
-                            res.status === 'completed' ? 'secondary' :
-                            res.status === 'cancelled' ? 'destructive' : 'outline'
-                          }>
-                            {t(`status.${res.status}`)}
-                          </Badge>
-                          {res.total_amount > 0 && (
-                            <span className="text-sm font-semibold text-gray-700">{res.total_amount.toLocaleString()} {defaultCurrencySymbol}</span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                      ))}
+                    </div>
+                  );
+                })()}
               </CardContent>
             </Card>
           </TabsContent>

@@ -139,8 +139,8 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
   }
 
   return (
-    <Card className="bg-gradient-to-br from-gray-50/50 to-slate-50/50 dark:from-gray-800/50 dark:to-slate-800/50 border-0 shadow-xl backdrop-blur-sm sticky top-8">
-      <CardHeader className="pb-4">
+    <Card className="bg-gradient-to-br from-gray-50/50 to-slate-50/50 dark:from-gray-800/50 dark:to-slate-800/50 border-0 shadow-xl backdrop-blur-sm sticky top-8 max-h-[calc(100vh-4rem)] flex flex-col">
+      <CardHeader className="pb-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-gradient-to-r from-green-500 to-blue-500"></div>
@@ -159,7 +159,7 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
         </CardDescription>
       </CardHeader>
       
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 overflow-y-auto flex-1 pb-6">
         {/* Date Range */}
         <div className="space-y-3">
           <Label className="text-sm font-medium flex items-center gap-2">

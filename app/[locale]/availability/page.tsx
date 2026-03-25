@@ -116,7 +116,7 @@ export default function AvailabilityPage() {
           {/* Main Content */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Filters Panel */}
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 min-h-0">
               <FilterPanel 
                 filters={filters} 
                 onFiltersChange={setFilters}

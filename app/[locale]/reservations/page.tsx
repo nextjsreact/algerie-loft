@@ -815,7 +815,7 @@ function ReservationsPageContent() {
                 )}
 
                 <div className="flex justify-end gap-4">
-                  {selectedReservation.status !== 'cancelled' && selectedReservation.status !== 'completed' && (
+                  {selectedReservation.status !== 'cancelled' && (
                     <Button
                       variant="outline"
                       onClick={() => {
@@ -851,11 +851,6 @@ function ReservationsPageContent() {
                     <Button onClick={() => handleStatusUpdate(selectedReservation.id, 'pending')} variant="outline">
                       Réactiver la réservation
                     </Button>
-                  )}
-                  {selectedReservation.status === 'completed' && (
-                    <div className="text-sm text-gray-600">
-                      Cette réservation est terminée
-                    </div>
                   )}
                 </div>
               </div>

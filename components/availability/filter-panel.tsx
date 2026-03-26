@@ -288,7 +288,7 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
                 <ChevronDown className="h-4 w-4 opacity-50 flex-shrink-0" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-full p-0" align="start" side="bottom" sideOffset={4}>
+            <PopoverContent className="w-[220px] p-0" align="start" side="bottom" sideOffset={4}>
               <div className="p-2 border-b">
                 <Input
                   placeholder="Rechercher..."

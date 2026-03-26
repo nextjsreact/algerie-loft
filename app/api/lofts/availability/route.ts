@@ -82,22 +82,41 @@ export async function GET(request: Request) {
       const interval = eachDayOfInterval({ start: startDate, end: endDate });
 
       let isCurrentlyOccupied = false;
+      let totalDays = 0;
+      let occupiedDays = 0;
 
       interval.forEach(day => {
         const dayKey = format(day, 'yyyy-MM-dd');
         const manualAvail = loftManualAvailability?.get(dayKey);
+        totalDays++;
 
         if (loftBookedDates?.has(dayKey)) {
           availabilityMap[dayKey] = 'occupied';
-          if (isBefore(day, addDays(new Date(), 1))) { // Check if occupied today
+          occupiedDays++;
+          if (isBefore(day, addDays(new Date(), 1))) {
             isCurrentlyOccupied = true;
           }
         } else if (manualAvail && !manualAvail.is_available) {
           availabilityMap[dayKey] = manualAvail.blocked_reason || 'maintenance';
+          occupiedDays++;
         } else {
           availabilityMap[dayKey] = 'available';
         }
       });
+
+      // Status based on the selected period:
+      // - 'available'    : no occupied days in the period
+      // - 'occupied'     : all days occupied
+      // - 'partial'      : some days occupied (shown as occupied in stats)
+      const occupancyRatio = totalDays > 0 ? occupiedDays / totalDays : 0;
+      let periodStatus: string;
+      if (occupiedDays === 0) {
+        periodStatus = 'available';
+      } else if (occupancyRatio >= 0.5) {
+        periodStatus = 'occupied';
+      } else {
+        periodStatus = 'partial'; // partially booked → counts as occupied in stats
+      }
 
       return {
         id: loft.id,
@@ -106,7 +125,7 @@ export async function GET(request: Request) {
         owner: ownersMap.get(loft.owner_id) || 'availability:unknown',
         pricePerNight: loft.price_per_night,
         capacity: 4,
-        status: isCurrentlyOccupied ? 'occupied' : 'available',
+        status: periodStatus,
         image: '/images/loft-placeholder.jpg',
         amenities: ['wifi', 'parking', 'kitchen'],
         availability: availabilityMap, // The detailed day-by-day map

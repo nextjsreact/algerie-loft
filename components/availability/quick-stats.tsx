@@ -17,10 +17,10 @@ export function QuickStats({ data, isLoading }: QuickStatsProps) {
   const stats = {
     totalLofts: data.length,
     availableLofts: data.filter(loft => loft.status === 'available').length,
-    occupiedLofts: data.filter(loft => loft.status === 'occupied').length,
+    occupiedLofts: data.filter(loft => loft.status === 'occupied' || loft.status === 'partial').length,
     maintenanceLofts: data.filter(loft => loft.status === 'maintenance').length,
     averagePrice: data.length > 0 ? Math.round(data.reduce((sum, loft) => sum + loft.pricePerNight, 0) / data.length) : 0,
-    occupancyRate: data.length > 0 ? Math.round((data.filter(loft => loft.status === 'occupied').length / data.length) * 100) : 0
+    occupancyRate: data.length > 0 ? Math.round((data.filter(loft => loft.status === 'occupied' || loft.status === 'partial').length / data.length) * 100) : 0
   }
 
   if (isLoading) {

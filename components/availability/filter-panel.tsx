@@ -40,6 +40,7 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
   const t = useTranslations('availability')
   const [ownerSearch, setOwnerSearch] = useState('')
   const [statusSearch, setStatusSearch] = useState('')
+  const [regionSearch, setRegionSearch] = useState('')
 
   const regions = filterOptions.regions.length > 0 ? filterOptions.regions.map(region => ({
     ...region,
@@ -278,17 +279,39 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
             <MapPin className="h-4 w-4 text-blue-600" />
             {t('region')}
           </Label>
-          <select
-            value={filters.region}
-            onChange={(e) => handleFilterChange('region', e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            {regions.map((region) => (
-              <option key={region.value} value={region.value}>
-                {region.label}
-              </option>
-            ))}
-          </select>
+          <Popover onOpenChange={(open) => { if (!open) setRegionSearch('') }}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-full justify-between text-left font-normal">
+                <span className="truncate">
+                  {regions.find(r => r.value === filters.region)?.label || t('allRegions')}
+                </span>
+                <ChevronDown className="h-4 w-4 opacity-50 flex-shrink-0" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0" align="start" side="bottom" sideOffset={4}>
+              <div className="p-2 border-b">
+                <Input
+                  placeholder="Rechercher..."
+                  value={regionSearch}
+                  onChange={(e) => setRegionSearch(e.target.value)}
+                  className="h-8 text-sm"
+                />
+              </div>
+              <div className="p-1 max-h-[200px] overflow-y-auto">
+                {regions
+                  .filter(r => r.label.toLowerCase().includes(regionSearch.toLowerCase()))
+                  .map((region) => (
+                    <button
+                      key={region.value}
+                      className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-accent transition-colors ${filters.region === region.value ? 'bg-accent font-medium' : ''}`}
+                      onClick={() => handleFilterChange('region', region.value)}
+                    >
+                      {region.label}
+                    </button>
+                  ))}
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
 
         {/* Owner Filter - Multi-select */}

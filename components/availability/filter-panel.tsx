@@ -227,7 +227,7 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
                 </div>
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-full p-0" align="start">
+            <PopoverContent className="w-full p-0" align="start" side="bottom" sideOffset={4}>
               <div className="p-3 border-b space-y-2">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium text-sm">{t('selectStatuses')}</h4>
@@ -244,7 +244,7 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
                   className="h-8 text-sm"
                 />
               </div>
-              <div className="p-2">
+              <div className="p-2 max-h-[200px] overflow-y-auto">
                 <div className="space-y-2">
                   <Button variant="ghost" size="sm" onClick={selectAllStatuses} className="w-full justify-start text-xs h-8">
                     {t('selectAll')}
@@ -316,7 +316,7 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
               </Button>
             </PopoverTrigger>
             
-            <PopoverContent className="w-full p-0" align="start">
+            <PopoverContent className="w-full p-0" align="start" side="bottom" sideOffset={4}>
               <div className="p-3 border-b space-y-2">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium text-sm">{t('selectOwners')}</h4>
@@ -334,7 +334,7 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
                 />
               </div>
               
-              <div className="p-2">
+              <div className="p-2 max-h-[200px] overflow-y-auto">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-4">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>

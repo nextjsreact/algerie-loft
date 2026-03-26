@@ -6,9 +6,11 @@ import { useTranslations, useLocale } from 'next-intl'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { ChevronLeft, ChevronRight, Calendar, Eye, BookOpen, Phone } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronDown, Calendar, Eye, BookOpen, Phone, Search } from 'lucide-react'
 import { format, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isWithinInterval } from 'date-fns'
 import { fr, ar } from 'date-fns/locale'
 import { DateRange } from 'react-day-picker'
@@ -44,6 +46,8 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
   const [currentMonth, setCurrentMonth] = useState(dateRange?.from || new Date())
   const [selectedLoft, setSelectedLoft] = useState<any>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [loftSearch, setLoftSearch] = useState('')
+  const [loftPopoverOpen, setLoftPopoverOpen] = useState(false)
 
   useEffect(() => {
     setCurrentMonth(dateRange?.from || new Date())
@@ -118,26 +122,47 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
 
         {/* Loft Selector */}
         <div className="flex items-center gap-2">
-          <select
-            value={selectedLoft?.id || 'all'}
-            onChange={(e) => {
-              const loftId = e.target.value;
-              if (loftId === 'all') {
-                setSelectedLoft(null);
-              } else {
-                const loft = data.find(l => l.id === loftId);
-                setSelectedLoft(loft);
-              }
-            }}
-            className="flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <option value="all">{t('allLofts')}</option>
-            {data.map((loft) => (
-              <option key={loft.id} value={loft.id}>
-                {loft.name}
-              </option>
-            ))}
-          </select>
+          <Popover open={loftPopoverOpen} onOpenChange={(open) => { setLoftPopoverOpen(open); if (!open) setLoftSearch('') }}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className="min-w-[180px] justify-between">
+                <span className="truncate">{selectedLoft ? selectedLoft.name : t('allLofts')}</span>
+                <ChevronDown className="h-4 w-4 opacity-50 ml-2 flex-shrink-0" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[220px] p-0" side="bottom" align="start" sideOffset={4}>
+              <div className="p-2 border-b">
+                <div className="relative">
+                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                  <Input
+                    placeholder="Rechercher..."
+                    value={loftSearch}
+                    onChange={(e) => setLoftSearch(e.target.value)}
+                    className="h-8 pl-7 text-sm"
+                    autoFocus
+                  />
+                </div>
+              </div>
+              <div className="max-h-[200px] overflow-y-auto p-1">
+                <button
+                  className="w-full text-left px-3 py-2 text-sm rounded hover:bg-accent transition-colors"
+                  onClick={() => { setSelectedLoft(null); setLoftPopoverOpen(false) }}
+                >
+                  {t('allLofts')}
+                </button>
+                {data
+                  .filter(l => l.name.toLowerCase().includes(loftSearch.toLowerCase()))
+                  .map((loft) => (
+                    <button
+                      key={loft.id}
+                      className="w-full text-left px-3 py-2 text-sm rounded hover:bg-accent transition-colors"
+                      onClick={() => { setSelectedLoft(loft); setLoftPopoverOpen(false) }}
+                    >
+                      {loft.name}
+                    </button>
+                  ))}
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 

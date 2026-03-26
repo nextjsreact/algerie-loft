@@ -38,6 +38,8 @@ const ALL_STATUSES = [
 
 export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeChange, isLoading, filterOptions }: FilterPanelProps) {
   const t = useTranslations('availability')
+  const [ownerSearch, setOwnerSearch] = useState('')
+  const [statusSearch, setStatusSearch] = useState('')
 
   const regions = filterOptions.regions.length > 0 ? filterOptions.regions.map(region => ({
     ...region,
@@ -208,7 +210,7 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
             <Filter className="h-4 w-4 text-yellow-600" />
             {t('status')}
           </Label>
-          <Popover>
+          <Popover onOpenChange={(open) => { if (!open) setStatusSearch('') }}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
@@ -226,33 +228,28 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-full p-0" align="start">
-              <div className="p-3 border-b">
+              <div className="p-3 border-b space-y-2">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium text-sm">{t('selectStatuses')}</h4>
                   {filters.statuses && filters.statuses.length > 0 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={clearAllStatuses}
-                      className="h-6 px-2 text-xs"
-                    >
-                      <X className="h-3 w-3 mr-1" />
-                      {t('clearAll')}
+                    <Button variant="ghost" size="sm" onClick={clearAllStatuses} className="h-6 px-2 text-xs">
+                      <X className="h-3 w-3 mr-1" />{t('clearAll')}
                     </Button>
                   )}
                 </div>
+                <Input
+                  placeholder="Rechercher..."
+                  value={statusSearch}
+                  onChange={(e) => setStatusSearch(e.target.value)}
+                  className="h-8 text-sm"
+                />
               </div>
               <div className="p-2">
                 <div className="space-y-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={selectAllStatuses}
-                    className="w-full justify-start text-xs h-8"
-                  >
+                  <Button variant="ghost" size="sm" onClick={selectAllStatuses} className="w-full justify-start text-xs h-8">
                     {t('selectAll')}
                   </Button>
-                  {ALL_STATUSES.map((status) => (
+                  {ALL_STATUSES.filter(s => t(s.label).toLowerCase().includes(statusSearch.toLowerCase())).map((status) => (
                     <div key={status.value} className="flex items-center space-x-2 p-2 hover:bg-accent rounded-sm">
                       <Checkbox
                         id={`status-${status.value}`}
@@ -301,7 +298,7 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
             {t('owners')}
           </Label>
           
-          <Popover>
+          <Popover onOpenChange={(open) => { if (!open) setOwnerSearch('') }}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
@@ -320,21 +317,21 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
             </PopoverTrigger>
             
             <PopoverContent className="w-full p-0" align="start">
-              <div className="p-3 border-b">
+              <div className="p-3 border-b space-y-2">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium text-sm">{t('selectOwners')}</h4>
                   {filters.owners && filters.owners.length > 0 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={clearAllOwners}
-                      className="h-6 px-2 text-xs"
-                    >
-                      <X className="h-3 w-3 mr-1" />
-                      {t('clearAll')}
+                    <Button variant="ghost" size="sm" onClick={clearAllOwners} className="h-6 px-2 text-xs">
+                      <X className="h-3 w-3 mr-1" />{t('clearAll')}
                     </Button>
                   )}
                 </div>
+                <Input
+                  placeholder="Rechercher..."
+                  value={ownerSearch}
+                  onChange={(e) => setOwnerSearch(e.target.value)}
+                  className="h-8 text-sm"
+                />
               </div>
               
               <div className="p-2">
@@ -351,16 +348,11 @@ export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeCh
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={selectAllOwners}
-                      className="w-full justify-start text-xs h-8"
-                    >
+                    <Button variant="ghost" size="sm" onClick={selectAllOwners} className="w-full justify-start text-xs h-8">
                       {t('selectAll')}
                     </Button>
                     
-                    {owners.map((owner) => (
+                    {owners.filter(o => o.label.toLowerCase().includes(ownerSearch.toLowerCase())).map((owner) => (
                       <div key={owner.value} className="flex items-center space-x-2 p-2 hover:bg-accent rounded-sm">
                         <Checkbox
                           id={`owner-${owner.value}`}

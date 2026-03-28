@@ -6,6 +6,7 @@ import { RevenueChart } from "@/components/dashboard/revenue-chart"
 import { RecentTasks } from "@/components/dashboard/recent-tasks"
 import { BillAlerts } from "@/components/dashboard/bill-alerts-original"
 import { BillMonitoringStats } from "@/components/dashboard/bill-monitoring-stats"
+import { ContractAlerts } from "@/components/dashboard/contract-alerts"
 import { MemberDashboard } from "@/components/dashboard/member-dashboard"
 import { SmartDashboard } from "@/components/dashboard/smart-dashboard"
 import { RoleBasedAccess } from "@/components/auth/role-based-access"
@@ -110,6 +111,9 @@ export function DashboardWrapper({
             </AlertDescription>
           </Alert>
         )}
+
+        {/* Contract expiry alerts */}
+        <ContractAlerts />
 
         {/* Role-based access control for stats */}
         <RoleBasedAccess 

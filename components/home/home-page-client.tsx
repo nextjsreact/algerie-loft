@@ -29,6 +29,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useTranslations, useLocale } from "next-intl"
+import { ContractAlerts } from "@/components/dashboard/contract-alerts"
 
 function HomePageContent({ session }: { session: AuthSession }) {
   const t = useTranslations('dashboard')
@@ -247,6 +248,11 @@ function HomePageContent({ session }: { session: AuthSession }) {
           </div>
         )}
       </div>
+
+      {/* Contract Expiry Alerts — admin/manager only */}
+      {(session.user.role === 'admin' || session.user.role === 'manager') && (
+        <ContractAlerts />
+      )}
 
       {/* Main Sections */}
       <div className="space-y-6">

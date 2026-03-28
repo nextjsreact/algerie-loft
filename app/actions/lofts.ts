@@ -150,7 +150,8 @@ export async function updateLoft(id: string, data: Omit<Loft, "id" | "created_at
       'amenities', 'is_published', 'maintenance_notes', 'availability_notes',
       'minimum_stay', 'maximum_stay', 'check_in_time', 'check_out_time',
       'cleaning_fee', 'tax_rate', 'cancellation_policy', 'house_rules',
-      'wifi_password', 'owner_id'
+      'wifi_password', 'owner_id',
+      'contract_start_date', 'contract_duration_months'
     ]
 
     const safeData = Object.fromEntries(

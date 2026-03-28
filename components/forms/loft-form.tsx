@@ -57,6 +57,8 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
     wifi_password: loft?.wifi_password || "",
     frequence_paiement_tv: loft?.frequence_paiement_tv || "",
     prochaine_echeance_tv: loft?.prochaine_echeance_tv || "",
+    contract_start_date: (loft as any)?.contract_start_date || "",
+    contract_duration_months: (loft as any)?.contract_duration_months?.toString() || "",
   }), [loft])
 
   const [formData, setFormData] = useState(() => getInitialFormData())
@@ -120,6 +122,8 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
         prochaine_echeance_telephone: formData.prochaine_echeance_telephone || null,
         prochaine_echeance_internet: formData.prochaine_echeance_internet || null,
         prochaine_echeance_tv: formData.prochaine_echeance_tv || null,
+        contract_start_date: formData.contract_start_date || null,
+        contract_duration_months: formData.contract_duration_months ? Number(formData.contract_duration_months) : null,
       }
       
       await onSubmit(processedData)
@@ -263,6 +267,56 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
               <Textarea id="description" value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} />
             </div>
           </div>
+
+          {/* Contract Section — visible only when owner is set */}
+          {formData.owner_id && (
+            <div className="space-y-6 p-6 bg-amber-50 rounded-lg shadow-md border border-amber-200">
+              <h2 className="text-2xl font-bold text-amber-800 border-b border-amber-200 pb-4 mb-6 flex items-center">
+                <span className="mr-3 text-3xl">📋</span>
+                Contrat partenaire
+              </h2>
+              <p className="text-amber-700 text-sm -mt-4 mb-4">
+                Renseignez les informations du contrat avec le propriétaire partenaire.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="contract_start_date">Date de début du contrat</Label>
+                  <Input
+                    id="contract_start_date"
+                    type="date"
+                    value={formData.contract_start_date}
+                    onChange={(e) => setFormData({...formData, contract_start_date: e.target.value})}
+                    className="bg-white"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contract_duration_months">Durée du contrat (mois)</Label>
+                  <Input
+                    id="contract_duration_months"
+                    type="number"
+                    min="1"
+                    max="120"
+                    value={formData.contract_duration_months}
+                    onChange={(e) => setFormData({...formData, contract_duration_months: e.target.value})}
+                    placeholder="Ex: 12"
+                    className="bg-white"
+                  />
+                </div>
+              </div>
+              {formData.contract_start_date && formData.contract_duration_months && (
+                <div className="mt-2 p-3 bg-amber-100 rounded-lg text-sm text-amber-800">
+                  📅 Date d'expiration :{' '}
+                  <strong>
+                    {(() => {
+                      const start = new Date(formData.contract_start_date)
+                      start.setMonth(start.getMonth() + Number(formData.contract_duration_months))
+                      return start.toLocaleDateString('fr-FR')
+                    })()}
+                  </strong>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Photos Section */}
           <div className="space-y-6 p-6 bg-white rounded-lg shadow-md border border-gray-200">

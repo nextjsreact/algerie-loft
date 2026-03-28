@@ -1186,6 +1186,15 @@
     "loading": "جاري التحميل...",
     "error": "خطأ",
     "noData": "لا توجد بيانات",
+    "contractAlerts": {
+      "title": "عقد على وشك الانتهاء",
+      "owner": "المالك",
+      "expiry": "ينتهي في",
+      "expired": "منتهي",
+      "daysRemaining": "يوم متبقي {count}",
+      "daysRemainingPlural": "أيام متبقية {count}",
+      "renew": "← تجديد"
+    },
     "dashboard": {
       "active": "نشط",
       "title": "العنوان"
@@ -1553,6 +1562,15 @@
     "waterMeterNumber": "رقم عداد المياه",
     "zoneArea": "المنطقة",
     "loftsList": "قائمة الشقق",
+    "contract": {
+      "title": "عقد الشريك",
+      "description": "أدخل تفاصيل العقد مع المالك الشريك.",
+      "startDate": "تاريخ بداية العقد",
+      "durationMonths": "مدة العقد (أشهر)",
+      "durationPlaceholder": "مثال: 12",
+      "expiryDate": "تاريخ الانتهاء",
+      "renewLink": "تجديد ←"
+    },
     "searchLofts": "البحث عن الشقق...",
     "found": "موجود",
     "loft": "شقة",

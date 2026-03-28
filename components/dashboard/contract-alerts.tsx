@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { AlertTriangle, FileWarning, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 interface ContractAlert {
   id: string
@@ -14,12 +14,13 @@ interface ContractAlert {
   owner_name: string
   contract_start_date: string
   contract_duration_months: number
-  expiry_date: Date
+  expiry_date: string
   days_remaining: number
 }
 
 export function ContractAlerts() {
   const locale = useLocale()
+  const t = useTranslations('dashboard.contractAlerts')
   const [alerts, setAlerts] = useState<ContractAlert[]>([])
   const [dismissed, setDismissed] = useState<Set<string>>(new Set())
 
@@ -32,6 +33,11 @@ export function ContractAlerts() {
 
   const visible = alerts.filter(a => !dismissed.has(a.id))
   if (visible.length === 0) return null
+
+  const formatDate = (iso: string) => {
+    const d = new Date(iso)
+    return d.toLocaleDateString(locale === 'ar' ? 'ar-DZ' : locale === 'fr' ? 'fr-FR' : 'en-GB')
+  }
 
   return (
     <div className="space-y-3">
@@ -53,22 +59,24 @@ export function ContractAlerts() {
                 }
                 <div className="flex-1 min-w-0">
                   <AlertTitle className={`font-semibold ${isCritical ? 'text-red-800 dark:text-red-300' : 'text-amber-800 dark:text-amber-300'}`}>
-                    Contrat expirant — {alert.name}
+                    {t('title')} — {alert.name}
                   </AlertTitle>
                   <AlertDescription className={`text-sm mt-1 ${isCritical ? 'text-red-700 dark:text-red-400' : 'text-amber-700 dark:text-amber-400'}`}>
-                    Propriétaire : <strong>{alert.owner_name}</strong> •{' '}
-                    Expire le <strong>{alert.expiry_date.toLocaleDateString('fr-FR')}</strong>
+                    {t('owner')} : <strong>{alert.owner_name}</strong> •{' '}
+                    {t('expiry')} <strong>{formatDate(alert.expiry_date)}</strong>
                   </AlertDescription>
                   <div className="flex items-center gap-2 mt-2">
                     <Badge variant={isCritical ? 'destructive' : 'outline'} className={!isCritical ? 'border-amber-500 text-amber-700' : ''}>
                       {alert.days_remaining <= 0
-                        ? 'Expiré'
-                        : `${alert.days_remaining} jour${alert.days_remaining > 1 ? 's' : ''} restant${alert.days_remaining > 1 ? 's' : ''}`
+                        ? t('expired')
+                        : alert.days_remaining === 1
+                          ? t('daysRemaining', { count: alert.days_remaining })
+                          : t('daysRemainingPlural', { count: alert.days_remaining })
                       }
                     </Badge>
                     <Link href={`/${locale}/lofts`}>
                       <Button variant="link" size="sm" className={`h-auto p-0 text-xs ${isCritical ? 'text-red-700' : 'text-amber-700'}`}>
-                        Renouveler →
+                        {t('renew')}
                       </Button>
                     </Link>
                   </div>

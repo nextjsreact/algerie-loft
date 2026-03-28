@@ -1181,6 +1181,15 @@
     "loading": "Loading...",
     "error": "Error",
     "noData": "No data",
+    "contractAlerts": {
+      "title": "Expiring contract",
+      "owner": "Owner",
+      "expiry": "Expires on",
+      "expired": "Expired",
+      "daysRemaining": "{count} day remaining",
+      "daysRemainingPlural": "{count} days remaining",
+      "renew": "Renew →"
+    },
     "dashboard": {
       "active": "Active",
       "title": "Title"
@@ -1552,6 +1561,15 @@
     "waterMeterNumber": "Water Meter Number",
     "zoneArea": "Zone",
     "loftsList": "Lofts List",
+    "contract": {
+      "title": "Partner Contract",
+      "description": "Enter the contract details with the partner owner.",
+      "startDate": "Contract start date",
+      "durationMonths": "Contract duration (months)",
+      "durationPlaceholder": "e.g. 12",
+      "expiryDate": "Expiry date",
+      "renewLink": "Renew →"
+    },
     "searchLofts": "Search lofts...",
     "found": "found",
     "loft": "loft",

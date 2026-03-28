@@ -273,14 +273,14 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
             <div className="space-y-6 p-6 bg-amber-50 rounded-lg shadow-md border border-amber-200">
               <h2 className="text-2xl font-bold text-amber-800 border-b border-amber-200 pb-4 mb-6 flex items-center">
                 <span className="mr-3 text-3xl">📋</span>
-                Contrat partenaire
+                {t('contract.title')}
               </h2>
               <p className="text-amber-700 text-sm -mt-4 mb-4">
-                Renseignez les informations du contrat avec le propriétaire partenaire.
+                {t('contract.description')}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="contract_start_date">Date de début du contrat</Label>
+                  <Label htmlFor="contract_start_date">{t('contract.startDate')}</Label>
                   <Input
                     id="contract_start_date"
                     type="date"
@@ -290,7 +290,7 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="contract_duration_months">Durée du contrat (mois)</Label>
+                  <Label htmlFor="contract_duration_months">{t('contract.durationMonths')}</Label>
                   <Input
                     id="contract_duration_months"
                     type="number"
@@ -298,14 +298,14 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
                     max="120"
                     value={formData.contract_duration_months}
                     onChange={(e) => setFormData({...formData, contract_duration_months: e.target.value})}
-                    placeholder="Ex: 12"
+                    placeholder={t('contract.durationPlaceholder')}
                     className="bg-white"
                   />
                 </div>
               </div>
               {formData.contract_start_date && formData.contract_duration_months && (
                 <div className="mt-2 p-3 bg-amber-100 rounded-lg text-sm text-amber-800">
-                  📅 Date d'expiration :{' '}
+                  📅 {t('contract.expiryDate')} :{' '}
                   <strong>
                     {(() => {
                       const start = new Date(formData.contract_start_date)

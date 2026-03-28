@@ -1188,6 +1188,15 @@
     "loading": "Chargement...",
     "error": "Erreur",
     "noData": "Aucune donnée",
+    "contractAlerts": {
+      "title": "Contrat expirant",
+      "owner": "Propriétaire",
+      "expiry": "Expire le",
+      "expired": "Expiré",
+      "daysRemaining": "{count} jour restant",
+      "daysRemainingPlural": "{count} jours restants",
+      "renew": "Renouveler →"
+    },
     "dashboard": {
       "active": "Actif",
       "title": "Titre"
@@ -1555,6 +1564,15 @@
     "waterMeterNumber": "Numéro de compteur d'eau",
     "zoneArea": "Zone",
     "loftsList": "Liste des appartements",
+    "contract": {
+      "title": "Contrat partenaire",
+      "description": "Renseignez les informations du contrat avec le propriétaire partenaire.",
+      "startDate": "Date de début du contrat",
+      "durationMonths": "Durée du contrat (mois)",
+      "durationPlaceholder": "Ex : 12",
+      "expiryDate": "Date d'expiration",
+      "renewLink": "Renouveler →"
+    },
     "searchLofts": "Rechercher des appartements...",
     "found": "trouvé",
     "loft": "appartement",

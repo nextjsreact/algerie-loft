@@ -19,17 +19,25 @@ export async function GET(request: NextRequest) {
 
     if (loftsError) return NextResponse.json({ error: loftsError.message }, { status: 500 })
 
-    // Fetch confirmed/completed reservations in date range
+    // Fetch confirmed/completed reservations in date range with guest info
     let query = supabase
       .from('reservations')
-      .select('loft_id, total_amount, check_in_date, check_out_date, status')
+      .select('id, loft_id, total_amount, check_in_date, check_out_date, status, guest_name, nights')
       .in('status', ['confirmed', 'completed'])
+      .order('check_in_date', { ascending: false })
 
     if (startDate) query = query.gte('check_in_date', startDate)
     if (endDate) query = query.lte('check_in_date', endDate)
 
     const { data: reservations, error: resError } = await query
     if (resError) return NextResponse.json({ error: resError.message }, { status: 500 })
+
+    // Group reservations by loft
+    const reservationsByLoft = new Map<string, any[]>()
+    ;(reservations || []).forEach(r => {
+      if (!reservationsByLoft.has(r.loft_id)) reservationsByLoft.set(r.loft_id, [])
+      reservationsByLoft.get(r.loft_id)!.push(r)
+    })
 
     // Calculate revenue per loft
     const revenueByLoft = new Map<string, number>()
@@ -44,6 +52,7 @@ export async function GET(request: NextRequest) {
       const companyPct = loft.company_percentage || 0
       const ownerDue = Math.round(revenue * ownerPct / 100)
       const companyDue = Math.round(revenue * companyPct / 100)
+      const loftReservations = reservationsByLoft.get(loft.id) || []
 
       return {
         loft_id: loft.id,
@@ -55,16 +64,32 @@ export async function GET(request: NextRequest) {
         total_revenue: revenue,
         owner_due: ownerDue,
         company_due: companyDue,
+        reservations: loftReservations.map(r => ({
+          id: r.id,
+          guest_name: r.guest_name,
+          check_in_date: r.check_in_date,
+          check_out_date: r.check_out_date,
+          nights: r.nights,
+          total_amount: r.total_amount,
+          status: r.status,
+        })),
       }
     })
 
     // Group by owner
-    const byOwner = new Map<string, { owner_id: string; owner_name: string; lofts: typeof loftResults; total_revenue: number; total_owner_due: number; total_company_due: number }>()
+    const byOwnerMap = new Map<string, any>()
     loftResults.forEach(l => {
-      if (!byOwner.has(l.owner_id)) {
-        byOwner.set(l.owner_id, { owner_id: l.owner_id, owner_name: l.owner_name, lofts: [], total_revenue: 0, total_owner_due: 0, total_company_due: 0 })
+      if (!byOwnerMap.has(l.owner_id)) {
+        byOwnerMap.set(l.owner_id, {
+          owner_id: l.owner_id,
+          owner_name: l.owner_name,
+          lofts: [],
+          total_revenue: 0,
+          total_owner_due: 0,
+          total_company_due: 0,
+        })
       }
-      const entry = byOwner.get(l.owner_id)!
+      const entry = byOwnerMap.get(l.owner_id)!
       entry.lofts.push(l)
       entry.total_revenue += l.total_revenue
       entry.total_owner_due += l.owner_due
@@ -73,7 +98,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       lofts: loftResults,
-      byOwner: Array.from(byOwner.values()),
+      byOwner: Array.from(byOwnerMap.values()),
+      period: { startDate, endDate },
     })
   } catch (err) {
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })

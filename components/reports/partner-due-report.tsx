@@ -125,7 +125,6 @@ export function PartnerDueReport() {
             const sign = isExpense ? '-' : '+'
             const color = isExpense ? '#dc2626' : '#16a34a'
             const bg = isExpense ? '#fef2f2' : ''
-            const ownerShare = Math.round(tx.amount * pct / 100)
             return `
               <tr style="background:${bg}">
                 <td style="padding:5px 8px;border:1px solid #e5e7eb">${fmtDate(tx.date)}</td>
@@ -137,10 +136,9 @@ export function PartnerDueReport() {
                   </span>
                 </td>
                 <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;color:${color};font-weight:500">${sign}${fmt(tx.amount)}</td>
-                <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;font-weight:bold;color:${isExpense ? '#dc2626' : '#111'}">${sign}${fmt(ownerShare)}</td>
               </tr>`
           }).join('')
-        : `<tr><td colspan="6" style="padding:8px;color:#9ca3af;text-align:center">${t('noTransactions')}</td></tr>`
+        : `<tr><td colspan="5" style="padding:8px;color:#9ca3af;text-align:center">${t('noTransactions')}</td></tr>`
 
       return `
         <div style="margin-bottom:28px">
@@ -155,17 +153,22 @@ export function PartnerDueReport() {
                 <th style="padding:6px 8px;text-align:left;border:1px solid #d1d5db">${t('category')}</th>
                 <th style="padding:6px 8px;text-align:center;border:1px solid #d1d5db">${t('type')}</th>
                 <th style="padding:6px 8px;text-align:right;border:1px solid #d1d5db">${t('amount')}</th>
-                <th style="padding:6px 8px;text-align:right;border:1px solid #d1d5db">${t('ownerDue')}</th>
               </tr>
             </thead>
             <tbody>${txRows}</tbody>
             <tfoot>
               <tr style="background:#f9fafb;font-size:11px;color:#6b7280">
-                <td colspan="4" style="padding:5px 8px;border:1px solid #e5e7eb">
-                  ${t('income')} : +${fmt(loft.total_income)} &nbsp;|&nbsp; ${t('expense')} : -${fmt(loft.total_expense)} &nbsp;|&nbsp; ${t('net')} : ${fmt(loft.total_revenue)}
+                <td colspan="3" style="padding:5px 8px;border:1px solid #e5e7eb">
+                  ${t('income')} : +${fmt(loft.total_income)} &nbsp;&minus;&nbsp; ${t('expense')} : ${fmt(loft.total_expense)}
                 </td>
+                <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;font-weight:bold">${t('net')}</td>
                 <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;font-weight:bold">${fmt(loft.total_revenue)}</td>
-                <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;font-weight:bold;color:#d97706">${fmt(netOwnerDue)}</td>
+              </tr>
+              <tr style="background:#fef3c7;font-weight:bold">
+                <td colspan="3" style="padding:6px 8px;border:1px solid #d1d5db">
+                  ${t('ownerDue')} (${fmt(loft.total_revenue)} × ${pct}%)
+                </td>
+                <td colspan="2" style="padding:6px 8px;text-align:right;border:1px solid #d1d5db;color:#d97706;font-size:13px">${fmt(netOwnerDue)}</td>
               </tr>
             </tfoot>
           </table>
@@ -428,12 +431,10 @@ export function PartnerDueReport() {
                       <th className="text-left p-3 font-medium">{t('category')}</th>
                       <th className="text-center p-3 font-medium">{t('type')}</th>
                       <th className="text-right p-3 font-medium">{t('amount')}</th>
-                      <th className="text-right p-3 font-medium">{t('ownerDue')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                     {detailLoft.transactions.map(tx => {
-                      const pct = overrides[detailLoft.loft_id] ?? detailLoft.owner_percentage
                       const isExpense = tx.type === 'expense'
                       return (
                         <tr key={tx.id} className={`hover:bg-gray-50 dark:hover:bg-gray-700/30 ${isExpense ? 'bg-red-50/40 dark:bg-red-900/10' : ''}`}>
@@ -446,10 +447,7 @@ export function PartnerDueReport() {
                             </span>
                           </td>
                           <td className={`p-3 text-right font-medium ${isExpense ? 'text-red-600' : 'text-green-600'}`}>
-                            {isExpense ? '-' : ''}{fmt(tx.amount)}
-                          </td>
-                          <td className="p-3 text-right font-semibold text-amber-700">
-                            {isExpense ? '-' : ''}{fmt(Math.round(tx.amount * pct / 100))}
+                            {isExpense ? '-' : '+'}{fmt(tx.amount)}
                           </td>
                         </tr>
                       )
@@ -457,9 +455,15 @@ export function PartnerDueReport() {
                   </tbody>
                   <tfoot>
                     <tr className="bg-gray-100 dark:bg-gray-700 text-xs text-gray-500">
-                      <td colSpan={4} className="p-2 pl-3">{t('income')} : {fmt(detailLoft.total_income)} — {t('expense')} : -{fmt(detailLoft.total_expense)}</td>
+                      <td colSpan={3} className="p-2 pl-3">{t('income')} : +{fmt(detailLoft.total_income)} — {t('expense')} : -{fmt(detailLoft.total_expense)}</td>
+                      <td className="p-2 text-right font-semibold">{t('net')}</td>
                       <td className="p-2 text-right font-semibold">{fmt(detailLoft.total_revenue)}</td>
-                      <td className="p-2 text-right font-semibold text-amber-700">{fmt(calcOwnerDue(detailLoft))}</td>
+                    </tr>
+                    <tr className="bg-amber-50 dark:bg-amber-900/20 font-bold">
+                      <td colSpan={4} className="p-3">
+                        {t('ownerDue')} ({fmt(detailLoft.total_revenue)} × {overrides[detailLoft.loft_id] ?? detailLoft.owner_percentage}%)
+                      </td>
+                      <td className="p-3 text-right text-amber-700">{fmt(calcOwnerDue(detailLoft))}</td>
                     </tr>
                   </tfoot>
                 </table>

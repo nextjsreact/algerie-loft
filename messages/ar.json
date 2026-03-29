@@ -2025,7 +2025,13 @@
       "nights": "الليالي",
       "amount": "المبلغ",
       "nbRes": "حج.",
+      "nbTx": "معا.",
       "noReservations": "لا توجد حجوزات في هذه الفترة",
+      "noTransactions": "لا توجد معاملات في هذه الفترة",
+      "transactionDetail": "تفاصيل المعاملات",
+      "date": "التاريخ",
+      "description": "الوصف",
+      "category": "الفئة",
       "signature": "التوقيع"
     },
     "quarter": "ربع سنوي",

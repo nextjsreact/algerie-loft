@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -10,16 +10,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useTranslations, useLocale } from 'next-intl'
 import { format, startOfMonth, endOfMonth } from 'date-fns'
 import { fr, ar, enUS } from 'date-fns/locale'
-import { RefreshCw, ChevronDown, ChevronRight, Building2, User, Printer, Eye, X } from 'lucide-react'
+import { RefreshCw, ChevronDown, ChevronRight, Building2, User, Printer, Eye } from 'lucide-react'
 
-interface Reservation {
+interface Transaction {
   id: string
-  guest_name: string
-  check_in_date: string
-  check_out_date: string
-  nights: number
-  total_amount: number
-  status: string
+  date: string
+  description: string
+  category: string
+  amount: number
 }
 
 interface LoftResult {
@@ -32,7 +30,7 @@ interface LoftResult {
   total_revenue: number
   owner_due: number
   company_due: number
-  reservations: Reservation[]
+  transactions: Transaction[]
 }
 
 interface OwnerGroup {
@@ -55,8 +53,6 @@ export function PartnerDueReport() {
   const [overrides, setOverrides] = useState<Record<string, number>>({})
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [detailLoft, setDetailLoft] = useState<LoftResult | null>(null)
-  const [printOwner, setPrintOwner] = useState<OwnerGroup | null>(null)
-  const printRef = useRef<HTMLDivElement>(null)
 
   const dateLocale = locale === 'ar' ? ar : locale === 'fr' ? fr : enUS
 
@@ -87,7 +83,9 @@ export function PartnerDueReport() {
   }
 
   const fmt = (n: number) => n.toLocaleString('fr-DZ') + ' DA'
-  const fmtDate = (d: string) => format(new Date(d), 'dd/MM/yyyy', { locale: dateLocale })
+  const fmtDate = (d: string) => {
+    try { return format(new Date(d), 'dd/MM/yyyy', { locale: dateLocale }) } catch { return d }
+  }
 
   const calcOwnerDue = (loft: LoftResult) => {
     const pct = overrides[loft.loft_id] ?? loft.owner_percentage
@@ -106,117 +104,113 @@ export function PartnerDueReport() {
   const grandOwner = byOwner.reduce((s, g) => s + ownerTotal(g), 0)
   const grandCompany = byOwner.reduce((s, g) => s + companyTotal(g), 0)
 
-  // Print a single owner's report
+  // Print in a new window — reliable cross-browser
   const handlePrint = (group: OwnerGroup) => {
-    setPrintOwner(group)
-    setTimeout(() => {
-      window.print()
-    }, 300)
+    const pctMap: Record<string, number> = {}
+    group.lofts.forEach(l => { pctMap[l.loft_id] = overrides[l.loft_id] ?? l.owner_percentage })
+
+    const rows = group.lofts.map(loft => {
+      const pct = pctMap[loft.loft_id]
+      const ownerDue = Math.round(loft.total_revenue * pct / 100)
+      const txRows = loft.transactions.length > 0
+        ? loft.transactions.map(tx => `
+            <tr>
+              <td style="padding:5px 8px;border:1px solid #e5e7eb">${fmtDate(tx.date)}</td>
+              <td style="padding:5px 8px;border:1px solid #e5e7eb">${tx.description || '-'}</td>
+              <td style="padding:5px 8px;border:1px solid #e5e7eb">${tx.category || '-'}</td>
+              <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb">${fmt(tx.amount)}</td>
+              <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;font-weight:bold">${fmt(Math.round(tx.amount * pct / 100))}</td>
+            </tr>`).join('')
+        : `<tr><td colspan="5" style="padding:8px;color:#9ca3af;text-align:center">${t('noTransactions')}</td></tr>`
+
+      return `
+        <div style="margin-bottom:24px">
+          <h3 style="font-size:14px;font-weight:bold;background:#f3f4f6;padding:8px 12px;margin:0 0 8px;border-radius:4px">
+            🏠 ${loft.loft_name} &mdash; ${t('ownerPct')} : ${pct}%
+          </h3>
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead>
+              <tr style="background:#e5e7eb">
+                <th style="padding:6px 8px;text-align:left;border:1px solid #d1d5db">${t('date')}</th>
+                <th style="padding:6px 8px;text-align:left;border:1px solid #d1d5db">${t('description')}</th>
+                <th style="padding:6px 8px;text-align:left;border:1px solid #d1d5db">${t('category')}</th>
+                <th style="padding:6px 8px;text-align:right;border:1px solid #d1d5db">${t('amount')}</th>
+                <th style="padding:6px 8px;text-align:right;border:1px solid #d1d5db">${t('ownerDue')}</th>
+              </tr>
+            </thead>
+            <tbody>${txRows}</tbody>
+            <tfoot>
+              <tr style="background:#fef3c7;font-weight:bold">
+                <td colspan="3" style="padding:6px 8px;border:1px solid #d1d5db">${t('subtotal')} ${loft.loft_name}</td>
+                <td style="padding:6px 8px;text-align:right;border:1px solid #d1d5db">${fmt(loft.total_revenue)}</td>
+                <td style="padding:6px 8px;text-align:right;border:1px solid #d1d5db">${fmt(ownerDue)}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>`
+    }).join('')
+
+    const html = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>${t('printTitle')} - ${group.owner_name}</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 32px; max-width: 800px; margin: 0 auto; color: #111; }
+    @media print { body { padding: 16px; } }
+  </style>
+</head>
+<body>
+  <div style="border-bottom:2px solid #333;padding-bottom:16px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-end">
+    <div>
+      <h1 style="font-size:22px;font-weight:bold;margin:0">Loft Algérie</h1>
+      <h2 style="font-size:15px;color:#555;margin:4px 0 0">${t('printTitle')}</h2>
+    </div>
+    <div style="text-align:right;font-size:12px;color:#666">
+      <p style="margin:0">${t('printedOn')} : ${format(new Date(), 'dd/MM/yyyy')}</p>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;margin-bottom:24px">
+    <div>
+      <p style="margin:0;font-weight:bold;font-size:15px">${t('partner')} : ${group.owner_name}</p>
+      <p style="margin:4px 0 0;color:#666;font-size:13px">${t('period')} : ${fmtDate(startDate)} → ${fmtDate(endDate)}</p>
+    </div>
+  </div>
+
+  ${rows}
+
+  <div style="border-top:2px solid #333;padding-top:16px;margin-top:8px">
+    <table style="width:100%;font-size:13px">
+      <tr>
+        <td style="padding:4px 0;font-weight:bold">${t('totalRevenue')}</td>
+        <td style="text-align:right;font-weight:bold">${fmt(revenueTotal(group))}</td>
+      </tr>
+      <tr>
+        <td style="padding:4px 0;color:#d97706;font-weight:bold">${t('totalOwnerDue')}</td>
+        <td style="text-align:right;color:#d97706;font-weight:bold;font-size:16px">${fmt(ownerTotal(group))}</td>
+      </tr>
+    </table>
+  </div>
+
+  <div style="margin-top:48px;border-top:1px solid #e5e7eb;padding-top:16px;display:flex;justify-content:space-between;font-size:12px;color:#9ca3af">
+    <span>Loft Algérie — www.loftalgerie.com</span>
+    <span>${t('signature')} : ___________________</span>
+  </div>
+
+  <script>window.onload = function(){ window.print(); }</script>
+</body>
+</html>`
+
+    const win = window.open('', '_blank', 'width=900,height=700')
+    if (win) {
+      win.document.write(html)
+      win.document.close()
+    }
   }
 
   return (
     <div className="space-y-6">
-      {/* Print styles */}
-      <style>{`
-        @media print {
-          body > * { display: none !important; }
-          #partner-print-area { display: block !important; }
-          #partner-print-area { position: fixed; top: 0; left: 0; width: 100%; }
-        }
-        #partner-print-area { display: none; }
-      `}</style>
-
-      {/* Hidden print area */}
-      {printOwner && (
-        <div id="partner-print-area" ref={printRef}>
-          <div style={{ fontFamily: 'Arial, sans-serif', padding: '32px', maxWidth: '800px', margin: '0 auto' }}>
-            {/* Header */}
-            <div style={{ borderBottom: '2px solid #333', paddingBottom: '16px', marginBottom: '24px' }}>
-              <h1 style={{ fontSize: '22px', fontWeight: 'bold', margin: 0 }}>Loft Algérie</h1>
-              <h2 style={{ fontSize: '16px', color: '#555', margin: '4px 0 0' }}>{t('printTitle')}</h2>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-              <div>
-                <p style={{ margin: 0, fontWeight: 'bold', fontSize: '15px' }}>{t('partner')} : {printOwner.owner_name}</p>
-                <p style={{ margin: '4px 0 0', color: '#666', fontSize: '13px' }}>
-                  {t('period')} : {fmtDate(startDate)} → {fmtDate(endDate)}
-                </p>
-              </div>
-              <div style={{ textAlign: 'right', color: '#666', fontSize: '12px' }}>
-                <p style={{ margin: 0 }}>{t('printedOn')} : {format(new Date(), 'dd/MM/yyyy')}</p>
-              </div>
-            </div>
-
-            {/* Per loft */}
-            {printOwner.lofts.map(loft => {
-              const pct = overrides[loft.loft_id] ?? loft.owner_percentage
-              const ownerDue = Math.round(loft.total_revenue * pct / 100)
-              return (
-                <div key={loft.loft_id} style={{ marginBottom: '24px' }}>
-                  <h3 style={{ fontSize: '14px', fontWeight: 'bold', background: '#f3f4f6', padding: '8px 12px', margin: '0 0 8px', borderRadius: '4px' }}>
-                    🏠 {loft.loft_name} — {t('ownerPct')} : {pct}%
-                  </h3>
-                  {loft.reservations.length > 0 ? (
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
-                      <thead>
-                        <tr style={{ background: '#e5e7eb' }}>
-                          <th style={{ padding: '6px 8px', textAlign: 'left', border: '1px solid #d1d5db' }}>{t('guest')}</th>
-                          <th style={{ padding: '6px 8px', textAlign: 'center', border: '1px solid #d1d5db' }}>{t('checkIn')}</th>
-                          <th style={{ padding: '6px 8px', textAlign: 'center', border: '1px solid #d1d5db' }}>{t('checkOut')}</th>
-                          <th style={{ padding: '6px 8px', textAlign: 'center', border: '1px solid #d1d5db' }}>{t('nights')}</th>
-                          <th style={{ padding: '6px 8px', textAlign: 'right', border: '1px solid #d1d5db' }}>{t('amount')}</th>
-                          <th style={{ padding: '6px 8px', textAlign: 'right', border: '1px solid #d1d5db' }}>{t('ownerDue')}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {loft.reservations.map(r => (
-                          <tr key={r.id}>
-                            <td style={{ padding: '5px 8px', border: '1px solid #e5e7eb' }}>{r.guest_name}</td>
-                            <td style={{ padding: '5px 8px', textAlign: 'center', border: '1px solid #e5e7eb' }}>{fmtDate(r.check_in_date)}</td>
-                            <td style={{ padding: '5px 8px', textAlign: 'center', border: '1px solid #e5e7eb' }}>{fmtDate(r.check_out_date)}</td>
-                            <td style={{ padding: '5px 8px', textAlign: 'center', border: '1px solid #e5e7eb' }}>{r.nights}</td>
-                            <td style={{ padding: '5px 8px', textAlign: 'right', border: '1px solid #e5e7eb' }}>{fmt(r.total_amount)}</td>
-                            <td style={{ padding: '5px 8px', textAlign: 'right', border: '1px solid #e5e7eb', fontWeight: 'bold' }}>{fmt(Math.round(r.total_amount * pct / 100))}</td>
-                          </tr>
-                        ))}
-                        <tr style={{ background: '#fef3c7', fontWeight: 'bold' }}>
-                          <td colSpan={4} style={{ padding: '6px 8px', border: '1px solid #d1d5db' }}>{t('subtotal')} {loft.loft_name}</td>
-                          <td style={{ padding: '6px 8px', textAlign: 'right', border: '1px solid #d1d5db' }}>{fmt(loft.total_revenue)}</td>
-                          <td style={{ padding: '6px 8px', textAlign: 'right', border: '1px solid #d1d5db' }}>{fmt(ownerDue)}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  ) : (
-                    <p style={{ color: '#9ca3af', fontSize: '12px', padding: '8px' }}>{t('noReservations')}</p>
-                  )}
-                </div>
-              )
-            })}
-
-            {/* Grand total */}
-            <div style={{ borderTop: '2px solid #333', paddingTop: '16px', marginTop: '8px' }}>
-              <table style={{ width: '100%', fontSize: '13px' }}>
-                <tbody>
-                  <tr>
-                    <td style={{ padding: '4px 0', fontWeight: 'bold' }}>{t('totalRevenue')}</td>
-                    <td style={{ textAlign: 'right', fontWeight: 'bold' }}>{fmt(revenueTotal(printOwner))}</td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: '4px 0', color: '#d97706', fontWeight: 'bold' }}>{t('totalOwnerDue')} ({t('ownerPct')} moyen)</td>
-                    <td style={{ textAlign: 'right', color: '#d97706', fontWeight: 'bold', fontSize: '16px' }}>{fmt(ownerTotal(printOwner))}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div style={{ marginTop: '48px', borderTop: '1px solid #e5e7eb', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#9ca3af' }}>
-              <span>Loft Algérie — www.loftalgerie.com</span>
-              <span>{t('signature')} : ___________________</span>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Filters */}
       <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-800/80">
         <CardContent className="p-4">
@@ -278,7 +272,7 @@ export function PartnerDueReport() {
                 }
                 <User className="h-5 w-5 text-purple-600" />
                 <CardTitle className="text-lg">{group.owner_name}</CardTitle>
-                <Badge variant="outline" className="text-xs">{group.lofts.length} {t('lofts')}</Badge>
+                <Badge variant="outline" className="text-xs">{group.lofts.filter(l => l.total_revenue > 0).length} {t('lofts')}</Badge>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-6 text-sm">
@@ -295,7 +289,6 @@ export function PartnerDueReport() {
                     <p className="font-bold text-emerald-700">{fmt(companyTotal(group))}</p>
                   </div>
                 </div>
-                {/* Print button */}
                 <Button
                   size="sm"
                   variant="outline"
@@ -312,10 +305,9 @@ export function PartnerDueReport() {
           {expanded.has(group.owner_id) && (
             <CardContent className="p-0">
               <div className="divide-y divide-gray-100 dark:divide-gray-700">
-                {/* Column headers */}
                 <div className="grid grid-cols-12 gap-2 px-6 py-2 bg-gray-50 dark:bg-gray-700/50 text-xs text-gray-500 font-medium">
                   <div className="col-span-3">{t('loft')}</div>
-                  <div className="col-span-1 text-center">{t('nbRes')}</div>
+                  <div className="col-span-1 text-center">{t('nbTx')}</div>
                   <div className="col-span-2 text-right">{t('revenue')}</div>
                   <div className="col-span-2 text-center">{t('ownerPct')}</div>
                   <div className="col-span-2 text-right">{t('ownerDue')}</div>
@@ -323,7 +315,7 @@ export function PartnerDueReport() {
                   <div className="col-span-1 text-right">{t('companyDue')}</div>
                 </div>
 
-                {group.lofts.map(loft => {
+                {group.lofts.filter(l => l.total_revenue > 0).map(loft => {
                   const pct = overrides[loft.loft_id] ?? loft.owner_percentage
                   const compPct = 100 - pct
                   return (
@@ -336,19 +328,15 @@ export function PartnerDueReport() {
                         <button
                           className="text-xs text-blue-600 hover:underline flex items-center gap-1 mx-auto"
                           onClick={() => setDetailLoft(loft)}
-                          title={t('viewDetail')}
                         >
                           <Eye className="h-3 w-3" />
-                          {loft.reservations.length}
+                          {loft.transactions.length}
                         </button>
                       </div>
                       <div className="col-span-2 text-right text-sm">{fmt(loft.total_revenue)}</div>
                       <div className="col-span-2 flex items-center justify-center gap-1">
                         <Input
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="0.5"
+                          type="number" min="0" max="100" step="0.5"
                           value={pct}
                           onChange={e => setOverrides(prev => ({ ...prev, [loft.loft_id]: Number(e.target.value) }))}
                           className="h-7 w-16 text-center text-sm px-1"
@@ -370,7 +358,6 @@ export function PartnerDueReport() {
                   )
                 })}
 
-                {/* Subtotal */}
                 <div className="grid grid-cols-12 gap-2 px-6 py-3 bg-gray-50 dark:bg-gray-700/50 font-semibold text-sm">
                   <div className="col-span-3 text-gray-600">{t('subtotal')}</div>
                   <div className="col-span-1"></div>
@@ -386,13 +373,13 @@ export function PartnerDueReport() {
         </Card>
       ))}
 
-      {/* Reservation detail modal */}
+      {/* Transaction detail modal */}
       <Dialog open={!!detailLoft} onOpenChange={() => setDetailLoft(null)}>
         <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Building2 className="h-5 w-5 text-blue-500" />
-              {detailLoft?.loft_name} — {t('reservationDetail')}
+              {detailLoft?.loft_name} — {t('transactionDetail')}
             </DialogTitle>
           </DialogHeader>
           {detailLoft && (
@@ -401,38 +388,36 @@ export function PartnerDueReport() {
                 <span>{t('partner')} : <strong>{detailLoft.owner_name}</strong></span>
                 <span>{t('ownerPct')} : <strong>{overrides[detailLoft.loft_id] ?? detailLoft.owner_percentage}%</strong></span>
               </div>
-              {detailLoft.reservations.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">{t('noReservations')}</p>
+              {detailLoft.transactions.length === 0 ? (
+                <p className="text-gray-500 text-center py-8">{t('noTransactions')}</p>
               ) : (
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-gray-50 dark:bg-gray-700">
-                      <th className="text-left p-3 font-medium">{t('guest')}</th>
-                      <th className="text-center p-3 font-medium">{t('checkIn')}</th>
-                      <th className="text-center p-3 font-medium">{t('checkOut')}</th>
-                      <th className="text-center p-3 font-medium">{t('nights')}</th>
+                      <th className="text-left p-3 font-medium">{t('date')}</th>
+                      <th className="text-left p-3 font-medium">{t('description')}</th>
+                      <th className="text-left p-3 font-medium">{t('category')}</th>
                       <th className="text-right p-3 font-medium">{t('amount')}</th>
                       <th className="text-right p-3 font-medium">{t('ownerDue')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                    {detailLoft.reservations.map(r => {
+                    {detailLoft.transactions.map(tx => {
                       const pct = overrides[detailLoft.loft_id] ?? detailLoft.owner_percentage
                       return (
-                        <tr key={r.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
-                          <td className="p-3">{r.guest_name}</td>
-                          <td className="p-3 text-center">{fmtDate(r.check_in_date)}</td>
-                          <td className="p-3 text-center">{fmtDate(r.check_out_date)}</td>
-                          <td className="p-3 text-center">{r.nights}</td>
-                          <td className="p-3 text-right">{fmt(r.total_amount)}</td>
-                          <td className="p-3 text-right font-semibold text-amber-700">{fmt(Math.round(r.total_amount * pct / 100))}</td>
+                        <tr key={tx.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+                          <td className="p-3">{fmtDate(tx.date)}</td>
+                          <td className="p-3">{tx.description || '-'}</td>
+                          <td className="p-3">{tx.category || '-'}</td>
+                          <td className="p-3 text-right">{fmt(tx.amount)}</td>
+                          <td className="p-3 text-right font-semibold text-amber-700">{fmt(Math.round(tx.amount * pct / 100))}</td>
                         </tr>
                       )
                     })}
                   </tbody>
                   <tfoot>
                     <tr className="bg-amber-50 dark:bg-amber-900/20 font-bold">
-                      <td colSpan={4} className="p-3">{t('subtotal')}</td>
+                      <td colSpan={3} className="p-3">{t('subtotal')}</td>
                       <td className="p-3 text-right">{fmt(detailLoft.total_revenue)}</td>
                       <td className="p-3 text-right text-amber-700">{fmt(calcOwnerDue(detailLoft))}</td>
                     </tr>

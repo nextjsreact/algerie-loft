@@ -19,30 +19,31 @@ export async function GET(request: NextRequest) {
 
     if (loftsError) return NextResponse.json({ error: loftsError.message }, { status: 500 })
 
-    // Fetch confirmed/completed reservations in date range with guest info
+    // Fetch income transactions per loft in date range
     let query = supabase
-      .from('reservations')
-      .select('id, loft_id, total_amount, check_in_date, check_out_date, status, guest_name, nights')
-      .in('status', ['confirmed', 'completed'])
-      .order('check_in_date', { ascending: false })
+      .from('transactions')
+      .select('id, loft_id, amount, equivalent_amount_default_currency, description, date, transaction_type, category, status')
+      .eq('transaction_type', 'income')
+      .order('date', { ascending: false })
 
-    if (startDate) query = query.gte('check_in_date', startDate)
-    if (endDate) query = query.lte('check_in_date', endDate)
+    if (startDate) query = query.gte('date', startDate)
+    if (endDate) query = query.lte('date', endDate + 'T23:59:59')
 
-    const { data: reservations, error: resError } = await query
-    if (resError) return NextResponse.json({ error: resError.message }, { status: 500 })
+    const { data: transactions, error: txError } = await query
+    if (txError) return NextResponse.json({ error: txError.message }, { status: 500 })
 
-    // Group reservations by loft
-    const reservationsByLoft = new Map<string, any[]>()
-    ;(reservations || []).forEach(r => {
-      if (!reservationsByLoft.has(r.loft_id)) reservationsByLoft.set(r.loft_id, [])
-      reservationsByLoft.get(r.loft_id)!.push(r)
+    // Group transactions by loft
+    const txByLoft = new Map<string, any[]>()
+    ;(transactions || []).forEach(tx => {
+      if (!txByLoft.has(tx.loft_id)) txByLoft.set(tx.loft_id, [])
+      txByLoft.get(tx.loft_id)!.push(tx)
     })
 
-    // Calculate revenue per loft
+    // Revenue per loft (sum of equivalent_amount_default_currency)
     const revenueByLoft = new Map<string, number>()
-    ;(reservations || []).forEach(r => {
-      revenueByLoft.set(r.loft_id, (revenueByLoft.get(r.loft_id) || 0) + (r.total_amount || 0))
+    ;(transactions || []).forEach(tx => {
+      const amt = tx.equivalent_amount_default_currency ?? tx.amount ?? 0
+      revenueByLoft.set(tx.loft_id, (revenueByLoft.get(tx.loft_id) || 0) + Number(amt))
     })
 
     // Build result per loft
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest) {
       const companyPct = loft.company_percentage || 0
       const ownerDue = Math.round(revenue * ownerPct / 100)
       const companyDue = Math.round(revenue * companyPct / 100)
-      const loftReservations = reservationsByLoft.get(loft.id) || []
+      const loftTx = txByLoft.get(loft.id) || []
 
       return {
         loft_id: loft.id,
@@ -61,22 +62,20 @@ export async function GET(request: NextRequest) {
         owner_name: (loft.owners as any)?.name || 'Inconnu',
         owner_percentage: ownerPct,
         company_percentage: companyPct,
-        total_revenue: revenue,
+        total_revenue: Math.round(revenue),
         owner_due: ownerDue,
         company_due: companyDue,
-        reservations: loftReservations.map(r => ({
-          id: r.id,
-          guest_name: r.guest_name,
-          check_in_date: r.check_in_date,
-          check_out_date: r.check_out_date,
-          nights: r.nights,
-          total_amount: r.total_amount,
-          status: r.status,
+        transactions: loftTx.map(tx => ({
+          id: tx.id,
+          date: tx.date,
+          description: tx.description || '',
+          category: tx.category || '',
+          amount: Math.round(Number(tx.equivalent_amount_default_currency ?? tx.amount ?? 0)),
         })),
       }
     })
 
-    // Group by owner
+    // Group by owner — only include lofts that have transactions
     const byOwnerMap = new Map<string, any>()
     loftResults.forEach(l => {
       if (!byOwnerMap.has(l.owner_id)) {
@@ -96,12 +95,18 @@ export async function GET(request: NextRequest) {
       entry.total_company_due += l.company_due
     })
 
+    // Filter out owners with zero revenue
+    const byOwner = Array.from(byOwnerMap.values())
+      .filter(g => g.total_revenue > 0)
+      .sort((a, b) => b.total_revenue - a.total_revenue)
+
     return NextResponse.json({
       lofts: loftResults,
-      byOwner: Array.from(byOwnerMap.values()),
+      byOwner,
       period: { startDate, endDate },
     })
   } catch (err) {
+    console.error('[partner-due]', err)
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
 }

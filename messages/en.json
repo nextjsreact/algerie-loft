@@ -2011,7 +2011,13 @@
       "nights": "Nights",
       "amount": "Amount",
       "nbRes": "Res.",
+      "nbTx": "Tx.",
       "noReservations": "No reservations for this period",
+      "noTransactions": "No transactions for this period",
+      "transactionDetail": "Transaction detail",
+      "date": "Date",
+      "description": "Description",
+      "category": "Category",
       "signature": "Signature"
     },
     "quarter": "Quarter",

@@ -112,22 +112,38 @@ export function PartnerDueReport() {
     const pctMap: Record<string, number> = {}
     group.lofts.forEach(l => { pctMap[l.loft_id] = overrides[l.loft_id] ?? l.owner_percentage })
 
-    const rows = group.lofts.map(loft => {
+    // Only lofts where partner has a percentage > 0
+    const activeLofts = group.lofts.filter(l => (pctMap[l.loft_id] ?? 0) > 0 && (l.total_income > 0 || l.total_expense > 0))
+
+    const rows = activeLofts.map(loft => {
       const pct = pctMap[loft.loft_id]
-      const ownerDue = Math.round(loft.total_revenue * pct / 100)
+      const netOwnerDue = Math.round(loft.total_revenue * pct / 100)
+
       const txRows = loft.transactions.length > 0
-        ? loft.transactions.map(tx => `
-            <tr>
-              <td style="padding:5px 8px;border:1px solid #e5e7eb">${fmtDate(tx.date)}</td>
-              <td style="padding:5px 8px;border:1px solid #e5e7eb">${tx.description || '-'}</td>
-              <td style="padding:5px 8px;border:1px solid #e5e7eb">${tx.category || '-'}</td>
-              <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb">${fmt(tx.amount)}</td>
-              <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;font-weight:bold">${fmt(Math.round(tx.amount * pct / 100))}</td>
-            </tr>`).join('')
-        : `<tr><td colspan="5" style="padding:8px;color:#9ca3af;text-align:center">${t('noTransactions')}</td></tr>`
+        ? loft.transactions.map(tx => {
+            const isExpense = tx.type === 'expense'
+            const sign = isExpense ? '-' : '+'
+            const color = isExpense ? '#dc2626' : '#16a34a'
+            const bg = isExpense ? '#fef2f2' : ''
+            const ownerShare = Math.round(tx.amount * pct / 100)
+            return `
+              <tr style="background:${bg}">
+                <td style="padding:5px 8px;border:1px solid #e5e7eb">${fmtDate(tx.date)}</td>
+                <td style="padding:5px 8px;border:1px solid #e5e7eb">${tx.description || '-'}</td>
+                <td style="padding:5px 8px;border:1px solid #e5e7eb">${tx.category || '-'}</td>
+                <td style="padding:5px 8px;text-align:center;border:1px solid #e5e7eb">
+                  <span style="font-size:11px;padding:2px 6px;border-radius:9999px;background:${isExpense ? '#fee2e2' : '#dcfce7'};color:${color};font-weight:bold">
+                    ${isExpense ? t('expenseLabel') : t('incomeLabel')}
+                  </span>
+                </td>
+                <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;color:${color};font-weight:500">${sign}${fmt(tx.amount)}</td>
+                <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;font-weight:bold;color:${isExpense ? '#dc2626' : '#111'}">${sign}${fmt(ownerShare)}</td>
+              </tr>`
+          }).join('')
+        : `<tr><td colspan="6" style="padding:8px;color:#9ca3af;text-align:center">${t('noTransactions')}</td></tr>`
 
       return `
-        <div style="margin-bottom:24px">
+        <div style="margin-bottom:28px">
           <h3 style="font-size:14px;font-weight:bold;background:#f3f4f6;padding:8px 12px;margin:0 0 8px;border-radius:4px">
             🏠 ${loft.loft_name} &mdash; ${t('ownerPct')} : ${pct}%
           </h3>
@@ -137,21 +153,29 @@ export function PartnerDueReport() {
                 <th style="padding:6px 8px;text-align:left;border:1px solid #d1d5db">${t('date')}</th>
                 <th style="padding:6px 8px;text-align:left;border:1px solid #d1d5db">${t('description')}</th>
                 <th style="padding:6px 8px;text-align:left;border:1px solid #d1d5db">${t('category')}</th>
+                <th style="padding:6px 8px;text-align:center;border:1px solid #d1d5db">${t('type')}</th>
                 <th style="padding:6px 8px;text-align:right;border:1px solid #d1d5db">${t('amount')}</th>
                 <th style="padding:6px 8px;text-align:right;border:1px solid #d1d5db">${t('ownerDue')}</th>
               </tr>
             </thead>
             <tbody>${txRows}</tbody>
             <tfoot>
-              <tr style="background:#fef3c7;font-weight:bold">
-                <td colspan="3" style="padding:6px 8px;border:1px solid #d1d5db">${t('subtotal')} ${loft.loft_name}</td>
-                <td style="padding:6px 8px;text-align:right;border:1px solid #d1d5db">${fmt(loft.total_revenue)}</td>
-                <td style="padding:6px 8px;text-align:right;border:1px solid #d1d5db">${fmt(ownerDue)}</td>
+              <tr style="background:#f9fafb;font-size:11px;color:#6b7280">
+                <td colspan="4" style="padding:5px 8px;border:1px solid #e5e7eb">
+                  ${t('income')} : +${fmt(loft.total_income)} &nbsp;|&nbsp; ${t('expense')} : -${fmt(loft.total_expense)} &nbsp;|&nbsp; ${t('net')} : ${fmt(loft.total_revenue)}
+                </td>
+                <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;font-weight:bold">${fmt(loft.total_revenue)}</td>
+                <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;font-weight:bold;color:#d97706">${fmt(netOwnerDue)}</td>
               </tr>
             </tfoot>
           </table>
         </div>`
     }).join('')
+
+    const totalIncome = activeLofts.reduce((s, l) => s + l.total_income, 0)
+    const totalExpense = activeLofts.reduce((s, l) => s + l.total_expense, 0)
+    const totalNet = activeLofts.reduce((s, l) => s + l.total_revenue, 0)
+    const totalOwnerDue = activeLofts.reduce((s, l) => s + Math.round(l.total_revenue * (pctMap[l.loft_id] ?? 0) / 100), 0)
 
     const html = `<!DOCTYPE html>
 <html lang="fr">
@@ -186,12 +210,20 @@ export function PartnerDueReport() {
   <div style="border-top:2px solid #333;padding-top:16px;margin-top:8px">
     <table style="width:100%;font-size:13px">
       <tr>
-        <td style="padding:4px 0;font-weight:bold">${t('totalRevenue')}</td>
-        <td style="text-align:right;font-weight:bold">${fmt(revenueTotal(group))}</td>
+        <td style="padding:4px 0;color:#16a34a">${t('income')}</td>
+        <td style="text-align:right;color:#16a34a">+${fmt(totalIncome)}</td>
       </tr>
       <tr>
-        <td style="padding:4px 0;color:#d97706;font-weight:bold">${t('totalOwnerDue')}</td>
-        <td style="text-align:right;color:#d97706;font-weight:bold;font-size:16px">${fmt(ownerTotal(group))}</td>
+        <td style="padding:4px 0;color:#dc2626">${t('expense')}</td>
+        <td style="text-align:right;color:#dc2626">-${fmt(totalExpense)}</td>
+      </tr>
+      <tr style="border-top:1px solid #e5e7eb">
+        <td style="padding:4px 0;font-weight:bold">${t('net')}</td>
+        <td style="text-align:right;font-weight:bold">${fmt(totalNet)}</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0 4px;color:#d97706;font-weight:bold;font-size:15px">${t('totalOwnerDue')}</td>
+        <td style="text-align:right;color:#d97706;font-weight:bold;font-size:18px">${fmt(totalOwnerDue)}</td>
       </tr>
     </table>
   </div>

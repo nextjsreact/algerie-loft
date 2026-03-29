@@ -19,11 +19,11 @@ export async function GET(request: NextRequest) {
 
     if (loftsError) return NextResponse.json({ error: loftsError.message }, { status: 500 })
 
-    // Fetch income transactions per loft in date range
+    // Fetch income AND expense transactions per loft in date range
     let query = supabase
       .from('transactions')
       .select('id, loft_id, amount, equivalent_amount_default_currency, description, date, transaction_type, category, status')
-      .eq('transaction_type', 'income')
+      .in('transaction_type', ['income', 'expense'])
       .order('date', { ascending: false })
 
     if (startDate) query = query.gte('date', startDate)
@@ -32,28 +32,31 @@ export async function GET(request: NextRequest) {
     const { data: transactions, error: txError } = await query
     if (txError) return NextResponse.json({ error: txError.message }, { status: 500 })
 
-    // Group transactions by loft
-    const txByLoft = new Map<string, any[]>()
+    // Group transactions by loft, split by type
+    const txByLoft = new Map<string, { income: any[], expense: any[] }>()
     ;(transactions || []).forEach(tx => {
-      if (!txByLoft.has(tx.loft_id)) txByLoft.set(tx.loft_id, [])
-      txByLoft.get(tx.loft_id)!.push(tx)
+      if (!txByLoft.has(tx.loft_id)) txByLoft.set(tx.loft_id, { income: [], expense: [] })
+      const entry = txByLoft.get(tx.loft_id)!
+      if (tx.transaction_type === 'income') entry.income.push(tx)
+      else entry.expense.push(tx)
     })
 
-    // Revenue per loft (sum of equivalent_amount_default_currency)
-    const revenueByLoft = new Map<string, number>()
-    ;(transactions || []).forEach(tx => {
-      const amt = tx.equivalent_amount_default_currency ?? tx.amount ?? 0
-      revenueByLoft.set(tx.loft_id, (revenueByLoft.get(tx.loft_id) || 0) + Number(amt))
+    // Net revenue per loft (income - expenses)
+    const netByLoft = new Map<string, { income: number; expense: number; net: number }>()
+    txByLoft.forEach((txs, loftId) => {
+      const income = txs.income.reduce((s, tx) => s + Number(tx.equivalent_amount_default_currency ?? tx.amount ?? 0), 0)
+      const expense = txs.expense.reduce((s, tx) => s + Number(tx.equivalent_amount_default_currency ?? tx.amount ?? 0), 0)
+      netByLoft.set(loftId, { income: Math.round(income), expense: Math.round(expense), net: Math.round(income - expense) })
     })
 
     // Build result per loft
     const loftResults = (lofts || []).map((loft: any) => {
-      const revenue = revenueByLoft.get(loft.id) || 0
+      const figures = netByLoft.get(loft.id) || { income: 0, expense: 0, net: 0 }
       const ownerPct = loft.owner_percentage || 0
       const companyPct = loft.company_percentage || 0
-      const ownerDue = Math.round(revenue * ownerPct / 100)
-      const companyDue = Math.round(revenue * companyPct / 100)
-      const loftTx = txByLoft.get(loft.id) || []
+      const ownerDue = Math.round(figures.net * ownerPct / 100)
+      const companyDue = Math.round(figures.net * companyPct / 100)
+      const loftTxs = txByLoft.get(loft.id) || { income: [], expense: [] }
 
       return {
         loft_id: loft.id,
@@ -62,16 +65,29 @@ export async function GET(request: NextRequest) {
         owner_name: (loft.owners as any)?.name || 'Inconnu',
         owner_percentage: ownerPct,
         company_percentage: companyPct,
-        total_revenue: Math.round(revenue),
+        total_income: figures.income,
+        total_expense: figures.expense,
+        total_revenue: figures.net,   // net = income - expenses
         owner_due: ownerDue,
         company_due: companyDue,
-        transactions: loftTx.map(tx => ({
-          id: tx.id,
-          date: tx.date,
-          description: tx.description || '',
-          category: tx.category || '',
-          amount: Math.round(Number(tx.equivalent_amount_default_currency ?? tx.amount ?? 0)),
-        })),
+        transactions: [
+          ...loftTxs.income.map(tx => ({
+            id: tx.id,
+            date: tx.date,
+            description: tx.description || '',
+            category: tx.category || '',
+            amount: Math.round(Number(tx.equivalent_amount_default_currency ?? tx.amount ?? 0)),
+            type: 'income' as const,
+          })),
+          ...loftTxs.expense.map(tx => ({
+            id: tx.id,
+            date: tx.date,
+            description: tx.description || '',
+            category: tx.category || '',
+            amount: Math.round(Number(tx.equivalent_amount_default_currency ?? tx.amount ?? 0)),
+            type: 'expense' as const,
+          })),
+        ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
       }
     })
 

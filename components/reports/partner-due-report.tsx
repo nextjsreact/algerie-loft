@@ -10,7 +10,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useTranslations, useLocale } from 'next-intl'
 import { format, startOfMonth, endOfMonth } from 'date-fns'
 import { fr, ar, enUS } from 'date-fns/locale'
-import { RefreshCw, ChevronDown, ChevronRight, Building2, User, Printer, Eye } from 'lucide-react'
+import { RefreshCw, ChevronDown, ChevronRight, Building2, User, Printer, Eye, Search, X } from 'lucide-react'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
 interface Transaction {
   id: string
@@ -56,6 +57,9 @@ export function PartnerDueReport() {
   const [overrides, setOverrides] = useState<Record<string, number>>({})
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [detailLoft, setDetailLoft] = useState<LoftResult | null>(null)
+  const [selectedOwner, setSelectedOwner] = useState<string>('all')
+  const [ownerSearch, setOwnerSearch] = useState('')
+  const [ownerPopoverOpen, setOwnerPopoverOpen] = useState(false)
 
   const dateLocale = locale === 'ar' ? ar : locale === 'fr' ? fr : enUS
 
@@ -106,6 +110,12 @@ export function PartnerDueReport() {
   const grandRevenue = byOwner.reduce((s, g) => s + revenueTotal(g), 0)
   const grandOwner = byOwner.reduce((s, g) => s + ownerTotal(g), 0)
   const grandCompany = byOwner.reduce((s, g) => s + companyTotal(g), 0)
+
+  // Filtered list based on selected partner
+  const visibleOwners = selectedOwner === 'all' ? byOwner : byOwner.filter(g => g.owner_id === selectedOwner)
+  const filteredRevenue = visibleOwners.reduce((s, g) => s + revenueTotal(g), 0)
+  const filteredOwner = visibleOwners.reduce((s, g) => s + ownerTotal(g), 0)
+  const filteredCompany = visibleOwners.reduce((s, g) => s + companyTotal(g), 0)
 
   // Print in a new window — reliable cross-browser
   const handlePrint = (group: OwnerGroup) => {
@@ -265,6 +275,60 @@ export function PartnerDueReport() {
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               {t('refresh')}
             </Button>
+
+            {/* Partner filter */}
+            <div className="space-y-1">
+              <Label className="text-xs text-gray-500">{t('filterPartner')}</Label>
+              <Popover open={ownerPopoverOpen} onOpenChange={open => { setOwnerPopoverOpen(open); if (!open) setOwnerSearch('') }}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="h-9 min-w-[200px] justify-between font-normal">
+                    <span className="truncate">
+                      {selectedOwner === 'all' ? t('allPartners') : byOwner.find(g => g.owner_id === selectedOwner)?.owner_name || t('allPartners')}
+                    </span>
+                    <ChevronDown className="h-4 w-4 opacity-50 flex-shrink-0 ml-2" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[220px] p-0" align="start" side="bottom" sideOffset={4}>
+                  <div className="p-2 border-b">
+                    <div className="relative">
+                      <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                      <Input
+                        placeholder={t('searchPartner')}
+                        value={ownerSearch}
+                        onChange={e => setOwnerSearch(e.target.value)}
+                        className="h-8 pl-7 text-sm"
+                        autoFocus
+                      />
+                    </div>
+                  </div>
+                  <div className="max-h-[200px] overflow-y-auto p-1">
+                    <button
+                      className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-accent transition-colors ${selectedOwner === 'all' ? 'bg-accent font-medium' : ''}`}
+                      onClick={() => { setSelectedOwner('all'); setOwnerPopoverOpen(false) }}
+                    >
+                      {t('allPartners')}
+                    </button>
+                    {byOwner
+                      .filter(g => g.owner_name.toLowerCase().includes(ownerSearch.toLowerCase()))
+                      .map(g => (
+                        <button
+                          key={g.owner_id}
+                          className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-accent transition-colors ${selectedOwner === g.owner_id ? 'bg-accent font-medium' : ''}`}
+                          onClick={() => { setSelectedOwner(g.owner_id); setOwnerPopoverOpen(false) }}
+                        >
+                          {g.owner_name}
+                        </button>
+                      ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            {selectedOwner !== 'all' && (
+              <Button size="sm" variant="ghost" className="h-9 text-gray-500" onClick={() => setSelectedOwner('all')}>
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -274,29 +338,29 @@ export function PartnerDueReport() {
         <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white">
           <CardContent className="p-5">
             <p className="text-blue-100 text-sm">{t('totalRevenue')}</p>
-            <p className="text-2xl font-bold mt-1">{fmt(grandRevenue)}</p>
+            <p className="text-2xl font-bold mt-1">{fmt(filteredRevenue)}</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
           <CardContent className="p-5">
             <p className="text-amber-100 text-sm">{t('totalOwnerDue')}</p>
-            <p className="text-2xl font-bold mt-1">{fmt(grandOwner)}</p>
+            <p className="text-2xl font-bold mt-1">{fmt(filteredOwner)}</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
           <CardContent className="p-5">
             <p className="text-emerald-100 text-sm">{t('totalCompanyDue')}</p>
-            <p className="text-2xl font-bold mt-1">{fmt(grandCompany)}</p>
+            <p className="text-2xl font-bold mt-1">{fmt(filteredCompany)}</p>
           </CardContent>
         </Card>
       </div>
 
-      {byOwner.length === 0 && !loading && (
+      {visibleOwners.length === 0 && !loading && (
         <div className="text-center py-12 text-gray-500">{t('noData')}</div>
       )}
 
       {/* Per owner */}
-      {byOwner.map(group => (
+      {visibleOwners.map(group => (
         <Card key={group.owner_id} className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90">
           <CardHeader
             className="cursor-pointer select-none bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-700 dark:to-gray-800 rounded-t-lg"

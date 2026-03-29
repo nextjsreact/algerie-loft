@@ -2,8 +2,9 @@
 
 import { ReportGenerator } from '@/components/reports/report-generator'
 import { ReportsWrapper } from '@/components/reports/reports-wrapper'
+import { PartnerDueReport } from '@/components/reports/partner-due-report'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { FileText, BarChart3, TrendingUp, Sparkles } from 'lucide-react'
+import { FileText, BarChart3, TrendingUp, Sparkles, Users } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { RoleBasedAccess } from '@/components/auth/role-based-access'
 import { useEffect, useState } from 'react'
@@ -119,7 +120,7 @@ export default function ReportsPage() {
           </div>
 
           <Tabs defaultValue={new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('tab') || "analytics"} className="space-y-8">
-            <TabsList className="grid w-full grid-cols-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-lg rounded-xl p-1">
+            <TabsList className="grid w-full grid-cols-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-lg rounded-xl p-1">
               <TabsTrigger 
                 value="analytics" 
                 className="flex items-center gap-3 rounded-lg px-6 py-3 text-sm font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
@@ -133,6 +134,13 @@ export default function ReportsPage() {
               >
                 <FileText className="h-5 w-5" />
                 {t('reports.pdfTab')}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="partner" 
+                className="flex items-center gap-3 rounded-lg px-6 py-3 text-sm font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-orange-500 data-[state=active]:text-white data-[state=active]:shadow-lg"
+              >
+                <Users className="h-5 w-5" />
+                {t('reports.partnerTab')}
               </TabsTrigger>
             </TabsList>
 
@@ -156,6 +164,12 @@ export default function ReportsPage() {
             <TabsContent value="generator" className="space-y-8">
               <div className="rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-xl p-6">
                 <ReportGenerator />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="partner" className="space-y-8">
+              <div className="rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-xl p-6">
+                <PartnerDueReport />
               </div>
             </TabsContent>
           </Tabs>

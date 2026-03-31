@@ -246,7 +246,6 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
                 {days.map((day) => {
                   const dayKey = format(day, 'yyyy-MM-dd')
                   const isCurrentMonth = day.getMonth() === currentMonth.getMonth()
-                  const dayStatus = isCurrentMonth ? (loft.availability?.[dayKey] || 'available') : null
                   const isToday = isSameDay(day, new Date())
 
                   // Days outside current month — show greyed out, no color

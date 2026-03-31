@@ -264,28 +264,7 @@ export default function ReservationCalendar({
         });
 
         // Extract loft name from different possible sources
-        const loftName = a.loft_name || a.reservation?.loft_name;
-        const loftIdFallback = loftId || 'unknown';
-        
-        console.log('Extracted loft name:', loftName, 'from loftId:', loftIdFallback);
-        
-        // For blocked events, show only the loft name (color will indicate the reason)
-        let title = loftName;
-        
-        if (!title) {
-          // Enhanced fallback with more debugging info
-          console.warn('⚠️ Missing loft name for availability record:', {
-            date: a.date,
-            loft_id: loftIdFallback,
-            blocked_reason: a.blocked_reason,
-            raw_loft_data: a.loft_name,
-            reservation_loft_data: a.reservation?.loft_name
-          });
-          
-          title = `Loft Inconnu (${loftIdFallback.slice(-8)})`;
-        }
-
-        console.log('Generated title:', title);
+        const loftName = a.loft_name || a.reservation?.loft_name || 'Loft inconnu';
 
         // Determine the specific status based on blocked reason
         let eventStatus = 'blocked';
@@ -387,36 +366,47 @@ export default function ReservationCalendar({
   };
 
   const fetchAvailability = async () => {
-    if (!loftId) {
-      setAvailability([]);
-      setLoading(false);
-      return;
-    }
     try {
       setLoading(true);
-      const params = new URLSearchParams();
-      params.append('loft_id', loftId); // loftId is guaranteed to be present here
       const start = new Date(date.getFullYear(), date.getMonth(), 1);
       const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-      params.append('start_date', format(start, 'yyyy-MM-dd'));
-      params.append('end_date', format(end, 'yyyy-MM-dd'));
 
-      console.log('🔍 Fetching availability for loft:', loftId, 'from', format(start, 'yyyy-MM-dd'), 'to', format(end, 'yyyy-MM-dd'));
+      if (loftId) {
+        // Single loft — use the detailed calendar API
+        const params = new URLSearchParams();
+        params.append('loft_id', loftId);
+        params.append('start_date', format(start, 'yyyy-MM-dd'));
+        params.append('end_date', format(end, 'yyyy-MM-dd'));
+        const response = await fetch(`/api/availability?${params}`);
+        if (!response.ok) throw new Error('Failed to fetch availability');
+        const data = await response.json();
+        setAvailability(data.calendar || []);
+      } else {
+        // All lofts — use the lofts availability API and extract blocked days
+        const params = new URLSearchParams();
+        params.append('startDate', format(start, 'yyyy-MM-dd'));
+        params.append('endDate', format(end, 'yyyy-MM-dd'));
+        const response = await fetch(`/api/lofts/availability?${params}`);
+        if (!response.ok) throw new Error('Failed to fetch lofts availability');
+        const data = await response.json();
 
-      const response = await fetch(`/api/availability?${params}`);
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('API Error fetching availability:', response.status, errorText);
-        throw new Error('Failed to fetch availability');
+        // Flatten all blocked days from all lofts into a calendar-like array
+        const allBlocked: any[] = [];
+        (data.lofts || []).forEach((loft: any) => {
+          Object.entries(loft.availability || {}).forEach(([date, status]) => {
+            if (status !== 'available') {
+              allBlocked.push({
+                date,
+                is_available: false,
+                blocked_reason: status as string,
+                loft_name: loft.name,
+                loft_id: loft.id,
+              });
+            }
+          });
+        });
+        setAvailability(allBlocked);
       }
-      const data = await response.json();
-      console.log('📊 Raw availability data received:', data);
-      
-      // Filter and log blocked dates specifically
-      const blockedDates = data.calendar?.filter((item: any) => !item.is_available) || [];
-      console.log('🚫 Blocked dates found:', blockedDates);
-      
-      setAvailability(data.calendar || []);
     } catch (error) {
       console.error('Error fetching availability:', error);
       setAvailability([]);

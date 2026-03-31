@@ -36,9 +36,6 @@ const ALL_STATUSES = [
   { value: 'personal_use', label: 'personalUse' },
   { value: 'renovation', label: 'renovation' },
 ];
-  { value: 'maintenance', label: 'maintenance' },
-  { value: 'personal_use', label: 'personal_use' },
-];
 
 export function FilterPanel({ filters, onFiltersChange, dateRange, onDateRangeChange, isLoading, filterOptions }: FilterPanelProps) {
   const t = useTranslations('availability')

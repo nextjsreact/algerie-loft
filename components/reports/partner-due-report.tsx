@@ -241,8 +241,8 @@ export function PartnerDueReport() {
         <td style="text-align:right;color:#dc2626">-${fmt(totalExpense)}</td>
       </tr>
       <tr style="border-top:1px solid #e5e7eb">
-        <td style="padding:4px 0;font-weight:bold">${t('net')}</td>
-        <td style="text-align:right;font-weight:bold">${fmt(totalNet)}</td>
+        <td style="padding:4px 0;font-weight:bold">${t('income')}</td>
+        <td style="text-align:right;font-weight:bold">${fmt(totalIncome)}</td>
       </tr>
       <tr>
         <td style="padding:8px 0 4px;color:#d97706;font-weight:bold;font-size:15px">${t('totalOwnerDue')}</td>

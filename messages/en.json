@@ -1994,6 +1994,7 @@
       "revenue": "Revenue",
       "ownerPct": "Partner %",
       "ownerDue": "Partner Due",
+      "ownerGross": "Partner Share (before expenses)",
       "companyPct": "Company %",
       "companyDue": "Company Due",
       "subtotal": "Subtotal",

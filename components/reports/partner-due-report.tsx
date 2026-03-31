@@ -31,9 +31,10 @@ interface LoftResult {
   company_percentage: number
   total_income: number
   total_expense: number
-  total_revenue: number  // net = income - expenses
-  owner_due: number
-  company_due: number
+  total_revenue: number
+  owner_gross: number    // income × owner%
+  owner_due: number      // owner_gross - expenses
+  company_due: number    // income × company%
   transactions: Transaction[]
 }
 
@@ -96,11 +97,17 @@ export function PartnerDueReport() {
 
   const calcOwnerDue = (loft: LoftResult) => {
     const pct = overrides[loft.loft_id] ?? loft.owner_percentage
-    return Math.round(loft.total_revenue * pct / 100)
+    const ownerGross = Math.round(loft.total_income * pct / 100)
+    return Math.max(0, ownerGross - loft.total_expense)
+  }
+  const calcOwnerGross = (loft: LoftResult) => {
+    const pct = overrides[loft.loft_id] ?? loft.owner_percentage
+    return Math.round(loft.total_income * pct / 100)
   }
   const calcCompanyDue = (loft: LoftResult) => {
     const pct = overrides[loft.loft_id] ?? loft.owner_percentage
-    return Math.round(loft.total_revenue * (100 - pct) / 100)
+    const compPct = 100 - pct
+    return Math.round(loft.total_income * compPct / 100)
   }
 
   const ownerTotal = (group: OwnerGroup) => group.lofts.reduce((s, l) => s + calcOwnerDue(l), 0)
@@ -127,7 +134,8 @@ export function PartnerDueReport() {
 
     const rows = activeLofts.map(loft => {
       const pct = pctMap[loft.loft_id]
-      const netOwnerDue = Math.round(loft.total_revenue * pct / 100)
+      const ownerGross = Math.round(loft.total_income * pct / 100)
+      const netOwnerDue = Math.max(0, ownerGross - loft.total_expense)
 
       const txRows = loft.transactions.length > 0
         ? loft.transactions.map(tx => {
@@ -168,17 +176,16 @@ export function PartnerDueReport() {
             <tbody>${txRows}</tbody>
             <tfoot>
               <tr style="background:#f9fafb;font-size:11px;color:#6b7280">
-                <td colspan="3" style="padding:5px 8px;border:1px solid #e5e7eb">
-                  ${t('income')} : +${fmt(loft.total_income)} &nbsp;&minus;&nbsp; ${t('expense')} : ${fmt(loft.total_expense)}
+                <td colspan="4" style="padding:5px 8px;border:1px solid #e5e7eb">
+                  ${t('income')} : +${fmt(loft.total_income)} × ${pct}% = ${fmt(ownerGross)}
                 </td>
-                <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;font-weight:bold">${t('net')}</td>
-                <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;font-weight:bold">${fmt(loft.total_revenue)}</td>
+                <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;font-weight:bold;color:#d97706">${fmt(ownerGross)}</td>
               </tr>
               <tr style="background:#fef3c7;font-weight:bold">
                 <td colspan="3" style="padding:6px 8px;border:1px solid #d1d5db">
-                  ${t('ownerDue')} (${fmt(loft.total_revenue)} × ${pct}%)
+                  ${t('ownerDue')} = ${fmt(ownerGross)} − ${t('expense')} ${fmt(loft.total_expense)}
                 </td>
-                <td colspan="2" style="padding:6px 8px;text-align:right;border:1px solid #d1d5db;color:#d97706;font-size:13px">${fmt(netOwnerDue)}</td>
+                <td colspan="2" style="padding:6px 8px;text-align:right;border:1px solid #d1d5db;color:#d97706;font-size:14px">${fmt(netOwnerDue)}</td>
               </tr>
             </tfoot>
           </table>
@@ -187,8 +194,11 @@ export function PartnerDueReport() {
 
     const totalIncome = activeLofts.reduce((s, l) => s + l.total_income, 0)
     const totalExpense = activeLofts.reduce((s, l) => s + l.total_expense, 0)
-    const totalNet = activeLofts.reduce((s, l) => s + l.total_revenue, 0)
-    const totalOwnerDue = activeLofts.reduce((s, l) => s + Math.round(l.total_revenue * (pctMap[l.loft_id] ?? 0) / 100), 0)
+    const totalOwnerDue = activeLofts.reduce((s, l) => {
+      const pct = pctMap[l.loft_id] ?? 0
+      const gross = Math.round(l.total_income * pct / 100)
+      return s + Math.max(0, gross - l.total_expense)
+    }, 0)
 
     const html = `<!DOCTYPE html>
 <html lang="fr">
@@ -407,19 +417,21 @@ export function PartnerDueReport() {
           {expanded.has(group.owner_id) && (
             <CardContent className="p-0">
               <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                {/* Column headers */}
                 <div className="grid grid-cols-12 gap-2 px-6 py-2 bg-gray-50 dark:bg-gray-700/50 text-xs text-gray-500 font-medium">
                   <div className="col-span-3">{t('loft')}</div>
                   <div className="col-span-1 text-center">{t('nbTx')}</div>
                   <div className="col-span-1 text-right text-green-600">{t('income')}</div>
-                  <div className="col-span-1 text-right text-red-500">{t('expense')}</div>
-                  <div className="col-span-1 text-right">{t('net')}</div>
                   <div className="col-span-2 text-center">{t('ownerPct')}</div>
-                  <div className="col-span-2 text-right">{t('ownerDue')}</div>
-                  <div className="col-span-1 text-right">{t('companyDue')}</div>
+                  <div className="col-span-2 text-right text-amber-600">{t('ownerGross')}</div>
+                  <div className="col-span-1 text-right text-red-500">-{t('expense')}</div>
+                  <div className="col-span-2 text-right text-amber-700 font-semibold">{t('ownerDue')}</div>
                 </div>
 
                 {group.lofts.filter(l => l.total_income > 0 || l.total_expense > 0).map(loft => {
                   const pct = overrides[loft.loft_id] ?? loft.owner_percentage
+                  const ownerGross = calcOwnerGross(loft)
+                  const ownerNet = calcOwnerDue(loft)
                   return (
                     <div key={loft.loft_id} className="grid grid-cols-12 gap-2 px-6 py-3 items-center hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                       <div className="col-span-3 flex items-center gap-2">
@@ -432,8 +444,6 @@ export function PartnerDueReport() {
                         </button>
                       </div>
                       <div className="col-span-1 text-right text-sm text-green-600">{fmt(loft.total_income)}</div>
-                      <div className="col-span-1 text-right text-sm text-red-500">-{fmt(loft.total_expense)}</div>
-                      <div className="col-span-1 text-right text-sm font-semibold">{fmt(loft.total_revenue)}</div>
                       <div className="col-span-2 flex items-center justify-center gap-1">
                         <Input
                           type="number" min="0" max="100" step="0.5"
@@ -447,21 +457,30 @@ export function PartnerDueReport() {
                           <button className="text-xs text-blue-500 hover:underline" onClick={() => setOverrides(prev => ({ ...prev, [loft.loft_id]: loft.owner_percentage }))} title={t('reset')}>↺</button>
                         )}
                       </div>
-                      <div className="col-span-2 text-right text-sm font-semibold text-amber-700">{fmt(calcOwnerDue(loft))}</div>
-                      <div className="col-span-1 text-right text-sm font-semibold text-emerald-700">{fmt(calcCompanyDue(loft))}</div>
+                      <div className="col-span-2 text-right text-sm text-amber-600">{fmt(ownerGross)}</div>
+                      <div className="col-span-1 text-right text-sm text-red-500">-{fmt(loft.total_expense)}</div>
+                      <div className="col-span-2 text-right">
+                        <span className="text-sm font-bold text-amber-700">{fmt(ownerNet)}</span>
+                      </div>
                     </div>
                   )
                 })}
 
+                {/* Subtotal row */}
                 <div className="grid grid-cols-12 gap-2 px-6 py-3 bg-gray-50 dark:bg-gray-700/50 font-semibold text-sm">
                   <div className="col-span-3 text-gray-600">{t('subtotal')}</div>
                   <div className="col-span-1"></div>
                   <div className="col-span-1 text-right text-green-600">{fmt(group.lofts.reduce((s,l)=>s+l.total_income,0))}</div>
-                  <div className="col-span-1 text-right text-red-500">-{fmt(group.lofts.reduce((s,l)=>s+l.total_expense,0))}</div>
-                  <div className="col-span-1 text-right">{fmt(revenueTotal(group))}</div>
                   <div className="col-span-2"></div>
+                  <div className="col-span-2 text-right text-amber-600">{fmt(group.lofts.reduce((s,l)=>s+calcOwnerGross(l),0))}</div>
+                  <div className="col-span-1 text-right text-red-500">-{fmt(group.lofts.reduce((s,l)=>s+l.total_expense,0))}</div>
                   <div className="col-span-2 text-right text-amber-700">{fmt(ownerTotal(group))}</div>
-                  <div className="col-span-1 text-right text-emerald-700">{fmt(companyTotal(group))}</div>
+                </div>
+
+                {/* Company due row */}
+                <div className="grid grid-cols-12 gap-2 px-6 py-2 bg-emerald-50/50 dark:bg-emerald-900/10 text-sm">
+                  <div className="col-span-6 text-gray-500 text-xs">{t('companyDue')} = {t('income')} × {100 - (overrides[group.lofts[0]?.loft_id] ?? group.lofts[0]?.owner_percentage ?? 0)}%</div>
+                  <div className="col-span-6 text-right font-semibold text-emerald-700">{fmt(companyTotal(group))}</div>
                 </div>
               </div>
             </CardContent>
@@ -518,16 +537,17 @@ export function PartnerDueReport() {
                     })}
                   </tbody>
                   <tfoot>
-                    <tr className="bg-gray-100 dark:bg-gray-700 text-xs text-gray-500">
-                      <td colSpan={3} className="p-2 pl-3">{t('income')} : +{fmt(detailLoft.total_income)} — {t('expense')} : -{fmt(detailLoft.total_expense)}</td>
-                      <td className="p-2 text-right font-semibold">{t('net')}</td>
-                      <td className="p-2 text-right font-semibold">{fmt(detailLoft.total_revenue)}</td>
+                    <tr className="bg-gray-50 dark:bg-gray-700/50 text-xs text-gray-500">
+                      <td colSpan={4} className="p-2 pl-3">
+                        {t('income')} : +{fmt(detailLoft.total_income)} × {overrides[detailLoft.loft_id] ?? detailLoft.owner_percentage}% = {fmt(calcOwnerGross(detailLoft))}
+                      </td>
+                      <td className="p-2 text-right font-semibold text-amber-600">{fmt(calcOwnerGross(detailLoft))}</td>
                     </tr>
                     <tr className="bg-amber-50 dark:bg-amber-900/20 font-bold">
                       <td colSpan={4} className="p-3">
-                        {t('ownerDue')} ({fmt(detailLoft.total_revenue)} × {overrides[detailLoft.loft_id] ?? detailLoft.owner_percentage}%)
+                        {t('ownerDue')} = {fmt(calcOwnerGross(detailLoft))} − {t('expense')} {fmt(detailLoft.total_expense)}
                       </td>
-                      <td className="p-3 text-right text-amber-700">{fmt(calcOwnerDue(detailLoft))}</td>
+                      <td className="p-3 text-right text-amber-700 text-base">{fmt(calcOwnerDue(detailLoft))}</td>
                     </tr>
                   </tfoot>
                 </table>

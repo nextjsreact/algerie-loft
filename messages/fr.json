@@ -1990,6 +1990,7 @@
       "revenue": "Revenu",
       "ownerPct": "% Partenaire",
       "ownerDue": "Dû partenaire",
+      "ownerGross": "Part partenaire (avant dépenses)",
       "companyPct": "% Société",
       "companyDue": "Dû société",
       "subtotal": "Sous-total",

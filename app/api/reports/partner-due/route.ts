@@ -54,8 +54,15 @@ export async function GET(request: NextRequest) {
       const figures = netByLoft.get(loft.id) || { income: 0, expense: 0, net: 0 }
       const ownerPct = loft.owner_percentage || 0
       const companyPct = loft.company_percentage || 0
-      const ownerDue = Math.round(figures.net * ownerPct / 100)
-      const companyDue = Math.round(figures.net * companyPct / 100)
+
+      // Formula:
+      // 1. Split income by percentage
+      // 2. Deduct ALL expenses from partner's share → partner net due
+      // 3. Company keeps its share of income (expenses are partner's responsibility)
+      const ownerGross = Math.round(figures.income * ownerPct / 100)
+      const companyGross = Math.round(figures.income * companyPct / 100)
+      const ownerDue = Math.max(0, ownerGross - figures.expense) // can't go below 0
+      const companyDue = companyGross
       const loftTxs = txByLoft.get(loft.id) || { income: [], expense: [] }
 
       return {
@@ -67,9 +74,10 @@ export async function GET(request: NextRequest) {
         company_percentage: companyPct,
         total_income: figures.income,
         total_expense: figures.expense,
-        total_revenue: figures.net,   // net = income - expenses
-        owner_due: ownerDue,
-        company_due: companyDue,
+        total_revenue: figures.net,
+        owner_gross: ownerGross,       // income × owner%
+        owner_due: ownerDue,           // owner_gross - expenses
+        company_due: companyDue,       // income × company% (no expense deduction)
         transactions: [
           ...loftTxs.income.map(tx => ({
             id: tx.id,

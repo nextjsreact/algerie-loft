@@ -2008,6 +2008,7 @@
       "revenue": "الإيراد",
       "ownerPct": "% الشريك",
       "ownerDue": "مستحق الشريك",
+      "ownerGross": "حصة الشريك (قبل المصاريف)",
       "companyPct": "% الشركة",
       "companyDue": "مستحق الشركة",
       "subtotal": "المجموع الفرعي",

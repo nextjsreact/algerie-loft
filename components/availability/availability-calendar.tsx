@@ -113,16 +113,30 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
             {format(currentMonth, 'MMMM yyyy', { locale: getDateLocale() })}
           </h3>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => setCurrentMonth(addDays(currentMonth, -30))}>
+            <Button
+              variant="outline" size="sm"
+              onClick={() => setCurrentMonth(addDays(currentMonth, -30))}
+              disabled={dateRange?.from ? startOfMonth(addDays(currentMonth, -30)) < startOfMonth(dateRange.from) : false}
+            >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setCurrentMonth(new Date())}>
+            <Button variant="outline" size="sm" onClick={() => setCurrentMonth(dateRange?.from || new Date())}>
               {t('today')}
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setCurrentMonth(addDays(currentMonth, 30))}>
+            <Button
+              variant="outline" size="sm"
+              onClick={() => setCurrentMonth(addDays(currentMonth, 30))}
+              disabled={dateRange?.to ? startOfMonth(addDays(currentMonth, 30)) > startOfMonth(dateRange.to) : false}
+            >
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
+          {/* Show data range info */}
+          {dateRange?.from && dateRange?.to && (
+            <span className="text-xs text-gray-400">
+              {format(dateRange.from, 'dd/MM/yyyy')} → {format(dateRange.to, 'dd/MM/yyyy')}
+            </span>
+          )}
         </div>
 
         {/* Loft Selector */}
@@ -244,8 +258,22 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
                     )
                   }
 
+                  // Days outside the data range — show as grey (no data)
+                  const inDataRange = dateRange?.from && dateRange?.to
+                    ? day >= dateRange.from && day <= dateRange.to
+                    : true
+                  if (!inDataRange) {
+                    return (
+                      <div key={dayKey} className="h-9 flex items-center justify-center text-xs text-muted-foreground opacity-30 bg-gray-100 dark:bg-gray-800 rounded">
+                        {format(day, 'd')}
+                      </div>
+                    )
+                  }
+
+                  const dayStatus = loft.availability?.[dayKey] || 'available'
+
                   // Status filter
-                  if (statuses && statuses.length > 0 && dayStatus && !statuses.includes(dayStatus)) {
+                  if (statuses && statuses.length > 0 && !statuses.includes(dayStatus)) {
                     return (
                       <div key={dayKey} className="h-9 flex items-center justify-center text-xs text-muted-foreground opacity-20 rounded bg-gray-100 dark:bg-gray-800">
                         {format(day, 'd')}

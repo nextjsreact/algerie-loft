@@ -33,6 +33,10 @@ const ALL_STATUSES = [
   { value: 'available', label: 'available' },
   { value: 'occupied', label: 'occupied' },
   { value: 'maintenance', label: 'maintenance' },
+  { value: 'personal_use', label: 'personalUse' },
+  { value: 'renovation', label: 'renovation' },
+];
+  { value: 'maintenance', label: 'maintenance' },
   { value: 'personal_use', label: 'personal_use' },
 ];
 

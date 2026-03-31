@@ -66,9 +66,11 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
     switch (status) {
       case 'available': return 'bg-green-500'
       case 'occupied': return 'bg-red-500'
+      case 'booked': return 'bg-red-500'
       case 'maintenance': return 'bg-orange-500'
       case 'personal_use': return 'bg-purple-500'
-      default: return 'bg-gray-300'
+      case 'renovation': return 'bg-yellow-600'
+      default: return 'bg-gray-400'
     }
   }
 
@@ -76,8 +78,10 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
     switch (status) {
       case 'available': return t('available')
       case 'occupied': return t('occupied')
+      case 'booked': return t('occupied')
       case 'maintenance': return t('maintenance')
       case 'personal_use': return t('personalUse')
+      case 'renovation': return t('renovation')
       default: return t('unknown')
     }
   }
@@ -186,7 +190,7 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+      <div className="flex flex-wrap items-center gap-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 bg-green-500 rounded"></div>
           <span className="text-sm">{t('available')}</span>
@@ -202,6 +206,10 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 bg-purple-500 rounded"></div>
           <span className="text-sm">{t('personalUse')}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-yellow-600 rounded"></div>
+          <span className="text-sm">{t('renovation')}</span>
         </div>
       </div>
 

@@ -55,10 +55,12 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
 
   const monthStart = startOfMonth(currentMonth)
   const monthEnd = endOfMonth(currentMonth)
-  // Use the actual date range if available, otherwise fall back to current month
-  const displayStart = dateRange?.from && dateRange?.to ? dateRange.from : monthStart
-  const displayEnd = dateRange?.from && dateRange?.to ? dateRange.to : monthEnd
-  const days = eachDayOfInterval({ start: displayStart, end: displayEnd })
+  // Always display a proper monthly calendar grid
+  // Pad the start to Monday of the first week
+  const calendarStart = addDays(monthStart, -(monthStart.getDay() === 0 ? 6 : monthStart.getDay() - 1))
+  // Pad the end to Sunday of the last week
+  const calendarEnd = addDays(monthEnd, monthEnd.getDay() === 0 ? 0 : 7 - monthEnd.getDay())
+  const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd })
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -217,16 +219,35 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
               </div>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-wrap gap-1">
+              {/* Weekday headers */}
+              <div className="grid grid-cols-7 gap-1 mb-1">
+                {getWeekdayNames().map((day) => (
+                  <div key={day} className="p-1 text-center text-xs font-medium text-muted-foreground">
+                    {day}
+                  </div>
+                ))}
+              </div>
+              {/* Day cells */}
+              <div className="grid grid-cols-7 gap-1">
                 {days.map((day) => {
                   const dayKey = format(day, 'yyyy-MM-dd')
-                  const dayStatus = loft.availability?.[dayKey] || 'available'
+                  const isCurrentMonth = day.getMonth() === currentMonth.getMonth()
+                  const dayStatus = isCurrentMonth ? (loft.availability?.[dayKey] || 'available') : null
                   const isToday = isSameDay(day, new Date())
-                  const isFirstOfMonth = day.getDate() === 1
 
-                  if (statuses && statuses.length > 0 && !statuses.includes(dayStatus)) {
+                  // Days outside current month — show greyed out, no color
+                  if (!isCurrentMonth) {
                     return (
-                      <div key={dayKey} className="w-8 h-8 flex items-center justify-center text-xs text-muted-foreground opacity-20 rounded">
+                      <div key={dayKey} className="h-9 flex items-center justify-center text-xs text-muted-foreground opacity-30">
+                        {format(day, 'd')}
+                      </div>
+                    )
+                  }
+
+                  // Status filter
+                  if (statuses && statuses.length > 0 && dayStatus && !statuses.includes(dayStatus)) {
+                    return (
+                      <div key={dayKey} className="h-9 flex items-center justify-center text-xs text-muted-foreground opacity-20 rounded bg-gray-100 dark:bg-gray-800">
                         {format(day, 'd')}
                       </div>
                     )
@@ -236,27 +257,20 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
                     <TooltipProvider key={dayKey}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="flex flex-col items-center">
-                            {isFirstOfMonth && (
-                              <span className="text-xs text-gray-400 mb-0.5 w-8 text-center">
-                                {format(day, 'MMM', { locale: getDateLocale() })}
-                              </span>
-                            )}
-                            <div
-                              className={`
-                                relative w-8 h-8 flex items-center justify-center text-xs cursor-pointer rounded transition-all hover:scale-110 font-medium
-                                ${isToday ? 'ring-2 ring-blue-500' : ''}
-                                ${getStatusColor(dayStatus)} text-white
-                              `}
-                            >
-                              {format(day, 'd')}
-                            </div>
+                          <div
+                            className={`
+                              relative h-9 flex items-center justify-center text-xs font-medium cursor-pointer rounded transition-all hover:scale-105 hover:z-10 text-white
+                              ${isToday ? 'ring-2 ring-offset-1 ring-blue-500' : ''}
+                              ${getStatusColor(dayStatus || 'available')}
+                            `}
+                          >
+                            {format(day, 'd')}
                           </div>
                         </TooltipTrigger>
                         <TooltipContent>
                           <div className="space-y-1">
                             <p className="font-medium">{format(day, 'dd MMMM yyyy', { locale: getDateLocale() })}</p>
-                            <p className="text-sm">{getStatusText(dayStatus)}</p>
+                            <p className="text-sm">{getStatusText(dayStatus || 'available')}</p>
                             <p className="text-sm">{loft.pricePerNight.toLocaleString()} DA</p>
                           </div>
                         </TooltipContent>

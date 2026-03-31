@@ -50,6 +50,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { deleteTransaction } from "@/app/actions/transactions"
 import { format } from "date-fns"
+import { toast } from "sonner"
 import { fr } from "date-fns/locale"
 import { currencyDisplayService } from "@/lib/services/currency-display"
 import { formatDualCurrency, getCurrencySymbol, shouldShowConversion } from "@/lib/utils/currency-display-utils"
@@ -143,10 +144,17 @@ export function ModernTransactionsPage({
   const handleDelete = async (id: string) => {
     try {
       setIsLoading(true)
-      await deleteTransaction(id)
-      setTransactions(prev => prev.filter(t => t.id !== id))
+      const res = await fetch(`/api/transactions/${id}`, { method: 'DELETE' })
+      const data = await res.json()
+      if (data.success) {
+        setTransactions(prev => prev.filter(t => t.id !== id))
+        toast.success('Transaction supprimée')
+      } else {
+        toast.error(data.error || 'Erreur lors de la suppression')
+      }
     } catch (error) {
       console.error("Failed to delete transaction:", error)
+      toast.error('Erreur lors de la suppression')
     } finally {
       setIsLoading(false)
     }

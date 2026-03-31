@@ -26,7 +26,8 @@ import {
   Loader2,
   Search,
   X,
-  Filter
+  Filter,
+  Trash2
 } from 'lucide-react';
 import ReservationCalendar from '@/components/reservations/reservation-calendar';
 import ReservationFormHybrid from '@/components/reservations/reservation-form-hybrid';
@@ -58,6 +59,8 @@ function ReservationsPageContent() {
   const [loading, setLoading] = useState(true);
   const [editReservation, setEditReservation] = useState<any>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const searchParams = useSearchParams();
 
@@ -225,6 +228,27 @@ function ReservationsPageContent() {
       });
     }
   }, []);
+
+  const handleDeleteReservation = useCallback(async (reservationId: string) => {
+    setDeletingId(reservationId);
+    try {
+      const res = await fetch(`/api/reservations/${reservationId}/delete`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        toast.success('Réservation supprimée', { description: 'La réservation a été supprimée définitivement.' });
+        setSelectedReservation(null);
+        setConfirmDelete(false);
+        setRefreshKey(prev => prev + 1);
+        fetchAllReservations();
+      } else {
+        toast.error('Erreur', { description: data.error || 'Impossible de supprimer la réservation' });
+      }
+    } catch {
+      toast.error('Erreur', { description: 'Une erreur inattendue s\'est produite' });
+    } finally {
+      setDeletingId(null);
+    }
+  }, [fetchAllReservations]);
 
   // Update function with useCallback to prevent infinite loops
   const handleAvailabilityUpdate = useCallback(() => {
@@ -734,7 +758,7 @@ function ReservationsPageContent() {
         </Dialog>
 
         {/* Reservation Details Dialog */}
-        <Dialog open={!!selectedReservation} onOpenChange={() => setSelectedReservation(null)}>
+        <Dialog open={!!selectedReservation} onOpenChange={(open) => { if (!open) { setSelectedReservation(null); setConfirmDelete(false); } }}>
           <DialogContent className="max-w-3xl border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
             <DialogHeader className="border-b border-gray-200 pb-4">
               <DialogTitle className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
@@ -814,7 +838,40 @@ function ReservationsPageContent() {
                   </Card>
                 )}
 
-                <div className="flex justify-end gap-4">
+                <div className="flex justify-between gap-4">
+                  {/* Delete button — left side with confirmation */}
+                  <div className="flex items-center gap-2">
+                    {!confirmDelete ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        onClick={() => setConfirmDelete(true)}
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Supprimer
+                      </Button>
+                    ) : (
+                      <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                        <span className="text-sm text-red-700 font-medium">Confirmer la suppression ?</span>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="h-7 text-xs"
+                          disabled={!!deletingId}
+                          onClick={() => handleDeleteReservation(selectedReservation.id)}
+                        >
+                          {deletingId ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Oui, supprimer'}
+                        </Button>
+                        <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setConfirmDelete(false)}>
+                          Annuler
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right side actions */}
+                  <div className="flex items-center gap-3">
                   {selectedReservation.status !== 'cancelled' && (
                     <Button
                       variant="outline"
@@ -852,6 +909,7 @@ function ReservationsPageContent() {
                       Réactiver la réservation
                     </Button>
                   )}
+                  </div>
                 </div>
               </div>
             )}

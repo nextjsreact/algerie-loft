@@ -278,8 +278,8 @@ export default function ReservationCalendar({
         }
 
         return {
-          id: `blocked-${a.date}`,
-          title: title,
+          id: `blocked-${a.date}-${a.loft_id || ''}`,
+          title: loftName,
           start: new Date(a.date),
           end: new Date(a.date),
           resource: a,

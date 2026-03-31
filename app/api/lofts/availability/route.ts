@@ -46,7 +46,7 @@ export async function GET(request: Request) {
     (reservationsData || []).forEach(res => {
       const interval = eachDayOfInterval({
         start: parseISO(res.check_in_date),
-        end: parseISO(res.check_out_date)
+        end: addDays(parseISO(res.check_out_date), -1) // checkout day is NOT occupied
       });
       
       if (!bookedDatesByLoft.has(res.loft_id)) {

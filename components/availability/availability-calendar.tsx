@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { ChevronLeft, ChevronRight, ChevronDown, Calendar, Eye, BookOpen, Phone, Search } from 'lucide-react'
-import { format, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isWithinInterval } from 'date-fns'
+import { format, addDays, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay } from 'date-fns'
 import { fr, ar } from 'date-fns/locale'
 import { DateRange } from 'react-day-picker'
 
@@ -55,7 +55,10 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
 
   const monthStart = startOfMonth(currentMonth)
   const monthEnd = endOfMonth(currentMonth)
-  const days = eachDayOfInterval({ start: monthStart, end: monthEnd })
+  // Use the actual date range if available, otherwise fall back to current month
+  const displayStart = dateRange?.from && dateRange?.to ? dateRange.from : monthStart
+  const displayEnd = dateRange?.from && dateRange?.to ? dateRange.to : monthEnd
+  const days = eachDayOfInterval({ start: displayStart, end: displayEnd })
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -214,22 +217,16 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-7 gap-1">
-                {getWeekdayNames().map((day) => (
-                  <div key={day} className="p-2 text-center text-sm font-medium text-muted-foreground">
-                    {day}
-                  </div>
-                ))}
-                
+              <div className="flex flex-wrap gap-1">
                 {days.map((day) => {
                   const dayKey = format(day, 'yyyy-MM-dd')
                   const dayStatus = loft.availability?.[dayKey] || 'available'
                   const isToday = isSameDay(day, new Date())
-                  const isInRange = dateRange?.from && dateRange?.to && isWithinInterval(day, { start: dateRange.from, end: dateRange.to })
-                  
+                  const isFirstOfMonth = day.getDate() === 1
+
                   if (statuses && statuses.length > 0 && !statuses.includes(dayStatus)) {
                     return (
-                      <div key={dayKey} className="p-2 text-center text-sm text-muted-foreground opacity-20">
+                      <div key={dayKey} className="w-8 h-8 flex items-center justify-center text-xs text-muted-foreground opacity-20 rounded">
                         {format(day, 'd')}
                       </div>
                     )
@@ -239,23 +236,21 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
                     <TooltipProvider key={dayKey}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div
-                            className={`
-                              relative p-2 text-center text-sm cursor-pointer rounded transition-all hover:scale-105
-                              ${!isSameMonth(day, currentMonth) ? 'text-muted-foreground opacity-50' : ''}
-                              ${isToday ? 'ring-2 ring-blue-500' : ''}
-                              ${isInRange ? 'ring-1 ring-green-300' : ''}
-                            `}
-                          >
-                            <div className="relative z-10">
+                          <div className="flex flex-col items-center">
+                            {isFirstOfMonth && (
+                              <span className="text-xs text-gray-400 mb-0.5 w-8 text-center">
+                                {format(day, 'MMM', { locale: getDateLocale() })}
+                              </span>
+                            )}
+                            <div
+                              className={`
+                                relative w-8 h-8 flex items-center justify-center text-xs cursor-pointer rounded transition-all hover:scale-110 font-medium
+                                ${isToday ? 'ring-2 ring-blue-500' : ''}
+                                ${getStatusColor(dayStatus)} text-white
+                              `}
+                            >
                               {format(day, 'd')}
                             </div>
-                            <div 
-                              className={`
-                                absolute inset-0 rounded opacity-80
-                                ${getStatusColor(dayStatus)}
-                              `}
-                            />
                           </div>
                         </TooltipTrigger>
                         <TooltipContent>

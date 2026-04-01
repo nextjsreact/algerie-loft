@@ -122,7 +122,17 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // 5. Group expenses by loft
+    // 3. Fetch expense transactions for the period (by transaction date)
+    const { data: expenseTx, error: expError } = await supabase
+      .from('transactions')
+      .select('id, loft_id, equivalent_amount_default_currency, amount, description, date, category')
+      .eq('transaction_type', 'expense')
+      .gte('date', startDate)
+      .lte('date', endDate + 'T23:59:59')
+
+    if (expError) return NextResponse.json({ error: expError.message }, { status: 500 })
+
+    // 4. Group expenses by loft
     const expByLoft = new Map<string, { expense: number; transactions: any[] }>()
     ;(expenseTx || []).forEach(tx => {
       if (!tx.loft_id) return

@@ -3,14 +3,48 @@ import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
+/**
+ * Prorates a reservation amount for a given period.
+ * e.g. reservation 28 mars → 05 avril, 8000 DA
+ *   → for mars  (01/03 → 01/04): 4/8 × 8000 = 4000 DA
+ *   → for avril (01/04 → 01/05): 4/8 × 8000 = 4000 DA
+ */
+function prorateAmount(
+  checkIn: Date,
+  checkOut: Date,
+  totalAmount: number,
+  periodStart: Date,
+  periodEnd: Date   // exclusive (first day of next period)
+): number {
+  const totalNights = Math.round((checkOut.getTime() - checkIn.getTime()) / 86400000)
+  if (totalNights <= 0) return 0
+
+  const overlapStart = checkIn < periodStart ? periodStart : checkIn
+  const overlapEnd = checkOut > periodEnd ? periodEnd : checkOut
+  const nightsInPeriod = Math.round((overlapEnd.getTime() - overlapStart.getTime()) / 86400000)
+
+  if (nightsInPeriod <= 0) return 0
+  return Math.round((nightsInPeriod / totalNights) * totalAmount)
+}
+
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient(true)
     const { searchParams } = new URL(request.url)
-    const startDate = searchParams.get('startDate')
-    const endDate = searchParams.get('endDate')
+    const startDate = searchParams.get('startDate')   // e.g. '2026-04-01'
+    const endDate = searchParams.get('endDate')       // e.g. '2026-04-30'
 
-    // Fetch lofts with owner info and percentages
+    if (!startDate || !endDate) {
+      return NextResponse.json({ error: 'startDate and endDate are required' }, { status: 400 })
+    }
+
+    const periodStart = new Date(startDate + 'T00:00:00Z')
+    const periodEnd = new Date(endDate + 'T00:00:00Z')
+    // Make periodEnd exclusive (day after last day)
+    const periodEndExclusive = new Date(periodEnd)
+    periodEndExclusive.setUTCDate(periodEndExclusive.getUTCDate() + 1)
+
+    // 1. Fetch lofts with owner info and percentages
     const { data: lofts, error: loftsError } = await supabase
       .from('lofts')
       .select('id, name, owner_id, owner_percentage, company_percentage, owners:owner_id(id, name)')
@@ -19,51 +53,78 @@ export async function GET(request: NextRequest) {
 
     if (loftsError) return NextResponse.json({ error: loftsError.message }, { status: 500 })
 
-    // Fetch income AND expense transactions per loft in date range
-    let query = supabase
+    // 2. Fetch confirmed/completed reservations that overlap with the period
+    //    A reservation overlaps if: check_in < periodEnd AND check_out > periodStart
+    const { data: reservations, error: resError } = await supabase
+      .from('reservations')
+      .select('id, loft_id, check_in_date, check_out_date, total_amount, guest_name, status, nights')
+      .in('status', ['confirmed', 'completed'])
+      .lt('check_in_date', periodEndExclusive.toISOString().split('T')[0])
+      .gt('check_out_date', startDate)
+      .order('check_in_date', { ascending: false })
+
+    if (resError) return NextResponse.json({ error: resError.message }, { status: 500 })
+
+    // 3. Fetch expense transactions for the period (by transaction date)
+    const { data: expenseTx, error: expError } = await supabase
       .from('transactions')
-      .select('id, loft_id, amount, equivalent_amount_default_currency, description, date, transaction_type, category, status')
-      .in('transaction_type', ['income', 'expense'])
-      .order('date', { ascending: false })
+      .select('id, loft_id, equivalent_amount_default_currency, amount, description, date, category')
+      .eq('transaction_type', 'expense')
+      .gte('date', startDate)
+      .lte('date', endDate + 'T23:59:59')
 
-    if (startDate) query = query.gte('date', startDate)
-    if (endDate) query = query.lte('date', endDate + 'T23:59:59')
+    if (expError) return NextResponse.json({ error: expError.message }, { status: 500 })
 
-    const { data: transactions, error: txError } = await query
-    if (txError) return NextResponse.json({ error: txError.message }, { status: 500 })
+    // 4. Group reservations by loft with prorated amounts
+    const resByLoft = new Map<string, { income: number; reservations: any[] }>()
+    ;(reservations || []).forEach(r => {
+      const checkIn = new Date(r.check_in_date + 'T00:00:00Z')
+      const checkOut = new Date(r.check_out_date + 'T00:00:00Z')
+      const proratedAmount = prorateAmount(checkIn, checkOut, r.total_amount || 0, periodStart, periodEndExclusive)
 
-    // Group transactions by loft, split by type
-    const txByLoft = new Map<string, { income: any[], expense: any[] }>()
-    ;(transactions || []).forEach(tx => {
-      if (!txByLoft.has(tx.loft_id)) txByLoft.set(tx.loft_id, { income: [], expense: [] })
-      const entry = txByLoft.get(tx.loft_id)!
-      if (tx.transaction_type === 'income') entry.income.push(tx)
-      else entry.expense.push(tx)
+      if (!resByLoft.has(r.loft_id)) resByLoft.set(r.loft_id, { income: 0, reservations: [] })
+      const entry = resByLoft.get(r.loft_id)!
+      entry.income += proratedAmount
+      entry.reservations.push({
+        id: r.id,
+        guest_name: r.guest_name,
+        check_in_date: r.check_in_date,
+        check_out_date: r.check_out_date,
+        nights: r.nights,
+        total_amount: r.total_amount,
+        prorated_amount: proratedAmount,
+        status: r.status,
+      })
     })
 
-    // Net revenue per loft (income - expenses)
-    const netByLoft = new Map<string, { income: number; expense: number; net: number }>()
-    txByLoft.forEach((txs, loftId) => {
-      const income = txs.income.reduce((s, tx) => s + Number(tx.equivalent_amount_default_currency ?? tx.amount ?? 0), 0)
-      const expense = txs.expense.reduce((s, tx) => s + Number(tx.equivalent_amount_default_currency ?? tx.amount ?? 0), 0)
-      netByLoft.set(loftId, { income: Math.round(income), expense: Math.round(expense), net: Math.round(income - expense) })
+    // 5. Group expenses by loft
+    const expByLoft = new Map<string, { expense: number; transactions: any[] }>()
+    ;(expenseTx || []).forEach(tx => {
+      if (!tx.loft_id) return
+      if (!expByLoft.has(tx.loft_id)) expByLoft.set(tx.loft_id, { expense: 0, transactions: [] })
+      const entry = expByLoft.get(tx.loft_id)!
+      const amt = Math.round(Number(tx.equivalent_amount_default_currency ?? tx.amount ?? 0))
+      entry.expense += amt
+      entry.transactions.push({
+        id: tx.id,
+        date: tx.date,
+        description: tx.description || '',
+        category: tx.category || '',
+        amount: amt,
+        type: 'expense' as const,
+      })
     })
 
-    // Build result per loft
+    // 6. Build result per loft
     const loftResults = (lofts || []).map((loft: any) => {
-      const figures = netByLoft.get(loft.id) || { income: 0, expense: 0, net: 0 }
+      const rev = resByLoft.get(loft.id) || { income: 0, reservations: [] }
+      const exp = expByLoft.get(loft.id) || { expense: 0, transactions: [] }
       const ownerPct = loft.owner_percentage || 0
       const companyPct = loft.company_percentage || 0
 
-      // Formula:
-      // 1. Split income by percentage
-      // 2. Deduct ALL expenses from partner's share → partner net due
-      // 3. Company keeps its share of income (expenses are partner's responsibility)
-      const ownerGross = Math.round(figures.income * ownerPct / 100)
-      const companyGross = Math.round(figures.income * companyPct / 100)
-      const ownerDue = Math.max(0, ownerGross - figures.expense) // can't go below 0
-      const companyDue = companyGross
-      const loftTxs = txByLoft.get(loft.id) || { income: [], expense: [] }
+      const ownerGross = Math.round(rev.income * ownerPct / 100)
+      const ownerDue = Math.max(0, ownerGross - exp.expense)
+      const companyDue = Math.round(rev.income * companyPct / 100)
 
       return {
         loft_id: loft.id,
@@ -72,34 +133,28 @@ export async function GET(request: NextRequest) {
         owner_name: (loft.owners as any)?.name || 'Inconnu',
         owner_percentage: ownerPct,
         company_percentage: companyPct,
-        total_income: figures.income,
-        total_expense: figures.expense,
-        total_revenue: figures.net,
-        owner_gross: ownerGross,       // income × owner%
-        owner_due: ownerDue,           // owner_gross - expenses
-        company_due: companyDue,       // income × company% (no expense deduction)
+        total_income: Math.round(rev.income),
+        total_expense: exp.expense,
+        total_revenue: Math.round(rev.income) - exp.expense,
+        owner_gross: ownerGross,
+        owner_due: ownerDue,
+        company_due: companyDue,
+        // For detail modal — show reservations (income source)
         transactions: [
-          ...loftTxs.income.map(tx => ({
-            id: tx.id,
-            date: tx.date,
-            description: tx.description || '',
-            category: tx.category || '',
-            amount: Math.round(Number(tx.equivalent_amount_default_currency ?? tx.amount ?? 0)),
+          ...rev.reservations.map(r => ({
+            id: r.id,
+            date: r.check_in_date,
+            description: `${r.guest_name} (${r.check_in_date} → ${r.check_out_date})`,
+            category: 'Réservation',
+            amount: r.prorated_amount,
             type: 'income' as const,
           })),
-          ...loftTxs.expense.map(tx => ({
-            id: tx.id,
-            date: tx.date,
-            description: tx.description || '',
-            category: tx.category || '',
-            amount: Math.round(Number(tx.equivalent_amount_default_currency ?? tx.amount ?? 0)),
-            type: 'expense' as const,
-          })),
+          ...exp.transactions,
         ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
       }
     })
 
-    // Group by owner — only include lofts that have transactions
+    // 7. Group by owner — only include lofts with activity
     const byOwnerMap = new Map<string, any>()
     loftResults.forEach(l => {
       if (!byOwnerMap.has(l.owner_id)) {
@@ -114,12 +169,11 @@ export async function GET(request: NextRequest) {
       }
       const entry = byOwnerMap.get(l.owner_id)!
       entry.lofts.push(l)
-      entry.total_revenue += l.total_revenue
+      entry.total_revenue += l.total_income
       entry.total_owner_due += l.owner_due
       entry.total_company_due += l.company_due
     })
 
-    // Filter out owners with zero revenue
     const byOwner = Array.from(byOwnerMap.values())
       .filter(g => g.total_revenue > 0)
       .sort((a, b) => b.total_revenue - a.total_revenue)

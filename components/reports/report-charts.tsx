@@ -198,33 +198,37 @@ export default function ReportCharts({ loftRevenue, monthlyRevenue }: ReportChar
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={450}>
-            <LineChart data={monthlyRevenue} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e0e7ff" className="opacity-30" />
-              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="revenue" 
-                stroke="#10B981" 
-                strokeWidth={3}
-                name={t('revenue')} 
-                activeDot={{ r: 6, fill: "#10B981", stroke: "#fff", strokeWidth: 2 }}
-                dot={{ fill: "#10B981", strokeWidth: 2, r: 4 }}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="expenses" 
-                stroke="#EF4444" 
-                strokeWidth={3}
-                name={t('expenses')}
-                activeDot={{ r: 6, fill: "#EF4444", stroke: "#fff", strokeWidth: 2 }}
-                dot={{ fill: "#EF4444", strokeWidth: 2, r: 4 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="overflow-x-auto">
+            <div style={{ minWidth: '800px' }}>
+              <ResponsiveContainer width="100%" height={450}>
+                <LineChart data={monthlyRevenue} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e7ff" className="opacity-30" />
+                  <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="revenue" 
+                    stroke="#10B981" 
+                    strokeWidth={3}
+                    name={t('revenue')} 
+                    activeDot={{ r: 6, fill: "#10B981", stroke: "#fff", strokeWidth: 2 }}
+                    dot={{ fill: "#10B981", strokeWidth: 2, r: 4 }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="expenses" 
+                    stroke="#EF4444" 
+                    strokeWidth={3}
+                    name={t('expenses')}
+                    activeDot={{ r: 6, fill: "#EF4444", stroke: "#fff", strokeWidth: 2 }}
+                    dot={{ fill: "#EF4444", strokeWidth: 2, r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

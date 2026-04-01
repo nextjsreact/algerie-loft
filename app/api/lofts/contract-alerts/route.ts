@@ -39,7 +39,7 @@ export async function GET() {
           days_remaining,
         }
       })
-      // Only show contracts expiring within 30 days (or already expired)
+      // Show contracts expiring within 30 days OR already expired
       .filter((a: any) => a.days_remaining <= 30)
       .sort((a: any, b: any) => a.days_remaining - b.days_remaining)
 

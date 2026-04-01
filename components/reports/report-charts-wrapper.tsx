@@ -272,3 +272,49 @@ export default function ReportChartsWrapper({ loftRevenue, monthlyRevenue }: Rep
       </Card>
 
       {/* Top 5 Lofts les Plus Rentables */}
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+            {t('top5ProfitableLofts')}
+          </CardTitle>
+          <CardDescription>
+            {t('mostValuableAssets')}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-xl border shadow-lg">
+            <div className="space-y-3">
+              {loftRevenue.slice(0, 5).map((item, index) => {
+                const topProfit = loftRevenue[0]?.net_profit || 1
+                const percentage = topProfit > 0 ? (item.net_profit / topProfit) * 100 : 0
+                return (
+                  <div key={index} className="flex items-center justify-between p-3 bg-white rounded-lg border shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
+                      <div>
+                        <div className="font-medium text-gray-900">{item.name}</div>
+                        <div className="text-sm text-gray-600">{item.net_profit.toLocaleString()} DA</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-bold text-lg text-gray-900">{percentage.toFixed(1)}%</div>
+                      <div className="text-xs text-gray-500">du top</div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            {loftRevenue.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <div className="text-lg mb-2">📊</div>
+                <div>Aucune donnée disponible</div>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}

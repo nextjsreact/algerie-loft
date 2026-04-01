@@ -196,152 +196,79 @@ export default function ReportChartsWrapper({ loftRevenue, monthlyRevenue }: Rep
                 <span className="text-sm font-medium text-gray-700">{t('expenses')}</span>
               </div>
             </div>
-            
-            <div className="relative bg-white rounded-lg p-4 shadow-inner border">
-              <svg viewBox="0 0 600 300" className="w-full h-64">
-                <defs>
-                  <linearGradient id="revenueLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#0088FE"/>
-                    <stop offset="100%" stopColor="#00C49F"/>
-                  </linearGradient>
-                  <linearGradient id="expenseLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#FF8042"/>
-                    <stop offset="100%" stopColor="#FF4444"/>
-                  </linearGradient>
-                </defs>
-                
-                {/* Grid */}
-                <g stroke="#f3f4f6" strokeWidth="1">
-                  {[0, 1, 2, 3, 4].map(i => (
-                    <line key={i} x1="60" y1={50 + i * 40} x2="540" y2={50 + i * 40} />
-                  ))}
-                </g>
-                
-                {/* Revenue line */}
-                <path
-                  d={`M 60 ${210 - (monthlyRevenue[0]?.revenue || 0) / maxMonthlyValue * 160} ${monthlyRevenue.map((item, i) => 
-                    `L ${60 + i * 80} ${210 - (item.revenue / maxMonthlyValue) * 160}`
-                  ).join(' ')}`}
-                  stroke="url(#revenueLineGradient)"
-                  strokeWidth="3"
-                  fill="none"
-                  className="drop-shadow-sm"
-                />
-                
-                {/* Expense line */}
-                <path
-                  d={`M 60 ${210 - (monthlyRevenue[0]?.expenses || 0) / maxMonthlyValue * 160} ${monthlyRevenue.map((item, i) => 
-                    `L ${60 + i * 80} ${210 - (item.expenses / maxMonthlyValue) * 160}`
-                  ).join(' ')}`}
-                  stroke="url(#expenseLineGradient)"
-                  strokeWidth="3"
-                  fill="none"
-                  className="drop-shadow-sm"
-                />
-                
-                {/* Data points */}
-                {monthlyRevenue.map((item, i) => (
-                  <g key={i}>
-                    <circle
-                      cx={60 + i * 80}
-                      cy={210 - (item.revenue / maxMonthlyValue) * 160}
-                      r="6"
-                      fill="#0088FE"
-                      stroke="white"
-                      strokeWidth="2"
-                      className="drop-shadow-lg hover:r-8 transition-all cursor-pointer"
-                    />
-                    <circle
-                      cx={60 + i * 80}
-                      cy={210 - (item.expenses / maxMonthlyValue) * 160}
-                      r="6"
-                      fill="#FF8042"
-                      stroke="white"
-                      strokeWidth="2"
-                      className="drop-shadow-lg hover:r-8 transition-all cursor-pointer"
-                    />
-                    
-                    {/* Month labels */}
-                    <text
-                      x={60 + i * 80}
-                      y="240"
-                      textAnchor="middle"
-                      className="text-sm font-medium fill-gray-700"
-                    >
-                      {item.month}
-                    </text>
+
+            {/* Scrollable chart — 12 months × 80px = 960px wide */}
+            <div className="overflow-x-auto">
+              <div className="relative bg-white rounded-lg p-4 shadow-inner border" style={{ minWidth: '960px' }}>
+                <svg viewBox="0 0 1020 300" className="w-full h-64">
+                  <defs>
+                    <linearGradient id="revenueLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#0088FE"/>
+                      <stop offset="100%" stopColor="#00C49F"/>
+                    </linearGradient>
+                    <linearGradient id="expenseLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#FF8042"/>
+                      <stop offset="100%" stopColor="#FF4444"/>
+                    </linearGradient>
+                  </defs>
+
+                  {/* Grid */}
+                  <g stroke="#f3f4f6" strokeWidth="1">
+                    {[0, 1, 2, 3, 4].map(i => (
+                      <line key={i} x1="60" y1={50 + i * 40} x2="980" y2={50 + i * 40} />
+                    ))}
                   </g>
-                ))}
-                
-                {/* Y-axis labels */}
-                {[0, 1, 2, 3, 4].map(i => (
-                  <text
-                    key={i}
-                    x="45"
-                    y={215 - i * 40}
-                    textAnchor="end"
-                    className="text-xs font-medium fill-gray-600"
-                  >
-                    {(maxMonthlyValue * i / 4 / 1000).toFixed(0)}k
-                  </text>
-                ))}
-              </svg>
+
+                  {/* Revenue line */}
+                  {monthlyRevenue.length > 0 && (
+                    <path
+                      d={monthlyRevenue.map((item, i) =>
+                        `${i === 0 ? 'M' : 'L'} ${80 + i * 80} ${210 - (item.revenue / maxMonthlyValue) * 160}`
+                      ).join(' ')}
+                      stroke="url(#revenueLineGradient)"
+                      strokeWidth="3"
+                      fill="none"
+                    />
+                  )}
+
+                  {/* Expense line */}
+                  {monthlyRevenue.length > 0 && (
+                    <path
+                      d={monthlyRevenue.map((item, i) =>
+                        `${i === 0 ? 'M' : 'L'} ${80 + i * 80} ${210 - (item.expenses / maxMonthlyValue) * 160}`
+                      ).join(' ')}
+                      stroke="url(#expenseLineGradient)"
+                      strokeWidth="3"
+                      fill="none"
+                    />
+                  )}
+
+                  {/* Data points + month labels */}
+                  {monthlyRevenue.map((item, i) => (
+                    <g key={i}>
+                      <circle cx={80 + i * 80} cy={210 - (item.revenue / maxMonthlyValue) * 160} r="5" fill="#0088FE" stroke="white" strokeWidth="2" />
+                      <circle cx={80 + i * 80} cy={210 - (item.expenses / maxMonthlyValue) * 160} r="5" fill="#FF8042" stroke="white" strokeWidth="2" />
+                      {/* Value label above revenue dot */}
+                      <text x={80 + i * 80} y={200 - (item.revenue / maxMonthlyValue) * 160} textAnchor="middle" fontSize="9" fill="#0088FE">
+                        {item.revenue > 0 ? `${(item.revenue / 1000).toFixed(0)}k` : ''}
+                      </text>
+                      <text x={80 + i * 80} y="240" textAnchor="middle" fontSize="11" fill="#374151">
+                        {item.month}
+                      </text>
+                    </g>
+                  ))}
+
+                  {/* Y-axis labels */}
+                  {[0, 1, 2, 3, 4].map(i => (
+                    <text key={i} x="55" y={215 - i * 40} textAnchor="end" fontSize="10" fill="#6b7280">
+                      {(maxMonthlyValue * i / 4 / 1000).toFixed(0)}k
+                    </text>
+                  ))}
+                </svg>
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Top 5 Lofts les Plus Rentables */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-            {t('top5ProfitableLofts')}
-          </CardTitle>
-          <CardDescription>
-            {t('mostValuableAssets')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-xl border shadow-lg">
-            <div className="space-y-3">
-              {loftRevenue.slice(0, 5).map((item, index) => {
-                const topProfit = loftRevenue[0]?.net_profit || 1; // Éviter division par zéro
-                const percentage = topProfit > 0 ? (item.net_profit / topProfit) * 100 : 0;
-                return (
-                  <div key={index} className="flex items-center justify-between p-3 bg-white rounded-lg border shadow-sm">
-                    <div className="flex items-center gap-3">
-                      <div 
-                        className="w-4 h-4 rounded-full"
-                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                      ></div>
-                      <div>
-                        <div className="font-medium text-gray-900">{item.name}</div>
-                        <div className="text-sm text-gray-600">
-                          {item.net_profit.toLocaleString()} DA
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-bold text-lg text-gray-900">
-                        {percentage.toFixed(1)}%
-                      </div>
-                      <div className="text-xs text-gray-500">du top</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            
-            {loftRevenue.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
-                <div className="text-lg mb-2">📊</div>
-                <div>Aucune donnée disponible</div>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}

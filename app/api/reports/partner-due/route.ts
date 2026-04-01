@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
     //    A reservation overlaps if: check_in < periodEnd AND check_out > periodStart
     const { data: reservations, error: resError } = await supabase
       .from('reservations')
-      .select('id, loft_id, check_in_date, check_out_date, total_amount, guest_name, status, nights')
+      .select('id, loft_id, check_in_date, check_out_date, total_amount, guest_name, status')
       .in('status', ['confirmed', 'completed'])
       .lt('check_in_date', periodEndExclusive.toISOString().split('T')[0])
       .gt('check_out_date', startDate)
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
         guest_name: r.guest_name,
         check_in_date: r.check_in_date,
         check_out_date: r.check_out_date,
-        nights: r.nights,
+        nights: Math.round((new Date(r.check_out_date).getTime() - new Date(r.check_in_date).getTime()) / 86400000),
         total_amount: r.total_amount,
         prorated_amount: proratedAmount,
         status: r.status,

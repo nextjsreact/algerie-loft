@@ -45,7 +45,7 @@ function prorateReservation(
 export async function getReportsData() {
   await requireRole(["admin", "manager", "executive"])
   
-  const supabase = await createClient()
+  const supabase = await createClient(true) // service role to bypass RLS
 
   // Get loft revenue data from transactions (all time)
   const { data: lofts, error: loftsError } = await supabase

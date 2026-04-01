@@ -210,6 +210,6 @@ export async function GET(request: NextRequest) {
     })
   } catch (err) {
     console.error('[partner-due]', err)
-    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
+    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
   }
 }

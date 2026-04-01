@@ -86,8 +86,12 @@ export async function getReportsData() {
 
   // Monthly revenue: prorated from reservations + expenses from transactions
   const now = new Date()
-  const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1)
-  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+  const currentYear = now.getUTCFullYear()
+  const currentMonth = now.getUTCMonth() // 0-indexed
+
+  // Use Date.UTC to avoid timezone/negative-month arithmetic bugs
+  const twelveMonthsAgo = new Date(Date.UTC(currentYear, currentMonth - 11, 1))
+  const nextMonth = new Date(Date.UTC(currentYear, currentMonth + 1, 1))
 
   // Fetch all reservations that overlap with the last 12 months
   const { data: reservations } = await supabase
@@ -108,8 +112,8 @@ export async function getReportsData() {
   const monthlyRevenueData: MonthlyRevenue[] = []
 
   for (let i = 11; i >= 0; i--) {
-    const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 1) // exclusive
+    const monthStart = new Date(Date.UTC(currentYear, currentMonth - i, 1))
+    const monthEnd = new Date(Date.UTC(currentYear, currentMonth - i + 1, 1))
     const monthName = monthStart.toLocaleDateString('fr-FR', { month: 'short' })
 
     // Prorated revenue from reservations

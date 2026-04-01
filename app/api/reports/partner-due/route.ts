@@ -44,6 +44,11 @@ export async function GET(request: NextRequest) {
     const periodEndExclusive = new Date(periodEnd)
     periodEndExclusive.setUTCDate(periodEndExclusive.getUTCDate() + 1)
 
+    // April 2026 is the cutover month: use reservations+prorata from April onwards,
+    // use transactions for months before April 2026
+    const CUTOVER = new Date('2026-04-01T00:00:00Z')
+    const useReservations = periodStart >= CUTOVER
+
     // 1. Fetch lofts with owner info and percentages
     const { data: lofts, error: loftsError } = await supabase
       .from('lofts')
@@ -53,49 +58,69 @@ export async function GET(request: NextRequest) {
 
     if (loftsError) return NextResponse.json({ error: loftsError.message }, { status: 500 })
 
-    // 2. Fetch confirmed/completed reservations that overlap with the period
-    //    A reservation overlaps if: check_in < periodEnd AND check_out > periodStart
-    const { data: reservations, error: resError } = await supabase
-      .from('reservations')
-      .select('id, loft_id, check_in_date, check_out_date, total_amount, guest_name, status')
-      .in('status', ['confirmed', 'completed'])
-      .lt('check_in_date', periodEndExclusive.toISOString().split('T')[0])
-      .gt('check_out_date', startDate)
-      .order('check_in_date', { ascending: false })
+    // 2. Fetch income — from reservations (prorata) if >= April 2026, else from transactions
+    let resByLoft = new Map<string, { income: number; reservations: any[] }>()
 
-    if (resError) return NextResponse.json({ error: resError.message }, { status: 500 })
+    if (useReservations) {
+      // Fetch confirmed/completed reservations overlapping the period
+      const { data: reservations, error: resError } = await supabase
+        .from('reservations')
+        .select('id, loft_id, check_in_date, check_out_date, total_amount, guest_name, status')
+        .in('status', ['confirmed', 'completed'])
+        .lt('check_in_date', periodEndExclusive.toISOString().split('T')[0])
+        .gt('check_out_date', startDate)
+        .order('check_in_date', { ascending: false })
 
-    // 3. Fetch expense transactions for the period (by transaction date)
-    const { data: expenseTx, error: expError } = await supabase
-      .from('transactions')
-      .select('id, loft_id, equivalent_amount_default_currency, amount, description, date, category')
-      .eq('transaction_type', 'expense')
-      .gte('date', startDate)
-      .lte('date', endDate + 'T23:59:59')
+      if (resError) return NextResponse.json({ error: resError.message }, { status: 500 })
 
-    if (expError) return NextResponse.json({ error: expError.message }, { status: 500 })
-
-    // 4. Group reservations by loft with prorated amounts
-    const resByLoft = new Map<string, { income: number; reservations: any[] }>()
-    ;(reservations || []).forEach(r => {
-      const checkIn = new Date(r.check_in_date + 'T00:00:00Z')
-      const checkOut = new Date(r.check_out_date + 'T00:00:00Z')
-      const proratedAmount = prorateAmount(checkIn, checkOut, r.total_amount || 0, periodStart, periodEndExclusive)
-
-      if (!resByLoft.has(r.loft_id)) resByLoft.set(r.loft_id, { income: 0, reservations: [] })
-      const entry = resByLoft.get(r.loft_id)!
-      entry.income += proratedAmount
-      entry.reservations.push({
-        id: r.id,
-        guest_name: r.guest_name,
-        check_in_date: r.check_in_date,
-        check_out_date: r.check_out_date,
-        nights: Math.round((new Date(r.check_out_date).getTime() - new Date(r.check_in_date).getTime()) / 86400000),
-        total_amount: r.total_amount,
-        prorated_amount: proratedAmount,
-        status: r.status,
+      ;(reservations || []).forEach(r => {
+        const checkIn = new Date(r.check_in_date + 'T00:00:00Z')
+        const checkOut = new Date(r.check_out_date + 'T00:00:00Z')
+        const proratedAmount = prorateAmount(checkIn, checkOut, r.total_amount || 0, periodStart, periodEndExclusive)
+        if (!resByLoft.has(r.loft_id)) resByLoft.set(r.loft_id, { income: 0, reservations: [] })
+        const entry = resByLoft.get(r.loft_id)!
+        entry.income += proratedAmount
+        entry.reservations.push({
+          id: r.id,
+          guest_name: r.guest_name,
+          check_in_date: r.check_in_date,
+          check_out_date: r.check_out_date,
+          nights: Math.round((new Date(r.check_out_date).getTime() - new Date(r.check_in_date).getTime()) / 86400000),
+          total_amount: r.total_amount,
+          prorated_amount: proratedAmount,
+          status: r.status,
+        })
       })
-    })
+    } else {
+      // Use income transactions for months before April 2026
+      const { data: incomeTx, error: incError } = await supabase
+        .from('transactions')
+        .select('id, loft_id, equivalent_amount_default_currency, amount, description, date, category')
+        .eq('transaction_type', 'income')
+        .gte('date', startDate)
+        .lte('date', endDate + 'T23:59:59')
+
+      if (incError) return NextResponse.json({ error: incError.message }, { status: 500 })
+
+      ;(incomeTx || []).forEach(tx => {
+        if (!tx.loft_id) return
+        if (!resByLoft.has(tx.loft_id)) resByLoft.set(tx.loft_id, { income: 0, reservations: [] })
+        const entry = resByLoft.get(tx.loft_id)!
+        const amt = Math.round(Number(tx.equivalent_amount_default_currency ?? tx.amount ?? 0))
+        entry.income += amt
+        // Store as "reservation-like" entry for display
+        entry.reservations.push({
+          id: tx.id,
+          guest_name: tx.description || '-',
+          check_in_date: tx.date?.split('T')[0] || startDate,
+          check_out_date: tx.date?.split('T')[0] || startDate,
+          nights: 0,
+          total_amount: amt,
+          prorated_amount: amt,
+          status: 'income_tx',
+        })
+      })
+    }
 
     // 5. Group expenses by loft
     const expByLoft = new Map<string, { expense: number; transactions: any[] }>()

@@ -120,10 +120,25 @@ export default async function LoftsPage() {
     const ownersMap = new Map((ownersData || []).map(owner => [owner.id, owner.name || owner.business_name]))
     const zonesMap = new Map((zoneAreasData || []).map(zone => [zone.id, zone.name]))
 
+    // Fetch active reservations today to compute real-time occupancy
+    const today = new Date().toISOString().split('T')[0]
+    const { data: activeReservations } = await supabase
+      .from('reservations')
+      .select('loft_id')
+      .in('status', ['confirmed', 'pending'])
+      .lte('check_in_date', today)
+      .gt('check_out_date', today)
+
+    const occupiedLoftIds = new Set((activeReservations || []).map(r => r.loft_id))
+
     const lofts = (loftsData || []).map(loft => ({
       ...loft,
       owner_name: ownersMap.get(loft.owner_id) || null,
-      zone_area_name: zonesMap.get(loft.zone_area_id) || null
+      zone_area_name: zonesMap.get(loft.zone_area_id) || null,
+      // Override status with real-time occupancy
+      status: loft.status === 'maintenance' ? 'maintenance'
+        : occupiedLoftIds.has(loft.id) ? 'occupied'
+        : 'available'
     })) as LoftWithRelations[]
 
     const owners = ownersData || []

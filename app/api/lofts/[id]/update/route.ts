@@ -19,7 +19,8 @@ const ALLOWED_FIELDS = [
   'minimum_stay', 'maximum_stay', 'check_in_time', 'check_out_time',
   'cleaning_fee', 'tax_rate', 'cancellation_policy', 'house_rules',
   'wifi_password', 'owner_id',
-  'contract_start_date', 'contract_duration_months'
+  'contract_start_date', 'contract_duration_months',
+  'airbnb_ical_url'
 ]
 
 export async function PUT(

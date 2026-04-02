@@ -59,6 +59,7 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
     prochaine_echeance_tv: loft?.prochaine_echeance_tv || "",
     contract_start_date: (loft as any)?.contract_start_date || "",
     contract_duration_months: (loft as any)?.contract_duration_months?.toString() || "",
+    airbnb_ical_url: (loft as any)?.airbnb_ical_url || "",
   }), [loft])
 
   const [formData, setFormData] = useState(() => getInitialFormData())
@@ -124,6 +125,7 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
         prochaine_echeance_tv: formData.prochaine_echeance_tv || null,
         contract_start_date: formData.contract_start_date || null,
         contract_duration_months: formData.contract_duration_months ? Number(formData.contract_duration_months) : null,
+        airbnb_ical_url: (formData as any).airbnb_ical_url || null,
       }
       
       await onSubmit(processedData)
@@ -600,6 +602,24 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
                     className="bg-white placeholder:text-gray-400 mt-2"
                   />
                   <p className="text-xs text-gray-500 mt-1">{t('wifiPasswordHelp')}</p>
+                </div>
+
+                {/* Airbnb iCal sync */}
+                <div className="mt-4 p-4 bg-orange-50 rounded-lg border border-orange-200">
+                  <Label htmlFor="airbnb_ical_url" className="text-sm font-medium text-orange-900 flex items-center gap-2">
+                    🏠 URL iCal Airbnb
+                  </Label>
+                  <Input
+                    id="airbnb_ical_url"
+                    type="url"
+                    value={(formData as any).airbnb_ical_url || ''}
+                    onChange={(e) => setFormData({...formData, airbnb_ical_url: e.target.value} as any)}
+                    placeholder="https://www.airbnb.com/calendar/ical/..."
+                    className="bg-white mt-2"
+                  />
+                  <p className="text-xs text-orange-700 mt-1">
+                    Airbnb → Calendrier → Exporter le calendrier → Copier le lien iCal
+                  </p>
                 </div>
               </div>
 

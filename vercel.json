@@ -10,6 +10,12 @@
       "maxDuration": 30
     }
   },
+  "crons": [
+    {
+      "path": "/api/airbnb/sync",
+      "schedule": "0 * * * *"
+    }
+  ],
   "redirects": [
     {
       "source": "/www/(.*)",

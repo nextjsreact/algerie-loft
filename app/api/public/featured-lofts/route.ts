@@ -47,6 +47,6 @@ export async function GET() {
     return NextResponse.json({ lofts: featured })
   } catch (err) {
     console.error('[featured-lofts]', err)
-    return NextResponse.json({ lofts: [], error: err instanceof Error ? err.message : String(err) })
+    return NextResponse.json({ lofts: [], error: JSON.stringify(err) })
   }
 }

@@ -134,10 +134,15 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
   const [dbLofts, setDbLofts] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('/api/public/featured-lofts')
+    const controller = new AbortController()
+    fetch('/api/public/featured-lofts', { signal: controller.signal })
       .then(r => r.json())
-      .then(data => { if (data.lofts?.length > 0) setDbLofts(data.lofts) })
-      .catch(() => {})
+      .then(data => { 
+        console.log('[homepage] lofts loaded:', data.lofts?.length)
+        if (data.lofts?.length > 0) setDbLofts(data.lofts) 
+      })
+      .catch(e => console.error('[homepage] fetch error:', e))
+    return () => controller.abort()
   }, [])
 
   const displayLofts = dbLofts

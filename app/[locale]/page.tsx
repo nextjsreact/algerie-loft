@@ -88,10 +88,12 @@ export default async function LocalePage({ params }: LocalePageProps) {
     const { createClient } = await import('@/utils/supabase/server')
     const supabase = await createClient(true)
 
-    const { data: photos } = await supabase
+    const { data: photos, error: photosError } = await supabase
       .from('loft_photos')
       .select('loft_id, url')
       .order('created_at', { ascending: true })
+
+    console.log('[page.tsx] photos fetched:', photos?.length, 'error:', photosError?.message)
 
     if (photos && photos.length > 0) {
       const photoMap = new Map<string, string>()
@@ -113,12 +115,11 @@ export default async function LocalePage({ params }: LocalePageProps) {
         zone: l.zone_areas?.name || '',
         photo: photoMap.get(l.id) || '',
       }))
+      console.log('[page.tsx] featuredLoftsFromDB:', featuredLoftsFromDB.length, 'lofts')
     }
   } catch (e) {
     console.error('Failed to fetch featured lofts:', e)
   }
-  
-  return (
     <>
       {/* Gestionnaire de redirection OAuth */}
       <OAuthRedirectHandler locale={locale} />

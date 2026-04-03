@@ -342,7 +342,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
       >
         {/* Hero Carrousel Section */}
         <motion.section variants={sectionVariants} className="relative w-full">
-          <div className="relative w-full overflow-hidden" style={{ height: 'calc(100vh - 120px)', minHeight: '500px', maxHeight: '700px' }}>
+          <div className="relative w-full overflow-hidden" style={{ height: 'calc(100vh - 80px)', minHeight: '600px', maxHeight: '900px' }}>
             {/* Carrousel d'images - Glissement fluide de droite vers gauche */}
             <div className="absolute inset-0 w-full h-full overflow-hidden">
               {carouselSlides.map((slide, index) => {
@@ -362,9 +362,9 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                       <img 
                         src={slide.image}
                         alt={getLocalizedText(slide.title)}
-                        className="w-full h-full object-contain bg-black"
-                        loading={index === 0 ? "eager" : "lazy"}
+                        className="w-full h-full object-cover"
                         style={{ objectPosition: 'center center' }}
+                        loading={index === 0 ? "eager" : "lazy"}
                       />
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-black/70"></div>

@@ -875,7 +875,12 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {displayLofts.map((loft: any, index: number) => {
+              {displayLofts.length === 0 && (
+                <div className="col-span-3 text-center py-12 text-gray-400">
+                  <div className="animate-pulse">Chargement des appartements...</div>
+                </div>
+              )}
+              {displayLofts.slice(0, 6).map((loft: any, index: number) => {
                 // Support both DB lofts and hardcoded lofts
                 const isDbLoft = !!loft.photo
                 const title = isDbLoft ? loft.name : getLocalizedText(loft.title)

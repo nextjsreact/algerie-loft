@@ -92,7 +92,10 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
       .then(r => r.json())
       .then(data => { 
         console.log('[homepage] lofts loaded:', data.lofts?.length)
-        if (data.lofts?.length > 0) setDbLofts(data.lofts) 
+        if (data.lofts?.length > 0) {
+          setDbLofts(data.lofts)
+          setCurrentSlide(0) // reset carousel to first slide
+        }
       })
       .catch(e => console.error('[homepage] fetch error:', e))
     return () => controller.abort()
@@ -126,7 +129,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, carouselSlides.length]);
 
   // Navigation functions for carousel
   const nextSlide = () => {

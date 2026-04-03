@@ -111,7 +111,7 @@ const heroSlides = [
 
 import { featuredLofts } from '@/config/featured-lofts-content';
 
-// Utilisation des données de configuration
+// Utilisation des données de configuration (fallback uniquement)
 const realLofts = featuredLofts;
 
 const AmenityIcon = ({ type }: { type: string }) => {
@@ -131,6 +131,18 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
   const [searchGuests, setSearchGuests] = useState('2');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [dbLofts, setDbLofts] = useState<any[]>([]);
+
+  // Fetch real lofts with photos from DB
+  useEffect(() => {
+    fetch('/api/public/featured-lofts')
+      .then(r => r.json())
+      .then(data => { if (data.lofts?.length > 0) setDbLofts(data.lofts) })
+      .catch(() => {})
+  }, [])
+
+  // Use DB lofts if available, otherwise fallback to hardcoded
+  const displayLofts = dbLofts.length > 0 ? dbLofts : realLofts
   
   // Initialize performance optimizations - Temporarily disabled to fix infinite loop
   const isOptimized = true;
@@ -865,7 +877,19 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {realLofts.map((loft, index) => (
+              {displayLofts.map((loft: any, index: number) => {
+                // Support both DB lofts and hardcoded lofts
+                const isDbLoft = !!loft.photo
+                const title = isDbLoft ? loft.name : getLocalizedText(loft.title)
+                const location = isDbLoft ? (loft.zone || loft.address) : getLocalizedText(loft.location)
+                const description = isDbLoft ? loft.description : getLocalizedText(loft.description)
+                const price = isDbLoft ? loft.price_per_night : loft.price
+                const currency = isDbLoft ? 'DA' : loft.currency
+                const image = isDbLoft ? loft.photo : loft.image
+                const rating = isDbLoft ? null : loft.rating
+                const reviews = isDbLoft ? null : loft.reviews
+
+                return (
                 <motion.div
                   key={loft.id}
                   initial={{ opacity: 0, y: 50 }}
@@ -876,56 +900,60 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                   <div className="relative h-64 overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
                     <img 
-                      src={loft.image} 
-                      alt={getLocalizedText(loft.title)}
+                      src={image} 
+                      alt={title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
-                    <div className="absolute top-4 right-4 z-20">
-                      <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-3 py-1 rounded-full">
-                        <div className="flex items-center space-x-1">
-                          <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                          <span className="text-sm font-semibold text-gray-900 dark:text-white">{loft.rating}</span>
-                          <span className="text-xs text-gray-600 dark:text-gray-400">({loft.reviews})</span>
+                    {rating && (
+                      <div className="absolute top-4 right-4 z-20">
+                        <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-3 py-1 rounded-full">
+                          <div className="flex items-center space-x-1">
+                            <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                            <span className="text-sm font-semibold text-gray-900 dark:text-white">{rating}</span>
+                            {reviews && <span className="text-xs text-gray-600 dark:text-gray-400">({reviews})</span>}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
                     <div className="absolute bottom-4 left-4 right-4 z-20">
                       <div className="flex items-center space-x-2">
                         <MapPin className="w-4 h-4 text-white" />
-                        <span className="text-sm text-white font-medium">
-                          {getLocalizedText(loft.location)}
-                        </span>
+                        <span className="text-sm text-white font-medium">{location}</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2" style={{ fontFamily: 'Caveat, cursive' }}>
-                      {getLocalizedText(loft.title)}
+                      {title}
                     </h3>
                     
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">
-                      {getLocalizedText(loft.description)}
-                    </p>
+                    {description && (
+                      <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">
+                        {description}
+                      </p>
+                    )}
 
-                    <div className="flex items-center space-x-4 mb-4">
-                      {loft.amenities.map((amenity, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ duration: 0.3, delay: index * 0.1 }}
-                          className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg"
-                        >
-                          <AmenityIcon type={amenity} />
-                        </motion.div>
-                      ))}
-                    </div>
+                    {!isDbLoft && loft.amenities && (
+                      <div className="flex items-center space-x-4 mb-4">
+                        {loft.amenities.map((amenity: string, i: number) => (
+                          <motion.div
+                            key={i}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.3, delay: i * 0.1 }}
+                            className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg"
+                          >
+                            <AmenityIcon type={amenity} />
+                          </motion.div>
+                        ))}
+                      </div>
+                    )}
 
                     <div className="flex items-center justify-between mt-6">
                       <div>
                         <span className="text-2xl font-bold text-gray-900 dark:text-white" style={{ fontFamily: 'Caveat, cursive' }}>
-                          {loft.price.toLocaleString()} {loft.currency}
+                          {price.toLocaleString()} {currency}
                         </span>
                         <span className="text-gray-600 dark:text-gray-400 text-sm ml-1">
                           {text.perNight}
@@ -935,7 +963,6 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                         whileHover={{ scale: 1.05, y: -1 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => {
-                          // Redirect to loft detail page for booking
                           window.location.href = `/${locale}/client/lofts/${loft.id}`;
                         }}
                         className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg"
@@ -946,7 +973,8 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                     </div>
                   </div>
                 </motion.div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </motion.section>

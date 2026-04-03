@@ -20,10 +20,13 @@ export async function GET() {
 
     // Build map: loft_id -> best photo url (cover first, then first photo)
     const photoMap = new Map<string, string>()
+    // First pass: set cover photos
     photos.forEach((p: any) => {
-      if (!photoMap.has(p.loft_id) || p.is_cover) {
-        photoMap.set(p.loft_id, p.url)
-      }
+      if (p.is_cover === true) photoMap.set(p.loft_id, p.url)
+    })
+    // Second pass: fill in lofts without cover using first available photo
+    photos.forEach((p: any) => {
+      if (!photoMap.has(p.loft_id)) photoMap.set(p.loft_id, p.url)
     })
 
     const loftIds = Array.from(photoMap.keys())

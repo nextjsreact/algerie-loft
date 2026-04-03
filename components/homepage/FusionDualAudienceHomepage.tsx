@@ -102,7 +102,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
 
   // Build carousel slides from DB lofts (use cover photo), fallback to heroSlides
   const carouselSlides = dbLofts.length > 0
-    ? dbLofts.slice(0, 6).map(l => ({
+    ? dbLofts.slice(0, 15).map(l => ({
         id: l.id,
         image: l.photo,
         title: { fr: l.name, en: l.name, ar: l.name },
@@ -849,7 +849,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                   <div className="animate-pulse">Chargement des appartements...</div>
                 </div>
               )}
-              {displayLofts.slice(0, 6).map((loft: any, index: number) => {
+              {displayLofts.slice(0, 15).map((loft: any, index: number) => {
                 // Support both DB lofts and hardcoded lofts
                 const isDbLoft = !!loft.photo
                 const title = isDbLoft ? loft.name : getLocalizedText(loft.title)

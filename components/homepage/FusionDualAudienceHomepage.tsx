@@ -132,19 +132,18 @@ export default function FusionDualAudienceHomepage({ locale, featuredLofts: init
   const [searchGuests, setSearchGuests] = useState('2');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [dbLofts, setDbLofts] = useState<any[]>(initialLofts);
+  const [dbLofts, setDbLofts] = useState<any[]>([]);
 
-  // Fetch real lofts with photos from DB (only if not passed as props)
+  // Fetch real lofts with photos from DB
   useEffect(() => {
-    if (initialLofts.length > 0) return // already have server-side data
     fetch('/api/public/featured-lofts')
       .then(r => r.json())
       .then(data => { if (data.lofts?.length > 0) setDbLofts(data.lofts) })
       .catch(() => {})
   }, [])
 
-  // Use DB lofts if available, otherwise fallback to hardcoded
-  const displayLofts = dbLofts.length > 0 ? dbLofts : realLofts
+  // Use server props first, then DB fetch result, then hardcoded fallback
+  const displayLofts = initialLofts.length > 0 ? initialLofts : dbLofts.length > 0 ? dbLofts : realLofts
   
   // Initialize performance optimizations - Temporarily disabled to fix infinite loop
   const isOptimized = true;

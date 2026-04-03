@@ -100,7 +100,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
 
   const displayLofts = dbLofts
 
-  // Build carousel slides from DB lofts (use cover photo), fallback to carouselSlides
+  // Build carousel slides from DB lofts (use cover photo), fallback to heroSlides
   const carouselSlides = dbLofts.length > 0
     ? dbLofts.slice(0, 6).map(l => ({
         id: l.id,
@@ -109,7 +109,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
         subtitle: { fr: l.zone || l.address, en: l.zone || l.address, ar: l.zone || l.address },
         price: `${(l.price_per_night || 0).toLocaleString()} DA/nuit`,
       }))
-    : carouselSlides
+    : heroSlides
   
   // Initialize performance optimizations - Temporarily disabled to fix infinite loop
   const isOptimized = true;

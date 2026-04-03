@@ -362,8 +362,9 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                       <img 
                         src={slide.image}
                         alt={getLocalizedText(slide.title)}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain bg-black"
                         loading={index === 0 ? "eager" : "lazy"}
+                        style={{ objectPosition: 'center center' }}
                       />
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-black/70"></div>

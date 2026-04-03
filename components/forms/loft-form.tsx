@@ -82,6 +82,7 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
             url: photo.url,
             name: photo.file_name,
             size: photo.file_size,
+            is_cover: photo.is_cover || false,
           }))
           setExistingPhotos(transformedPhotos)
           setCurrentPhotos(transformedPhotos)

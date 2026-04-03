@@ -7,20 +7,23 @@ export async function GET() {
   try {
     const supabase = await createClient(true)
 
-    // Get loft IDs that have photos
+    // Get loft IDs that have photos, prioritizing cover photos
     const { data: photos } = await supabase
       .from('loft_photos')
-      .select('loft_id, url')
+      .select('loft_id, url, is_cover')
+      .order('is_cover', { ascending: false }) // cover photos first
       .order('created_at', { ascending: true })
 
     if (!photos || photos.length === 0) {
       return NextResponse.json({ lofts: [] })
     }
 
-    // Build map: loft_id -> first photo url
+    // Build map: loft_id -> best photo url (cover first, then first photo)
     const photoMap = new Map<string, string>()
     photos.forEach((p: any) => {
-      if (!photoMap.has(p.loft_id)) photoMap.set(p.loft_id, p.url)
+      if (!photoMap.has(p.loft_id) || p.is_cover) {
+        photoMap.set(p.loft_id, p.url)
+      }
     })
 
     const loftIds = Array.from(photoMap.keys())

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Upload, X, Image as ImageIcon, Loader2, AlertTriangle } from "lucide-react";
+import { Upload, X, Image as ImageIcon, Loader2, AlertTriangle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -22,6 +22,7 @@ interface LoftPhoto {
   name: string;
   size: number;
   isUploading?: boolean;
+  is_cover?: boolean;
 }
 
 export function PhotoUpload({
@@ -231,6 +232,23 @@ export function PhotoUpload({
     });
   };
 
+  const setCoverPhoto = async (index: number, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const photo = photos[index];
+    if (!photo.id || !loftId) return;
+    try {
+      const response = await fetch(`/api/lofts/photos/${photo.id}/cover`, { method: 'POST' });
+      if (!response.ok) throw new Error();
+      // Update local state
+      const newPhotos = photos.map((p, i) => ({ ...p, is_cover: i === index }));
+      updatePhotos(newPhotos);
+      toast.success('Photo principale définie');
+    } catch {
+      toast.error('Erreur lors de la mise à jour');
+    }
+  };
+
   const confirmDeletePhoto = async () => {
     const { photoIndex } = deleteConfirmation;
     
@@ -329,21 +347,39 @@ export function PhotoUpload({
                   />
 
                   {/* Overlay avec actions */}
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                     {photo.isUploading ? (
                       <Loader2 className="h-6 w-6 text-white animate-spin" />
                     ) : (
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={(e) => openDeleteConfirmation(index, e)}
-                        className="h-8 w-8 p-0"
-                        title={t("photos.deletePhoto") || "Supprimer la photo"}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
+                      <>
+                        <Button
+                          size="sm"
+                          variant={photo.is_cover ? "default" : "outline"}
+                          onClick={(e) => setCoverPhoto(index, e)}
+                          className="h-8 w-8 p-0"
+                          title="Définir comme photo principale"
+                        >
+                          <Star className={`h-4 w-4 ${photo.is_cover ? 'fill-yellow-400 text-yellow-400' : 'text-white'}`} />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={(e) => openDeleteConfirmation(index, e)}
+                          className="h-8 w-8 p-0"
+                          title={t("photos.deletePhoto") || "Supprimer la photo"}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </>
                     )}
                   </div>
+
+                  {/* Badge photo principale */}
+                  {photo.is_cover && (
+                    <div className="absolute top-2 left-2 z-10 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <Star className="h-3 w-3 fill-yellow-900" /> Principal
+                    </div>
+                  )}
 
                   {/* Indicateur d'upload */}
                   {photo.isUploading && (

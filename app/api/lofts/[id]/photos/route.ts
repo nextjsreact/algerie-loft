@@ -27,6 +27,7 @@ export async function GET(
         file_size,
         mime_type,
         url,
+        is_cover,
         created_at,
         uploaded_by,
         uploader:profiles!uploaded_by (
@@ -35,6 +36,7 @@ export async function GET(
         )
       `)
       .eq('loft_id', id)
+      .order('is_cover', { ascending: false })
       .order('created_at', { ascending: false })
 
     if (error) {

@@ -120,6 +120,8 @@ export default async function LocalePage({ params }: LocalePageProps) {
   } catch (e) {
     console.error('Failed to fetch featured lofts:', e)
   }
+
+  return (
     <>
       {/* Gestionnaire de redirection OAuth */}
       <OAuthRedirectHandler locale={locale} />

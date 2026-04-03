@@ -14,6 +14,7 @@ import { PartnerLogos } from './PartnerLogos';
 
 interface FusionDualAudienceHomepageProps {
   locale: string;
+  featuredLofts?: any[];
 }
 
 // Images pour le carrousel hero avec textes
@@ -124,17 +125,18 @@ const AmenityIcon = ({ type }: { type: string }) => {
   }
 };
 
-export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienceHomepageProps) {
+export default function FusionDualAudienceHomepage({ locale, featuredLofts: initialLofts = [] }: FusionDualAudienceHomepageProps) {
   const { getMotionVariants } = useResponsiveAnimations();
   const [searchLocation, setSearchLocation] = useState('');
   const [searchDates, setSearchDates] = useState('');
   const [searchGuests, setSearchGuests] = useState('2');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [dbLofts, setDbLofts] = useState<any[]>([]);
+  const [dbLofts, setDbLofts] = useState<any[]>(initialLofts);
 
-  // Fetch real lofts with photos from DB
+  // Fetch real lofts with photos from DB (only if not passed as props)
   useEffect(() => {
+    if (initialLofts.length > 0) return // already have server-side data
     fetch('/api/public/featured-lofts')
       .then(r => r.json())
       .then(data => { if (data.lofts?.length > 0) setDbLofts(data.lofts) })

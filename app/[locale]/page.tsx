@@ -81,6 +81,42 @@ export async function generateMetadata({ params }: LocalePageProps): Promise<Met
 
 export default async function LocalePage({ params }: LocalePageProps) {
   const { locale } = await params;
+
+  // Fetch real lofts with photos server-side
+  let featuredLoftsFromDB: any[] = []
+  try {
+    const { createClient } = await import('@/utils/supabase/server')
+    const supabase = await createClient(true)
+
+    const { data: photos } = await supabase
+      .from('loft_photos')
+      .select('loft_id, url')
+      .order('created_at', { ascending: true })
+
+    if (photos && photos.length > 0) {
+      const photoMap = new Map<string, string>()
+      photos.forEach((p: any) => { if (!photoMap.has(p.loft_id)) photoMap.set(p.loft_id, p.url) })
+      const loftIds = Array.from(photoMap.keys())
+
+      const { data: lofts } = await supabase
+        .from('lofts')
+        .select('id, name, address, description, price_per_night, zone_areas!lofts_zone_area_id_fkey(name)')
+        .in('id', loftIds)
+        .order('name')
+
+      featuredLoftsFromDB = (lofts || []).map((l: any) => ({
+        id: l.id,
+        name: l.name,
+        address: l.address || '',
+        description: l.description || '',
+        price_per_night: l.price_per_night || 0,
+        zone: l.zone_areas?.name || '',
+        photo: photoMap.get(l.id) || '',
+      }))
+    }
+  } catch (e) {
+    console.error('Failed to fetch featured lofts:', e)
+  }
   
   return (
     <>
@@ -134,7 +170,7 @@ export default async function LocalePage({ params }: LocalePageProps) {
           }),
         }}
       />
-      <FusionDualAudienceHomepage locale={locale} />
+      <FusionDualAudienceHomepage locale={locale} featuredLofts={featuredLoftsFromDB} />
     </>
   );
 }

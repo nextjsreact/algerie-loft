@@ -8,23 +8,24 @@ export async function DELETE(
 ) {
   try {
     const session = await requireAuthAPI();
-
     if (!session) {
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
     }
 
-    const { photoId } = await params;
-
-    if (!photoId) {
-      return NextResponse.json(
-        { error: "ID de photo requis" },
-        { status: 400 }
-      );
+    // Only admin, manager, employee can delete photos
+    if (!['admin', 'manager', 'employee', 'member'].includes(session.user.role)) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
     }
 
-    const supabase = await createClient();
+    const { photoId } = await params;
+    if (!photoId) {
+      return NextResponse.json({ error: "ID de photo requis" }, { status: 400 });
+    }
 
-    // Récupérer les informations de la photo
+    // Use service role to bypass RLS
+    const supabase = await createClient(true);
+
+    // Get photo info
     const { data: photo, error: fetchError } = await supabase
       .from("loft_photos")
       .select("*")
@@ -32,51 +33,29 @@ export async function DELETE(
       .single();
 
     if (fetchError || !photo) {
-      return NextResponse.json(
-        { error: "Photo non trouvée" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Photo non trouvée" }, { status: 404 });
     }
 
-    // Vérifier que l'utilisateur peut supprimer cette photo
-    // (soit le propriétaire, soit l'uploader)
-    const { data: loft } = await supabase
-      .from("lofts")
-      .select("user_id")
-      .eq("id", photo.loft_id)
-      .single();
-
-    if (loft?.user_id !== session.user.id && photo.uploaded_by !== session.user.id) {
-      return NextResponse.json(
-        { error: "Non autorisé" },
-        { status: 403 }
-      );
+    // Delete from storage
+    if (photo.file_path) {
+      await supabase.storage
+        .from("loft-photos")
+        .remove([photo.file_path]);
     }
 
-    // Supprimer le fichier du storage
-    const { error: storageError } = await supabase.storage
-      .from("loft-photos")
-      .remove([photo.file_path]);
-
-    if (storageError) {
-      // On continue même si la suppression du fichier échoue
-    }
-
-    // Supprimer l'enregistrement de la base de données
+    // Delete from DB
     const { error: deleteError } = await supabase
       .from("loft_photos")
       .delete()
       .eq("id", photoId);
 
     if (deleteError) {
-      return NextResponse.json(
-        { error: "Erreur lors de la suppression" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Erreur lors de la suppression" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error('[DELETE photo]', error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

@@ -20,92 +20,45 @@ interface FusionDualAudienceHomepageProps {
 const heroSlides = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1920&h=1080&fit=crop",
-    title: {
-      fr: "Loft Moderne Hydra",
-      en: "Modern Hydra Loft",
-      ar: "شقة حديثة في حيدرة"
-    },
-    subtitle: {
-      fr: "Vue panoramique sur la baie d'Alger",
-      en: "Panoramic view of Algiers bay",
-      ar: "إطلالة بانورامية على خليج الجزائر"
-    },
-    price: "25,000 DZD/nuit"
+    image: "https://mhngbluefyucoesgcjoy.supabase.co/storage/v1/object/public/loft-photos/lofts/c4931c00-1792-492d-9101-4bc583484749/e43a66e0-1929-4bd1-8df8-ddf676cf70f8.jpeg",
+    title: { fr: "Candy Loft", en: "Candy Loft", ar: "كاندي لوفت" },
+    subtitle: { fr: "Alger Centre", en: "Algiers Center", ar: "وسط الجزائر" },
+    price: "9,000 DA/nuit"
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1920&h=1080&fit=crop",
-    title: {
-      fr: "Penthouse Luxury Oran",
-      en: "Luxury Penthouse Oran",
-      ar: "بنتهاوس فاخر وهران"
-    },
-    subtitle: {
-      fr: "Design contemporain au cœur d'Oran",
-      en: "Contemporary design in the heart of Oran",
-      ar: "تصميم معاصر في قلب وهران"
-    },
-    price: "45,000 DZD/nuit"
+    image: "https://mhngbluefyucoesgcjoy.supabase.co/storage/v1/object/public/loft-photos/lofts/c8f109bc-86c2-4aa5-a472-d155b3085c15/6ba33f2e-2fb0-4503-991a-857916aca347.jpg",
+    title: { fr: "Talia Loft", en: "Talia Loft", ar: "تاليا لوفت" },
+    subtitle: { fr: "Alger Centre", en: "Algiers Center", ar: "وسط الجزائر" },
+    price: "9,000 DA/nuit"
   },
   {
     id: 3,
-    image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1920&h=1080&fit=crop",
-    title: {
-      fr: "Loft Artistique Constantine",
-      en: "Artistic Loft Constantine",
-      ar: "شقة فنية قسنطينة"
-    },
-    subtitle: {
-      fr: "Charme historique et modernité",
-      en: "Historic charm meets modernity",
-      ar: "سحر تاريخي يلتقي بالحداثة"
-    },
-    price: "18,000 DZD/nuit"
+    image: "https://mhngbluefyucoesgcjoy.supabase.co/storage/v1/object/public/loft-photos/lofts/b305b744-5ae6-40ed-bf91-00a848a4b1bc/e4defb1a-3b52-4128-b6d5-f3155766b913.jpeg",
+    title: { fr: "Swan Loft", en: "Swan Loft", ar: "سوان لوفت" },
+    subtitle: { fr: "El Mouradia, Alger", en: "El Mouradia, Algiers", ar: "المرادية، الجزائر" },
+    price: "9,000 DA/nuit"
   },
   {
     id: 4,
-    image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1920&h=1080&fit=crop",
-    title: {
-      fr: "Suite Présidentielle Alger",
-      en: "Presidential Suite Algiers",
-      ar: "جناح رئاسي الجزائر"
-    },
-    subtitle: {
-      fr: "Luxe absolu avec service conciergerie",
-      en: "Absolute luxury with concierge service",
-      ar: "رفاهية مطلقة مع خدمة الكونسيرج"
-    },
-    price: "65,000 DZD/nuit"
+    image: "https://mhngbluefyucoesgcjoy.supabase.co/storage/v1/object/public/loft-photos/lofts/bcbf0c9f-a179-49e3-be64-f61339de4c8c/f0ec4489-a4fb-4a0a-9113-8ff8bdf6f643.jpg",
+    title: { fr: "Dary Loft", en: "Dary Loft", ar: "داري لوفت" },
+    subtitle: { fr: "Hussein Dey, Alger", en: "Hussein Dey, Algiers", ar: "حسين داي، الجزائر" },
+    price: "9,000 DA/nuit"
   },
   {
     id: 5,
-    image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&h=1080&fit=crop",
-    title: {
-      fr: "Villa Moderne Tipaza",
-      en: "Modern Villa Tipaza",
-      ar: "فيلا حديثة تيبازة"
-    },
-    subtitle: {
-      fr: "Face à la mer Méditerranée",
-      en: "Facing the Mediterranean Sea",
-      ar: "مواجهة للبحر الأبيض المتوسط"
-    },
-    price: "55,000 DZD/nuit"
+    image: "https://mhngbluefyucoesgcjoy.supabase.co/storage/v1/object/public/loft-photos/lofts/9be87001-9977-4f1b-8bf5-e183f9ee8d27/c5ebd720-8dc8-42d6-b6b1-88de54a6f4e4.jpg",
+    title: { fr: "Dounia Loft", en: "Dounia Loft", ar: "دنيا لوفت" },
+    subtitle: { fr: "Hussein Dey, Alger", en: "Hussein Dey, Algiers", ar: "حسين داي، الجزائر" },
+    price: "9,000 DA/nuit"
   },
-    {id: 6,
-    image: "/lofts/redoute5.jpg",
-    title: {
-      fr: "Villa Moderne Tipaza",
-      en: "Modern Villa Tipaza",
-      ar: "فيلا حديثة تيبازة"
-    },
-    subtitle: {
-      fr: "Face à la mer Méditerranée",
-      en: "Facing the Mediterranean Sea",
-      ar: "مواجهة للبحر الأبيض المتوسط"
-    },
-    price: "55,000 DZD/nuit"
+  {
+    id: 6,
+    image: "https://mhngbluefyucoesgcjoy.supabase.co/storage/v1/object/public/loft-photos/lofts/0d79d0fd-41e5-4206-97d1-cb217279c7e8/ea5bfb99-18a6-47f5-8534-4b74a14cb896.jpg",
+    title: { fr: "Choco Loft", en: "Choco Loft", ar: "شوكو لوفت" },
+    subtitle: { fr: "Alger Centre", en: "Algiers Center", ar: "وسط الجزائر" },
+    price: "10,000 DA/nuit"
   }
 ];
 

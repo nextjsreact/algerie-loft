@@ -28,7 +28,7 @@ export async function GET() {
     // Fetch those lofts
     const { data: lofts, error } = await supabase
       .from('lofts')
-      .select('id, name, address, description, price_per_night, zone_area_id, zone_areas:zone_area_id(name)')
+      .select('id, name, address, description, price_per_night, zone_area_id, zone_areas!lofts_zone_area_id_fkey(name)')
       .in('id', loftIds)
       .order('name')
 
@@ -40,7 +40,7 @@ export async function GET() {
       address: l.address || '',
       description: l.description || '',
       price_per_night: l.price_per_night || 0,
-      zone: l.zone_areas?.name || '',
+      zone: (l.zone_areas as any)?.name || l.address?.split(',')[0] || '',
       photo: photoMap.get(l.id) || '',
     }))
 

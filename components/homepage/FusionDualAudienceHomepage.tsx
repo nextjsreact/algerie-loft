@@ -14,7 +14,6 @@ import { PartnerLogos } from './PartnerLogos';
 
 interface FusionDualAudienceHomepageProps {
   locale: string;
-  featuredLofts?: any[];
 }
 
 // Images pour le carrousel hero avec textes
@@ -125,7 +124,7 @@ const AmenityIcon = ({ type }: { type: string }) => {
   }
 };
 
-export default function FusionDualAudienceHomepage({ locale, featuredLofts: initialLofts = [] }: FusionDualAudienceHomepageProps) {
+export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienceHomepageProps) {
   const { getMotionVariants } = useResponsiveAnimations();
   const [searchLocation, setSearchLocation] = useState('');
   const [searchDates, setSearchDates] = useState('');
@@ -134,7 +133,6 @@ export default function FusionDualAudienceHomepage({ locale, featuredLofts: init
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [dbLofts, setDbLofts] = useState<any[]>([]);
 
-  // Fetch real lofts with photos from DB
   useEffect(() => {
     fetch('/api/public/featured-lofts')
       .then(r => r.json())
@@ -142,8 +140,7 @@ export default function FusionDualAudienceHomepage({ locale, featuredLofts: init
       .catch(() => {})
   }, [])
 
-  // Use server props first, then DB fetch result, then hardcoded fallback
-  const displayLofts = initialLofts.length > 0 ? initialLofts : dbLofts.length > 0 ? dbLofts : realLofts
+  const displayLofts = dbLofts
   
   // Initialize performance optimizations - Temporarily disabled to fix infinite loop
   const isOptimized = true;

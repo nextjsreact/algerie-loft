@@ -99,6 +99,17 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
   }, [])
 
   const displayLofts = dbLofts
+
+  // Build carousel slides from DB lofts (use cover photo), fallback to carouselSlides
+  const carouselSlides = dbLofts.length > 0
+    ? dbLofts.slice(0, 6).map(l => ({
+        id: l.id,
+        image: l.photo,
+        title: { fr: l.name, en: l.name, ar: l.name },
+        subtitle: { fr: l.zone || l.address, en: l.zone || l.address, ar: l.zone || l.address },
+        price: `${(l.price_per_night || 0).toLocaleString()} DA/nuit`,
+      }))
+    : carouselSlides
   
   // Initialize performance optimizations - Temporarily disabled to fix infinite loop
   const isOptimized = true;
@@ -111,7 +122,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
     if (!isAutoPlaying) return;
     
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+      setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
     }, 5000);
 
     return () => clearInterval(interval);
@@ -119,11 +130,11 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
 
   // Navigation functions for carousel
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+    setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length);
   };
 
   const goToSlide = (index: number) => {
@@ -331,7 +342,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
           <div className="relative w-full overflow-hidden" style={{ height: 'calc(100vh - 120px)', minHeight: '500px', maxHeight: '700px' }}>
             {/* Carrousel d'images - Glissement fluide de droite vers gauche */}
             <div className="absolute inset-0 w-full h-full overflow-hidden">
-              {heroSlides.map((slide, index) => {
+              {carouselSlides.map((slide, index) => {
                 // Calcul de la position pour le glissement fluide
                 const position = (index - currentSlide) * 100;
                 
@@ -384,7 +395,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                   }}
                 >
                   <span className="bg-gradient-to-r from-white via-yellow-200 to-white bg-clip-text text-transparent">
-                    {getLocalizedText(heroSlides[currentSlide].title)}
+                    {getLocalizedText(carouselSlides[currentSlide].title)}
                   </span>
                 </motion.h1>
                 
@@ -404,7 +415,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                     textShadow: '0 2px 10px rgba(0,0,0,0.3)'
                   }}
                 >
-                  {getLocalizedText(heroSlides[currentSlide].subtitle)}
+                  {getLocalizedText(carouselSlides[currentSlide].subtitle)}
                 </motion.p>
 
                 <motion.div
@@ -421,7 +432,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                   className="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-4 py-2 rounded-full text-sm md:text-base lg:text-lg font-bold mb-6 shadow-2xl transform hover:scale-105 transition-transform duration-300"
                   style={{ fontFamily: 'Caveat, cursive' }}
                 >
-                  {heroSlides[currentSlide].price}
+                  {carouselSlides[currentSlide].price}
                 </motion.div>
 
                 {/* CTA Buttons Agressifs */}
@@ -530,7 +541,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
               <div className="flex items-center space-x-3 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 border border-white/20">
                 {/* Indicateurs */}
                 <div className="flex space-x-2">
-                  {heroSlides.map((slide, index) => (
+                  {carouselSlides.map((slide, index) => (
                     <motion.button
                       key={index}
                       onClick={() => goToSlide(index)}
@@ -555,7 +566,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                 
                 {/* Compteur */}
                 <span className="text-xs font-medium text-white/70" style={{ fontFamily: 'Caveat, cursive' }}>
-                  {currentSlide + 1}/{heroSlides.length}
+                  {currentSlide + 1}/{carouselSlides.length}
                 </span>
               </div>
             </div>

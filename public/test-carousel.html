@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Carrousel Photos</title>
+<style>
+  body { margin: 0; font-family: Arial; background: #111; }
+  .carousel { position: relative; width: 100%; height: calc(100vh - 80px); min-height: 600px; max-height: 900px; overflow: hidden; }
+  .slide { position: absolute; top: 0; width: 100%; height: 100%; transition: left 1.2s ease; }
+  .slide img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+  .info { position: absolute; bottom: 20px; left: 20px; color: white; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; }
+  .nav { position: absolute; bottom: 20px; right: 20px; display: flex; gap: 8px; }
+  .nav button { background: white; border: none; padding: 8px 16px; cursor: pointer; border-radius: 4px; }
+  .dots { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; }
+  .dot.active { background: white; width: 24px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="carousel" id="carousel">
+  <div class="info" id="info">Chargement...</div>
+  <div class="nav">
+    <button onclick="prev()">◀</button>
+    <button onclick="next()">▶</button>
+  </div>
+  <div class="dots" id="dots"></div>
+</div>
+
+<script>
+const photos = [
+  { name: 'Tulipe loft', url: 'https://mhngbluefyucoesgcjoy.supabase.co/storage/v1/object/public/loft-photos/lofts/7cf0f8cc-6962-486e-89c9-26ef4817f519/0b038fba-cd1e-4139-904b-b5d8d687ac12.jpeg' },
+  { name: 'Baya loft', url: 'https://mhngbluefyucoesgcjoy.supabase.co/storage/v1/object/public/loft-photos/lofts/e934921b-dcbd-4f2b-811a-6cff08ffed28/05f9a8ec-0480-4596-bf4c-f05d4fad62e8.jpg' },
+  { name: 'Candy loft', url: 'https://mhngbluefyucoesgcjoy.supabase.co/storage/v1/object/public/loft-photos/lofts/c4931c00-1792-492d-9101-4bc583484749/0723f248-0f73-464b-8c92-fb3289bb32bc.jpeg' },
+  { name: 'Swan Loft (cover)', url: 'https://mhngbluefyucoesgcjoy.supabase.co/storage/v1/object/public/loft-photos/lofts/b305b744-5ae6-40ed-bf91-00a848a4b1bc/cb01b0d0-a2bd-44bb-b300-539ae3d3d6bd.jpeg' },
+  { name: 'Joelle loft', url: 'https://mhngbluefyucoesgcjoy.supabase.co/storage/v1/object/public/loft-photos/lofts/d7a37ad1-21cc-4549-9f3f-8b07b5bf33ce/0a1c9278-a7a4-4412-acf9-0a6cd4884629.jpeg' },
+  { name: 'Green loft', url: 'https://mhngbluefyucoesgcjoy.supabase.co/storage/v1/object/public/loft-photos/lofts/7d140c6a-b077-45db-9c9d-ac27df6b256c/36ba822a-eda7-4318-b946-3c67a7f26075.jpeg' },
+];
+
+let current = 0;
+const carousel = document.getElementById('carousel');
+const info = document.getElementById('info');
+const dots = document.getElementById('dots');
+
+// Create slides
+photos.forEach((p, i) => {
+  const slide = document.createElement('div');
+  slide.className = 'slide';
+  slide.id = 'slide-' + i;
+  slide.style.left = (i * 100) + '%';
+  slide.innerHTML = `<img src="${p.url}" alt="${p.name}" onerror="this.style.background='#333'; this.alt='Erreur: ' + '${p.name}'">`;
+  carousel.insertBefore(slide, info);
+
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (i === 0 ? ' active' : '');
+  dot.onclick = () => goTo(i);
+  dots.appendChild(dot);
+});
+
+function goTo(n) {
+  current = n;
+  photos.forEach((_, i) => {
+    document.getElementById('slide-' + i).style.left = ((i - current) * 100) + '%';
+  });
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.className = 'dot' + (i === current ? ' active' : '');
+  });
+  info.textContent = photos[current].name + ' (' + (current+1) + '/' + photos.length + ')';
+}
+
+function next() { goTo((current + 1) % photos.length); }
+function prev() { goTo((current - 1 + photos.length) % photos.length); }
+
+goTo(0);
+setInterval(next, 4000);
+</script>
+</body>
+</html>

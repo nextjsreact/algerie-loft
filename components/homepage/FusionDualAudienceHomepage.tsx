@@ -358,14 +358,12 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                       transition: 'left 1.2s cubic-bezier(0.25, 0.1, 0.25, 1)',
                     }}
                   >
-                    <div className="w-full h-full relative overflow-hidden bg-black">
-                      {/* Main photo - scale-down shows full photo without cropping */}
+                    <div style={{ width: '100%', height: '100%', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                       <img 
                         src={slide.image}
                         alt={getLocalizedText(slide.title)}
-                        className="w-full h-full"
-                        style={{ objectFit: 'scale-down', objectPosition: 'center center' }}
                         loading={index === 0 ? "eager" : "lazy"}
+                        style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', display: 'block' }}
                       />
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-black/70"></div>

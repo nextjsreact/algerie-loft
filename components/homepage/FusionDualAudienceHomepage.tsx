@@ -358,20 +358,13 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                       transition: 'left 1.2s cubic-bezier(0.25, 0.1, 0.25, 1)',
                     }}
                   >
-                    <div className="w-full h-full relative overflow-hidden">
-                      {/* Blurred background to fill sides for portrait photos */}
-                      <img 
-                        src={slide.image}
-                        aria-hidden="true"
-                        className="absolute inset-0 w-full h-full object-cover blur-xl scale-110 opacity-60"
-                        style={{ objectPosition: 'center' }}
-                      />
-                      {/* Main photo - contain to show full image */}
+                    <div className="w-full h-full relative overflow-hidden bg-black">
+                      {/* Main photo - scale-down shows full photo without cropping */}
                       <img 
                         src={slide.image}
                         alt={getLocalizedText(slide.title)}
-                        className="relative w-full h-full object-contain"
-                        style={{ objectPosition: 'center center' }}
+                        className="w-full h-full"
+                        style={{ objectFit: 'scale-down', objectPosition: 'center center' }}
                         loading={index === 0 ? "eager" : "lazy"}
                       />
                     </div>

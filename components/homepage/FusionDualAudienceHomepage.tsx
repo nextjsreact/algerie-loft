@@ -872,12 +872,12 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                   transition={{ duration: 0.6, delay: index * 0.2 }}
                   className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] group"
                 >
-                  <div className="relative h-64 overflow-hidden">
+                  <div className="relative h-64 overflow-hidden bg-black flex items-center justify-center">
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
                     <img 
                       src={image} 
                       alt={title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', display: 'block' }}
                     />
                     {rating && (
                       <div className="absolute top-4 right-4 z-20">

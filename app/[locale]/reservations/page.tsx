@@ -76,6 +76,8 @@ function ReservationsPageContent() {
   // Fetch all reservations for list tab (via API to bypass RLS)
   const fetchAllReservations = useCallback(async () => {
     try {
+      // Auto-complete past reservations first
+      await fetch('/api/reservations/auto-complete', { method: 'POST' }).catch(() => {})
       const response = await fetch('/api/reservations');
       if (!response.ok) return;
       const data = await response.json();
@@ -558,6 +560,7 @@ function ReservationsPageContent() {
                       <SelectItem value="confirmed">{t('status.confirmed')}</SelectItem>
                       <SelectItem value="completed">{t('status.completed')}</SelectItem>
                       <SelectItem value="cancelled">{t('status.cancelled')}</SelectItem>
+                      <SelectItem value="blocked">🔒 Bloqué</SelectItem>
                     </SelectContent>
                   </Select>
                   {/* Loft filter */}
@@ -640,33 +643,52 @@ function ReservationsPageContent() {
                   return (
                     <div className="divide-y divide-gray-100">
                       {filtered.map((res) => (
-                        <div key={res.id} className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedReservation(res)}>
+                        <div key={res.id} className={`flex items-center justify-between px-6 py-4 hover:bg-gray-50 cursor-pointer ${res._is_block ? 'bg-orange-50/50' : ''}`}
+                          onClick={() => !res._is_block && setSelectedReservation(res)}>
                           <div className="flex items-center gap-4">
                             <div className={`p-2 rounded-full ${
+                              res._is_block ? 'bg-orange-100' :
                               res.status === 'confirmed' ? 'bg-green-100' :
                               res.status === 'completed' ? 'bg-blue-100' :
                               res.status === 'pending' ? 'bg-yellow-100' : 'bg-red-100'
                             }`}>
-                              {res.status === 'confirmed' ? <CheckCircle className="h-4 w-4 text-green-600" /> :
+                              {res._is_block ? <AlertCircle className="h-4 w-4 text-orange-600" /> :
+                               res.status === 'confirmed' ? <CheckCircle className="h-4 w-4 text-green-600" /> :
                                res.status === 'completed' ? <Calendar className="h-4 w-4 text-blue-600" /> :
                                res.status === 'pending' ? <Clock className="h-4 w-4 text-yellow-600" /> :
                                <AlertCircle className="h-4 w-4 text-red-600" />}
                             </div>
                             <div>
                               <p className="font-medium text-gray-900">{res.lofts?.name}</p>
-                              <p className="text-sm text-gray-500">{res.guest_name} • {res.check_in_date} → {res.check_out_date}</p>
+                              <p className="text-sm text-gray-500">
+                                {res._is_block
+                                  ? `🔒 ${res.blocked_reason || 'Bloqué'} • ${res.check_in_date} → ${res.check_out_date}`
+                                  : `${res.guest_name} • ${res.check_in_date} → ${res.check_out_date}`
+                                }
+                              </p>
                             </div>
                           </div>
                           <div className="flex items-center gap-3">
-                            <Badge variant={
-                              res.status === 'confirmed' ? 'default' :
-                              res.status === 'completed' ? 'secondary' :
-                              res.status === 'cancelled' ? 'destructive' : 'outline'
-                            }>
-                              {t(`status.${res.status}`)}
-                            </Badge>
-                            {res.total_amount > 0 && (
-                              <span className="text-sm font-semibold text-gray-700">{res.total_amount.toLocaleString()} {defaultCurrencySymbol}</span>
+                            {res._is_block ? (
+                              <Badge variant="outline" className="border-orange-400 text-orange-700 bg-orange-50">
+                                {res.blocked_reason === 'maintenance' ? '🔧 Maintenance' :
+                                 res.blocked_reason === 'personal_use' ? '🏠 Usage personnel' :
+                                 res.blocked_reason === 'renovation' ? '🔨 Rénovation' :
+                                 '🔒 Bloqué'}
+                              </Badge>
+                            ) : (
+                              <>
+                                <Badge variant={
+                                  res.status === 'confirmed' ? 'default' :
+                                  res.status === 'completed' ? 'secondary' :
+                                  res.status === 'cancelled' ? 'destructive' : 'outline'
+                                }>
+                                  {t(`status.${res.status}`)}
+                                </Badge>
+                                {res.total_amount > 0 && (
+                                  <span className="text-sm font-semibold text-gray-700">{res.total_amount.toLocaleString()} {defaultCurrencySymbol}</span>
+                                )}
+                              </>
                             )}
                           </div>
                         </div>

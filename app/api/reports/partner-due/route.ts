@@ -209,6 +209,7 @@ export async function GET(request: NextRequest) {
       entry.total_company_due += l.company_due
     })
 
+    // Filter out owners with zero revenue (but keep all lofts with activity)
     const byOwner = Array.from(byOwnerMap.values())
       .filter(g => g.total_revenue > 0)
       .sort((a, b) => b.total_revenue - a.total_revenue)

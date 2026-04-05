@@ -129,8 +129,8 @@ export function PartnerDueReport() {
     const pctMap: Record<string, number> = {}
     group.lofts.forEach(l => { pctMap[l.loft_id] = overrides[l.loft_id] ?? l.owner_percentage })
 
-    // Only lofts where partner has a percentage > 0
-    const activeLofts = group.lofts.filter(l => (pctMap[l.loft_id] ?? 0) > 0 && (l.total_income > 0 || l.total_expense > 0))
+    // All lofts with activity (income or expense), regardless of percentage
+    const activeLofts = group.lofts.filter(l => l.total_income > 0 || l.total_expense > 0)
 
     const rows = activeLofts.map(loft => {
       const pct = pctMap[loft.loft_id]
@@ -384,7 +384,7 @@ export function PartnerDueReport() {
                 }
                 <User className="h-5 w-5 text-purple-600" />
                 <CardTitle className="text-lg">{group.owner_name}</CardTitle>
-                <Badge variant="outline" className="text-xs">{group.lofts.filter(l => l.total_revenue > 0).length} {t('lofts')}</Badge>
+                <Badge variant="outline" className="text-xs">{group.lofts.filter(l => l.total_income > 0 || l.total_expense > 0).length} {t('lofts')}</Badge>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-6 text-sm">

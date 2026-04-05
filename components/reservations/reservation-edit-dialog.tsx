@@ -229,7 +229,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>{t('edit.checkIn')}</Label>
-              <Input type="date" value={checkIn} onChange={(e) => { setCheckIn(e.target.value); setAvailOk(null) }} min={format(new Date(), 'yyyy-MM-dd')} required />
+              <Input type="date" value={checkIn} onChange={(e) => { setCheckIn(e.target.value); setAvailOk(null) }} required />
             </div>
             <div className="space-y-2">
               <Label>{t('edit.checkOut')}</Label>

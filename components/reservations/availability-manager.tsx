@@ -180,7 +180,7 @@ export default function AvailabilityManager({
                   <Input
                     type="date"
                     name="start_date"
-                    min={format(new Date(), 'yyyy-MM-dd')}
+                    
                     required
                   />
                 </div>
@@ -190,7 +190,7 @@ export default function AvailabilityManager({
                   <Input
                     type="date"
                     name="end_date"
-                    min={format(addDays(new Date(), 1), 'yyyy-MM-dd')}
+                    
                     required
                   />
                 </div>
@@ -259,7 +259,7 @@ export default function AvailabilityManager({
                   <Input
                     type="date"
                     name="start_date"
-                    min={format(new Date(), 'yyyy-MM-dd')}
+                    
                     required
                   />
                 </div>
@@ -269,7 +269,7 @@ export default function AvailabilityManager({
                   <Input
                     type="date"
                     name="end_date"
-                    min={format(addDays(new Date(), 1), 'yyyy-MM-dd')}
+                    
                     required
                   />
                 </div>

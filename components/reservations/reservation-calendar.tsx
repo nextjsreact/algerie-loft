@@ -243,7 +243,7 @@ export default function ReservationCalendar({
     // This effect ensures that events are updated when availability changes
     const reservationEvents: CalendarEvent[] = reservations.map((reservation: Reservation) => ({
       id: reservation.id,
-      title: `${reservation.guest_name} - ${reservation.lofts.name}`,
+      title: reservation.lofts.name,
       start: new Date(reservation.check_in_date),
       end: new Date(reservation.check_out_date),
       resource: reservation,
@@ -311,7 +311,7 @@ export default function ReservationCalendar({
       
       const reservationEvents: CalendarEvent[] = reservations.map((reservation: Reservation) => ({
         id: reservation.id,
-        title: `${reservation.guest_name} - ${reservation.lofts.name}`,
+        title: reservation.lofts.name,
         start: new Date(reservation.check_in_date),
         end: new Date(reservation.check_out_date),
         resource: reservation,

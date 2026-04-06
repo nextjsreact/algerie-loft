@@ -49,6 +49,7 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [currencyRates, setCurrencyRates] = useState<Record<string, number>>({})
 
   // Form state
   const [amount, setAmount] = useState('')
@@ -71,7 +72,18 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
     setLoading(false)
   }, [reservationId])
 
-  useEffect(() => { fetchPayments() }, [fetchPayments])
+  useEffect(() => {
+    fetchPayments()
+    // Load currency rates
+    fetch('/api/currencies')
+      .then(r => r.json())
+      .then(data => {
+        const rates: Record<string, number> = {}
+        ;(data.currencies || data || []).forEach((c: any) => { rates[c.code] = Number(c.ratio) || 1 })
+        setCurrencyRates(rates)
+      })
+      .catch(() => {})
+  }, [fetchPayments])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -261,19 +273,24 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
           {/* Show DZD equivalent field when foreign currency */}
           {payCurrency !== 'DZD' && (
             <div className="space-y-1 p-3 bg-amber-50 rounded-lg border border-amber-200">
-              <Label className="text-xs text-amber-800 font-medium">
-                Équivalent en DA (pour le calcul du solde)
-              </Label>
+              <Label className="text-xs text-amber-800 font-medium">Équivalent en DA</Label>
               <div className="flex items-center gap-2">
                 <Input type="number" min="0" step="any" value={amountDZD}
                   onChange={e => setAmountDZD(e.target.value)}
-                  placeholder={`Ex: ${amount ? Math.round(Number(amount) * 145) : '29000'}`}
+                  placeholder={currencyRates[payCurrency] ? String(Math.round(Number(amount || 0) * currencyRates[payCurrency])) : ''}
                   className="h-9 bg-white" />
                 <span className="text-sm text-amber-700 whitespace-nowrap">DA</span>
+                {currencyRates[payCurrency] && amount && (
+                  <Button type="button" size="sm" variant="outline" className="h-9 text-xs whitespace-nowrap"
+                    onClick={() => setAmountDZD(String(Math.round(Number(amount) * currencyRates[payCurrency])))}>
+                    Auto ({currencyRates[payCurrency]} DA)
+                  </Button>
+                )}
               </div>
               {amount && amountDZD && (
                 <p className="text-xs text-amber-600">
                   Taux : 1 {payCurrency} = {(Number(amountDZD) / Number(amount)).toFixed(2)} DA
+                  {currencyRates[payCurrency] && ` (officiel : ${currencyRates[payCurrency]} DA)`}
                 </p>
               )}
             </div>

@@ -109,6 +109,7 @@ export default function ReservationFormHybrid({
   const [initPaymentDate, setInitPaymentDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [initPaymentCurrency, setInitPaymentCurrency] = useState<string>('DZD');
   const [initPaymentAmountDZD, setInitPaymentAmountDZD] = useState<string>('');
+  const [currencyRates, setCurrencyRates] = useState<Record<string, number>>({});
 
   const selectedLoftData = lofts.find(l => l.id === selectedLoft);
   const nights = availabilityData?.nights || 0;
@@ -118,6 +119,17 @@ export default function ReservationFormHybrid({
   useEffect(() => {
     fetchLofts();
     fetchCurrencies();
+    // Load currency rates for payment conversion
+    fetch('/api/currencies')
+      .then(r => r.json())
+      .then(data => {
+        const rates: Record<string, number> = {}
+        ;(data.currencies || data || []).forEach((c: any) => {
+          rates[c.code] = Number(c.ratio) || 1
+        })
+        setCurrencyRates(rates)
+      })
+      .catch(() => {})
     // Check user role — employees can book past dates
     fetch('/api/auth/session')
       .then(r => r.json())
@@ -871,7 +883,7 @@ export default function ReservationFormHybrid({
               {initPaymentCurrency !== 'DZD' && initPaymentAmount && (
                 <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 space-y-2">
                   <Label className="text-sm font-medium text-amber-800">
-                    Équivalent en DA (pour le calcul du solde)
+                    Équivalent en DA
                   </Label>
                   <div className="flex items-center gap-2">
                     <Input
@@ -880,14 +892,21 @@ export default function ReservationFormHybrid({
                       step="any"
                       value={initPaymentAmountDZD}
                       onChange={e => setInitPaymentAmountDZD(e.target.value)}
-                      placeholder={`Ex: ${Math.round(parseFloat(initPaymentAmount || '0') * 145)}`}
+                      placeholder={`Ex: ${Math.round(parseFloat(initPaymentAmount || '0') * (currencyRates[initPaymentCurrency] || 1))}`}
                       className="bg-white"
                     />
                     <span className="text-sm text-amber-700 whitespace-nowrap">DA</span>
+                    {currencyRates[initPaymentCurrency] && (
+                      <Button type="button" size="sm" variant="outline" className="h-9 text-xs whitespace-nowrap"
+                        onClick={() => setInitPaymentAmountDZD(String(Math.round(parseFloat(initPaymentAmount || '0') * currencyRates[initPaymentCurrency])))}>
+                        Auto ({currencyRates[initPaymentCurrency]} DA/1 {initPaymentCurrency})
+                      </Button>
+                    )}
                   </div>
                   {initPaymentAmount && initPaymentAmountDZD && (
                     <p className="text-xs text-amber-600">
-                      Taux : 1 {initPaymentCurrency} = {(parseFloat(initPaymentAmountDZD) / parseFloat(initPaymentAmount)).toFixed(2)} DA
+                      Taux appliqué : 1 {initPaymentCurrency} = {(parseFloat(initPaymentAmountDZD) / parseFloat(initPaymentAmount)).toFixed(2)} DA
+                      {currencyRates[initPaymentCurrency] && ` (taux officiel : ${currencyRates[initPaymentCurrency]} DA)`}
                     </p>
                   )}
                 </div>

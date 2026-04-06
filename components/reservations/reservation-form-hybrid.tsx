@@ -108,6 +108,7 @@ export default function ReservationFormHybrid({
   const [initPaymentRef, setInitPaymentRef] = useState<string>('');
   const [initPaymentDate, setInitPaymentDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [initPaymentCurrency, setInitPaymentCurrency] = useState<string>('DZD');
+  const [initPaymentAmountDZD, setInitPaymentAmountDZD] = useState<string>('');
 
   const selectedLoftData = lofts.find(l => l.id === selectedLoft);
   const nights = availabilityData?.nights || 0;
@@ -314,16 +315,21 @@ export default function ReservationFormHybrid({
         // If initial payment provided, record it
         const reservationId = result.data?.id || result.reservation?.id
         if (initPaymentAmount && parseFloat(initPaymentAmount) > 0 && reservationId) {
+          const effectiveAmount = initPaymentCurrency !== 'DZD' && initPaymentAmountDZD
+            ? parseFloat(initPaymentAmountDZD)
+            : parseFloat(initPaymentAmount)
           const payRes = await fetch(`/api/reservations/${reservationId}/payments`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              amount: parseFloat(initPaymentAmount),
+              amount: effectiveAmount,
               payment_method: initPaymentMethod,
-              reference: initPaymentRef || null,
+              currency: initPaymentCurrency,
+              reference: initPaymentCurrency !== 'DZD'
+                ? `${initPaymentAmount} ${initPaymentCurrency}`
+                : (initPaymentRef || null),
               payment_date: initPaymentDate,
               notes: null,
-              currency: initPaymentCurrency,
             }),
           })
           const payData = await payRes.json()
@@ -861,10 +867,35 @@ export default function ReservationFormHybrid({
                   />
                 </div>
               </div>
+              {/* DZD equivalent for foreign currency */}
+              {initPaymentCurrency !== 'DZD' && initPaymentAmount && (
+                <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 space-y-2">
+                  <Label className="text-sm font-medium text-amber-800">
+                    Équivalent en DA (pour le calcul du solde)
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min="0"
+                      step="any"
+                      value={initPaymentAmountDZD}
+                      onChange={e => setInitPaymentAmountDZD(e.target.value)}
+                      placeholder={`Ex: ${Math.round(parseFloat(initPaymentAmount || '0') * 145)}`}
+                      className="bg-white"
+                    />
+                    <span className="text-sm text-amber-700 whitespace-nowrap">DA</span>
+                  </div>
+                  {initPaymentAmount && initPaymentAmountDZD && (
+                    <p className="text-xs text-amber-600">
+                      Taux : 1 {initPaymentCurrency} = {(parseFloat(initPaymentAmountDZD) / parseFloat(initPaymentAmount)).toFixed(2)} DA
+                    </p>
+                  )}
+                </div>
+              )}
               {initPaymentAmount && parseFloat(initPaymentAmount) > 0 && (
                 <div className="text-sm text-emerald-700 bg-emerald-100 rounded p-2">
                   Reste à payer après ce versement : <strong>
-                    {Math.max(0, (parseFloat(totalAmountInput) || 0) - parseFloat(initPaymentAmount)).toLocaleString()} {defaultCurrencySymbol}
+                    {Math.max(0, (parseFloat(totalAmountInput) || 0) - (initPaymentCurrency !== 'DZD' ? parseFloat(initPaymentAmountDZD || '0') : parseFloat(initPaymentAmount))).toLocaleString()} {defaultCurrencySymbol}
                   </strong>
                 </div>
               )}

@@ -8,10 +8,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTranslations } from 'next-intl';
-import { Calendar, Ban, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
+import { Calendar, Ban, CheckCircle, Loader2, AlertCircle, Search } from 'lucide-react';
 import { blockDates, unblockDates } from '@/lib/actions/reservations';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { format, addDays } from 'date-fns';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface Loft {
   id: string;
@@ -34,6 +35,12 @@ export default function AvailabilityManager({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [mode, setMode] = useState<'block' | 'unblock'>('block');
+  const [blockLoftSearch, setBlockLoftSearch] = useState('');
+  const [unblockLoftSearch, setUnblockLoftSearch] = useState('');
+  const [blockLoftId, setBlockLoftId] = useState(selectedLoftId || '');
+  const [unblockLoftId, setUnblockLoftId] = useState(selectedLoftId || '');
+  const [blockLoftOpen, setBlockLoftOpen] = useState(false);
+  const [unblockLoftOpen, setUnblockLoftOpen] = useState(false);
   
   // Server action states
   const [blockState, blockAction] = useActionState(blockDates, null);
@@ -144,18 +151,29 @@ export default function AvailabilityManager({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="loft_id">{tAvailability('selectLoft')}</Label>
-                  <Select name="loft_id" defaultValue={selectedLoftId} required>
-                    <SelectTrigger>
-                      <SelectValue placeholder={tAvailability('chooseLoft')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {lofts.map((loft) => (
-                        <SelectItem key={loft.id} value={loft.id}>
-                          {loft.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <input type="hidden" name="loft_id" value={blockLoftId} />
+                  <Popover open={blockLoftOpen} onOpenChange={(o) => { setBlockLoftOpen(o); if (!o) setBlockLoftSearch('') }}>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="w-full justify-between font-normal">
+                        <span className="truncate">{blockLoftId ? lofts.find(l => l.id === blockLoftId)?.name : tAvailability('chooseLoft')}</span>
+                        <Search className="h-4 w-4 opacity-50 ml-2 flex-shrink-0" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[250px] p-0" align="start" side="bottom" sideOffset={4}>
+                      <div className="p-2 border-b">
+                        <Input placeholder="Rechercher..." value={blockLoftSearch} onChange={e => setBlockLoftSearch(e.target.value)} className="h-8 text-sm" autoFocus />
+                      </div>
+                      <div className="max-h-[200px] overflow-y-auto p-1">
+                        {lofts.filter(l => l.name.toLowerCase().includes(blockLoftSearch.toLowerCase())).map(loft => (
+                          <button key={loft.id} type="button"
+                            className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-accent transition-colors ${blockLoftId === loft.id ? 'bg-accent font-medium' : ''}`}
+                            onClick={() => { setBlockLoftId(loft.id); setBlockLoftOpen(false) }}>
+                            {loft.name}
+                          </button>
+                        ))}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
 
                 <div className="space-y-2">
@@ -239,18 +257,29 @@ export default function AvailabilityManager({
             <form action={handleUnblockSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="loft_id">{t('availability.selectLoft')}</Label>
-                <Select name="loft_id" defaultValue={selectedLoftId} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('availability.chooseLoft')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {lofts.map((loft) => (
-                      <SelectItem key={loft.id} value={loft.id}>
-                        {loft.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <input type="hidden" name="loft_id" value={unblockLoftId} />
+                <Popover open={unblockLoftOpen} onOpenChange={(o) => { setUnblockLoftOpen(o); if (!o) setUnblockLoftSearch('') }}>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-between font-normal">
+                      <span className="truncate">{unblockLoftId ? lofts.find(l => l.id === unblockLoftId)?.name : t('availability.chooseLoft')}</span>
+                      <Search className="h-4 w-4 opacity-50 ml-2 flex-shrink-0" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[250px] p-0" align="start" side="bottom" sideOffset={4}>
+                    <div className="p-2 border-b">
+                      <Input placeholder="Rechercher..." value={unblockLoftSearch} onChange={e => setUnblockLoftSearch(e.target.value)} className="h-8 text-sm" autoFocus />
+                    </div>
+                    <div className="max-h-[200px] overflow-y-auto p-1">
+                      {lofts.filter(l => l.name.toLowerCase().includes(unblockLoftSearch.toLowerCase())).map(loft => (
+                        <button key={loft.id} type="button"
+                          className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-accent transition-colors ${unblockLoftId === loft.id ? 'bg-accent font-medium' : ''}`}
+                          onClick={() => { setUnblockLoftId(loft.id); setUnblockLoftOpen(false) }}>
+                          {loft.name}
+                        </button>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

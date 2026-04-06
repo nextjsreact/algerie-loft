@@ -54,6 +54,7 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
   const [amount, setAmount] = useState('')
   const [method, setMethod] = useState('cash')
   const [payCurrency, setPayCurrency] = useState('DZD')
+  const [amountDZD, setAmountDZD] = useState('') // equivalent in DZD if foreign currency
   const [reference, setReference] = useState('')
   const [paymentDate, setPaymentDate] = useState(new Date().toISOString().split('T')[0])
   const [notes, setNotes] = useState('')
@@ -81,10 +82,11 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: Number(amount),
+          amount: payCurrency === 'DZD' ? Number(amount) : Number(amountDZD || amount),
           payment_method: method,
           currency: payCurrency,
-          reference,
+          // Store original foreign amount in transaction_id field as JSON
+          reference: payCurrency !== 'DZD' ? `${amount} ${payCurrency}` : (reference || null),
           payment_date: paymentDate,
           notes,
         }),
@@ -120,6 +122,7 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
     id: p.id,
     amount: Number(p.amount),
     payment_method: p.payment_method,
+    currency: p.currency || 'DZD',
     reference: p.transaction_id,
     payment_date: p.processed_at || p.created_at,
     notes: p.processor_response,
@@ -187,7 +190,7 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm">{fmt(mapped.amount)}</span>
+                      <span className="font-semibold text-sm">{mapped.amount.toLocaleString('fr-DZ')} {mapped.currency}</span>
                       <span className="text-xs opacity-70">• {m.label}</span>
                       {mapped.reference && <span className="text-xs opacity-60">#{mapped.reference}</span>}
                     </div>
@@ -255,6 +258,26 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
               </Select>
             </div>
           </div>
+          {/* Show DZD equivalent field when foreign currency */}
+          {payCurrency !== 'DZD' && (
+            <div className="space-y-1 p-3 bg-amber-50 rounded-lg border border-amber-200">
+              <Label className="text-xs text-amber-800 font-medium">
+                Équivalent en DA (pour le calcul du solde)
+              </Label>
+              <div className="flex items-center gap-2">
+                <Input type="number" min="0" step="any" value={amountDZD}
+                  onChange={e => setAmountDZD(e.target.value)}
+                  placeholder={`Ex: ${amount ? Math.round(Number(amount) * 145) : '29000'}`}
+                  className="h-9 bg-white" />
+                <span className="text-sm text-amber-700 whitespace-nowrap">DA</span>
+              </div>
+              {amount && amountDZD && (
+                <p className="text-xs text-amber-600">
+                  Taux : 1 {payCurrency} = {(Number(amountDZD) / Number(amount)).toFixed(2)} DA
+                </p>
+              )}
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label className="text-xs">Date du paiement</Label>

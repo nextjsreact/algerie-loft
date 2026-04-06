@@ -20,8 +20,8 @@ const PAYMENT_LABELS: Record<string, { label: string; emoji: string }> = {
 }
 
 export function FinancialSummaryReport() {
-  const [startDate, setStartDate] = useState(format(startOfMonth(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)), 'yyyy-MM-dd'))
-  const [endDate, setEndDate] = useState(format(endOfMonth(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)), 'yyyy-MM-dd'))
+  const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), 'yyyy-MM-dd'))
+  const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), 'yyyy-MM-dd'))
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(false)
 
@@ -66,6 +66,12 @@ export function FinancialSummaryReport() {
 
       {data && (
         <>
+          {/* Source indicator */}
+          <div className="flex items-center gap-2 text-xs text-gray-500">
+            <span className={`px-2 py-1 rounded-full font-medium ${data.period?.source === 'reservations' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+              {data.period?.source === 'reservations' ? '📋 Source : Réservations (prorata)' : '💳 Source : Transactions'}
+            </span>
+          </div>
           {/* Section 1: Global */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="border-0 shadow-lg bg-gradient-to-br from-green-500 to-emerald-600 text-white">

@@ -817,7 +817,7 @@ function ReservationsPageContent() {
 
         {/* Reservation Details Dialog */}
         <Dialog open={!!selectedReservation} onOpenChange={(open) => { if (!open) { setSelectedReservation(null); setConfirmDelete(false); } }}>
-          <DialogContent className="max-w-3xl border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
             <DialogHeader className="border-b border-gray-200 pb-4">
               <DialogTitle className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
                 <div className="p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg">

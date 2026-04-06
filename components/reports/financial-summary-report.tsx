@@ -73,38 +73,57 @@ export function FinancialSummaryReport() {
             </span>
           </div>
           {/* Section 1: Global */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-green-500 to-emerald-600 text-white">
-              <CardContent className="p-5">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-green-500 to-emerald-600 text-white col-span-2 md:col-span-1">
+              <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <TrendingUp className="h-4 w-4 text-green-200" />
-                  <p className="text-green-100 text-xs">Recettes totales</p>
+                  <p className="text-green-100 text-xs">Revenu acquis</p>
                 </div>
-                <p className="text-xl font-bold">{fmt(data.global.total_income)}</p>
+                <p className="text-lg font-bold">{fmt(data.global.total_income)}</p>
+                <p className="text-xs text-green-200 mt-1">Prorata réservations</p>
               </CardContent>
             </Card>
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-red-500 to-rose-600 text-white">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-2 mb-1">
-                  <TrendingDown className="h-4 w-4 text-red-200" />
-                  <p className="text-red-100 text-xs">Dépenses totales</p>
-                </div>
-                <p className="text-xl font-bold">{fmt(data.global.total_expense)}</p>
-              </CardContent>
-            </Card>
-            <Card className={`border-0 shadow-lg text-white ${data.global.net >= 0 ? 'bg-gradient-to-br from-blue-500 to-indigo-600' : 'bg-gradient-to-br from-orange-500 to-red-600'}`}>
-              <CardContent className="p-5">
-                <p className="text-blue-100 text-xs mb-1">Bénéfice net</p>
-                <p className="text-xl font-bold">{fmt(data.global.net)}</p>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-500 to-violet-600 text-white">
-              <CardContent className="p-5">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-500 to-violet-600 text-white col-span-2 md:col-span-1">
+              <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <CreditCard className="h-4 w-4 text-purple-200" />
-                  <p className="text-purple-100 text-xs">Paiements reçus</p>
+                  <p className="text-purple-100 text-xs">Trésorerie encaissée</p>
                 </div>
-                <p className="text-xl font-bold">{fmt(data.global.total_payments_received)}</p>
+                <p className="text-lg font-bold">{fmt(data.global.cash_received)}</p>
+                <p className="text-xs text-purple-200 mt-1">Paiements reçus</p>
+              </CardContent>
+            </Card>
+            <Card className={`border-0 shadow-lg text-white col-span-2 md:col-span-1 ${(data.global.outstanding || 0) > 0 ? 'bg-gradient-to-br from-amber-500 to-orange-500' : 'bg-gradient-to-br from-green-600 to-teal-600'}`}>
+              <CardContent className="p-4">
+                <p className="text-xs text-white/80 mb-1">Créances en cours</p>
+                <p className="text-lg font-bold">{fmt(data.global.outstanding || 0)}</p>
+                <p className="text-xs text-white/70 mt-1">Reste à encaisser</p>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-red-500 to-rose-600 text-white col-span-2 md:col-span-1">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <TrendingDown className="h-4 w-4 text-red-200" />
+                  <p className="text-red-100 text-xs">Dépenses</p>
+                </div>
+                <p className="text-lg font-bold">{fmt(data.global.total_expense)}</p>
+              </CardContent>
+            </Card>
+            <Card className={`border-0 shadow-lg text-white col-span-2 md:col-span-1 ${data.global.net >= 0 ? 'bg-gradient-to-br from-blue-500 to-indigo-600' : 'bg-gradient-to-br from-orange-500 to-red-600'}`}>
+              <CardContent className="p-4">
+                <p className="text-xs text-white/80 mb-1">Bénéfice net</p>
+                <p className="text-lg font-bold">{fmt(data.global.net)}</p>
+                <p className="text-xs text-white/70 mt-1">Revenu − Dépenses</p>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-teal-500 to-cyan-600 text-white col-span-2 md:col-span-1">
+              <CardContent className="p-4">
+                <p className="text-xs text-teal-100 mb-1">Taux encaissement</p>
+                <p className="text-lg font-bold">
+                  {data.global.total_income > 0 ? Math.round(data.global.cash_received / data.global.total_income * 100) : 0}%
+                </p>
+                <p className="text-xs text-teal-200 mt-1">Encaissé / Acquis</p>
               </CardContent>
             </Card>
           </div>

@@ -78,12 +78,18 @@ export async function GET(request: NextRequest) {
       expenseByLoft.set(t.loft_id, (expenseByLoft.get(t.loft_id) || 0) + amt)
     })
 
-    // --- RESERVATION PAYMENTS (by payment method) ---
+    // --- RESERVATION PAYMENTS (by payment method + per loft) ---
     const { data: resPay } = await supabase
       .from('reservation_payments')
-      .select('amount, payment_method')
+      .select('amount, payment_method, reservation_id, reservations:reservation_id(loft_id, check_in_date)')
       .gte('created_at', startDate)
       .lte('created_at', endDate + 'T23:59:59')
+
+    // Also fetch reservation payments linked to reservations in the period
+    const { data: resPayByPeriod } = await supabase
+      .from('reservation_payments')
+      .select('amount, payment_method, reservation_id, reservations:reservation_id(loft_id, check_in_date, check_out_date)')
+      .not('reservation_id', 'is', null)
 
     // --- LOFTS ---
     const { data: lofts } = await supabase
@@ -95,6 +101,18 @@ export async function GET(request: NextRequest) {
     // --- GLOBAL TOTALS ---
     const totalIncome = Array.from(incomeByLoft.values()).reduce((s, v) => s + v, 0)
     const totalExpense = Array.from(expenseByLoft.values()).reduce((s, v) => s + v, 0)
+
+    // Trésorerie encaissée = payments received for reservations in this period
+    // Filter payments whose reservation overlaps the period
+    const cashReceived = (resPayByPeriod || []).filter((p: any) => {
+      const r = p.reservations as any
+      if (!r) return false
+      const ci = r.check_in_date
+      const co = r.check_out_date
+      return ci < periodEndExclusive.toISOString().split('T')[0] && co > startDate
+    }).reduce((s: number, p: any) => s + Number(p.amount ?? 0), 0)
+
+    // Payment method breakdown (from payments in period)
     const totalPayments = (resPay || []).reduce((s, p) => s + Number(p.amount ?? 0), 0)
 
     // --- BY PAYMENT METHOD ---
@@ -131,9 +149,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       period: { startDate, endDate, source: useReservations ? 'reservations' : 'transactions' },
       global: {
-        total_income: Math.round(totalIncome),
+        total_income: Math.round(totalIncome),          // Revenu acquis (prorata)
         total_expense: Math.round(totalExpense),
         net: Math.round(totalIncome - totalExpense),
+        cash_received: Math.round(cashReceived),         // Trésorerie encaissée
+        outstanding: Math.round(totalIncome - cashReceived), // Créances en cours
         total_payments_received: Math.round(totalPayments),
       },
       by_payment_method: Object.entries(byPaymentMethod)

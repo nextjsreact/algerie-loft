@@ -102,6 +102,12 @@ export default function ReservationFormHybrid({
 
   // No server action state needed - using fetch API
 
+  // Initial payment state
+  const [initPaymentAmount, setInitPaymentAmount] = useState<string>('');
+  const [initPaymentMethod, setInitPaymentMethod] = useState<string>('cash');
+  const [initPaymentRef, setInitPaymentRef] = useState<string>('');
+  const [initPaymentDate, setInitPaymentDate] = useState<string>(new Date().toISOString().split('T')[0]);
+
   const selectedLoftData = lofts.find(l => l.id === selectedLoft);
   const nights = availabilityData?.nights || 0;
 
@@ -304,6 +310,19 @@ export default function ReservationFormHybrid({
       if (!response.ok || result.error) {
         setState({ error: result.error || 'Erreur lors de la création de la réservation' });
       } else {
+        // If initial payment provided, record it
+        if (initPaymentAmount && parseFloat(initPaymentAmount) > 0 && result.reservation?.id) {
+          await fetch(`/api/reservations/${result.reservation.id}/payments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              amount: parseFloat(initPaymentAmount),
+              payment_method: initPaymentMethod,
+              reference: initPaymentRef || null,
+              payment_date: initPaymentDate,
+            }),
+          }).catch(() => {})
+        }
         setState({ success: true });
         setTimeout(() => onSuccess?.(), 1500);
       }
@@ -761,6 +780,70 @@ export default function ReservationFormHybrid({
                   style={{ color: 'black', backgroundColor: 'white' }}
                 />
               </div>
+            </div>
+
+            {/* Initial Payment Section */}
+            <div className="space-y-4 p-6 bg-emerald-50 rounded-lg border border-emerald-200">
+              <h3 className="font-semibold text-emerald-800 flex items-center gap-2">
+                💳 Paiement initial (optionnel)
+              </h3>
+              <p className="text-sm text-emerald-700">Enregistrez un premier paiement lors de la création de la réservation.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">Montant versé</Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    step="any"
+                    value={initPaymentAmount}
+                    onChange={e => setInitPaymentAmount(e.target.value)}
+                    placeholder={`Ex: ${(parseFloat(totalAmountInput) || 0).toLocaleString()}`}
+                    className="bg-white"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">Mode de paiement</Label>
+                  <Select value={initPaymentMethod} onValueChange={setInitPaymentMethod}>
+                    <SelectTrigger className="bg-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cash">💵 Espèces</SelectItem>
+                      <SelectItem value="ccp">🏦 CCP</SelectItem>
+                      <SelectItem value="virement">🏛️ Virement bancaire</SelectItem>
+                      <SelectItem value="paypal">📱 PayPal</SelectItem>
+                      <SelectItem value="cheque">📄 Chèque</SelectItem>
+                      <SelectItem value="baridi">📲 Baridi Mob</SelectItem>
+                      <SelectItem value="autre">💳 Autre</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">Date du paiement</Label>
+                  <Input
+                    type="date"
+                    value={initPaymentDate}
+                    onChange={e => setInitPaymentDate(e.target.value)}
+                    className="bg-white"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">Référence (optionnel)</Label>
+                  <Input
+                    value={initPaymentRef}
+                    onChange={e => setInitPaymentRef(e.target.value)}
+                    placeholder="N° CCP, référence virement..."
+                    className="bg-white"
+                  />
+                </div>
+              </div>
+              {initPaymentAmount && parseFloat(initPaymentAmount) > 0 && (
+                <div className="text-sm text-emerald-700 bg-emerald-100 rounded p-2">
+                  Reste à payer après ce versement : <strong>
+                    {Math.max(0, (parseFloat(totalAmountInput) || 0) - parseFloat(initPaymentAmount)).toLocaleString()} {defaultCurrencySymbol}
+                  </strong>
+                </div>
+              )}
             </div>
 
             {/* Actions */}

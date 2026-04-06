@@ -375,14 +375,14 @@ export async function DELETE(request: NextRequest) {
       Object.fromEntries(searchParams.entries())
     );
 
-    // Delete availability records (which will make dates available by default)
+    // Delete availability records — allow removing 'booked' orphans too
+    // (orphans = booked blocks with no corresponding active reservation)
     const { error } = await supabase
       .from('loft_availability')
       .delete()
       .eq('loft_id', loft_id)
       .gte('date', start_date)
       .lt('date', end_date)
-      .neq('blocked_reason', 'booked'); // Don't unblock booked dates
 
     if (error) {
       console.error('Error unblocking dates:', error);

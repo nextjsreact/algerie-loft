@@ -94,7 +94,10 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: payCurrency === 'DZD' ? Number(amount) : Number(amountDZD || amount),
+          amount: payCurrency === 'DZD' ? Number(amount)
+            : amountDZD ? Number(amountDZD)
+            : currencyRates[payCurrency] ? Math.round(Number(amount) * currencyRates[payCurrency])
+            : Number(amount),
           payment_method: method,
           currency: payCurrency,
           // Store original foreign amount in transaction_id field as JSON
@@ -271,28 +274,25 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
             </div>
           </div>
           {/* Show DZD equivalent field when foreign currency */}
-          {payCurrency !== 'DZD' && (
-            <div className="space-y-1 p-3 bg-amber-50 rounded-lg border border-amber-200">
-              <Label className="text-xs text-amber-800 font-medium">Équivalent en DA</Label>
-              <div className="flex items-center gap-2">
+          {payCurrency !== 'DZD' && amount && currencyRates[payCurrency] && (
+            <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 text-sm">
+              <p className="text-amber-800 font-medium">
+                {amount} {payCurrency} = <strong>{Math.round(Number(amount) * currencyRates[payCurrency]).toLocaleString('fr-DZ')} DA</strong>
+              </p>
+              <p className="text-xs text-amber-600 mt-1">
+                Taux officiel : 1 {payCurrency} = {currencyRates[payCurrency]} DA
+                {amountDZD && Number(amountDZD) !== Math.round(Number(amount) * currencyRates[payCurrency]) && (
+                  <span> • Taux personnalisé : {(Number(amountDZD) / Number(amount)).toFixed(2)} DA</span>
+                )}
+              </p>
+              <div className="flex items-center gap-2 mt-2">
+                <Label className="text-xs text-amber-700">Modifier le taux :</Label>
                 <Input type="number" min="0" step="any" value={amountDZD}
                   onChange={e => setAmountDZD(e.target.value)}
-                  placeholder={currencyRates[payCurrency] ? String(Math.round(Number(amount || 0) * currencyRates[payCurrency])) : ''}
-                  className="h-9 bg-white" />
-                <span className="text-sm text-amber-700 whitespace-nowrap">DA</span>
-                {currencyRates[payCurrency] && amount && (
-                  <Button type="button" size="sm" variant="outline" className="h-9 text-xs whitespace-nowrap"
-                    onClick={() => setAmountDZD(String(Math.round(Number(amount) * currencyRates[payCurrency])))}>
-                    Auto ({currencyRates[payCurrency]} DA)
-                  </Button>
-                )}
+                  placeholder={String(Math.round(Number(amount) * currencyRates[payCurrency]))}
+                  className="h-7 w-28 text-xs bg-white" />
+                <span className="text-xs text-amber-600">DA</span>
               </div>
-              {amount && amountDZD && (
-                <p className="text-xs text-amber-600">
-                  Taux : 1 {payCurrency} = {(Number(amountDZD) / Number(amount)).toFixed(2)} DA
-                  {currencyRates[payCurrency] && ` (officiel : ${currencyRates[payCurrency]} DA)`}
-                </p>
-              )}
             </div>
           )}
           <div className="grid grid-cols-2 gap-3">

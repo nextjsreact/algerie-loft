@@ -329,6 +329,8 @@ export default function ReservationFormHybrid({
         if (initPaymentAmount && parseFloat(initPaymentAmount) > 0 && reservationId) {
           const effectiveAmount = initPaymentCurrency !== 'DZD' && initPaymentAmountDZD
             ? parseFloat(initPaymentAmountDZD)
+            : initPaymentCurrency !== 'DZD' && currencyRates[initPaymentCurrency]
+            ? Math.round(parseFloat(initPaymentAmount) * currencyRates[initPaymentCurrency])
             : parseFloat(initPaymentAmount)
           const payRes = await fetch(`/api/reservations/${reservationId}/payments`, {
             method: 'POST',
@@ -879,36 +881,26 @@ export default function ReservationFormHybrid({
                   />
                 </div>
               </div>
-              {/* DZD equivalent for foreign currency */}
-              {initPaymentCurrency !== 'DZD' && initPaymentAmount && (
-                <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 space-y-2">
-                  <Label className="text-sm font-medium text-amber-800">
-                    Équivalent en DA
-                  </Label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      min="0"
-                      step="any"
-                      value={initPaymentAmountDZD}
+              {/* Auto-conversion display for foreign currency */}
+              {initPaymentCurrency !== 'DZD' && initPaymentAmount && currencyRates[initPaymentCurrency] && (
+                <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 text-sm">
+                  <p className="text-amber-800 font-medium">
+                    {initPaymentAmount} {initPaymentCurrency} = <strong>
+                      {(initPaymentAmountDZD
+                        ? Number(initPaymentAmountDZD)
+                        : Math.round(parseFloat(initPaymentAmount) * currencyRates[initPaymentCurrency])
+                      ).toLocaleString('fr-DZ')} DA
+                    </strong>
+                  </p>
+                  <p className="text-xs text-amber-600 mt-1">Taux officiel : 1 {initPaymentCurrency} = {currencyRates[initPaymentCurrency]} DA</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Label className="text-xs text-amber-700">Modifier le taux :</Label>
+                    <Input type="number" min="0" step="any" value={initPaymentAmountDZD}
                       onChange={e => setInitPaymentAmountDZD(e.target.value)}
-                      placeholder={`Ex: ${Math.round(parseFloat(initPaymentAmount || '0') * (currencyRates[initPaymentCurrency] || 1))}`}
-                      className="bg-white"
-                    />
-                    <span className="text-sm text-amber-700 whitespace-nowrap">DA</span>
-                    {currencyRates[initPaymentCurrency] && (
-                      <Button type="button" size="sm" variant="outline" className="h-9 text-xs whitespace-nowrap"
-                        onClick={() => setInitPaymentAmountDZD(String(Math.round(parseFloat(initPaymentAmount || '0') * currencyRates[initPaymentCurrency])))}>
-                        Auto ({currencyRates[initPaymentCurrency]} DA/1 {initPaymentCurrency})
-                      </Button>
-                    )}
+                      placeholder={String(Math.round(parseFloat(initPaymentAmount) * currencyRates[initPaymentCurrency]))}
+                      className="h-7 w-28 text-xs bg-white" />
+                    <span className="text-xs text-amber-600">DA</span>
                   </div>
-                  {initPaymentAmount && initPaymentAmountDZD && (
-                    <p className="text-xs text-amber-600">
-                      Taux appliqué : 1 {initPaymentCurrency} = {(parseFloat(initPaymentAmountDZD) / parseFloat(initPaymentAmount)).toFixed(2)} DA
-                      {currencyRates[initPaymentCurrency] && ` (taux officiel : ${currencyRates[initPaymentCurrency]} DA)`}
-                    </p>
-                  )}
                 </div>
               )}
               {initPaymentAmount && parseFloat(initPaymentAmount) > 0 && (

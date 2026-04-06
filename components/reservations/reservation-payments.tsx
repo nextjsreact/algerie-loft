@@ -79,7 +79,13 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
       const res = await fetch(`/api/reservations/${reservationId}/payments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: Number(amount), payment_method: method, reference, payment_date: paymentDate, notes }),
+        body: JSON.stringify({
+          amount: Number(amount),
+          payment_method: method,
+          reference,
+          payment_date: paymentDate,
+          notes,
+        }),
       })
       const data = await res.json()
       if (data.success) {
@@ -106,6 +112,16 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
 
   const fmt = (n: number) => n.toLocaleString('fr-DZ') + ' ' + currency
   const getMethod = (v: string) => PAYMENT_METHODS.find(m => m.value === v) || PAYMENT_METHODS[PAYMENT_METHODS.length - 1]
+
+  // Map DB fields to display fields
+  const mapPayment = (p: any) => ({
+    id: p.id,
+    amount: Number(p.amount),
+    payment_method: p.payment_method,
+    reference: p.transaction_id,
+    payment_date: p.processed_at || p.created_at,
+    notes: p.processor_response,
+  })
 
   if (loading) return <div className="text-sm text-gray-400 py-2">Chargement des paiements...</div>
 
@@ -158,28 +174,29 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
       {payments.length > 0 && (
         <div className="space-y-2">
           {payments.map(p => {
-            const m = getMethod(p.payment_method)
+            const mapped = mapPayment(p)
+            const m = getMethod(mapped.payment_method)
             const Icon = m.icon
             return (
-              <div key={p.id} className={`flex items-center justify-between p-3 rounded-lg border ${m.color}`}>
+              <div key={mapped.id} className={`flex items-center justify-between p-3 rounded-lg border ${m.color}`}>
                 <div className="flex items-center gap-3">
                   <div className="p-1.5 rounded-full bg-white/80">
                     <Icon className="h-4 w-4" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm">{fmt(p.amount)}</span>
+                      <span className="font-semibold text-sm">{fmt(mapped.amount)}</span>
                       <span className="text-xs opacity-70">• {m.label}</span>
-                      {p.reference && <span className="text-xs opacity-60">#{p.reference}</span>}
+                      {mapped.reference && <span className="text-xs opacity-60">#{mapped.reference}</span>}
                     </div>
                     <div className="text-xs opacity-60">
-                      {new Date(p.payment_date).toLocaleDateString('fr-FR')}
-                      {p.notes && ` • ${p.notes}`}
+                      {mapped.payment_date ? new Date(mapped.payment_date).toLocaleDateString('fr-FR') : ''}
+                      {mapped.notes && ` • ${mapped.notes}`}
                     </div>
                   </div>
                 </div>
                 <Button variant="ghost" size="sm" className="h-7 w-7 p-0 opacity-60 hover:opacity-100 hover:text-red-600"
-                  onClick={() => handleDelete(p.id)}>
+                  onClick={() => handleDelete(mapped.id)}>
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
               </div>
@@ -243,7 +260,12 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
           </div>
         </form>
       ) : (
-        <Button variant="outline" size="sm" className="w-full gap-2 border-dashed" onClick={() => setShowForm(true)}>
+        <Button variant="outline" size="sm" className="w-full gap-2 border-dashed" onClick={() => {
+          setShowForm(true)
+          // Pre-fill with remaining balance
+          if (summary && summary.balance > 0) setAmount(String(summary.balance))
+          else if (!summary) setAmount(String(totalAmount))
+        }}>
           <Plus className="h-4 w-4" />
           Ajouter un paiement
         </Button>

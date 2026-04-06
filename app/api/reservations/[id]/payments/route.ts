@@ -11,9 +11,9 @@ export async function GET(
 
     const { data, error } = await supabase
       .from('reservation_payments')
-      .select('*')
+      .select('id, amount, payment_method, currency, status, transaction_id, processor_response, processed_at, created_at')
       .eq('reservation_id', id)
-      .order('payment_date', { ascending: false })
+      .order('created_at', { ascending: false })
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
@@ -66,10 +66,11 @@ export async function POST(
         reservation_id: id,
         amount: Number(amount),
         payment_method,
-        reference: reference || null,
-        payment_date: payment_date || new Date().toISOString().split('T')[0],
-        notes: notes || null,
-        created_by: user.id,
+        currency: 'DZD',
+        status: 'completed',
+        transaction_id: reference || null,
+        processor_response: notes || null,
+        processed_at: new Date(payment_date || new Date()).toISOString(),
       })
       .select()
       .single()

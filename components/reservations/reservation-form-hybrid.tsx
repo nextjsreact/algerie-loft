@@ -311,8 +311,9 @@ export default function ReservationFormHybrid({
         setState({ error: result.error || 'Erreur lors de la création de la réservation' });
       } else {
         // If initial payment provided, record it
-        if (initPaymentAmount && parseFloat(initPaymentAmount) > 0 && result.reservation?.id) {
-          await fetch(`/api/reservations/${result.reservation.id}/payments`, {
+        const reservationId = result.data?.id || result.reservation?.id
+        if (initPaymentAmount && parseFloat(initPaymentAmount) > 0 && reservationId) {
+          const payRes = await fetch(`/api/reservations/${reservationId}/payments`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -320,8 +321,13 @@ export default function ReservationFormHybrid({
               payment_method: initPaymentMethod,
               reference: initPaymentRef || null,
               payment_date: initPaymentDate,
+              notes: null,
             }),
-          }).catch(() => {})
+          })
+          const payData = await payRes.json()
+          if (!payData.success) {
+            console.error('Payment recording failed:', payData.error)
+          }
         }
         setState({ success: true });
         setTimeout(() => onSuccess?.(), 1500);

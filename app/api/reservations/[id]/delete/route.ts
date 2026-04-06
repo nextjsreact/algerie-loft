@@ -57,6 +57,15 @@ export async function DELETE(
       return NextResponse.json({ error: deleteErr.message }, { status: 500 })
     }
 
+    // Free up the blocked dates in loft_availability
+    await supabase
+      .from('loft_availability')
+      .delete()
+      .eq('loft_id', reservation.loft_id)
+      .gte('date', reservation.check_in_date)
+      .lt('date', reservation.check_out_date)
+      .eq('blocked_reason', 'booked')
+
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error('[DELETE reservation]', err)

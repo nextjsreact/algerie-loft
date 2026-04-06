@@ -107,6 +107,7 @@ export default function ReservationFormHybrid({
   const [initPaymentMethod, setInitPaymentMethod] = useState<string>('cash');
   const [initPaymentRef, setInitPaymentRef] = useState<string>('');
   const [initPaymentDate, setInitPaymentDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [initPaymentCurrency, setInitPaymentCurrency] = useState<string>('DZD');
 
   const selectedLoftData = lofts.find(l => l.id === selectedLoft);
   const nights = availabilityData?.nights || 0;
@@ -322,6 +323,7 @@ export default function ReservationFormHybrid({
               reference: initPaymentRef || null,
               payment_date: initPaymentDate,
               notes: null,
+              currency: initPaymentCurrency,
             }),
           })
           const payData = await payRes.json()
@@ -821,6 +823,22 @@ export default function ReservationFormHybrid({
                       <SelectItem value="cheque">📄 Chèque</SelectItem>
                       <SelectItem value="baridi">📲 Baridi Mob</SelectItem>
                       <SelectItem value="autre">💳 Autre</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">Devise du paiement</Label>
+                  <Select value={initPaymentCurrency} onValueChange={setInitPaymentCurrency}>
+                    <SelectTrigger className="bg-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="DZD">🇩🇿 DZD — Dinar algérien</SelectItem>
+                      <SelectItem value="EUR">🇪🇺 EUR — Euro</SelectItem>
+                      <SelectItem value="USD">🇺🇸 USD — Dollar américain</SelectItem>
+                      <SelectItem value="GBP">🇬🇧 GBP — Livre sterling</SelectItem>
+                      <SelectItem value="CAD">🇨🇦 CAD — Dollar canadien</SelectItem>
+                      <SelectItem value="CHF">🇨🇭 CHF — Franc suisse</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

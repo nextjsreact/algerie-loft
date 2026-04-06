@@ -53,6 +53,7 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
   // Form state
   const [amount, setAmount] = useState('')
   const [method, setMethod] = useState('cash')
+  const [payCurrency, setPayCurrency] = useState('DZD')
   const [reference, setReference] = useState('')
   const [paymentDate, setPaymentDate] = useState(new Date().toISOString().split('T')[0])
   const [notes, setNotes] = useState('')
@@ -82,6 +83,7 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
         body: JSON.stringify({
           amount: Number(amount),
           payment_method: method,
+          currency: payCurrency,
           reference,
           payment_date: paymentDate,
           notes,
@@ -233,6 +235,22 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
                       </div>
                     </SelectItem>
                   ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Devise</Label>
+              <Select value={payCurrency} onValueChange={setPayCurrency}>
+                <SelectTrigger className="h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="DZD">🇩🇿 DZD</SelectItem>
+                  <SelectItem value="EUR">🇪🇺 EUR</SelectItem>
+                  <SelectItem value="USD">🇺🇸 USD</SelectItem>
+                  <SelectItem value="GBP">🇬🇧 GBP</SelectItem>
+                  <SelectItem value="CAD">🇨🇦 CAD</SelectItem>
+                  <SelectItem value="CHF">🇨🇭 CHF</SelectItem>
                 </SelectContent>
               </Select>
             </div>

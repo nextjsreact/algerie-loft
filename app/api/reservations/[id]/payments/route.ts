@@ -54,7 +54,7 @@ export async function POST(
     if (!user) return NextResponse.json({ error: 'Non authentifie' }, { status: 401 })
 
     const body = await request.json()
-    const { amount, payment_method, reference, payment_date, notes } = body
+    const { amount, payment_method, reference, payment_date, notes, currency } = body
 
     if (!amount || !payment_method) {
       return NextResponse.json({ error: 'Montant et mode de paiement requis' }, { status: 400 })
@@ -66,7 +66,7 @@ export async function POST(
         reservation_id: id,
         amount: Number(amount),
         payment_method,
-        currency: 'DZD',
+        currency: currency || 'DZD',
         status: 'completed',
         transaction_id: reference || null,
         processor_response: notes || null,

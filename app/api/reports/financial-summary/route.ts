@@ -30,8 +30,8 @@ export async function GET(request: NextRequest) {
     const { data: resPay } = await supabase
       .from('reservation_payments')
       .select('amount, payment_method, reservation_id, reservations:reservation_id(loft_id)')
-      .gte('payment_date', startDate)
-      .lte('payment_date', endDate)
+      .gte('created_at', startDate)
+      .lte('created_at', endDate + 'T23:59:59')
 
     // 4. Lofts with owner info
     const { data: lofts } = await supabase

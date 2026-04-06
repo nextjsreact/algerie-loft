@@ -20,8 +20,8 @@ const PAYMENT_LABELS: Record<string, { label: string; emoji: string }> = {
 }
 
 export function FinancialSummaryReport() {
-  const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), 'yyyy-MM-dd'))
-  const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), 'yyyy-MM-dd'))
+  const [startDate, setStartDate] = useState(format(startOfMonth(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)), 'yyyy-MM-dd'))
+  const [endDate, setEndDate] = useState(format(endOfMonth(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)), 'yyyy-MM-dd'))
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(false)
 

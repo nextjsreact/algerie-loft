@@ -653,7 +653,7 @@ function ReservationsPageContent() {
                         if (filterSearch && !res.lofts?.name?.toLowerCase().includes(filterSearch.toLowerCase()) && !res.guest_name?.toLowerCase().includes(filterSearch.toLowerCase())) return false;
                         if (filterStatus !== 'all' && res.status !== filterStatus) return false;
                         if (filterLoft !== 'all' && res.loft_id !== filterLoft) return false;
-                        if (filterDateFrom && res.check_in_date < filterDateFrom) return false;
+                        if (filterDateFrom && res.check_out_date && res.check_out_date <= filterDateFrom) return false;
                         if (filterDateTo && res.check_in_date > filterDateTo) return false;
                         return true;
                       });
@@ -668,7 +668,7 @@ function ReservationsPageContent() {
                     if (filterSearch && !res.lofts?.name?.toLowerCase().includes(filterSearch.toLowerCase()) && !res.guest_name?.toLowerCase().includes(filterSearch.toLowerCase())) return false;
                     if (filterStatus !== 'all' && res.status !== filterStatus) return false;
                     if (filterLoft !== 'all' && res.loft_id !== filterLoft) return false;
-                    if (filterDateFrom && res.check_in_date < filterDateFrom) return false;
+                    if (filterDateFrom && res.check_out_date && res.check_out_date <= filterDateFrom) return false;
                     if (filterDateTo && res.check_in_date > filterDateTo) return false;
                     return true;
                   });

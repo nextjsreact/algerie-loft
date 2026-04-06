@@ -35,6 +35,7 @@ import ReservationCalendar from '@/components/reservations/reservation-calendar'
 import ReservationFormHybrid from '@/components/reservations/reservation-form-hybrid';
 import AvailabilityManager from '@/components/reservations/availability-manager';
 import { ReservationEditDialog } from '@/components/reservations/reservation-edit-dialog';
+import { ReservationPayments } from '@/components/reservations/reservation-payments';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/utils/supabase/client';
@@ -894,6 +895,22 @@ function ReservationsPageContent() {
                     </CardContent>
                   </Card>
                 )}
+
+                {/* Payments section */}
+                <Card className="border border-gray-200 shadow-sm">
+                  <CardContent className="p-4">
+                    <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-blue-600" />
+                      Paiements
+                    </h4>
+                    <ReservationPayments
+                      reservationId={selectedReservation.id}
+                      totalAmount={selectedReservation.total_amount}
+                      currency={defaultCurrencySymbol}
+                      onUpdate={() => { setRefreshKey(prev => prev + 1); fetchAllReservations(); }}
+                    />
+                  </CardContent>
+                </Card>
 
                 <div className="flex justify-between gap-4">
                   {/* Delete button — left side with confirmation */}

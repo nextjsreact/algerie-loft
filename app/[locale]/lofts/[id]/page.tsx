@@ -648,7 +648,7 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-purple-600">{t.wifiPassword}:</span>
                             <span className="font-mono text-sm bg-white px-2 py-1 rounded border font-semibold text-purple-700">
-                              {loft.wifi_password}
+                              {'•'.repeat(loft.wifi_password.length)}
                             </span>
                           </div>
                           {loft.prochaine_echeance_internet && (

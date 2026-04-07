@@ -165,13 +165,14 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-medium text-gray-600 block mb-1">Arrivée</label>
-                  <input type="date" value={checkIn} onChange={e => setCheckIn(e.target.value)}
+                  <input type="date" value={checkIn} onChange={e => { setCheckIn(e.target.value); if (checkOut && checkOut <= e.target.value) setCheckOut('') }}
+                    min={new Date().toISOString().split('T')[0]}
                     className="w-full border rounded-lg px-3 py-2 text-sm" required />
                 </div>
                 <div>
                   <label className="text-xs font-medium text-gray-600 block mb-1">Départ</label>
                   <input type="date" value={checkOut} onChange={e => setCheckOut(e.target.value)}
-                    min={checkIn || undefined}
+                    min={checkIn ? new Date(new Date(checkIn).getTime() + 86400000).toISOString().split('T')[0] : new Date(new Date().getTime() + 86400000).toISOString().split('T')[0]}
                     className="w-full border rounded-lg px-3 py-2 text-sm" required />
                 </div>
               </div>
@@ -188,7 +189,7 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
               <div>
                 <label className="text-xs font-medium text-gray-600 block mb-1">Téléphone <span className="text-red-500">*</span></label>
                 <input type="tel" value={guestPhone} onChange={e => setGuestPhone(e.target.value)}
-                  placeholder="+213 5X XX XX XX" className="w-full border rounded-lg px-3 py-2 text-sm" required />
+                  placeholder="+213 XX XX XX XX" className="w-full border rounded-lg px-3 py-2 text-sm" required />
               </div>
 
               <div>

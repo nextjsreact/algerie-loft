@@ -475,8 +475,8 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => {
-                      // Open phone call
-                      window.open('tel:+213560362543', '_self');
+                      // Open WhatsApp with our phone number
+                      window.open('https://wa.me/213560362543', '_blank');
                     }}
                     className="w-full sm:w-auto bg-white/20 backdrop-blur-md border-2 border-white text-white px-6 py-4 rounded-full text-lg font-bold hover:bg-white hover:text-gray-900 transition-all duration-300 shadow-2xl"
                     style={{ fontFamily: 'Caveat, cursive' }}
@@ -805,8 +805,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => {
-                    // Redirect to client search page
-                    window.location.href = `/${locale}/client/search`;
+                    window.open('https://wa.me/213560362543', '_blank');
                   }}
                   className="border-2 border-white text-white px-6 py-4 rounded-full text-lg font-bold hover:bg-white hover:text-green-600 transition-all duration-300"
                   style={{ fontFamily: 'Caveat, cursive' }}
@@ -1367,7 +1366,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
                 </div>
               </div>
 
-              <div>
+              <div id="footer-contact">
                 <h3 className="text-lg font-semibold mb-6" style={{ fontFamily: 'Caveat, cursive' }}>
                   {footerText.contact}
                 </h3>

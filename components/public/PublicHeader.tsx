@@ -112,7 +112,7 @@ export default function PublicHeader({ locale, text }: PublicHeaderProps) {
                   // Si on est sur la page d'accueil, scroll vers la section
                   if (window.location.pathname === `/${locale}` || window.location.pathname === `/${locale}/`) {
                     e.preventDefault();
-                    const contactSection = document.querySelector('#contact-section');
+                    const contactSection = document.querySelector('#footer-contact');
                     if (contactSection) {
                       contactSection.scrollIntoView({ behavior: 'smooth' });
                     }
@@ -262,7 +262,7 @@ export default function PublicHeader({ locale, text }: PublicHeaderProps) {
                   if (window.location.pathname === `/${locale}` || window.location.pathname === `/${locale}/`) {
                     e.preventDefault();
                     setTimeout(() => {
-                      const contactSection = document.querySelector('#contact-section');
+                      const contactSection = document.querySelector('#footer-contact');
                       if (contactSection) {
                         contactSection.scrollIntoView({ behavior: 'smooth' });
                       }

@@ -4,9 +4,11 @@ import { LanguageSelector } from "@/components/ui/language-selector"
 import { UserAvatarDropdown } from "@/components/auth/user-avatar-dropdown"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { NotificationBell } from "@/components/layout/notification-bell"
+import { useLocale } from "next-intl"
 import Image from "next/image"
 
 export function DesktopHeader() {
+  const locale = useLocale()
   return (
     <header className="hidden md:flex h-16 items-center justify-between bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 shadow-sm sticky top-0 z-50">
       {/* Left side - Logo */}

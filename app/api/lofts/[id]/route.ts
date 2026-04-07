@@ -17,7 +17,7 @@ export async function GET(
         check_in_time, check_out_time, minimum_stay, maximum_stay,
         house_rules, cancellation_policy,
         owner_id, zone_area_id,
-        zone_areas:zone_area_id(name),
+        zone_areas!lofts_zone_area_id_fkey(name),
         owners:owner_id(name),
         loft_photos(url, is_cover)
       `)
@@ -25,7 +25,8 @@ export async function GET(
       .single();
 
     if (error || !loft) {
-      return NextResponse.json({ success: false, error: 'Loft non trouvé' }, { status: 404 });
+      console.error('Loft fetch error:', error?.message, 'id:', id)
+      return NextResponse.json({ success: false, error: 'Loft non trouvé', detail: error?.message }, { status: 404 });
     }
 
     // Sort photos: cover first

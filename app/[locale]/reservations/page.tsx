@@ -699,7 +699,7 @@ function ReservationsPageContent() {
                               <p className="text-sm text-gray-500">
                                 {res._is_block
                                   ? `🔒 ${res.blocked_reason || 'Bloqué'} • ${res.check_in_date} → ${res.check_out_date}`
-                                  : `${res.guest_name} • ${res.check_in_date} → ${res.check_out_date}`
+                                  : `${res.guest_name || res.guest_phone || '—'} • ${res.check_in_date} → ${res.check_out_date}`
                                 }
                               </p>
                             </div>
@@ -835,8 +835,27 @@ function ReservationsPageContent() {
                         <Users className="h-4 w-4 text-blue-600" />
                         {t('details.guest')}
                       </h4>
-                      <p className="font-medium">{selectedReservation.guest_name}</p>
-                      <p className="text-sm text-gray-600">{selectedReservation.guest_email}</p>
+                      {selectedReservation.guest_name ? (
+                        <p className="font-medium">{selectedReservation.guest_name}</p>
+                      ) : (
+                        <p className="text-gray-400 italic text-sm">Nom non renseigné</p>
+                      )}
+                      {selectedReservation.guest_phone && (
+                        <p className="text-sm text-gray-700 flex items-center gap-1 mt-1">
+                          📞 <a href={`tel:${selectedReservation.guest_phone}`} className="hover:underline text-blue-600">{selectedReservation.guest_phone}</a>
+                        </p>
+                      )}
+                      {selectedReservation.guest_email && (
+                        <p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
+                          ✉️ <a href={`mailto:${selectedReservation.guest_email}`} className="hover:underline text-blue-600">{selectedReservation.guest_email}</a>
+                        </p>
+                      )}
+                      {selectedReservation.guest_nationality && (
+                        <p className="text-sm text-gray-500 mt-1">🌍 {selectedReservation.guest_nationality}</p>
+                      )}
+                      {!selectedReservation.guest_name && !selectedReservation.guest_phone && !selectedReservation.guest_email && (
+                        <p className="text-red-500 text-sm mt-1">⚠️ Aucune information de contact</p>
+                      )}
                     </CardContent>
                   </Card>
                   

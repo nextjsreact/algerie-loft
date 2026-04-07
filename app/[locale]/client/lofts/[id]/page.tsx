@@ -47,8 +47,13 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!guestPhone) { alert('Le numéro de téléphone est obligatoire'); return }
     if (!checkIn || !checkOut) { alert('Veuillez sélectionner les dates'); return }
+    const today = new Date(); today.setHours(0,0,0,0)
+    const cin = new Date(checkIn); cin.setHours(0,0,0,0)
+    const cout = new Date(checkOut); cout.setHours(0,0,0,0)
+    if (cin < today) { alert('La date d\'arrivée ne peut pas être dans le passé'); return }
+    if (cout <= cin) { alert('La date de départ doit être après la date d\'arrivée'); return }
+    if (!guestPhone.trim()) { alert('Le numéro de téléphone est obligatoire'); return }
     if (nights <= 0) { alert('La date de départ doit être après la date d\'arrivée'); return }
 
     setSubmitting(true)
@@ -165,14 +170,23 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-medium text-gray-600 block mb-1">Arrivée</label>
-                  <input type="date" value={checkIn} onChange={e => { setCheckIn(e.target.value); if (checkOut && checkOut <= e.target.value) setCheckOut('') }}
+                  <input type="date" value={checkIn}
+                    onChange={e => {
+                      const val = e.target.value
+                      setCheckIn(val)
+                      // Reset checkout if it's no longer valid
+                      if (checkOut && checkOut <= val) setCheckOut('')
+                    }}
                     min={new Date().toISOString().split('T')[0]}
                     className="w-full border rounded-lg px-3 py-2 text-sm" required />
                 </div>
                 <div>
                   <label className="text-xs font-medium text-gray-600 block mb-1">Départ</label>
-                  <input type="date" value={checkOut} onChange={e => setCheckOut(e.target.value)}
-                    min={checkIn ? new Date(new Date(checkIn).getTime() + 86400000).toISOString().split('T')[0] : new Date(new Date().getTime() + 86400000).toISOString().split('T')[0]}
+                  <input type="date" value={checkOut}
+                    onChange={e => setCheckOut(e.target.value)}
+                    min={checkIn
+                      ? new Date(new Date(checkIn + 'T00:00:00').getTime() + 86400000).toISOString().split('T')[0]
+                      : new Date(new Date().getTime() + 86400000).toISOString().split('T')[0]}
                     className="w-full border rounded-lg px-3 py-2 text-sm" required />
                 </div>
               </div>

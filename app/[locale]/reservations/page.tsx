@@ -831,19 +831,30 @@ function ReservationsPageContent() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Card className="border border-gray-200 shadow-sm">
                     <CardContent className="p-4">
-                      <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                      <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                         <Users className="h-4 w-4 text-blue-600" />
                         {t('details.guest')}
                       </h4>
                       {selectedReservation.guest_name ? (
-                        <p className="font-medium">{selectedReservation.guest_name}</p>
+                        <p className="font-semibold text-gray-900">{selectedReservation.guest_name}</p>
                       ) : (
                         <p className="text-gray-400 italic text-sm">Nom non renseigné</p>
                       )}
-                      {selectedReservation.guest_phone && (
-                        <p className="text-sm text-gray-700 flex items-center gap-1 mt-1">
-                          📞 <a href={`tel:${selectedReservation.guest_phone}`} className="hover:underline text-blue-600">{selectedReservation.guest_phone}</a>
-                        </p>
+                      {selectedReservation.guest_phone ? (
+                        <div className="flex items-center gap-2 mt-2">
+                          <a href={`tel:${selectedReservation.guest_phone}`}
+                            className="flex items-center gap-1 text-sm text-blue-600 hover:underline font-medium">
+                            📞 {selectedReservation.guest_phone}
+                          </a>
+                          <a
+                            href={`https://wa.me/${selectedReservation.guest_phone.replace(/\D/g, '')}`}
+                            target="_blank" rel="noopener noreferrer"
+                            className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full hover:bg-green-200 transition-colors">
+                            WhatsApp
+                          </a>
+                        </div>
+                      ) : (
+                        <p className="text-amber-600 text-sm mt-1">⚠️ Pas de téléphone</p>
                       )}
                       {selectedReservation.guest_email && (
                         <p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
@@ -854,7 +865,7 @@ function ReservationsPageContent() {
                         <p className="text-sm text-gray-500 mt-1">🌍 {selectedReservation.guest_nationality}</p>
                       )}
                       {!selectedReservation.guest_name && !selectedReservation.guest_phone && !selectedReservation.guest_email && (
-                        <p className="text-red-500 text-sm mt-1">⚠️ Aucune information de contact</p>
+                        <p className="text-red-500 text-sm mt-2 bg-red-50 p-2 rounded">⚠️ Aucune information de contact disponible</p>
                       )}
                     </CardContent>
                   </Card>

@@ -128,6 +128,36 @@ export async function POST(request: NextRequest) {
     }
 
     revalidatePath('/reservations')
+
+    // Notify all staff (admin/manager/executive/member) about the new client reservation
+    try {
+      const { data: staffProfiles } = await supabase
+        .from('profiles')
+        .select('id')
+        .in('role', ['admin', 'manager', 'executive', 'member'])
+
+      if (staffProfiles && staffProfiles.length > 0) {
+        const loftName = (reservation as any).lofts?.name || 'Appartement'
+        const guestDisplay = guest_name || guest_phone || 'Client'
+        const nights = Math.ceil((new Date(check_out_date).getTime() - new Date(check_in_date).getTime()) / 86400000)
+
+        const notifRows = staffProfiles.map((p: { id: string }) => ({
+          user_id: p.id,
+          title_key: '🔔 Nouvelle demande de réservation',
+          message_key: `${guestDisplay} • ${loftName} • ${check_in_date} → ${check_out_date} (${nights} nuit${nights > 1 ? 's' : ''}) • ${(total_amount || 0).toLocaleString('fr-DZ')} DA`,
+          type: 'info' as const,
+          link: '/fr/reservations?tab=list',
+          is_read: false,
+          created_at: new Date().toISOString(),
+        }))
+
+        await supabase.from('notifications').insert(notifRows)
+      }
+    } catch (notifErr) {
+      // Don't fail the reservation if notification fails
+      console.error('Notification error (non-blocking):', notifErr)
+    }
+
     return NextResponse.json({ success: true, data: reservation })
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error)

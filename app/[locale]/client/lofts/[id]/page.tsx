@@ -76,6 +76,7 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
           taxes: 0,
           total_amount: total,
           special_requests: specialRequests || null,
+          source: 'client', // ← identifies this as a public client booking
         }),
       })
       const data = await res.json()

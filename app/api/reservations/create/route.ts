@@ -12,7 +12,11 @@ export async function POST(request: NextRequest) {
       guest_count, check_in_date, check_out_date, special_requests,
       customer_id, base_price, cleaning_fee, service_fee, taxes, total_amount,
       currency_code, currency_ratio, price_per_night_input,
+      source, // 'client' = public booking page, absent = employee dashboard
     } = body
+
+    // Only notify staff when a client books from the public site
+    const isClientBooking = source === 'client'
 
     // Basic validation — only phone is required for guest info
     if (!loft_id || !guest_phone || !check_in_date || !check_out_date) {
@@ -130,57 +134,59 @@ export async function POST(request: NextRequest) {
 
     revalidatePath('/reservations')
 
-    // Notify all staff (admin/manager/executive/member) about the new client reservation
-    try {
-      const { data: staffProfiles } = await supabase
-        .from('profiles')
-        .select('id')
-        .in('role', ['admin', 'manager', 'executive', 'member'])
+    // Only notify when a client books from the public site (not when an employee creates a reservation)
+    if (isClientBooking) {
+      // In-app notifications for all staff
+      try {
+        const { data: staffProfiles } = await supabase
+          .from('profiles')
+          .select('id')
+          .in('role', ['admin', 'manager', 'executive', 'member'])
 
-      if (staffProfiles && staffProfiles.length > 0) {
+        if (staffProfiles && staffProfiles.length > 0) {
+          const loftName = (reservation as any).lofts?.name || 'Appartement'
+          const guestDisplay = guest_name || guest_phone || 'Client'
+          const nights = Math.ceil((new Date(check_out_date).getTime() - new Date(check_in_date).getTime()) / 86400000)
+
+          const notifRows = staffProfiles.map((p: { id: string }) => ({
+            user_id: p.id,
+            title_key: '🔔 Nouvelle demande de réservation',
+            message_key: `${guestDisplay} • ${loftName} • ${check_in_date} → ${check_out_date} (${nights} nuit${nights > 1 ? 's' : ''}) • ${(total_amount || 0).toLocaleString('fr-DZ')} DA`,
+            type: 'info' as const,
+            link: '/fr/reservations?tab=list',
+            is_read: false,
+            created_at: new Date().toISOString(),
+          }))
+
+          await supabase.from('notifications').insert(notifRows)
+        }
+      } catch (notifErr) {
+        console.error('Notification error (non-blocking):', notifErr)
+      }
+
+      // Telegram notification
+      try {
         const loftName = (reservation as any).lofts?.name || 'Appartement'
         const guestDisplay = guest_name || guest_phone || 'Client'
         const nights = Math.ceil((new Date(check_out_date).getTime() - new Date(check_in_date).getTime()) / 86400000)
+        const amount = (total_amount || 0).toLocaleString('fr-DZ')
 
-        const notifRows = staffProfiles.map((p: { id: string }) => ({
-          user_id: p.id,
-          title_key: '🔔 Nouvelle demande de réservation',
-          message_key: `${guestDisplay} • ${loftName} • ${check_in_date} → ${check_out_date} (${nights} nuit${nights > 1 ? 's' : ''}) • ${(total_amount || 0).toLocaleString('fr-DZ')} DA`,
-          type: 'info' as const,
-          link: '/fr/reservations?tab=list',
-          is_read: false,
-          created_at: new Date().toISOString(),
-        }))
+        const msg = [
+          '🔔 <b>Nouvelle demande de réservation</b>',
+          '',
+          `🏠 <b>Appartement :</b> ${loftName}`,
+          `👤 <b>Client :</b> ${guestDisplay}`,
+          `📅 <b>Dates :</b> ${check_in_date} → ${check_out_date} (${nights} nuit${nights > 1 ? 's' : ''})`,
+          `💰 <b>Montant :</b> ${amount} DA`,
+          special_requests ? `📝 <b>Demandes :</b> ${special_requests}` : '',
+          '',
+          '👉 Connectez-vous pour confirmer : https://www.loftalgerie.com/fr/reservations',
+        ].filter(Boolean).join('\n')
 
-        await supabase.from('notifications').insert(notifRows)
+        await sendTelegramNotification(msg)
+      } catch (tgErr) {
+        console.error('Telegram notification error (non-blocking):', tgErr)
       }
-    } catch (notifErr) {
-      // Don't fail the reservation if notification fails
-      console.error('Notification error (non-blocking):', notifErr)
-    }
-
-    // Telegram notification
-    try {
-      const loftName = (reservation as any).lofts?.name || 'Appartement'
-      const guestDisplay = guest_name || guest_phone || 'Client'
-      const nights = Math.ceil((new Date(check_out_date).getTime() - new Date(check_in_date).getTime()) / 86400000)
-      const amount = (total_amount || 0).toLocaleString('fr-DZ')
-
-      const msg = [
-        '🔔 <b>Nouvelle demande de réservation</b>',
-        '',
-        `🏠 <b>Appartement :</b> ${loftName}`,
-        `👤 <b>Client :</b> ${guestDisplay}`,
-        `📅 <b>Dates :</b> ${check_in_date} → ${check_out_date} (${nights} nuit${nights > 1 ? 's' : ''})`,
-        `💰 <b>Montant :</b> ${amount} DA`,
-        special_requests ? `📝 <b>Demandes :</b> ${special_requests}` : '',
-        '',
-        '👉 Connectez-vous pour confirmer : https://www.loftalgerie.com/fr/reservations',
-      ].filter(Boolean).join('\n')
-
-      await sendTelegramNotification(msg)
-    } catch (tgErr) {
-      console.error('Telegram notification error (non-blocking):', tgErr)
     }
 
     return NextResponse.json({ success: true, data: reservation })

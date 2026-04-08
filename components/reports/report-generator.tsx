@@ -24,7 +24,7 @@ export function ReportGenerator() {
   const [ownerPopoverOpen, setOwnerPopoverOpen] = useState(false)
 
   // Report type
-  const [reportType, setReportType] = useState<'partner' | 'global'>('partner')
+  const [reportType, setReportType] = useState<'partner' | 'loft' | 'global'>('partner')
 
   const fmt = (n: number) => n.toLocaleString('fr-DZ') + ' DA'
   const fmtDate = (d: string) => { try { return format(new Date(d), 'dd/MM/yyyy', { locale: fr }) } catch { return d } }
@@ -235,6 +235,161 @@ export function ReportGenerator() {
     else toast.error('Popup bloqué — autorisez les popups pour ce site')
   }
 
+  // ─── LOFT PDF ─────────────────────────────────────────────────────────────
+  const generateLoftPDF = (loft: any) => {
+    const periodLabel = `${fmtDate(startDate)} → ${fmtDate(endDate)}`
+    const txRows = loft.transactions?.length > 0
+      ? loft.transactions.map((tx: any) => {
+          const isExp = tx.type === 'expense'
+          return `<tr style="background:${isExp ? '#fef2f2' : ''}">
+            <td style="padding:4px 8px;border:1px solid #e5e7eb">${fmtDate(tx.date)}</td>
+            <td style="padding:4px 8px;border:1px solid #e5e7eb">${tx.description || '-'}</td>
+            <td style="padding:4px 8px;border:1px solid #e5e7eb">${tx.category || '-'}</td>
+            <td style="padding:4px 8px;text-align:center;border:1px solid #e5e7eb">
+              <span style="font-size:10px;padding:1px 6px;border-radius:9999px;background:${isExp ? '#fee2e2' : '#dcfce7'};color:${isExp ? '#dc2626' : '#16a34a'};font-weight:bold">
+                ${isExp ? 'Dépense' : 'Revenu'}
+              </span>
+            </td>
+            <td style="padding:4px 8px;text-align:right;border:1px solid #e5e7eb;color:${isExp ? '#dc2626' : '#16a34a'};font-weight:500">
+              ${isExp ? '-' : '+'}${fmt(tx.amount)}
+            </td>
+          </tr>`
+        }).join('')
+      : `<tr><td colspan="5" style="padding:8px;color:#9ca3af;text-align:center;border:1px solid #e5e7eb">Aucune transaction</td></tr>`
+
+    const ownerGross = Math.round(loft.total_income * loft.owner_percentage / 100)
+    const ownerNet = Math.max(0, ownerGross - loft.total_expense)
+    const companyDue = Math.round(loft.total_income * loft.company_percentage / 100)
+
+    const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
+<title>Rapport — ${loft.loft_name}</title>
+<style>body{font-family:Arial,sans-serif;padding:28px;max-width:820px;margin:0 auto;color:#111;font-size:12px}@media print{body{padding:12px}}</style>
+</head><body>
+  <div style="border-bottom:2px solid #1e3a5f;padding-bottom:14px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end">
+    <div><h1 style="font-size:20px;font-weight:bold;margin:0;color:#1e3a5f">Loft Algérie</h1>
+    <h2 style="font-size:14px;color:#555;margin:3px 0 0;font-weight:normal">Rapport — ${loft.loft_name}</h2></div>
+    <div style="text-align:right;font-size:11px;color:#666">
+      <p style="margin:0">Période : <strong>${periodLabel}</strong></p>
+      <p style="margin:2px 0 0">Imprimé le : ${format(new Date(), 'dd/MM/yyyy')}</p>
+    </div>
+  </div>
+  ${loft.owner_name ? `<p style="margin:0 0 12px;font-size:13px">Partenaire : <strong>${loft.owner_name}</strong> &nbsp;|&nbsp; Part partenaire : <strong>${loft.owner_percentage}%</strong></p>` : '<p style="margin:0 0 12px;font-size:13px;color:#2563eb">🏠 Loft propre — Loft Algérie (100%)</p>'}
+  <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:16px">
+    <thead><tr style="background:#e5e7eb">
+      <th style="padding:5px 8px;text-align:left;border:1px solid #d1d5db">Date</th>
+      <th style="padding:5px 8px;text-align:left;border:1px solid #d1d5db">Description</th>
+      <th style="padding:5px 8px;text-align:left;border:1px solid #d1d5db">Catégorie</th>
+      <th style="padding:5px 8px;text-align:center;border:1px solid #d1d5db">Type</th>
+      <th style="padding:5px 8px;text-align:right;border:1px solid #d1d5db">Montant</th>
+    </tr></thead>
+    <tbody>${txRows}</tbody>
+    <tfoot>
+      <tr style="background:#f9fafb;font-size:10px;color:#6b7280">
+        <td colspan="4" style="padding:4px 8px;border:1px solid #e5e7eb">Revenus : +${fmt(loft.total_income)} &nbsp;|&nbsp; Dépenses : -${fmt(loft.total_expense)}</td>
+        <td style="padding:4px 8px;text-align:right;border:1px solid #e5e7eb;font-weight:bold;color:#16a34a">+${fmt(loft.total_income)}</td>
+      </tr>
+      ${loft.owner_percentage > 0 && loft.owner_percentage < 100 ? `
+      <tr style="background:#fef3c7;font-weight:bold">
+        <td colspan="4" style="padding:5px 8px;border:1px solid #d1d5db">Dû partenaire = ${fmt(ownerGross)} − ${fmt(loft.total_expense)}</td>
+        <td style="padding:5px 8px;text-align:right;border:1px solid #d1d5db;color:#d97706;font-size:13px">${fmt(ownerNet)}</td>
+      </tr>
+      <tr style="background:#f0fdf4">
+        <td colspan="4" style="padding:5px 8px;border:1px solid #d1d5db">Part société (${loft.company_percentage}%)</td>
+        <td style="padding:5px 8px;text-align:right;border:1px solid #d1d5db;color:#059669;font-size:13px">${fmt(companyDue)}</td>
+      </tr>` : `
+      <tr style="background:#eff6ff;font-weight:bold">
+        <td colspan="4" style="padding:5px 8px;border:1px solid #d1d5db">Net Loft Algérie = ${fmt(loft.total_income)} − ${fmt(loft.total_expense)}</td>
+        <td style="padding:5px 8px;text-align:right;border:1px solid #d1d5db;color:#2563eb;font-size:13px">${fmt(loft.total_income - loft.total_expense)}</td>
+      </tr>`}
+    </tfoot>
+  </table>
+  <div style="margin-top:40px;border-top:1px solid #e5e7eb;padding-top:12px;display:flex;justify-content:space-between;font-size:10px;color:#9ca3af">
+    <span>Loft Algérie — www.loftalgerie.com</span><span>Signature : ___________________</span>
+  </div>
+  <script>window.onload=function(){window.print()}</script>
+</body></html>`
+
+    const win = window.open('', '_blank', 'width=900,height=700')
+    if (win) { win.document.write(html); win.document.close() }
+    else alert('Popup bloqué — autorisez les popups pour ce site')
+  }
+
+  // ─── GLOBAL PDF ────────────────────────────────────────────────────────────
+  const generateGlobalPDF = () => {
+    const periodLabel = `${fmtDate(startDate)} → ${fmtDate(endDate)}`
+    const loftRows = allLofts
+      .filter((l: any) => l.total_income > 0 || l.total_expense > 0)
+      .map((l: any) => {
+        const ownerGross = Math.round(l.total_income * l.owner_percentage / 100)
+        const ownerNet = Math.max(0, ownerGross - l.total_expense)
+        const companyDue = Math.round(l.total_income * l.company_percentage / 100)
+        return `<tr>
+          <td style="padding:5px 8px;border:1px solid #e5e7eb">${l.loft_name}</td>
+          <td style="padding:5px 8px;border:1px solid #e5e7eb;color:#6b7280;font-size:11px">${l.owner_name || 'Loft Algérie'}</td>
+          <td style="padding:5px 8px;text-align:center;border:1px solid #e5e7eb">${l.owner_percentage}% / ${l.company_percentage}%</td>
+          <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;color:#16a34a">${fmt(l.total_income)}</td>
+          <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;color:#dc2626">${l.total_expense > 0 ? `-${fmt(l.total_expense)}` : '—'}</td>
+          <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;color:#d97706;font-weight:bold">${l.owner_percentage < 100 ? fmt(ownerNet) : '—'}</td>
+          <td style="padding:5px 8px;text-align:right;border:1px solid #e5e7eb;color:#059669;font-weight:bold">${fmt(companyDue)}</td>
+        </tr>`
+      }).join('')
+
+    const totalIncome = allLofts.reduce((s: number, l: any) => s + l.total_income, 0)
+    const totalExpense = allLofts.reduce((s: number, l: any) => s + l.total_expense, 0)
+    const totalOwnerDue = allLofts.reduce((s: number, l: any) => s + l.owner_due, 0)
+    const totalCompanyDue = allLofts.reduce((s: number, l: any) => s + l.company_due, 0)
+
+    const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
+<title>Rapport Global</title>
+<style>body{font-family:Arial,sans-serif;padding:28px;max-width:900px;margin:0 auto;color:#111;font-size:12px}@media print{body{padding:12px}}</style>
+</head><body>
+  <div style="border-bottom:2px solid #1e3a5f;padding-bottom:14px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end">
+    <div><h1 style="font-size:20px;font-weight:bold;margin:0;color:#1e3a5f">Loft Algérie</h1>
+    <h2 style="font-size:14px;color:#555;margin:3px 0 0;font-weight:normal">Rapport Global — Tous les appartements</h2></div>
+    <div style="text-align:right;font-size:11px;color:#666">
+      <p style="margin:0">Période : <strong>${periodLabel}</strong></p>
+      <p style="margin:2px 0 0">Imprimé le : ${format(new Date(), 'dd/MM/yyyy')}</p>
+    </div>
+  </div>
+  <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px">
+    <thead><tr style="background:#1e3a5f;color:white">
+      <th style="padding:6px 8px;text-align:left">Appartement</th>
+      <th style="padding:6px 8px;text-align:left">Partenaire</th>
+      <th style="padding:6px 8px;text-align:center">Part P/S</th>
+      <th style="padding:6px 8px;text-align:right">Revenus</th>
+      <th style="padding:6px 8px;text-align:right">Dépenses</th>
+      <th style="padding:6px 8px;text-align:right">Dû partenaire</th>
+      <th style="padding:6px 8px;text-align:right">Part société</th>
+    </tr></thead>
+    <tbody>${loftRows}</tbody>
+    <tfoot><tr style="background:#f3f4f6;font-weight:bold">
+      <td colspan="3" style="padding:6px 8px;border:1px solid #e5e7eb">TOTAL</td>
+      <td style="padding:6px 8px;text-align:right;border:1px solid #e5e7eb;color:#16a34a">${fmt(totalIncome)}</td>
+      <td style="padding:6px 8px;text-align:right;border:1px solid #e5e7eb;color:#dc2626">-${fmt(totalExpense)}</td>
+      <td style="padding:6px 8px;text-align:right;border:1px solid #e5e7eb;color:#d97706">${fmt(totalOwnerDue)}</td>
+      <td style="padding:6px 8px;text-align:right;border:1px solid #e5e7eb;color:#059669">${fmt(totalCompanyDue)}</td>
+    </tr></tfoot>
+  </table>
+  <div style="border:2px solid #1e3a5f;border-radius:8px;padding:14px;background:#f8fafc">
+    <h3 style="margin:0 0 10px;font-size:13px;font-weight:bold;color:#1e3a5f">RÉCAPITULATIF</h3>
+    <table style="width:100%;font-size:12px">
+      <tr><td style="padding:3px 0;color:#16a34a">Total revenus</td><td style="text-align:right;color:#16a34a;font-weight:bold">+${fmt(totalIncome)}</td></tr>
+      <tr><td style="padding:3px 0;color:#dc2626">Total dépenses</td><td style="text-align:right;color:#dc2626;font-weight:bold">-${fmt(totalExpense)}</td></tr>
+      <tr style="border-top:1px solid #e5e7eb"><td style="padding:6px 0;font-weight:bold;color:#d97706;font-size:13px">Total dû partenaires</td><td style="text-align:right;font-weight:bold;color:#d97706;font-size:15px">${fmt(totalOwnerDue)}</td></tr>
+      <tr><td style="padding:3px 0;color:#059669;font-weight:bold">Total part société (Loft Algérie)</td><td style="text-align:right;color:#059669;font-weight:bold;font-size:15px">${fmt(totalCompanyDue)}</td></tr>
+    </table>
+  </div>
+  <div style="margin-top:40px;border-top:1px solid #e5e7eb;padding-top:12px;display:flex;justify-content:space-between;font-size:10px;color:#9ca3af">
+    <span>Loft Algérie — www.loftalgerie.com</span><span>Signature : ___________________</span>
+  </div>
+  <script>window.onload=function(){window.print()}</script>
+</body></html>`
+
+    const win = window.open('', '_blank', 'width=900,height=700')
+    if (win) { win.document.write(html); win.document.close() }
+    else alert('Popup bloqué — autorisez les popups pour ce site')
+  }
+
   const handlePrintPartner = (group: any) => generatePDF([group], `Rapport Partenaire — ${group.owner_name}`)
   const handlePrintGlobal = () => generatePDF(byOwner, 'Rapport Global — Tous les partenaires')
   const handlePrintFiltered = () => {
@@ -245,64 +400,30 @@ export function ReportGenerator() {
     }
   }
 
+  // Loft selector for "par loft" tab
+  const [selectedLoftId, setSelectedLoftId] = useState<string>('')
+  const [loftTabSearch, setLoftTabSearch] = useState('')
+  const [loftTabPopover, setLoftTabPopover] = useState(false)
+  const activeLofts = allLofts.filter((l: any) => l.total_income > 0 || l.total_expense > 0)
+  const selectedLoftData = allLofts.find((l: any) => l.loft_id === selectedLoftId)
+
   return (
     <div className="space-y-6">
-      {/* Filters */}
+      {/* Date filters */}
       <Card className="border-0 shadow-lg bg-white/80">
         <CardContent className="p-4">
-          <div className="flex flex-wrap gap-4 items-end">
+          <div className="flex flex-wrap gap-3 items-end">
             <div className="space-y-1">
               <Label className="text-xs text-gray-500">Du</Label>
-              <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="h-9 w-[150px]" />
+              <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="h-9 w-[145px]" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs text-gray-500">Au</Label>
-              <Input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="h-9 w-[150px]" />
+              <Input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="h-9 w-[145px]" />
             </div>
             <Button size="sm" onClick={fetchData} disabled={loading} className="h-9">
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Actualiser
-            </Button>
-
-            {/* Partner filter */}
-            <div className="space-y-1">
-              <Label className="text-xs text-gray-500">Partenaire</Label>
-              <Popover open={ownerPopoverOpen} onOpenChange={open => { setOwnerPopoverOpen(open); if (!open) setOwnerSearch('') }}>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="h-9 min-w-[200px] justify-between font-normal">
-                    <span className="truncate">
-                      {selectedOwner === 'all' ? 'Tous les partenaires' : byOwner.find((g: any) => g.owner_id === selectedOwner)?.owner_name || 'Tous'}
-                    </span>
-                    <ChevronDown className="h-4 w-4 opacity-50 ml-2 flex-shrink-0" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[220px] p-0" align="start">
-                  <div className="p-2 border-b">
-                    <div className="relative">
-                      <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                      <Input placeholder="Rechercher..." value={ownerSearch} onChange={e => setOwnerSearch(e.target.value)} className="h-8 pl-7 text-sm" autoFocus />
-                    </div>
-                  </div>
-                  <div className="max-h-[200px] overflow-y-auto p-1">
-                    <button className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-accent ${selectedOwner === 'all' ? 'bg-accent font-medium' : ''}`}
-                      onClick={() => { setSelectedOwner('all'); setOwnerPopoverOpen(false) }}>
-                      Tous les partenaires
-                    </button>
-                    {byOwner.filter((g: any) => g.owner_name.toLowerCase().includes(ownerSearch.toLowerCase())).map((g: any) => (
-                      <button key={g.owner_id} className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-accent ${selectedOwner === g.owner_id ? 'bg-accent font-medium' : ''}`}
-                        onClick={() => { setSelectedOwner(g.owner_id); setOwnerPopoverOpen(false) }}>
-                        {g.owner_name}
-                      </button>
-                    ))}
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            {/* Print button */}
-            <Button onClick={handlePrintFiltered} disabled={loading || byOwner.length === 0} className="h-9 bg-blue-600 hover:bg-blue-700 text-white gap-2">
-              <Printer className="h-4 w-4" />
-              {selectedOwner === 'all' ? 'Imprimer tout' : 'Imprimer ce partenaire'}
             </Button>
           </div>
         </CardContent>
@@ -336,64 +457,208 @@ export function ReportGenerator() {
         </Card>
       </div>
 
-      {/* Per partner list */}
+      {/* Tabs: Par partenaire / Par loft / Global */}
+      <div className="flex gap-2 border-b border-gray-200">
+        {(['partner', 'loft', 'global'] as const).map(tab => (
+          <button key={tab} onClick={() => setReportType(tab)}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${reportType === tab ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+            {tab === 'partner' ? '👤 Par partenaire' : tab === 'loft' ? '🏠 Par appartement' : '🌐 Global'}
+          </button>
+        ))}
+      </div>
+
       {loading && <div className="text-center py-12 text-gray-400">Chargement...</div>}
 
-      {!loading && visibleOwners.length === 0 && (
-        <div className="text-center py-12 text-gray-400">Aucune donnée pour cette période</div>
+      {/* ── TAB: PAR PARTENAIRE ── */}
+      {!loading && reportType === 'partner' && (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-3 items-center">
+            <Popover open={ownerPopoverOpen} onOpenChange={open => { setOwnerPopoverOpen(open); if (!open) setOwnerSearch('') }}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="h-9 min-w-[200px] justify-between font-normal">
+                  <span className="truncate">{selectedOwner === 'all' ? 'Tous les partenaires' : byOwner.find((g: any) => g.owner_id === selectedOwner)?.owner_name || 'Tous'}</span>
+                  <ChevronDown className="h-4 w-4 opacity-50 ml-2 flex-shrink-0" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[220px] p-0" align="start">
+                <div className="p-2 border-b">
+                  <div className="relative">
+                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                    <Input placeholder="Rechercher..." value={ownerSearch} onChange={e => setOwnerSearch(e.target.value)} className="h-8 pl-7 text-sm" autoFocus />
+                  </div>
+                </div>
+                <div className="max-h-[200px] overflow-y-auto p-1">
+                  <button className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-accent ${selectedOwner === 'all' ? 'bg-accent font-medium' : ''}`}
+                    onClick={() => { setSelectedOwner('all'); setOwnerPopoverOpen(false) }}>Tous les partenaires</button>
+                  {byOwner.filter((g: any) => g.owner_name.toLowerCase().includes(ownerSearch.toLowerCase())).map((g: any) => (
+                    <button key={g.owner_id} className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-accent ${selectedOwner === g.owner_id ? 'bg-accent font-medium' : ''}`}
+                      onClick={() => { setSelectedOwner(g.owner_id); setOwnerPopoverOpen(false) }}>{g.owner_name}</button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+            <Button onClick={handlePrintFiltered} disabled={byOwner.length === 0} className="h-9 bg-blue-600 hover:bg-blue-700 text-white gap-2">
+              <Printer className="h-4 w-4" />
+              {selectedOwner === 'all' ? 'PDF tous les partenaires' : 'PDF ce partenaire'}
+            </Button>
+          </div>
+
+          {visibleOwners.length === 0 && <div className="text-center py-12 text-gray-400">Aucune donnée</div>}
+          {visibleOwners.map((group: any) => {
+            const active = group.lofts.filter((l: any) => l.total_income > 0 || l.total_expense > 0)
+            return (
+              <Card key={group.owner_id} className="border-0 shadow-lg bg-white/90">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div className="flex items-center gap-2">
+                      <User className="h-5 w-5 text-purple-600" />
+                      <CardTitle className="text-base">{group.owner_name}</CardTitle>
+                      <Badge variant="outline" className="text-xs">{active.length} appart{active.length > 1 ? 's' : ''}</Badge>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-right"><p className="text-xs text-amber-600">Dû partenaire</p><p className="font-bold text-amber-700">{fmt(group.total_owner_due)}</p></div>
+                      <div className="text-right"><p className="text-xs text-emerald-600">Part société</p><p className="font-bold text-emerald-700">{fmt(group.total_company_due)}</p></div>
+                      <Button size="sm" variant="outline" className="h-8 gap-1 text-xs" onClick={() => handlePrintPartner(group)}>
+                        <Printer className="h-3.5 w-3.5" /> PDF
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="divide-y divide-gray-100">
+                    {active.map((loft: any) => (
+                      <div key={loft.loft_id} className="flex items-center justify-between py-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Building2 className="h-3.5 w-3.5 text-blue-500" />
+                          <span className="font-medium">{loft.loft_name}</span>
+                          <span className="text-xs text-gray-400">{loft.owner_percentage}%</span>
+                        </div>
+                        <div className="flex items-center gap-4 text-xs">
+                          <span className="text-green-600">+{fmt(loft.total_income)}</span>
+                          {loft.total_expense > 0 && <span className="text-red-500">-{fmt(loft.total_expense)}</span>}
+                          <span className="font-bold text-amber-700">{fmt(loft.owner_due)}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
+        </div>
       )}
 
-      {!loading && visibleOwners.map((group: any) => {
-        const activeLofts = group.lofts.filter((l: any) => l.total_income > 0 || l.total_expense > 0)
-        return (
-          <Card key={group.owner_id} className="border-0 shadow-lg bg-white/90">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-purple-600" />
-                  <CardTitle className="text-base">{group.owner_name}</CardTitle>
-                  <Badge variant="outline" className="text-xs">{activeLofts.length} appart{activeLofts.length > 1 ? 's' : ''}</Badge>
+      {/* ── TAB: PAR APPARTEMENT ── */}
+      {!loading && reportType === 'loft' && (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-3 items-center">
+            <Popover open={loftTabPopover} onOpenChange={o => { setLoftTabPopover(o); if (!o) setLoftTabSearch('') }}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="h-9 min-w-[220px] justify-between font-normal">
+                  <span className="truncate">{selectedLoftData?.loft_name || 'Choisir un appartement'}</span>
+                  <ChevronDown className="h-4 w-4 opacity-50 ml-2 flex-shrink-0" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[240px] p-0" align="start">
+                <div className="p-2 border-b">
+                  <div className="relative">
+                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                    <Input placeholder="Rechercher..." value={loftTabSearch} onChange={e => setLoftTabSearch(e.target.value)} className="h-8 pl-7 text-sm" autoFocus />
+                  </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
-                    <p className="text-xs text-amber-600">Dû partenaire</p>
-                    <p className="font-bold text-amber-700">{fmt(group.total_owner_due)}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-emerald-600">Part société</p>
-                    <p className="font-bold text-emerald-700">{fmt(group.total_company_due)}</p>
-                  </div>
-                  <Button size="sm" variant="outline" className="h-8 gap-1 text-xs" onClick={() => handlePrintPartner(group)}>
-                    <Printer className="h-3.5 w-3.5" /> PDF
-                  </Button>
+                <div className="max-h-[220px] overflow-y-auto p-1">
+                  {activeLofts.filter((l: any) => l.loft_name.toLowerCase().includes(loftTabSearch.toLowerCase())).map((l: any) => (
+                    <button key={l.loft_id} className={`w-full text-left px-3 py-2 text-sm rounded hover:bg-accent ${selectedLoftId === l.loft_id ? 'bg-accent font-medium' : ''}`}
+                      onClick={() => { setSelectedLoftId(l.loft_id); setLoftTabPopover(false) }}>
+                      <span className="font-medium">{l.loft_name}</span>
+                      {l.owner_name && <span className="text-xs text-gray-400 ml-1">· {l.owner_name}</span>}
+                    </button>
+                  ))}
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="divide-y divide-gray-100">
-                {activeLofts.map((loft: any) => (
-                  <div key={loft.loft_id} className="flex items-center justify-between py-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Building2 className="h-3.5 w-3.5 text-blue-500" />
-                      <span className="font-medium">{loft.loft_name}</span>
-                      <span className="text-xs text-gray-400">{loft.owner_percentage}%</span>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs">
-                      <span className="text-green-600">+{fmt(loft.total_income)}</span>
-                      {loft.total_expense > 0 && <span className="text-red-500">-{fmt(loft.total_expense)}</span>}
-                      <span className="font-bold text-amber-700">{fmt(loft.owner_due)}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )
-      })}
+              </PopoverContent>
+            </Popover>
+            {selectedLoftData && (
+              <Button onClick={() => generateLoftPDF(selectedLoftData)} className="h-9 bg-blue-600 hover:bg-blue-700 text-white gap-2">
+                <Printer className="h-4 w-4" /> PDF cet appartement
+              </Button>
+            )}
+          </div>
 
-      {/* Info note */}
+          {activeLofts.length === 0 && <div className="text-center py-12 text-gray-400">Aucune donnée</div>}
+
+          <div className="divide-y divide-gray-100 bg-white rounded-xl shadow-lg overflow-hidden">
+            <div className="grid grid-cols-12 gap-2 px-5 py-2 bg-gray-50 text-xs text-gray-500 font-medium">
+              <div className="col-span-4">Appartement</div>
+              <div className="col-span-2 text-right text-green-600">Revenus</div>
+              <div className="col-span-2 text-right text-red-500">Dépenses</div>
+              <div className="col-span-2 text-right">Net</div>
+              <div className="col-span-2 text-right text-amber-600">Dû partenaire</div>
+            </div>
+            {activeLofts.map((l: any) => (
+              <div key={l.loft_id} className={`grid grid-cols-12 gap-2 px-5 py-3 items-center hover:bg-gray-50 text-sm cursor-pointer ${selectedLoftId === l.loft_id ? 'bg-blue-50' : ''}`}
+                onClick={() => setSelectedLoftId(l.loft_id)}>
+                <div className="col-span-4 flex items-center gap-2">
+                  <Building2 className="h-3.5 w-3.5 text-blue-400 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium truncate">{l.loft_name}</p>
+                    {l.owner_name && <p className="text-xs text-gray-400">{l.owner_name} · {l.owner_percentage}%</p>}
+                  </div>
+                </div>
+                <div className="col-span-2 text-right text-green-600 font-medium">{fmt(l.total_income)}</div>
+                <div className="col-span-2 text-right text-red-500">{l.total_expense > 0 ? `-${fmt(l.total_expense)}` : '—'}</div>
+                <div className={`col-span-2 text-right font-semibold ${(l.total_income - l.total_expense) >= 0 ? 'text-blue-700' : 'text-red-700'}`}>{fmt(l.total_income - l.total_expense)}</div>
+                <div className="col-span-2 text-right text-amber-700 font-semibold">{l.owner_percentage < 100 ? fmt(l.owner_due) : '—'}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB: GLOBAL ── */}
+      {!loading && reportType === 'global' && (
+        <div className="space-y-4">
+          <div className="flex justify-end">
+            <Button onClick={generateGlobalPDF} disabled={allLofts.length === 0} className="h-9 bg-blue-600 hover:bg-blue-700 text-white gap-2">
+              <Printer className="h-4 w-4" /> PDF global
+            </Button>
+          </div>
+
+          <Card className="border-0 shadow-lg bg-white/90 overflow-hidden">
+            <div className="divide-y divide-gray-100">
+              <div className="grid grid-cols-12 gap-2 px-5 py-2 bg-gray-50 text-xs text-gray-500 font-medium">
+                <div className="col-span-3">Appartement</div>
+                <div className="col-span-2">Partenaire</div>
+                <div className="col-span-1 text-center">Part</div>
+                <div className="col-span-2 text-right text-green-600">Revenus</div>
+                <div className="col-span-1 text-right text-red-500">Dépenses</div>
+                <div className="col-span-2 text-right text-amber-600">Dû partenaire</div>
+                <div className="col-span-1 text-right text-emerald-600">Société</div>
+              </div>
+              {allLofts.filter((l: any) => l.total_income > 0 || l.total_expense > 0).map((l: any) => (
+                <div key={l.loft_id} className="grid grid-cols-12 gap-2 px-5 py-2.5 items-center hover:bg-gray-50 text-sm">
+                  <div className="col-span-3 font-medium truncate">{l.loft_name}</div>
+                  <div className="col-span-2 text-xs text-gray-500 truncate">{l.owner_name || 'Loft Algérie'}</div>
+                  <div className="col-span-1 text-center text-xs text-gray-400">{l.owner_percentage}%</div>
+                  <div className="col-span-2 text-right text-green-600">{fmt(l.total_income)}</div>
+                  <div className="col-span-1 text-right text-red-500 text-xs">{l.total_expense > 0 ? `-${fmt(l.total_expense)}` : '—'}</div>
+                  <div className="col-span-2 text-right text-amber-700 font-semibold">{l.owner_percentage < 100 ? fmt(l.owner_due) : '—'}</div>
+                  <div className="col-span-1 text-right text-emerald-700 font-semibold text-xs">{fmt(l.company_due)}</div>
+                </div>
+              ))}
+              <div className="grid grid-cols-12 gap-2 px-5 py-3 bg-gray-50 font-semibold text-sm">
+                <div className="col-span-6 text-gray-600">TOTAL</div>
+                <div className="col-span-2 text-right text-green-600">{fmt(grandIncome)}</div>
+                <div className="col-span-1 text-right text-red-500 text-xs">-{fmt(grandExpense)}</div>
+                <div className="col-span-2 text-right text-amber-700">{fmt(grandOwnerDue)}</div>
+                <div className="col-span-1 text-right text-emerald-700 text-xs">{fmt(grandCompanyDue)}</div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
       <div className="text-xs text-gray-400 text-center pt-2">
-        💡 Cliquez sur "PDF" pour imprimer le rapport d'un partenaire, ou "Imprimer tout" pour tous les partenaires. Utilisez Ctrl+P dans la fenêtre qui s'ouvre.
+        💡 Utilisez Ctrl+P dans la fenêtre PDF qui s'ouvre pour enregistrer en PDF.
       </div>
     </div>
   )

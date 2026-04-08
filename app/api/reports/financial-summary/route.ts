@@ -21,6 +21,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const startDate = searchParams.get('startDate') || new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1).toISOString().split('T')[0]
     const endDate = searchParams.get('endDate') || new Date(new Date().getFullYear(), new Date().getMonth(), 0).toISOString().split('T')[0]
+    const filterLoftId = searchParams.get('loftId') || null
+    const filterOwnerId = searchParams.get('ownerId') || null
 
     const periodStart = new Date(startDate + 'T00:00:00Z')
     const periodEnd = new Date(endDate + 'T00:00:00Z')
@@ -34,12 +36,16 @@ export async function GET(request: NextRequest) {
 
     if (useReservations) {
       // From April: prorated reservations
-      const { data: reservations } = await supabase
+      let resQuery = supabase
         .from('reservations')
         .select('loft_id, check_in_date, check_out_date, total_amount')
         .in('status', ['confirmed', 'completed'])
         .lt('check_in_date', periodEndExclusive.toISOString().split('T')[0])
         .gt('check_out_date', startDate)
+
+      if (filterLoftId) resQuery = resQuery.eq('loft_id', filterLoftId)
+
+      const { data: reservations } = await resQuery
 
       ;(reservations || []).forEach((r: any) => {
         const ci = new Date(r.check_in_date + 'T00:00:00Z')
@@ -49,12 +55,16 @@ export async function GET(request: NextRequest) {
       })
     } else {
       // Before April: transactions
-      const { data: incomeTx } = await supabase
+      let txQuery = supabase
         .from('transactions')
         .select('loft_id, equivalent_amount_default_currency, amount')
         .eq('transaction_type', 'income')
         .gte('date', startDate)
         .lte('date', endDate + 'T23:59:59')
+
+      if (filterLoftId) txQuery = txQuery.eq('loft_id', filterLoftId)
+
+      const { data: incomeTx } = await txQuery
 
       ;(incomeTx || []).forEach((t: any) => {
         if (!t.loft_id) return
@@ -64,12 +74,16 @@ export async function GET(request: NextRequest) {
     }
 
     // --- EXPENSES (always from transactions) ---
-    const { data: expenseTx } = await supabase
+    let expQuery = supabase
       .from('transactions')
       .select('loft_id, equivalent_amount_default_currency, amount, category')
       .eq('transaction_type', 'expense')
       .gte('date', startDate)
       .lte('date', endDate + 'T23:59:59')
+
+    if (filterLoftId) expQuery = expQuery.eq('loft_id', filterLoftId)
+
+    const { data: expenseTx } = await expQuery
 
     const expenseByLoft = new Map<string, number>()
     ;(expenseTx || []).forEach((t: any) => {
@@ -98,9 +112,21 @@ export async function GET(request: NextRequest) {
 
     const loftMap = new Map((lofts || []).map((l: any) => [l.id, l]))
 
-    // --- GLOBAL TOTALS ---
-    const totalIncome = Array.from(incomeByLoft.values()).reduce((s, v) => s + v, 0)
-    const totalExpense = Array.from(expenseByLoft.values()).reduce((s, v) => s + v, 0)
+    // Apply owner filter to loft list
+    const filteredLofts = (lofts || []).filter((l: any) => {
+      if (filterLoftId && l.id !== filterLoftId) return false
+      if (filterOwnerId && l.owner_id !== filterOwnerId) return false
+      return true
+    })
+    const filteredLoftIds = new Set(filteredLofts.map((l: any) => l.id))
+
+    // --- GLOBAL TOTALS (filtered) ---
+    const totalIncome = Array.from(incomeByLoft.entries())
+      .filter(([id]) => !filterLoftId && !filterOwnerId ? true : filteredLoftIds.has(id))
+      .reduce((s, [, v]) => s + v, 0)
+    const totalExpense = Array.from(expenseByLoft.entries())
+      .filter(([id]) => !filterLoftId && !filterOwnerId ? true : filteredLoftIds.has(id))
+      .reduce((s, [, v]) => s + v, 0)
 
     // Trésorerie encaissée = payments received for reservations in this period
     // Filter payments whose reservation overlaps the period
@@ -115,16 +141,19 @@ export async function GET(request: NextRequest) {
     // Payment method breakdown (from payments in period)
     const totalPayments = (resPay || []).reduce((s, p) => s + Number(p.amount ?? 0), 0)
 
-    // --- BY PAYMENT METHOD ---
+    // --- BY PAYMENT METHOD (filtered by loft/owner) ---
     const byPaymentMethod: Record<string, number> = {}
     ;(resPay || []).forEach((p: any) => {
+      const loftId = (p.reservations as any)?.loft_id
+      if (filterLoftId && loftId !== filterLoftId) return
+      if (filterOwnerId && !filteredLoftIds.has(loftId)) return
       const m = p.payment_method || 'autre'
       byPaymentMethod[m] = (byPaymentMethod[m] || 0) + Number(p.amount)
     })
 
-    // --- OWN LOFTS (company_percentage = 100) ---
+    // --- OWN LOFTS (company_percentage = 100, filtered) ---
     const byOwnLoft: Record<string, { name: string; income: number; expense: number }> = {}
-    ;(lofts || []).filter((l: any) => l.company_percentage === 100).forEach((l: any) => {
+    ;(lofts || []).filter((l: any) => l.company_percentage === 100 && filteredLoftIds.has(l.id)).forEach((l: any) => {
       const income = incomeByLoft.get(l.id) || 0
       const expense = expenseByLoft.get(l.id) || 0
       if (income > 0 || expense > 0) {
@@ -132,9 +161,9 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // --- BY PARTNER ---
+    // --- BY PARTNER (filtered) ---
     const byPartner: Record<string, any> = {}
-    ;(lofts || []).filter((l: any) => l.owner_percentage > 0 && l.owner_percentage < 100).forEach((l: any) => {
+    ;(lofts || []).filter((l: any) => l.owner_percentage > 0 && l.owner_percentage < 100 && filteredLoftIds.has(l.id)).forEach((l: any) => {
       const income = incomeByLoft.get(l.id) || 0
       if (income === 0) return
       const companyShare = Math.round(income * (l.company_percentage || 0) / 100)
@@ -146,15 +175,54 @@ export async function GET(request: NextRequest) {
       byPartner[ownerId].total_company_share += companyShare
     })
 
+    // --- LOFT ALGÉRIE TOTAL GAINS ---
+    // = net from own lofts + company share from partner lofts
+    const ownLoftNet = Object.values(byOwnLoft).reduce((s: number, l: any) => s + l.income - l.expense, 0)
+    const partnerCompanyShare = Object.values(byPartner).reduce((s: number, p: any) => s + p.total_company_share, 0)
+    const loftAlgerieTotal = Math.round(ownLoftNet + partnerCompanyShare)
+
+    // --- BY LOFT (for loft-level report) ---
+    const byLoft = (lofts || [])
+      .filter((l: any) => filteredLoftIds.has(l.id))
+      .map((l: any) => {
+        const income = Math.round(incomeByLoft.get(l.id) || 0)
+        const expense = Math.round(expenseByLoft.get(l.id) || 0)
+        const ownerPct = l.owner_percentage || 0
+        const companyPct = l.company_percentage || 0
+        const ownerDue = Math.max(0, Math.round(income * ownerPct / 100) - expense)
+        const companyDue = Math.round(income * companyPct / 100)
+        return {
+          loft_id: l.id,
+          loft_name: l.name,
+          owner_name: (l.owners as any)?.name || null,
+          owner_percentage: ownerPct,
+          company_percentage: companyPct,
+          income,
+          expense,
+          net: income - expense,
+          owner_due: ownerDue,
+          company_due: companyDue,
+          is_own: companyPct === 100,
+        }
+      })
+      .filter((l: any) => l.income > 0 || l.expense > 0)
+      .sort((a: any, b: any) => b.income - a.income)
+
     return NextResponse.json({
       period: { startDate, endDate, source: useReservations ? 'reservations' : 'transactions' },
+      filters: { loftId: filterLoftId, ownerId: filterOwnerId },
       global: {
-        total_income: Math.round(totalIncome),          // Revenu acquis (prorata)
+        total_income: Math.round(totalIncome),
         total_expense: Math.round(totalExpense),
         net: Math.round(totalIncome - totalExpense),
-        cash_received: Math.round(cashReceived),         // Trésorerie encaissée
-        outstanding: Math.round(totalIncome - cashReceived), // Créances en cours
+        cash_received: Math.round(cashReceived),
+        outstanding: Math.round(totalIncome - cashReceived),
         total_payments_received: Math.round(totalPayments),
+      },
+      loft_algerie: {
+        own_loft_net: Math.round(ownLoftNet),
+        partner_company_share: Math.round(partnerCompanyShare),
+        total: loftAlgerieTotal,
       },
       by_payment_method: Object.entries(byPaymentMethod)
         .map(([method, amount]) => ({ method, amount: Math.round(amount) }))
@@ -164,6 +232,10 @@ export async function GET(request: NextRequest) {
         .sort((a: any, b: any) => b.income - a.income),
       by_partner: Object.values(byPartner)
         .sort((a: any, b: any) => b.total_company_share - a.total_company_share),
+      by_loft: byLoft,
+      // Available lofts and owners for filter dropdowns
+      lofts_list: (lofts || []).map((l: any) => ({ id: l.id, name: l.name, owner_id: l.owner_id, owner_name: (l.owners as any)?.name || null })),
+      owners_list: Array.from(new Map((lofts || []).filter((l: any) => l.owner_id).map((l: any) => [l.owner_id, { id: l.owner_id, name: (l.owners as any)?.name || 'Inconnu' }])).values()),
     })
   } catch (err) {
     console.error('[financial-summary]', err)

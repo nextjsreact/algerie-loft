@@ -95,9 +95,16 @@ export async function GET(request: NextRequest) {
     // --- RESERVATION PAYMENTS (by payment method + per loft) ---
     const { data: resPay } = await supabase
       .from('reservation_payments')
-      .select('amount, payment_method, reservation_id, reservations:reservation_id(loft_id, check_in_date)')
+      .select(`
+        id, amount, payment_method, processed_at, created_at, transaction_id, processor_response,
+        reservations:reservation_id(
+          id, loft_id, guest_name, guest_phone, check_in_date, check_out_date,
+          lofts:loft_id(id, name)
+        )
+      `)
       .gte('created_at', startDate)
       .lte('created_at', endDate + 'T23:59:59')
+      .order('created_at', { ascending: false })
 
     // Also fetch reservation payments linked to reservations in the period
     const { data: resPayByPeriod } = await supabase
@@ -138,18 +145,32 @@ export async function GET(request: NextRequest) {
       return ci < periodEndExclusive.toISOString().split('T')[0] && co > startDate
     }).reduce((s: number, p: any) => s + Number(p.amount ?? 0), 0)
 
-    // Payment method breakdown (from payments in period)
-    const totalPayments = (resPay || []).reduce((s, p) => s + Number(p.amount ?? 0), 0)
-
     // --- BY PAYMENT METHOD (filtered by loft/owner) ---
-    const byPaymentMethod: Record<string, number> = {}
+    const byPaymentMethod: Record<string, { amount: number; details: any[] }> = {}
     ;(resPay || []).forEach((p: any) => {
-      const loftId = (p.reservations as any)?.loft_id
+      const res = p.reservations as any
+      const loftId = res?.loft_id
       if (filterLoftId && loftId !== filterLoftId) return
       if (filterOwnerId && !filteredLoftIds.has(loftId)) return
       const m = p.payment_method || 'autre'
-      byPaymentMethod[m] = (byPaymentMethod[m] || 0) + Number(p.amount)
+      if (!byPaymentMethod[m]) byPaymentMethod[m] = { amount: 0, details: [] }
+      byPaymentMethod[m].amount += Number(p.amount)
+      byPaymentMethod[m].details.push({
+        id: p.id,
+        amount: Number(p.amount),
+        date: p.processed_at || p.created_at,
+        reference: p.transaction_id || null,
+        notes: p.processor_response || null,
+        loft_name: res?.lofts?.name || '—',
+        guest_name: res?.guest_name || null,
+        guest_phone: res?.guest_phone || null,
+        check_in: res?.check_in_date || null,
+        check_out: res?.check_out_date || null,
+      })
     })
+
+    // Payment method total
+    const totalPayments = Object.values(byPaymentMethod).reduce((s, v) => s + v.amount, 0)
 
     // --- OWN LOFTS (company_percentage = 100, filtered) ---
     const byOwnLoft: Record<string, { name: string; income: number; expense: number }> = {}
@@ -225,7 +246,7 @@ export async function GET(request: NextRequest) {
         total: loftAlgerieTotal,
       },
       by_payment_method: Object.entries(byPaymentMethod)
-        .map(([method, amount]) => ({ method, amount: Math.round(amount) }))
+        .map(([method, data]) => ({ method, amount: Math.round(data.amount), details: data.details }))
         .sort((a, b) => b.amount - a.amount),
       own_lofts: Object.values(byOwnLoft)
         .map((l: any) => ({ ...l, net: l.income - l.expense }))

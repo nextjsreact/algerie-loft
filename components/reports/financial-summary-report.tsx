@@ -299,7 +299,7 @@ export function FinancialSummaryReport() {
                         <div>
                           <p className="font-medium truncate">{l.loft_name}</p>
                           {l.owner_name && <p className="text-xs text-gray-400">{l.owner_name} · {l.owner_percentage}%</p>}
-                          {l.is_own && <Badge variant="outline" className="text-[10px] h-4 px-1 border-blue-300 text-blue-600">Propre</Badge>}
+                          {l.is_own && <span className="text-[10px] px-1.5 py-0.5 rounded border border-blue-300 text-blue-600">Propre</span>}
                         </div>
                       </div>
                       <div className="col-span-2 text-right text-green-600 font-medium">{fmt(l.income)}</div>

@@ -13,6 +13,7 @@ import { format, addDays } from 'date-fns';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Customer } from '@/types/customer';
+import { DateRangePicker } from '@/components/reservations/date-range-picker';
 
 interface Currency {
   id: string
@@ -504,37 +505,14 @@ export default function ReservationFormHybrid({
                 <h3 className="text-xl font-semibold text-gray-900">{t('form.stayDates')}</h3>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <Label htmlFor="check_in" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-green-600" />
-                    {t('form.checkIn')}
-                  </Label>
-                  <Input
-                    type="date"
-                    value={checkInDate}
-                    onChange={(e) => setCheckInDate(e.target.value)}
-                    min={isEmployee ? undefined : format(new Date(), 'yyyy-MM-dd')}
-                    placeholder="jj/mm/aaaa"
-                    className="h-12 border-gray-300 focus:border-green-500 focus:ring-green-500"
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <Label htmlFor="check_out" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-emerald-600" />
-                    {t('form.checkOut')}
-                  </Label>
-                  <Input
-                    type="date"
-                    value={checkOutDate}
-                    onChange={(e) => setCheckOutDate(e.target.value)}
-                    min={isEmployee ? (checkInDate ? format(addDays(new Date(checkInDate), 1), 'yyyy-MM-dd') : undefined) : (checkInDate ? format(addDays(new Date(checkInDate), 1), 'yyyy-MM-dd') : format(addDays(new Date(), 1), 'yyyy-MM-dd'))}
-                    placeholder="jj/mm/aaaa"
-                    className="h-12 border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
-                  />
-                </div>
-              </div>
+              <DateRangePicker
+                loftId={selectedLoft}
+                checkIn={checkInDate}
+                checkOut={checkOutDate}
+                onCheckInChange={setCheckInDate}
+                onCheckOutChange={setCheckOutDate}
+                isEmployee={isEmployee}
+              />
             </div>
             {/* Real-time Availability Status (API-powered) */}
             {checkingAvailability && (

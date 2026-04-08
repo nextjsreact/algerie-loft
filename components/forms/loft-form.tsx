@@ -138,16 +138,16 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
   }
 
   return (
-    <div className="bg-gray-50 p-4 sm:p-6 md:p-8">
+    <div className="bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 md:p-8">
       <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto">
         <div className="space-y-12">
           {/* Loft Information Section */}
-          <div className="space-y-6 p-6 bg-white rounded-lg shadow-md border border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-800 border-b pb-4 mb-6 flex items-center">
+          <div className="space-y-6 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 border-b dark:border-gray-700 pb-4 mb-6 flex items-center">
               <span className="mr-3 text-3xl">🏠</span>
               {t('loftInfoTitle')}
             </h2>
-            <p className="text-gray-600 mb-6 -mt-4">
+            <p className="text-gray-600 dark:text-gray-400 mb-6 -mt-4">
               {t('loftInfoDescription')}
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -273,12 +273,12 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
 
           {/* Contract Section — visible only when owner is set */}
           {formData.owner_id && (
-            <div className="space-y-6 p-6 bg-amber-50 rounded-lg shadow-md border border-amber-200">
-              <h2 className="text-2xl font-bold text-amber-800 border-b border-amber-200 pb-4 mb-6 flex items-center">
+            <div className="space-y-6 p-6 bg-amber-50 dark:bg-amber-900/20 rounded-lg shadow-md border border-amber-200 dark:border-amber-700">
+              <h2 className="text-2xl font-bold text-amber-800 dark:text-amber-300 border-b border-amber-200 dark:border-amber-700 pb-4 mb-6 flex items-center">
                 <span className="mr-3 text-3xl">📋</span>
                 {t('contract.title')}
               </h2>
-              <p className="text-amber-700 text-sm -mt-4 mb-4">
+              <p className="text-amber-700 dark:text-amber-400 text-sm -mt-4 mb-4">
                 {t('contract.description')}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -307,7 +307,7 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
                 </div>
               </div>
               {formData.contract_start_date && formData.contract_duration_months && (
-                <div className="mt-2 p-3 bg-amber-100 rounded-lg text-sm text-amber-800">
+                <div className="mt-2 p-3 bg-amber-100 dark:bg-amber-900/40 rounded-lg text-sm text-amber-800 dark:text-amber-300">
                   📅 {t('contract.expiryDate')} :{' '}
                   <strong>
                     {(() => {
@@ -322,12 +322,12 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
           )}
 
           {/* Photos Section */}
-          <div className="space-y-6 p-6 bg-white rounded-lg shadow-md border border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-800 border-b pb-4 mb-6 flex items-center">
+          <div className="space-y-6 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 border-b dark:border-gray-700 pb-4 mb-6 flex items-center">
               <span className="mr-3 text-3xl">📸</span>
               {t('photos.title')}
             </h2>
-            <p className="text-gray-600 mb-6 -mt-4">
+            <p className="text-gray-600 dark:text-gray-400 mb-6 -mt-4">
               {t('photos.description')}
             </p>
             <PhotoUpload 
@@ -342,15 +342,15 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
           </div>
 
           {/* Utility Information Section */}
-          <div className="space-y-6 p-6 bg-white rounded-lg shadow-md border border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-800 border-b pb-4 mb-6 flex items-center">
+          <div className="space-y-6 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 border-b dark:border-gray-700 pb-4 mb-6 flex items-center">
               <span className="mr-3 text-3xl">🛠️</span>
               {t('utilityInformation')}
             </h2>
             <div className="space-y-4">
               {/* Water Section */}
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h4 className="font-medium text-blue-900 mb-3 flex items-center gap-2">
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                <h4 className="font-medium text-blue-900 dark:text-blue-300 mb-3 flex items-center gap-2">
                   <span>💧</span> {t('billingSections.water')}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -370,8 +370,8 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
               </div>
 
               {/* Electricity Section */}
-              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                <h4 className="font-medium text-yellow-900 mb-3 flex items-center gap-2">
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                <h4 className="font-medium text-yellow-900 dark:text-yellow-300 mb-3 flex items-center gap-2">
                   <span>⚡</span> {t('billingSections.energy')}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -391,8 +391,8 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
               </div>
 
               {/* Gas Section */}
-              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                <h4 className="font-medium text-green-900 mb-3 flex items-center gap-2">
+              <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+                <h4 className="font-medium text-green-900 dark:text-green-300 mb-3 flex items-center gap-2">
                   <span role="img" aria-label="gas">🔥</span> {t('billingSections.gas')}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -414,19 +414,19 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
           </div>
 
           {/* Billing Alerts Section */}
-          <div className="space-y-6 p-6 bg-white rounded-lg shadow-md border border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-800 border-b pb-4 mb-6 flex items-center">
+          <div className="space-y-6 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 border-b dark:border-gray-700 pb-4 mb-6 flex items-center">
               <span className="mr-3 text-3xl">🔔</span>
               {t('billingAlerts')}
             </h2>
-            <p className="text-sm text-gray-600 mb-6">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
               {t('billingAlertsDescription')}
             </p>
             
             <div className="space-y-8">
               {/* Water */}
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <h4 className="font-medium text-blue-900 mb-3 flex items-center gap-2">
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                <h4 className="font-medium text-blue-900 dark:text-blue-300 mb-3 flex items-center gap-2">
                   <span>💧</span> {t('billingSections.water')}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -466,8 +466,8 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
               </div>
 
               {/* Energy */}
-              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                <h4 className="font-medium text-yellow-900 mb-3 flex items-center gap-2">
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                <h4 className="font-medium text-yellow-900 dark:text-yellow-300 mb-3 flex items-center gap-2">
                   <span>⚡</span> {t('billingSections.energy')}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -507,8 +507,8 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
               </div>
 
               {/* Phone */}
-              <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                <h4 className="font-medium text-green-900 mb-3 flex items-center gap-2">
+              <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+                <h4 className="font-medium text-green-900 dark:text-green-300 mb-3 flex items-center gap-2">
                   <span>📞</span> {t('billingSections.phone')}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -552,8 +552,8 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
               </div>
 
               {/* Internet */}
-              <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                <h4 className="font-medium text-purple-900 mb-3 flex items-center gap-2">
+              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                <h4 className="font-medium text-purple-900 dark:text-purple-300 mb-3 flex items-center gap-2">
                   <span>🌐</span> {t('billingSections.internet')}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -606,8 +606,8 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
                 </div>
 
                 {/* Airbnb iCal sync */}
-                <div className="mt-4 p-4 bg-orange-50 rounded-lg border border-orange-200">
-                  <Label htmlFor="airbnb_ical_url" className="text-sm font-medium text-orange-900 flex items-center gap-2">
+                <div className="mt-4 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                  <Label htmlFor="airbnb_ical_url" className="text-sm font-medium text-orange-900 dark:text-orange-300 flex items-center gap-2">
                     🏠 URL iCal Airbnb
                   </Label>
                   <Input
@@ -618,15 +618,15 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
                     placeholder="https://www.airbnb.com/calendar/ical/..."
                     className="bg-white mt-2"
                   />
-                  <p className="text-xs text-orange-700 mt-1">
+                  <p className="text-xs text-orange-700 dark:text-orange-400 mt-1">
                     Airbnb → Calendrier → Exporter le calendrier → Copier le lien iCal
                   </p>
                 </div>
               </div>
 
               {/* TV */}
-              <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-                <h4 className="font-medium text-red-900 mb-3 flex items-center gap-2">
+              <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
+                <h4 className="font-medium text-red-900 dark:text-red-300 mb-3 flex items-center gap-2">
                   <span>📺</span> {t('billingSections.tv')}
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -668,7 +668,7 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
           </div>
         </div>
 
-        <div className="flex justify-between items-center pt-6 border-t">
+        <div className="flex justify-between items-center pt-6 border-t dark:border-gray-700">
           {/* Delete button (only in edit mode) */}
           {loft && (
             <Button 

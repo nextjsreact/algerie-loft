@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/utils/supabase/server"
 import { randomUUID } from "crypto"
 import { revalidatePath } from "next/cache"
+import { sendTelegramNotification } from "@/lib/telegram"
 
 export async function POST(request: NextRequest) {
   try {
@@ -156,6 +157,30 @@ export async function POST(request: NextRequest) {
     } catch (notifErr) {
       // Don't fail the reservation if notification fails
       console.error('Notification error (non-blocking):', notifErr)
+    }
+
+    // Telegram notification
+    try {
+      const loftName = (reservation as any).lofts?.name || 'Appartement'
+      const guestDisplay = guest_name || guest_phone || 'Client'
+      const nights = Math.ceil((new Date(check_out_date).getTime() - new Date(check_in_date).getTime()) / 86400000)
+      const amount = (total_amount || 0).toLocaleString('fr-DZ')
+
+      const msg = [
+        '🔔 <b>Nouvelle demande de réservation</b>',
+        '',
+        `🏠 <b>Appartement :</b> ${loftName}`,
+        `👤 <b>Client :</b> ${guestDisplay}`,
+        `📅 <b>Dates :</b> ${check_in_date} → ${check_out_date} (${nights} nuit${nights > 1 ? 's' : ''})`,
+        `💰 <b>Montant :</b> ${amount} DA`,
+        special_requests ? `📝 <b>Demandes :</b> ${special_requests}` : '',
+        '',
+        '👉 Connectez-vous pour confirmer : https://www.loftalgerie.com/fr/reservations',
+      ].filter(Boolean).join('\n')
+
+      await sendTelegramNotification(msg)
+    } catch (tgErr) {
+      console.error('Telegram notification error (non-blocking):', tgErr)
     }
 
     return NextResponse.json({ success: true, data: reservation })

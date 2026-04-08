@@ -1,11 +1,10 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { RefreshCw, TrendingUp, TrendingDown, Building2, Users, CreditCard, ChevronDown, Search, X, Star } from 'lucide-react'
 import { format, startOfMonth, endOfMonth } from 'date-fns'
@@ -242,15 +241,13 @@ export function FinancialSummaryReport() {
           {/* ── SECTION 3 : PAR MODE DE PAIEMENT ── */}
           {data.by_payment_method?.length > 0 && (
             <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90">
-              <CardHeader className="bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-t-lg pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <CreditCard className="h-5 w-5" />
-                  Paiements reçus par mode
-                  <Badge variant="secondary" className="bg-white/20 text-white border-white/30 ml-auto">
-                    Total : {fmt(data.global.total_payments_received)}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
+              <div className="bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-t-lg px-6 py-4 flex items-center gap-2">
+                <CreditCard className="h-5 w-5" />
+                <span className="font-semibold text-base">Paiements reçus par mode</span>
+                <span className="ml-auto text-xs bg-white/20 border border-white/30 px-2 py-0.5 rounded-full">
+                  Total : {fmt(data.global.total_payments_received)}
+                </span>
+              </div>
               <CardContent className="p-4">
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                   {data.by_payment_method.map((p: any) => {
@@ -279,15 +276,13 @@ export function FinancialSummaryReport() {
           {/* ── SECTION 4 : PAR LOFT ── */}
           {data.by_loft?.length > 0 && (
             <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90">
-              <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Building2 className="h-5 w-5" />
-                  Détail par appartement
-                  <Badge variant="secondary" className="bg-white/20 text-white border-white/30 ml-auto">
-                    {data.by_loft.length} apparts
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg px-6 py-4 flex items-center gap-2">
+                <Building2 className="h-5 w-5" />
+                <span className="font-semibold text-base">Détail par appartement</span>
+                <span className="ml-auto text-xs bg-white/20 border border-white/30 px-2 py-0.5 rounded-full">
+                  {data.by_loft.length} apparts
+                </span>
+              </div>
               <CardContent className="p-0">
                 <div className="divide-y divide-gray-100 dark:divide-gray-700">
                   <div className="grid grid-cols-12 gap-2 px-5 py-2 bg-gray-50 dark:bg-gray-700/50 text-xs text-gray-500 font-medium">
@@ -330,15 +325,13 @@ export function FinancialSummaryReport() {
           {/* ── SECTION 5 : LOFTS PROPRES ── */}
           {data.own_lofts?.length > 0 && !filterOwner && (
             <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90">
-              <CardHeader className="bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-t-lg pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Star className="h-5 w-5 text-yellow-400" />
-                  Lofts propres — Loft Algérie
-                  <Badge variant="secondary" className="bg-white/20 text-white border-white/30 ml-auto">
-                    Net : {fmt(data.own_lofts.reduce((s: number, l: any) => s + l.net, 0))}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
+              <div className="bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-t-lg px-6 py-4 flex items-center gap-2">
+                <Star className="h-5 w-5 text-yellow-400" />
+                <span className="font-semibold text-base">Lofts propres — Loft Algérie</span>
+                <span className="ml-auto text-xs bg-white/20 border border-white/30 px-2 py-0.5 rounded-full">
+                  Net : {fmt(data.own_lofts.reduce((s: number, l: any) => s + l.net, 0))}
+                </span>
+              </div>
               <CardContent className="p-0">
                 <div className="divide-y divide-gray-100 dark:divide-gray-700">
                   {data.own_lofts.map((l: any) => (
@@ -357,15 +350,13 @@ export function FinancialSummaryReport() {
           {/* ── SECTION 6 : PAR PARTENAIRE ── */}
           {data.by_partner?.length > 0 && !filterLoft && (
             <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90">
-              <CardHeader className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-t-lg pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Users className="h-5 w-5" />
-                  Part société par partenaire
-                  <Badge variant="secondary" className="bg-white/20 text-white border-white/30 ml-auto">
-                    Total : {fmt(data.by_partner.reduce((s: number, p: any) => s + p.total_company_share, 0))}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
+              <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-t-lg px-6 py-4 flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                <span className="font-semibold text-base">Part société par partenaire</span>
+                <span className="ml-auto text-xs bg-white/20 border border-white/30 px-2 py-0.5 rounded-full">
+                  Total : {fmt(data.by_partner.reduce((s: number, p: any) => s + p.total_company_share, 0))}
+                </span>
+              </div>
               <CardContent className="p-0">
                 <div className="divide-y divide-gray-100 dark:divide-gray-700">
                   {data.by_partner.map((p: any) => (

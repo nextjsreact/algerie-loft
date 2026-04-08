@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { RefreshCw, TrendingUp, TrendingDown, Building2, Users, CreditCard, ChevronDown, Search, X, Star } from 'lucide-react'
 import { format, startOfMonth, endOfMonth } from 'date-fns'
 
@@ -32,6 +33,7 @@ export function FinancialSummaryReport() {
   const [ownerSearch, setOwnerSearch] = useState('')
   const [loftPopover, setLoftPopover] = useState(false)
   const [ownerPopover, setOwnerPopover] = useState(false)
+  const [selectedPayMethod, setSelectedPayMethod] = useState<any>(null)
 
   const fmt = (n: number) => n.toLocaleString('fr-DZ') + ' DA'
 
@@ -255,16 +257,18 @@ export function FinancialSummaryReport() {
                     const pct = data.global.total_payments_received > 0
                       ? Math.round(p.amount / data.global.total_payments_received * 100) : 0
                     return (
-                      <div key={p.method} className={`rounded-lg p-3 border ${info.color}`}>
+                      <div key={p.method} className={`rounded-lg p-3 border cursor-pointer hover:shadow-md hover:scale-[1.02] transition-all ${info.color}`}
+                        onClick={() => setSelectedPayMethod(p)}>
                         <div className="flex items-center gap-2 mb-2">
                           <span className="text-xl">{info.emoji}</span>
                           <span className="text-sm font-semibold">{info.label}</span>
+                          <span className="ml-auto text-xs opacity-50">{p.details?.length || 0} pmt</span>
                         </div>
                         <p className="font-bold text-lg">{fmt(p.amount)}</p>
                         <div className="mt-2 h-1.5 bg-black/10 rounded-full">
                           <div className="h-1.5 bg-current rounded-full opacity-40" style={{ width: `${pct}%` }} />
                         </div>
-                        <p className="text-xs opacity-70 mt-1">{pct}% du total encaissé</p>
+                        <p className="text-xs opacity-60 mt-1">{pct}% · voir détails →</p>
                       </div>
                     )
                   })}
@@ -384,6 +388,67 @@ export function FinancialSummaryReport() {
           )}
         </>
       )}
+      {/* ── PAYMENT METHOD DETAIL MODAL ── */}
+      {selectedPayMethod && (() => {
+        const info = PAYMENT_LABELS[selectedPayMethod.method] || { label: selectedPayMethod.method, emoji: '💳', color: '' }
+        const details: any[] = selectedPayMethod.details || []
+        return (
+          <Dialog open={!!selectedPayMethod} onOpenChange={() => setSelectedPayMethod(null)}>
+            <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-lg">
+                  <span>{info.emoji}</span>
+                  {info.label} — Détail des paiements
+                  <span className="ml-auto text-sm font-normal text-gray-500">{fmt(selectedPayMethod.amount)}</span>
+                </DialogTitle>
+              </DialogHeader>
+              {details.length === 0 ? (
+                <p className="text-center text-gray-400 py-8">Aucun détail disponible</p>
+              ) : (
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-gray-50 text-xs text-gray-500 font-medium">
+                      <th className="text-left p-3">Date</th>
+                      <th className="text-left p-3">Appartement</th>
+                      <th className="text-left p-3">Client</th>
+                      <th className="text-left p-3">Séjour</th>
+                      <th className="text-left p-3">Référence</th>
+                      <th className="text-right p-3">Montant</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {details.map((d: any, i: number) => (
+                      <tr key={d.id || i} className="hover:bg-gray-50">
+                        <td className="p-3 text-gray-600 whitespace-nowrap">
+                          {d.date ? new Date(d.date).toLocaleDateString('fr-FR') : '—'}
+                        </td>
+                        <td className="p-3 font-medium">{d.loft_name || '—'}</td>
+                        <td className="p-3">
+                          <p>{d.guest_name || <span className="text-gray-400 italic">Sans nom</span>}</p>
+                          {d.guest_phone && (
+                            <a href={`tel:${d.guest_phone}`} className="text-xs text-blue-600 hover:underline">{d.guest_phone}</a>
+                          )}
+                        </td>
+                        <td className="p-3 text-xs text-gray-500 whitespace-nowrap">
+                          {d.check_in && d.check_out ? `${d.check_in} → ${d.check_out}` : '—'}
+                        </td>
+                        <td className="p-3 text-xs text-gray-400">{d.reference || d.notes || '—'}</td>
+                        <td className="p-3 text-right font-semibold text-green-700">{fmt(d.amount)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="bg-gray-50 font-bold">
+                      <td colSpan={5} className="p-3 text-gray-600">Total {info.label}</td>
+                      <td className="p-3 text-right text-green-700">{fmt(selectedPayMethod.amount)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              )}
+            </DialogContent>
+          </Dialog>
+        )
+      })()}
     </div>
   )
 }

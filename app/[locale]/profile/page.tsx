@@ -16,14 +16,22 @@ export default async function ProfilePage({
     redirect(`/${locale}/login`)
   }
 
+  // Fetch full profile including telegram_chat_id
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('full_name, telegram_chat_id')
+    .eq('id', user.id)
+    .single()
+
   const userProfile = {
     id: user.id,
     email: user.email || '',
-    full_name: user.user_metadata?.full_name || user.user_metadata?.name || '',
+    full_name: profile?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || '',
     role: user.user_metadata?.role || 'client',
     avatar_url: user.user_metadata?.avatar_url || user.user_metadata?.picture || '',
     phone: user.user_metadata?.phone || '',
-    created_at: user.created_at
+    created_at: user.created_at,
+    telegram_chat_id: profile?.telegram_chat_id || '',
   }
 
   return <UserProfilePage user={userProfile} locale={locale} />

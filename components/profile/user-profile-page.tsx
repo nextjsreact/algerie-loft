@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { toast } from 'sonner'
 import { 
   User, 
   Mail, 
@@ -16,7 +19,9 @@ import {
   Home,
   Edit,
   Settings,
-  ArrowLeft
+  ArrowLeft,
+  Send,
+  CheckCircle
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -28,6 +33,7 @@ interface UserProfile {
   avatar_url: string
   phone: string
   created_at: string
+  telegram_chat_id?: string
 }
 
 interface UserProfilePageProps {
@@ -36,6 +42,29 @@ interface UserProfilePageProps {
 }
 
 export function UserProfilePage({ user, locale }: UserProfilePageProps) {
+  const [telegramId, setTelegramId] = useState(user.telegram_chat_id || '')
+  const [savingTelegram, setSavingTelegram] = useState(false)
+  const [telegramSaved, setTelegramSaved] = useState(false)
+
+  const saveTelegramId = async () => {
+    setSavingTelegram(true)
+    try {
+      const res = await fetch('/api/profile/telegram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ telegram_chat_id: telegramId.trim() || null }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        toast.success('Telegram ID enregistré')
+        setTelegramSaved(true)
+        setTimeout(() => setTelegramSaved(false), 3000)
+      } else {
+        toast.error(data.error || 'Erreur')
+      }
+    } catch { toast.error('Erreur réseau') }
+    setSavingTelegram(false)
+  }
   const getRoleConfig = (role: string) => {
     switch (role) {
       case 'client':
@@ -262,6 +291,46 @@ export function UserProfilePage({ user, locale }: UserProfilePageProps) {
                     </p>
                   </div>
                 </div>
+
+                {/* Telegram Chat ID — for team members */}
+                {(user.role === 'member' || user.role === 'admin' || user.role === 'manager') && (
+                  <>
+                    <Separator />
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0">
+                        <div className="h-10 w-10 bg-sky-100 dark:bg-sky-900 rounded-lg flex items-center justify-center">
+                          <Send className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+                        </div>
+                      </div>
+                      <div className="flex-1 space-y-2">
+                        <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+                          Telegram Chat ID
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          Pour recevoir le planning quotidien sur Telegram. 
+                          Envoyez <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">/start</code> au bot, 
+                          puis allez sur <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">https://api.telegram.org/bot{'<TOKEN>'}/getUpdates</code> pour trouver votre Chat ID.
+                        </p>
+                        <div className="flex gap-2">
+                          <Input
+                            value={telegramId}
+                            onChange={e => setTelegramId(e.target.value)}
+                            placeholder="Ex: 123456789"
+                            className="h-9 font-mono text-sm"
+                          />
+                          <Button
+                            onClick={saveTelegramId}
+                            disabled={savingTelegram}
+                            size="sm"
+                            className="h-9 shrink-0 bg-sky-600 hover:bg-sky-700 text-white"
+                          >
+                            {telegramSaved ? <CheckCircle className="h-4 w-4" /> : savingTelegram ? '...' : 'Enregistrer'}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>

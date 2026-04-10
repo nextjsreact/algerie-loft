@@ -240,20 +240,27 @@ export function UserManagementInterface() {
 
   const handleSaveUser = async () => {
     if (!editingUser) return;
+    setError(null);
 
     try {
+      const payload = {
+        full_name: editingUser.full_name,
+        role: editingUser.role,
+        is_staff: editingUser.is_staff === true,
+        team: editingUser.team || null,
+      }
+
+      console.log('[handleSaveUser] PATCH payload:', payload, 'userId:', editingUser.id)
+
       const response = await fetch(`/api/superuser/users/${editingUser.id}/staff`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          full_name: editingUser.full_name,
-          role: editingUser.role,
-          is_staff: editingUser.is_staff === true,
-          team: editingUser.team || null,
-        })
+        body: JSON.stringify(payload)
       });
 
       const data = await response.json()
+      console.log('[handleSaveUser] response:', response.status, data)
+
       if (!response.ok) throw new Error(data.error || 'Failed to update user');
 
       await fetchUsers();

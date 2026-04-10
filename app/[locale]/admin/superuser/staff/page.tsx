@@ -26,21 +26,28 @@ export default function StaffManagementPage() {
   }, [])
 
   const update = async (id: string, field: string, value: any) => {
+    // Build the updated member first
+    const member = members.find(m => m.id === id)
+    if (!member) return
+
+    const newIsStaff = field === 'is_staff' ? value : (member.is_staff === true)
+    const newTeam = field === 'team' ? (value || null) : (member.team || null)
+
+    // Optimistic update
     setMembers(prev => prev.map(m => m.id === id ? { ...m, [field]: value } : m))
     setSaving(id)
     try {
       const res = await fetch(`/api/superuser/users/${id}/staff`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          is_staff: field === 'is_staff' ? value : members.find(m => m.id === id)?.is_staff || false,
-          team: field === 'team' ? (value || null) : members.find(m => m.id === id)?.team || null,
-        })
+        body: JSON.stringify({ is_staff: newIsStaff, team: newTeam })
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
-      toast.success('Sauvegardé')
+      toast.success('Sauvegardé ✓')
     } catch (err: any) {
+      // Revert on error
+      setMembers(prev => prev.map(m => m.id === id ? { ...m, [field]: field === 'is_staff' ? member.is_staff : member.team } : m))
       toast.error(err.message || 'Erreur')
     }
     setSaving(null)

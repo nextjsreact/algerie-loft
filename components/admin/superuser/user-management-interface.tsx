@@ -242,40 +242,19 @@ export function UserManagementInterface() {
     if (!editingUser) return;
 
     try {
-      // Use the simpler /staff endpoint that avoids the complex superuser auth
       const response = await fetch(`/api/superuser/users/${editingUser.id}/staff`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           full_name: editingUser.full_name,
           role: editingUser.role,
-          is_staff: editingUser.is_staff || false,
+          is_staff: editingUser.is_staff === true,
           team: editingUser.team || null,
         })
       });
 
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || 'Failed to update user');
-      }
-
-      // If password needs to be changed, use the original endpoint
-      if (newPassword.trim()) {
-        await fetch(`/api/superuser/users/${editingUser.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: editingUser.full_name,
-            email: editingUser.email,
-            role: editingUser.role,
-            is_active: editingUser.is_active,
-            email_verified: editingUser.email_verified,
-            password: newPassword,
-            is_staff: editingUser.is_staff || false,
-            team: editingUser.team || null,
-          })
-        });
-      }
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || 'Failed to update user');
 
       await fetchUsers();
       setShowEditDialog(false);

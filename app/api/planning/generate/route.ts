@@ -29,16 +29,17 @@ export async function GET(request: NextRequest) {
     yesterday.setDate(yesterday.getDate() - 1)
     const yesterdayStr = yesterday.toISOString().split('T')[0]
 
-    // 1. Fetch all team members
+    // 1. Fetch confirmed staff members only (is_staff = true AND role = 'member')
     const { data: members, error: membersError } = await supabase
       .from('profiles')
-      .select('id, full_name, email, telegram_chat_id')
+      .select('id, full_name, email, telegram_chat_id, team')
       .eq('role', 'member')
+      .eq('is_staff', true)
       .order('full_name')
 
     if (membersError) return NextResponse.json({ error: membersError.message }, { status: 500 })
     if (!members || members.length === 0) {
-      return NextResponse.json({ error: 'Aucun membre dans l\'équipe' }, { status: 400 })
+      return NextResponse.json({ error: 'Aucun employé confirmé (is_staff = true) dans l\'équipe. Activez le statut staff dans la gestion des utilisateurs.' }, { status: 400 })
     }
 
     // 2. Who did astreinte yesterday? → they are OFF today

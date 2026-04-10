@@ -182,7 +182,9 @@ function AgentCard({ item }: { item: any }) {
             </div>
             <div>
               <p className="font-semibold text-sm text-gray-900 dark:text-white">{agent.full_name || agent.email}</p>
-              <p className="text-xs text-gray-400">{agent.telegram_chat_id ? '✅ Telegram' : '⚠️ Pas de Telegram'}</p>
+              <p className="text-xs text-gray-400">
+                {agent.team ? `🏷️ ${agent.team} · ` : ''}{agent.telegram_chat_id ? '✅ Telegram' : '⚠️ Pas de Telegram'}
+              </p>
             </div>
           </div>
           <div className="flex flex-col items-end gap-1">

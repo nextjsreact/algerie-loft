@@ -23,7 +23,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { name, email, role, is_active, email_verified, password } = body;
+    const { name, email, role, is_active, email_verified, password, is_staff, team } = body;
 
     const supabase = await createClient(true); // Use service role
 
@@ -48,6 +48,8 @@ export async function PUT(
         full_name: name,
         email,
         role,
+        is_staff: is_staff ?? false,
+        team: team ?? null,
         updated_at: new Date().toISOString()
       })
       .eq('id', userId)

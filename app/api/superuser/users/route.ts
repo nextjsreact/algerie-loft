@@ -29,6 +29,8 @@ export async function GET(request: NextRequest) {
         full_name,
         avatar_url,
         role,
+        is_staff,
+        team,
         created_at,
         updated_at
       `)

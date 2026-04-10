@@ -54,6 +54,8 @@ interface ExtendedUser extends User {
   last_login?: string | null;
   is_active: boolean;
   email_verified: boolean;
+  is_staff?: boolean;
+  team?: string | null;
 }
 
 interface UserFilters {
@@ -245,7 +247,9 @@ export function UserManagementInterface() {
         email: editingUser.email,
         role: editingUser.role,
         is_active: editingUser.is_active,
-        email_verified: editingUser.email_verified
+        email_verified: editingUser.email_verified,
+        is_staff: editingUser.is_staff || false,
+        team: editingUser.team || null,
       };
 
       // Ajouter le mot de passe seulement s'il est fourni
@@ -504,6 +508,8 @@ export function UserManagementInterface() {
                 </TableHead>
                 <TableHead>{t('table.user')}</TableHead>
                 <TableHead>{t('table.role')}</TableHead>
+                <TableHead>Équipe</TableHead>
+                <TableHead>Staff</TableHead>
                 <TableHead>{t('table.status')}</TableHead>
                 <TableHead>{t('table.lastLogin')}</TableHead>
                 <TableHead>{t('table.createdAt')}</TableHead>
@@ -534,6 +540,16 @@ export function UserManagementInterface() {
                     <Badge variant={getRoleBadgeVariant(user.role)}>
                       {user.role}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm text-gray-600">{user.team || '—'}</span>
+                  </TableCell>
+                  <TableCell>
+                    {user.is_staff ? (
+                      <Badge className="bg-green-100 text-green-800 border-green-300">✅ Staff</Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-gray-400">—</Badge>
+                    )}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -708,6 +724,33 @@ export function UserManagementInterface() {
                   className="w-4 h-4"
                 />
                 <label htmlFor="edit-verified" className="text-sm">{t('labels.emailVerified')}</label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  id="edit-staff"
+                  type="checkbox"
+                  checked={editingUser.is_staff || false}
+                  onChange={(e) => setEditingUser(prev => prev ? {...prev, is_staff: e.target.checked} : null)}
+                  className="w-4 h-4"
+                />
+                <label htmlFor="edit-staff" className="text-sm font-medium text-green-700">
+                  ✅ Employé confirmé (staff) — apparaît dans le planning
+                </label>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="edit-team" className="block text-sm font-medium">Équipe</label>
+                <select
+                  id="edit-team"
+                  value={editingUser.team || ''}
+                  onChange={(e) => setEditingUser(prev => prev ? {...prev, team: e.target.value || null} : null)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">— Aucune équipe —</option>
+                  <option value="nettoyage">🧹 Nettoyage</option>
+                  <option value="accueil">🤝 Accueil</option>
+                  <option value="maintenance">🔧 Maintenance</option>
+                  <option value="gestion">📋 Gestion</option>
+                </select>
               </div>
             </div>
           )}

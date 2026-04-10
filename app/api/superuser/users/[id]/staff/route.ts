@@ -7,7 +7,7 @@ export async function PATCH(
 ) {
   try {
     const { id: userId } = await params
-    const supabase = await createClient(true) // service role
+    const supabase = await createClient(true)
 
     const body = await request.json()
     const { is_staff, team, role, full_name } = body
@@ -17,8 +17,6 @@ export async function PATCH(
     if (team !== undefined) updateData.team = team || null
     if (role !== undefined) updateData.role = role
     if (full_name !== undefined) updateData.full_name = full_name
-
-    console.log('[staff PATCH] updating', userId, updateData)
 
     const { error } = await supabase
       .from('profiles')
@@ -33,11 +31,6 @@ export async function PATCH(
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error('[staff PATCH] exception:', err)
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
-  }
-}
-  } catch (err) {
-    console.error('Staff update exception:', err)
     return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })
   }
 }

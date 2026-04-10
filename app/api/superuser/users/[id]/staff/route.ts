@@ -42,14 +42,26 @@ export async function PATCH(
       .update(updateData)
       .eq('id', userId)
       .select()
-      .single()
 
     if (error) {
       console.error('Staff update error:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    return NextResponse.json({ success: true, user: data })
+    if (!data || data.length === 0) {
+      // Profile might not exist yet — try to insert it
+      const { data: inserted, error: insertError } = await supabase
+        .from('profiles')
+        .upsert({ id: userId, ...updateData })
+        .select()
+      if (insertError) {
+        console.error('Staff upsert error:', insertError)
+        return NextResponse.json({ error: insertError.message }, { status: 500 })
+      }
+      return NextResponse.json({ success: true, user: inserted?.[0] })
+    }
+
+    return NextResponse.json({ success: true, user: data[0] })
   } catch (err) {
     console.error('Staff update exception:', err)
     return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 })

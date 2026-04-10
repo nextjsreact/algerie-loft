@@ -82,29 +82,20 @@ export async function PUT(
       await supabase.auth.admin.updateUserById(userId, authUpdateData);
     }
 
-    // Log audit entry
+    // Log audit entry (non-blocking)
     const changes: Record<string, any> = {};
     if (name !== currentUser.full_name) changes.name = { from: currentUser.full_name, to: name };
     if (email !== currentUser.email) changes.email = { from: currentUser.email, to: email };
     if (role !== currentUser.role) changes.role = { from: currentUser.role, to: role };
+    if (is_staff !== currentUser.is_staff) changes.is_staff = { from: currentUser.is_staff, to: is_staff };
+    if (team !== currentUser.team) changes.team = { from: currentUser.team, to: team };
     if (password && password.trim()) changes.password = { changed: true };
 
-    await logSuperuserAudit(
+    logSuperuserAudit(
       'USER_MANAGEMENT',
-      {
-        action: 'user_update',
-        targetUserId: userId,
-        changes
-      },
-      {
-        targetUserId: userId,
-        severity: 'MEDIUM',
-        metadata: {
-          actionType: 'user_update',
-          fieldsChanged: Object.keys(changes)
-        }
-      }
-    );
+      { action: 'user_update', targetUserId: userId, changes },
+      { targetUserId: userId, severity: 'MEDIUM', metadata: { actionType: 'user_update', fieldsChanged: Object.keys(changes) } }
+    ).catch(err => console.error('Audit log failed (non-blocking):', err))
 
     return NextResponse.json({ 
       user: updatedUser,

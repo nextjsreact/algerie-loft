@@ -14,10 +14,11 @@ import { getTeamColorByName } from "./team-colors"
 interface Team {
   id: string
   name: string
-  description?: string
+  description?: string | null
   created_by_name: string
   member_count: string
   active_tasks: string
+  members?: { id: string; full_name: string; email: string; active_tasks: number }[]
 }
 
 interface TeamsWrapperProps {
@@ -98,17 +99,7 @@ export function TeamsWrapper({ teams, userRole }: TeamsWrapperProps) {
                 </p>
               </div>
               
-              {userRole === "admin" && (
-                <Button 
-                  asChild 
-                  className="gradient-button text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                >
-                  <Link href="/teams/new" className="flex items-center gap-3 px-8 py-4 text-base font-semibold">
-                    <Plus className="h-5 w-5" />
-                    <span>{t('addTeam')}</span>
-                  </Link>
-                </Button>
-              )}
+              {/* Teams are managed via Superuser → Staff Management */}
             </div>
           </div>
         </div>
@@ -230,15 +221,9 @@ export function TeamsWrapper({ teams, userRole }: TeamsWrapperProps) {
                   </p>
                 </div>
                 {userRole === "admin" && (
-                  <Button 
-                    asChild 
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
-                    <Link href="/teams/new" className="flex items-center gap-2 px-8 py-3">
-                      <Plus className="h-5 w-5" />
-                      <span className="font-semibold">{t('createTeam')}</span>
-                    </Link>
-                  </Button>
+                  <p className="text-sm text-gray-500">
+                    Assignez des équipes aux employés via <strong>Superuser → Gestion Staff</strong>
+                  </p>
                 )}
               </div>
             </CardContent>
@@ -356,33 +341,32 @@ export function TeamsWrapper({ teams, userRole }: TeamsWrapperProps) {
                     </Badge>
                   </div>
 
-                  {/* Actions avec design moderne */}
+                  {/* Members list */}
+                  {team.members && team.members.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-1">
+                        <Users className="h-3 w-3" /> Membres
+                      </p>
+                      <div className="space-y-1">
+                        {team.members.map((m: any) => (
+                          <div key={m.id} className="flex items-center justify-between text-sm bg-gray-50 dark:bg-gray-700/30 rounded-lg px-3 py-1.5">
+                            <span className="font-medium text-gray-800 dark:text-gray-200">{m.full_name || m.email}</span>
+                            {m.active_tasks > 0 && (
+                              <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">
+                                {m.active_tasks} tâche{m.active_tasks > 1 ? 's' : ''}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Actions */}
                   <div className="flex gap-3 pt-4 border-t border-gray-100">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      asChild 
-                      className={`flex-1 ${teamColor.border} ${teamColor.text} ${teamColor.hover} hover:${teamColor.border} hover:${teamColor.text} transition-all duration-300 font-semibold`}
-                    >
-                      <Link href={`/teams/${team.id}`} className="flex items-center justify-center gap-2">
-                        <Users className="h-4 w-4" />
-                        <span>{t("view")}</span>
-                      </Link>
-                    </Button>
-                    
-                    {userRole === "admin" && (
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        asChild 
-                        className="flex-1 border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 transition-all duration-300 font-semibold"
-                      >
-                        <Link href={`/teams/${team.id}/edit`} className="flex items-center justify-center gap-2">
-                          <Settings className="h-4 w-4" />
-                          <span>{t("edit")}</span>
-                        </Link>
-                      </Button>
-                    )}
+                    <p className="text-xs text-gray-400 italic">
+                      Gérez les équipes via <strong>Superuser → Gestion Staff</strong>
+                    </p>
                   </div>
                 </CardContent>
               </Card>

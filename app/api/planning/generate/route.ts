@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     // 1. Fetch confirmed staff members only (is_staff = true AND role = 'member')
     const { data: members, error: membersError } = await supabase
       .from('profiles')
-      .select('id, full_name, email, telegram_chat_id, team')
+      .select('id, full_name, email, telegram_chat_id, team, preferred_zone_id, zone_areas:preferred_zone_id(id, name)')
       .eq('role', 'member')
       .eq('is_staff', true)
       .order('full_name')
@@ -73,46 +73,55 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 5. Fetch check-outs for target date (cleaning tasks)
+    // 5. Fetch check-outs for target date (cleaning tasks) — include zone
     const { data: checkouts } = await supabase
       .from('reservations')
-      .select('id, loft_id, check_out_date, guest_name, lofts:loft_id(name, address)')
+      .select('id, loft_id, check_out_date, guest_name, lofts:loft_id(name, address, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
       .eq('check_out_date', targetDateStr)
       .in('status', ['confirmed', 'completed'])
       .order('check_out_date')
 
-    // 6. Fetch check-ins for target date (welcome tasks)
+    // 6. Fetch check-ins for target date (welcome tasks) — include zone
     const { data: checkins } = await supabase
       .from('reservations')
-      .select('id, loft_id, check_in_date, guest_name, guest_phone, lofts:loft_id(name, address)')
+      .select('id, loft_id, check_in_date, guest_name, guest_phone, lofts:loft_id(name, address, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
       .eq('check_in_date', targetDateStr)
       .in('status', ['confirmed', 'pending'])
       .order('check_in_date')
 
-    // 7. Distribute tasks by team specialty
-    // Cleaning → team 'nettoyage' agents (or all if none available)
-    // Welcome → team 'accueil' agents (or all if none available)
+    // 7. Distribute tasks by team specialty AND preferred zone
     const cleaningAgents = available.filter(a => a.team === 'nettoyage')
     const welcomeAgents = available.filter(a => a.team === 'accueil')
 
-    // Fallback: if no specialist available, use all working agents
     const cleaningPool = cleaningAgents.length > 0 ? cleaningAgents : available
     const welcomePool = welcomeAgents.length > 0 ? welcomeAgents : available
 
+    // Zone-aware assignment: prefer agent whose preferred_zone matches the loft's zone
+    const assignByZone = (pool: any[], reservation: any): any => {
+      const loftZoneId = (reservation.lofts as any)?.zone_area_id
+      if (loftZoneId) {
+        const zoneMatch = pool.find(a => a.preferred_zone_id === loftZoneId)
+        if (zoneMatch) return zoneMatch
+      }
+      return null // fallback to round-robin
+    }
+
     const cleaningTasks: { agent: any; reservation: any }[] = []
-    ;(checkouts || []).forEach((res, i) => {
-      cleaningTasks.push({
-        agent: cleaningPool[i % cleaningPool.length],
-        reservation: res,
-      })
+    let cleaningRR = 0
+    ;(checkouts || []).forEach((res) => {
+      const zoneAgent = assignByZone(cleaningPool, res)
+      const agent = zoneAgent || cleaningPool[cleaningRR % cleaningPool.length]
+      if (!zoneAgent) cleaningRR++
+      cleaningTasks.push({ agent, reservation: res })
     })
 
     const welcomeTasks: { agent: any; reservation: any }[] = []
-    ;(checkins || []).forEach((res, i) => {
-      welcomeTasks.push({
-        agent: welcomePool[i % welcomePool.length],
-        reservation: res,
-      })
+    let welcomeRR = 0
+    ;(checkins || []).forEach((res) => {
+      const zoneAgent = assignByZone(welcomePool, res)
+      const agent = zoneAgent || welcomePool[welcomeRR % welcomePool.length]
+      if (!zoneAgent) welcomeRR++
+      welcomeTasks.push({ agent, reservation: res })
     })
 
     // 8. Fetch active tasks (todo + in_progress) per agent

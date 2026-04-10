@@ -14,40 +14,42 @@ const TEAM_LABELS: Record<string, string> = {
 
 export default function StaffManagementPage() {
   const [members, setMembers] = useState<any[]>([])
+  const [zones, setZones] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch('/api/superuser/users?role=member&limit=100')
-      .then(r => r.json())
-      .then(d => setMembers(d.users || []))
-      .catch(() => toast.error('Erreur chargement'))
+    Promise.all([
+      fetch('/api/superuser/users?role=member&limit=100').then(r => r.json()),
+      fetch('/api/zone-areas').then(r => r.json()),
+    ]).then(([usersData, zonesData]) => {
+      setMembers(usersData.users || [])
+      setZones(zonesData.zoneAreas || zonesData || [])
+    }).catch(() => toast.error('Erreur chargement'))
       .finally(() => setLoading(false))
   }, [])
 
   const update = async (id: string, field: string, value: any) => {
-    // Build the updated member first
     const member = members.find(m => m.id === id)
     if (!member) return
 
     const newIsStaff = field === 'is_staff' ? value : (member.is_staff === true)
     const newTeam = field === 'team' ? (value || null) : (member.team || null)
+    const newZone = field === 'preferred_zone_id' ? (value || null) : (member.preferred_zone_id || null)
 
-    // Optimistic update
     setMembers(prev => prev.map(m => m.id === id ? { ...m, [field]: value } : m))
     setSaving(id)
     try {
       const res = await fetch(`/api/superuser/users/${id}/staff`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ is_staff: newIsStaff, team: newTeam })
+        body: JSON.stringify({ is_staff: newIsStaff, team: newTeam, preferred_zone_id: newZone })
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
       toast.success('Sauvegardé ✓')
     } catch (err: any) {
-      // Revert on error
-      setMembers(prev => prev.map(m => m.id === id ? { ...m, [field]: field === 'is_staff' ? member.is_staff : member.team } : m))
+      setMembers(prev => prev.map(m => m.id === id ? { ...m, [field]: member[field] } : m))
       toast.error(err.message || 'Erreur')
     }
     setSaving(null)
@@ -56,13 +58,13 @@ export default function StaffManagementPage() {
   if (loading) return <div className="p-8 text-center">Chargement...</div>
 
   return (
-    <div className="container mx-auto px-6 py-8 max-w-3xl">
+    <div className="container mx-auto px-6 py-8 max-w-5xl">
       <h1 className="text-2xl font-bold mb-2">Gestion du staff</h1>
       <p className="text-gray-500 text-sm mb-6">
-        Cochez les vrais employés et assignez leur équipe. Seuls les membres cochés apparaissent dans le planning.
+        Cochez les vrais employés, assignez leur équipe et leur zone préférée.
       </p>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
@@ -70,6 +72,7 @@ export default function StaffManagementPage() {
               <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Email</th>
               <th className="text-center px-4 py-3 font-medium text-gray-600 dark:text-gray-300">✅ Staff</th>
               <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Équipe</th>
+              <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Zone préférée</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -95,6 +98,19 @@ export default function StaffManagementPage() {
                   >
                     {TEAMS.map(t => (
                       <option key={t} value={t}>{TEAM_LABELS[t]}</option>
+                    ))}
+                  </select>
+                </td>
+                <td className="px-4 py-3">
+                  <select
+                    value={m.preferred_zone_id || ''}
+                    onChange={e => update(m.id, 'preferred_zone_id', e.target.value)}
+                    disabled={saving === m.id}
+                    className="border rounded px-2 py-1 text-sm bg-white dark:bg-gray-700 dark:border-gray-600 min-w-[140px]"
+                  >
+                    <option value="">— Toutes zones —</option>
+                    {zones.map((z: any) => (
+                      <option key={z.id} value={z.id}>{z.name}</option>
                     ))}
                   </select>
                 </td>

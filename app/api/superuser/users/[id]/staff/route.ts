@@ -16,13 +16,14 @@ export async function PATCH(
     )
 
     const body = await request.json()
-    const { is_staff, team, role, full_name } = body
+    const { is_staff, team, role, full_name, preferred_zone_id } = body
 
     const updateData: any = {}
     if (is_staff !== undefined) updateData.is_staff = is_staff
     if (team !== undefined) updateData.team = team || null
     if (role !== undefined) updateData.role = role
     if (full_name !== undefined) updateData.full_name = full_name
+    if (preferred_zone_id !== undefined) updateData.preferred_zone_id = preferred_zone_id || null
 
     console.log('[staff PATCH] userId:', userId, 'data:', updateData)
 

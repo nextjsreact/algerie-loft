@@ -242,35 +242,45 @@ export function UserManagementInterface() {
     if (!editingUser) return;
 
     try {
-      const updateData: any = {
-        name: editingUser.full_name,
-        email: editingUser.email,
-        role: editingUser.role,
-        is_active: editingUser.is_active,
-        email_verified: editingUser.email_verified,
-        is_staff: editingUser.is_staff || false,
-        team: editingUser.team || null,
-      };
-
-      // Ajouter le mot de passe seulement s'il est fourni
-      if (newPassword.trim()) {
-        updateData.password = newPassword;
-      }
-
-      const response = await fetch(`/api/superuser/users/${editingUser.id}`, {
-        method: 'PUT',
+      // Use the simpler /staff endpoint that avoids the complex superuser auth
+      const response = await fetch(`/api/superuser/users/${editingUser.id}/staff`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updateData)
+        body: JSON.stringify({
+          full_name: editingUser.full_name,
+          role: editingUser.role,
+          is_staff: editingUser.is_staff || false,
+          team: editingUser.team || null,
+        })
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update user');
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to update user');
+      }
+
+      // If password needs to be changed, use the original endpoint
+      if (newPassword.trim()) {
+        await fetch(`/api/superuser/users/${editingUser.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: editingUser.full_name,
+            email: editingUser.email,
+            role: editingUser.role,
+            is_active: editingUser.is_active,
+            email_verified: editingUser.email_verified,
+            password: newPassword,
+            is_staff: editingUser.is_staff || false,
+            team: editingUser.team || null,
+          })
+        });
       }
 
       await fetchUsers();
       setShowEditDialog(false);
       setEditingUser(null);
-      setNewPassword(''); // Reset password field
+      setNewPassword('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update user');
     }

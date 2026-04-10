@@ -13,12 +13,11 @@ export default async function TeamsPage() {
   const session = await requireRole(["admin", "manager"])
   const supabase = await createClient(true)
 
-  // Fetch all confirmed staff members with their team
+  // Fetch all staff: confirmed members + admins + managers (they belong to gestion team)
   const { data: staffMembers, error } = await supabase
     .from('profiles')
     .select('id, full_name, email, team, role')
-    .eq('is_staff', true)
-    .eq('role', 'member')
+    .or('and(is_staff.eq.true,role.eq.member),role.eq.admin,role.eq.manager')
     .order('full_name')
 
   if (error) throw new Error(error.message)
@@ -43,7 +42,8 @@ export default async function TeamsPage() {
   ALL_TEAMS.forEach(t => teamMap.set(t, []))
 
   ;(staffMembers || []).forEach((m: any) => {
-    const team = m.team || 'sans_equipe'
+    // admins and managers without a team → auto-assign to gestion
+    const team = m.team || (['admin', 'manager'].includes(m.role) ? 'gestion' : 'sans_equipe')
     if (!teamMap.has(team)) teamMap.set(team, [])
     teamMap.get(team)!.push({ ...m, active_tasks: taskCountByMember.get(m.id) || 0 })
   })

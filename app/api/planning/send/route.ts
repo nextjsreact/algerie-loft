@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
-import { sendTelegramNotification } from '@/lib/telegram'
 
 export const dynamic = 'force-dynamic'
 
@@ -80,8 +79,8 @@ export async function POST(request: NextRequest) {
 
       try {
         // Send to individual agent's Telegram
-        const token = process.env.TELEGRAM_BOT_TOKEN
-        if (!token) throw new Error('TELEGRAM_BOT_TOKEN non configuré')
+        const token = process.env.PLANNING_TELEGRAM_BOT_TOKEN
+        if (!token) throw new Error('PLANNING_TELEGRAM_BOT_TOKEN non configuré')
 
         const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
           method: 'POST',
@@ -107,9 +106,19 @@ export async function POST(request: NextRequest) {
         .upsert({ agent_id: astreinte_agent.id, astreinte_date: date }, { onConflict: 'astreinte_date' })
     }
 
-    // Also send a summary to the group chat
+    // Also send a summary to the planning group chat
     const groupSummary = buildGroupSummary(date, dateLabel, members)
-    await sendTelegramNotification(groupSummary).catch(() => {})
+    try {
+      const token = process.env.PLANNING_TELEGRAM_BOT_TOKEN
+      const chatId = process.env.PLANNING_TELEGRAM_CHAT_ID
+      if (token && chatId) {
+        await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: chatId, text: groupSummary, parse_mode: 'HTML' }),
+        })
+      }
+    } catch {}
 
     const sentCount = results.filter(r => r.sent).length
     return NextResponse.json({

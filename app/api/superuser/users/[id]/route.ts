@@ -58,28 +58,17 @@ export async function PUT(
       .single();
 
     if (updateError) {
-      throw updateError;
+      console.error('Profile update error:', updateError)
+      return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
 
-    // Update auth user metadata and password if needed
-    const authUpdateData: any = {
-      user_metadata: {
-        full_name: name,
-        role
-      }
-    };
-
-    if (email !== currentUser.email) {
-      authUpdateData.email = email;
-    }
-
-    if (password && password.trim()) {
-      authUpdateData.password = password;
-    }
-
-    // Only update auth if there are changes
+    // Update auth user metadata only if email or password changed
     if (email !== currentUser.email || (password && password.trim())) {
-      await supabase.auth.admin.updateUserById(userId, authUpdateData);
+      const authUpdateData: any = { user_metadata: { full_name: name, role } }
+      if (email !== currentUser.email) authUpdateData.email = email
+      if (password && password.trim()) authUpdateData.password = password
+      const { error: authErr } = await supabase.auth.admin.updateUserById(userId, authUpdateData)
+      if (authErr) console.error('Auth update error (non-blocking):', authErr)
     }
 
     // Log audit entry (non-blocking)
@@ -103,9 +92,9 @@ export async function PUT(
     });
 
   } catch (error) {
-    console.error('Error updating user:', error);
+    console.error('Error updating user:', JSON.stringify(error))
     return NextResponse.json(
-      { error: 'Failed to update user' },
+      { error: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

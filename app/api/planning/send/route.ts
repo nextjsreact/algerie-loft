@@ -74,6 +74,18 @@ export async function POST(request: NextRequest) {
           msg += '\n'
         }
 
+        if (item.pending_tasks?.length > 0) {
+          msg += `📋 <b>TÂCHES EN COURS / À FAIRE (${item.pending_tasks.length})</b>\n`
+          item.pending_tasks.forEach((t: any, i: number) => {
+            const status = t.status === 'in_progress' ? '🔄' : '⏳'
+            msg += `  ${i + 1}. ${status} ${t.title}`
+            if (t.lofts?.name) msg += ` — ${t.lofts.name}`
+            if (t.due_date) msg += ` (échéance: ${new Date(t.due_date).toLocaleDateString('fr-FR')})`
+            msg += '\n'
+          })
+          msg += '\n'
+        }
+
         msg += `\n📞 En cas de problème, contactez le responsable.`
       }
 

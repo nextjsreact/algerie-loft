@@ -1,6 +1,6 @@
 import { requireRole } from "@/lib/auth"
 import { getTasks } from "@/app/actions/tasks"
-import { getUsers } from "@/app/actions/users"
+import { getStaffUsers } from "@/app/actions/users"
 import { ModernTasksPage } from "@/components/tasks/modern-tasks-page"
 
 export const dynamic = 'force-dynamic'
@@ -9,7 +9,7 @@ export default async function TasksPage() {
   try {
     const session = await requireRole(["admin", "manager", "member"])
     const tasks = await getTasks()
-    const users = await getUsers()
+    const users = await getStaffUsers() // Only confirmed staff members
 
     return (
       <ModernTasksPage 

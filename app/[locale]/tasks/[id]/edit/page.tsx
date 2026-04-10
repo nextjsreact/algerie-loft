@@ -1,5 +1,5 @@
 import { getTask, updateTask } from '@/app/actions/tasks'
-import { getUsers } from '@/app/actions/users'
+import { getStaffUsers } from '@/app/actions/users'
 import EditTaskForm from './edit-task-form'
 import { notFound } from 'next/navigation'
 import { getSession } from "@/lib/auth" // Import getSession
@@ -13,7 +13,7 @@ interface EditTaskPageProps {
 export default async function EditTaskPage({ params }: EditTaskPageProps) {
   const { id } = await params;
   const task = await getTask(id)
-  const users = await getUsers()
+  const users = await getStaffUsers()
   const session = await getSession(); // Fetch session
 
   if (!task) {

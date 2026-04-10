@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { format, addDays } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { RefreshCw, Send, Calendar, User, Loader2, CheckCircle, AlertCircle, Brush, HandshakeIcon, Moon, Bell } from 'lucide-react'
+import { RefreshCw, Send, Calendar, User, Loader2, CheckCircle, AlertCircle, Brush, HandshakeIcon, Moon, Bell, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -163,7 +163,7 @@ export default function PlanningPage() {
 }
 
 function AgentCard({ item }: { item: any }) {
-  const { agent, is_off, is_astreinte, cleaning_tasks, welcome_tasks } = item
+  const { agent, is_off, is_astreinte, cleaning_tasks, welcome_tasks, pending_tasks = [] } = item
   const totalTasks = cleaning_tasks.length + welcome_tasks.length
 
   return (
@@ -237,6 +237,27 @@ function AgentCard({ item }: { item: any }) {
           )}
           {is_astreinte && totalTasks === 0 && (
             <p className="text-xs text-blue-500 text-center py-1">Disponible pour les urgences</p>
+          )}
+
+          {/* Pending tasks from /tasks */}
+          {pending_tasks?.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1.5 flex items-center gap-1">
+                <Clock className="h-3 w-3" /> Tâches en cours / à faire ({pending_tasks.length})
+              </p>
+              <div className="space-y-1">
+                {pending_tasks.map((task: any) => (
+                  <div key={task.id} className={`rounded-lg px-3 py-2 text-xs border ${task.status === 'in_progress' ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800' : 'bg-gray-50 dark:bg-gray-700/30 border-gray-100 dark:border-gray-700'}`}>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${task.status === 'in_progress' ? 'bg-blue-500' : 'bg-gray-400'}`} />
+                      <p className={`font-medium truncate ${task.status === 'in_progress' ? 'text-blue-800 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'}`}>{task.title}</p>
+                    </div>
+                    {task.lofts?.name && <p className="text-gray-400 mt-0.5 pl-3">🏠 {task.lofts.name}</p>}
+                    {task.due_date && <p className="text-gray-400 mt-0.5 pl-3">📅 {new Date(task.due_date).toLocaleDateString('fr-FR')}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </CardContent>
       )}

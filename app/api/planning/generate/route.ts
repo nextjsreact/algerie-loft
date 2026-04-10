@@ -89,17 +89,20 @@ export async function GET(request: NextRequest) {
       .in('status', ['confirmed', 'pending'])
       .order('check_in_date')
 
-    // 7. Distribute tasks among available agents (round-robin)
-    // Astreinte agent gets first pick, then round-robin
-    const workingAgents = [
-      astreinteAgent,
-      ...available.filter(a => a.id !== astreinteAgent.id)
-    ]
+    // 7. Distribute tasks by team specialty
+    // Cleaning → team 'nettoyage' agents (or all if none available)
+    // Welcome → team 'accueil' agents (or all if none available)
+    const cleaningAgents = available.filter(a => a.team === 'nettoyage')
+    const welcomeAgents = available.filter(a => a.team === 'accueil')
+
+    // Fallback: if no specialist available, use all working agents
+    const cleaningPool = cleaningAgents.length > 0 ? cleaningAgents : available
+    const welcomePool = welcomeAgents.length > 0 ? welcomeAgents : available
 
     const cleaningTasks: { agent: any; reservation: any }[] = []
     ;(checkouts || []).forEach((res, i) => {
       cleaningTasks.push({
-        agent: workingAgents[i % workingAgents.length],
+        agent: cleaningPool[i % cleaningPool.length],
         reservation: res,
       })
     })
@@ -107,17 +110,32 @@ export async function GET(request: NextRequest) {
     const welcomeTasks: { agent: any; reservation: any }[] = []
     ;(checkins || []).forEach((res, i) => {
       welcomeTasks.push({
-        agent: workingAgents[i % workingAgents.length],
+        agent: welcomePool[i % welcomePool.length],
         reservation: res,
       })
     })
 
-    // 8. Build per-agent summary
+    // 8. Fetch active tasks (todo + in_progress) per agent
+    const { data: activeTasks } = await supabase
+      .from('tasks')
+      .select('id, title, status, due_date, assigned_to, loft_id, lofts:loft_id(name)')
+      .in('status', ['todo', 'in_progress'])
+      .in('assigned_to', members.map(m => m.id))
+
+    const tasksByAgent = new Map<string, any[]>()
+    ;(activeTasks || []).forEach(task => {
+      if (!task.assigned_to) return
+      if (!tasksByAgent.has(task.assigned_to)) tasksByAgent.set(task.assigned_to, [])
+      tasksByAgent.get(task.assigned_to)!.push(task)
+    })
+
+    // 9. Build per-agent summary
     const agentPlanning = members.map(member => {
       const isOff = member.id === offAgentId
       const isAstreinte = member.id === astreinteAgent.id
       const cleaning = cleaningTasks.filter(t => t.agent.id === member.id).map(t => t.reservation)
       const welcome = welcomeTasks.filter(t => t.agent.id === member.id).map(t => t.reservation)
+      const pendingTasks = tasksByAgent.get(member.id) || []
 
       return {
         agent: member,
@@ -125,6 +143,7 @@ export async function GET(request: NextRequest) {
         is_astreinte: isAstreinte,
         cleaning_tasks: cleaning,
         welcome_tasks: welcome,
+        pending_tasks: pendingTasks,
       }
     })
 

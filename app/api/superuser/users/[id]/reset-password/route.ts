@@ -4,28 +4,24 @@ import { createClient } from '@/utils/supabase/server';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Verify superuser access with user management permissions
+    const { id: userId } = await params;
+
     const { authorized, error } = await verifySuperuserAPI(['USER_MANAGEMENT']);
     if (!authorized) {
       return NextResponse.json({ error: error || 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = params.id;
     if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
-    const supabase = await createClient(true); // Use service role
+    const supabase = await createClient(true);
 
-    // Get user details for audit
     const { data: user, error: userError } = await supabase
-      .from('users')
+      .from('profiles')
       .select('id, email, full_name')
       .eq('id', userId)
       .single();

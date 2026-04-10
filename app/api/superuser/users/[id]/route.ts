@@ -5,16 +5,17 @@ import type { UserRole } from '@/lib/types';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: userId } = await params;
+
     // Verify superuser access with user management permissions
     const { authorized, error } = await verifySuperuserAPI(['USER_MANAGEMENT']);
     if (!authorized) {
       return NextResponse.json({ error: error || 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = params.id;
     if (!userId) {
       return NextResponse.json(
         { error: 'User ID is required' },
@@ -121,16 +122,17 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: userId } = await params;
+
     // Verify superuser access with user management permissions
     const { authorized, error } = await verifySuperuserAPI(['USER_MANAGEMENT']);
     if (!authorized) {
       return NextResponse.json({ error: error || 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = params.id;
     if (!userId) {
       return NextResponse.json(
         { error: 'User ID is required' },

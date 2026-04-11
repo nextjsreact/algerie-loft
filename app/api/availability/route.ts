@@ -263,7 +263,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient(true); // service role to bypass RLS
     const body = await request.json();
     
     const blockDatesSchema = z.object({
@@ -364,7 +364,7 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const supabase = await createClient(true); // service role to bypass RLS
     const { searchParams } = new URL(request.url);
     
     const unblockDatesSchema = z.object({

@@ -512,12 +512,13 @@ export async function unblockDates(prevState: any, formData: FormData): Promise<
     }
 
     // Delete availability records (which will make dates available by default)
+    // Use lte (<=) for end_date so a single-day block (start=end) is also deleted
     const { error } = await supabase
       .from('loft_availability')
       .delete()
       .eq('loft_id', loft_id)
       .gte('date', start_date)
-      .lt('date', end_date)
+      .lte('date', end_date)
       .neq('blocked_reason', 'booked'); // Don't unblock booked dates
 
     if (error) {

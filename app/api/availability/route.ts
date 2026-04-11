@@ -194,18 +194,20 @@ export async function GET(request: NextRequest) {
           .eq('loft_id', loft_id)
           .neq('id', excludeId)
           .in('status', ['confirmed', 'pending'])
-          .or(`and(check_in_date.lt.${check_out_date},check_out_date.gt.${check_in_date})`);
+          .lt('check_in_date', check_out_date)   // existing starts before new checkout
+          .gt('check_out_date', check_in_date)   // existing ends after new checkin (strict)
 
         const { data: conflicts } = await query;
         isAvailable = !conflicts || conflicts.length === 0;
       } else {
-        // Check availability using the database function
-        const { data, error: availabilityError } = await supabase
-          .rpc('check_loft_availability', {
-            p_loft_id: loft_id,
-            p_check_in: check_in_date,
-            p_check_out: check_out_date,
-          });
+        // Direct check — same-day turnover allowed (checkout = checkin is NOT a conflict)
+        const { data: conflicts, error: availabilityError } = await supabase
+          .from('reservations')
+          .select('id')
+          .eq('loft_id', loft_id)
+          .in('status', ['confirmed', 'pending'])
+          .lt('check_in_date', check_out_date)   // existing starts before new checkout
+          .gt('check_out_date', check_in_date)   // existing ends after new checkin (strict)
 
         if (availabilityError) {
           console.error('Error checking availability:', availabilityError);
@@ -214,7 +216,7 @@ export async function GET(request: NextRequest) {
             { status: 500 }
           );
         }
-        isAvailable = data;
+        isAvailable = !conflicts || conflicts.length === 0;
       }
 
       // Get pricing if available

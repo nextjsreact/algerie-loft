@@ -31,20 +31,23 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient(true) // service role to bypass RLS
 
-    // Check availability
-    const { data: available, error: availError } = await supabase
-      .rpc('check_loft_availability', {
-        p_loft_id: loft_id,
-        p_check_in: check_in_date,
-        p_check_out: check_out_date,
-      })
+    // Check availability — a loft is available if no confirmed/pending reservation overlaps
+    // Rule: checkout_date of existing = check_in_date of new is ALLOWED (same-day turnover)
+    // Overlap condition: existing.check_in < new.check_out AND existing.check_out > new.check_in
+    const { data: conflicting, error: availError } = await supabase
+      .from('reservations')
+      .select('id, check_in_date, check_out_date')
+      .eq('loft_id', loft_id)
+      .in('status', ['confirmed', 'pending'])
+      .lt('check_in_date', check_out_date)   // existing starts before new checkout
+      .gt('check_out_date', check_in_date)   // existing ends after new checkin
 
     if (availError) {
       console.error('Availability check error:', availError)
       return NextResponse.json({ error: "Erreur lors de la vérification de disponibilité" }, { status: 500 })
     }
 
-    if (!available) {
+    if (conflicting && conflicting.length > 0) {
       return NextResponse.json({ error: "Les dates sélectionnées ne sont pas disponibles" }, { status: 400 })
     }
 

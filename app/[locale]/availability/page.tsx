@@ -56,6 +56,11 @@ function AvailabilityPageContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [activeTab, setActiveTab] = useState(urlTab)
 
+  // Force tab when URL param changes (after hydration)
+  useEffect(() => {
+    if (urlTab) setActiveTab(urlTab)
+  }, [urlTab])
+
   useEffect(() => {
     const fetchLofts = async () => {
       setIsLoading(true)

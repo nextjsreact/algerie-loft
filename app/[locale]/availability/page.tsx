@@ -42,6 +42,18 @@ export default function AvailabilityPage() {
   const [rawAvailabilityData, setRawAvailabilityData] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
 
+  // Read loftId from URL params to pre-filter
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const loftId = params.get('loftId')
+      if (loftId) {
+        // We'll filter by this loft after data loads
+        setFilters(prev => ({ ...prev, _loftId: loftId } as any))
+      }
+    }
+  }, [])
+
   useEffect(() => {
     const fetchLofts = async () => {
       setIsLoading(true)
@@ -73,6 +85,8 @@ export default function AvailabilityPage() {
 
   const filteredData = useMemo(() => {
     return availabilityData.filter(loft => {
+      // Filter by loftId from URL if present
+      if ((filters as any)._loftId && (loft as any).id !== (filters as any)._loftId) return false
       if (filters.region !== 'all' && (loft as any).zone_area_id !== filters.region) return false
       if (filters.owners.length > 0 && !filters.owners.includes((loft as any).owner_id)) return false
       if ((loft as any).capacity < filters.guests) return false

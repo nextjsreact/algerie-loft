@@ -4,8 +4,9 @@ import { ReportGenerator } from '@/components/reports/report-generator'
 import { ReportsWrapper } from '@/components/reports/reports-wrapper'
 import { PartnerDueReport } from '@/components/reports/partner-due-report'
 import { FinancialSummaryReport } from '@/components/reports/financial-summary-report'
+import { CurrencyReport } from '@/components/reports/currency-report'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { FileText, BarChart3, TrendingUp, Sparkles, Users, PieChart } from 'lucide-react'
+import { FileText, BarChart3, TrendingUp, Sparkles, Users, PieChart, Coins } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { RoleBasedAccess } from '@/components/auth/role-based-access'
 import { useEffect, useState } from 'react'
@@ -121,12 +122,15 @@ export default function ReportsPage() {
           </div>
 
           <Tabs defaultValue={new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('tab') || "analytics"} className="space-y-8">
-            <TabsList className="grid w-full grid-cols-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-lg rounded-xl p-1">
+            <TabsList className="grid w-full grid-cols-5 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-lg rounded-xl p-1">
               <TabsTrigger value="analytics" className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white data-[state=active]:shadow-lg">
                 <BarChart3 className="h-4 w-4" />{t('reports.analyticsTab')}
               </TabsTrigger>
               <TabsTrigger value="financial" className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-teal-500 data-[state=active]:text-white data-[state=active]:shadow-lg">
                 <PieChart className="h-4 w-4" />Financier
+              </TabsTrigger>
+              <TabsTrigger value="currency" className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-purple-500 data-[state=active]:text-white data-[state=active]:shadow-lg">
+                <Coins className="h-4 w-4" />Par devise
               </TabsTrigger>
               <TabsTrigger value="partner" className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-orange-500 data-[state=active]:text-white data-[state=active]:shadow-lg">
                 <Users className="h-4 w-4" />{t('reports.partnerTab')}
@@ -162,6 +166,12 @@ export default function ReportsPage() {
             <TabsContent value="financial" className="space-y-8">
               <div className="rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-xl p-6">
                 <FinancialSummaryReport />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="currency" className="space-y-8">
+              <div className="rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-xl p-6">
+                <CurrencyReport />
               </div>
             </TabsContent>
 

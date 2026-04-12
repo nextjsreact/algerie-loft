@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, Suspense } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
+import { useSearchParams } from 'next/navigation'
 import { AvailabilityCalendar } from '@/components/availability/availability-calendar'
 import { FilterPanel } from '@/components/availability/filter-panel'
 import { LoftGrid } from '@/components/availability/loft-grid'
@@ -22,16 +23,19 @@ interface AvailabilityFilters {
 }
 
 export default function AvailabilityPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="text-lg">Chargement...</div></div>}>
+      <AvailabilityPageContent />
+    </Suspense>
+  )
+}
+
+function AvailabilityPageContent() {
   const t = useTranslations('availability')
   const locale = useLocale()
-
-  // Read URL params synchronously at init
-  const getUrlParam = (key: string) => {
-    if (typeof window !== 'undefined') {
-      return new URLSearchParams(window.location.search).get(key)
-    }
-    return null
-  }
+  const searchParams = useSearchParams()
+  const urlTab = searchParams.get('tab') || 'calendar'
+  const urlLoftId = searchParams.get('loftId') || null
 
   const [filters, setFilters] = useState<AvailabilityFilters>({
     region: 'all',
@@ -50,17 +54,7 @@ export default function AvailabilityPage() {
   const [filterOptions, setFilterOptions] = useState({ regions: [], owners: [], zoneAreas: [], ownersData: [] });
   const [rawAvailabilityData, setRawAvailabilityData] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState(() => getUrlParam('tab') || 'calendar')
-  const [urlLoftId, setUrlLoftId] = useState<string | null>(() => getUrlParam('loftId'))
-
-  // Update from URL on mount (handles SSR)
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const tab = params.get('tab')
-    const loftId = params.get('loftId')
-    if (tab) setActiveTab(tab)
-    if (loftId) setUrlLoftId(loftId)
-  }, [])
+  const [activeTab, setActiveTab] = useState(urlTab)
 
   useEffect(() => {
     const fetchLofts = async () => {

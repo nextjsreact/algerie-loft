@@ -37,6 +37,8 @@ export function LoftGrid({ data, isLoading }: LoftGridProps) {
         return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
       case 'occupied':
         return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+      case 'partial':
+        return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
       case 'maintenance':
         return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'
       default:
@@ -50,10 +52,12 @@ export function LoftGrid({ data, isLoading }: LoftGridProps) {
         return t('available')
       case 'occupied':
         return t('occupied')
+      case 'partial':
+        return locale === 'ar' ? 'جزئي' : locale === 'en' ? 'Partial' : 'Partiel'
       case 'maintenance':
         return t('maintenance')
       default:
-        return t('unknown')
+        return t('available') // default to available instead of unknown
     }
   }
 
@@ -90,12 +94,12 @@ export function LoftGrid({ data, isLoading }: LoftGridProps) {
   }
 
   const translateText = (text: string) => {
-    if (text === 'availability:unknown') {
-      return locale === 'ar' ? 'غير معروف' : locale === 'en' ? 'Unknown' : 'Inconnu'
+    if (!text || text === 'availability:unknown') {
+      return locale === 'ar' ? '—' : '—'
     }
     if (text.startsWith('availability:')) {
       const key = text.replace('availability:', '')
-      return t(key)
+      try { return t(key) } catch { return '—' }
     }
     if (text === 'Propriétaire Test') return t('testOwner')
     if (text === 'Centre-ville Alger') return t('algerCenterRegion')

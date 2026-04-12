@@ -20,6 +20,8 @@ import {
   DollarSign
 } from 'lucide-react'
 
+import { useRouter } from 'next/navigation'
+
 interface LoftGridProps {
   data: any[]
   isLoading: boolean
@@ -28,6 +30,7 @@ interface LoftGridProps {
 export function LoftGrid({ data, isLoading }: LoftGridProps) {
   const t = useTranslations('availability')
   const locale = useLocale()
+  const router = useRouter()
   const [selectedLoft, setSelectedLoft] = useState<any>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
@@ -207,7 +210,16 @@ export function LoftGrid({ data, isLoading }: LoftGridProps) {
                   </Button>
 
                   {loft.status === 'available' && (
-                    <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                    <Button 
+                      size="sm" 
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() => {
+                        const params = new URLSearchParams()
+                        params.set('loftId', loft.id)
+                        params.set('action', 'new')
+                        router.push(`/${locale}/reservations?${params.toString()}`)
+                      }}
+                    >
                       <BookOpen className="h-4 w-4 mr-1" />
                       {t('book')}
                     </Button>
@@ -271,24 +283,35 @@ export function LoftGrid({ data, isLoading }: LoftGridProps) {
 
               <div className="space-y-2">
                 <h4 className="font-medium">{t('address')}</h4>
-                <p className="text-sm text-muted-foreground">{selectedLoft.address}</p>
+                <p className="text-sm text-muted-foreground">{selectedLoft.address || '—'}</p>
               </div>
 
               <div className="space-y-2">
                 <h4 className="font-medium">{t('description')}</h4>
-                <p className="text-sm text-muted-foreground">{selectedLoft.description}</p>
+                <p className="text-sm text-muted-foreground">{selectedLoft.description || '—'}</p>
               </div>
 
               <div className="flex gap-3">
-                <Button className="flex-1">
+                <Button 
+                  className="flex-1"
+                  onClick={() => {
+                    setIsDialogOpen(false)
+                    const params = new URLSearchParams()
+                    params.set('loftId', selectedLoft.id)
+                    params.set('action', 'new')
+                    router.push(`/${locale}/reservations?${params.toString()}`)
+                  }}
+                >
                   <BookOpen className="h-4 w-4 mr-2" />
                   {t('bookNow')}
                 </Button>
-                <Button variant="outline">
-                  <Phone className="h-4 w-4 mr-2" />
-                  {t('contact')}
-                </Button>
-                <Button variant="outline">
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    setIsDialogOpen(false)
+                    router.push(`/${locale}/availability?loftId=${selectedLoft.id}`)
+                  }}
+                >
                   <Calendar className="h-4 w-4 mr-2" />
                   {t('checkAvailability')}
                 </Button>

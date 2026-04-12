@@ -102,10 +102,10 @@ export async function GET(request: NextRequest) {
         const loft = loftMap.get(t.loft_id)
         if (filterOwnerId && loft?.owner_id !== filterOwnerId) return
         const currency = (t.currencies as any)?.code || 'DZD'
-        // Use original amount (not the DZD equivalent)
         const amount = Number(t.amount ?? 0)
         addIncome(currency, amount, {
           id: t.id, amount, currency,
+          amount_dzd: Number(t.equivalent_amount_default_currency ?? t.amount ?? 0),
           loft_name: loft?.name || '—',
           description: t.description || '—',
           date: t.date,
@@ -188,7 +188,7 @@ export async function GET(request: NextRequest) {
       const loft = loftMap.get(t.loft_id)
       if (filterOwnerId && loft?.owner_id !== filterOwnerId) return
       const currency = (t.currencies as any)?.code || 'DZD'
-      // Use original amount (not the DZD equivalent)
+      // amount = original amount in original currency
       const amount = Number(t.amount ?? 0)
       if (!expensesByCurrency.has(currency)) expensesByCurrency.set(currency, { total: 0, count: 0, details: [] })
       const e = expensesByCurrency.get(currency)!
@@ -196,6 +196,7 @@ export async function GET(request: NextRequest) {
       e.count++
       e.details.push({
         id: t.id, amount, currency,
+        amount_dzd: Number(t.equivalent_amount_default_currency ?? t.amount ?? 0),
         description: t.description || '—',
         category: t.category || '—',
         date: t.date,

@@ -160,7 +160,7 @@ function AvailabilityPageContent() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+                  <Tabs value={urlTab} onValueChange={(tab) => { setActiveTab(tab) }} className="space-y-6">
                     <TabsList className="grid w-full grid-cols-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
                       <TabsTrigger 
                         value="calendar" 

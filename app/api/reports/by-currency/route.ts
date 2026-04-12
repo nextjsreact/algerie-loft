@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
       // Before April: income transactions
       let txQuery = supabase
         .from('transactions')
-        .select('id, amount, equivalent_amount_default_currency, description, date, loft_id, currency_id, currencies:currency_id(code, symbol)')
+        .select('id, amount, original_amount, original_currency, equivalent_amount_default_currency, description, date, loft_id, currency_id, currencies:currency_id(code, symbol)')
         .eq('transaction_type', 'income')
         .gte('date', startDate)
         .lte('date', endDate + 'T23:59:59')
@@ -101,8 +101,9 @@ export async function GET(request: NextRequest) {
       ;(incomeTx || []).forEach((t: any) => {
         const loft = loftMap.get(t.loft_id)
         if (filterOwnerId && loft?.owner_id !== filterOwnerId) return
-        const currency = (t.currencies as any)?.code || 'DZD'
-        const amount = Number(t.amount ?? 0)
+        const currency = (t as any).original_currency || (t.currencies as any)?.code || 'DZD'
+        // Use original_amount if available, otherwise use amount (which is already original)
+        const amount = Number((t as any).original_amount ?? t.amount ?? 0)
         addIncome(currency, amount, {
           id: t.id, amount, currency,
           amount_dzd: Number(t.equivalent_amount_default_currency ?? t.amount ?? 0),
@@ -174,7 +175,7 @@ export async function GET(request: NextRequest) {
     // ── EXPENSES ────────────────────────────────────────────────────────────
     let expQuery = supabase
       .from('transactions')
-      .select('id, amount, equivalent_amount_default_currency, description, category, date, loft_id, currency_id, currencies:currency_id(code, symbol)')
+      .select('id, amount, original_amount, original_currency, equivalent_amount_default_currency, description, category, date, loft_id, currency_id, currencies:currency_id(code, symbol)')
       .eq('transaction_type', 'expense')
       .gte('date', startDate)
       .lte('date', endDate + 'T23:59:59')

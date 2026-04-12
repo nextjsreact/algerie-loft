@@ -112,6 +112,18 @@ export async function createTransaction(data: unknown) {
   }
 
   const supabase = await createClient()
+
+  // Get original currency code
+  let originalCurrencyCode = 'DZD'
+  if (validatedData.currency_id) {
+    const { data: currData } = await supabase
+      .from('currencies')
+      .select('code')
+      .eq('id', validatedData.currency_id)
+      .single()
+    if (currData?.code) originalCurrencyCode = currData.code
+  }
+
   const { error } = await supabase.from("transactions").insert({
     ...validatedData,
     loft_id: validatedData.loft_id || null,
@@ -119,6 +131,8 @@ export async function createTransaction(data: unknown) {
     description: validatedData.description || '',
     ratio_at_transaction: ratioAtTransaction,
     equivalent_amount_default_currency: equivalentAmountDefaultCurrency,
+    original_amount: validatedData.amount,
+    original_currency: originalCurrencyCode,
   })
 
   if (error) {
@@ -222,6 +236,17 @@ export async function updateTransaction(id: string, data: unknown) {
     }
   }
 
+  // Get original currency code for update
+  let updateOriginalCurrency = currentTransaction.original_currency || 'DZD'
+  if (currencyChanged && validatedData.currency_id) {
+    const { data: currData } = await supabase
+      .from('currencies')
+      .select('code')
+      .eq('id', validatedData.currency_id)
+      .single()
+    if (currData?.code) updateOriginalCurrency = currData.code
+  }
+
   const { error } = await supabase
     .from("transactions")
     .update({
@@ -231,6 +256,8 @@ export async function updateTransaction(id: string, data: unknown) {
       description: validatedData.description || '',
       ratio_at_transaction: ratioAtTransaction,
       equivalent_amount_default_currency: equivalentAmountDefaultCurrency,
+      original_amount: validatedData.amount,
+      original_currency: updateOriginalCurrency,
     })
     .eq("id", id)
 

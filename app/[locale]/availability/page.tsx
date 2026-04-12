@@ -2,14 +2,14 @@
 
 import { useState, useEffect, useMemo, Suspense } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { AvailabilityCalendar } from '@/components/availability/availability-calendar'
 import { FilterPanel } from '@/components/availability/filter-panel'
 import { LoftGrid } from '@/components/availability/loft-grid'
 import { QuickStats } from '@/components/availability/quick-stats'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Calendar, Grid3X3, BarChart3, Search } from 'lucide-react'
+import { Calendar, Grid3X3, BarChart3, Search, X } from 'lucide-react'
 import { DateRange } from 'react-day-picker'
 import { addDays } from 'date-fns'
 
@@ -31,6 +31,7 @@ export default function AvailabilityPage() {
 }
 
 function AvailabilityPageContent() {
+  const router = useRouter()
   const t = useTranslations('availability')
   const locale = useLocale()
   const searchParams = useSearchParams()
@@ -56,9 +57,13 @@ function AvailabilityPageContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [activeTab, setActiveTab] = useState(urlTab)
 
-  // When tab changes manually, update URL so back/forward works
+  // When tab changes manually, clear loftId filter from URL
   const handleTabChange = (tab: string) => {
     setActiveTab(tab)
+    // Clear loftId from URL when user manually switches tabs
+    if (urlLoftId) {
+      router.push(`/${locale}/availability?tab=${tab}`)
+    }
   }
 
   // When URL changes (e.g. from loft grid "check availability"), update tab
@@ -139,6 +144,22 @@ function AvailabilityPageContent() {
 
           {/* Quick Stats */}
           <QuickStats data={filteredData} isLoading={isLoading} />
+
+          {/* Clear loft filter banner */}
+          {urlLoftId && (
+            <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-xl px-4 py-3">
+              <p className="text-sm text-blue-700 dark:text-blue-300">
+                🔍 Filtré sur : <strong>{filteredData[0]?.name || 'un appartement'}</strong>
+              </p>
+              <button
+                onClick={() => router.push(`/${locale}/availability`)}
+                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
+              >
+                <X className="h-3.5 w-3.5" />
+                Voir tous les appartements
+              </button>
+            </div>
+          )}
 
           {/* Main Content */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">

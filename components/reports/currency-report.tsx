@@ -38,7 +38,7 @@ export function CurrencyReport() {
 
   // Detail modal
   const [detailCurrency, setDetailCurrency] = useState<any>(null)
-  const [detailType, setDetailType] = useState<'income' | 'expense'>('income')
+  const [detailType, setDetailType] = useState<'income' | 'expense' | 'payment'>('income')
 
   const fmt = (n: number, currency: string) =>
     n.toLocaleString('fr-DZ') + ' ' + currency
@@ -161,12 +161,19 @@ export function CurrencyReport() {
       {data && !loading && (
         <>
           {/* Grand totals */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="border-0 shadow-lg bg-gradient-to-br from-green-500 to-emerald-600 text-white">
               <CardContent className="p-4">
-                <div className="flex items-center gap-1 mb-1"><TrendingUp className="h-3.5 w-3.5 text-green-200" /><p className="text-green-100 text-xs">Total encaissé</p></div>
+                <div className="flex items-center gap-1 mb-1"><TrendingUp className="h-3.5 w-3.5 text-green-200" /><p className="text-green-100 text-xs">Revenus acquis</p></div>
                 <p className="text-xl font-bold">{data.totals.income.toLocaleString('fr-DZ')} DA</p>
-                <p className="text-xs text-green-200 mt-1">Toutes devises confondues</p>
+                <p className="text-xs text-green-200 mt-1">{data.period?.source === 'reservations' ? 'Prorata réservations' : 'Transactions'}</p>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-500 to-violet-600 text-white">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-1 mb-1"><TrendingUp className="h-3.5 w-3.5 text-purple-200" /><p className="text-purple-100 text-xs">Trésorerie encaissée</p></div>
+                <p className="text-xl font-bold">{data.totals.payments.toLocaleString('fr-DZ')} DA</p>
+                <p className="text-xs text-purple-200 mt-1">Paiements reçus</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-lg bg-gradient-to-br from-red-500 to-rose-600 text-white">
@@ -177,7 +184,7 @@ export function CurrencyReport() {
             </Card>
             <Card className={`border-0 shadow-lg text-white ${data.totals.net >= 0 ? 'bg-gradient-to-br from-blue-500 to-indigo-600' : 'bg-gradient-to-br from-orange-500 to-red-600'}`}>
               <CardContent className="p-4">
-                <p className="text-xs text-white/80 mb-1">Net</p>
+                <p className="text-xs text-white/80 mb-1">Net (revenus − dépenses)</p>
                 <p className="text-xl font-bold">{data.totals.net.toLocaleString('fr-DZ')} DA</p>
               </CardContent>
             </Card>
@@ -201,11 +208,15 @@ export function CurrencyReport() {
                 </div>
                 <div className="flex items-center gap-8 text-right">
                   <div>
-                    <p className="text-slate-400 text-xs">Entrées</p>
+                    <p className="text-slate-400 text-xs">Revenus</p>
                     <p className="font-semibold text-green-300">{fmt(c.income, c.currency)}</p>
                   </div>
                   <div>
-                    <p className="text-slate-400 text-xs">Sorties</p>
+                    <p className="text-slate-400 text-xs">Encaissé</p>
+                    <p className="font-semibold text-purple-300">{fmt(c.payments, c.currency)}</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-400 text-xs">Dépenses</p>
                     <p className="font-semibold text-red-300">{fmt(c.expense, c.currency)}</p>
                   </div>
                   <div className="border-l border-white/20 pl-8">
@@ -216,37 +227,66 @@ export function CurrencyReport() {
               </div>
 
               <CardContent className="p-0">
-                <div className="grid grid-cols-2 divide-x divide-gray-100 dark:divide-gray-700">
-                  {/* Income column */}
+                <div className="grid grid-cols-3 divide-x divide-gray-100 dark:divide-gray-700">
+                  {/* Income/Revenue column */}
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-sm font-semibold text-green-700 dark:text-green-400 flex items-center gap-1">
-                        <TrendingUp className="h-3.5 w-3.5" /> Entrées ({c.income_count})
+                        <TrendingUp className="h-3.5 w-3.5" /> Revenus acquis ({c.income_count})
                       </h4>
                       {c.income_count > 0 && (
                         <button onClick={() => { setDetailCurrency(c); setDetailType('income') }}
-                          className="text-xs text-blue-600 hover:underline">Voir détails</button>
+                          className="text-xs text-blue-600 hover:underline">Détails</button>
                       )}
                     </div>
-                    {c.income_details.slice(0, 5).map((d: any) => (
+                    {c.income_details.slice(0, 4).map((d: any) => (
+                      <div key={d.id} className="flex items-center justify-between py-1.5 border-b border-gray-50 dark:border-gray-700 last:border-0 text-xs">
+                        <div>
+                          <p className="font-medium text-gray-800 dark:text-gray-200">{d.loft_name}</p>
+                          <p className="text-gray-400">{fmtDate(d.date)}{d.guest_name ? ` · ${d.guest_name}` : ''}</p>
+                        </div>
+                        <span className="font-semibold text-green-600">+{fmt(d.amount, d.currency)}</span>
+                      </div>
+                    ))}
+                    {c.income_count > 4 && (
+                      <button onClick={() => { setDetailCurrency(c); setDetailType('income') }}
+                        className="text-xs text-blue-600 hover:underline mt-2">+{c.income_count - 4} autres</button>
+                    )}
+                    {c.income_count === 0 && <p className="text-xs text-gray-400 text-center py-4">Aucun revenu</p>}
+                    <div className="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex justify-between text-sm font-bold">
+                      <span className="text-gray-600 dark:text-gray-400">Sous-total</span>
+                      <span className="text-green-600">+{fmt(c.income, c.currency)}</span>
+                    </div>
+                  </div>
+
+                  {/* Payments/Cash received column */}
+                  <div className="p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-semibold text-purple-700 dark:text-purple-400 flex items-center gap-1">
+                        <TrendingUp className="h-3.5 w-3.5" /> Encaissements ({c.payments_count})
+                      </h4>
+                      {c.payments_count > 0 && (
+                        <button onClick={() => { setDetailCurrency(c); setDetailType('payment') }}
+                          className="text-xs text-blue-600 hover:underline">Détails</button>
+                      )}
+                    </div>
+                    {c.payments_details.slice(0, 4).map((d: any) => (
                       <div key={d.id} className="flex items-center justify-between py-1.5 border-b border-gray-50 dark:border-gray-700 last:border-0 text-xs">
                         <div>
                           <p className="font-medium text-gray-800 dark:text-gray-200">{d.loft_name}</p>
                           <p className="text-gray-400">{fmtDate(d.date)} · {PAYMENT_LABELS[d.payment_method] || d.payment_method}</p>
                         </div>
-                        <span className="font-semibold text-green-600">+{fmt(d.amount, d.currency)}</span>
+                        <span className="font-semibold text-purple-600">+{fmt(d.amount, d.currency)}</span>
                       </div>
                     ))}
-                    {c.income_count > 5 && (
-                      <button onClick={() => { setDetailCurrency(c); setDetailType('income') }}
-                        className="text-xs text-blue-600 hover:underline mt-2">
-                        +{c.income_count - 5} autres...
-                      </button>
+                    {c.payments_count > 4 && (
+                      <button onClick={() => { setDetailCurrency(c); setDetailType('payment') }}
+                        className="text-xs text-blue-600 hover:underline mt-2">+{c.payments_count - 4} autres</button>
                     )}
-                    {c.income_count === 0 && <p className="text-xs text-gray-400 text-center py-4">Aucune entrée</p>}
+                    {c.payments_count === 0 && <p className="text-xs text-gray-400 text-center py-4">Aucun encaissement</p>}
                     <div className="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex justify-between text-sm font-bold">
                       <span className="text-gray-600 dark:text-gray-400">Sous-total</span>
-                      <span className="text-green-600">+{fmt(c.income, c.currency)}</span>
+                      <span className="text-purple-600">+{fmt(c.payments, c.currency)}</span>
                     </div>
                   </div>
 
@@ -254,14 +294,14 @@ export function CurrencyReport() {
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="text-sm font-semibold text-red-700 dark:text-red-400 flex items-center gap-1">
-                        <TrendingDown className="h-3.5 w-3.5" /> Sorties ({c.expense_count})
+                        <TrendingDown className="h-3.5 w-3.5" /> Dépenses ({c.expense_count})
                       </h4>
                       {c.expense_count > 0 && (
                         <button onClick={() => { setDetailCurrency(c); setDetailType('expense') }}
-                          className="text-xs text-blue-600 hover:underline">Voir détails</button>
+                          className="text-xs text-blue-600 hover:underline">Détails</button>
                       )}
                     </div>
-                    {c.expense_details.slice(0, 5).map((d: any) => (
+                    {c.expense_details.slice(0, 4).map((d: any) => (
                       <div key={d.id} className="flex items-center justify-between py-1.5 border-b border-gray-50 dark:border-gray-700 last:border-0 text-xs">
                         <div>
                           <p className="font-medium text-gray-800 dark:text-gray-200">{d.description}</p>
@@ -270,13 +310,11 @@ export function CurrencyReport() {
                         <span className="font-semibold text-red-600">-{fmt(d.amount, d.currency)}</span>
                       </div>
                     ))}
-                    {c.expense_count > 5 && (
+                    {c.expense_count > 4 && (
                       <button onClick={() => { setDetailCurrency(c); setDetailType('expense') }}
-                        className="text-xs text-blue-600 hover:underline mt-2">
-                        +{c.expense_count - 5} autres...
-                      </button>
+                        className="text-xs text-blue-600 hover:underline mt-2">+{c.expense_count - 4} autres</button>
                     )}
-                    {c.expense_count === 0 && <p className="text-xs text-gray-400 text-center py-4">Aucune sortie</p>}
+                    {c.expense_count === 0 && <p className="text-xs text-gray-400 text-center py-4">Aucune dépense</p>}
                     <div className="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex justify-between text-sm font-bold">
                       <span className="text-gray-600 dark:text-gray-400">Sous-total</span>
                       <span className="text-red-600">-{fmt(c.expense, c.currency)}</span>
@@ -286,7 +324,7 @@ export function CurrencyReport() {
 
                 {/* Net row */}
                 <div className={`px-6 py-3 flex justify-between items-center text-sm font-bold ${c.net >= 0 ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
-                  <span className="text-gray-700 dark:text-gray-300">Net {c.currency}</span>
+                  <span className="text-gray-700 dark:text-gray-300">Net {c.currency} (revenus − dépenses)</span>
                   <span className={c.net >= 0 ? 'text-green-700 dark:text-green-400 text-base' : 'text-red-700 dark:text-red-400 text-base'}>
                     {c.net >= 0 ? '+' : ''}{fmt(c.net, c.currency)}
                   </span>
@@ -304,26 +342,28 @@ export function CurrencyReport() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 {CURRENCY_FLAGS[detailCurrency.currency] || '💱'} {detailCurrency.currency} —
-                {detailType === 'income' ? ' Entrées' : ' Sorties'}
+                {detailType === 'income' ? ' Revenus acquis' : detailType === 'payment' ? ' Encaissements' : ' Dépenses'}
               </DialogTitle>
             </DialogHeader>
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 dark:bg-gray-700 text-xs text-gray-500 font-medium">
                   <th className="text-left p-3">Date</th>
-                  <th className="text-left p-3">{detailType === 'income' ? 'Appartement' : 'Description'}</th>
-                  <th className="text-left p-3">{detailType === 'income' ? 'Mode' : 'Catégorie'}</th>
+                  <th className="text-left p-3">{detailType === 'expense' ? 'Description' : 'Appartement'}</th>
+                  <th className="text-left p-3">{detailType === 'income' ? 'Client' : detailType === 'payment' ? 'Mode' : 'Catégorie'}</th>
                   <th className="text-right p-3">Montant</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                {(detailType === 'income' ? detailCurrency.income_details : detailCurrency.expense_details).map((d: any) => (
+                {(detailType === 'income' ? detailCurrency.income_details : detailType === 'payment' ? detailCurrency.payments_details : detailCurrency.expense_details).map((d: any) => (
                   <tr key={d.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
                     <td className="p-3 text-gray-500">{fmtDate(d.date)}</td>
-                    <td className="p-3 font-medium">{detailType === 'income' ? d.loft_name : d.description}</td>
-                    <td className="p-3 text-gray-500">{detailType === 'income' ? (PAYMENT_LABELS[d.payment_method] || d.payment_method) : d.category}</td>
-                    <td className={`p-3 text-right font-semibold ${detailType === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                      {detailType === 'income' ? '+' : '-'}{fmt(d.amount, d.currency)}
+                    <td className="p-3 font-medium">{detailType === 'expense' ? d.description : d.loft_name}</td>
+                    <td className="p-3 text-gray-500">
+                      {detailType === 'income' ? (d.guest_name || '—') : detailType === 'payment' ? (PAYMENT_LABELS[d.payment_method] || d.payment_method) : d.category}
+                    </td>
+                    <td className={`p-3 text-right font-semibold ${detailType === 'expense' ? 'text-red-600' : detailType === 'payment' ? 'text-purple-600' : 'text-green-600'}`}>
+                      {detailType === 'expense' ? '-' : '+'}{fmt(d.amount, d.currency)}
                     </td>
                   </tr>
                 ))}
@@ -331,8 +371,11 @@ export function CurrencyReport() {
               <tfoot>
                 <tr className="bg-gray-50 dark:bg-gray-700 font-bold">
                   <td colSpan={3} className="p-3 text-gray-600 dark:text-gray-400">Total</td>
-                  <td className={`p-3 text-right ${detailType === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                    {detailType === 'income' ? '+' : '-'}{fmt(detailType === 'income' ? detailCurrency.income : detailCurrency.expense, detailCurrency.currency)}
+                  <td className={`p-3 text-right ${detailType === 'expense' ? 'text-red-600' : detailType === 'payment' ? 'text-purple-600' : 'text-green-600'}`}>
+                    {detailType === 'expense' ? '-' : '+'}{fmt(
+                      detailType === 'income' ? detailCurrency.income : detailType === 'payment' ? detailCurrency.payments : detailCurrency.expense,
+                      detailCurrency.currency
+                    )}
                   </td>
                 </tr>
               </tfoot>

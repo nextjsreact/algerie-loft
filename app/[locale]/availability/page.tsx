@@ -56,10 +56,12 @@ function AvailabilityPageContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [activeTab, setActiveTab] = useState(urlTab)
 
-  // Force tab when URL param changes (after hydration)
+  // Sync tab from URL only on initial mount
   useEffect(() => {
-    if (urlTab) setActiveTab(urlTab)
-  }, [urlTab])
+    const tab = searchParams.get('tab')
+    if (tab) setActiveTab(tab)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // empty deps = only on mount
 
   useEffect(() => {
     const fetchLofts = async () => {
@@ -160,7 +162,7 @@ function AvailabilityPageContent() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Tabs value={urlTab} onValueChange={(tab) => { setActiveTab(tab) }} className="space-y-6">
+                  <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                     <TabsList className="grid w-full grid-cols-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
                       <TabsTrigger 
                         value="calendar" 

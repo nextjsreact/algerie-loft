@@ -24,6 +24,15 @@ interface AvailabilityFilters {
 export default function AvailabilityPage() {
   const t = useTranslations('availability')
   const locale = useLocale()
+
+  // Read URL params synchronously at init
+  const getUrlParam = (key: string) => {
+    if (typeof window !== 'undefined') {
+      return new URLSearchParams(window.location.search).get(key)
+    }
+    return null
+  }
+
   const [filters, setFilters] = useState<AvailabilityFilters>({
     region: 'all',
     owners: [],
@@ -41,19 +50,16 @@ export default function AvailabilityPage() {
   const [filterOptions, setFilterOptions] = useState({ regions: [], owners: [], zoneAreas: [], ownersData: [] });
   const [rawAvailabilityData, setRawAvailabilityData] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
-  const [defaultTab, setDefaultTab] = useState('calendar')
-  const [activeTab, setActiveTab] = useState('calendar')
-  const [urlLoftId, setUrlLoftId] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState(() => getUrlParam('tab') || 'calendar')
+  const [urlLoftId, setUrlLoftId] = useState<string | null>(() => getUrlParam('loftId'))
 
-  // Read loftId and tab from URL params
+  // Update from URL on mount (handles SSR)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search)
-      const loftId = params.get('loftId')
-      const tab = params.get('tab')
-      if (loftId) setUrlLoftId(loftId)
-      if (tab) { setDefaultTab(tab); setActiveTab(tab) }
-    }
+    const params = new URLSearchParams(window.location.search)
+    const tab = params.get('tab')
+    const loftId = params.get('loftId')
+    if (tab) setActiveTab(tab)
+    if (loftId) setUrlLoftId(loftId)
   }, [])
 
   useEffect(() => {

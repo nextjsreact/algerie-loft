@@ -79,10 +79,11 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
       case 'available': return t('available')
       case 'occupied': return t('occupied')
       case 'booked': return t('occupied')
+      case 'partial': return locale === 'ar' ? 'جزئي' : locale === 'en' ? 'Partial' : 'Partiel'
       case 'maintenance': return t('maintenance')
       case 'personal_use': return t('personalUse')
       case 'renovation': return t('renovation')
-      default: return t('unknown')
+      default: return t('available')
     }
   }
 
@@ -222,11 +223,11 @@ export function AvailabilityCalendar({ data, dateRange, isLoading, onBookNow, ra
                 <div>
                   <CardTitle className="text-lg">{loft.name}</CardTitle>
                   <CardDescription className="flex items-center gap-4 mt-1">
-                    <span>{loft.region}</span>
+                    <span>{loft.region?.startsWith('availability:') ? '—' : (loft.region || '—')}</span>
                     <span>•</span>
-                    <span>{loft.owner}</span>
+                    <span>{loft.owner?.startsWith('availability:') ? '—' : (loft.owner || '—')}</span>
                     <span>•</span>
-                    <span>{loft.pricePerNight.toLocaleString()} DA/nuit</span>
+                    <span>{loft.pricePerNight?.toLocaleString()} DA/nuit</span>
                   </CardDescription>
                 </div>
                 <div className="flex items-center gap-2">

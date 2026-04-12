@@ -42,6 +42,7 @@ export default function AvailabilityPage() {
   const [rawAvailabilityData, setRawAvailabilityData] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
   const [defaultTab, setDefaultTab] = useState('calendar')
+  const [activeTab, setActiveTab] = useState('calendar')
   const [urlLoftId, setUrlLoftId] = useState<string | null>(null)
 
   // Read loftId and tab from URL params
@@ -51,7 +52,7 @@ export default function AvailabilityPage() {
       const loftId = params.get('loftId')
       const tab = params.get('tab')
       if (loftId) setUrlLoftId(loftId)
-      if (tab) setDefaultTab(tab)
+      if (tab) { setDefaultTab(tab); setActiveTab(tab) }
     }
   }, [])
 
@@ -154,7 +155,7 @@ export default function AvailabilityPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Tabs defaultValue={defaultTab} className="space-y-6">
+                  <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                     <TabsList className="grid w-full grid-cols-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
                       <TabsTrigger 
                         value="calendar" 

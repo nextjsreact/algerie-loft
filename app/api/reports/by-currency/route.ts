@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
       // From April: prorated reservations — currency from reservation.currency_code
       const { data: reservations } = await supabase
         .from('reservations')
-        .select('id, loft_id, check_in_date, check_out_date, total_amount, currency_code, guest_name, status')
+        .select('id, loft_id, check_in_date, check_out_date, total_amount, currency_code, currency_ratio, guest_name, status')
         .in('status', ['confirmed', 'completed'])
         .lt('check_in_date', periodEndExclusive.toISOString().split('T')[0])
         .gt('check_out_date', startDate)
@@ -63,12 +63,19 @@ export async function GET(request: NextRequest) {
 
         const ci = new Date(r.check_in_date + 'T00:00:00Z')
         const co = new Date(r.check_out_date + 'T00:00:00Z')
-        const prorated = prorateAmount(ci, co, r.total_amount || 0, periodStart, periodEndExclusive)
+        const totalDZD = r.total_amount || 0
         const currency = r.currency_code || 'DZD'
+        const ratio = Number(r.currency_ratio) || 1
 
-        addIncome(currency, prorated, {
+        // Convert prorata to original currency
+        // total_amount is always in DZD, so divide by ratio to get original currency amount
+        const proratedDZD = prorateAmount(ci, co, totalDZD, periodStart, periodEndExclusive)
+        const originalAmount = currency === 'DZD' ? proratedDZD : Math.round((proratedDZD / ratio) * 100) / 100
+
+        addIncome(currency, originalAmount, {
           id: r.id,
-          amount: prorated,
+          amount: originalAmount,
+          amount_dzd: proratedDZD,
           currency,
           loft_name: loft?.name || '—',
           guest_name: r.guest_name || null,
@@ -95,7 +102,8 @@ export async function GET(request: NextRequest) {
         const loft = loftMap.get(t.loft_id)
         if (filterOwnerId && loft?.owner_id !== filterOwnerId) return
         const currency = (t.currencies as any)?.code || 'DZD'
-        const amount = Number(t.equivalent_amount_default_currency ?? t.amount ?? 0)
+        // Use original amount (not the DZD equivalent)
+        const amount = Number(t.amount ?? 0)
         addIncome(currency, amount, {
           id: t.id, amount, currency,
           loft_name: loft?.name || '—',
@@ -165,7 +173,8 @@ export async function GET(request: NextRequest) {
       const loft = loftMap.get(t.loft_id)
       if (filterOwnerId && loft?.owner_id !== filterOwnerId) return
       const currency = (t.currencies as any)?.code || 'DZD'
-      const amount = Number(t.equivalent_amount_default_currency ?? t.amount ?? 0)
+      // Use original amount (not the DZD equivalent)
+      const amount = Number(t.amount ?? 0)
       if (!expensesByCurrency.has(currency)) expensesByCurrency.set(currency, { total: 0, count: 0, details: [] })
       const e = expensesByCurrency.get(currency)!
       e.total += amount

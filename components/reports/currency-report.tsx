@@ -40,8 +40,11 @@ export function CurrencyReport() {
   const [detailCurrency, setDetailCurrency] = useState<any>(null)
   const [detailType, setDetailType] = useState<'income' | 'expense' | 'payment'>('income')
 
-  const fmt = (n: number, currency: string) =>
-    n.toLocaleString('fr-DZ') + ' ' + currency
+  const fmt = (n: number, currency: string) => {
+    if (currency === 'DZD') return n.toLocaleString('fr-DZ') + ' DA'
+    // For foreign currencies, show 2 decimal places
+    return n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + currency
+  }
 
   const fmtDate = (d: string) => {
     try { return format(new Date(d), 'dd/MM/yyyy', { locale: fr }) } catch { return d }
@@ -244,6 +247,9 @@ export function CurrencyReport() {
                         <div>
                           <p className="font-medium text-gray-800 dark:text-gray-200">{d.loft_name}</p>
                           <p className="text-gray-400">{fmtDate(d.date)}{d.guest_name ? ` · ${d.guest_name}` : ''}</p>
+                          {d.amount_dzd && c.currency !== 'DZD' && (
+                            <p className="text-gray-300 text-[10px]">≈ {d.amount_dzd.toLocaleString('fr-DZ')} DA</p>
+                          )}
                         </div>
                         <span className="font-semibold text-green-600">+{fmt(d.amount, d.currency)}</span>
                       </div>

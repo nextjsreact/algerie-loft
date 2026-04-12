@@ -56,12 +56,16 @@ function AvailabilityPageContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [activeTab, setActiveTab] = useState(urlTab)
 
-  // Sync tab from URL only on initial mount
+  // When tab changes manually, update URL so back/forward works
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab)
+  }
+
+  // When URL changes (e.g. from loft grid "check availability"), update tab
   useEffect(() => {
     const tab = searchParams.get('tab')
-    if (tab) setActiveTab(tab)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // empty deps = only on mount
+    if (tab && tab !== activeTab) setActiveTab(tab)
+  }, [searchParams])
 
   useEffect(() => {
     const fetchLofts = async () => {
@@ -162,7 +166,7 @@ function AvailabilityPageContent() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+                  <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
                     <TabsList className="grid w-full grid-cols-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
                       <TabsTrigger 
                         value="calendar" 

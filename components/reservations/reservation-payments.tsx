@@ -90,18 +90,25 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
     if (!amount || Number(amount) <= 0) { toast.error('Montant invalide'); return }
     setSubmitting(true)
     try {
+      // amount = original amount in payCurrency
+      // amountDZD = DZD equivalent (required if foreign currency)
+      const originalAmt = Number(amount)
+      const dzdAmt = payCurrency === 'DZD'
+        ? originalAmt
+        : amountDZD ? Number(amountDZD)
+        : currencyRates[payCurrency] ? Math.round(originalAmt * currencyRates[payCurrency])
+        : originalAmt
+
       const res = await fetch(`/api/reservations/${reservationId}/payments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: payCurrency === 'DZD' ? Number(amount)
-            : amountDZD ? Number(amountDZD)
-            : currencyRates[payCurrency] ? Math.round(Number(amount) * currencyRates[payCurrency])
-            : Number(amount),
+          amount: dzdAmt,                    // stored in DZD
+          original_amount: originalAmt,      // original currency amount
+          original_currency: payCurrency,
           payment_method: method,
           currency: payCurrency,
-          // Store original foreign amount in transaction_id field as JSON
-          reference: payCurrency !== 'DZD' ? `${amount} ${payCurrency}` : (reference || null),
+          reference: reference || null,
           payment_date: paymentDate,
           notes,
         }),
@@ -135,9 +142,10 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
   // Map DB fields to display fields
   const mapPayment = (p: any) => ({
     id: p.id,
-    amount: Number(p.amount),
+    amount: Number(p.original_amount ?? p.amount),  // show original amount
+    amount_dzd: Number(p.amount),                    // DZD equivalent
     payment_method: p.payment_method,
-    currency: p.currency || 'DZD',
+    currency: p.original_currency || p.currency || 'DZD',
     reference: p.transaction_id,
     payment_date: p.processed_at || p.created_at,
     notes: p.processor_response,
@@ -206,6 +214,9 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-sm">{mapped.amount.toLocaleString('fr-DZ')} {mapped.currency}</span>
+                      {mapped.currency !== 'DZD' && mapped.amount_dzd && (
+                        <span className="text-xs opacity-50">≈ {mapped.amount_dzd.toLocaleString('fr-DZ')} DA</span>
+                      )}
                       <span className="text-xs opacity-70">• {m.label}</span>
                       {mapped.reference && <span className="text-xs opacity-60">#{mapped.reference}</span>}
                     </div>

@@ -120,13 +120,14 @@ export async function GET(request: NextRequest) {
       .from('reservation_payments')
       .select(`
         id, amount, currency, payment_method, processed_at, created_at,
+        original_amount, original_currency, transaction_id,
         reservations:reservation_id(id, loft_id, guest_name, check_in_date, check_out_date)
       `)
       .gte('created_at', startDate)
       .lte('created_at', endDate + 'T23:59:59')
       .eq('status', 'completed')
 
-    // Group payments separately as "encaissements" (cash received)
+    // Group payments by original currency
     const paymentsByCurrency = new Map<string, { total: number; count: number; details: any[] }>()
 
     ;(payments || []).forEach((p: any) => {
@@ -136,15 +137,29 @@ export async function GET(request: NextRequest) {
       if (filterLoftId && loftId !== filterLoftId) return
       if (filterOwnerId && loft?.owner_id !== filterOwnerId) return
 
-      const currency = p.currency || 'DZD'
-      if (!paymentsByCurrency.has(currency)) paymentsByCurrency.set(currency, { total: 0, count: 0, details: [] })
-      const e = paymentsByCurrency.get(currency)!
-      e.total += Number(p.amount)
+      // Use original_amount if available, otherwise try to parse from transaction_id
+      const origCurrency = (p as any).original_currency || p.currency || 'DZD'
+      let origAmount: number
+
+      if ((p as any).original_amount) {
+        origAmount = Number((p as any).original_amount)
+      } else if (p.transaction_id && /^[\d.]+\s+[A-Z]{3}$/.test(p.transaction_id)) {
+        // Parse from "200 EUR" format (legacy)
+        origAmount = parseFloat(p.transaction_id.split(' ')[0])
+      } else {
+        // Fallback: amount is in DZD, convert back if ratio available
+        origAmount = Number(p.amount)
+      }
+
+      if (!paymentsByCurrency.has(origCurrency)) paymentsByCurrency.set(origCurrency, { total: 0, count: 0, details: [] })
+      const e = paymentsByCurrency.get(origCurrency)!
+      e.total += origAmount
       e.count++
       e.details.push({
         id: p.id,
-        amount: Number(p.amount),
-        currency,
+        amount: origAmount,
+        amount_dzd: Number(p.amount),
+        currency: origCurrency,
         payment_method: p.payment_method,
         date: p.processed_at || p.created_at,
         loft_name: loft?.name || '—',

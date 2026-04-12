@@ -11,7 +11,7 @@ export async function GET(
 
     const { data, error } = await supabase
       .from('reservation_payments')
-      .select('id, amount, payment_method, currency, status, transaction_id, processor_response, processed_at, created_at')
+      .select('id, amount, payment_method, currency, status, transaction_id, processor_response, processed_at, created_at, original_amount, original_currency')
       .eq('reservation_id', id)
       .order('created_at', { ascending: false })
 
@@ -54,19 +54,25 @@ export async function POST(
     if (!user) return NextResponse.json({ error: 'Non authentifie' }, { status: 401 })
 
     const body = await request.json()
-    const { amount, payment_method, reference, payment_date, notes, currency } = body
+    const { amount, payment_method, reference, payment_date, notes, currency, original_amount, original_currency } = body
 
     if (!amount || !payment_method) {
       return NextResponse.json({ error: 'Montant et mode de paiement requis' }, { status: 400 })
     }
 
+    // Determine original amount and currency
+    const origCurrency = original_currency || currency || 'DZD'
+    const origAmount = original_amount ? Number(original_amount) : (origCurrency === 'DZD' ? Number(amount) : null)
+
     const { data, error } = await supabase
       .from('reservation_payments')
       .insert({
         reservation_id: id,
-        amount: Number(amount),
+        amount: Number(amount),           // always DZD
         payment_method,
-        currency: currency || 'DZD',
+        currency: origCurrency,           // original currency label
+        original_amount: origAmount,      // amount in original currency
+        original_currency: origCurrency,
         status: 'completed',
         transaction_id: reference || null,
         processor_response: notes || null,

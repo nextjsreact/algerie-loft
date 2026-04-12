@@ -41,16 +41,17 @@ export default function AvailabilityPage() {
   const [filterOptions, setFilterOptions] = useState({ regions: [], owners: [], zoneAreas: [], ownersData: [] });
   const [rawAvailabilityData, setRawAvailabilityData] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
+  const [defaultTab, setDefaultTab] = useState('calendar')
+  const [urlLoftId, setUrlLoftId] = useState<string | null>(null)
 
-  // Read loftId from URL params to pre-filter
+  // Read loftId and tab from URL params
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search)
       const loftId = params.get('loftId')
-      if (loftId) {
-        // We'll filter by this loft after data loads
-        setFilters(prev => ({ ...prev, _loftId: loftId } as any))
-      }
+      const tab = params.get('tab')
+      if (loftId) setUrlLoftId(loftId)
+      if (tab) setDefaultTab(tab)
     }
   }, [])
 
@@ -86,14 +87,14 @@ export default function AvailabilityPage() {
   const filteredData = useMemo(() => {
     return availabilityData.filter(loft => {
       // Filter by loftId from URL if present
-      if ((filters as any)._loftId && (loft as any).id !== (filters as any)._loftId) return false
+      if (urlLoftId && (loft as any).id !== urlLoftId) return false
       if (filters.region !== 'all' && (loft as any).zone_area_id !== filters.region) return false
       if (filters.owners.length > 0 && !filters.owners.includes((loft as any).owner_id)) return false
       if ((loft as any).capacity < filters.guests) return false
       if ((loft as any).pricePerNight < filters.minPrice || (loft as any).pricePerNight > filters.maxPrice) return false
       return true
     })
-  }, [availabilityData, filters])
+  }, [availabilityData, filters, urlLoftId])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50/50 via-white to-blue-50/50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900/20">
@@ -153,7 +154,7 @@ export default function AvailabilityPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Tabs defaultValue="calendar" className="space-y-6">
+                  <Tabs defaultValue={defaultTab} className="space-y-6">
                     <TabsList className="grid w-full grid-cols-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
                       <TabsTrigger 
                         value="calendar" 

@@ -730,6 +730,8 @@
     "today": "اليوم",
     "totalLofts": "إجمالي الشقق",
     "unknown": "غير معروف",
+    "address": "العنوان",
+    "description": "الوصف",
     "viewDetails": "عرض التفاصيل",
     "blocked": "محجوب",
     "status": "الحالة",

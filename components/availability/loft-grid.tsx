@@ -282,13 +282,13 @@ export function LoftGrid({ data, isLoading }: LoftGridProps) {
               </div>
 
               <div className="space-y-2">
-                <h4 className="font-medium">Adresse</h4>
+                <h4 className="font-medium">{t('address')}</h4>
                 <p className="text-sm text-muted-foreground">{selectedLoft.address || '—'}</p>
               </div>
 
               {selectedLoft.description && (
                 <div className="space-y-2">
-                  <h4 className="font-medium">Description</h4>
+                  <h4 className="font-medium">{t('description')}</h4>
                   <p className="text-sm text-muted-foreground">{selectedLoft.description}</p>
                 </div>
               )}

@@ -730,6 +730,8 @@
     "today": "Today",
     "totalLofts": "Total Lofts",
     "unknown": "Unknown",
+    "address": "Address",
+    "description": "Description",
     "viewDetails": "View Details",
     "blocked": "Blocked",
     "status": "Status",

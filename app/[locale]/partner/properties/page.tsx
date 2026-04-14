@@ -338,24 +338,6 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
                   </div>
                 )}
 
-                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      router.push(`/${locale}/availability?loftId=${property.id}&tab=calendar`)
-                    }}
-                    style={{
-                      ...buttonStyle,
-                      backgroundColor: '#3B82F6',
-                      color: 'white',
-                      flex: 1,
-                      padding: '0.5rem 1rem',
-                      fontSize: '0.875rem'
-                    }}
-                  >
-                    📅 Voir le calendrier
-                  </button>
-                </div>
               </div>
             ))}
           </div>

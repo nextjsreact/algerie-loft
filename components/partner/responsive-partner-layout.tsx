@@ -9,11 +9,10 @@ import { cn } from '@/lib/utils'
 import { 
   LayoutDashboard, 
   Building2, 
-  Calendar, 
-  MessageSquare,
   DollarSign,
   Menu,
   X,
+  MessageSquare,
 } from 'lucide-react'
 import { PartnerSWRProvider } from './swr-provider'
 import type { AuthSession } from '@/lib/types'
@@ -37,7 +36,6 @@ export function ResponsivePartnerLayout({ children, locale }: ResponsivePartnerL
   const navigationItems = [
     { name: 'dashboard', translationKey: 'dashboard', href: `/${locale}/partner/dashboard`, icon: LayoutDashboard },
     { name: 'properties', translationKey: 'properties', href: `/${locale}/partner/properties`, icon: Building2 },
-    { name: 'bookings', translationKey: 'bookings', href: `/${locale}/partner/bookings`, icon: Calendar },
     { name: 'revenue', translationKey: 'revenue', href: `/${locale}/partner/revenue`, icon: DollarSign },
   ]
 

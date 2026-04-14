@@ -67,17 +67,33 @@ export async function detectUserRole(userId: string, userEmail: string | null, l
     }
 
     if (loginContext === 'partner') {
-      // Verify user is actually in owners table
-      const { data: owner } = await supabase
+      // Verify user is actually in owners table — search by id OR email
+      const { data: ownerById } = await supabase
         .from('owners')
         .select('id')
         .eq('id', userId)
         .single();
-      if (owner) {
-        console.log(`[ROLE DETECTION] User ${userId} → partner (via login_context)`);
-        return 'partner';
+
+      if (ownerById) {
+        console.log(`[ROLE DETECTION] User ${userId} → partner (via login_context, id match)`)
+        return 'partner'
       }
-      console.log(`[ROLE DETECTION] User ${userId} chose partner but not in owners table`);
+
+      // Fallback: search by email (owner may have a different id)
+      if (userEmail) {
+        const { data: ownerByEmail } = await supabase
+          .from('owners')
+          .select('id')
+          .eq('email', userEmail)
+          .single()
+
+        if (ownerByEmail) {
+          console.log(`[ROLE DETECTION] User ${userId} → partner (via login_context, email match)`)
+          return 'partner'
+        }
+      }
+
+      console.log(`[ROLE DETECTION] User ${userId} chose partner but not found in owners table`)
     }
 
     // For employee context (or no context), use profiles table role
@@ -104,10 +120,13 @@ export async function detectUserRole(userId: string, userEmail: string | null, l
 
     // profile.role is 'member' (default from trigger) — check if user has other roles
     // If no login_context was set, try to infer the best role
-    const [{ data: customer }, { data: owner }] = await Promise.all([
+    const [{ data: customer }, { data: ownerById }, { data: ownerByEmail }] = await Promise.all([
       supabase.from('customers').select('id').eq('id', userId).single(),
       supabase.from('owners').select('id').eq('id', userId).single(),
+      userEmail ? supabase.from('owners').select('id').eq('email', userEmail).single() : Promise.resolve({ data: null }),
     ]);
+
+    const owner = ownerById || ownerByEmail
 
     if (customer && !owner) {
       console.log(`[ROLE DETECTION] User ${userId} → client (only in customers, no context)`);

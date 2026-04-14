@@ -99,10 +99,10 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
       search: searchParams.get('search') || undefined
     };
 
-    // Build query with RLS automatically applied
+    // Build query - get lofts WITHOUT photo join first
     let query = supabase
       .from('lofts')
-      .select('id, name, address, status, price_per_night, max_guests, bedrooms, bathrooms, created_at, updated_at, loft_photos(url, is_cover)')
+      .select('id, name, address, status, price_per_night, max_guests, bedrooms, bathrooms, created_at, updated_at')
       .eq('owner_id', partnerId)
       .order('created_at', { ascending: false })
 
@@ -137,6 +137,25 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
     }
 
     const propertiesList = properties || [];
+
+    // Fetch photos separately (explicit query, more reliable than join)
+    const photosMap: Record<string, { url: string; is_cover: boolean }[]> = {}
+    if (propertiesList.length > 0) {
+      const { data: allPhotos, error: photosError } = await supabase
+        .from('loft_photos')
+        .select('loft_id, url, is_cover')
+        .in('loft_id', propertiesList.map(p => p.id))
+
+      if (photosError) {
+        console.error('[partner/properties] photos fetch error:', photosError.message)
+      } else {
+        console.log(`[partner/properties] fetched ${(allPhotos || []).length} photos for ${propertiesList.length} lofts`)
+        for (const photo of (allPhotos || [])) {
+          if (!photosMap[photo.loft_id]) photosMap[photo.loft_id] = []
+          photosMap[photo.loft_id].push({ url: photo.url, is_cover: photo.is_cover })
+        }
+      }
+    }
 
     // Get current and previous month dates for revenue calculations
     const now = new Date();
@@ -216,12 +235,12 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
         }, 0)
       const occupancyRate = Math.round((occupiedDays / daysInMonth) * 100)
 
-      const photos = ((property as any).loft_photos || [])
-        .sort((a: any, b: any) => (b.is_cover ? 1 : 0) - (a.is_cover ? 1 : 0))
-        .map((p: any) => p.url)
+      const photos = (photosMap[property.id] || [])
+        .sort((a, b) => (b.is_cover ? 1 : 0) - (a.is_cover ? 1 : 0))
+        .map(p => p.url)
       const coverPhoto = photos[0] || null
 
-      console.log(`[partner/properties] loft ${property.id} (${property.name}): loft_photos count=${((property as any).loft_photos || []).length}, coverPhoto=${coverPhoto}`)
+      console.log(`[partner/properties] loft ${property.id} (${property.name}): photos=${photos.length}, cover=${coverPhoto}`)
 
       return {
         id: property.id,

@@ -135,7 +135,7 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
               return (
                 <div
                   key={property.id}
-                  onClick={() => router.push(`/${locale}/lofts/${property.id}`)}
+                  onClick={() => router.push(`/${locale}/partner/properties/${property.id}`)}
                   className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group"
                 >
                   {/* Photo */}

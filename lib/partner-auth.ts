@@ -13,28 +13,39 @@ export interface PartnerInfo {
 }
 
 export async function getPartnerInfo(): Promise<PartnerInfo | null> {
-  const session = await getSession()
-  if (!session) return null
-
   const supabase = await createClient(true)
 
+  // Get current user from Supabase auth directly (most reliable in API routes)
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (user) {
+    return findOwner(supabase, user.id, user.email)
+  }
+
+  // Fallback to session helper
+  const session = await getSession()
+  if (!session) return null
+  return findOwner(supabase, session.user.id, session.user.email)
+}
+
+async function findOwner(supabase: any, userId: string, userEmail: string | null | undefined): Promise<PartnerInfo | null> {
   // Try by auth user id first
   const { data: byId } = await supabase
     .from('owners')
     .select('id, name, email')
-    .eq('id', session.user.id)
+    .eq('id', userId)
     .single()
 
   if (byId) {
     return { ownerId: byId.id, ownerName: byId.name, ownerEmail: byId.email }
   }
 
-  // Fallback: search by email
-  if (session.user.email) {
+  // Fallback: search by email (owner.id may differ from auth.user.id)
+  if (userEmail) {
     const { data: byEmail } = await supabase
       .from('owners')
       .select('id, name, email')
-      .eq('email', session.user.email)
+      .eq('email', userEmail)
       .single()
 
     if (byEmail) {

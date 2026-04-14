@@ -102,7 +102,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
     // Build query with RLS automatically applied
     let query = supabase
       .from('lofts')
-      .select('id, name, address, status, price_per_night, created_at, updated_at')
+      .select('id, name, address, status, price_per_night, created_at, updated_at, loft_photos(url, is_cover)')
       .eq('owner_id', partnerId)
       .order('created_at', { ascending: false })
 
@@ -216,6 +216,11 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
         }, 0)
       const occupancyRate = Math.round((occupiedDays / daysInMonth) * 100)
 
+      const photos = ((property as any).loft_photos || [])
+        .sort((a: any, b: any) => (b.is_cover ? 1 : 0) - (a.is_cover ? 1 : 0))
+        .map((p: any) => p.url)
+      const coverPhoto = photos[0] || null
+
       return {
         id: property.id,
         name: property.name,
@@ -226,7 +231,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
         earnings_this_month: Math.round(propertyCurrentMonthRevenue),
         occupancy_rate: occupancyRate,
         average_rating: 4.5,
-        images: [],
+        images: photos,
+        cover_photo: coverPhoto,
         next_booking: nextReservation ? {
           check_in: nextReservation.check_in,
           check_out: nextReservation.check_out,

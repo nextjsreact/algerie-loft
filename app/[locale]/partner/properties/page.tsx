@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 interface Property {
   id: string
@@ -10,25 +11,23 @@ interface Property {
   description?: string
   price_per_night: number
   status: 'available' | 'occupied' | 'maintenance'
-  max_guests: number
-  bedrooms?: number
-  bathrooms?: number
-  area_sqm?: number
-  amenities: string[]
-  is_published: boolean
+  max_guests?: number
+  amenities?: string[]
   bookings_count?: number
   earnings_this_month?: number
   occupancy_rate?: number
-  average_rating?: number
+  cover_photo?: string | null
+  images?: string[]
   created_at: string
 }
 
-export default function PartnerPropertiesPage() {
+export default function PartnerPropertiesPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = use(params)
   const router = useRouter()
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [filter, setFilter] = useState<'all' | 'published' | 'draft' | 'maintenance'>('all')
+  const [filter, setFilter] = useState<'all' | 'available' | 'occupied' | 'maintenance'>('all')
 
   const fetchProperties = async () => {
     try {
@@ -56,15 +55,10 @@ export default function PartnerPropertiesPage() {
 
   const getFilteredProperties = () => {
     switch (filter) {
-      case 'published':
-        return properties.filter(p => p.is_published)
-      case 'draft':
-        return properties.filter(p => !p.is_published)
-      case 'maintenance':
-        return properties.filter(p => p.status === 'maintenance')
-      case 'all':
-      default:
-        return properties
+      case 'available': return properties.filter(p => p.status === 'available')
+      case 'occupied': return properties.filter(p => p.status === 'occupied')
+      case 'maintenance': return properties.filter(p => p.status === 'maintenance')
+      default: return properties
     }
   }
 
@@ -140,7 +134,7 @@ export default function PartnerPropertiesPage() {
       <div style={{ backgroundColor: 'white', borderBottom: '1px solid #E5E7EB', padding: '1rem 0' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
           <button
-            onClick={() => router.push('/fr/partner/dashboard')}
+            onClick={() => router.push(`/${locale}/partner/dashboard`)}
             style={{
               backgroundColor: 'transparent',
               border: '1px solid #D1D5DB',
@@ -180,10 +174,10 @@ export default function PartnerPropertiesPage() {
         <div style={{ ...cardStyle, marginBottom: '2rem' }}>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             {[
-              { key: 'all', label: 'Toutes', count: properties.length },
-              { key: 'published', label: 'Publiées', count: properties.filter(p => p.is_published).length },
-              { key: 'draft', label: 'Brouillons', count: properties.filter(p => !p.is_published).length },
-              { key: 'maintenance', label: 'Maintenance', count: properties.filter(p => p.status === 'maintenance').length }
+              { key: 'all', label: 'Tous', count: properties.length },
+              { key: 'available', label: '✅ Disponible', count: properties.filter(p => p.status === 'available').length },
+              { key: 'occupied', label: '🔴 Occupé', count: properties.filter(p => p.status === 'occupied').length },
+              { key: 'maintenance', label: '🔧 Maintenance', count: properties.filter(p => p.status === 'maintenance').length }
             ].map((filterOption) => (
               <button
                 key={filterOption.key}
@@ -244,7 +238,7 @@ export default function PartnerPropertiesPage() {
                   cursor: 'pointer',
                   transition: 'all 0.2s'
                 }}
-                onClick={() => router.push(`/fr/partner/properties/${property.id}`)}
+                onClick={() => router.push(`/${locale}/lofts/${property.id}`)}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-2px)'
                   e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
@@ -254,18 +248,26 @@ export default function PartnerPropertiesPage() {
                   e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
                 }}
               >
-                {/* Property Image Placeholder */}
+                {/* Property Image */}
                 <div style={{ 
                   height: '200px', 
                   backgroundColor: '#F3F4F6', 
                   borderRadius: '0.5rem',
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  fontSize: '3rem',
-                  marginBottom: '1rem'
+                  overflow: 'hidden',
+                  marginBottom: '1rem',
+                  position: 'relative'
                 }}>
-                  🏠
+                  {property.cover_photo ? (
+                    <img
+                      src={property.cover_photo}
+                      alt={property.name}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' }}>
+                      🏠
+                    </div>
+                  )}
                 </div>
 
                 {/* Property Header */}
@@ -291,20 +293,6 @@ export default function PartnerPropertiesPage() {
                     >
                       {getStatusLabel(property.status)}
                     </span>
-                    {!property.is_published && (
-                      <span
-                        style={{
-                          backgroundColor: '#F59E0B',
-                          color: 'white',
-                          padding: '0.25rem 0.5rem',
-                          borderRadius: '0.25rem',
-                          fontSize: '0.75rem',
-                          fontWeight: '500'
-                        }}
-                      >
-                        Brouillon
-                      </span>
-                    )}
                   </div>
                 </div>
 
@@ -388,12 +376,11 @@ export default function PartnerPropertiesPage() {
                   </div>
                 )}
 
-                {/* Action Buttons */}
                 <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
-                      router.push(`/fr/partner/properties/${property.id}/edit`)
+                      router.push(`/${locale}/lofts/${property.id}/edit`)
                     }}
                     style={{
                       ...buttonStyle,
@@ -409,7 +396,7 @@ export default function PartnerPropertiesPage() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
-                      router.push(`/fr/partner/properties/${property.id}/calendar`)
+                      router.push(`/${locale}/availability?loftId=${property.id}&tab=calendar`)
                     }}
                     style={{
                       ...buttonStyle,

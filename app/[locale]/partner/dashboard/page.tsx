@@ -152,14 +152,18 @@ export default function PartnerDashboardPage({ params }: PartnerDashboardPagePro
       if (results.properties.error) {
         console.log('Properties API error:', results.properties.error)
       } else if (results.properties.data) {
-        setProperties(results.properties.data.properties || [])
+        // API returns { success, data: { properties: [...] } }
+        const propsData = (results.properties.data as any)
+        setProperties(propsData?.data?.properties || propsData?.properties || [])
       }
       
       // Handle bookings result
       if (results.bookings.error) {
         console.log('Bookings API error:', results.bookings.error)
       } else if (results.bookings.data) {
-        setRecentBookings(results.bookings.data.bookings || [])
+        // API returns { success, data: { reservations: [...], bookings: [...] } }
+        const bookData = (results.bookings.data as any)
+        setRecentBookings(bookData?.data?.bookings || bookData?.data?.reservations || bookData?.bookings || bookData?.reservations || [])
       }
       
     } catch (err) {

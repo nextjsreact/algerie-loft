@@ -153,6 +153,26 @@ export default function PartnerRevenuePage({ params }: { params: Promise<{ local
               </Card>
             )}
 
+            {/* Payments by method/currency */}
+            {data.by_payment?.length > 0 && (
+              <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90">
+                <div className="bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-t-lg px-6 py-4">
+                  <h3 className="font-semibold text-base">Paiements reçus par mode et devise</h3>
+                </div>
+                <CardContent className="p-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {data.by_payment.map((p: any, i: number) => (
+                      <div key={i} className="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-3 border border-gray-100 dark:border-gray-700">
+                        <p className="text-xs text-gray-500 mb-1">{PAYMENT_LABELS[p.method] || p.method}</p>
+                        <p className="font-bold text-gray-900 dark:text-white">{fmtOrig(p.total, p.currency)}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">{p.count} paiement{p.count > 1 ? 's' : ''}</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Analytics chart */}
             {data.analytics?.length > 0 && (
               <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90">
@@ -183,26 +203,6 @@ export default function PartnerRevenuePage({ params }: { params: Promise<{ local
                         </div>
                       )
                     })}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Payments by method/currency */}
-            {data.by_payment?.length > 0 && (
-              <Card className="border-0 shadow-xl bg-white/90 dark:bg-gray-800/90">
-                <div className="bg-gradient-to-r from-purple-600 to-violet-600 text-white rounded-t-lg px-6 py-4">
-                  <h3 className="font-semibold text-base">Paiements reçus par mode et devise</h3>
-                </div>
-                <CardContent className="p-4">
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {data.by_payment.map((p: any, i: number) => (
-                      <div key={i} className="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-3 border border-gray-100 dark:border-gray-700">
-                        <p className="text-xs text-gray-500 mb-1">{PAYMENT_LABELS[p.method] || p.method}</p>
-                        <p className="font-bold text-gray-900 dark:text-white">{fmtOrig(p.total, p.currency)}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{p.count} paiement{p.count > 1 ? 's' : ''}</p>
-                      </div>
-                    ))}
                   </div>
                 </CardContent>
               </Card>

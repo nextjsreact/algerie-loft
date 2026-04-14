@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createReadOnlyClient } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/server';
 import { getSession } from '@/lib/auth';
 
 interface PropertyFilters {
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
       }, { status: 401 });
     }
 
-    const supabase = await createReadOnlyClient();
+    const supabase = await createClient(true);
 
     // Find owner by auth user id OR email (ids may differ)
     let ownerId: string | null = null

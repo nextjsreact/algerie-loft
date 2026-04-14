@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { ResponsivePartnerLayout } from '@/components/partner/responsive-partner-layout'
 import { DashboardHeader } from '@/components/partner/dashboard-header'
-import { QuickActions } from '@/components/partner/quick-actions'
 import { PropertiesOverview } from '@/components/partner/properties-overview'
 import { RecentBookingsSection } from '@/components/partner/recent-bookings-section'
 import { DashboardPageSkeleton } from '@/components/partner/dashboard-skeletons'
@@ -330,9 +329,6 @@ export default function PartnerDashboardPage({ params }: PartnerDashboardPagePro
             </CardContent>
           </Card>
         </section>
-
-        {/* Quick Actions */}
-        <QuickActions locale={locale} />
 
         {/* Properties and Bookings - Responsive layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

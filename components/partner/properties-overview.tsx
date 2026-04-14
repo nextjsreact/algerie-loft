@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Plus, Building2, TrendingUp, Calendar, Filter, ArrowUpDown } from 'lucide-react'
+import { Building2, TrendingUp, Calendar, Filter, ArrowUpDown } from 'lucide-react'
 import Image from 'next/image'
 
 interface PropertySummary {
@@ -26,6 +26,7 @@ interface PropertySummary {
   earnings_this_month: number
   occupancy_rate: number
   average_rating: number
+  cover_photo?: string | null
   images?: string[]
   next_booking?: {
     check_in: string
@@ -151,15 +152,6 @@ export const PropertiesOverview = memo(function PropertiesOverview({
             <p className="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
               {t('properties.noPropertiesMessage')}
             </p>
-            <Button
-              onClick={() => router.push(`/${locale}/partner/properties/new`)}
-              size="lg"
-              aria-label={t('actions.addProperty')}
-              className="min-h-[44px]"
-            >
-              <Plus className="h-5 w-5 mr-2" aria-hidden="true" />
-              {t('actions.addProperty')}
-            </Button>
           </div>
         </CardContent>
       </Card>
@@ -240,9 +232,9 @@ export const PropertiesOverview = memo(function PropertiesOverview({
               <div className="flex flex-col sm:flex-row">
                 {/* Property Image */}
                 <div className="relative w-full sm:w-48 h-48 sm:h-auto bg-gray-200 dark:bg-gray-700 flex-shrink-0">
-                  {property.images && property.images.length > 0 ? (
+                  {(property.cover_photo || (property.images && property.images.length > 0)) ? (
                     <Image
-                      src={property.images[0]}
+                      src={property.cover_photo || property.images![0]}
                       alt={`${property.name} property image`}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-200"

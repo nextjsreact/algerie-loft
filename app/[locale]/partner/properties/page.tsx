@@ -2,13 +2,18 @@
 
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { MapPin, Users, TrendingUp, Calendar } from 'lucide-react'
 import { ResponsivePartnerLayout } from '@/components/partner/responsive-partner-layout'
+
+const BLUR_DATA = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+"
 
 interface Property {
   id: string
   name: string
   address: string
-  description?: string
   price_per_night: number
   status: 'available' | 'occupied' | 'maintenance'
   max_guests?: number
@@ -23,6 +28,12 @@ interface Property {
   created_at: string
 }
 
+const STATUS_CONFIG = {
+  available:   { label: 'Disponible',  cls: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' },
+  occupied:    { label: 'Occupé',      cls: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'         },
+  maintenance: { label: 'Maintenance', cls: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' },
+}
+
 export default function PartnerPropertiesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = use(params)
   const router = useRouter()
@@ -31,36 +42,27 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState<'all' | 'available' | 'occupied' | 'maintenance'>('all')
 
-  const fetchProperties = async () => {
-    try {
-      setLoading(true)
-      // TEST: use ?_test_owner_id=68dcda4b-6d78-4271-90ee-08c0fb201513 to see a partner with photos
-      const testParam = typeof window !== 'undefined' && window.location.search.includes('_test_owner_id')
-        ? `?_test_owner_id=${new URLSearchParams(window.location.search).get('_test_owner_id')}`
-        : ''
-      const response = await fetch(`/api/partner/properties${testParam}`)
-      if (!response.ok) throw new Error('Erreur lors du chargement des propriétés')
-      const data = await response.json()
-      const props = data?.data?.properties || data?.properties || []
-      console.log('[Partner Properties] received:', props.length, 'properties')
-      if (props[0]) console.log('[Partner Properties] first property cover_photo:', props[0].cover_photo, 'images:', props[0].images)
-      setProperties(props)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur lors du chargement')
-    } finally {
-      setLoading(false)
+  useEffect(() => {
+    async function fetchProperties() {
+      try {
+        setLoading(true)
+        const testParam = typeof window !== 'undefined' && window.location.search.includes('_test_owner_id')
+          ? `?_test_owner_id=${new URLSearchParams(window.location.search).get('_test_owner_id')}`
+          : ''
+        const res = await fetch(`/api/partner/properties${testParam}`)
+        if (!res.ok) throw new Error('Erreur de chargement')
+        const data = await res.json()
+        setProperties(data?.data?.properties || data?.properties || [])
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erreur')
+      } finally {
+        setLoading(false)
+      }
     }
-  }
-
-  useEffect(() => { fetchProperties() }, [])
+    fetchProperties()
+  }, [])
 
   const filtered = properties.filter(p => filter === 'all' || p.status === filter)
-
-  const statusConfig = {
-    available: { label: 'Disponible', cls: 'bg-emerald-500' },
-    occupied:  { label: 'Occupé',     cls: 'bg-amber-500'   },
-    maintenance:{ label: 'Maintenance', cls: 'bg-red-500'   },
-  }
 
   const filterBtns = [
     { key: 'all',         label: 'Tous',           count: properties.length },
@@ -71,26 +73,24 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
 
   if (loading) return (
     <ResponsivePartnerLayout locale={locale}>
-      <div className="flex items-center justify-center py-20">
-        <div className="text-center">
-          <div className="text-5xl mb-4">🔄</div>
-          <p className="text-gray-500 dark:text-gray-400">Chargement de vos propriétés...</p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[1,2,3].map(i => (
+          <Card key={i} className="overflow-hidden">
+            <div className="h-48 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-t-lg" />
+            <CardHeader><div className="h-5 bg-gray-200 dark:bg-gray-700 animate-pulse rounded w-3/4" /></CardHeader>
+            <CardContent><div className="h-4 bg-gray-200 dark:bg-gray-700 animate-pulse rounded w-full" /></CardContent>
+          </Card>
+        ))}
       </div>
     </ResponsivePartnerLayout>
   )
 
   if (error) return (
     <ResponsivePartnerLayout locale={locale}>
-      <div className="flex items-center justify-center py-20">
-        <div className="text-center">
-          <div className="text-5xl mb-4">❌</div>
-          <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Erreur de chargement</h2>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">{error}</p>
-          <button onClick={fetchProperties} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-            Réessayer
-          </button>
-        </div>
+      <div className="text-center py-20">
+        <div className="text-5xl mb-4">❌</div>
+        <p className="text-gray-500 dark:text-gray-400 mb-4">{error}</p>
+        <button onClick={() => window.location.reload()} className="px-4 py-2 bg-blue-600 text-white rounded-lg">Réessayer</button>
       </div>
     </ResponsivePartnerLayout>
   )
@@ -99,125 +99,125 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
     <ResponsivePartnerLayout locale={locale}>
       <div className="space-y-6">
 
-        {/* Page Title */}
+        {/* Title */}
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">🏠 Mes Propriétés</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Consultez vos lofts et suivez leurs performances</p>
         </div>
 
         {/* Filters */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm">
-          <div className="flex flex-wrap gap-2">
-            {filterBtns.map(f => (
-              <button
-                key={f.key}
-                onClick={() => setFilter(f.key as any)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
-                  filter === f.key
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'bg-transparent text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
-              >
-                {f.label} ({f.count})
-              </button>
-            ))}
-          </div>
+        <div className="flex flex-wrap gap-2">
+          {filterBtns.map(f => (
+            <button key={f.key} onClick={() => setFilter(f.key as any)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                filter === f.key
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+              }`}>
+              {f.label} ({f.count})
+            </button>
+          ))}
         </div>
 
-        {/* Properties Grid */}
+        {/* Grid */}
         {filtered.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-12 text-center shadow-sm">
+          <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
             <div className="text-5xl mb-4">🏠</div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Aucune propriété</h2>
-            <p className="text-gray-500 dark:text-gray-400">Aucune propriété trouvée pour ce filtre.</p>
+            <p className="text-gray-500 dark:text-gray-400">Aucune propriété trouvée.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            {filtered.map((property) => {
-              const photoUrl = property.cover_photo || (property.images && property.images[0]) || null
-              const sc = statusConfig[property.status] || { label: property.status, cls: 'bg-gray-500' }
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map(property => {
+              const photoUrl = property.cover_photo || (property.images?.[0]) || null
+              const sc = STATUS_CONFIG[property.status] || { label: property.status, cls: 'bg-gray-100 text-gray-800' }
               return (
-                <div
+                <Card
                   key={property.id}
+                  className="cursor-pointer hover:shadow-xl transition-shadow duration-200 border-0 shadow-lg overflow-hidden group"
                   onClick={() => router.push(`/${locale}/partner/properties/${property.id}`)}
-                  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group"
                 >
-                  {/* Photo */}
-                  <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-700">
+                  {/* Photo — même style que OptimizedLoftsList */}
+                  <div className="relative h-48 overflow-hidden rounded-t-lg bg-gray-200 dark:bg-gray-700">
                     {photoUrl ? (
-                      <img
+                      <Image
                         src={photoUrl}
                         alt={property.name}
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          console.warn('[Partner Properties] image failed to load:', photoUrl)
-                          e.currentTarget.style.display = 'none'
-                        }}
+                        fill
+                        className="object-cover transition-transform duration-200 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        loading="lazy"
+                        placeholder="blur"
+                        blurDataURL={BLUR_DATA}
                       />
                     ) : (
-                      <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
-                        <span className="text-4xl mb-2">🏠</span>
+                      <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+                        <MapPin className="h-12 w-12 mb-2" />
                         <span className="text-xs">Aucune photo</span>
                       </div>
                     )}
-                    {/* Status badge */}
-                    <span className={`absolute top-3 right-3 ${sc.cls} text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow`}>
-                      {sc.label}
-                    </span>
+                    <div className="absolute top-2 right-2">
+                      <Badge className={sc.cls}>{sc.label}</Badge>
+                    </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="p-5">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  {/* Header */}
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       {property.name}
-                    </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                      📍 {property.address}
-                    </p>
+                    </CardTitle>
+                    <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                      <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
+                      <span className="line-clamp-1">{property.address}</span>
+                    </div>
+                  </CardHeader>
 
-                    {/* Details grid */}
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Prix par nuit</div>
-                        <div className="font-bold text-gray-900 dark:text-white">{property.price_per_night?.toLocaleString('fr-DZ')} DA</div>
+                  {/* Content */}
+                  <CardContent className="pt-0 space-y-3">
+                    {/* Price + capacity */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+                        {property.max_guests && (
+                          <div className="flex items-center gap-1">
+                            <Users className="h-4 w-4" />
+                            <span>{property.max_guests}</span>
+                          </div>
+                        )}
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Capacité</div>
-                        <div className="font-bold text-gray-900 dark:text-white">{property.max_guests ?? '—'} invités</div>
+                      <div className="text-right">
+                        <div className="font-bold text-lg text-gray-900 dark:text-white">
+                          {property.price_per_night?.toLocaleString('fr-DZ')} DA
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">par nuit</div>
                       </div>
-                      {property.bedrooms != null && (
-                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
-                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Chambres</div>
-                          <div className="font-bold text-gray-900 dark:text-white">{property.bedrooms}</div>
-                        </div>
-                      )}
-                      {property.bathrooms != null && (
-                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
-                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Salles de bain</div>
-                          <div className="font-bold text-gray-900 dark:text-white">{property.bathrooms}</div>
-                        </div>
-                      )}
                     </div>
 
                     {/* Stats */}
                     {property.bookings_count !== undefined && (
-                      <div className="border-t border-gray-100 dark:border-gray-700 pt-4 grid grid-cols-3 gap-2 text-sm">
+                      <div className="border-t border-gray-100 dark:border-gray-700 pt-3 grid grid-cols-3 gap-2 text-center text-xs">
                         <div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">Réservations</div>
+                          <div className="flex items-center justify-center gap-1 text-gray-400 mb-0.5">
+                            <Calendar className="h-3 w-3" />
+                          </div>
                           <div className="font-semibold text-gray-900 dark:text-white">{property.bookings_count}</div>
+                          <div className="text-gray-500 dark:text-gray-400">Réservations</div>
                         </div>
                         <div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">Revenus/mois</div>
-                          <div className="font-semibold text-green-600 dark:text-green-400">{(property.earnings_this_month || 0).toLocaleString('fr-DZ')} DA</div>
+                          <div className="font-semibold text-green-600 dark:text-green-400">
+                            {(property.earnings_this_month || 0).toLocaleString('fr-DZ')}
+                          </div>
+                          <div className="text-gray-500 dark:text-gray-400">DA/mois</div>
                         </div>
                         <div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">Occupation</div>
+                          <div className="flex items-center justify-center gap-1 text-gray-400 mb-0.5">
+                            <TrendingUp className="h-3 w-3" />
+                          </div>
                           <div className="font-semibold text-gray-900 dark:text-white">{Math.round(property.occupancy_rate || 0)}%</div>
+                          <div className="text-gray-500 dark:text-gray-400">Occupation</div>
                         </div>
                       </div>
                     )}
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               )
             })}
           </div>

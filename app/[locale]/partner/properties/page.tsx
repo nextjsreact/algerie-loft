@@ -46,10 +46,7 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
     async function fetchProperties() {
       try {
         setLoading(true)
-        const testParam = typeof window !== 'undefined' && window.location.search.includes('_test_owner_id')
-          ? `?_test_owner_id=${new URLSearchParams(window.location.search).get('_test_owner_id')}`
-          : ''
-        const res = await fetch(`/api/partner/properties${testParam}`)
+        const res = await fetch('/api/partner/properties')
         if (!res.ok) throw new Error('Erreur de chargement')
         const data = await res.json()
         setProperties(data?.data?.properties || data?.properties || [])

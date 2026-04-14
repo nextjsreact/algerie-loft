@@ -44,10 +44,7 @@ export default function PartnerPropertyDetailPage({ params }: { params: Promise<
   useEffect(() => {
     async function load() {
       try {
-        const testParam = typeof window !== 'undefined' && window.location.search.includes('_test_owner_id')
-          ? `?_test_owner_id=${new URLSearchParams(window.location.search).get('_test_owner_id')}`
-          : ''
-        const res = await fetch(`/api/partner/properties${testParam}`)
+        const res = await fetch('/api/partner/properties')
         if (!res.ok) throw new Error('Erreur de chargement')
         const data = await res.json()
         const props: Property[] = data?.data?.properties || data?.properties || []

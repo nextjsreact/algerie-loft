@@ -58,30 +58,26 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
 
     const supabase = await createClient(true);
 
-    // TEST MODE: allow overriding owner_id via query param for demo
     const { searchParams: sp } = new URL(request.url);
-    const testOwnerId = sp.get('_test_owner_id')
 
     // Find owner by auth user id OR email (ids may differ)
-    let ownerId: string | null = testOwnerId || null
+    let ownerId: string | null = null
 
-    if (!ownerId) {
-      const { data: ownerById } = await supabase
+    const { data: ownerById } = await supabase
+      .from('owners')
+      .select('id')
+      .eq('id', session.user.id)
+      .single()
+
+    if (ownerById) {
+      ownerId = ownerById.id
+    } else if (session.user.email) {
+      const { data: ownerByEmail } = await supabase
         .from('owners')
         .select('id')
-        .eq('id', session.user.id)
+        .eq('email', session.user.email)
         .single()
-
-      if (ownerById) {
-        ownerId = ownerById.id
-      } else if (session.user.email) {
-        const { data: ownerByEmail } = await supabase
-          .from('owners')
-          .select('id')
-          .eq('email', session.user.email)
-          .single()
-        if (ownerByEmail) ownerId = ownerByEmail.id
-      }
+      if (ownerByEmail) ownerId = ownerByEmail.id
     }
 
     if (!ownerId) {
@@ -245,7 +241,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
       const coverPhoto = photos[0] || null
 
       console.log(`[partner/properties] loft ${property.id} (${property.name}): photos=${photos.length}, cover=${coverPhoto}`)
-
       return {
         id: property.id,
         name: property.name,

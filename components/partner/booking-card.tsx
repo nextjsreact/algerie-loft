@@ -115,7 +115,7 @@ export function BookingCard({ booking, locale, onClick }: BookingCardProps) {
           </div>
           <div className="text-right ml-3 flex-shrink-0">
             <div className="font-bold text-lg text-gray-900 dark:text-gray-100">
-              {formatCurrency(booking.total_price)}
+              {formatCurrency(booking.total_price || 0)}
             </div>
           </div>
         </div>
@@ -144,9 +144,9 @@ export function BookingCard({ booking, locale, onClick }: BookingCardProps) {
           </Badge>
           <Badge 
             variant="secondary" 
-            className={cn("text-xs font-medium", getPaymentStatusColor(booking.payment_status))}
+            className={cn("text-xs font-medium", getPaymentStatusColor(booking.payment_status || 'pending'))}
           >
-            {t(`paymentStatus.${booking.payment_status}`)}
+            {booking.payment_status ? t(`paymentStatus.${booking.payment_status}`) : '—'}
           </Badge>
           <span className="text-xs text-gray-500 dark:text-gray-500 ml-auto">
             {booking.booking_reference}

@@ -54,16 +54,21 @@ export async function GET(request: NextRequest) {
 
     const reservationsView = list.map(r => ({
       id: r.id,
+      booking_reference: r.id.slice(0, 8).toUpperCase(),
       loft_id: r.loft_id,
       loft_name: loftNameMap.get(r.loft_id) || '—',
+      client_name: r.guest_name || 'Invité',
       guest_name: r.guest_name || 'Invité',
       guest_email: r.guest_email,
       guest_phone: r.guest_phone,
       check_in: r.check_in_date,
       check_out: r.check_out_date,
       status: r.status,
+      total_price: Number(r.total_amount || 0),   // mapped for BookingCard
       total_amount: Number(r.total_amount || 0),
+      payment_status: 'paid' as const,             // default since we don't track separately
       nights: Math.ceil((new Date(r.check_out_date).getTime() - new Date(r.check_in_date).getTime()) / 86400000),
+      guests: r.guest_count || 1,
       guests_count: r.guest_count || 1,
       special_requests: r.special_requests,
       created_at: r.created_at,

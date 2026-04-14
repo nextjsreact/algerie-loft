@@ -286,7 +286,7 @@ export const PropertiesOverview = memo(function PropertiesOverview({
                         {t('properties.pricePerNight')}
                       </dt>
                       <dd className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        {property.price_per_night}€
+                        {property.price_per_night.toLocaleString('fr-DZ')} DA
                       </dd>
                     </div>
                     <div className="flex flex-col">
@@ -303,7 +303,7 @@ export const PropertiesOverview = memo(function PropertiesOverview({
                         {t('properties.monthlyRevenue')}
                       </dt>
                       <dd className="text-sm font-semibold text-green-600 dark:text-green-400">
-                        {property.earnings_this_month}€
+                        {property.earnings_this_month.toLocaleString('fr-DZ')} DA
                       </dd>
                     </div>
                     <div className="flex flex-col">

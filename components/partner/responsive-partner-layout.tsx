@@ -10,13 +10,10 @@ import {
   LayoutDashboard, 
   Building2, 
   Calendar, 
-  MessageSquare, 
-  BarChart3, 
-  Settings,
+  MessageSquare,
   DollarSign,
   Menu,
   X,
-  Sparkles
 } from 'lucide-react'
 import { PartnerSWRProvider } from './swr-provider'
 import type { AuthSession } from '@/lib/types'
@@ -42,9 +39,6 @@ export function ResponsivePartnerLayout({ children, locale }: ResponsivePartnerL
     { name: 'properties', translationKey: 'properties', href: `/${locale}/partner/properties`, icon: Building2 },
     { name: 'bookings', translationKey: 'bookings', href: `/${locale}/partner/bookings`, icon: Calendar },
     { name: 'revenue', translationKey: 'revenue', href: `/${locale}/partner/revenue`, icon: DollarSign },
-    { name: 'analytics', translationKey: 'analytics', href: `/${locale}/partner/analytics`, icon: BarChart3 },
-    { name: 'messages', translationKey: 'messages', href: `/${locale}/partner/messages`, icon: MessageSquare },
-    { name: 'settings', translationKey: 'settings', href: `/${locale}/partner/settings`, icon: Settings },
   ]
 
   const handleSessionExpired = useCallback(() => {

@@ -152,19 +152,9 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
                 🏠 Mes Propriétés
               </h1>
               <p style={{ color: '#6B7280', margin: '0.5rem 0 0 0' }}>
-                Gérez vos lofts et suivez leurs performances
+                Consultez vos lofts et suivez leurs performances
               </p>
             </div>
-            <button
-              onClick={() => router.push('/fr/partner/properties/new')}
-              style={{
-                ...buttonStyle,
-                backgroundColor: '#10B981',
-                color: 'white'
-              }}
-            >
-              ➕ Ajouter une Propriété
-            </button>
           </div>
         </div>
       </div>
@@ -204,28 +194,16 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
               <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🏠</div>
               <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
                 {filter === 'all' ? 'Aucune propriété' : 
-                 filter === 'published' ? 'Aucune propriété publiée' :
-                 filter === 'draft' ? 'Aucun brouillon' :
+                 filter === 'available' ? 'Aucune propriété disponible' :
+                 filter === 'occupied' ? 'Aucune propriété occupée' :
                  'Aucune propriété en maintenance'}
               </h2>
               <p style={{ color: '#6B7280', marginBottom: '2rem' }}>
-                {filter === 'all' ? 'Ajoutez votre première propriété pour commencer à recevoir des réservations' :
-                 filter === 'published' ? 'Publiez vos propriétés pour qu\'elles soient visibles par les clients' :
-                 filter === 'draft' ? 'Vos brouillons de propriétés apparaîtront ici' :
-                 'Aucune propriété n\'est actuellement en maintenance'}
+                {filter === 'all' ? 'Aucune propriété trouvée.' :
+                 filter === 'available' ? 'Aucune propriété disponible.' :
+                 filter === 'occupied' ? 'Aucune propriété occupée.' :
+                 'Aucune propriété en maintenance.'}
               </p>
-              {filter === 'all' && (
-                <button
-                  onClick={() => router.push('/fr/partner/properties/new')}
-                  style={{
-                    ...buttonStyle,
-                    backgroundColor: '#10B981',
-                    color: 'white'
-                  }}
-                >
-                  ➕ Ajouter une Propriété
-                </button>
-              )}
             </div>
           </div>
         ) : (

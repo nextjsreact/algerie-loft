@@ -102,7 +102,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
     // Build query with RLS automatically applied
     let query = supabase
       .from('lofts')
-      .select('id, name, address, status, price_per_night, created_at, updated_at, loft_photos(url, is_cover)')
+      .select('id, name, address, status, price_per_night, max_guests, bedrooms, bathrooms, created_at, updated_at, loft_photos(url, is_cover)')
       .eq('owner_id', partnerId)
       .order('created_at', { ascending: false })
 
@@ -227,6 +227,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
         address: property.address || '',
         status: occupancyStatus,
         price_per_night: property.price_per_night || 0,
+        max_guests: (property as any).max_guests || null,
+        bedrooms: (property as any).bedrooms || null,
+        bathrooms: (property as any).bathrooms || null,
         bookings_count: propertyReservations.length,
         earnings_this_month: Math.round(propertyCurrentMonthRevenue),
         occupancy_rate: occupancyRate,

@@ -40,7 +40,8 @@ export default function PartnerPropertiesPage() {
       }
 
       const data = await response.json()
-      setProperties(data.properties || [])
+      // API returns { success, data: { properties: [...] } }
+      setProperties(data?.data?.properties || data?.properties || [])
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement')
@@ -311,7 +312,7 @@ export default function PartnerPropertiesPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
                   <div>
                     <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>Prix par nuit</div>
-                    <div style={{ fontSize: '1.125rem', fontWeight: 'bold' }}>{property.price_per_night}€</div>
+                    <div style={{ fontSize: '1.125rem', fontWeight: 'bold' }}>{property.price_per_night?.toLocaleString('fr-DZ')} DA</div>
                   </div>
                   <div>
                     <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>Capacité</div>
@@ -341,7 +342,7 @@ export default function PartnerPropertiesPage() {
                       </div>
                       <div>
                         <div style={{ color: '#6B7280' }}>Revenus/mois</div>
-                        <div style={{ fontWeight: '500' }}>{property.earnings_this_month || 0}€</div>
+                        <div style={{ fontWeight: '500' }}>{(property.earnings_this_month || 0).toLocaleString('fr-DZ')} DA</div>
                       </div>
                       <div>
                         <div style={{ color: '#6B7280' }}>Occupation</div>

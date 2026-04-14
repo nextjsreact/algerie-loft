@@ -58,28 +58,34 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
 
     const supabase = await createReadOnlyClient();
 
-    // Get partner profile
-    const { data: partnerProfile, error: partnerError } = await supabase
-      .from('partner_profiles')
-      .select('id, verification_status')
-      .eq('user_id', session.user.id)
-      .single();
+    // Find owner by auth user id OR email (ids may differ)
+    let ownerId: string | null = null
 
-    if (partnerError || !partnerProfile) {
+    const { data: ownerById } = await supabase
+      .from('owners')
+      .select('id')
+      .eq('id', session.user.id)
+      .single()
+
+    if (ownerById) {
+      ownerId = ownerById.id
+    } else if (session.user.email) {
+      const { data: ownerByEmail } = await supabase
+        .from('owners')
+        .select('id')
+        .eq('email', session.user.email)
+        .single()
+      if (ownerByEmail) ownerId = ownerByEmail.id
+    }
+
+    if (!ownerId) {
       return NextResponse.json({
         success: false,
         error: 'Partner profile not found'
-      }, { status: 403 });
+      }, { status: 403 })
     }
 
-    if (partnerProfile.verification_status !== 'verified') {
-      return NextResponse.json({
-        success: false,
-        error: 'Partner account not verified'
-      }, { status: 403 });
-    }
-
-    const partnerId = partnerProfile.id;
+    const partnerId = ownerId
 
     const { searchParams } = new URL(request.url);
     const page = Number(searchParams.get('page')) || 1;
@@ -157,23 +163,29 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
     
     if (propertyIds.length > 0) {
       const { data: bookings, error: bookingsError } = await supabase
-        .from('bookings')
+        .from('reservations')
         .select(`
           id,
           loft_id,
-          check_in,
-          check_out,
+          check_in_date,
+          check_out_date,
           status,
-          total_price,
+          total_amount,
+          guest_name,
           created_at
         `)
         .in('loft_id', propertyIds)
         .order('created_at', { ascending: false });
 
       if (bookingsError) {
-        console.error('Bookings fetch error:', bookingsError);
+        console.error('Reservations fetch error:', bookingsError);
       } else {
-        reservationsData = bookings || [];
+        reservationsData = (bookings || []).map((b: any) => ({
+          ...b,
+          check_in: b.check_in_date,
+          check_out: b.check_out_date,
+          total_price: b.total_amount,
+        }))
       }
     }
 

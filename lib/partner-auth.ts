@@ -1,62 +1,46 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/utils/supabase/server'
-import { getSession } from './auth'
-
 /**
- * Check if the current user has a verified partner profile
- * Redirects to appropriate page if not verified
+ * Partner authentication helper.
+ * Finds the owner record for the current session user,
+ * searching by id first, then by email (since owner.id may differ from auth.user.id).
  */
-export async function requireVerifiedPartner() {
-  const session = await getSession()
-  
-  if (!session) {
-    redirect('/login')
-  }
+import { createClient } from '@/utils/supabase/server'
+import { getSession } from '@/lib/auth'
 
-  const supabase = await createClient()
-  
-  // Check if user has a partner profile
-  const { data: partnerProfile, error } = await supabase
-    .from('partner_profiles')
-    .select('id, verification_status')
-    .eq('user_id', session.user.id)
-    .single()
-
-  if (error || !partnerProfile) {
-    // No partner profile - redirect to registration
-    redirect('/partner/register')
-  }
-
-  // Check verification status
-  if (partnerProfile.verification_status === 'pending') {
-    redirect('/partner/application-pending')
-  }
-
-  if (partnerProfile.verification_status === 'rejected') {
-    redirect('/partner/rejected')
-  }
-
-  // If verified, return the partner profile
-  return partnerProfile
+export interface PartnerInfo {
+  ownerId: string
+  ownerName: string
+  ownerEmail: string
 }
 
-/**
- * Get partner profile status without redirecting
- */
-export async function getPartnerStatus() {
+export async function getPartnerInfo(): Promise<PartnerInfo | null> {
   const session = await getSession()
-  
-  if (!session) {
-    return null
-  }
+  if (!session) return null
 
-  const supabase = await createClient()
-  
-  const { data: partnerProfile } = await supabase
-    .from('partner_profiles')
-    .select('id, verification_status')
-    .eq('user_id', session.user.id)
+  const supabase = await createClient(true)
+
+  // Try by auth user id first
+  const { data: byId } = await supabase
+    .from('owners')
+    .select('id, name, email')
+    .eq('id', session.user.id)
     .single()
 
-  return partnerProfile
+  if (byId) {
+    return { ownerId: byId.id, ownerName: byId.name, ownerEmail: byId.email }
+  }
+
+  // Fallback: search by email
+  if (session.user.email) {
+    const { data: byEmail } = await supabase
+      .from('owners')
+      .select('id, name, email')
+      .eq('email', session.user.email)
+      .single()
+
+    if (byEmail) {
+      return { ownerId: byEmail.id, ownerName: byEmail.name, ownerEmail: byEmail.email }
+    }
+  }
+
+  return null
 }

@@ -210,7 +210,7 @@ export async function fetchDashboardData(
     {
       stats: '/api/partner/dashboard/stats',
       properties: '/api/partner/properties?summary=true',
-      bookings: '/api/bookings?limit=5',
+      bookings: '/api/partner/reservations?limit=5',
     },
     options
   )

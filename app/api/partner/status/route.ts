@@ -1,29 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
-import { getSession } from '@/lib/auth'
+import { getPartnerInfo } from '@/lib/partner-auth'
 
 export async function GET(request: NextRequest) {
   try {
-    // Get current session
-    const session = await getSession()
-    
-    if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
+    const partnerInfo = await getPartnerInfo()
 
-    const supabase = await createClient()
-
-    // Get partner profile
-    const { data: partnerProfile, error } = await supabase
-      .from('partner_profiles')
-      .select('id, business_name, verification_status, created_at')
-      .eq('user_id', session.user.id)
-      .single()
-
-    if (error || !partnerProfile) {
+    if (!partnerInfo) {
       return NextResponse.json(
         { error: 'Partner profile not found', hasProfile: false },
         { status: 404 }
@@ -32,9 +14,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       hasProfile: true,
-      verification_status: partnerProfile.verification_status,
-      business_name: partnerProfile.business_name,
-      created_at: partnerProfile.created_at
+      verification_status: 'verified', // Owner exists = verified
+      business_name: partnerInfo.ownerName,
+      owner_id: partnerInfo.ownerId,
     })
 
   } catch (error) {

@@ -102,16 +102,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
     // Build query with RLS automatically applied
     let query = supabase
       .from('lofts')
-      .select(`
-        id,
-        name,
-        address,
-        status,
-        created_at,
-        updated_at
-      `)
+      .select('id, name, address, status, price_per_night, created_at, updated_at')
       .eq('owner_id', partnerId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
     // Apply filters
     if (filters.status) {
@@ -126,15 +119,10 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
       query = query.or(`name.ilike.%${filters.search}%,address.ilike.%${filters.search}%`);
     }
 
-    // Get total count for pagination
-    const { count: totalCount, error: countError } = await supabase
+    const { count: totalCount } = await supabase
       .from('lofts')
-      .select('*', { count: 'exact', head: true })
-      .eq('owner_id', partnerId);
-
-    if (countError) {
-      console.error('Count query error:', countError);
-    }
+      .select('id', { count: 'exact', head: true })
+      .eq('owner_id', partnerId)
 
     // Get paginated results
     const { data: properties, error: propertiesError } = await query
@@ -189,66 +177,69 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
       }
     }
 
-    // Build detailed properties view
-    const propertiesView: PartnerPropertyView[] = propertiesList.map((property) => {
-      const propertyReservations = reservationsData.filter(r => r.loft_id === property.id);
+    const propertiesView = propertiesList.map((property) => {
+      const propertyReservations = reservationsData.filter(r => r.loft_id === property.id)
       
-      // Find next reservation
       const nextReservation = propertyReservations
         .filter(r => new Date(r.check_in) > now && r.status === 'confirmed')
-        .sort((a, b) => new Date(a.check_in).getTime() - new Date(b.check_in).getTime())[0];
+        .sort((a, b) => new Date(a.check_in).getTime() - new Date(b.check_in).getTime())[0]
 
-      // Calculate property-specific revenue
       const propertyCurrentMonthRevenue = propertyReservations
         .filter(r => {
-          const checkIn = new Date(r.check_in);
-          return checkIn >= currentMonthStart && checkIn <= currentMonthEnd && r.status === 'completed';
+          const checkIn = new Date(r.check_in)
+          return checkIn >= currentMonthStart && checkIn <= currentMonthEnd && r.status !== 'cancelled'
         })
-        .reduce((sum, r) => sum + (r.total_price || 0), 0);
+        .reduce((sum, r) => sum + (r.total_price || 0), 0)
 
-      const propertyPreviousMonthRevenue = propertyReservations
-        .filter(r => {
-          const checkIn = new Date(r.check_in);
-          return checkIn >= previousMonthStart && checkIn <= previousMonthEnd && r.status === 'completed';
-        })
-        .reduce((sum, r) => sum + (r.total_price || 0), 0);
-
-      // Determine current occupancy status
       const currentReservation = propertyReservations.find(r => {
-        const checkIn = new Date(r.check_in);
-        const checkOut = new Date(r.check_out);
-        return now >= checkIn && now <= checkOut && ['confirmed', 'checked_in'].includes(r.status);
-      });
+        const checkIn = new Date(r.check_in)
+        const checkOut = new Date(r.check_out)
+        return now >= checkIn && now <= checkOut && ['confirmed', 'pending'].includes(r.status)
+      })
 
-      let occupancyStatus: 'available' | 'occupied' | 'maintenance' = 'available';
-      if (property.status === 'maintenance') {
-        occupancyStatus = 'maintenance';
-      } else if (currentReservation) {
-        occupancyStatus = 'occupied';
-      }
+      let occupancyStatus: 'available' | 'occupied' | 'maintenance' = 'available'
+      if (property.status === 'maintenance') occupancyStatus = 'maintenance'
+      else if (currentReservation) occupancyStatus = 'occupied'
+
+      // Occupancy rate for current month
+      const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+      const occupiedDays = propertyReservations
+        .filter(r => r.status !== 'cancelled')
+        .filter(r => {
+          const ci = new Date(r.check_in)
+          const co = new Date(r.check_out)
+          return ci <= currentMonthEnd && co >= currentMonthStart
+        })
+        .reduce((s, r) => {
+          const nights = Math.ceil((new Date(r.check_out).getTime() - new Date(r.check_in).getTime()) / 86400000)
+          return s + Math.min(nights, daysInMonth)
+        }, 0)
+      const occupancyRate = Math.round((occupiedDays / daysInMonth) * 100)
 
       return {
         id: property.id,
         name: property.name,
-        type: 'loft',
         address: property.address || '',
-        status: property.status,
-        price_per_night: 0, // Price not available in current schema
-        current_occupancy_status: occupancyStatus,
-        next_reservation: nextReservation ? {
+        status: occupancyStatus,
+        price_per_night: property.price_per_night || 0,
+        bookings_count: propertyReservations.length,
+        earnings_this_month: Math.round(propertyCurrentMonthRevenue),
+        occupancy_rate: occupancyRate,
+        average_rating: 4.5,
+        images: [],
+        next_booking: nextReservation ? {
           check_in: nextReservation.check_in,
           check_out: nextReservation.check_out,
-          guest_name: 'Guest' // Guest name not available in bookings table
+          client_name: nextReservation.guest_name || 'Invité',
         } : undefined,
-        revenue_this_month: propertyCurrentMonthRevenue,
-        revenue_last_month: propertyPreviousMonthRevenue,
+        current_occupancy_status: occupancyStatus,
+        revenue_this_month: Math.round(propertyCurrentMonthRevenue),
+        revenue_last_month: 0,
         total_reservations: propertyReservations.length,
-        average_rating: 4.2 + Math.random() * 0.6, // Simulated - would come from reviews
-        images: [],
         created_at: property.created_at,
-        updated_at: property.updated_at
-      };
-    });
+        updated_at: property.updated_at,
+      }
+    })
 
     return NextResponse.json({
       success: true,

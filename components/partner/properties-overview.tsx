@@ -231,7 +231,7 @@ export const PropertiesOverview = memo(function PropertiesOverview({
             >
               <div className="flex flex-col sm:flex-row">
                 {/* Property Image */}
-                <div className="relative w-full sm:w-48 h-48 sm:h-auto bg-gray-200 dark:bg-gray-700 flex-shrink-0">
+                <div className="relative aspect-[4/3] sm:w-48 sm:aspect-auto sm:h-auto bg-gray-200 dark:bg-gray-700 flex-shrink-0 overflow-hidden">
                   {(property.cover_photo || (property.images && property.images.length > 0)) ? (
                     <Image
                       src={property.cover_photo || property.images![0]}

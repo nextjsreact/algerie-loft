@@ -98,11 +98,11 @@ export default function PartnerPropertyDetailPage({ params }: { params: Promise<
         </button>
 
         {/* Hero photo */}
-        <div className="relative h-72 rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800">
+        <div className="relative aspect-[4/3] sm:aspect-[16/7] rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800">
           {photoUrl ? (
-            <img src={photoUrl} alt={property.name} className="w-full h-full object-cover" />
+            <img src={photoUrl} alt={property.name} className="absolute inset-0 w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+            <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
               <span className="text-6xl mb-2">🏠</span>
               <span className="text-sm">Aucune photo</span>
             </div>

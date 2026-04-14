@@ -143,19 +143,19 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
                   className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group"
                 >
                   {/* Photo */}
-                  <div className="relative h-52 bg-gray-100 dark:bg-gray-700 overflow-hidden">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-700">
                     {photoUrl ? (
                       <img
                         src={photoUrl}
                         alt={property.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         onError={(e) => {
                           console.warn('[Partner Properties] image failed to load:', photoUrl)
                           e.currentTarget.style.display = 'none'
                         }}
                       />
                     ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+                      <div className="absolute inset-0 w-full h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
                         <span className="text-4xl mb-2">🏠</span>
                         <span className="text-xs">Aucune photo</span>
                       </div>

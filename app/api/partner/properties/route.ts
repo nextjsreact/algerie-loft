@@ -221,6 +221,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
         .map((p: any) => p.url)
       const coverPhoto = photos[0] || null
 
+      console.log(`[partner/properties] loft ${property.id} (${property.name}): loft_photos count=${((property as any).loft_photos || []).length}, coverPhoto=${coverPhoto}`)
+
       return {
         id: property.id,
         name: property.name,

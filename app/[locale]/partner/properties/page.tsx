@@ -12,6 +12,8 @@ interface Property {
   price_per_night: number
   status: 'available' | 'occupied' | 'maintenance'
   max_guests?: number
+  bedrooms?: number
+  bathrooms?: number
   amenities?: string[]
   bookings_count?: number
   earnings_this_month?: number
@@ -33,15 +35,12 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
     try {
       setLoading(true)
       const response = await fetch('/api/partner/properties')
-      
-      if (!response.ok) {
-        throw new Error('Erreur lors du chargement des propriétés')
-      }
-
+      if (!response.ok) throw new Error('Erreur lors du chargement des propriétés')
       const data = await response.json()
-      // API returns { success, data: { properties: [...] } }
-      setProperties(data?.data?.properties || data?.properties || [])
-      
+      const props = data?.data?.properties || data?.properties || []
+      console.log('[Partner Properties] received:', props.length, 'properties')
+      if (props[0]) console.log('[Partner Properties] first property cover_photo:', props[0].cover_photo, 'images:', props[0].images)
+      setProperties(props)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement')
     } finally {
@@ -49,297 +48,174 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
     }
   }
 
-  useEffect(() => {
-    fetchProperties()
-  }, [])
+  useEffect(() => { fetchProperties() }, [])
 
-  const getFilteredProperties = () => {
-    switch (filter) {
-      case 'available': return properties.filter(p => p.status === 'available')
-      case 'occupied': return properties.filter(p => p.status === 'occupied')
-      case 'maintenance': return properties.filter(p => p.status === 'maintenance')
-      default: return properties
-    }
+  const filtered = properties.filter(p => filter === 'all' || p.status === filter)
+
+  const statusConfig = {
+    available: { label: 'Disponible', cls: 'bg-emerald-500' },
+    occupied:  { label: 'Occupé',     cls: 'bg-amber-500'   },
+    maintenance:{ label: 'Maintenance', cls: 'bg-red-500'   },
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'available': return '#10B981'
-      case 'occupied': return '#F59E0B'
-      case 'maintenance': return '#EF4444'
-      default: return '#6B7280'
-    }
-  }
+  const filterBtns = [
+    { key: 'all',         label: 'Tous',           count: properties.length },
+    { key: 'available',   label: '✅ Disponible',  count: properties.filter(p => p.status === 'available').length },
+    { key: 'occupied',    label: '🔴 Occupé',      count: properties.filter(p => p.status === 'occupied').length },
+    { key: 'maintenance', label: '🔧 Maintenance', count: properties.filter(p => p.status === 'maintenance').length },
+  ]
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'available': return 'Disponible'
-      case 'occupied': return 'Occupé'
-      case 'maintenance': return 'Maintenance'
-      default: return status
-    }
-  }
-
-  const cardStyle = {
-    backgroundColor: 'white',
-    border: '1px solid #E5E7EB',
-    borderRadius: '0.5rem',
-    padding: '1.5rem',
-    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-  }
-
-  const buttonStyle = {
-    padding: '0.75rem 1.5rem',
-    borderRadius: '0.5rem',
-    border: 'none',
-    fontSize: '1rem',
-    cursor: 'pointer',
-    fontWeight: '500'
-  }
-
-  if (loading) {
-    return (
-      <ResponsivePartnerLayout locale={locale}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem' }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔄</div>
-            <p style={{ color: '#6B7280' }}>Chargement de vos propriétés...</p>
-          </div>
+  if (loading) return (
+    <ResponsivePartnerLayout locale={locale}>
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center">
+          <div className="text-5xl mb-4">🔄</div>
+          <p className="text-gray-500 dark:text-gray-400">Chargement de vos propriétés...</p>
         </div>
-      </ResponsivePartnerLayout>
-    )
-  }
+      </div>
+    </ResponsivePartnerLayout>
+  )
 
-  if (error) {
-    return (
-      <ResponsivePartnerLayout locale={locale}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem' }}>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>❌</div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Erreur de chargement</h2>
-            <p style={{ color: '#6B7280', marginBottom: '1.5rem' }}>{error}</p>
-            <button
-              onClick={fetchProperties}
-              style={{ ...buttonStyle, backgroundColor: '#3B82F6', color: 'white' }}
-            >
-              Réessayer
-            </button>
-          </div>
+  if (error) return (
+    <ResponsivePartnerLayout locale={locale}>
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center">
+          <div className="text-5xl mb-4">❌</div>
+          <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">Erreur de chargement</h2>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">{error}</p>
+          <button onClick={fetchProperties} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            Réessayer
+          </button>
         </div>
-      </ResponsivePartnerLayout>
-    )
-  }
-
-  const filteredProperties = getFilteredProperties()
+      </div>
+    </ResponsivePartnerLayout>
+  )
 
   return (
     <ResponsivePartnerLayout locale={locale}>
-      <div>
+      <div className="space-y-6">
+
         {/* Page Title */}
-        <div style={{ marginBottom: '1.5rem' }}>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#111827', margin: 0 }}>
-            🏠 Mes Propriétés
-          </h1>
-          <p style={{ color: '#6B7280', margin: '0.25rem 0 0 0' }}>
-            Consultez vos lofts et suivez leurs performances
-          </p>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">🏠 Mes Propriétés</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Consultez vos lofts et suivez leurs performances</p>
         </div>
+
         {/* Filters */}
-        <div style={{ ...cardStyle, marginBottom: '2rem' }}>
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            {[
-              { key: 'all', label: 'Tous', count: properties.length },
-              { key: 'available', label: '✅ Disponible', count: properties.filter(p => p.status === 'available').length },
-              { key: 'occupied', label: '🔴 Occupé', count: properties.filter(p => p.status === 'occupied').length },
-              { key: 'maintenance', label: '🔧 Maintenance', count: properties.filter(p => p.status === 'maintenance').length }
-            ].map((filterOption) => (
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 shadow-sm">
+          <div className="flex flex-wrap gap-2">
+            {filterBtns.map(f => (
               <button
-                key={filterOption.key}
-                onClick={() => setFilter(filterOption.key as any)}
-                style={{
-                  ...buttonStyle,
-                  backgroundColor: filter === filterOption.key ? '#3B82F6' : 'transparent',
-                  color: filter === filterOption.key ? 'white' : '#6B7280',
-                  border: '1px solid #D1D5DB',
-                  padding: '0.5rem 1rem',
-                  fontSize: '0.875rem'
-                }}
+                key={f.key}
+                onClick={() => setFilter(f.key as any)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                  filter === f.key
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-transparent text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
               >
-                {filterOption.label} ({filterOption.count})
+                {f.label} ({f.count})
               </button>
             ))}
           </div>
         </div>
 
         {/* Properties Grid */}
-        {filteredProperties.length === 0 ? (
-          <div style={cardStyle}>
-            <div style={{ textAlign: 'center', padding: '3rem' }}>
-              <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🏠</div>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                {filter === 'all' ? 'Aucune propriété' : 
-                 filter === 'available' ? 'Aucune propriété disponible' :
-                 filter === 'occupied' ? 'Aucune propriété occupée' :
-                 'Aucune propriété en maintenance'}
-              </h2>
-              <p style={{ color: '#6B7280', marginBottom: '2rem' }}>
-                {filter === 'all' ? 'Aucune propriété trouvée.' :
-                 filter === 'available' ? 'Aucune propriété disponible.' :
-                 filter === 'occupied' ? 'Aucune propriété occupée.' :
-                 'Aucune propriété en maintenance.'}
-              </p>
-            </div>
+        {filtered.length === 0 ? (
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-12 text-center shadow-sm">
+            <div className="text-5xl mb-4">🏠</div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Aucune propriété</h2>
+            <p className="text-gray-500 dark:text-gray-400">Aucune propriété trouvée pour ce filtre.</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '1.5rem' }}>
-            {filteredProperties.map((property) => (
-              <div
-                key={property.id}
-                style={{
-                  ...cardStyle,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-                onClick={() => router.push(`/${locale}/lofts/${property.id}`)}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                  e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
-                }}
-              >
-                {/* Property Image */}
-                <div style={{ 
-                  height: '200px', 
-                  backgroundColor: '#F3F4F6', 
-                  borderRadius: '0.5rem',
-                  overflow: 'hidden',
-                  marginBottom: '1rem',
-                  position: 'relative'
-                }}>
-                  {property.cover_photo ? (
-                    <img
-                      src={property.cover_photo}
-                      alt={property.name}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem' }}>
-                      🏠
-                    </div>
-                  )}
-                </div>
-
-                {/* Property Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
-                  <div style={{ flex: 1 }}>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: '600', margin: '0 0 0.25rem 0' }}>
-                      {property.name}
-                    </h3>
-                    <p style={{ color: '#6B7280', fontSize: '0.875rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                      📍 {property.address}
-                    </p>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', alignItems: 'end' }}>
-                    <span
-                      style={{
-                        backgroundColor: getStatusColor(property.status),
-                        color: 'white',
-                        padding: '0.25rem 0.5rem',
-                        borderRadius: '0.25rem',
-                        fontSize: '0.75rem',
-                        fontWeight: '500'
-                      }}
-                    >
-                      {getStatusLabel(property.status)}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            {filtered.map((property) => {
+              const photoUrl = property.cover_photo || (property.images && property.images[0]) || null
+              const sc = statusConfig[property.status] || { label: property.status, cls: 'bg-gray-500' }
+              return (
+                <div
+                  key={property.id}
+                  onClick={() => router.push(`/${locale}/lofts/${property.id}`)}
+                  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group"
+                >
+                  {/* Photo */}
+                  <div className="relative h-52 bg-gray-100 dark:bg-gray-700 overflow-hidden">
+                    {photoUrl ? (
+                      <img
+                        src={photoUrl}
+                        alt={property.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          console.warn('[Partner Properties] image failed to load:', photoUrl)
+                          e.currentTarget.style.display = 'none'
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+                        <span className="text-4xl mb-2">🏠</span>
+                        <span className="text-xs">Aucune photo</span>
+                      </div>
+                    )}
+                    {/* Status badge */}
+                    <span className={`absolute top-3 right-3 ${sc.cls} text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow`}>
+                      {sc.label}
                     </span>
                   </div>
-                </div>
 
-                {/* Property Details */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: '1rem' }}>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>Prix par nuit</div>
-                    <div style={{ fontSize: '1.125rem', fontWeight: 'bold' }}>{property.price_per_night?.toLocaleString('fr-DZ')} DA</div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>Capacité</div>
-                    <div style={{ fontSize: '1.125rem', fontWeight: 'bold' }}>{property.max_guests} invités</div>
-                  </div>
-                  {property.bedrooms && (
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>Chambres</div>
-                      <div style={{ fontSize: '1.125rem', fontWeight: 'bold' }}>{property.bedrooms}</div>
-                    </div>
-                  )}
-                  {property.bathrooms && (
-                    <div>
-                      <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>Salles de bain</div>
-                      <div style={{ fontSize: '1.125rem', fontWeight: 'bold' }}>{property.bathrooms}</div>
-                    </div>
-                  )}
-                </div>
+                  {/* Content */}
+                  <div className="p-5">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      {property.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                      📍 {property.address}
+                    </p>
 
-                {/* Performance Stats */}
-                {property.bookings_count !== undefined && (
-                  <div style={{ borderTop: '1px solid #E5E7EB', paddingTop: '1rem' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', fontSize: '0.875rem' }}>
-                      <div>
-                        <div style={{ color: '#6B7280' }}>Réservations</div>
-                        <div style={{ fontWeight: '500' }}>{property.bookings_count}</div>
+                    {/* Details grid */}
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                      <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Prix par nuit</div>
+                        <div className="font-bold text-gray-900 dark:text-white">{property.price_per_night?.toLocaleString('fr-DZ')} DA</div>
                       </div>
-                      <div>
-                        <div style={{ color: '#6B7280' }}>Revenus/mois</div>
-                        <div style={{ fontWeight: '500' }}>{(property.earnings_this_month || 0).toLocaleString('fr-DZ')} DA</div>
+                      <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Capacité</div>
+                        <div className="font-bold text-gray-900 dark:text-white">{property.max_guests ?? '—'} invités</div>
                       </div>
-                      <div>
-                        <div style={{ color: '#6B7280' }}>Occupation</div>
-                        <div style={{ fontWeight: '500' }}>{Math.round(property.occupancy_rate || 0)}%</div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Amenities Preview */}
-                {property.amenities && property.amenities.length > 0 && (
-                  <div style={{ marginTop: '1rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.5rem' }}>Équipements</div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
-                      {property.amenities.slice(0, 3).map((amenity, index) => (
-                        <span
-                          key={index}
-                          style={{
-                            backgroundColor: '#F3F4F6',
-                            color: '#374151',
-                            padding: '0.125rem 0.375rem',
-                            borderRadius: '0.125rem',
-                            fontSize: '0.75rem'
-                          }}
-                        >
-                          {amenity}
-                        </span>
-                      ))}
-                      {property.amenities.length > 3 && (
-                        <span
-                          style={{
-                            backgroundColor: '#E5E7EB',
-                            color: '#6B7280',
-                            padding: '0.125rem 0.375rem',
-                            borderRadius: '0.125rem',
-                            fontSize: '0.75rem'
-                          }}
-                        >
-                          +{property.amenities.length - 3}
-                        </span>
+                      {property.bedrooms != null && (
+                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Chambres</div>
+                          <div className="font-bold text-gray-900 dark:text-white">{property.bedrooms}</div>
+                        </div>
+                      )}
+                      {property.bathrooms != null && (
+                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">Salles de bain</div>
+                          <div className="font-bold text-gray-900 dark:text-white">{property.bathrooms}</div>
+                        </div>
                       )}
                     </div>
-                  </div>
-                )}
 
-              </div>
-            ))}
+                    {/* Stats */}
+                    {property.bookings_count !== undefined && (
+                      <div className="border-t border-gray-100 dark:border-gray-700 pt-4 grid grid-cols-3 gap-2 text-sm">
+                        <div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">Réservations</div>
+                          <div className="font-semibold text-gray-900 dark:text-white">{property.bookings_count}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">Revenus/mois</div>
+                          <div className="font-semibold text-green-600 dark:text-green-400">{(property.earnings_this_month || 0).toLocaleString('fr-DZ')} DA</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">Occupation</div>
+                          <div className="font-semibold text-gray-900 dark:text-white">{Math.round(property.occupancy_rate || 0)}%</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

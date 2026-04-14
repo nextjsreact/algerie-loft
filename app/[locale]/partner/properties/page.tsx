@@ -380,7 +380,7 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
-                      router.push(`/${locale}/lofts/${property.id}/edit`)
+                      router.push(`/${locale}/availability?loftId=${property.id}&tab=calendar`)
                     }}
                     style={{
                       ...buttonStyle,
@@ -391,23 +391,7 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
                       fontSize: '0.875rem'
                     }}
                   >
-                    ✏️ Modifier
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      router.push(`/${locale}/availability?loftId=${property.id}&tab=calendar`)
-                    }}
-                    style={{
-                      ...buttonStyle,
-                      backgroundColor: '#F59E0B',
-                      color: 'white',
-                      flex: 1,
-                      padding: '0.5rem 1rem',
-                      fontSize: '0.875rem'
-                    }}
-                  >
-                    📅 Calendrier
+                    📅 Voir le calendrier
                   </button>
                 </div>
               </div>

@@ -34,6 +34,8 @@ interface PropertySummary {
   earnings_this_month: number
   occupancy_rate: number
   average_rating: number
+  cover_photo?: string | null
+  images?: string[]
   next_booking?: {
     check_in: string
     check_out: string

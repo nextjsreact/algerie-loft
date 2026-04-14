@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import { ResponsivePartnerLayout } from '@/components/partner/responsive-partner-layout'
 
 interface Property {
   id: string
@@ -99,67 +99,51 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔄</div>
-          <p style={{ color: '#6B7280' }}>Chargement de vos propriétés...</p>
+      <ResponsivePartnerLayout locale={locale}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔄</div>
+            <p style={{ color: '#6B7280' }}>Chargement de vos propriétés...</p>
+          </div>
         </div>
-      </div>
+      </ResponsivePartnerLayout>
     )
   }
 
   if (error) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#F9FAFB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>❌</div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Erreur de chargement</h2>
-          <p style={{ color: '#6B7280', marginBottom: '1.5rem' }}>{error}</p>
-          <button
-            onClick={fetchProperties}
-            style={{ ...buttonStyle, backgroundColor: '#3B82F6', color: 'white' }}
-          >
-            Réessayer
-          </button>
+      <ResponsivePartnerLayout locale={locale}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>❌</div>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Erreur de chargement</h2>
+            <p style={{ color: '#6B7280', marginBottom: '1.5rem' }}>{error}</p>
+            <button
+              onClick={fetchProperties}
+              style={{ ...buttonStyle, backgroundColor: '#3B82F6', color: 'white' }}
+            >
+              Réessayer
+            </button>
+          </div>
         </div>
-      </div>
+      </ResponsivePartnerLayout>
     )
   }
 
   const filteredProperties = getFilteredProperties()
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F9FAFB' }}>
-      {/* Header */}
-      <div style={{ backgroundColor: 'white', borderBottom: '1px solid #E5E7EB', padding: '1rem 0' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
-          <button
-            onClick={() => router.push(`/${locale}/partner/dashboard`)}
-            style={{
-              backgroundColor: 'transparent',
-              border: '1px solid #D1D5DB',
-              borderRadius: '0.25rem',
-              padding: '0.5rem 1rem',
-              cursor: 'pointer',
-              marginBottom: '1rem'
-            }}
-          >
-            ← Retour au dashboard
-          </button>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827', margin: 0 }}>
-                🏠 Mes Propriétés
-              </h1>
-              <p style={{ color: '#6B7280', margin: '0.5rem 0 0 0' }}>
-                Consultez vos lofts et suivez leurs performances
-              </p>
-            </div>
-          </div>
+    <ResponsivePartnerLayout locale={locale}>
+      <div>
+        {/* Page Title */}
+        <div style={{ marginBottom: '1.5rem' }}>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#111827', margin: 0 }}>
+            🏠 Mes Propriétés
+          </h1>
+          <p style={{ color: '#6B7280', margin: '0.25rem 0 0 0' }}>
+            Consultez vos lofts et suivez leurs performances
+          </p>
         </div>
-      </div>
-
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
         {/* Filters */}
         <div style={{ ...cardStyle, marginBottom: '2rem' }}>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -377,6 +361,6 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
           </div>
         )}
       </div>
-    </div>
+    </ResponsivePartnerLayout>
   )
 }

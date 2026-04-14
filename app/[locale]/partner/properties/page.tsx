@@ -34,7 +34,11 @@ export default function PartnerPropertiesPage({ params }: { params: Promise<{ lo
   const fetchProperties = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/partner/properties')
+      // TEST: use ?_test_owner_id=68dcda4b-6d78-4271-90ee-08c0fb201513 to see a partner with photos
+      const testParam = typeof window !== 'undefined' && window.location.search.includes('_test_owner_id')
+        ? `?_test_owner_id=${new URLSearchParams(window.location.search).get('_test_owner_id')}`
+        : ''
+      const response = await fetch(`/api/partner/properties${testParam}`)
       if (!response.ok) throw new Error('Erreur lors du chargement des propriétés')
       const data = await response.json()
       const props = data?.data?.properties || data?.properties || []

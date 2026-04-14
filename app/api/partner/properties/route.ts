@@ -58,24 +58,30 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
 
     const supabase = await createClient(true);
 
+    // TEST MODE: allow overriding owner_id via query param for demo
+    const { searchParams: sp } = new URL(request.url);
+    const testOwnerId = sp.get('_test_owner_id')
+
     // Find owner by auth user id OR email (ids may differ)
-    let ownerId: string | null = null
+    let ownerId: string | null = testOwnerId || null
 
-    const { data: ownerById } = await supabase
-      .from('owners')
-      .select('id')
-      .eq('id', session.user.id)
-      .single()
-
-    if (ownerById) {
-      ownerId = ownerById.id
-    } else if (session.user.email) {
-      const { data: ownerByEmail } = await supabase
+    if (!ownerId) {
+      const { data: ownerById } = await supabase
         .from('owners')
         .select('id')
-        .eq('email', session.user.email)
+        .eq('id', session.user.id)
         .single()
-      if (ownerByEmail) ownerId = ownerByEmail.id
+
+      if (ownerById) {
+        ownerId = ownerById.id
+      } else if (session.user.email) {
+        const { data: ownerByEmail } = await supabase
+          .from('owners')
+          .select('id')
+          .eq('email', session.user.email)
+          .single()
+        if (ownerByEmail) ownerId = ownerByEmail.id
+      }
     }
 
     if (!ownerId) {
@@ -87,16 +93,14 @@ export async function GET(request: NextRequest): Promise<NextResponse<PartnerPro
 
     const partnerId = ownerId
 
-    const { searchParams } = new URL(request.url);
-    const page = Number(searchParams.get('page')) || 1;
-    const limit = Math.min(Number(searchParams.get('limit')) || 20, 100); // Max 100 items per page
+    const page = Number(sp.get('page')) || 1;
+    const limit = Math.min(Number(sp.get('limit')) || 20, 100);
     const offset = (page - 1) * limit;
     
-    // Parse filters
     const filters: PropertyFilters = {
-      status: searchParams.get('status') || undefined,
-      type: searchParams.get('type') || undefined,
-      search: searchParams.get('search') || undefined
+      status: sp.get('status') || undefined,
+      type: sp.get('type') || undefined,
+      search: sp.get('search') || undefined
     };
 
     // Build query - get lofts WITHOUT photo join first

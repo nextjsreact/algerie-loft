@@ -12,39 +12,54 @@ export async function DELETE(
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 })
     }
 
-    if (session.user.role !== 'admin') {
+    if (!['admin', 'manager', 'superuser'].includes(session.user.role)) {
       return NextResponse.json({ error: "Permissions insuffisantes" }, { status: 403 })
     }
 
     const { id } = await params
-    const supabase = await createClient()
+    // Use service role to bypass RLS
+    const supabase = await createClient(true)
 
-    // Vérifier les dépendances
-    const { data: relatedTasks } = await supabase.from("tasks").select("id").eq("loft_id", id).limit(1)
-    const { data: relatedTransactions } = await supabase.from("transactions").select("id").eq("loft_id", id).limit(1)
+    // Check all tables that reference lofts
+    const checks = await Promise.all([
+      supabase.from("reservations").select("id").eq("loft_id", id).limit(1),
+      supabase.from("tasks").select("id").eq("loft_id", id).limit(1),
+      supabase.from("transactions").select("id").eq("loft_id", id).limit(1),
+    ])
 
-    if (relatedTasks?.length || relatedTransactions?.length) {
-      const deps = []
-      if (relatedTasks?.length) deps.push("tâches")
-      if (relatedTransactions?.length) deps.push("transactions")
+    const [reservations, tasks, transactions] = checks
+    const blockers: string[] = []
+    if (reservations.data?.length) blockers.push(`${reservations.data.length} réservation(s)`)
+    if (tasks.data?.length) blockers.push(`${tasks.data.length} tâche(s)`)
+    if (transactions.data?.length) blockers.push(`${transactions.data.length} transaction(s)`)
+
+    if (blockers.length > 0) {
       return NextResponse.json(
-        { error: `Impossible de supprimer: loft lié à des ${deps.join(", ")}` },
+        { error: `Impossible de supprimer ce loft : il est lié à ${blockers.join(", ")}. Supprimez d'abord ces données.` },
         { status: 400 }
       )
     }
 
-    // Supprimer les photos et disponibilités
+    // Delete all dependent data first
     await supabase.from("loft_photos").delete().eq("loft_id", id)
     await supabase.from("loft_availability").delete().eq("loft_id", id)
 
-    // Supprimer le loft
+    // Also clean up pricing_rules if exists
+    await supabase.from("pricing_rules").delete().eq("loft_id", id).throwOnError().catch(() => {})
+
+    // Delete the loft
     const { error } = await supabase.from("lofts").delete().eq("id", id)
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      console.error("[delete loft] DB error:", error)
+      return NextResponse.json(
+        { error: `Erreur base de données : ${error.message}` },
+        { status: 500 }
+      )
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, message: "Loft supprimé avec succès" })
+
   } catch (error) {
     console.error("Error in DELETE /api/lofts/[id]/delete:", error)
     return NextResponse.json(

@@ -88,7 +88,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
 
   useEffect(() => {
     const controller = new AbortController()
-    fetch('/api/public/featured-lofts', { signal: controller.signal })
+    fetch('/api/public/featured-lofts?limit=25&randomize=true', { signal: controller.signal })
       .then(r => r.json())
       .then(data => { 
         console.log('[homepage] lofts loaded:', data.lofts?.length)
@@ -105,7 +105,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
 
   // Build carousel slides from DB lofts (use cover photo), fallback to heroSlides
   const carouselSlides = dbLofts.length > 0
-    ? dbLofts.slice(0, 15).map(l => ({
+    ? dbLofts.slice(0, 25).map(l => ({
         id: l.id,
         image: l.photo,
         title: { fr: l.name, en: l.name, ar: l.name },

@@ -4,14 +4,18 @@ import { createClient } from '@/utils/supabase/server'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0 // No cache — always fresh data
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url)
+    const limit = parseInt(searchParams.get('limit') || '25', 10) // Default 25 for carousel
+    const randomize = searchParams.get('randomize') === 'true'
+
     const supabase = await createClient(true)
 
     // Get loft IDs that have photos, prioritizing cover photos
     const { data: photos } = await supabase
       .from('loft_photos')
-      .select('loft_id, url, is_cover')
+      .select('loft_id, url, is_cover, mime_type')
       .order('is_cover', { ascending: false }) // cover photos first
       .order('created_at', { ascending: true })
 
@@ -21,16 +25,32 @@ export async function GET() {
 
     // Build map: loft_id -> best photo url (cover first, then first photo)
     const photoMap = new Map<string, string>()
+    const mimeMap = new Map<string, string>()
     // First pass: set cover photos
     photos.forEach((p: any) => {
-      if (p.is_cover === true) photoMap.set(p.loft_id, p.url)
+      if (p.is_cover === true) {
+        photoMap.set(p.loft_id, p.url)
+        mimeMap.set(p.loft_id, p.mime_type || '')
+      }
     })
     // Second pass: fill in lofts without cover using first available photo
     photos.forEach((p: any) => {
-      if (!photoMap.has(p.loft_id)) photoMap.set(p.loft_id, p.url)
+      if (!photoMap.has(p.loft_id)) {
+        photoMap.set(p.loft_id, p.url)
+        mimeMap.set(p.loft_id, p.mime_type || '')
+      }
     })
 
-    const loftIds = Array.from(photoMap.keys())
+    // Filter out HEIC photos (not displayable in browsers → black image)
+    const validLoftIds = Array.from(photoMap.keys()).filter(id => {
+      const mime = mimeMap.get(id) || ''
+      const url = photoMap.get(id) || ''
+      const isHeic = mime.includes('heic') || mime.includes('heif') ||
+                     url.toLowerCase().includes('.heic') || url.toLowerCase().includes('.heif')
+      return !isHeic
+    })
+
+    const loftIds = validLoftIds
 
     // Fetch those lofts — published first, then all others with photos
     const { data: lofts, error } = await supabase
@@ -54,15 +74,13 @@ export async function GET() {
       created_at: l.created_at,
     }))
 
-    // Sort: published first, then by most recent creation date
-    // → new lofts with photos automatically appear at the top
-    const sorted = featured.sort((a, b) => {
-      if (a.is_published && !b.is_published) return -1
-      if (!a.is_published && b.is_published) return 1
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    })
+    // Shuffle for random display (new lofts get equal chance to appear)
+    const shuffled = featured.sort(() => Math.random() - 0.5)
 
-    return NextResponse.json({ lofts: sorted })
+    // Take up to `limit` lofts
+    const result = shuffled.slice(0, limit)
+
+    return NextResponse.json({ lofts: result, total: featured.length })
   } catch (err) {
     console.error('[featured-lofts]', err)
     return NextResponse.json({ lofts: [], error: JSON.stringify(err) })

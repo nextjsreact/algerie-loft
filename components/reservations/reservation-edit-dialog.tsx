@@ -27,6 +27,7 @@ interface ReservationEditDialogProps {
     loft_id: string
     check_in_date: string
     check_out_date: string
+    status?: string
     base_price?: number
     cleaning_fee?: number
     service_fee?: number
@@ -57,6 +58,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
   const [error, setError] = useState('')
   const [checkingAvail, setCheckingAvail] = useState(false)
   const [availOk, setAvailOk] = useState<boolean | null>(null)
+  const [selectedStatus, setSelectedStatus] = useState<string>('')
 
   // Currency state
   const [currencies, setCurrencies] = useState<Currency[]>([])
@@ -90,6 +92,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
     setCheckOut(reservation.check_out_date)
     setError('')
     setAvailOk(null)
+    setSelectedStatus(reservation.status || 'pending')
 
     // Restore original currency if stored
     const origCode = reservation.currency_code || 'DZD'
@@ -182,6 +185,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
           currency_code: selectedCurrency?.code || 'DZD',
           currency_ratio: effectiveRatio,
           price_per_night_input: pricePerNight !== '' ? parseFloat(pricePerNight) || null : null,
+          status: selectedStatus,
         }),
       })
       const data = await res.json()
@@ -234,6 +238,42 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
               <Label>{t('edit.checkOut')}</Label>
               <Input type="date" value={checkOut} onChange={(e) => { setCheckOut(e.target.value); setAvailOk(null) }} min={checkIn ? format(addDays(new Date(checkIn), 1), 'yyyy-MM-dd') : undefined} required />
             </div>
+          </div>
+
+          {/* Status selector */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Statut de la réservation</Label>
+            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+              <SelectTrigger className="h-9">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
+                    En attente
+                  </span>
+                </SelectItem>
+                <SelectItem value="confirmed">
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
+                    Confirmée
+                  </span>
+                </SelectItem>
+                <SelectItem value="completed">
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-gray-400 inline-block" />
+                    Terminée
+                  </span>
+                </SelectItem>
+                <SelectItem value="cancelled">
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
+                    Annulée
+                  </span>
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Nights + availability */}

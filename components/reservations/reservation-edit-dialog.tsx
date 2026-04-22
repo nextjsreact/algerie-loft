@@ -47,11 +47,11 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
   const t = useTranslations('reservations')
   const [checkIn, setCheckIn] = useState('')
   const [checkOut, setCheckOut] = useState('')
-  const [pricePerNight, setPricePerNight] = useState<number | ''>('')
-  const [basePrice, setBasePrice] = useState<number | ''>(0)
-  const [cleaningFee, setCleaningFee] = useState<number | ''>(0)
-  const [serviceFee, setServiceFee] = useState<number | ''>(0)
-  const [taxes, setTaxes] = useState<number | ''>(0)
+  const [pricePerNight, setPricePerNight] = useState<string>('')
+  const [basePrice, setBasePrice] = useState<string>('0')
+  const [cleaningFee, setCleaningFee] = useState<string>('0')
+  const [serviceFee, setServiceFee] = useState<string>('0')
+  const [taxes, setTaxes] = useState<string>('0')
   const [total, setTotal] = useState<number>(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -99,25 +99,23 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
 
     // If we have a stored per-night price, use it; otherwise derive from base_price / nights
     if (reservation.price_per_night_input) {
-      setPricePerNight(reservation.price_per_night_input)
+      setPricePerNight(String(reservation.price_per_night_input))
     } else {
       setPricePerNight('')
     }
 
-    // Show amounts in original currency (divide by ratio to get back to foreign currency)
     const ratio = origRatio || 1
     const isDefault = origCode === 'DZD' || origCode === ''
     if (isDefault) {
-      setBasePrice(reservation.base_price ?? 0)
-      setCleaningFee(reservation.cleaning_fee ?? 0)
-      setServiceFee(reservation.service_fee ?? 0)
-      setTaxes(reservation.taxes ?? 0)
+      setBasePrice(String(reservation.base_price ?? 0))
+      setCleaningFee(String(reservation.cleaning_fee ?? 0))
+      setServiceFee(String(reservation.service_fee ?? 0))
+      setTaxes(String(reservation.taxes ?? 0))
     } else {
-      // Convert stored DA amounts back to original currency for display
-      setBasePrice(reservation.base_price ? Math.round((reservation.base_price / ratio) * 100) / 100 : 0)
-      setCleaningFee(reservation.cleaning_fee ? Math.round((reservation.cleaning_fee / ratio) * 100) / 100 : 0)
-      setServiceFee(reservation.service_fee ? Math.round((reservation.service_fee / ratio) * 100) / 100 : 0)
-      setTaxes(reservation.taxes ? Math.round((reservation.taxes / ratio) * 100) / 100 : 0)
+      setBasePrice(String(reservation.base_price ? Math.round((reservation.base_price / ratio) * 100) / 100 : 0))
+      setCleaningFee(String(reservation.cleaning_fee ? Math.round((reservation.cleaning_fee / ratio) * 100) / 100 : 0))
+      setServiceFee(String(reservation.service_fee ? Math.round((reservation.service_fee / ratio) * 100) / 100 : 0))
+      setTaxes(String(reservation.taxes ? Math.round((reservation.taxes / ratio) * 100) / 100 : 0))
     }
   }, [reservation, open])
 
@@ -127,15 +125,16 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
     : 0
 
   useEffect(() => {
-    if (pricePerNight !== '' && nights > 0) {
-      setBasePrice(Number(pricePerNight) * nights)
+    const pn = parseFloat(pricePerNight)
+    if (!isNaN(pn) && pn > 0 && nights > 0) {
+      setBasePrice(String(Math.round(pn * nights * 100) / 100))
     }
   }, [pricePerNight, nights])
 
   // Recalculate total
   useEffect(() => {
-    const sum = (Number(basePrice) || 0) + (Number(cleaningFee) || 0) + (Number(serviceFee) || 0) + (Number(taxes) || 0)
-    setTotal(sum)
+    const sum = (parseFloat(basePrice) || 0) + (parseFloat(cleaningFee) || 0) + (parseFloat(serviceFee) || 0) + (parseFloat(taxes) || 0)
+    setTotal(Math.round(sum * 100) / 100)
   }, [basePrice, cleaningFee, serviceFee, taxes])
 
   // Check availability when dates change
@@ -175,14 +174,14 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
         body: JSON.stringify({
           check_in_date: checkIn,
           check_out_date: checkOut,
-          base_price: toDA(Number(basePrice) || 0),
-          cleaning_fee: toDA(Number(cleaningFee) || 0),
-          service_fee: toDA(Number(serviceFee) || 0),
-          taxes: toDA(Number(taxes) || 0),
+          base_price: toDA(parseFloat(basePrice) || 0),
+          cleaning_fee: toDA(parseFloat(cleaningFee) || 0),
+          service_fee: toDA(parseFloat(serviceFee) || 0),
+          taxes: toDA(parseFloat(taxes) || 0),
           total_amount: totalDA,
           currency_code: selectedCurrency?.code || 'DZD',
           currency_ratio: effectiveRatio,
-          price_per_night_input: pricePerNight !== '' ? Number(pricePerNight) : null,
+          price_per_night_input: pricePerNight !== '' ? parseFloat(pricePerNight) || null : null,
         }),
       })
       const data = await res.json()
@@ -302,13 +301,16 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
               <div className="flex items-center gap-1">
                 <span className="text-xs text-gray-400">{sym}</span>
                 <Input
-                  type="number"
-                  min="0"
-                  value={String(pricePerNight)}
+                  type="text"
+                  inputMode="decimal"
+                  value={pricePerNight}
                   onChange={(e) => {
-                    const pn = parseFloat(e.target.value) || 0
-                    setPricePerNight(pn || '')
-                    if (nights > 0) setBasePrice(pn * nights)
+                    const v = e.target.value
+                    // Allow digits, dot, comma (replace comma with dot)
+                    const normalized = v.replace(',', '.')
+                    if (/^\d*\.?\d*$/.test(normalized)) {
+                      setPricePerNight(normalized)
+                    }
                   }}
                   className="w-24 text-right h-7 text-xs"
                   placeholder="0"
@@ -319,19 +321,51 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <Label className="text-xs">{t('edit.basePrice')} ({sym})</Label>
-                <Input type="number" min="0" value={String(basePrice)} onChange={(e) => { setBasePrice(parseFloat(e.target.value) || 0); setPricePerNight('') }} className="h-8 text-xs" />
+                <Input
+                  type="text" inputMode="decimal"
+                  value={basePrice}
+                  onChange={(e) => {
+                    const normalized = e.target.value.replace(',', '.')
+                    if (/^\d*\.?\d*$/.test(normalized)) { setBasePrice(normalized); setPricePerNight('') }
+                  }}
+                  className="h-8 text-xs"
+                />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">{t('edit.cleaningFee')} ({sym})</Label>
-                <Input type="number" min="0" value={String(cleaningFee)} onChange={(e) => setCleaningFee(parseFloat(e.target.value) || 0)} className="h-8 text-xs" />
+                <Input
+                  type="text" inputMode="decimal"
+                  value={cleaningFee}
+                  onChange={(e) => {
+                    const normalized = e.target.value.replace(',', '.')
+                    if (/^\d*\.?\d*$/.test(normalized)) setCleaningFee(normalized)
+                  }}
+                  className="h-8 text-xs"
+                />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">{t('edit.serviceFee')} ({sym})</Label>
-                <Input type="number" min="0" value={String(serviceFee)} onChange={(e) => setServiceFee(parseFloat(e.target.value) || 0)} className="h-8 text-xs" />
+                <Input
+                  type="text" inputMode="decimal"
+                  value={serviceFee}
+                  onChange={(e) => {
+                    const normalized = e.target.value.replace(',', '.')
+                    if (/^\d*\.?\d*$/.test(normalized)) setServiceFee(normalized)
+                  }}
+                  className="h-8 text-xs"
+                />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">{t('edit.taxes')} ({sym})</Label>
-                <Input type="number" min="0" value={String(taxes)} onChange={(e) => setTaxes(parseFloat(e.target.value) || 0)} className="h-8 text-xs" />
+                <Input
+                  type="text" inputMode="decimal"
+                  value={taxes}
+                  onChange={(e) => {
+                    const normalized = e.target.value.replace(',', '.')
+                    if (/^\d*\.?\d*$/.test(normalized)) setTaxes(normalized)
+                  }}
+                  className="h-8 text-xs"
+                />
               </div>
             </div>
 

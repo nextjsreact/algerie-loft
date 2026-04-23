@@ -870,6 +870,7 @@ function ReservationsPageContent() {
                 </Card>
               )
             })()}
+          </TabsContent>
         </Tabs>
 
         {/* Create Reservation Dialog */}

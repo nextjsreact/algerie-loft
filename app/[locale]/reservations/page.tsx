@@ -737,60 +737,139 @@ function ReservationsPageContent() {
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-8">
-            {/* Enhanced Analytics Cards */}
+            {/* Analytics Cards — real data from reservationStats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                { title: tAnalytics('totalReservations'), value: '0', change: '0%', icon: Calendar, color: 'from-blue-600 to-indigo-600' },
-                { title: tAnalytics('totalRevenue'), value: `${defaultCurrencySymbol}0`, change: '0%', icon: TrendingUp, color: 'from-green-600 to-emerald-600' },
-                { title: tAnalytics('occupancyRate'), value: '0%', change: '0%', icon: Building2, color: 'from-purple-600 to-pink-600' },
-                { title: tAnalytics('averageStay'), value: '0', change: '0', icon: Clock, color: 'from-orange-600 to-red-600' }
-              ].map((metric, index) => (
-                <Card key={index} className="border-0 shadow-lg bg-white/90 backdrop-blur-sm overflow-hidden group hover:shadow-xl transition-all duration-300">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className={`p-3 rounded-xl bg-gradient-to-r ${metric.color} shadow-lg group-hover:scale-110 transition-transform duration-200`}>
-                        <metric.icon className="h-6 w-6 text-white" />
+              {loading ? (
+                [1,2,3,4].map(i => (
+                  <Card key={i} className="border-0 shadow-lg bg-white/90 h-36 animate-pulse" />
+                ))
+              ) : reservationStats ? (() => {
+                const totalRes = reservationStats.totalReservations ?? 0
+                const totalResLast = reservationStats.totalReservationsLastMonth ?? 0
+                const revenue = reservationStats.monthlyRevenue ?? 0
+                const revenueLast = reservationStats.monthlyRevenueLastMonth ?? 0
+                const occupancy = Math.round(reservationStats.occupancyRate ?? 0)
+                const occupancyLast = Math.round(reservationStats.occupancyRateLastMonth ?? 0)
+
+                // Average stay from allReservations
+                const completedRes = allReservations.filter(r => r.status !== 'cancelled' && r.check_in_date && r.check_out_date)
+                const avgStay = completedRes.length > 0
+                  ? Math.round(completedRes.reduce((sum, r) => {
+                      const nights = Math.ceil((new Date(r.check_out_date).getTime() - new Date(r.check_in_date).getTime()) / 86400000)
+                      return sum + (nights > 0 ? nights : 0)
+                    }, 0) / completedRes.length * 10) / 10
+                  : 0
+
+                const pct = (cur: number, prev: number) => {
+                  if (prev === 0) return cur > 0 ? '+100%' : '0%'
+                  const p = Math.round(((cur - prev) / prev) * 100)
+                  return (p >= 0 ? '+' : '') + p + '%'
+                }
+
+                const metrics = [
+                  {
+                    title: tAnalytics('totalReservations'),
+                    value: totalRes.toLocaleString(),
+                    change: pct(totalRes, totalResLast),
+                    up: totalRes >= totalResLast,
+                    icon: Calendar,
+                    color: 'from-blue-600 to-indigo-600'
+                  },
+                  {
+                    title: tAnalytics('totalRevenue'),
+                    value: revenue.toLocaleString('fr-DZ') + ' DA',
+                    change: pct(revenue, revenueLast),
+                    up: revenue >= revenueLast,
+                    icon: TrendingUp,
+                    color: 'from-green-600 to-emerald-600'
+                  },
+                  {
+                    title: tAnalytics('occupancyRate'),
+                    value: occupancy + '%',
+                    change: (occupancy - occupancyLast >= 0 ? '+' : '') + (occupancy - occupancyLast) + '%',
+                    up: occupancy >= occupancyLast,
+                    icon: Building2,
+                    color: 'from-purple-600 to-pink-600'
+                  },
+                  {
+                    title: tAnalytics('averageStay'),
+                    value: avgStay + ' nuits',
+                    change: '—',
+                    up: true,
+                    icon: Clock,
+                    color: 'from-orange-600 to-red-600'
+                  },
+                ]
+
+                return metrics.map((metric, index) => (
+                  <Card key={index} className="border-0 shadow-lg bg-white/90 backdrop-blur-sm overflow-hidden group hover:shadow-xl transition-all duration-300">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className={`p-3 rounded-xl bg-gradient-to-r ${metric.color} shadow-lg group-hover:scale-110 transition-transform duration-200`}>
+                          <metric.icon className="h-6 w-6 text-white" />
+                        </div>
+                        <Badge variant="secondary" className={`border-0 ${metric.up ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                          {metric.change}
+                        </Badge>
                       </div>
-                      <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
-                        {metric.change}
-                      </Badge>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium text-gray-600">{metric.title}</p>
-                      <p className="text-3xl font-bold text-gray-900">{metric.value}</p>
-                      <p className="text-xs text-gray-500">{tAnalytics('vsLastMonth')}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-gray-600">{metric.title}</p>
+                        <p className="text-3xl font-bold text-gray-900">{metric.value}</p>
+                        <p className="text-xs text-gray-500">{tAnalytics('vsLastMonth')}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              })() : (
+                <div className="col-span-4 text-center text-gray-400 py-8">Aucune donnée disponible</div>
+              )}
             </div>
 
-            {/* Placeholder for future analytics */}
-            <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
-                <CardTitle className="flex items-center gap-3">
-                  <BarChart3 className="h-5 w-5" />
-                  {tAnalytics('title')}
-                  <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
-                    {t('enterpriseTag')}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-12">
-                <div className="text-center space-y-6">
-                  <div className="mx-auto w-32 h-32 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full flex items-center justify-center">
-                    <BarChart3 className="h-16 w-16 text-emerald-600" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-2xl font-bold text-gray-900">{tAnalytics('enterpriseSuite')}</h3>
-                    <p className="text-gray-600 max-w-2xl mx-auto">
-                      {tAnalytics('enterpriseDescription')}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+            {/* Top lofts by revenue */}
+            {allReservations.length > 0 && (() => {
+              const byLoft = new Map<string, { name: string; revenue: number; count: number }>()
+              allReservations
+                .filter(r => r.status !== 'cancelled' && r.total_amount > 0)
+                .forEach(r => {
+                  const key = r.loft_id
+                  const name = r.lofts?.name || '—'
+                  if (!byLoft.has(key)) byLoft.set(key, { name, revenue: 0, count: 0 })
+                  const entry = byLoft.get(key)!
+                  entry.revenue += r.total_amount
+                  entry.count++
+                })
+              const sorted = Array.from(byLoft.values()).sort((a, b) => b.revenue - a.revenue).slice(0, 10)
+              const maxRev = sorted[0]?.revenue || 1
+
+              return (
+                <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
+                  <CardHeader className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
+                    <CardTitle className="flex items-center gap-3">
+                      <BarChart3 className="h-5 w-5" />
+                      Top lofts par revenus
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-3">
+                    {sorted.map((loft, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <span className="text-xs font-bold text-gray-400 w-5">{i + 1}</span>
+                        <span className="text-sm text-gray-700 w-40 truncate">{loft.name}</span>
+                        <div className="flex-1 bg-gray-100 rounded-full h-5 relative overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full"
+                            style={{ width: `${Math.round((loft.revenue / maxRev) * 100)}%` }}
+                          />
+                          <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-700">
+                            {loft.revenue.toLocaleString('fr-DZ')} DA
+                          </span>
+                        </div>
+                        <span className="text-xs text-gray-400 w-16 text-right">{loft.count} rés.</span>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )
+            })()}
         </Tabs>
 
         {/* Create Reservation Dialog */}

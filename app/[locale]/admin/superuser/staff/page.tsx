@@ -36,6 +36,7 @@ export default function StaffManagementPage() {
     const newIsStaff = field === 'is_staff' ? value : (member.is_staff === true)
     const newTeam = field === 'team' ? (value || null) : (member.team || null)
     const newZone = field === 'preferred_zone_id' ? (value || null) : (member.preferred_zone_id || null)
+    const newTelegram = field === 'telegram_chat_id' ? (value || null) : (member.telegram_chat_id || null)
 
     setMembers(prev => prev.map(m => m.id === id ? { ...m, [field]: value } : m))
     setSaving(id)
@@ -43,7 +44,12 @@ export default function StaffManagementPage() {
       const res = await fetch(`/api/superuser/users/${id}/staff`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ is_staff: newIsStaff, team: newTeam, preferred_zone_id: newZone })
+        body: JSON.stringify({
+          is_staff: newIsStaff,
+          team: newTeam,
+          preferred_zone_id: newZone,
+          telegram_chat_id: newTelegram,
+        })
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
@@ -70,9 +76,10 @@ export default function StaffManagementPage() {
             <tr>
               <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Nom</th>
               <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Email</th>
-              <th className="text-center px-4 py-3 font-medium text-gray-600 dark:text-gray-300">✅ Staff</th>
+              <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">✅ Staff</th>
               <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Équipe</th>
               <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Zone préférée</th>
+              <th className="text-left px-4 py-3 font-medium text-gray-600 dark:text-gray-300">📱 Telegram Chat ID</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -113,6 +120,28 @@ export default function StaffManagementPage() {
                       <option key={z.id} value={z.id}>{z.name}</option>
                     ))}
                   </select>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={m.telegram_chat_id || ''}
+                      onChange={e => setMembers(prev => prev.map(u => u.id === m.id ? { ...u, telegram_chat_id: e.target.value } : u))}
+                      onBlur={e => {
+                        const val = e.target.value.trim()
+                        if (val !== (m.telegram_chat_id || '')) {
+                          update(m.id, 'telegram_chat_id', val || null)
+                        }
+                      }}
+                      placeholder="ex: 123456789"
+                      disabled={saving === m.id}
+                      className="border rounded px-2 py-1 text-sm bg-white dark:bg-gray-700 dark:border-gray-600 w-36"
+                    />
+                    {m.telegram_chat_id
+                      ? <span className="text-green-500 text-xs">✅</span>
+                      : <span className="text-amber-500 text-xs">⚠️</span>
+                    }
+                  </div>
                 </td>
               </tr>
             ))}

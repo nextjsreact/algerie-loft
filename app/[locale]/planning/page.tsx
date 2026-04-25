@@ -51,11 +51,13 @@ export default function PlanningPage() {
       })
       const data = await res.json()
       if (data.success) {
-        toast.success(`Planning envoyé à ${data.sent}/${data.total} agents`)
-        data.results?.forEach((r: any) => {
-          if (r.sent) toast.success(`✅ ${r.agent} : reçu`)
-          else toast.warning(`⚠️ ${r.agent} : ${r.error}`)
-        })
+        const failed = data.results?.filter((r: any) => !r.sent) || []
+        if (data.sent === data.total) {
+          toast.success(`✅ Planning envoyé avec succès à ${data.sent} agent${data.sent > 1 ? 's' : ''}`)
+        } else {
+          toast.success(`Planning envoyé à ${data.sent}/${data.total} agents`)
+          failed.forEach((r: any) => toast.warning(`⚠️ ${r.agent} : ${r.error}`))
+        }
         setSent(true)
       } else {
         toast.error(data.error || 'Erreur envoi')

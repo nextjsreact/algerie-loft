@@ -25,6 +25,8 @@ export async function POST(request: NextRequest) {
     for (const item of members) {
       const { agent, is_off, is_astreinte, cleaning_tasks, welcome_tasks } = item
 
+      console.log(`[planning/send] agent: ${agent.full_name}, telegram_chat_id: ${agent.telegram_chat_id}`)
+
       if (!agent.telegram_chat_id) {
         results.push({ agent: agent.full_name, sent: false, error: 'Pas de Telegram ID' })
         continue
@@ -133,6 +135,7 @@ export async function POST(request: NextRequest) {
     } catch {}
 
     const sentCount = results.filter(r => r.sent).length
+    console.log('[planning/send] results:', JSON.stringify(results))
     return NextResponse.json({
       success: true,
       sent: sentCount,

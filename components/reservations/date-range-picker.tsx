@@ -43,6 +43,8 @@ export function DateRangePicker({
   }, [loftId, excludeReservationId])
 
   // Build set of booked dates (check_in inclusive, check_out exclusive)
+  // The check_in day of an existing reservation is blocked for NEW check-ins
+  // but is ALLOWED as a check-out (same-day turnover)
   const bookedDates: Date[] = bookedRanges.flatMap(r => {
     const from = parseISO(r.from)
     const to = addDays(parseISO(r.to), -1) // checkout day is free
@@ -50,12 +52,21 @@ export function DateRangePicker({
     return eachDayOfInterval({ start: from, end: to })
   })
 
+  // Check-in days of existing reservations — these are free as checkout targets
+  const checkinDays: Date[] = bookedRanges.map(r => parseISO(r.from))
+
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
   const isDisabled = (date: Date) => {
     if (!isEmployee && isBefore(date, today)) return true
-    return bookedDates.some(d => isSameDay(d, date))
+    // A day is disabled if it's booked AND it's not a check-in day of an existing reservation
+    // (check-in days can be used as checkout for same-day turnover)
+    const isBooked = bookedDates.some(d => isSameDay(d, date))
+    if (!isBooked) return false
+    // If we're selecting checkout and this day is a check-in of another reservation → allow it
+    if (selecting === 'checkout' && checkinDays.some(d => isSameDay(d, date))) return false
+    return true
   }
 
   const selectedRange: DateRange | undefined = checkIn
@@ -82,8 +93,8 @@ export function DateRangePicker({
       return
     }
 
-    // Check no booked dates between checkin and selected checkout
-    const range = eachDayOfInterval({ start: addDays(cin, 1), end: day })
+    // Check no booked dates between checkin and selected checkout (exclusive of checkout)
+    const range = eachDayOfInterval({ start: addDays(cin, 1), end: addDays(day, -1) })
     const hasConflict = range.some(d => bookedDates.some(b => isSameDay(b, d)))
     if (hasConflict) {
       // Can't select this range — restart from this day

@@ -11,6 +11,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import SupabaseProvider from "@/components/providers/supabase-provider"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ToastProvider } from '@/components/providers/toast-provider'
+import { Toaster } from 'sonner'
 import { EnhancedRealtimeProvider } from '@/components/providers/enhanced-realtime-provider'
 import { NotificationProvider } from '@/components/providers/notification-context'
 import { CriticalAlertsNotification } from '@/components/executive/critical-alerts-notification'
@@ -204,6 +205,7 @@ export default function ClientProviders({ children, session: serverSession, unre
                disableTransitionOnChange
              >
              <ToastProvider />
+               <Toaster position="top-right" richColors closeButton />
                <EnhancedRealtimeProvider userId={session.user.id}>
                  <NotificationProvider userId={session.user.id}>
                    <div className="flex h-screen bg-background" key={`layout-${renderKey}`}>

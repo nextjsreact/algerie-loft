@@ -93,9 +93,13 @@ export function DateRangePicker({
       return
     }
 
-    // Check no booked dates between checkin and selected checkout (exclusive of checkout)
-    const range = eachDayOfInterval({ start: addDays(cin, 1), end: addDays(day, -1) })
-    const hasConflict = range.some(d => bookedDates.some(b => isSameDay(b, d)))
+    // Check no booked dates strictly between checkin and checkout (exclusive of both endpoints)
+    // For a 1-night stay (e.g. 28→29), the interval is empty → no conflict possible
+    const dayBefore = addDays(day, -1)
+    const hasConflict = isAfter(dayBefore, cin)
+      ? eachDayOfInterval({ start: addDays(cin, 1), end: dayBefore })
+          .some(d => bookedDates.some(b => isSameDay(b, d)))
+      : false
     if (hasConflict) {
       // Can't select this range — restart from this day
       onCheckInChange(format(day, 'yyyy-MM-dd'))

@@ -23,6 +23,7 @@ export function SuperuserSidebar({ className }: SuperuserSidebarProps) {
     { name: 'Partenaires', href: `/${locale}/admin/partners`, icon: UserCheck },
     { name: t('navigation.userManagement'), href: `/${locale}/admin/superuser/users`, icon: Users },
     { name: '👥 Gestion Staff', href: `/${locale}/admin/superuser/staff`, icon: UserCheck },
+    { name: '🔐 Permissions', href: `/${locale}/admin/superuser/permissions`, icon: Shield },
     { name: t('navigation.security'), href: `/${locale}/admin/superuser/audit`, icon: Shield },
     { name: t('navigation.backup'), href: `/${locale}/admin/superuser/backup`, icon: Database },
     { name: t('navigation.databaseCloner'), href: `/${locale}/database-cloner`, icon: Database },

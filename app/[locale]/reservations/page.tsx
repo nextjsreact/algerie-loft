@@ -64,6 +64,7 @@ function ReservationsPageContent() {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [canValidate, setCanValidate] = useState(false);
 
   const searchParams = useSearchParams();
 
@@ -136,6 +137,21 @@ function ReservationsPageContent() {
         
         if (isMounted && currencyData) {
           setDefaultCurrencySymbol(currencyData.symbol);
+        }
+
+        // Check if current user can validate reservations
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role, can_validate_reservations')
+            .eq('id', user.id)
+            .single()
+          if (isMounted && profile) {
+            const allowed = profile.role === 'superuser' ||
+              (['admin', 'manager'].includes(profile.role) && profile.can_validate_reservations === true)
+            setCanValidate(allowed)
+          }
         }
         
         // Fetch lofts
@@ -1068,7 +1084,7 @@ function ReservationsPageContent() {
                       ✏️ {t('edit.editButton')}
                     </Button>
                   )}
-                  {selectedReservation.status === 'pending' && (
+                  {selectedReservation.status === 'pending' && canValidate && (
                     <>
                       <Button onClick={() => handleStatusUpdate(selectedReservation.id, 'confirmed')}>
                         {t('statusActions.confirm')}
@@ -1078,17 +1094,24 @@ function ReservationsPageContent() {
                       </Button>
                     </>
                   )}
+                  {selectedReservation.status === 'pending' && !canValidate && (
+                    <span className="text-xs text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg">
+                      🔒 Validation non autorisée
+                    </span>
+                  )}
                   {selectedReservation.status === 'confirmed' && (
                     <>
                       <Button onClick={() => handleStatusUpdate(selectedReservation.id, 'completed')}>
                         {t('statusActions.complete')}
                       </Button>
-                      <Button variant="destructive" onClick={() => handleStatusUpdate(selectedReservation.id, 'cancelled')}>
-                        {t('statusActions.cancel')}
-                      </Button>
+                      {canValidate && (
+                        <Button variant="destructive" onClick={() => handleStatusUpdate(selectedReservation.id, 'cancelled')}>
+                          {t('statusActions.cancel')}
+                        </Button>
+                      )}
                     </>
                   )}
-                  {selectedReservation.status === 'cancelled' && (
+                  {selectedReservation.status === 'cancelled' && canValidate && (
                     <Button onClick={() => handleStatusUpdate(selectedReservation.id, 'pending')} variant="outline">
                       Réactiver la réservation
                     </Button>

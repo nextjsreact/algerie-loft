@@ -252,6 +252,26 @@ export async function updateReservationStatus(
 ): Promise<ActionResult> {
   try {
     const supabase = await createClient(true);
+
+    // Permission check for confirm/cancel
+    if (['confirmed', 'cancelled'].includes(status)) {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return { error: 'Non authentifié' }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role, can_validate_reservations')
+        .eq('id', user.id)
+        .single()
+
+      const role = profile?.role || ''
+      const canValidate = role === 'superuser' ||
+        (['admin', 'manager'].includes(role) && profile?.can_validate_reservations === true)
+
+      if (!canValidate) {
+        return { error: 'Permission refusée — vous n\'avez pas le droit de valider ou annuler des réservations' }
+      }
+    }
     
     const updateData: any = {
       status,

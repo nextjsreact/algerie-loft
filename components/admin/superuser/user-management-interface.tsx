@@ -56,6 +56,7 @@ interface ExtendedUser extends User {
   email_verified: boolean;
   is_staff?: boolean;
   team?: string | null;
+  can_validate_reservations?: boolean;
 }
 
 interface UserFilters {

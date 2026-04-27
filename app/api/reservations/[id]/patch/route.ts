@@ -4,6 +4,22 @@ import { getSession } from '@/lib/auth'
 
 const VALID_STATUSES = ['pending', 'confirmed', 'completed', 'cancelled']
 
+// Check if user can validate (confirm/cancel) reservations
+async function canValidate(supabase: any, userId: string, role: string): Promise<boolean> {
+  // Superuser always can
+  if (role === 'superuser') return true
+  // Admin and manager need explicit permission
+  if (['admin', 'manager'].includes(role)) {
+    const { data } = await supabase
+      .from('profiles')
+      .select('can_validate_reservations')
+      .eq('id', userId)
+      .single()
+    return data?.can_validate_reservations === true
+  }
+  return false
+}
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -20,12 +36,25 @@ export async function PATCH(
     const checkOut = new Date(check_out_date)
     if (checkOut <= checkIn) return NextResponse.json({ error: 'La date de départ doit être après la date d\'arrivée' }, { status: 400 })
 
-    // Validate status if provided
     if (status && !VALID_STATUSES.includes(status)) {
       return NextResponse.json({ error: 'Statut invalide' }, { status: 400 })
     }
 
+    // Check session for permission
+    const session = await getSession()
+    if (!session) return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
+
     const supabase = await createClient(true)
+
+    // If status is being changed to confirmed or cancelled → check permission
+    if (status && ['confirmed', 'cancelled'].includes(status)) {
+      const allowed = await canValidate(supabase, session.user.id, session.user.role)
+      if (!allowed) {
+        return NextResponse.json({
+          error: 'Permission refusée — vous n\'avez pas le droit de valider ou annuler des réservations'
+        }, { status: 403 })
+      }
+    }
 
     // Get current reservation
     const { data: current, error: fetchErr } = await supabase

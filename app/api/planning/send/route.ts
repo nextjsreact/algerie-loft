@@ -54,9 +54,11 @@ export async function POST(request: NextRequest) {
           cleaning_tasks.forEach((r: any, i: number) => {
             const loftName = r.lofts?.name || r.loft_id
             const address = r.lofts?.address || ''
+            const gps = r.lofts?.gps_coordinates || ''
             msg += `  ${i + 1}. <b>${loftName}</b>`
             if (address) msg += ` — ${address}`
             if (r.guest_name) msg += `\n     👤 Départ : ${r.guest_name}`
+            if (gps) msg += `\n     📍 <a href="https://maps.google.com/?q=${gps}">Voir sur Maps</a>`
             msg += '\n'
           })
           msg += '\n'
@@ -67,10 +69,12 @@ export async function POST(request: NextRequest) {
           welcome_tasks.forEach((r: any, i: number) => {
             const loftName = r.lofts?.name || r.loft_id
             const address = r.lofts?.address || ''
+            const gps = r.lofts?.gps_coordinates || ''
             msg += `  ${i + 1}. <b>${loftName}</b>`
             if (address) msg += ` — ${address}`
             if (r.guest_name) msg += `\n     👤 Arrivée : ${r.guest_name}`
             if (r.guest_phone) msg += ` — 📞 ${r.guest_phone}`
+            if (gps) msg += `\n     📍 <a href="https://maps.google.com/?q=${gps}">Voir sur Maps</a>`
             msg += '\n'
           })
           msg += '\n'

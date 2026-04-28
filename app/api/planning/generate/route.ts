@@ -73,18 +73,18 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 5. Fetch check-outs for target date (cleaning tasks) — include zone
+    // 5. Fetch check-outs for target date (cleaning tasks) — include zone + GPS
     const { data: checkouts } = await supabase
       .from('reservations')
-      .select('id, loft_id, check_out_date, guest_name, lofts:loft_id(name, address, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
+      .select('id, loft_id, check_out_date, guest_name, lofts:loft_id(name, address, gps_coordinates, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
       .eq('check_out_date', targetDateStr)
       .in('status', ['confirmed', 'completed'])
       .order('check_out_date')
 
-    // 6. Fetch check-ins for target date (welcome tasks) — include zone
+    // 6. Fetch check-ins for target date (welcome tasks) — include zone + GPS
     const { data: checkins } = await supabase
       .from('reservations')
-      .select('id, loft_id, check_in_date, guest_name, guest_phone, lofts:loft_id(name, address, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
+      .select('id, loft_id, check_in_date, guest_name, guest_phone, lofts:loft_id(name, address, gps_coordinates, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
       .eq('check_in_date', targetDateStr)
       .in('status', ['confirmed', 'pending'])
       .order('check_in_date')

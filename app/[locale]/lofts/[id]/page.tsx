@@ -306,9 +306,6 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                             </div>
                           </div>
                         )}
-                            </div>
-                          </div>
-                        )}
                       </div>
 
                       <div className="space-y-4">

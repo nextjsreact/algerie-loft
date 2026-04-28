@@ -26,6 +26,7 @@ export async function PATCH(
     if (preferred_zone_id !== undefined) updateData.preferred_zone_id = preferred_zone_id || null
     if (telegram_chat_id !== undefined) updateData.telegram_chat_id = telegram_chat_id || null
     if (can_validate_reservations !== undefined) updateData.can_validate_reservations = can_validate_reservations
+    if (body.can_view_reports !== undefined) updateData.can_view_reports = body.can_view_reports
 
     console.log('[staff PATCH] userId:', userId, 'data:', updateData)
 

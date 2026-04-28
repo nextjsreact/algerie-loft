@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
         is_staff,
         team,
         can_validate_reservations,
+        can_view_reports,
         telegram_chat_id,
         created_at,
         updated_at

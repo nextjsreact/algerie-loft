@@ -32,6 +32,7 @@ export default function ReportsPage() {
   const t = useTranslations()
   const [session, setSession] = useState<AuthSession | null>(null)
   const [loading, setLoading] = useState(true)
+  const [canViewReports, setCanViewReports] = useState(false)
   const [loftRevenue, setLoftRevenue] = useState<LoftRevenue[]>([])
   const [monthlyRevenue, setMonthlyRevenue] = useState<MonthlyRevenue[]>([])
 
@@ -42,6 +43,25 @@ export default function ReportsPage() {
         setSession(sessionData)
         
         if (sessionData) {
+          // Check permission
+          const res = await fetch('/api/auth/session')
+          const data = await res.json()
+          const role = data?.user?.role || sessionData.user.role
+          // Superuser and executive always have access
+          if (['superuser', 'executive'].includes(role)) {
+            setCanViewReports(true)
+          } else if (['admin', 'manager'].includes(role)) {
+            // Check explicit permission
+            const { createClient } = await import('@/utils/supabase/client')
+            const supabase = createClient()
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('can_view_reports')
+              .eq('id', sessionData.user.id)
+              .single()
+            setCanViewReports(profile?.can_view_reports === true)
+          }
+
           // Fetch real data from database
           const reportsData = await getReportsData()
           setLoftRevenue(reportsData.loftRevenue)
@@ -75,17 +95,17 @@ export default function ReportsPage() {
   return (
     <RoleBasedAccess 
       userRole={session.user.role}
-      allowedRoles={['admin', 'manager', 'executive']}
+      allowedRoles={['admin', 'manager', 'executive', 'superuser']}
       fallback={
         <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-purple-50/50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900/20 p-8">
           <div className="container mx-auto">
-            <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
-              <div className="flex">
-                <div className="ml-3">
-                  <h3 className="text-lg font-medium text-red-800">Access Restricted</h3>
-                  <p className="text-red-700 mt-2">
-                    Financial reports are only available to administrators, managers, and executives. 
-                    Your current role ({session.user.role}) does not have permission to view this content.
+            <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-6 rounded-lg">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-6 w-6 text-red-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-lg font-medium text-red-800 dark:text-red-300">Accès restreint</h3>
+                  <p className="text-red-700 dark:text-red-400 mt-1">
+                    Vous n'avez pas les droits pour accéder aux rapports financiers.
                   </p>
                 </div>
               </div>
@@ -94,6 +114,24 @@ export default function ReportsPage() {
         </div>
       }
     >
+    {!canViewReports && ['admin', 'manager'].includes(session.user.role) ? (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-purple-50/50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900/20 p-8">
+        <div className="container mx-auto">
+          <div className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-400 p-6 rounded-lg">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-6 w-6 text-amber-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-lg font-medium text-amber-800 dark:text-amber-300">🔒 Accès non autorisé</h3>
+                <p className="text-amber-700 dark:text-amber-400 mt-1">
+                  Vous n'avez pas la permission de consulter les rapports financiers.<br />
+                  Contactez le superuser pour obtenir l'accès.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : (
     <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-purple-50/50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900/20">
       <div className="container mx-auto py-8">
         <div className="space-y-8">
@@ -194,6 +232,7 @@ export default function ReportsPage() {
         </div>
       </div>
     </div>
+    )}
     </RoleBasedAccess>
   )
 }

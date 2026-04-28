@@ -157,19 +157,22 @@ export function DateRangePicker({
       {/* Calendar */}
       <div className="border rounded-xl overflow-hidden bg-white dark:bg-gray-800 shadow-sm">
         <style>{`
-          .rdp { margin: 0; --rdp-cell-size: 38px; }
+          .rdp { margin: 0; --rdp-cell-size: 36px; }
+          @media (max-width: 480px) {
+            .rdp { --rdp-cell-size: 40px; }
+            .rdp-months { flex-direction: column !important; }
+          }
           .rdp-months { justify-content: center; }
           .rdp-day_selected:not(.rdp-day_range_middle) { background-color: #3b82f6 !important; color: white !important; }
           .rdp-day_range_middle { background-color: #dbeafe !important; color: #1e40af !important; border-radius: 0 !important; }
           .rdp-day_range_start { border-radius: 50% 0 0 50% !important; background-color: #3b82f6 !important; color: white !important; }
           .rdp-day_range_end { border-radius: 0 50% 50% 0 !important; background-color: #3b82f6 !important; color: white !important; }
           .rdp-day_disabled { color: #d1d5db !important; }
-          .rdp-day[data-booked="true"] { background-color: #fee2e2 !important; color: #ef4444 !important; text-decoration: line-through; cursor: not-allowed; border-radius: 4px; }
           .rdp-caption { padding: 8px 12px; }
           .rdp-nav_button { color: #6b7280; }
           .rdp-head_cell { font-size: 11px; color: #9ca3af; font-weight: 600; }
           .rdp-day { font-size: 13px; }
-          .rdp-day:hover:not(.rdp-day_disabled):not([data-booked="true"]) { background-color: #eff6ff !important; }
+          .rdp-day:hover:not(.rdp-day_disabled) { background-color: #eff6ff !important; }
         `}</style>
         <DayPicker
           mode="range"
@@ -177,9 +180,8 @@ export function DateRangePicker({
           onDayClick={handleDayClick}
           disabled={isDisabled}
           locale={fr}
-          numberOfMonths={2}
+          numberOfMonths={typeof window !== 'undefined' && window.innerWidth < 640 ? 1 : 2}
           modifiers={{ booked: bookedDates }}
-          modifiersClassNames={{ booked: 'rdp-day-booked' }}
           modifiersStyles={{
             booked: {
               backgroundColor: '#fee2e2',

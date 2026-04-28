@@ -363,20 +363,17 @@ export default function ReservationFormHybrid({
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
+    <div className="max-w-5xl mx-auto space-y-6">
       <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-blue-50/30">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white pb-8">
-          <CardTitle className="flex items-center gap-3 text-2xl">
+        <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white pb-6">
+          <CardTitle className="flex items-center gap-3 text-xl sm:text-2xl">
             <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-              <Calendar className="h-6 w-6" />
+              <Calendar className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
             {t('form.title')}
-            <Badge variant="secondary" className="bg-white/20 text-white border-white/30 ml-auto">
-              {t('form.badge')}
-            </Badge>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-8">
+        <CardContent className="p-4 sm:p-6 md:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
 
             {/* Display server action errors */}
@@ -590,7 +587,7 @@ export default function ReservationFormHybrid({
 
                       <div className="space-y-2 text-sm">
                         {/* Per-night input → auto-calculates base price */}
-                        <div className="flex justify-between items-center py-1 bg-blue-50 rounded px-2">
+                        <div className="flex flex-wrap justify-between items-center py-1 bg-blue-50 rounded px-2 gap-2">
                           <Label className="text-blue-700 font-medium text-xs">
                             {t('form.pricePerNight')} × {nights} {t('form.nights')}
                           </Label>
@@ -606,46 +603,26 @@ export default function ReservationFormHybrid({
                                 const pn = parseFloat(e.target.value);
                                 if (!isNaN(pn) && nights > 0) setBasePriceInput(String(pn * nights));
                               }}
-                              className="w-28 text-right h-8 text-xs"
+                              className="w-24 sm:w-28 text-right h-8 text-xs"
                               placeholder="0"
                             />
                           </div>
                         </div>
 
-                        <div className="flex justify-between items-center py-1">
-                          <Label className="text-gray-600">{t('form.basePrice')} ({nights} {t('form.nights')})</Label>
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs text-gray-400">{selectedCurrency?.symbol || 'DA'}</span>
-                            <Input
-                              type="number"
-                              step="any"
-                              value={basePriceInput}
-                              onChange={(e) => { setBasePriceInput(e.target.value); setPricePerNightInput(''); }}
-                              className="w-28 text-right h-8 text-xs"
-                            />
+                        {[
+                          { label: `${t('form.basePrice')} (${nights} ${t('form.nights')})`, value: basePriceInput, setter: (v: string) => { setBasePriceInput(v); setPricePerNightInput('') } },
+                          { label: t('form.cleaningFee'), value: cleaningFeeInput, setter: setCleaningFeeInput },
+                          { label: t('form.serviceFee'), value: serviceFeeInput, setter: setServiceFeeInput },
+                          { label: t('form.taxes'), value: taxesInput, setter: setTaxesInput },
+                        ].map(({ label, value, setter }) => (
+                          <div key={label} className="flex flex-wrap justify-between items-center py-1 gap-2">
+                            <Label className="text-gray-600 text-xs">{label}</Label>
+                            <div className="flex items-center gap-1">
+                              <span className="text-xs text-gray-400">{selectedCurrency?.symbol || 'DA'}</span>
+                              <Input type="number" step="any" value={value} onChange={(e) => setter(e.target.value)} className="w-24 sm:w-28 text-right h-8 text-xs" />
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex justify-between items-center py-1">
-                          <Label className="text-gray-600">{t('form.cleaningFee')}</Label>
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs text-gray-400">{selectedCurrency?.symbol || 'DA'}</span>
-                            <Input type="number" step="any" value={cleaningFeeInput} onChange={(e) => setCleaningFeeInput(e.target.value)} className="w-28 text-right h-8 text-xs" />
-                          </div>
-                        </div>
-                        <div className="flex justify-between items-center py-1">
-                          <Label className="text-gray-600">{t('form.serviceFee')}</Label>
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs text-gray-400">{selectedCurrency?.symbol || 'DA'}</span>
-                            <Input type="number" step="any" value={serviceFeeInput} onChange={(e) => setServiceFeeInput(e.target.value)} className="w-28 text-right h-8 text-xs" />
-                          </div>
-                        </div>
-                        <div className="flex justify-between items-center py-1">
-                          <Label className="text-gray-600">{t('form.taxes')}</Label>
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs text-gray-400">{selectedCurrency?.symbol || 'DA'}</span>
-                            <Input type="number" step="any" value={taxesInput} onChange={(e) => setTaxesInput(e.target.value)} className="w-28 text-right h-8 text-xs" />
-                          </div>
-                        </div>
+                        ))}
                         <hr className="my-2" />
                         <div className="flex justify-between items-center py-2 bg-green-100 rounded-lg px-3">
                           <Label className="font-semibold text-green-800">{t('form.total')}</Label>

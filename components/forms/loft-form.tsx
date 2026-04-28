@@ -274,21 +274,8 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
               <Textarea id="description" value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} />
             </div>
 
-            {/* New fields: client phone + GPS */}
+            {/* GPS coordinates */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-              <div className="space-y-2">
-                <Label htmlFor="client_phone" className="flex items-center gap-2">
-                  📞 Numéro client téléphone
-                </Label>
-                <Input
-                  id="client_phone"
-                  type="tel"
-                  value={(formData as any).client_phone}
-                  onChange={(e) => setFormData({...formData, client_phone: e.target.value} as any)}
-                  placeholder="ex: +213 555 123 456"
-                />
-                <p className="text-xs text-gray-400">Numéro de téléphone du client/locataire principal</p>
-              </div>
               <div className="space-y-2">
                 <Label htmlFor="gps_coordinates" className="flex items-center gap-2">
                   📍 Coordonnées GPS
@@ -558,6 +545,16 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
                   <div className="space-y-2">
                     <Label htmlFor="phone_number">{t('phoneNumber')}</Label>
                     <Input id="phone_number" value={formData.phone_number} onChange={(e) => setFormData({...formData, phone_number: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="client_phone">N° client (facture fournisseur)</Label>
+                    <Input
+                      id="client_phone"
+                      value={(formData as any).client_phone}
+                      onChange={(e) => setFormData({...formData, client_phone: e.target.value} as any)}
+                      placeholder="ex: 0123456789"
+                    />
+                    <p className="text-xs text-gray-400">Numéro client figurant sur la facture téléphonique</p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="frequence_paiement_telephone" className="text-sm font-medium">

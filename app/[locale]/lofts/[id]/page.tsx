@@ -285,7 +285,7 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                           <div className="flex items-center gap-3">
                             <Phone className="h-5 w-5 text-green-600" />
                             <div>
-                              <p className="text-sm text-muted-foreground">📞 N° client téléphone</p>
+                              <p className="text-sm text-muted-foreground">📞 N° client téléphone (facture)</p>
                               <p className="font-medium">{(loft as any).client_phone}</p>
                             </div>
                           </div>

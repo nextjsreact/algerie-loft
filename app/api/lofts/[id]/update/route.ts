@@ -20,7 +20,8 @@ const ALLOWED_FIELDS = [
   'cleaning_fee', 'tax_rate', 'cancellation_policy', 'house_rules',
   'wifi_password', 'owner_id',
   'contract_start_date', 'contract_duration_months',
-  'airbnb_ical_url'
+  'airbnb_ical_url',
+  'client_phone', 'gps_coordinates'
 ]
 
 export async function PUT(
@@ -47,7 +48,7 @@ export async function PUT(
         .map(([key, value]) => [key, value === "" ? null : value])
     )
 
-    const supabase = await createClient()
+    const supabase = await createClient(true)
     const { error } = await supabase
       .from("lofts")
       .update(safeData)

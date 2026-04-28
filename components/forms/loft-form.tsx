@@ -60,6 +60,8 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
     contract_start_date: (loft as any)?.contract_start_date || "",
     contract_duration_months: (loft as any)?.contract_duration_months?.toString() || "",
     airbnb_ical_url: (loft as any)?.airbnb_ical_url || "",
+    client_phone: (loft as any)?.client_phone || "",
+    gps_coordinates: (loft as any)?.gps_coordinates || "",
   }), [loft])
 
   const [formData, setFormData] = useState(() => getInitialFormData())
@@ -127,6 +129,8 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
         contract_start_date: formData.contract_start_date || null,
         contract_duration_months: formData.contract_duration_months ? Number(formData.contract_duration_months) : null,
         airbnb_ical_url: (formData as any).airbnb_ical_url || null,
+        client_phone: (formData as any).client_phone || null,
+        gps_coordinates: (formData as any).gps_coordinates || null,
       }
       
       await onSubmit(processedData)
@@ -268,6 +272,45 @@ export function LoftForm({ owners, zoneAreas, internetConnectionTypes, onSubmit,
             <div className="space-y-2 pt-4">
               <Label htmlFor="description">{t('loftDescription')}</Label>
               <Textarea id="description" value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} />
+            </div>
+
+            {/* New fields: client phone + GPS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+              <div className="space-y-2">
+                <Label htmlFor="client_phone" className="flex items-center gap-2">
+                  📞 Numéro client téléphone
+                </Label>
+                <Input
+                  id="client_phone"
+                  type="tel"
+                  value={(formData as any).client_phone}
+                  onChange={(e) => setFormData({...formData, client_phone: e.target.value} as any)}
+                  placeholder="ex: +213 555 123 456"
+                />
+                <p className="text-xs text-gray-400">Numéro de téléphone du client/locataire principal</p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="gps_coordinates" className="flex items-center gap-2">
+                  📍 Coordonnées GPS
+                </Label>
+                <Input
+                  id="gps_coordinates"
+                  value={(formData as any).gps_coordinates}
+                  onChange={(e) => setFormData({...formData, gps_coordinates: e.target.value} as any)}
+                  placeholder="ex: 36.7372, 3.0865"
+                />
+                <p className="text-xs text-gray-400">
+                  Latitude, Longitude — 
+                  <a
+                    href="https://maps.google.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline ml-1"
+                  >
+                    Trouver sur Google Maps
+                  </a>
+                </p>
+              </div>
             </div>
           </div>
 

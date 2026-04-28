@@ -281,6 +281,34 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                             </div>
                           </div>
                         )}
+                        {(loft as any).client_phone && (
+                          <div className="flex items-center gap-3">
+                            <Phone className="h-5 w-5 text-green-600" />
+                            <div>
+                              <p className="text-sm text-muted-foreground">📞 N° client téléphone</p>
+                              <p className="font-medium">{(loft as any).client_phone}</p>
+                            </div>
+                          </div>
+                        )}
+                        {(loft as any).gps_coordinates && (
+                          <div className="flex items-center gap-3">
+                            <MapPin className="h-5 w-5 text-red-600" />
+                            <div>
+                              <p className="text-sm text-muted-foreground">📍 Coordonnées GPS</p>
+                              <a
+                                href={`https://maps.google.com/?q=${(loft as any).gps_coordinates}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-medium text-blue-600 hover:underline"
+                              >
+                                {(loft as any).gps_coordinates}
+                              </a>
+                            </div>
+                          </div>
+                        )}
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       <div className="space-y-4">

@@ -296,7 +296,7 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
                             <div>
                               <p className="text-sm text-muted-foreground">📍 Coordonnées GPS</p>
                               <a
-                                href={`https://maps.google.com/?q=${(loft as any).gps_coordinates}`}
+                                href={(loft as any).gps_coordinates}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="font-medium text-blue-600 hover:underline"

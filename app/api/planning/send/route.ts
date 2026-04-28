@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
             msg += `  ${i + 1}. <b>${loftName}</b>`
             if (address) msg += ` — ${address}`
             if (r.guest_name) msg += `\n     👤 Départ : ${r.guest_name}`
-            if (gps) msg += `\n     📍 <a href="https://maps.google.com/?q=${gps}">Voir sur Maps</a>`
+            if (gps) msg += `\n     📍 <a href="${gps}">Voir sur Maps</a>`
             msg += '\n'
           })
           msg += '\n'
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
             if (address) msg += ` — ${address}`
             if (r.guest_name) msg += `\n     👤 Arrivée : ${r.guest_name}`
             if (r.guest_phone) msg += ` — 📞 ${r.guest_phone}`
-            if (gps) msg += `\n     📍 <a href="https://maps.google.com/?q=${gps}">Voir sur Maps</a>`
+            if (gps) msg += `\n     📍 <a href="${gps}">Voir sur Maps</a>`
             msg += '\n'
           })
           msg += '\n'

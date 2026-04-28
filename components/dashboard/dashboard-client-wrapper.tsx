@@ -90,7 +90,74 @@ function ExecutiveDashboardContent({ session }: { session: AuthSession }) {
 }
 
 function AdminManagerDashboardContent({ session }: { session: AuthSession }) {
-  // Use SmartDashboard for admin/manager roles with bill alerts
+  const [stats, setStats] = useState({
+    totalLofts: 0,
+    occupiedLofts: 0,
+    activeTasks: 0,
+    monthlyRevenue: 0,
+    totalTeams: 0
+  })
+  const [monthlyRevenue, setMonthlyRevenue] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const { createClient } = await import('@/utils/supabase/client')
+        const supabase = createClient()
+        const today = new Date()
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0]
+        const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0]
+
+        const [loftsRes, tasksRes, teamsRes, revenueRes] = await Promise.all([
+          supabase.from('lofts').select('id, status'),
+          supabase.from('tasks').select('id').in('status', ['todo', 'in_progress']),
+          supabase.from('teams').select('id'),
+          supabase.from('reservations')
+            .select('total_amount')
+            .gte('check_in_date', monthStart)
+            .lte('check_in_date', monthEnd)
+            .in('status', ['confirmed', 'completed', 'pending']),
+        ])
+
+        const lofts = loftsRes.data || []
+        const occupied = lofts.filter((l: any) => l.status === 'occupied').length
+        const revenue = (revenueRes.data || []).reduce((s: number, r: any) => s + (r.total_amount || 0), 0)
+
+        setStats({
+          totalLofts: lofts.length,
+          occupiedLofts: occupied,
+          activeTasks: (tasksRes.data || []).length,
+          monthlyRevenue: Math.round(revenue),
+          totalTeams: (teamsRes.data || []).length,
+        })
+
+        // Last 6 months revenue
+        const months = []
+        for (let i = 5; i >= 0; i--) {
+          const d = new Date(today.getFullYear(), today.getMonth() - i, 1)
+          const start = d.toISOString().split('T')[0]
+          const end = new Date(d.getFullYear(), d.getMonth() + 1, 0).toISOString().split('T')[0]
+          const label = d.toLocaleDateString('fr-FR', { month: 'short' })
+          const { data } = await supabase
+            .from('reservations')
+            .select('total_amount')
+            .gte('check_in_date', start)
+            .lte('check_in_date', end)
+            .in('status', ['confirmed', 'completed', 'pending'])
+          const rev = (data || []).reduce((s: number, r: any) => s + (r.total_amount || 0), 0)
+          months.push({ month: label, revenue: Math.round(rev), expenses: 0 })
+        }
+        setMonthlyRevenue(months)
+      } catch (e) {
+        console.error('Dashboard stats error:', e)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchStats()
+  }, [])
+
   return (
     <SmartDashboard
       user={{
@@ -103,25 +170,12 @@ function AdminManagerDashboardContent({ session }: { session: AuthSession }) {
         lofts: [],
         notifications: [],
         transactions: [],
-        stats: {
-          totalLofts: 24,
-          occupiedLofts: 18,
-          activeTasks: 12,
-          monthlyRevenue: 45231,
-          totalTeams: 3
-        },
+        stats,
         recentTasks: [],
-        monthlyRevenue: [
-          { month: 'Jan', revenue: 45000, expenses: 32000 },
-          { month: 'Fév', revenue: 52000, expenses: 35000 },
-          { month: 'Mar', revenue: 48000, expenses: 33000 },
-          { month: 'Avr', revenue: 61000, expenses: 40000 },
-          { month: 'Mai', revenue: 55000, expenses: 37000 },
-          { month: 'Jun', revenue: 67000, expenses: 42000 },
-        ]
+        monthlyRevenue,
       }}
       errors={[]}
-      isLoading={false}
+      isLoading={isLoading}
     />
   )
 }

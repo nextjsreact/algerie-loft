@@ -31,12 +31,24 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient(true)
     const { searchParams } = new URL(request.url)
-    const startDate = searchParams.get('startDate')   // e.g. '2026-04-01'
-    const endDate = searchParams.get('endDate')       // e.g. '2026-04-30'
+    const startDate = searchParams.get('startDate')
+    const endDateRaw = searchParams.get('endDate')
 
-    if (!startDate || !endDate) {
+    if (!startDate || !endDateRaw) {
       return NextResponse.json({ error: 'startDate and endDate are required' }, { status: 400 })
     }
+
+    // Cap endDate to end of the startDate's month to ensure correct proration
+    // e.g. if startDate=2026-04-01 and endDate=2026-05-31, cap to 2026-04-30
+    const startDateObj = new Date(startDate + 'T00:00:00Z')
+    const endOfStartMonth = new Date(Date.UTC(startDateObj.getUTCFullYear(), startDateObj.getUTCMonth() + 1, 0))
+    const endDateObj = new Date(endDateRaw + 'T00:00:00Z')
+    // Use the earlier of the two: provided endDate or end of startDate's month
+    const endDate = endDateObj <= endOfStartMonth
+      ? endDateRaw
+      : endOfStartMonth.toISOString().split('T')[0]
+
+    console.log(`[partner-due] startDate=${startDate}, endDateRaw=${endDateRaw}, endDate used=${endDate}`)
 
     const periodStart = new Date(startDate + 'T00:00:00Z')
     const periodEnd = new Date(endDate + 'T00:00:00Z')

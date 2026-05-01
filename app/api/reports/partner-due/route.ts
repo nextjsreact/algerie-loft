@@ -220,14 +220,14 @@ export async function GET(request: NextRequest) {
             id: r.id,
             date: r.check_in_date,
             description: r.status === 'income_tx'
-              ? r.guest_name  // description of the manual transaction
+              ? r.guest_name
               : `(${r.check_in_date} → ${r.check_out_date})`,
             category: r.status === 'income_tx' ? r.guest_name : 'Réservation',
             amount: r.prorated_amount,
             type: 'income' as const,
           })),
           ...exp.transactions,
-        ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+        ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()), // ascending for print
       }
     })
 

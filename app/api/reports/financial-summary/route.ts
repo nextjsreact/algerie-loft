@@ -53,6 +53,23 @@ export async function GET(request: NextRequest) {
         const prorated = prorateAmount(ci, co, r.total_amount || 0, periodStart, periodEndExclusive)
         incomeByLoft.set(r.loft_id, (incomeByLoft.get(r.loft_id) || 0) + prorated)
       })
+
+      // ALSO add manual income transactions (hors réservations)
+      let txIncomeQuery = supabase
+        .from('transactions')
+        .select('loft_id, equivalent_amount_default_currency, amount')
+        .eq('transaction_type', 'income')
+        .gte('date', startDate)
+        .lte('date', endDate + 'T23:59:59')
+
+      if (filterLoftId) txIncomeQuery = txIncomeQuery.eq('loft_id', filterLoftId)
+
+      const { data: incomeTx } = await txIncomeQuery
+      ;(incomeTx || []).forEach((t: any) => {
+        if (!t.loft_id) return
+        const amt = Number(t.equivalent_amount_default_currency ?? t.amount ?? 0)
+        incomeByLoft.set(t.loft_id, (incomeByLoft.get(t.loft_id) || 0) + amt)
+      })
     } else {
       // Before April: transactions
       let txQuery = supabase

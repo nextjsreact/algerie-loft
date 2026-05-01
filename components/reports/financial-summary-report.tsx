@@ -160,7 +160,7 @@ export function FinancialSummaryReport() {
           {/* Source badge */}
           <div className="flex items-center gap-2 text-xs text-gray-500">
             <span className={`px-2 py-1 rounded-full font-medium ${data.period?.source === 'reservations' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
-              {data.period?.source === 'reservations' ? '📋 Revenus : Réservations (prorata)' : '💳 Revenus : Transactions'}
+              {data.period?.source === 'reservations' ? '📋 Revenus : Réservations (prorata) + Transactions income' : '💳 Revenus : Transactions'}
             </span>
             {hasFilter && (
               <span className="px-2 py-1 rounded-full bg-amber-100 text-amber-700 font-medium">

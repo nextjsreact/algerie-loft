@@ -3,11 +3,12 @@
 import { ReportGenerator } from '@/components/reports/report-generator'
 import { ReportsWrapper } from '@/components/reports/reports-wrapper'
 import { PartnerDueReport } from '@/components/reports/partner-due-report'
+import { PartnerDueByCurrencyReport } from '@/components/reports/partner-due-by-currency-report'
 import { FinancialSummaryReport } from '@/components/reports/financial-summary-report'
 import { CurrencyReport } from '@/components/reports/currency-report'
 import { RecouvrementReport } from '@/components/reports/recouvrement-report'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { FileText, BarChart3, TrendingUp, Sparkles, Users, PieChart, Coins, AlertCircle } from 'lucide-react'
+import { FileText, BarChart3, TrendingUp, Sparkles, Users, PieChart, Coins, AlertCircle, Globe } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { RoleBasedAccess } from '@/components/auth/role-based-access'
 import { useEffect, useState } from 'react'
@@ -161,7 +162,7 @@ export default function ReportsPage() {
           </div>
 
           <Tabs defaultValue={new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('tab') || "analytics"} className="space-y-8">
-            <TabsList className="grid w-full grid-cols-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-lg rounded-xl p-1">
+            <TabsList className="grid w-full grid-cols-7 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-lg rounded-xl p-1">
               <TabsTrigger value="analytics" className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white data-[state=active]:shadow-lg">
                 <BarChart3 className="h-4 w-4" />{t('reports.analyticsTab')}
               </TabsTrigger>
@@ -176,6 +177,9 @@ export default function ReportsPage() {
               </TabsTrigger>
               <TabsTrigger value="partner" className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-orange-500 data-[state=active]:text-white data-[state=active]:shadow-lg">
                 <Users className="h-4 w-4" />{t('reports.partnerTab')}
+              </TabsTrigger>
+              <TabsTrigger value="partner-currency" className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg">
+                <Globe className="h-4 w-4" />Dû/Devise
               </TabsTrigger>
               <TabsTrigger value="generator" className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-medium transition-all data-[state=active]:bg-gradient-to-r data-[state=active]:from-gray-500 data-[state=active]:to-slate-500 data-[state=active]:text-white data-[state=active]:shadow-lg">
                 <FileText className="h-4 w-4" />{t('reports.pdfTab')}
@@ -226,6 +230,12 @@ export default function ReportsPage() {
             <TabsContent value="partner" className="space-y-8">
               <div className="rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-xl p-6">
                 <PartnerDueReport />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="partner-currency" className="space-y-8">
+              <div className="rounded-2xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 shadow-xl p-6">
+                <PartnerDueByCurrencyReport />
               </div>
             </TabsContent>
           </Tabs>

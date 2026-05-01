@@ -67,8 +67,6 @@ export async function GET(request: NextRequest) {
         const currency = r.currency_code || 'DZD'
         const ratio = Number(r.currency_ratio) || 1
 
-        // Convert prorata to original currency
-        // total_amount is always in DZD, so divide by ratio to get original currency amount
         const proratedDZD = prorateAmount(ci, co, totalDZD, periodStart, periodEndExclusive)
         const originalAmount = currency === 'DZD' ? proratedDZD : Math.round((proratedDZD / ratio) * 100) / 100
 
@@ -84,6 +82,33 @@ export async function GET(request: NextRequest) {
           check_out: r.check_out_date,
           type: 'income',
           source: 'reservation',
+        })
+      })
+
+      // ALSO add manual income transactions (hors réservations)
+      let txIncomeQuery = supabase
+        .from('transactions')
+        .select('id, amount, original_amount, original_currency, equivalent_amount_default_currency, description, date, loft_id, currency_id, currencies:currency_id(code, symbol)')
+        .eq('transaction_type', 'income')
+        .gte('date', startDate)
+        .lte('date', endDate + 'T23:59:59')
+
+      if (filterLoftId) txIncomeQuery = txIncomeQuery.eq('loft_id', filterLoftId)
+      const { data: incomeTxExtra } = await txIncomeQuery
+
+      ;(incomeTxExtra || []).forEach((t: any) => {
+        const loft = loftMap.get(t.loft_id)
+        if (filterOwnerId && loft?.owner_id !== filterOwnerId) return
+        const currency = (t as any).original_currency || (t.currencies as any)?.code || 'DZD'
+        const amount = Number((t as any).original_amount ?? t.amount ?? 0)
+        addIncome(currency, amount, {
+          id: t.id, amount, currency,
+          amount_dzd: Number(t.equivalent_amount_default_currency ?? t.amount ?? 0),
+          loft_name: loft?.name || '—',
+          description: t.description || '—',
+          date: t.date,
+          type: 'income',
+          source: 'transaction',
         })
       })
     } else {

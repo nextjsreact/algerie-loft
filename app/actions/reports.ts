@@ -84,12 +84,11 @@ export async function getReportsData() {
 
   const loftRevenue: LoftRevenue[] = await Promise.all(loftRevenuePromises)
 
-  // Monthly revenue: prorated from reservations + expenses from transactions
+  // Monthly revenue: prorated from reservations + manual income transactions + expenses from transactions
   const now = new Date()
   const currentYear = now.getUTCFullYear()
-  const currentMonth = now.getUTCMonth() // 0-indexed
+  const currentMonth = now.getUTCMonth()
 
-  // Use Date.UTC to avoid timezone/negative-month arithmetic bugs
   const twelveMonthsAgo = new Date(Date.UTC(currentYear, currentMonth - 11, 1))
   const nextMonth = new Date(Date.UTC(currentYear, currentMonth + 1, 1))
 
@@ -100,6 +99,14 @@ export async function getReportsData() {
     .in("status", ["confirmed", "completed"])
     .gte("check_out_date", twelveMonthsAgo.toISOString().split('T')[0])
     .lt("check_in_date", nextMonth.toISOString().split('T')[0])
+
+  // Fetch all income transactions for the last 12 months (manual income hors réservations)
+  const { data: incomeTransactions } = await supabase
+    .from("transactions")
+    .select("equivalent_amount_default_currency, date")
+    .eq("transaction_type", "income")
+    .gte("date", twelveMonthsAgo.toISOString())
+    .lt("date", nextMonth.toISOString())
 
   // Fetch all expense transactions for the last 12 months
   const { data: expenseTransactions } = await supabase
@@ -123,6 +130,14 @@ export async function getReportsData() {
       return sum + prorateReservation(checkIn, checkOut, r.total_amount || 0, monthStart, monthEnd)
     }, 0)
 
+    // Manual income transactions for this month
+    const incomeFromTx = (incomeTransactions || [])
+      .filter(t => {
+        const d = new Date(t.date)
+        return d >= monthStart && d < monthEnd
+      })
+      .reduce((sum, t) => sum + (t.equivalent_amount_default_currency || 0), 0)
+
     // Expenses from transactions (by transaction date)
     const expenses = (expenseTransactions || [])
       .filter(t => {
@@ -133,7 +148,7 @@ export async function getReportsData() {
 
     monthlyRevenueData.push({
       month: monthName.charAt(0).toUpperCase() + monthName.slice(1),
-      revenue: Math.round(revenue),
+      revenue: Math.round(revenue + incomeFromTx),
       expenses: Math.round(expenses)
     })
   }

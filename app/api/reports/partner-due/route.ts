@@ -91,6 +91,32 @@ export async function GET(request: NextRequest) {
           status: r.status,
         })
       })
+
+      // ALSO add manual income transactions (hors réservations)
+      const { data: incomeTx } = await supabase
+        .from('transactions')
+        .select('id, loft_id, equivalent_amount_default_currency, amount, description, date, category')
+        .eq('transaction_type', 'income')
+        .gte('date', startDate)
+        .lte('date', endDate + 'T23:59:59')
+
+      ;(incomeTx || []).forEach((tx: any) => {
+        if (!tx.loft_id) return
+        if (!resByLoft.has(tx.loft_id)) resByLoft.set(tx.loft_id, { income: 0, reservations: [] })
+        const entry = resByLoft.get(tx.loft_id)!
+        const amt = Math.round(Number(tx.equivalent_amount_default_currency ?? tx.amount ?? 0))
+        entry.income += amt
+        entry.reservations.push({
+          id: tx.id,
+          guest_name: tx.description || tx.category || 'Autre recette',
+          check_in_date: tx.date?.split('T')[0] || startDate,
+          check_out_date: tx.date?.split('T')[0] || startDate,
+          nights: 0,
+          total_amount: amt,
+          prorated_amount: amt,
+          status: 'income_tx',
+        })
+      })
     } else {
       // Use income transactions for months before April 2026
       const { data: incomeTx, error: incError } = await supabase
@@ -174,13 +200,15 @@ export async function GET(request: NextRequest) {
         owner_gross: ownerGross,
         owner_due: ownerDue,
         company_due: companyDue,
-        // For detail modal — show reservations (income source)
+        // For detail modal — show reservations + manual income transactions
         transactions: [
           ...rev.reservations.map(r => ({
             id: r.id,
             date: r.check_in_date,
-            description: `${r.guest_name} (${r.check_in_date} → ${r.check_out_date})`,
-            category: 'Réservation',
+            description: r.status === 'income_tx'
+              ? r.guest_name  // description of the manual transaction
+              : `(${r.check_in_date} → ${r.check_out_date})`,
+            category: r.status === 'income_tx' ? r.guest_name : 'Réservation',
             amount: r.prorated_amount,
             type: 'income' as const,
           })),

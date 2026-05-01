@@ -40,9 +40,11 @@ export async function GET(request: NextRequest) {
 
     const periodStart = new Date(startDate + 'T00:00:00Z')
     const periodEnd = new Date(endDate + 'T00:00:00Z')
-    // Make periodEnd exclusive (day after last day)
+    // Make periodEnd exclusive (day after last day) — ensures correct proration
     const periodEndExclusive = new Date(periodEnd)
     periodEndExclusive.setUTCDate(periodEndExclusive.getUTCDate() + 1)
+
+    console.log(`[partner-due] period: ${startDate} → ${endDate}, exclusive end: ${periodEndExclusive.toISOString().split('T')[0]}`)
 
     // April 2026 is the cutover month: use reservations+prorata from April onwards,
     // use transactions for months before April 2026

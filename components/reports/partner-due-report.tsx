@@ -275,7 +275,16 @@ export function PartnerDueReport() {
           <div className="flex flex-wrap gap-4 items-end">
             <div className="space-y-1">
               <Label className="text-xs text-gray-500">{t('from')}</Label>
-              <Input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="h-9 w-[150px]" />
+              <Input type="date" value={startDate} onChange={e => {
+                const newStart = e.target.value
+                setStartDate(newStart)
+                // Auto-set endDate to end of the same month
+                if (newStart) {
+                  const d = new Date(newStart + 'T00:00:00')
+                  const endOfM = new Date(d.getFullYear(), d.getMonth() + 1, 0)
+                  setEndDate(format(endOfM, 'yyyy-MM-dd'))
+                }
+              }} className="h-9 w-[150px]" />
             </div>
             <div className="space-y-1">
               <Label className="text-xs text-gray-500">{t('to')}</Label>

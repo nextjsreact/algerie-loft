@@ -65,6 +65,7 @@ function ReservationsPageContent() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [canValidate, setCanValidate] = useState(false);
+  const [whatsappReservation, setWhatsappReservation] = useState<any>(null);
 
   const searchParams = useSearchParams();
 
@@ -201,21 +202,23 @@ function ReservationsPageContent() {
     setShowCreateForm(true);
   }, []);
 
-  const handleCreateSuccess = useCallback(() => {
+  const handleCreateSuccess = useCallback((reservationData?: any) => {
     setShowCreateForm(false);
     setSelectedDates(null);
-    toast.success('Réservation créée avec succès', {
-      description: 'La réservation a été enregistrée.'
-    });
     setRefreshKey(prev => prev + 1);
     fetchAllReservations();
-    // Re-fetch recent activities
     getRecentReservations().then(result => {
       if (result.success) setRecentActivities(result.data || []);
     });
     getReservationStats().then(result => {
       if (result.success) setReservationStats(result.data);
     });
+    // Show WhatsApp dialog if phone available
+    if (reservationData?.guest_phone) {
+      setWhatsappReservation(reservationData);
+    } else {
+      toast.success('Réservation créée avec succès');
+    }
   }, [fetchAllReservations]);
 
   const handleStatusUpdate = useCallback(async (reservationId: string, status: 'pending' | 'confirmed' | 'cancelled' | 'completed') => {
@@ -904,10 +907,83 @@ function ReservationsPageContent() {
               initialCheckIn={selectedDates?.start ? selectedDates.start.toISOString().split('T')[0] : undefined}
               initialCheckOut={selectedDates?.end ? selectedDates.end.toISOString().split('T')[0] : undefined}
               initialLoftId={initialLoftId}
-              onSuccess={handleCreateSuccess}
+              onSuccess={(data?: any) => handleCreateSuccess(data)}
               onCancel={() => setShowCreateForm(false)}
               defaultCurrencySymbol={defaultCurrencySymbol}
             />
+          </DialogContent>
+        </Dialog>
+
+        {/* WhatsApp Confirmation Dialog */}
+        <Dialog open={!!whatsappReservation} onOpenChange={(open) => { if (!open) setWhatsappReservation(null) }}>
+          <DialogContent className="max-w-md border-0 shadow-2xl bg-white">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-green-700">
+                <span className="text-2xl">📱</span>
+                Envoyer la confirmation WhatsApp
+              </DialogTitle>
+            </DialogHeader>
+            {whatsappReservation && (
+              <div className="space-y-4 pt-2">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm space-y-1">
+                  <p><strong>Client :</strong> {whatsappReservation.guest_name || '—'}</p>
+                  <p><strong>Tél :</strong> {whatsappReservation.guest_phone}</p>
+                  <p><strong>Loft :</strong> {whatsappReservation.loft_name}</p>
+                  <p><strong>Séjour :</strong> {whatsappReservation.check_in_date} → {whatsappReservation.check_out_date}</p>
+                </div>
+                <button
+                  onClick={async () => {
+                    const r = whatsappReservation
+                    const phone = r.guest_phone.replace(/\D/g, '')
+                    const nights = Math.ceil((new Date(r.check_out_date).getTime() - new Date(r.check_in_date).getTime()) / 86400000)
+                    const total = (r.total_amount || 0).toLocaleString('fr-DZ')
+                    const initPaid = r.init_payment || 0
+                    const remaining = Math.max(0, (r.total_amount || 0) - initPaid)
+                    let gps = '', checkInTime = '15h00', address = ''
+                    try {
+                      const loftRes = await fetch(`/api/lofts/${r.loft_id}`)
+                      const loftData = await loftRes.json()
+                      gps = loftData.loft?.gps_coordinates || ''
+                      const rawTime = loftData.loft?.check_in_time || '15:00'
+                      checkInTime = rawTime.substring(0, 5).replace(':', 'h')
+                      address = loftData.loft?.address || ''
+                    } catch {}
+                    const e = (code: string) => String.fromCodePoint(parseInt(code, 16))
+                    const msg = [
+                      r.guest_name ? `Bonjour ${r.guest_name} ${e('1F44B')}` : `Bonjour ${e('1F44B')}`,
+                      '',
+                      `${e('2705')} Votre réservation est confirmée !`,
+                      '',
+                      `${e('1F3E0')} Appartement : ${r.loft_name}`,
+                      address ? `${e('1F4CD')} Adresse : ${address}` : null,
+                      gps ? `${e('1F5FA')} GPS : ${gps}` : null,
+                      `${e('1F4C5')} Arrivée : ${r.check_in_date} à partir de ${checkInTime}`,
+                      `${e('1F4C5')} Départ : ${r.check_out_date}`,
+                      `${e('1F319')} Durée : ${nights} nuit${nights > 1 ? 's' : ''}`,
+                      `${e('1F465')} Nombre de personnes : ${r.guest_count || 1}`,
+                      `${e('1F4B0')} Montant total : ${total} DA`,
+                      `${e('2705')} Versé : ${initPaid.toLocaleString('fr-DZ')} DA`,
+                      `${e('23F3')} Reste : ${remaining.toLocaleString('fr-DZ')} DA`,
+                      '',
+                      'Pour toute question, contactez-nous :',
+                      `${e('1F4DE')} +213 56 03 62 543`,
+                      '',
+                      `Merci de votre confiance ${e('1F64F')}`,
+                      'Loft Algérie',
+                    ].filter(Boolean).join('\n')
+                    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank')
+                    setWhatsappReservation(null)
+                  }}
+                  className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl text-base transition-colors"
+                >
+                  <span className="text-xl">📱</span> Envoyer via WhatsApp
+                </button>
+                <button onClick={() => setWhatsappReservation(null)}
+                  className="w-full text-sm text-gray-500 hover:text-gray-700 underline text-center">
+                  Fermer sans envoyer
+                </button>
+              </div>
+            )}
           </DialogContent>
         </Dialog>
 

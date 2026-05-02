@@ -367,8 +367,6 @@ export default function ReservationFormHybrid({
           init_payment: initPaymentAmount ? parseFloat(initPaymentAmount) : 0,
           init_payment_currency: initPaymentCurrency,
         });
-        // Don't auto-close — let user send WhatsApp first
-        setTimeout(() => onSuccess?.(), 8000);
       }
     } catch (error) {
       setState({ error: error instanceof Error ? error.message : 'Erreur serveur' });
@@ -471,6 +469,7 @@ export default function ReservationFormHybrid({
 
                       const msg = lines.join('\n')
                       window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank')
+                      setTimeout(() => onSuccess?.(createdReservation), 500)
                     }}
                     className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
                   >
@@ -480,7 +479,7 @@ export default function ReservationFormHybrid({
                 )}
                 <button
                   type="button"
-                  onClick={() => onSuccess?.()}
+                  onClick={() => onSuccess?.(createdReservation)}
                   className="w-full text-sm text-green-700 hover:text-green-900 underline text-center"
                 >
                   Fermer sans envoyer →

@@ -72,6 +72,7 @@ export default function ReservationFormHybrid({
   const [checkingAvailability, setCheckingAvailability] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const [state, setState] = useState<{ success?: boolean; error?: string; details?: string[] } | null>(null);
+  const [createdReservation, setCreatedReservation] = useState<any>(null);
   
   // Form state management
   const [selectedLoft, setSelectedLoft] = useState(initialLoftId || '');
@@ -353,7 +354,21 @@ export default function ReservationFormHybrid({
           }
         }
         setState({ success: true });
-        setTimeout(() => onSuccess?.(), 1500);
+        setCreatedReservation({
+          id: result.data?.id || result.reservation?.id,
+          guest_name: guestName,
+          guest_phone: guestPhone,
+          guest_count: guestCount,
+          check_in_date: checkInDate,
+          check_out_date: checkOutDate,
+          total_amount: toDA(parseFloat(totalAmountInput) || 0),
+          loft_id: selectedLoft,
+          loft_name: selectedLoftData?.name || '',
+          init_payment: initPaymentAmount ? parseFloat(initPaymentAmount) : 0,
+          init_payment_currency: initPaymentCurrency,
+        });
+        // Don't auto-close — let user send WhatsApp first
+        setTimeout(() => onSuccess?.(), 8000);
       }
     } catch (error) {
       setState({ error: error instanceof Error ? error.message : 'Erreur serveur' });
@@ -398,14 +413,78 @@ export default function ReservationFormHybrid({
             )}
 
             {/* Display success message */}
-            {state?.success && (
-              <Alert className="border-green-200 bg-green-50/80 backdrop-blur-sm">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <AlertDescription className="text-green-800">
-                  <div className="font-medium">{t('form.reservationSuccess')}</div>
-                  <div className="text-sm mt-1">{t('form.confirmationMessage')}</div>
-                </AlertDescription>
-              </Alert>
+            {state?.success && createdReservation && (
+              <div className="border-2 border-green-300 bg-green-50 rounded-xl p-5 space-y-4">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0" />
+                  <div>
+                    <div className="font-bold text-green-800 text-lg">{t('form.reservationSuccess')}</div>
+                    <div className="text-sm text-green-600 mt-0.5">{t('form.confirmationMessage')}</div>
+                  </div>
+                </div>
+                {createdReservation.guest_phone && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const r = createdReservation
+                      const phone = r.guest_phone.replace(/\D/g, '')
+                      const nights = Math.ceil((new Date(r.check_out_date).getTime() - new Date(r.check_in_date).getTime()) / 86400000)
+                      const total = (r.total_amount || 0).toLocaleString('fr-DZ')
+
+                      // Fetch loft GPS + check_in_time
+                      let gps = '', checkInTime = '15h00', address = ''
+                      try {
+                        const loftRes = await fetch(`/api/lofts/${r.loft_id}`)
+                        const loftData = await loftRes.json()
+                        gps = loftData.loft?.gps_coordinates || ''
+                        checkInTime = loftData.loft?.check_in_time || '15h00'
+                        address = loftData.loft?.address || ''
+                      } catch {}
+
+                      // Calculate paid amount
+                      const initPaid = r.init_payment || 0
+                      const remaining = Math.max(0, (r.total_amount || 0) - initPaid)
+
+                      const lines = [
+                        r.guest_name ? `Bonjour ${r.guest_name} 👋` : 'Bonjour 👋',
+                        '',
+                        '✅ Votre réservation est confirmée !',
+                        '',
+                        `🏠 Appartement : ${r.loft_name}`,
+                        address ? `📍 Adresse : ${address}` : '',
+                        gps ? `🗺️ GPS : ${gps}` : '',
+                        `📅 Arrivée : ${r.check_in_date} à partir de ${checkInTime}`,
+                        `📅 Départ : ${r.check_out_date}`,
+                        `🌙 Durée : ${nights} nuit${nights > 1 ? 's' : ''}`,
+                        `👥 Nombre de personnes : ${r.guest_count || 1}`,
+                        `💰 Montant total : ${total} DA`,
+                        `✅ Versé : ${initPaid.toLocaleString('fr-DZ')} DA`,
+                        `⏳ Reste : ${remaining.toLocaleString('fr-DZ')} DA`,
+                        '',
+                        'Pour toute question, contactez-nous :',
+                        '📞 +213 56 03 62 543',
+                        '',
+                        'Merci de votre confiance 🙏',
+                        'Loft Algérie',
+                      ].filter(Boolean)
+
+                      const msg = lines.join('\n')
+                      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank')
+                    }}
+                    className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+                  >
+                    <span className="text-xl">📱</span>
+                    Envoyer la confirmation WhatsApp au client
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => onSuccess?.()}
+                  className="w-full text-sm text-green-700 hover:text-green-900 underline text-center"
+                >
+                  Fermer sans envoyer →
+                </button>
+              </div>
             )}
 
             {/* Property & Guest Selection */}

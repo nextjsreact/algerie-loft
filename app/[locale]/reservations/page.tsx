@@ -948,30 +948,36 @@ function ReservationsPageContent() {
                       checkInTime = rawTime.substring(0, 5).replace(':', 'h')
                       address = loftData.loft?.address || ''
                     } catch {}
-                    const e = (code: string) => String.fromCodePoint(parseInt(code, 16))
+                    // Build message with emojis using actual Unicode characters
                     const msg = [
-                      r.guest_name ? `Bonjour ${r.guest_name} ${e('1F44B')}` : `Bonjour ${e('1F44B')}`,
+                      r.guest_name ? `Bonjour ${r.guest_name} \uD83D\uDC4B` : `Bonjour \uD83D\uDC4B`,
                       '',
-                      `${e('2705')} Votre réservation est confirmée !`,
+                      `\u2705 Votre réservation est confirmée !`,
                       '',
-                      `${e('1F3E0')} Appartement : ${r.loft_name}`,
-                      address ? `${e('1F4CD')} Adresse : ${address}` : null,
-                      gps ? `${e('1F5FA')} GPS : ${gps}` : null,
-                      `${e('1F4C5')} Arrivée : ${r.check_in_date} à partir de ${checkInTime}`,
-                      `${e('1F4C5')} Départ : ${r.check_out_date}`,
-                      `${e('1F319')} Durée : ${nights} nuit${nights > 1 ? 's' : ''}`,
-                      `${e('1F465')} Nombre de personnes : ${r.guest_count || 1}`,
-                      `${e('1F4B0')} Montant total : ${total} DA`,
-                      `${e('2705')} Versé : ${initPaid.toLocaleString('fr-DZ')} DA`,
-                      `${e('23F3')} Reste : ${remaining.toLocaleString('fr-DZ')} DA`,
+                      `\uD83C\uDFE0 Appartement : ${r.loft_name}`,
+                      address ? `\uD83D\uDCCD Adresse : ${address}` : null,
+                      gps ? `\uD83D\uDDFA GPS : ${gps}` : null,
+                      `\uD83D\uDCC5 Arrivée : ${r.check_in_date} à partir de ${checkInTime}`,
+                      `\uD83D\uDCC5 Départ : ${r.check_out_date}`,
+                      `\uD83C\uDF19 Durée : ${nights} nuit${nights > 1 ? 's' : ''}`,
+                      `\uD83D\uDC65 Nombre de personnes : ${r.guest_count || 1}`,
+                      `\uD83D\uDCB0 Montant total : ${total} DA`,
+                      `\u2705 Versé : ${initPaid.toLocaleString('fr-DZ')} DA`,
+                      `\u23F3 Reste : ${remaining.toLocaleString('fr-DZ')} DA`,
                       '',
                       'Pour toute question, contactez-nous :',
-                      `${e('1F4DE')} +213 56 03 62 543`,
+                      `\uD83D\uDCDE +213 56 03 62 543`,
                       '',
-                      `Merci de votre confiance ${e('1F64F')}`,
+                      `Merci de votre confiance \uD83D\uDE4F`,
                       'Loft Algérie',
                     ].filter(Boolean).join('\n')
-                    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank')
+                    // Use encodeURIComponent with proper UTF-16 surrogate pair handling
+                    const encoded = Array.from(msg).map(c => {
+                      const code = c.codePointAt(0)!
+                      if (code > 0x7F) return encodeURIComponent(c)
+                      return c
+                    }).join('')
+                    window.open(`https://wa.me/${phone}?text=${encoded}`, '_blank')
                     setWhatsappReservation(null)
                   }}
                   className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl text-base transition-colors"

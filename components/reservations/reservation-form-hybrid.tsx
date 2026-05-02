@@ -354,7 +354,7 @@ export default function ReservationFormHybrid({
           }
         }
         setState({ success: true });
-        setCreatedReservation({
+        const resData = {
           id: result.data?.id || result.reservation?.id,
           guest_name: guestName,
           guest_phone: guestPhone,
@@ -365,8 +365,10 @@ export default function ReservationFormHybrid({
           loft_id: selectedLoft,
           loft_name: selectedLoftData?.name || '',
           init_payment: initPaymentAmount ? parseFloat(initPaymentAmount) : 0,
-          init_payment_currency: initPaymentCurrency,
-        });
+        };
+        setCreatedReservation(resData);
+        // Immediately call onSuccess with data — page will show WhatsApp dialog
+        onSuccess?.(resData);
       }
     } catch (error) {
       setState({ error: error instanceof Error ? error.message : 'Erreur serveur' });

@@ -96,32 +96,38 @@ export async function GET(request: NextRequest) {
     const cleaningPool = cleaningAgents.length > 0 ? cleaningAgents : available
     const welcomePool = welcomeAgents.length > 0 ? welcomeAgents : available
 
-    // Zone-aware assignment: prefer agent whose preferred_zone matches the loft's zone
-    const assignByZone = (pool: any[], reservation: any): any => {
-      const loftZoneId = (reservation.lofts as any)?.zone_area_id
-      if (loftZoneId) {
-        const zoneMatch = pool.find(a => a.preferred_zone_id === loftZoneId)
-        if (zoneMatch) return zoneMatch
+    // Zone-aware round-robin: rotate among agents of the matching zone, then fallback to global RR
+    const makeZoneRR = () => {
+      const zoneCounters = new Map<string, number>() // zone_id -> next index
+      let globalRR = 0
+      return (pool: any[], reservation: any): any => {
+        const loftZoneId = (reservation.lofts as any)?.zone_area_id
+        if (loftZoneId) {
+          const zoneAgents = pool.filter(a => a.preferred_zone_id === loftZoneId)
+          if (zoneAgents.length > 0) {
+            const idx = (zoneCounters.get(loftZoneId) || 0) % zoneAgents.length
+            zoneCounters.set(loftZoneId, idx + 1)
+            return zoneAgents[idx]
+          }
+        }
+        // No zone match → global round-robin
+        const agent = pool[globalRR % pool.length]
+        globalRR++
+        return agent
       }
-      return null // fallback to round-robin
     }
 
+    const assignCleaning = makeZoneRR()
+    const assignWelcome = makeZoneRR()
+
     const cleaningTasks: { agent: any; reservation: any }[] = []
-    let cleaningRR = 0
     ;(checkouts || []).forEach((res) => {
-      const zoneAgent = assignByZone(cleaningPool, res)
-      const agent = zoneAgent || cleaningPool[cleaningRR % cleaningPool.length]
-      if (!zoneAgent) cleaningRR++
-      cleaningTasks.push({ agent, reservation: res })
+      cleaningTasks.push({ agent: assignCleaning(cleaningPool, res), reservation: res })
     })
 
     const welcomeTasks: { agent: any; reservation: any }[] = []
-    let welcomeRR = 0
     ;(checkins || []).forEach((res) => {
-      const zoneAgent = assignByZone(welcomePool, res)
-      const agent = zoneAgent || welcomePool[welcomeRR % welcomePool.length]
-      if (!zoneAgent) welcomeRR++
-      welcomeTasks.push({ agent, reservation: res })
+      welcomeTasks.push({ agent: assignWelcome(welcomePool, res), reservation: res })
     })
 
     // 8. Fetch active tasks (todo + in_progress) per agent

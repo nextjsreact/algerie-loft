@@ -1071,7 +1071,71 @@ function ReservationsPageContent() {
                   </div>
 
                   {/* Right side actions */}
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 flex-wrap">
+                  {/* WhatsApp confirmation button */}
+                  {selectedReservation.guest_phone && (
+                    <Button
+                      variant="outline"
+                      className="border-green-300 text-green-700 hover:bg-green-50 gap-1.5"
+                      onClick={async () => {
+                        const res = selectedReservation
+                        const phone = res.guest_phone.replace(/\D/g, '')
+                        const loftName = res.lofts?.name || '—'
+                        const address = res.lofts?.address || ''
+                        const nights = Math.ceil((new Date(res.check_out_date).getTime() - new Date(res.check_in_date).getTime()) / 86400000)
+                        const guestName = res.guest_name || ''
+                        const total = (res.total_amount || 0).toLocaleString('fr-DZ')
+
+                        // Fetch loft GPS + check_in_time
+                        let gps = ''
+                        let checkInTime = '15h00'
+                        try {
+                          const loftRes = await fetch(`/api/lofts/${res.loft_id}`)
+                          const loftData = await loftRes.json()
+                          gps = loftData.loft?.gps_coordinates || ''
+                          checkInTime = loftData.loft?.check_in_time || '15h00'
+                        } catch {}
+
+                        // Fetch payments
+                        let paid = 0
+                        try {
+                          const payRes = await fetch(`/api/reservations/${res.id}/payments`)
+                          const payData = await payRes.json()
+                          paid = (payData.payments || []).reduce((s: number, p: any) => s + Number(p.amount || 0), 0)
+                        } catch {}
+                        const remaining = Math.max(0, (res.total_amount || 0) - paid)
+
+                        const lines = [
+                          guestName ? `Bonjour ${guestName} 👋` : 'Bonjour 👋',
+                          '',
+                          '✅ Votre réservation est confirmée !',
+                          '',
+                          `🏠 Appartement : ${loftName}`,
+                          `📍 Adresse : ${address}`,
+                          gps ? `🗺️ GPS : ${gps}` : '',
+                          `📅 Arrivée : ${res.check_in_date} à partir de ${checkInTime}`,
+                          `📅 Départ : ${res.check_out_date}`,
+                          `🌙 Durée : ${nights} nuit${nights > 1 ? 's' : ''}`,
+                          `👥 Nombre de personnes : ${res.guest_count || 1}`,
+                          `💰 Montant total : ${total} DA`,
+                          `✅ Versé : ${paid.toLocaleString('fr-DZ')} DA`,
+                          `⏳ Reste : ${remaining.toLocaleString('fr-DZ')} DA`,
+                          '',
+                          'Pour toute question, contactez-nous :',
+                          '📞 +213 56 03 62 543',
+                          '',
+                          'Merci de votre confiance 🙏',
+                          'Loft Algérie',
+                        ].filter(l => l !== null && l !== undefined && !(l === '' && false))
+
+                        const msg = lines.filter(l => l !== null).join('\n')
+                        const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`
+                        window.open(url, '_blank')
+                      }}
+                    >
+                      <span>📱</span> WhatsApp
+                    </Button>
+                  )}
                   {selectedReservation.status !== 'cancelled' && (
                     <Button
                       variant="outline"

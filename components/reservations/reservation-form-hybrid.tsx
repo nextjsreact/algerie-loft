@@ -437,7 +437,8 @@ export default function ReservationFormHybrid({
                         const loftRes = await fetch(`/api/lofts/${r.loft_id}`)
                         const loftData = await loftRes.json()
                         gps = loftData.loft?.gps_coordinates || ''
-                        checkInTime = loftData.loft?.check_in_time || '15h00'
+                        const rawTime = loftData.loft?.check_in_time || '15:00'
+                        checkInTime = rawTime.substring(0, 5).replace(':', 'h')
                         address = loftData.loft?.address || ''
                       } catch {}
 

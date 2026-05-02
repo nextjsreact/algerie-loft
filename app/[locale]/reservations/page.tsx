@@ -1093,7 +1093,8 @@ function ReservationsPageContent() {
                           const loftRes = await fetch(`/api/lofts/${res.loft_id}`)
                           const loftData = await loftRes.json()
                           gps = loftData.loft?.gps_coordinates || ''
-                          checkInTime = loftData.loft?.check_in_time || '15h00'
+                          const rawTime = loftData.loft?.check_in_time || '15:00'
+                          checkInTime = rawTime.substring(0, 5).replace(':', 'h')
                         } catch {}
 
                         // Fetch payments

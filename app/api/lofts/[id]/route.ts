@@ -16,6 +16,7 @@ export async function GET(
         max_guests, bedrooms, bathrooms, area_sqm, amenities,
         check_in_time, check_out_time, minimum_stay, maximum_stay,
         house_rules, cancellation_policy,
+        gps_coordinates, client_phone,
         owner_id, zone_area_id,
         zone_areas!lofts_zone_area_id_fkey(name),
         owners:owner_id(name),

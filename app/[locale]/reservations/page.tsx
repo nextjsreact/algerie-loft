@@ -948,38 +948,46 @@ function ReservationsPageContent() {
                       checkInTime = rawTime.substring(0, 5).replace(':', 'h')
                       address = loftData.loft?.address || ''
                     } catch {}
-                    // Build message WITHOUT emojis to avoid encoding issues
-                    const msg = [
-                      r.guest_name ? `Bonjour ${r.guest_name},` : 'Bonjour,',
+                    // Build message with proper French + emojis
+                    // Emojis are typed as literal characters (not escape sequences)
+                    const lines = [
+                      r.guest_name ? `Bonjour ${r.guest_name} 👋` : 'Bonjour 👋',
                       '',
-                      'Votre reservation est confirmee !',
-                      '================================',
+                      '✅ Votre réservation est confirmée !',
                       '',
-                      `Appartement : ${r.loft_name}`,
-                      address ? `Adresse     : ${address}` : null,
-                      gps ? `GPS         : ${gps}` : null,
-                      `Arrivee     : ${r.check_in_date} a partir de ${checkInTime}`,
-                      `Depart      : ${r.check_out_date}`,
-                      `Duree       : ${nights} nuit${nights > 1 ? 's' : ''}`,
-                      `Personnes   : ${r.guest_count || 1}`,
+                      `🏠 Appartement : ${r.loft_name}`,
+                      address ? `📍 Adresse : ${address}` : null,
+                      gps ? `📍 GPS : ${gps}` : null,
+                      `📅 Arrivée : ${r.check_in_date} à partir de ${checkInTime}`,
+                      `📅 Départ : ${r.check_out_date}`,
+                      `🌙 Durée : ${nights} nuit${nights > 1 ? 's' : ''}`,
+                      `👥 Nombre de personnes : ${r.guest_count || 1}`,
+                      `💰 Montant total : ${total} DA`,
+                      `✅ Versé : ${initPaid.toLocaleString('fr-DZ')} DA`,
+                      `⏳ Reste : ${remaining.toLocaleString('fr-DZ')} DA`,
                       '',
-                      '--- Paiement ---',
-                      `Total       : ${total} DA`,
-                      `Verse       : ${initPaid.toLocaleString('fr-DZ')} DA`,
-                      `Reste       : ${remaining.toLocaleString('fr-DZ')} DA`,
+                      'Pour toute question, contactez-nous :',
+                      '📞 +213 56 03 62 543',
                       '',
-                      'Pour toute question : +213 56 03 62 543',
-                      '',
-                      'Merci de votre confiance.',
-                      'Loft Algerie',
+                      'Merci de votre confiance 🙏',
+                      'Loft Algérie',
                     ].filter(Boolean).join('\n')
-                    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank')
+
+                    // Copy to clipboard first, then open WhatsApp
+                    try {
+                      await navigator.clipboard.writeText(lines)
+                      toast.success('Message copié ! Collez-le dans WhatsApp.')
+                    } catch {}
+                    window.open(`https://wa.me/${phone}`, '_blank')
                     setWhatsappReservation(null)
                   }}
                   className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl text-base transition-colors"
                 >
                   <span className="text-xl">📱</span> Envoyer via WhatsApp
                 </button>
+                <p className="text-xs text-gray-400 text-center">
+                  Le message sera copié dans votre presse-papier. Collez-le dans WhatsApp.
+                </p>
                 <button onClick={() => setWhatsappReservation(null)}
                   className="w-full text-sm text-gray-500 hover:text-gray-700 underline text-center">
                   Fermer sans envoyer

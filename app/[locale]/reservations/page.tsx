@@ -950,7 +950,7 @@ function ReservationsPageContent() {
                     } catch {}
                     // Build message with proper French + emojis
                     // Emojis are typed as literal characters (not escape sequences)
-                    const lines = [
+                    const msg = [
                       r.guest_name ? `Bonjour ${r.guest_name} 👋` : 'Bonjour 👋',
                       '',
                       '✅ Votre réservation est confirmée !',
@@ -973,20 +973,21 @@ function ReservationsPageContent() {
                       'Loft Algérie',
                     ].filter(Boolean).join('\n')
 
-                    // Copy to clipboard first, then open WhatsApp
-                    try {
-                      await navigator.clipboard.writeText(lines)
-                      toast.success('Message copié ! Collez-le dans WhatsApp.')
-                    } catch {}
-                    window.open(`https://wa.me/${phone}`, '_blank')
+                    // Copy to clipboard
+                    try { await navigator.clipboard.writeText(msg) } catch {}
+                    // Open WhatsApp with text in URL (works on mobile WhatsApp app)
+                    // On desktop WhatsApp Web, user pastes from clipboard
+                    const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`
+                    window.open(waUrl, '_blank')
                     setWhatsappReservation(null)
                   }}
                   className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl text-base transition-colors"
                 >
-                  <span className="text-xl">📱</span> Envoyer via WhatsApp
+                  <span className="text-xl">📱</span> Ouvrir WhatsApp avec le message
                 </button>
                 <p className="text-xs text-gray-400 text-center">
-                  Le message sera copié dans votre presse-papier. Collez-le dans WhatsApp.
+                  Sur mobile : le message s'ouvre directement dans WhatsApp.<br/>
+                  Sur PC : le message est copié — collez-le (Ctrl+V) dans WhatsApp Web.
                 </p>
                 <button onClick={() => setWhatsappReservation(null)}
                   className="w-full text-sm text-gray-500 hover:text-gray-700 underline text-center">

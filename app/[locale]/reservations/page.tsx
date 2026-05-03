@@ -948,36 +948,32 @@ function ReservationsPageContent() {
                       checkInTime = rawTime.substring(0, 5).replace(':', 'h')
                       address = loftData.loft?.address || ''
                     } catch {}
-                    // Build message with emojis using actual Unicode characters
+                    // Build message WITHOUT emojis to avoid encoding issues
                     const msg = [
-                      r.guest_name ? `Bonjour ${r.guest_name} \uD83D\uDC4B` : `Bonjour \uD83D\uDC4B`,
+                      r.guest_name ? `Bonjour ${r.guest_name},` : 'Bonjour,',
                       '',
-                      `\u2705 Votre réservation est confirmée !`,
+                      'Votre reservation est confirmee !',
+                      '================================',
                       '',
-                      `\uD83C\uDFE0 Appartement : ${r.loft_name}`,
-                      address ? `\uD83D\uDCCD Adresse : ${address}` : null,
-                      gps ? `\uD83D\uDDFA GPS : ${gps}` : null,
-                      `\uD83D\uDCC5 Arrivée : ${r.check_in_date} à partir de ${checkInTime}`,
-                      `\uD83D\uDCC5 Départ : ${r.check_out_date}`,
-                      `\uD83C\uDF19 Durée : ${nights} nuit${nights > 1 ? 's' : ''}`,
-                      `\uD83D\uDC65 Nombre de personnes : ${r.guest_count || 1}`,
-                      `\uD83D\uDCB0 Montant total : ${total} DA`,
-                      `\u2705 Versé : ${initPaid.toLocaleString('fr-DZ')} DA`,
-                      `\u23F3 Reste : ${remaining.toLocaleString('fr-DZ')} DA`,
+                      `Appartement : ${r.loft_name}`,
+                      address ? `Adresse     : ${address}` : null,
+                      gps ? `GPS         : ${gps}` : null,
+                      `Arrivee     : ${r.check_in_date} a partir de ${checkInTime}`,
+                      `Depart      : ${r.check_out_date}`,
+                      `Duree       : ${nights} nuit${nights > 1 ? 's' : ''}`,
+                      `Personnes   : ${r.guest_count || 1}`,
                       '',
-                      'Pour toute question, contactez-nous :',
-                      `\uD83D\uDCDE +213 56 03 62 543`,
+                      '--- Paiement ---',
+                      `Total       : ${total} DA`,
+                      `Verse       : ${initPaid.toLocaleString('fr-DZ')} DA`,
+                      `Reste       : ${remaining.toLocaleString('fr-DZ')} DA`,
                       '',
-                      `Merci de votre confiance \uD83D\uDE4F`,
-                      'Loft Algérie',
+                      'Pour toute question : +213 56 03 62 543',
+                      '',
+                      'Merci de votre confiance.',
+                      'Loft Algerie',
                     ].filter(Boolean).join('\n')
-                    // Use encodeURIComponent with proper UTF-16 surrogate pair handling
-                    const encoded = Array.from(msg).map(c => {
-                      const code = c.codePointAt(0)!
-                      if (code > 0x7F) return encodeURIComponent(c)
-                      return c
-                    }).join('')
-                    window.open(`https://wa.me/${phone}?text=${encoded}`, '_blank')
+                    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank')
                     setWhatsappReservation(null)
                   }}
                   className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl text-base transition-colors"

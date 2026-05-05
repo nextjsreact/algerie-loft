@@ -3,18 +3,13 @@ import { createClient } from '@/utils/supabase/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId, email, fullName } = await request.json()
+    const { userId, email, fullName, consent } = await request.json()
 
     if (!userId || !email) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
     const supabase = await createClient(true)
-    const { userId, email, fullName, consent } = await request.json()
-
-    if (!userId || !email) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
-    }
 
     const [firstName, ...rest] = (fullName || email.split('@')[0]).split(' ')
     const lastName = rest.join(' ') || firstName

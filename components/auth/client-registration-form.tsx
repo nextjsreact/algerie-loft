@@ -12,6 +12,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, ArrowLeft } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { registerClientComplete } from '@/lib/client-auth'
+import { CGUCheckboxes } from '@/components/auth/cgu-checkboxes'
+import { useLocale } from 'next-intl'
 
 const clientRegistrationSchema = z.object({
   fullName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -32,8 +34,11 @@ interface ClientRegistrationFormProps {
 
 export function ClientRegistrationForm({ onBack, onSuccess }: ClientRegistrationFormProps) {
   const t = useTranslations('auth')
+  const locale = useLocale()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [cguValid, setCguValid] = useState(false)
+  const [consent, setConsent] = useState({ accepted_cgu: false, accepted_data_transfer: false, marketing_consent: false })
 
   const {
     register,
@@ -51,7 +56,8 @@ export function ClientRegistrationForm({ onBack, onSuccess }: ClientRegistration
       const result = await registerClientComplete({
         email: data.email,
         password: data.password,
-        fullName: data.fullName
+        fullName: data.fullName,
+        consent,
       })
       
       if (result.success) {
@@ -147,10 +153,16 @@ export function ClientRegistrationForm({ onBack, onSuccess }: ClientRegistration
             </Alert>
           )}
 
+          <CGUCheckboxes
+            locale={locale}
+            onValidityChange={setCguValid}
+            onConsentChange={setConsent}
+          />
+
           <Button
             type="submit"
             className="w-full"
-            disabled={isLoading}
+            disabled={isLoading || !cguValid}
           >
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {t('clientRegistration.submit')}

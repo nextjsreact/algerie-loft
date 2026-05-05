@@ -11,6 +11,11 @@ export interface ClientRegistrationData {
   password: string
   fullName: string
   phone?: string
+  consent?: {
+    accepted_cgu: boolean
+    accepted_data_transfer: boolean
+    marketing_consent: boolean
+  }
 }
 
 export interface ClientLoginData {
@@ -75,6 +80,7 @@ export async function registerClientComplete(data: ClientRegistrationData): Prom
           userId: authData.user.id,
           email: authData.user.email,
           fullName: data.fullName,
+          consent: data.consent,
         })
       })
     } catch (err) {

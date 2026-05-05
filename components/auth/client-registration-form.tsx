@@ -62,12 +62,12 @@ export function ClientRegistrationForm({ onBack, onSuccess }: ClientRegistration
       
       if (result.success) {
         if (result.requiresEmailVerification) {
-          setError('Please check your email to verify your account before logging in.')
+          setError('✅ Compte créé ! Vérifiez votre boîte email (et vos spams) pour confirmer votre adresse avant de vous connecter.')
         } else {
           onSuccess()
         }
       } else {
-        setError(result.error || 'Registration failed')
+        setError(result.error || 'Échec de l\'inscription')
       }
     } catch (err) {
       setError('An unexpected error occurred')

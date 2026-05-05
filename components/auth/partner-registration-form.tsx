@@ -71,6 +71,12 @@ export function PartnerRegistrationForm({ onBack, onSuccess, onError }: PartnerR
   const [consent, setConsent] = useState({ accepted_cgu: false, accepted_data_transfer: false, marketing_consent: false })
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const handleCguChange = (valid: boolean) => {
+    setCguValid(valid)
+    // Sync with react-hook-form terms_accepted field
+    setValue('terms_accepted', valid)
+  }
+
   const {
     register,
     handleSubmit,
@@ -525,7 +531,7 @@ export function PartnerRegistrationForm({ onBack, onSuccess, onError }: PartnerR
 
               <CGUCheckboxes
                 locale={locale}
-                onValidityChange={setCguValid}
+                onValidityChange={handleCguChange}
                 onConsentChange={setConsent}
               />
 

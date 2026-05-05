@@ -149,6 +149,19 @@ export async function POST(request: NextRequest) {
       // Don't fail the registration for this, just log it
     }
 
+    // Save consent to profiles
+    if (data.terms_accepted) {
+      await supabase
+        .from('profiles')
+        .update({
+          accepted_cgu: true,
+          accepted_cgu_at: new Date().toISOString(),
+          accepted_data_transfer: true,
+          marketing_consent: false,
+        })
+        .eq('id', authData.user.id)
+    }
+
     // Send notification email to admins
     try {
       const { EmailNotificationService } = await import('@/lib/services/email-notification-service')

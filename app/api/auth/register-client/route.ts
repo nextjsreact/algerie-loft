@@ -9,11 +9,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    const supabase = await createClient(true) // service role
+    const supabase = await createClient(true)
+    const { userId, email, fullName, consent } = await request.json()
+
+    if (!userId || !email) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
 
     const [firstName, ...rest] = (fullName || email.split('@')[0]).split(' ')
     const lastName = rest.join(' ') || firstName
 
+    // Create customer record
     const { error } = await supabase
       .from('customers')
       .insert({
@@ -26,9 +32,22 @@ export async function POST(request: NextRequest) {
       .select()
       .single()
 
-    if (error && error.code !== '23505') { // ignore duplicate key
+    if (error && error.code !== '23505') {
       console.error('Failed to create customer record:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    // Save consent to profiles table
+    if (consent) {
+      await supabase
+        .from('profiles')
+        .update({
+          accepted_cgu: consent.accepted_cgu || false,
+          accepted_cgu_at: consent.accepted_cgu ? new Date().toISOString() : null,
+          accepted_data_transfer: consent.accepted_data_transfer || false,
+          marketing_consent: consent.marketing_consent || false,
+        })
+        .eq('id', userId)
     }
 
     return NextResponse.json({ success: true })

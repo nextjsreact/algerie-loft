@@ -15,6 +15,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Progress } from '@/components/ui/progress'
 import { Loader2, ArrowLeft, ArrowRight, Info, Upload, X, FileText, CheckCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
+import { CGUCheckboxes } from '@/components/auth/cgu-checkboxes'
 import type { PartnerRegistrationData, PartnerRegistrationFormErrors } from '@/types/partner'
 
 // Enhanced validation schema with file upload support
@@ -60,10 +62,13 @@ interface PartnerRegistrationFormProps {
 
 export function PartnerRegistrationForm({ onBack, onSuccess, onError }: PartnerRegistrationFormProps) {
   const t = useTranslations('auth')
+  const locale = useLocale()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [step, setStep] = useState(1)
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
+  const [cguValid, setCguValid] = useState(false)
+  const [consent, setConsent] = useState({ accepted_cgu: false, accepted_data_transfer: false, marketing_consent: false })
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const {
@@ -486,8 +491,8 @@ export function PartnerRegistrationForm({ onBack, onSuccess, onError }: PartnerR
           {step === 4 && (
             <div className="space-y-4">
               <div className="text-center mb-6">
-                <h3 className="text-lg font-semibold">Account Security & Terms</h3>
-                <p className="text-sm text-gray-600">Set up your account password and accept terms</p>
+                <h3 className="text-lg font-semibold">Sécurité du compte & Consentements</h3>
+                <p className="text-sm text-gray-600">Définissez votre mot de passe et acceptez les conditions</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -518,36 +523,11 @@ export function PartnerRegistrationForm({ onBack, onSuccess, onError }: PartnerR
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex items-start space-x-2">
-                  <Checkbox
-                    id="terms_accepted"
-                    checked={termsAccepted}
-                    onCheckedChange={(checked) => setValue('terms_accepted', checked as boolean)}
-                  />
-                  <div className="grid gap-1.5 leading-none">
-                    <Label
-                      htmlFor="terms_accepted"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      I accept the terms and conditions *
-                    </Label>
-                    <p className="text-xs text-muted-foreground">
-                      By registering, you agree to our{' '}
-                      <a href="/terms" className="text-blue-600 hover:underline" target="_blank">
-                        Terms of Service
-                      </a>{' '}
-                      and{' '}
-                      <a href="/privacy" className="text-blue-600 hover:underline" target="_blank">
-                        Privacy Policy
-                      </a>
-                    </p>
-                  </div>
-                </div>
-                {errors.terms_accepted && (
-                  <p className="text-sm text-red-600">{errors.terms_accepted.message}</p>
-                )}
-              </div>
+              <CGUCheckboxes
+                locale={locale}
+                onValidityChange={setCguValid}
+                onConsentChange={setConsent}
+              />
 
               <Alert>
                 <CheckCircle className="h-4 w-4" />
@@ -574,10 +554,10 @@ export function PartnerRegistrationForm({ onBack, onSuccess, onError }: PartnerR
                 <Button
                   type="submit"
                   className="flex-1"
-                  disabled={isLoading || !termsAccepted}
+                  disabled={isLoading || !cguValid}
                 >
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Complete Registration
+                  Finaliser l'inscription
                 </Button>
               </div>
             </div>
@@ -591,10 +571,10 @@ export function PartnerRegistrationForm({ onBack, onSuccess, onError }: PartnerR
 // Helper function to get step titles
 function getStepTitle(step: number): string {
   const titles = {
-    1: 'Personal Information',
-    2: 'Business Details',
+    1: 'Informations personnelles',
+    2: 'Informations professionnelles',
     3: 'Portfolio & Documents',
-    4: 'Security & Terms'
+    4: 'Sécurité & Consentements'
   }
   return titles[step as keyof typeof titles] || ''
 }

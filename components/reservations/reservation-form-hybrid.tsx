@@ -364,7 +364,14 @@ export default function ReservationFormHybrid({
           total_amount: toDA(parseFloat(totalAmountInput) || 0),
           loft_id: selectedLoft,
           loft_name: selectedLoftData?.name || '',
-          init_payment: initPaymentAmount ? parseFloat(initPaymentAmount) : 0,
+          // Store init_payment in DA for correct remaining calculation
+          init_payment: initPaymentAmount
+            ? (initPaymentCurrency !== 'DZD' && initPaymentAmountDZD
+                ? parseFloat(initPaymentAmountDZD)
+                : initPaymentCurrency !== 'DZD' && currencyRates[initPaymentCurrency]
+                ? Math.round(parseFloat(initPaymentAmount) * currencyRates[initPaymentCurrency])
+                : parseFloat(initPaymentAmount))
+            : 0,
         };
         setCreatedReservation(resData);
         // Immediately call onSuccess with data — page will show WhatsApp dialog
@@ -918,32 +925,43 @@ export default function ReservationFormHybrid({
                 </div>
               </div>
               {/* Auto-conversion display for foreign currency */}
-              {initPaymentCurrency !== 'DZD' && initPaymentAmount && currencyRates[initPaymentCurrency] && (
+              {initPaymentCurrency !== 'DZD' && initPaymentAmount && (
                 <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 text-sm">
-                  <p className="text-amber-800 font-medium">
-                    {initPaymentAmount} {initPaymentCurrency} = <strong>
-                      {(initPaymentAmountDZD
-                        ? Number(initPaymentAmountDZD)
-                        : Math.round(parseFloat(initPaymentAmount) * currencyRates[initPaymentCurrency])
-                      ).toLocaleString('fr-DZ')} DA
-                    </strong>
-                  </p>
-                  <p className="text-xs text-amber-600 mt-1">Taux officiel : 1 {initPaymentCurrency} = {currencyRates[initPaymentCurrency]} DA</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Label className="text-xs text-amber-700">Modifier le taux :</Label>
-                    <Input type="number" min="0" step="any" value={initPaymentAmountDZD}
-                      onChange={e => setInitPaymentAmountDZD(e.target.value)}
-                      placeholder={String(Math.round(parseFloat(initPaymentAmount) * currencyRates[initPaymentCurrency]))}
-                      className="h-7 w-28 text-xs bg-white" />
-                    <span className="text-xs text-amber-600">DA</span>
-                  </div>
+                  {(() => {
+                    const rate = currencyRates[initPaymentCurrency] || 1
+                    const amtNum = parseFloat(initPaymentAmount) || 0
+                    const amtDZD = initPaymentAmountDZD ? Number(initPaymentAmountDZD) : Math.round(amtNum * rate)
+                    return (
+                      <>
+                        <p className="text-amber-800 font-medium">
+                          {initPaymentAmount} {initPaymentCurrency} = <strong>{amtDZD.toLocaleString('fr-DZ')} DA</strong>
+                        </p>
+                        <p className="text-xs text-amber-600 mt-1">Taux officiel : 1 {initPaymentCurrency} = {rate} DA</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Label className="text-xs text-amber-700">Modifier le taux :</Label>
+                          <Input type="number" min="0" step="any"
+                            value={initPaymentAmountDZD}
+                            onChange={e => setInitPaymentAmountDZD(e.target.value)}
+                            placeholder={String(Math.round(amtNum * rate))}
+                            className="h-7 w-28 text-xs bg-white" />
+                          <span className="text-xs text-amber-600">DA</span>
+                        </div>
+                      </>
+                    )
+                  })()}
                 </div>
               )}
               {initPaymentAmount && parseFloat(initPaymentAmount) > 0 && (
                 <div className="text-sm text-emerald-700 bg-emerald-100 rounded p-2">
-                  Reste à payer après ce versement : <strong>
-                    {Math.max(0, (parseFloat(totalAmountInput) || 0) - (initPaymentCurrency !== 'DZD' ? parseFloat(initPaymentAmountDZD || '0') : parseFloat(initPaymentAmount))).toLocaleString()} {defaultCurrencySymbol}
-                  </strong>
+                  {(() => {
+                    const totalDA = toDA(parseFloat(totalAmountInput) || 0)
+                    const rate = currencyRates[initPaymentCurrency] || 1
+                    const paidDA = initPaymentCurrency !== 'DZD'
+                      ? (initPaymentAmountDZD ? Number(initPaymentAmountDZD) : Math.round((parseFloat(initPaymentAmount) || 0) * rate))
+                      : (parseFloat(initPaymentAmount) || 0)
+                    const remaining = Math.max(0, totalDA - paidDA)
+                    return <>Reste à payer après ce versement : <strong>{remaining.toLocaleString('fr-DZ')} DA</strong></>
+                  })()}
                 </div>
               )}
             </div>

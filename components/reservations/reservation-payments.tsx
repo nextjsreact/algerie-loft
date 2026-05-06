@@ -93,18 +93,28 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
       // amount = original amount in payCurrency
       // amountDZD = DZD equivalent (required if foreign currency)
       const originalAmt = Number(amount)
+      const rate = currencyRates[payCurrency]
       const dzdAmt = payCurrency === 'DZD'
         ? originalAmt
-        : amountDZD ? Number(amountDZD)
-        : currencyRates[payCurrency] ? Math.round(originalAmt * currencyRates[payCurrency])
-        : originalAmt
+        : amountDZD
+          ? Number(amountDZD)
+          : rate
+            ? Math.round(originalAmt * rate)
+            : null  // unknown rate
+
+      // Block submission if foreign currency and no DZD equivalent available
+      if (payCurrency !== 'DZD' && !dzdAmt) {
+        toast.error(`Taux de change pour ${payCurrency} non disponible. Saisissez le montant en DA manuellement.`)
+        setSubmitting(false)
+        return
+      }
 
       const res = await fetch(`/api/reservations/${reservationId}/payments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: dzdAmt,                    // stored in DZD
-          original_amount: originalAmt,      // original currency amount
+          amount: dzdAmt!,               // stored in DZD — never null here
+          original_amount: originalAmt,
           original_currency: payCurrency,
           payment_method: method,
           currency: payCurrency,
@@ -297,26 +307,38 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
               </Select>
             </div>
           </div>
-          {/* Show DZD equivalent field when foreign currency */}
-          {payCurrency !== 'DZD' && amount && currencyRates[payCurrency] && (
+          {payCurrency !== 'DZD' && amount && (
             <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 text-sm">
-              <p className="text-amber-800 font-medium">
-                {amount} {payCurrency} = <strong>{Math.round(Number(amount) * currencyRates[payCurrency]).toLocaleString('fr-DZ')} DA</strong>
-              </p>
-              <p className="text-xs text-amber-600 mt-1">
-                Taux officiel : 1 {payCurrency} = {currencyRates[payCurrency]} DA
-                {amountDZD && Number(amountDZD) !== Math.round(Number(amount) * currencyRates[payCurrency]) && (
-                  <span> • Taux personnalisé : {(Number(amountDZD) / Number(amount)).toFixed(2)} DA</span>
-                )}
-              </p>
+              {currencyRates[payCurrency] ? (
+                <>
+                  <p className="text-amber-800 font-medium">
+                    {amount} {payCurrency} = <strong>{Math.round(Number(amount) * currencyRates[payCurrency]).toLocaleString('fr-DZ')} DA</strong>
+                  </p>
+                  <p className="text-xs text-amber-600 mt-1">
+                    Taux officiel : 1 {payCurrency} = {currencyRates[payCurrency]} DA
+                    {amountDZD && Number(amountDZD) !== Math.round(Number(amount) * currencyRates[payCurrency]) && (
+                      <span> • Taux personnalisé : {(Number(amountDZD) / Number(amount)).toFixed(2)} DA</span>
+                    )}
+                  </p>
+                </>
+              ) : (
+                <p className="text-amber-800 font-medium">Taux non disponible pour {payCurrency}</p>
+              )}
               <div className="flex items-center gap-2 mt-2">
-                <Label className="text-xs text-amber-700">Modifier le taux :</Label>
+                <Label className="text-xs text-amber-700 font-semibold">
+                  Équivalent DA <span className="text-red-500">*</span>
+                </Label>
                 <Input type="number" min="0" step="any" value={amountDZD}
                   onChange={e => setAmountDZD(e.target.value)}
-                  placeholder={String(Math.round(Number(amount) * currencyRates[payCurrency]))}
-                  className="h-7 w-28 text-xs bg-white" />
+                  placeholder={currencyRates[payCurrency] ? String(Math.round(Number(amount) * currencyRates[payCurrency])) : 'Saisir le montant DA'}
+                  className="h-7 w-32 text-xs bg-white border-amber-300"
+                  required={payCurrency !== 'DZD'}
+                />
                 <span className="text-xs text-amber-600">DA</span>
               </div>
+              {payCurrency !== 'DZD' && !amountDZD && !currencyRates[payCurrency] && (
+                <p className="text-xs text-red-500 mt-1">⚠️ Saisissez le montant en DA pour continuer</p>
+              )}
             </div>
           )}
           <div className="grid grid-cols-2 gap-3">

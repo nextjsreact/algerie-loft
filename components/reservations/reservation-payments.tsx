@@ -152,13 +152,23 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
   // Map DB fields to display fields
   const mapPayment = (p: any) => {
     const origCurrency = p.original_currency || p.currency || 'DZD'
-    const origAmount = p.original_amount != null ? Number(p.original_amount) : Number(p.amount)
     const dzdAmount = Number(p.amount) // always stored in DZD
 
-    // Parse legacy reference format "40 USD" → extract amount
+    // Parse original_amount — handle legacy format in transaction_id like "50 EUR"
+    let origAmount: number
+    if (p.original_amount != null) {
+      origAmount = Number(p.original_amount)
+    } else if (p.transaction_id && /^[\d.]+\s+[A-Z]{3}$/.test(p.transaction_id)) {
+      // Legacy format "50 EUR" → extract numeric part
+      origAmount = parseFloat(p.transaction_id.split(' ')[0])
+    } else {
+      // Fallback: use DZD amount
+      origAmount = dzdAmount
+    }
+
+    // Clean reference — don't show legacy "50 EUR" format as reference
     let displayRef = p.transaction_id || p.reference || null
-    if (displayRef && /^\d+(\.\d+)?\s+[A-Z]{3}$/.test(displayRef)) {
-      // Legacy format like "40 USD" — don't show as reference, it's already in original_amount
+    if (displayRef && /^[\d.]+\s+[A-Z]{3}$/.test(displayRef)) {
       displayRef = null
     }
 

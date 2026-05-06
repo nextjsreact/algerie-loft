@@ -338,12 +338,12 @@ export default function ReservationFormHybrid({
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              amount: effectiveAmount,
+              amount: effectiveAmount,                          // always DZD
+              original_amount: parseFloat(initPaymentAmount),  // amount in original currency
+              original_currency: initPaymentCurrency,
               payment_method: initPaymentMethod,
               currency: initPaymentCurrency,
-              reference: initPaymentCurrency !== 'DZD'
-                ? `${initPaymentAmount} ${initPaymentCurrency}`
-                : (initPaymentRef || null),
+              reference: initPaymentRef || null,
               payment_date: initPaymentDate,
               notes: null,
             }),

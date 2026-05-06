@@ -140,16 +140,29 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
   const getMethod = (v: string) => PAYMENT_METHODS.find(m => m.value === v) || PAYMENT_METHODS[PAYMENT_METHODS.length - 1]
 
   // Map DB fields to display fields
-  const mapPayment = (p: any) => ({
-    id: p.id,
-    amount: Number(p.original_amount ?? p.amount),  // show original amount
-    amount_dzd: Number(p.amount),                    // DZD equivalent
-    payment_method: p.payment_method,
-    currency: p.original_currency || p.currency || 'DZD',
-    reference: p.transaction_id,
-    payment_date: p.processed_at || p.created_at,
-    notes: p.processor_response,
-  })
+  const mapPayment = (p: any) => {
+    const origCurrency = p.original_currency || p.currency || 'DZD'
+    const origAmount = p.original_amount != null ? Number(p.original_amount) : Number(p.amount)
+    const dzdAmount = Number(p.amount) // always stored in DZD
+
+    // Parse legacy reference format "40 USD" → extract amount
+    let displayRef = p.transaction_id || p.reference || null
+    if (displayRef && /^\d+(\.\d+)?\s+[A-Z]{3}$/.test(displayRef)) {
+      // Legacy format like "40 USD" — don't show as reference, it's already in original_amount
+      displayRef = null
+    }
+
+    return {
+      id: p.id,
+      amount: origAmount,
+      amount_dzd: dzdAmount,
+      payment_method: p.payment_method,
+      currency: origCurrency,
+      reference: displayRef,
+      payment_date: p.processed_at || p.created_at,
+      notes: p.processor_response || p.notes,
+    }
+  }
 
   if (loading) return <div className="text-sm text-gray-400 py-2">Chargement des paiements...</div>
 

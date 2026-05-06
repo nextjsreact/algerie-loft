@@ -1061,7 +1061,10 @@ function ReservationsPageContent() {
                       </h4>
                       <p className="font-medium">{selectedReservation.check_in_date} - {selectedReservation.check_out_date}</p>
                       <p className="text-sm text-gray-600">
-                        {t('nights', { count: selectedReservation.nights })}
+                        {(() => {
+                          const n = selectedReservation.nights || Math.ceil((new Date(selectedReservation.check_out_date).getTime() - new Date(selectedReservation.check_in_date).getTime()) / 86400000)
+                          return `${n} nuit${n > 1 ? 's' : ''}`
+                        })()}
                       </p>
                       <Badge variant={
                         selectedReservation.status === 'confirmed' ? 'default' :

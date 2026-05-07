@@ -269,13 +269,66 @@ export default function ReservationFormHybrid({
   }, [guestName, guestNationality]);
 
   const handleCurrencyChange = (currencyId: string) => {
-    setSelectedCurrencyId(currencyId);
     const cur = currencies.find(c => c.id === currencyId) || null;
+    const oldCurrency = selectedCurrency;
+    const oldRatio = effectiveRatio;
+    const newRatio = cur?.ratio ?? 1;
+    
+    setSelectedCurrencyId(currencyId);
     setSelectedCurrency(cur);
-    setCustomRatio(String(cur?.ratio ?? 1));
-    if (pricePerNightInput !== '' && nights > 0) {
-      setBasePriceInput(String(parseFloat(pricePerNightInput) * nights));
+    setCustomRatio(String(newRatio));
+    
+    // Convert all price fields from old currency to new currency
+    // If switching from DZD to EUR (ratio 250): 84000 DA ÷ 250 = 336 EUR
+    // If switching from EUR to DZD: 336 EUR × 250 = 84000 DA
+    if (oldCurrency) {
+      const conversionFactor = oldRatio / newRatio;
+      
+      // Convert price per night
+      if (pricePerNightInput !== '') {
+        const oldPrice = parseFloat(pricePerNightInput);
+        if (!isNaN(oldPrice)) {
+          setPricePerNightInput(String(oldPrice * conversionFactor));
+        }
+      }
+      
+      // Convert base price
+      if (basePriceInput !== '') {
+        const oldBase = parseFloat(basePriceInput);
+        if (!isNaN(oldBase)) {
+          setBasePriceInput(String(oldBase * conversionFactor));
+        }
+      }
+      
+      // Convert cleaning fee
+      if (cleaningFeeInput !== '' && cleaningFeeInput !== '0') {
+        const oldFee = parseFloat(cleaningFeeInput);
+        if (!isNaN(oldFee)) {
+          setCleaningFeeInput(String(oldFee * conversionFactor));
+        }
+      }
+      
+      // Convert service fee
+      if (serviceFeeInput !== '' && serviceFeeInput !== '0') {
+        const oldFee = parseFloat(serviceFeeInput);
+        if (!isNaN(oldFee)) {
+          setServiceFeeInput(String(oldFee * conversionFactor));
+        }
+      }
+      
+      // Convert taxes
+      if (taxesInput !== '' && taxesInput !== '0') {
+        const oldTax = parseFloat(taxesInput);
+        if (!isNaN(oldTax)) {
+          setTaxesInput(String(oldTax * conversionFactor));
+        }
+      }
     }
+    
+    // Update initial payment currency to match selected currency
+    setInitPaymentCurrency(cur?.code || 'DZD');
+    // Clear the custom DZD amount when currency changes
+    setInitPaymentAmountDZD('');
   };
 
   // Effective ratio: user can override

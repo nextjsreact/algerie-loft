@@ -280,7 +280,16 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label className="text-xs">Montant ({currency})</Label>
-              <Input type="number" min="1" step="any" value={amount} onChange={e => setAmount(e.target.value)}
+              <Input type="number" min="1" step="any" value={amount} 
+                onChange={e => {
+                  setAmount(e.target.value)
+                  // Auto-fill DZD equivalent when amount changes
+                  if (payCurrency !== 'DZD' && currencyRates[payCurrency]) {
+                    const rate = currencyRates[payCurrency]
+                    const converted = Math.round(Number(e.target.value) * rate)
+                    setAmountDZD(String(converted))
+                  }
+                }}
                 placeholder="Ex: 5000" className="h-9" required />
             </div>
             <div className="space-y-1">
@@ -303,7 +312,17 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Devise</Label>
-              <Select value={payCurrency} onValueChange={setPayCurrency}>
+              <Select value={payCurrency} onValueChange={(newCurrency) => {
+                setPayCurrency(newCurrency)
+                // Auto-fill DZD equivalent when currency changes
+                if (newCurrency !== 'DZD' && amount && currencyRates[newCurrency]) {
+                  const rate = currencyRates[newCurrency]
+                  const converted = Math.round(Number(amount) * rate)
+                  setAmountDZD(String(converted))
+                } else if (newCurrency === 'DZD') {
+                  setAmountDZD('')
+                }
+              }}>
                 <SelectTrigger className="h-9">
                   <SelectValue />
                 </SelectTrigger>
@@ -337,13 +356,13 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
               )}
               <div className="flex items-center gap-2 mt-2">
                 <Label className="text-xs text-amber-700 font-semibold">
-                  Équivalent DA <span className="text-red-500">*</span>
+                  Équivalent DA {payCurrency !== 'DZD' && !currencyRates[payCurrency] && <span className="text-red-500">*</span>}
                 </Label>
                 <Input type="number" min="0" step="any" value={amountDZD}
                   onChange={e => setAmountDZD(e.target.value)}
                   placeholder={currencyRates[payCurrency] ? String(Math.round(Number(amount) * currencyRates[payCurrency])) : 'Saisir le montant DA'}
                   className="h-7 w-32 text-xs bg-white border-amber-300"
-                  required={payCurrency !== 'DZD'}
+                  required={payCurrency !== 'DZD' && !currencyRates[payCurrency]}
                 />
                 <span className="text-xs text-amber-600">DA</span>
               </div>

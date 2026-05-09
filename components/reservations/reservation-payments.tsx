@@ -279,7 +279,7 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
         <form onSubmit={handleSubmit} className="space-y-3 p-4 bg-gray-50 rounded-lg border">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label className="text-xs">Montant ({currency})</Label>
+              <Label className="text-xs">Montant</Label>
               <Input type="number" min="1" step="any" value={amount} 
                 onChange={e => {
                   setAmount(e.target.value)

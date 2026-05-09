@@ -151,7 +151,7 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
 
   // Map DB fields to display fields
   const mapPayment = (p: any) => {
-    const origCurrency = p.original_currency || p.currency || 'DZD'
+    let origCurrency = p.original_currency || p.currency || 'DZD'
     const dzdAmount = Number(p.amount) // always stored in DZD
 
     // Parse original_amount — handle legacy format in transaction_id like "50 EUR"
@@ -162,8 +162,9 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
       // Legacy format "50 EUR" → extract numeric part
       origAmount = parseFloat(p.transaction_id.split(' ')[0])
     } else {
-      // Fallback: use DZD amount
+      // Fallback: use DZD amount and force currency to DZD
       origAmount = dzdAmount
+      origCurrency = 'DZD'
     }
 
     // Clean reference — don't show legacy "50 EUR" format as reference

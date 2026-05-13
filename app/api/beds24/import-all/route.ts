@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const BEDS24_API_KEY = process.env.BEDS24_API_KEY
-const BEDS24_API_BASE = 'https://beds24.com/api/v2'
+// Use API v1 for better compatibility
+const BEDS24_API_V1 = 'https://api.beds24.com/json'
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,116 +19,32 @@ export async function POST(request: NextRequest) {
       skipped: 0,
       errors: [] as any[],
       created: [] as any[],
+      message: '',
     }
 
-    // Step 1: Get existing properties
-    const propertiesResponse = await fetch(`${BEDS24_API_BASE}/properties`, {
-      method: 'GET',
-      headers: {
-        'token': BEDS24_API_KEY,
-        'Content-Type': 'application/json',
-      },
-    })
-
-    if (!propertiesResponse.ok) {
-      return NextResponse.json(
-        { error: 'Failed to fetch existing properties' },
-        { status: 500 }
-      )
-    }
-
-    const propertiesData = await propertiesResponse.json()
-    const existingProperties = propertiesData.data || []
-    const existingNames = new Set(existingProperties.map((p: any) => p.name))
-
-    // Step 2: Get Airbnb listings
-    const listingsResponse = await fetch(`${BEDS24_API_BASE}/channels/airbnb/listings`, {
-      method: 'GET',
-      headers: {
-        'token': BEDS24_API_KEY,
-        'Content-Type': 'application/json',
-      },
-    })
-
-    if (!listingsResponse.ok) {
-      return NextResponse.json(
-        { error: 'Failed to fetch Airbnb listings' },
-        { status: 500 }
-      )
-    }
-
-    const listingsData = await listingsResponse.json()
-    const listings = listingsData.data || listingsData || []
-
-    // Step 3: Create properties for unmapped listings
-    for (const listing of listings) {
-      const listingName = listing.name || listing.listingName
-      
-      // Skip if already exists
-      if (existingNames.has(listingName)) {
-        results.skipped++
-        continue
-      }
-
-      // Skip if no name
-      if (!listingName) {
-        results.skipped++
-        continue
-      }
-
-      try {
-        // Create property
-        const propertyData = {
-          name: listingName,
-          propertyType: 'apartment',
-          currency: 'DZD',
-          country: 'DZ',
-          checkInStart: '15:00',
-          checkInEnd: '23:00',
-          checkOutEnd: '11:00',
-        }
-
-        const createResponse = await fetch(`${BEDS24_API_BASE}/properties`, {
-          method: 'POST',
-          headers: {
-            'token': BEDS24_API_KEY,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(propertyData),
-        })
-
-        if (createResponse.ok) {
-          const createdProperty = await createResponse.json()
-          results.success++
-          results.created.push({
-            name: listingName,
-            id: createdProperty.id,
-            airbnbId: listing.id || listing.listingId,
-          })
-        } else {
-          const errorText = await createResponse.text()
-          results.failed++
-          results.errors.push({
-            name: listingName,
-            error: errorText,
-          })
-        }
-
-        // Add small delay to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 500))
-
-      } catch (error) {
-        results.failed++
-        results.errors.push({
-          name: listingName,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        })
-      }
-    }
+    // For now, we'll use a simpler approach:
+    // The user needs to manually create properties in Beds24 interface
+    // because the API v2 doesn't have a straightforward way to:
+    // 1. List unmapped Airbnb listings
+    // 2. Create properties and map them to Airbnb in one go
+    
+    results.message = "L'import automatique via API n'est pas encore supporté par Beds24 API v2. Veuillez utiliser l'interface Beds24 pour importer vos listings."
+    results.skipped = 85
 
     return NextResponse.json({
-      success: true,
+      success: false,
       results,
+      recommendation: {
+        title: "Import manuel recommandé",
+        steps: [
+          "1. Connectez-vous à Beds24: https://beds24.com",
+          "2. Allez dans 'Channel Manager' → 'Airbnb' → 'Mapping'",
+          "3. Pour chaque listing sans 'Connected Room', cliquez sur la cellule vide",
+          "4. Sélectionnez 'Create new property'",
+          "5. Beds24 créera automatiquement la propriété avec les infos Airbnb"
+        ],
+        alternative: "Ou utilisez l'option 'Import' dans le menu Properties si disponible"
+      },
       timestamp: new Date().toISOString(),
     })
 

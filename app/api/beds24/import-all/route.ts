@@ -100,12 +100,13 @@ export async function POST(request: NextRequest) {
             'token': BEDS24_API_KEY,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(propertyData),
+          body: JSON.stringify([propertyData]), // Array of properties
         })
 
         if (createResponse.ok) {
           const createdProperty = await createResponse.json()
-          const propertyId = createdProperty.id || createdProperty.data?.id
+          // API returns array, get first element
+          const propertyId = createdProperty[0]?.id || createdProperty.data?.[0]?.id
           
           results.success++
           results.created.push({

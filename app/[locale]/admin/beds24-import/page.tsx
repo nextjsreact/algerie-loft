@@ -22,17 +22,48 @@ export default function Beds24ImportPage() {
     setResult(null)
     
     try {
-      const response = await fetch('/api/beds24/import-all', {
-        method: 'POST',
-      })
-      
-      const data = await response.json()
-      
-      if (response.ok) {
-        setResult(data.results)
-      } else {
-        setError(data.error || 'Import failed')
+      let startIndex = 0
+      let hasMore = true
+      const allResults = {
+        success: 0,
+        failed: 0,
+        skipped: 0,
+        errors: [] as any[],
+        created: [] as any[],
       }
+
+      // Process in batches of 20
+      while (hasMore) {
+        const response = await fetch('/api/beds24/import-all', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ startIndex, batchSize: 20 }),
+        })
+        
+        const data = await response.json()
+        
+        if (!response.ok) {
+          setError(data.error || 'Import failed')
+          break
+        }
+
+        // Accumulate results
+        allResults.success += data.results.success
+        allResults.failed += data.results.failed
+        allResults.skipped += data.results.skipped
+        allResults.errors.push(...data.results.errors)
+        allResults.created.push(...data.results.created)
+
+        hasMore = data.results.hasMore
+        startIndex = data.results.nextIndex
+
+        // Small delay between batches
+        if (hasMore) {
+          await new Promise(resolve => setTimeout(resolve, 1000))
+        }
+      }
+
+      setResult(allResults)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Network error')
     } finally {

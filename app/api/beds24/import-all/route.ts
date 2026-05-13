@@ -32,12 +32,19 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Get batch parameters
+    const body = await request.json().catch(() => ({}))
+    const batchSize = body.batchSize || 20
+    const startIndex = body.startIndex || 0
+
     const results = {
       success: 0,
       failed: 0,
       skipped: 0,
       errors: [] as any[],
       created: [] as any[],
+      hasMore: false,
+      nextIndex: 0,
     }
 
     // Step 1: Get existing properties from Beds24 using API v2
@@ -60,8 +67,14 @@ export async function POST(request: NextRequest) {
     const existingProperties = propertiesData.data || []
     const existingNames = new Set(existingProperties.map((p: any) => p.name.toLowerCase()))
 
-    // Step 2: Create properties for each Airbnb listing that doesn't exist
-    for (const listingName of AIRBNB_LISTINGS) {
+    // Step 2: Process batch of listings
+    const endIndex = Math.min(startIndex + batchSize, AIRBNB_LISTINGS.length)
+    const batch = AIRBNB_LISTINGS.slice(startIndex, endIndex)
+    
+    results.hasMore = endIndex < AIRBNB_LISTINGS.length
+    results.nextIndex = endIndex
+
+    for (const listingName of batch) {
       // Skip if already exists (case-insensitive)
       if (existingNames.has(listingName.toLowerCase())) {
         results.skipped++
@@ -108,8 +121,8 @@ export async function POST(request: NextRequest) {
           })
         }
 
-        // Add delay to avoid rate limiting (500ms between each)
-        await new Promise(resolve => setTimeout(resolve, 500))
+        // Add small delay to avoid rate limiting (100ms)
+        await new Promise(resolve => setTimeout(resolve, 100))
 
       } catch (error) {
         results.failed++
@@ -124,6 +137,8 @@ export async function POST(request: NextRequest) {
       success: true,
       results,
       totalListings: AIRBNB_LISTINGS.length,
+      processed: endIndex,
+      remaining: AIRBNB_LISTINGS.length - endIndex,
       timestamp: new Date().toISOString(),
     })
 

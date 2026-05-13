@@ -12,32 +12,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Test 1: Get account info
-    const accountResponse = await fetch(`${BEDS24_API_BASE}/authentication/setup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        token: BEDS24_API_KEY,
-      }),
-    })
-
-    if (!accountResponse.ok) {
-      const errorText = await accountResponse.text()
-      return NextResponse.json(
-        { 
-          error: 'Failed to authenticate with Beds24',
-          status: accountResponse.status,
-          details: errorText
-        },
-        { status: accountResponse.status }
-      )
-    }
-
-    const accountData = await accountResponse.json()
-
-    // Test 2: Get properties list
+    // Test: Get properties list directly (this validates the token)
     const propertiesResponse = await fetch(`${BEDS24_API_BASE}/properties`, {
       method: 'GET',
       headers: {
@@ -46,16 +21,33 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    let propertiesData = null
-    if (propertiesResponse.ok) {
-      propertiesData = await propertiesResponse.json()
+    if (!propertiesResponse.ok) {
+      const errorText = await propertiesResponse.text()
+      let errorDetails
+      try {
+        errorDetails = JSON.parse(errorText)
+      } catch {
+        errorDetails = errorText
+      }
+      
+      return NextResponse.json(
+        { 
+          error: 'Failed to connect to Beds24',
+          status: propertiesResponse.status,
+          details: errorDetails,
+          apiKey: BEDS24_API_KEY ? `${BEDS24_API_KEY.substring(0, 20)}...` : 'not set'
+        },
+        { status: propertiesResponse.status }
+      )
     }
+
+    const propertiesData = await propertiesResponse.json()
 
     return NextResponse.json({
       success: true,
       message: 'Beds24 API connection successful',
-      account: accountData,
       properties: propertiesData,
+      count: Array.isArray(propertiesData) ? propertiesData.length : 0,
       timestamp: new Date().toISOString(),
     })
 
@@ -64,7 +56,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       { 
         error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined
       },
       { status: 500 }
     )

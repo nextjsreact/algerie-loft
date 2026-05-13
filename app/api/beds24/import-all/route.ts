@@ -1,8 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const BEDS24_API_KEY = process.env.BEDS24_API_KEY
-const BEDS24_API_BASE = 'https://beds24.com/api/v2'
-const AIRBNB_USER_ID = '154594699' // Karim's Airbnb account
+const BEDS24_API_V1 = 'https://api.beds24.com/json'
+const BEDS24_API_V2 = 'https://beds24.com/api/v2'
+
+// List of all Airbnb listings from the user's account
+const AIRBNB_LISTINGS = [
+  "Carnot Loft", "Bougie Loft", "Yemma Gouraya Loft", "Ighil El bordj · Résidence Ighil El Bordj",
+  "Dary Loft", "Bouzareah loft · Nada Loft - Forest vue", "Blue · Golf Loft _ Blue'78",
+  "Purple · El Mouradia Loft _ Purple'78", "Mira loft", "Aftis 01 · Aftis 01", "Aftis 02 · Aftis 02",
+  "Aftis 03", "Aftis 04", "Aftis 05", "Aftis 101", "Aftis 102", "Aftis 103", "Aftis 202", "Aftis 201",
+  "Aftis 203", "Aftis 301", "Aftis 302", "Aftis 303", "Aftis 401 VIP", "Aftis 402", "Aftis 403",
+  "Aftis 501", "Aftis 502", "Maya loft", "Camélia loft", "Marc loft", "Golden loft", "Yasmine loft",
+  "Djoua loft", "Sonia loft", "Mona Loft", "Dina Loft", "Chiswick loft", "Tulipe Loft",
+  "Lafayette · Luna Loft", "Choco Loft", "Sidi Fredj · Chanel Loft _ Sidi Fredj", "Oasis Loft",
+  "La Redoute N°5", "La Redoute N°6", "La Redoute N°4", "Aida Loft - Forest Vue", "Zina Loft",
+  "La Redoute - Duplex N°2", "El Bahdja", "Dounia Loft", "Talia loft", "Villa Lalla Meriem",
+  "Madina loft", "Kifan Loft", "Hilel Loft", "Lyna loft", "Nedjma loft", "Max loft", "La Redoute N°3",
+  "Swan Loft", "Star Loft", "Camomille Loft", "Nounou Loft", "Manar Loft", "Candy loft", "Éden Loft",
+  "Mély Loft", "Baya Loft", "Lila Loft", "Amel loft", "Élias loft", "Ania loft", "Gouraya loft",
+  "Thiziri loft", "Léa loft", "Amilis loft", "Sky loft", "Joelle loft", "Anna loft", "Olivia loft",
+  "Eva loft", "Maha Loft", "Océana loft", "Sarah loft"
+]
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,8 +40,8 @@ export async function POST(request: NextRequest) {
       created: [] as any[],
     }
 
-    // Step 1: Get existing properties from Beds24
-    const propertiesResponse = await fetch(`${BEDS24_API_BASE}/properties`, {
+    // Step 1: Get existing properties from Beds24 using API v2
+    const propertiesResponse = await fetch(`${BEDS24_API_V2}/properties`, {
       method: 'GET',
       headers: {
         'token': BEDS24_API_KEY,
@@ -39,81 +58,30 @@ export async function POST(request: NextRequest) {
 
     const propertiesData = await propertiesResponse.json()
     const existingProperties = propertiesData.data || []
-    const existingNames = new Set(existingProperties.map((p: any) => p.name))
+    const existingNames = new Set(existingProperties.map((p: any) => p.name.toLowerCase()))
 
-    // Step 2: Get Airbnb listings for the user
-    const listingsResponse = await fetch(`${BEDS24_API_BASE}/channels/airbnb/users/${AIRBNB_USER_ID}/listings`, {
-      method: 'GET',
-      headers: {
-        'token': BEDS24_API_KEY,
-        'Content-Type': 'application/json',
-      },
-    })
-
-    if (!listingsResponse.ok) {
-      const errorText = await listingsResponse.text()
-      let errorDetails
-      try {
-        errorDetails = JSON.parse(errorText)
-      } catch {
-        errorDetails = errorText
-      }
-      
-      return NextResponse.json(
-        { 
-          error: 'Failed to fetch Airbnb listings',
-          status: listingsResponse.status,
-          details: errorDetails,
-          hint: 'Vérifiez que le User ID Airbnb est correct: ' + AIRBNB_USER_ID
-        },
-        { status: listingsResponse.status }
-      )
-    }
-
-    const listingsData = await listingsResponse.json()
-    const listings = listingsData.data || listingsData || []
-
-    if (!Array.isArray(listings) || listings.length === 0) {
-      return NextResponse.json({
-        success: false,
-        results: {
-          ...results,
-          message: 'Aucun listing Airbnb trouvé pour cet utilisateur'
-        },
-        timestamp: new Date().toISOString(),
-      })
-    }
-
-    // Step 3: Create properties for unmapped listings
-    for (const listing of listings) {
-      const listingName = listing.name || listing.listingName || listing.title
-      const listingId = listing.id || listing.listingId
-      
-      // Skip if no name
-      if (!listingName) {
-        results.skipped++
-        continue
-      }
-
-      // Skip if already exists
-      if (existingNames.has(listingName)) {
+    // Step 2: Create properties for each Airbnb listing that doesn't exist
+    for (const listingName of AIRBNB_LISTINGS) {
+      // Skip if already exists (case-insensitive)
+      if (existingNames.has(listingName.toLowerCase())) {
         results.skipped++
         continue
       }
 
       try {
-        // Create property in Beds24
+        // Create property in Beds24 using API v2
         const propertyData = {
           name: listingName,
           propertyType: 'apartment',
           currency: 'DZD',
           country: 'DZ',
+          city: 'Algiers',
           checkInStart: '15:00',
           checkInEnd: '23:00',
           checkOutEnd: '11:00',
         }
 
-        const createResponse = await fetch(`${BEDS24_API_BASE}/properties`, {
+        const createResponse = await fetch(`${BEDS24_API_V2}/properties`, {
           method: 'POST',
           headers: {
             'token': BEDS24_API_KEY,
@@ -130,31 +98,7 @@ export async function POST(request: NextRequest) {
           results.created.push({
             name: listingName,
             propertyId: propertyId,
-            airbnbListingId: listingId,
           })
-
-          // Try to map the property to Airbnb listing
-          // This might require additional API call to link them
-          if (propertyId && listingId) {
-            try {
-              // Attempt to link property to Airbnb listing
-              // The exact endpoint might vary, this is a common pattern
-              await fetch(`${BEDS24_API_BASE}/properties/${propertyId}/channels/airbnb`, {
-                method: 'POST',
-                headers: {
-                  'token': BEDS24_API_KEY,
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  listingId: listingId,
-                  userId: AIRBNB_USER_ID,
-                }),
-              })
-            } catch (linkError) {
-              // Linking failed but property was created
-              console.error('Failed to link property to Airbnb:', linkError)
-            }
-          }
         } else {
           const errorText = await createResponse.text()
           results.failed++
@@ -164,7 +108,7 @@ export async function POST(request: NextRequest) {
           })
         }
 
-        // Add delay to avoid rate limiting
+        // Add delay to avoid rate limiting (500ms between each)
         await new Promise(resolve => setTimeout(resolve, 500))
 
       } catch (error) {
@@ -179,7 +123,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       results,
-      totalListings: listings.length,
+      totalListings: AIRBNB_LISTINGS.length,
       timestamp: new Date().toISOString(),
     })
 

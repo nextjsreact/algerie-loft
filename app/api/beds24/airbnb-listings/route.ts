@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const BEDS24_API_KEY = process.env.BEDS24_API_KEY
-const BEDS24_API_BASE = 'https://beds24.com/api/v2'
+const BEDS24_API_V1 = 'https://api.beds24.com/json'
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,13 +12,17 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get Airbnb listings from Beds24
-    const response = await fetch(`${BEDS24_API_BASE}/channels/airbnb/listings`, {
-      method: 'GET',
+    // Use API v1 to get properties with their channel mappings
+    const response = await fetch(`${BEDS24_API_V1}/getProperties`, {
+      method: 'POST',
       headers: {
-        'token': BEDS24_API_KEY,
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        authentication: {
+          apiKey: BEDS24_API_KEY,
+        },
+      }),
     })
 
     if (!response.ok) {
@@ -32,7 +36,7 @@ export async function GET(request: NextRequest) {
       
       return NextResponse.json(
         { 
-          error: 'Failed to fetch Airbnb listings from Beds24',
+          error: 'Failed to fetch properties from Beds24',
           status: response.status,
           details: errorDetails
         },
@@ -44,13 +48,13 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      listings: data.data || data,
-      count: data.count || (Array.isArray(data.data) ? data.data.length : 0),
+      properties: data,
+      count: Array.isArray(data) ? data.length : 0,
       timestamp: new Date().toISOString(),
     })
 
   } catch (error) {
-    console.error('Beds24 Airbnb listings error:', error)
+    console.error('Beds24 properties error:', error)
     return NextResponse.json(
       { 
         error: 'Internal server error',

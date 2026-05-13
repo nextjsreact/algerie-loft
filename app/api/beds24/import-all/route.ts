@@ -103,22 +103,31 @@ export async function POST(request: NextRequest) {
           body: JSON.stringify([propertyData]), // Array of properties
         })
 
+        const responseText = await createResponse.text()
+        
         if (createResponse.ok) {
-          const createdProperty = await createResponse.json()
-          // API returns array, get first element
-          const propertyId = createdProperty[0]?.id || createdProperty.data?.[0]?.id
-          
-          results.success++
-          results.created.push({
-            name: listingName,
-            propertyId: propertyId,
-          })
+          try {
+            const createdProperty = JSON.parse(responseText)
+            // API returns array, get first element
+            const propertyId = createdProperty[0]?.id || createdProperty.data?.[0]?.id
+            
+            results.success++
+            results.created.push({
+              name: listingName,
+              propertyId: propertyId,
+            })
+          } catch (parseError) {
+            results.failed++
+            results.errors.push({
+              name: listingName,
+              error: `Parse error: ${responseText}`,
+            })
+          }
         } else {
-          const errorText = await createResponse.text()
           results.failed++
           results.errors.push({
             name: listingName,
-            error: errorText,
+            error: `HTTP ${createResponse.status}: ${responseText}`,
           })
         }
 

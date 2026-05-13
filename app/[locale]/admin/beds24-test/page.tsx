@@ -11,6 +11,7 @@ export default function Beds24TestPage() {
   const [testResult, setTestResult] = useState<any>(null)
   const [properties, setProperties] = useState<any>(null)
   const [bookings, setBookings] = useState<any>(null)
+  const [createTest, setCreateTest] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
 
   const runConnectionTest = async () => {
@@ -82,6 +83,28 @@ export default function Beds24TestPage() {
     }
   }
 
+  const testCreateProperty = async () => {
+    setLoading(true)
+    setError(null)
+    setCreateTest(null)
+    
+    try {
+      const response = await fetch('/api/beds24/test-create', {
+        method: 'POST',
+      })
+      const data = await response.json()
+      
+      setCreateTest(data)
+      if (!data.success) {
+        setError('Property creation failed - see details below')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Network error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -95,7 +118,7 @@ export default function Beds24TestPage() {
         </Alert>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
@@ -168,6 +191,32 @@ export default function Beds24TestPage() {
                 </>
               ) : (
                 'Récupérer les réservations'
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Home className="h-5 w-5" />
+              Test Création
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              onClick={testCreateProperty} 
+              disabled={loading}
+              className="w-full"
+              variant="secondary"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Test...
+                </>
+              ) : (
+                'Test créer propriété'
               )}
             </Button>
           </CardContent>
@@ -252,6 +301,60 @@ export default function Beds24TestPage() {
                   {JSON.stringify(bookings, null, 2)}
                 </pre>
               </details>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {createTest && (
+        <Card>
+          <CardHeader>
+            <CardTitle className={`flex items-center gap-2 ${createTest.success ? 'text-green-600' : 'text-red-600'}`}>
+              {createTest.success ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
+              Test de création de propriété
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-semibold">Status HTTP:</p>
+                  <p className={`text-lg font-bold ${createTest.success ? 'text-green-600' : 'text-red-600'}`}>
+                    {createTest.status} {createTest.statusText}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">Résultat:</p>
+                  <p className={`text-lg font-bold ${createTest.success ? 'text-green-600' : 'text-red-600'}`}>
+                    {createTest.success ? '✓ Succès' : '✗ Échec'}
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-semibold mb-2">Données envoyées:</p>
+                <pre className="bg-blue-50 p-4 rounded-lg overflow-auto text-xs border border-blue-200">
+                  {JSON.stringify(createTest.requestBody, null, 2)}
+                </pre>
+              </div>
+
+              <div>
+                <p className="text-sm font-semibold mb-2">Réponse de Beds24:</p>
+                <pre className={`p-4 rounded-lg overflow-auto text-xs border ${createTest.success ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                  {JSON.stringify(createTest.responseBody, null, 2)}
+                </pre>
+              </div>
+
+              {!createTest.success && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <p className="text-sm font-semibold text-yellow-900 mb-2">💡 Analyse de l'erreur:</p>
+                  <p className="text-sm text-yellow-800">
+                    {typeof createTest.responseBody === 'object' && createTest.responseBody.error 
+                      ? `Erreur: ${createTest.responseBody.error}`
+                      : 'Voir la réponse brute ci-dessus pour plus de détails'}
+                  </p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

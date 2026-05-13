@@ -42,6 +42,8 @@ export default function Beds24ImportPage() {
         
         const data = await response.json()
         
+        console.log('Batch result:', data)
+        
         if (!response.ok) {
           setError(data.error || 'Import failed')
           break
@@ -63,6 +65,8 @@ export default function Beds24ImportPage() {
         }
       }
 
+      console.log('FINAL RESULT:', allResults)
+      console.log('First 5 errors:', allResults.errors.slice(0, 5))
       setResult(allResults)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Network error')
@@ -171,9 +175,11 @@ export default function Beds24ImportPage() {
                   {result.created.map((prop: any, idx: number) => (
                     <div key={idx} className="p-3 bg-green-50 border border-green-200 rounded text-sm">
                       <div className="font-medium">{prop.name}</div>
-                      <div className="text-xs text-gray-600">
-                        Beds24 ID: {prop.id} | Airbnb ID: {prop.airbnbId}
-                      </div>
+                      {prop.propertyId && (
+                        <div className="text-xs text-gray-600">
+                          Beds24 Property ID: {prop.propertyId}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

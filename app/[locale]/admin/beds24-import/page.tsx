@@ -106,54 +106,6 @@ export default function Beds24ImportPage() {
         </CardContent>
       </Card>
 
-      {result && !result.success && result.recommendation && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-amber-600">
-              <AlertTriangle className="h-5 w-5" />
-              {result.recommendation.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Alert>
-              <AlertDescription>
-                {result.results.message}
-              </AlertDescription>
-            </Alert>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-semibold text-blue-900 mb-3">Étapes à suivre:</h3>
-              <ol className="space-y-2">
-                {result.recommendation.steps.map((step: string, idx: number) => (
-                  <li key={idx} className="text-sm text-blue-800">{step}</li>
-                ))}
-              </ol>
-              {result.recommendation.alternative && (
-                <p className="text-sm text-blue-700 mt-3 pt-3 border-t border-blue-200">
-                  <strong>Alternative:</strong> {result.recommendation.alternative}
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3">
-              <Button 
-                onClick={() => window.open('https://beds24.com', '_blank')}
-                className="flex-1"
-              >
-                Ouvrir Beds24
-              </Button>
-              <Button 
-                onClick={() => window.location.href = '/fr/admin/beds24-test'}
-                variant="outline"
-                className="flex-1"
-              >
-                Voir les propriétés actuelles
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {result && result.success && (
         <Card>
           <CardHeader>

@@ -195,17 +195,19 @@ export default function Beds24TestPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Home className="h-5 w-5" />
-              Propriétés trouvées: {properties.count}
+              Propriétés trouvées: {properties.properties?.count || properties.count || 0}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {Array.isArray(properties.properties) && properties.properties.map((prop: any) => (
-                <div key={prop.id || prop.propId} className="p-4 border rounded-lg">
-                  <h3 className="font-semibold text-lg">{prop.name || prop.propName}</h3>
-                  <p className="text-sm text-gray-600">ID: {prop.id || prop.propId}</p>
+              {Array.isArray(properties.properties?.data) && properties.properties.data.map((prop: any) => (
+                <div key={prop.id} className="p-4 border rounded-lg">
+                  <h3 className="font-semibold text-lg">{prop.name}</h3>
+                  <p className="text-sm text-gray-600">ID: {prop.id}</p>
                   {prop.address && <p className="text-sm">{prop.address}</p>}
-                  {prop.maxPeople && <p className="text-sm">Max guests: {prop.maxPeople}</p>}
+                  {prop.city && <p className="text-sm">{prop.city}, {prop.country}</p>}
+                  {prop.phone && <p className="text-sm">📞 {prop.phone}</p>}
+                  <p className="text-sm text-gray-500 mt-2">Check-in: {prop.checkInStart} | Check-out: {prop.checkOutEnd}</p>
                 </div>
               ))}
               <details className="mt-4">

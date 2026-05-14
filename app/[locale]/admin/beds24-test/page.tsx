@@ -482,14 +482,32 @@ export default function Beds24TestPage() {
               </div>
             ) : (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <p className="text-sm text-red-800">
-                  {tokenExchange.error || 'Erreur inconnue'}
+                <p className="text-sm font-semibold text-red-800 mb-2">
+                  ❌ {tokenExchange.error || 'Erreur inconnue'}
                 </p>
-                {tokenExchange.details && (
-                  <pre className="mt-2 text-xs text-red-700 overflow-auto">
-                    {JSON.stringify(tokenExchange.details, null, 2)}
-                  </pre>
+                {tokenExchange.hint && (
+                  <p className="text-sm text-red-700 mb-2">
+                    💡 {tokenExchange.hint}
+                  </p>
                 )}
+                {tokenExchange.details && (
+                  <details className="mt-2">
+                    <summary className="cursor-pointer text-sm text-red-700 hover:text-red-900">
+                      Voir les détails de l'erreur
+                    </summary>
+                    <pre className="mt-2 text-xs text-red-700 overflow-auto bg-white p-2 rounded">
+                      {JSON.stringify(tokenExchange.details, null, 2)}
+                    </pre>
+                  </details>
+                )}
+                <div className="mt-3 pt-3 border-t border-red-300">
+                  <p className="text-sm text-red-800 font-semibold mb-1">Solutions possibles:</p>
+                  <ul className="text-sm text-red-700 space-y-1 list-disc list-inside">
+                    <li>L'invite code expire après quelques minutes - générez-en un nouveau</li>
+                    <li>Assurez-vous de copier le code complet sans espaces</li>
+                    <li>Vérifiez que vous avez coché "Write Properties" dans Beds24</li>
+                  </ul>
+                </div>
               </div>
             )}
           </CardContent>

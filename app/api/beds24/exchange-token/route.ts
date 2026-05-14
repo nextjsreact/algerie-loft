@@ -22,19 +22,32 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    const responseText = await response.text()
+    console.log('Beds24 exchange response status:', response.status)
+    console.log('Beds24 exchange response body:', responseText)
+
     if (!response.ok) {
-      const errorText = await response.text()
+      let errorDetails
+      try {
+        errorDetails = JSON.parse(responseText)
+      } catch {
+        errorDetails = responseText
+      }
+      
       return NextResponse.json(
         { 
           error: 'Failed to exchange invite code',
           status: response.status,
-          details: errorText
+          details: errorDetails,
+          hint: response.status === 401 
+            ? 'L\'invite code est invalide ou a expiré. Générez-en un nouveau dans Beds24 et réessayez immédiatement.'
+            : 'Erreur inconnue'
         },
         { status: response.status }
       )
     }
 
-    const data = await response.json()
+    const data = JSON.parse(responseText)
 
     return NextResponse.json({
       success: true,

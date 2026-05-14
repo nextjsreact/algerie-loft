@@ -12,6 +12,8 @@ export default function Beds24TestPage() {
   const [properties, setProperties] = useState<any>(null)
   const [bookings, setBookings] = useState<any>(null)
   const [createTest, setCreateTest] = useState<any>(null)
+  const [tokenExchange, setTokenExchange] = useState<any>(null)
+  const [inviteCode, setInviteCode] = useState('')
   const [error, setError] = useState<string | null>(null)
 
   const runConnectionTest = async () => {
@@ -105,6 +107,35 @@ export default function Beds24TestPage() {
     }
   }
 
+  const exchangeInviteCode = async () => {
+    if (!inviteCode.trim()) {
+      setError('Veuillez entrer un invite code')
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+    setTokenExchange(null)
+    
+    try {
+      const response = await fetch('/api/beds24/exchange-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ inviteCode: inviteCode.trim() }),
+      })
+      const data = await response.json()
+      
+      setTokenExchange(data)
+      if (!data.success) {
+        setError(data.error || 'Token exchange failed')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Network error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -117,6 +148,50 @@ export default function Beds24TestPage() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
+
+      <Card className="border-2 border-blue-500">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-blue-600">
+            🔑 Étape 1: Échanger l'Invite Code
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="font-semibold text-blue-900 mb-2">Instructions:</h3>
+            <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+              <li>Allez dans Beds24 → Settings → Account → API</li>
+              <li>Section "Invite Code"</li>
+              <li>Cochez: Read Properties + <strong>Write Properties</strong> + Read Bookings</li>
+              <li>Cliquez "Generate Invite Code"</li>
+              <li>Copiez le code et collez-le ci-dessous</li>
+            </ol>
+          </div>
+
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={inviteCode}
+              onChange={(e) => setInviteCode(e.target.value)}
+              placeholder="Collez votre invite code ici"
+              className="flex-1 px-4 py-2 border rounded-lg"
+              disabled={loading}
+            />
+            <Button 
+              onClick={exchangeInviteCode} 
+              disabled={loading || !inviteCode.trim()}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Échange...
+                </>
+              ) : (
+                'Échanger le code'
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
@@ -356,6 +431,67 @@ export default function Beds24TestPage() {
                 </div>
               )}
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {tokenExchange && (
+        <Card className="border-2 border-green-500">
+          <CardHeader>
+            <CardTitle className={`flex items-center gap-2 ${tokenExchange.success ? 'text-green-600' : 'text-red-600'}`}>
+              {tokenExchange.success ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
+              Résultat de l'échange de token
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {tokenExchange.success ? (
+              <div className="space-y-4">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <p className="text-sm font-semibold text-green-900 mb-2">✅ Succès! Voici votre nouveau token:</p>
+                  <div className="bg-white p-3 rounded border border-green-300 font-mono text-xs break-all">
+                    {tokenExchange.refreshToken}
+                  </div>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(tokenExchange.refreshToken)
+                      alert('Token copié dans le presse-papier!')
+                    }}
+                    className="mt-2 text-sm text-green-700 hover:text-green-900 underline"
+                  >
+                    📋 Copier le token
+                  </button>
+                </div>
+
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <p className="text-sm font-semibold text-yellow-900 mb-2">📝 Prochaines étapes:</p>
+                  <ol className="text-sm text-yellow-800 space-y-1 list-decimal list-inside">
+                    {tokenExchange.instructions?.map((instruction: string, idx: number) => (
+                      <li key={idx}>{instruction}</li>
+                    ))}
+                  </ol>
+                </div>
+
+                <details>
+                  <summary className="cursor-pointer text-sm text-gray-600 hover:text-gray-900">
+                    Voir les données complètes
+                  </summary>
+                  <pre className="bg-gray-50 p-4 rounded-lg overflow-auto text-xs mt-2">
+                    {JSON.stringify(tokenExchange, null, 2)}
+                  </pre>
+                </details>
+              </div>
+            ) : (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <p className="text-sm text-red-800">
+                  {tokenExchange.error || 'Erreur inconnue'}
+                </p>
+                {tokenExchange.details && (
+                  <pre className="mt-2 text-xs text-red-700 overflow-auto">
+                    {JSON.stringify(tokenExchange.details, null, 2)}
+                  </pre>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

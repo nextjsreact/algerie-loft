@@ -736,18 +736,6 @@ export class AuditService {
         
         return log;
       });
-              enrichedLog.newValues = {
-                ...enrichedLog.newValues,
-                currency_code: currencyCode
-              };
-            }
-          }
-          
-          return enrichedLog;
-        }
-        
-        return log;
-      });
 
       return enrichedLogs;
 

@@ -1,12 +1,14 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { LoftForm } from "@/components/forms/loft-form"
 import { toast } from "sonner"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 
 export function EditLoftFormWrapper({ loft, owners, zoneAreas, internetConnectionTypes }: any) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const locale = useLocale()
   const tLofts = useTranslations('lofts');
   const tCommon = useTranslations('common');
 
@@ -32,8 +34,13 @@ export function EditLoftFormWrapper({ loft, owners, zoneAreas, internetConnectio
         description: tLofts('loftUpdatedDescription'),
         duration: 4000,
       })
+      
+      // Récupérer le paramètre returnPage de l'URL
+      const returnPage = searchParams.get('returnPage')
+      const redirectUrl = returnPage ? `/${locale}/lofts?page=${returnPage}` : `/${locale}/lofts`
+      
       setTimeout(() => {
-        router.push("/lofts")
+        router.push(redirectUrl)
       }, 1500)
     } catch (error) {
       console.error('Error updating loft:', error)

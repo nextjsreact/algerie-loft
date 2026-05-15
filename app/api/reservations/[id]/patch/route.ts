@@ -27,7 +27,7 @@ export async function PATCH(
   try {
     const { id } = await params
     const body = await request.json()
-    const { check_in_date, check_out_date, base_price, cleaning_fee, service_fee, taxes, total_amount, currency_code, currency_ratio, price_per_night_input, status } = body
+    const { loft_id, check_in_date, check_out_date, base_price, cleaning_fee, service_fee, taxes, total_amount, currency_code, currency_ratio, price_per_night_input, status } = body
 
     if (!id) return NextResponse.json({ error: 'ID requis' }, { status: 400 })
     if (!check_in_date || !check_out_date) return NextResponse.json({ error: 'Dates requises' }, { status: 400 })
@@ -70,14 +70,17 @@ export async function PATCH(
       return NextResponse.json({ error: 'Impossible de modifier une réservation annulée' }, { status: 400 })
     }
 
-    // Check availability for new dates (excluding current reservation)
+    // Déterminer le loft_id à utiliser (nouveau ou actuel)
+    const targetLoftId = loft_id || current.loft_id
+
+    // Check availability for new dates/loft (excluding current reservation)
     // Skip if status is being set to cancelled
     const newStatus = status || current.status
     if (newStatus !== 'cancelled') {
       const { data: conflicts } = await supabase
         .from('reservations')
         .select('id')
-        .eq('loft_id', current.loft_id)
+        .eq('loft_id', targetLoftId)
         .neq('id', id)
         .in('status', ['confirmed', 'pending'])
         .or(`and(check_in_date.lt.${check_out_date},check_out_date.gt.${check_in_date})`)
@@ -99,6 +102,11 @@ export async function PATCH(
       currency_ratio: currency_ratio || 1,
       price_per_night_input: price_per_night_input ?? null,
       updated_at: new Date().toISOString(),
+    }
+
+    // Ajouter loft_id si changé
+    if (loft_id && loft_id !== current.loft_id) {
+      updatePayload.loft_id = loft_id
     }
 
     // Apply status change if provided

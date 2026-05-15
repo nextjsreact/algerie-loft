@@ -42,12 +42,14 @@ interface ReservationEditDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSuccess: () => void
+  availableLofts?: Array<{ id: string; name: string; address?: string }> // Liste des lofts disponibles
 }
 
-export function ReservationEditDialog({ reservation, open, onOpenChange, onSuccess }: ReservationEditDialogProps) {
+export function ReservationEditDialog({ reservation, open, onOpenChange, onSuccess, availableLofts = [] }: ReservationEditDialogProps) {
   const t = useTranslations('reservations')
   const [checkIn, setCheckIn] = useState('')
   const [checkOut, setCheckOut] = useState('')
+  const [selectedLoftId, setSelectedLoftId] = useState('')
   const [pricePerNight, setPricePerNight] = useState<string>('')
   const [basePrice, setBasePrice] = useState<string>('0')
   const [cleaningFee, setCleaningFee] = useState<string>('0')
@@ -90,6 +92,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
     if (!reservation || !open) return
     setCheckIn(reservation.check_in_date)
     setCheckOut(reservation.check_out_date)
+    setSelectedLoftId(reservation.loft_id)
     setError('')
     setAvailOk(null)
     setSelectedStatus(reservation.status || 'pending')
@@ -140,9 +143,14 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
     setTotal(Math.round(sum * 100) / 100)
   }, [basePrice, cleaningFee, serviceFee, taxes])
 
-  // Check availability when dates change
+  // Check availability when dates or loft change
   useEffect(() => {
-    if (!reservation || !checkIn || !checkOut || (checkIn === reservation.check_in_date && checkOut === reservation.check_out_date)) {
+    if (!reservation || !checkIn || !checkOut || !selectedLoftId) {
+      setAvailOk(null)
+      return
+    }
+    // Si rien n'a changé, pas besoin de vérifier
+    if (checkIn === reservation.check_in_date && checkOut === reservation.check_out_date && selectedLoftId === reservation.loft_id) {
       setAvailOk(null)
       return
     }
@@ -150,7 +158,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
       setCheckingAvail(true)
       setAvailOk(null)
       try {
-        const res = await fetch(`/api/availability?loft_id=${reservation.loft_id}&check_in_date=${checkIn}&check_out_date=${checkOut}&exclude_id=${reservation.id}`)
+        const res = await fetch(`/api/availability?loft_id=${selectedLoftId}&check_in_date=${checkIn}&check_out_date=${checkOut}&exclude_id=${reservation.id}`)
         const data = await res.json()
         setAvailOk(data.available !== false)
       } catch {
@@ -161,7 +169,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
     }
     const timer = setTimeout(check, 600)
     return () => clearTimeout(timer)
-  }, [checkIn, checkOut, reservation])
+  }, [checkIn, checkOut, selectedLoftId, reservation])
 
   const totalDA = isDefaultCurrency ? total : toDA(total)
 
@@ -175,6 +183,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          loft_id: selectedLoftId,
           check_in_date: checkIn,
           check_out_date: checkOut,
           base_price: toDA(parseFloat(basePrice) || 0),
@@ -216,7 +225,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
             {t('edit.title')}
           </DialogTitle>
           <p className="text-sm text-muted-foreground">
-            {reservation.lofts?.name} — {reservation.guest_name}
+            {reservation.guest_name}
           </p>
         </DialogHeader>
 
@@ -226,6 +235,36 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
+          )}
+
+          {/* Sélecteur de loft */}
+          {availableLofts.length > 0 && (
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Loft</Label>
+              <Select value={selectedLoftId} onValueChange={(value) => { setSelectedLoftId(value); setAvailOk(null) }}>
+                <SelectTrigger className="h-9">
+                  <SelectValue placeholder="Sélectionner un loft" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableLofts.map((loft) => (
+                    <SelectItem key={loft.id} value={loft.id}>
+                      <div className="flex flex-col">
+                        <span className="font-medium">{loft.name}</span>
+                        {loft.address && (
+                          <span className="text-xs text-muted-foreground">{loft.address}</span>
+                        )}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {selectedLoftId !== reservation.loft_id && (
+                <p className="text-xs text-amber-600 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  Le loft sera changé de "{reservation.lofts?.name}" vers "{availableLofts.find(l => l.id === selectedLoftId)?.name}"
+                </p>
+              )}
+            </div>
           )}
 
           {/* Dates */}

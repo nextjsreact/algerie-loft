@@ -1286,6 +1286,7 @@ function ReservationsPageContent() {
             setRefreshKey(prev => prev + 1);
             fetchAllReservations();
           }}
+          availableLofts={lofts.map(l => ({ id: l.id, name: l.name, address: l.address }))}
         />
       </div>
     </div>

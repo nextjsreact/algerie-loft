@@ -55,6 +55,27 @@ export async function deleteOwner(id: string) {
   await requireRole(["admin"])
 
   const supabase = await createClient() // Create client here
+  
+  // SÉCURITÉ CRITIQUE: Vérifier si le propriétaire a des lofts
+  const { data: loftsCount, error: countError } = await supabase
+    .from("lofts")
+    .select("id", { count: 'exact', head: true })
+    .eq("owner_id", id);
+
+  if (countError) {
+    console.error("Failed to check lofts count:", countError)
+    return { error: "Impossible de vérifier les lofts associés" }
+  }
+
+  // Si le propriétaire a des lofts, INTERDIRE la suppression
+  if (loftsCount && (loftsCount as any).count > 0) {
+    const count = (loftsCount as any).count;
+    return { 
+      error: `Impossible de supprimer ce propriétaire car il possède ${count} loft(s). Veuillez d'abord réassigner ou supprimer ces lofts.` 
+    }
+  }
+
+  // Si aucun loft, autoriser la suppression
   const { error } = await supabase.from("owners").delete().eq("id", id)
 
   if (error) {

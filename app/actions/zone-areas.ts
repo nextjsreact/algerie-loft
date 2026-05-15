@@ -70,7 +70,33 @@ export async function createZoneArea(data: { name: string } | FormData) {
 
 export async function deleteZoneArea(id: string) {
   const supabase = await createClient(); // Create client here
-  const { error } = await supabase.from("zone_areas").delete().eq("id", id)
+  
+  // SÉCURITÉ: Vérifier combien de lofts utilisent cette zone
+  const { data: loftsCount, error: countError } = await supabase
+    .from("lofts")
+    .select("id", { count: 'exact', head: true })
+    .eq("zone_area_id", id);
+
+  if (countError) {
+    console.error("Error checking lofts count:", countError);
+    throw countError;
+  }
+
+  // Si des lofts utilisent cette zone, mettre à jour leur zone_area_id à NULL
+  if (loftsCount && (loftsCount as any).count > 0) {
+    const { error: updateError } = await supabase
+      .from("lofts")
+      .update({ zone_area_id: null })
+      .eq("zone_area_id", id);
+
+    if (updateError) {
+      console.error("Error updating lofts:", updateError);
+      throw updateError;
+    }
+  }
+
+  // Maintenant supprimer la zone en toute sécurité
+  const { error } = await supabase.from("zone_areas").delete().eq("id", id);
 
   if (error) {
     console.error("Error deleting zone area:", error);

@@ -88,6 +88,30 @@ export async function updateInternetConnectionType(
 export async function deleteInternetConnectionType(id: string): Promise<{ error: any }> {
   try {
     const supabase = await createClient();
+    
+    // SÉCURITÉ: Vérifier combien de lofts utilisent ce type de connexion
+    const { data: loftsCount, error: countError } = await supabase
+      .from("lofts")
+      .select("id", { count: 'exact', head: true })
+      .eq("internet_connection_type_id", id);
+
+    if (countError) {
+      return { error: countError.message || 'Failed to check lofts count' };
+    }
+
+    // Si des lofts utilisent ce type, mettre à jour leur internet_connection_type_id à NULL
+    if (loftsCount && (loftsCount as any).count > 0) {
+      const { error: updateError } = await supabase
+        .from("lofts")
+        .update({ internet_connection_type_id: null })
+        .eq("internet_connection_type_id", id);
+
+      if (updateError) {
+        return { error: updateError.message || 'Failed to update lofts' };
+      }
+    }
+
+    // Maintenant supprimer le type de connexion en toute sécurité
     const { error } = await supabase
       .from('internet_connection_types')
       .delete()

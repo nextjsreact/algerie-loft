@@ -34,6 +34,31 @@ const FIELD_DISPLAY_NAMES: Record<string, Record<string, string>> = {
     payment_method_id: 'Méthode de paiement',
     ratio_at_transaction: 'Taux de change',
     equivalent_amount_default_currency: 'Montant équivalent'
+  },
+  reservations: {
+    guest_name: 'Nom du client',
+    guest_email: 'Email du client',
+    guest_phone: 'Téléphone du client',
+    guest_nationality: 'Nationalité',
+    guest_count: 'Nombre de personnes',
+    check_in_date: 'Date d\'arrivée',
+    check_out_date: 'Date de départ',
+    nights: 'Nombre de nuits',
+    status: 'Statut',
+    payment_status: 'Statut du paiement',
+    loft_id: 'Loft',
+    base_price: 'Prix de base',
+    cleaning_fee: 'Frais de ménage',
+    service_fee: 'Frais de service',
+    taxes: 'Taxes',
+    total_amount: 'Montant total',
+    currency_code: 'Devise',
+    currency_ratio: 'Taux de change',
+    special_requests: 'Demandes spéciales',
+    cancelled_at: 'Date d\'annulation',
+    cancellation_reason: 'Raison d\'annulation',
+    price_per_night_input: 'Prix par nuit (saisi)',
+    guest_id: 'ID Client'
   }
 }
 
@@ -44,7 +69,8 @@ function getFieldDisplayName(tableName: string, fieldName: string): string {
 
 // Fonction pour formater les valeurs
 function formatAuditValue(tableName: string, fieldName: string, value: string | null, enrichedData?: any): string {
-  if (!value) return 'Vide'
+  if (value === null || value === undefined) return 'Vide'
+  if (value === '') return '(vide)'
 
   // Mapping des devises - utiliser les données enrichies si disponibles
   if (fieldName === 'currency_id') {
@@ -57,6 +83,17 @@ function formatAuditValue(tableName: string, fieldName: string, value: string | 
       '0fa82c9a-6e85-4ba3-ae71-cf438466df7b': 'DZD (DA)'
     }
     return commonCurrencies[value] || `Devise: ${value.substring(0, 8)}...`
+  }
+
+  // Mapping des codes de devise (pour les réservations)
+  if (fieldName === 'currency_code') {
+    const currencySymbols: Record<string, string> = {
+      'EUR': '€',
+      'DZD': 'DA',
+      'USD': '$',
+      'GBP': '£'
+    }
+    return `${value} (${currencySymbols[value] || value})`
   }
 
   // Mapping des méthodes de paiement
@@ -74,7 +111,11 @@ function formatAuditValue(tableName: string, fieldName: string, value: string | 
     if (enrichedData?.loft_name) {
       return enrichedData.loft_name
     }
-    return `Loft: ${value.substring(0, 8)}...`
+    // Si c'est un UUID, afficher une version tronquée
+    if (value.length === 36 && value.includes('-')) {
+      return `Loft: ${value.substring(0, 8)}...`
+    }
+    return value
   }
 
   // Mapping des statuts
@@ -82,10 +123,23 @@ function formatAuditValue(tableName: string, fieldName: string, value: string | 
     const statusLabels: Record<string, string> = {
       pending: 'En attente',
       completed: 'Terminé',
+      confirmed: 'Confirmé',
       failed: 'Échoué',
       cancelled: 'Annulé'
     }
     return statusLabels[value] || value
+  }
+
+  // Mapping des statuts de paiement
+  if (fieldName === 'payment_status') {
+    const paymentStatusLabels: Record<string, string> = {
+      pending: 'En attente',
+      paid: 'Payé',
+      partially_paid: 'Partiellement payé',
+      refunded: 'Remboursé',
+      failed: 'Échoué'
+    }
+    return paymentStatusLabels[value] || value
   }
 
   // Mapping des types de transaction
@@ -96,6 +150,54 @@ function formatAuditValue(tableName: string, fieldName: string, value: string | 
       transfer: 'Virement'
     }
     return typeLabels[value] || value
+  }
+
+  // Formater les montants
+  if (fieldName.includes('amount') || fieldName.includes('price') || fieldName.includes('fee') || fieldName === 'taxes') {
+    const numValue = parseFloat(value)
+    if (!isNaN(numValue)) {
+      return new Intl.NumberFormat('fr-FR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(numValue)
+    }
+  }
+
+  // Formater les dates
+  if (fieldName.includes('date') && !fieldName.includes('updated') && !fieldName.includes('created')) {
+    try {
+      const date = new Date(value)
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleDateString('fr-FR', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
+      }
+    } catch (e) {
+      // Si ce n'est pas une date valide, retourner la valeur brute
+    }
+  }
+
+  // Formater les nombres (nights, guest_count, etc.)
+  if (fieldName === 'nights' || fieldName === 'guest_count') {
+    const numValue = parseInt(value)
+    if (!isNaN(numValue)) {
+      if (fieldName === 'nights') {
+        return `${numValue} nuit${numValue > 1 ? 's' : ''}`
+      }
+      if (fieldName === 'guest_count') {
+        return `${numValue} personne${numValue > 1 ? 's' : ''}`
+      }
+    }
+  }
+
+  // Formater les ratios
+  if (fieldName.includes('ratio')) {
+    const numValue = parseFloat(value)
+    if (!isNaN(numValue)) {
+      return numValue.toString()
+    }
   }
 
   return value
@@ -317,10 +419,22 @@ export function AuditLogItem({ log, className, showDetails = false }: AuditLogIt
                   <h4 className="text-sm font-medium text-muted-foreground">
                     {t('createdData')}
                   </h4>
-                  <div className="p-3 bg-green-50 border border-green-200 rounded">
-                    <pre className="text-xs font-mono text-green-800 whitespace-pre-wrap">
-                      {JSON.stringify(log.newValues, null, 2)}
-                    </pre>
+                  <div className="space-y-2">
+                    {Object.entries(log.newValues).map(([key, value]) => {
+                      // Ignorer les champs techniques
+                      if (['created_at', 'updated_at', 'id'].includes(key)) return null
+                      
+                      return (
+                        <div key={key} className="grid grid-cols-2 gap-4 text-sm">
+                          <div className="font-medium text-muted-foreground">
+                            {getFieldDisplayName(log.tableName, key)}
+                          </div>
+                          <div className="p-2 bg-green-50 border border-green-200 rounded text-green-800 text-xs break-words">
+                            {formatAuditValue(log.tableName, key, value as string, log.newValues)}
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               )}
@@ -331,10 +445,22 @@ export function AuditLogItem({ log, className, showDetails = false }: AuditLogIt
                   <h4 className="text-sm font-medium text-muted-foreground">
                     {t('deletedData')}
                   </h4>
-                  <div className="p-3 bg-red-50 border border-red-200 rounded">
-                    <pre className="text-xs font-mono text-red-800 whitespace-pre-wrap">
-                      {JSON.stringify(log.oldValues, null, 2)}
-                    </pre>
+                  <div className="space-y-2">
+                    {Object.entries(log.oldValues).map(([key, value]) => {
+                      // Ignorer les champs techniques
+                      if (['created_at', 'updated_at', 'id'].includes(key)) return null
+                      
+                      return (
+                        <div key={key} className="grid grid-cols-2 gap-4 text-sm">
+                          <div className="font-medium text-muted-foreground">
+                            {getFieldDisplayName(log.tableName, key)}
+                          </div>
+                          <div className="p-2 bg-red-50 border border-red-200 rounded text-red-800 text-xs break-words">
+                            {formatAuditValue(log.tableName, key, value as string, log.oldValues)}
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               )}

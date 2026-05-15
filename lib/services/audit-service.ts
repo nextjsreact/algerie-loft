@@ -609,22 +609,18 @@ export class AuditService {
       const currencyIds = new Set<string>();
       
       logs.forEach(log => {
+        // Pour les transactions
         if (log.tableName === 'transactions') {
-          // Collecter les loft_ids
-          if (log.oldValues?.loft_id) {
-            loftIds.add(log.oldValues.loft_id);
-          }
-          if (log.newValues?.loft_id) {
-            loftIds.add(log.newValues.loft_id);
-          }
-          
-          // Collecter les currency_ids
-          if (log.oldValues?.currency_id) {
-            currencyIds.add(log.oldValues.currency_id);
-          }
-          if (log.newValues?.currency_id) {
-            currencyIds.add(log.newValues.currency_id);
-          }
+          if (log.oldValues?.loft_id) loftIds.add(log.oldValues.loft_id);
+          if (log.newValues?.loft_id) loftIds.add(log.newValues.loft_id);
+          if (log.oldValues?.currency_id) currencyIds.add(log.oldValues.currency_id);
+          if (log.newValues?.currency_id) currencyIds.add(log.newValues.currency_id);
+        }
+        
+        // Pour les réservations
+        if (log.tableName === 'reservations') {
+          if (log.oldValues?.loft_id) loftIds.add(log.oldValues.loft_id);
+          if (log.newValues?.loft_id) loftIds.add(log.newValues.loft_id);
         }
       });
 
@@ -658,8 +654,9 @@ export class AuditService {
         }
       }
 
-      // Enrichir les logs avec les noms des lofts
+      // Enrichir les logs avec les noms des lofts et devises
       const enrichedLogs = logs.map(log => {
+        // Enrichir les transactions
         if (log.tableName === 'transactions') {
           const enrichedLog = { ...log };
           
@@ -698,6 +695,47 @@ export class AuditService {
           if (enrichedLog.newValues?.currency_id) {
             const currencyCode = currencyCodes.get(enrichedLog.newValues.currency_id);
             if (currencyCode) {
+              enrichedLog.newValues = {
+                ...enrichedLog.newValues,
+                currency_code: currencyCode
+              };
+            }
+          }
+          
+          return enrichedLog;
+        }
+        
+        // Enrichir les réservations
+        if (log.tableName === 'reservations') {
+          const enrichedLog = { ...log };
+          
+          // Enrichir les anciennes valeurs
+          if (enrichedLog.oldValues?.loft_id) {
+            const loftName = loftNames.get(enrichedLog.oldValues.loft_id);
+            if (loftName) {
+              enrichedLog.oldValues = {
+                ...enrichedLog.oldValues,
+                loft_name: loftName
+              };
+            }
+          }
+          
+          // Enrichir les nouvelles valeurs
+          if (enrichedLog.newValues?.loft_id) {
+            const loftName = loftNames.get(enrichedLog.newValues.loft_id);
+            if (loftName) {
+              enrichedLog.newValues = {
+                ...enrichedLog.newValues,
+                loft_name: loftName
+              };
+            }
+          }
+          
+          return enrichedLog;
+        }
+        
+        return log;
+      });
               enrichedLog.newValues = {
                 ...enrichedLog.newValues,
                 currency_code: currencyCode

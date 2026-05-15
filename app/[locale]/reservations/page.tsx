@@ -77,6 +77,7 @@ function ReservationsPageContent() {
   const [filterLoft, setFilterLoft] = useState('all');
   const [filterDateFrom, setFilterDateFrom] = useState('');
   const [filterDateTo, setFilterDateTo] = useState('');
+  const [sortBy, setSortBy] = useState('updated'); // 'updated', 'created', 'name', 'checkin'
   const [loftSearch, setLoftSearch] = useState('');
   const [loftPopoverOpen, setLoftPopoverOpen] = useState(false);
 
@@ -646,6 +647,18 @@ function ReservationsPageContent() {
                     className="w-[150px] h-10"
                     title="Date d'arrivée jusqu'à"
                   />
+                  {/* Sort by */}
+                  <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger className="w-[180px] h-10">
+                      <SelectValue placeholder="Trier par" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="updated">Plus récent (modif.)</SelectItem>
+                      <SelectItem value="created">Plus récent (créé)</SelectItem>
+                      <SelectItem value="name">Nom du loft</SelectItem>
+                      <SelectItem value="checkin">Date d'arrivée</SelectItem>
+                    </SelectContent>
+                  </Select>
                   {/* Reset */}
                   {(filterSearch || filterStatus !== 'all' || filterLoft !== 'all' || filterDateFrom || filterDateTo) && (
                     <Button
@@ -684,7 +697,7 @@ function ReservationsPageContent() {
               </CardHeader>
               <CardContent className="p-0">
                 {(() => {
-                  const filtered = allReservations.filter(res => {
+                  let filtered = allReservations.filter(res => {
                     if (filterSearch && !res.lofts?.name?.toLowerCase().includes(filterSearch.toLowerCase()) && !res.guest_name?.toLowerCase().includes(filterSearch.toLowerCase())) return false;
                     if (filterStatus !== 'all' && res.status !== filterStatus) return false;
                     if (filterLoft !== 'all' && res.loft_id !== filterLoft) return false;
@@ -692,6 +705,23 @@ function ReservationsPageContent() {
                     if (filterDateTo && res.check_in_date > filterDateTo) return false;
                     return true;
                   });
+                  
+                  // Appliquer le tri
+                  filtered = [...filtered].sort((a, b) => {
+                    switch (sortBy) {
+                      case 'created':
+                        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+                      case 'updated':
+                        return new Date(b.updated_at || b.created_at || 0).getTime() - new Date(a.updated_at || a.created_at || 0).getTime();
+                      case 'name':
+                        return (a.lofts?.name || '').localeCompare(b.lofts?.name || '');
+                      case 'checkin':
+                        return (b.check_in_date || '').localeCompare(a.check_in_date || '');
+                      default:
+                        return new Date(b.updated_at || b.created_at || 0).getTime() - new Date(a.updated_at || a.created_at || 0).getTime();
+                    }
+                  });
+                  
                   if (filtered.length === 0) return (
                     <div className="p-12 text-center text-gray-500">{t('upcoming.empty')}</div>
                   );
@@ -721,6 +751,17 @@ function ReservationsPageContent() {
                                   : `${res.guest_name || res.guest_phone || '—'} • ${res.check_in_date} → ${res.check_out_date}`
                                 }
                               </p>
+                              {res.created_at && (
+                                <p className="text-xs text-gray-400 mt-1">
+                                  Créé le {new Date(res.created_at).toLocaleDateString('fr-FR', { 
+                                    day: '2-digit', 
+                                    month: '2-digit', 
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </p>
+                              )}
                             </div>
                           </div>
                           <div className="flex items-center gap-3">

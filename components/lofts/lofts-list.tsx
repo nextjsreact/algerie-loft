@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useTranslations, useLocale } from "next-intl"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { deleteLoft } from "@/app/actions/lofts"
 import { toast } from "sonner"
@@ -67,18 +68,39 @@ export function LoftsList({
 }: LoftsListProps) {
   // All hooks must be called before any conditional logic
   const locale = useLocale()
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const t = useTranslations('lofts')
   const tCommon = useTranslations('common')
   const { confirm } = useConfirmationToast()
+  
+  // Récupérer la page depuis l'URL ou utiliser 1 par défaut
+  const pageFromUrl = parseInt(searchParams.get('page') || '1', 10)
   
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [ownerFilter, setOwnerFilter] = useState("all")
   const [zoneFilter, setZoneFilter] = useState("all")
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(pageFromUrl)
   const [deletingLoftId, setDeletingLoftId] = useState<string | null>(null)
   
   const itemsPerPage = 10
+
+  // Synchroniser la page avec l'URL
+  useEffect(() => {
+    const newPage = parseInt(searchParams.get('page') || '1', 10)
+    if (newPage !== currentPage) {
+      setCurrentPage(newPage)
+    }
+  }, [searchParams])
+
+  // Fonction pour mettre à jour la page dans l'URL
+  const updatePageInUrl = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('page', page.toString())
+    router.push(`/${locale}/lofts?${params.toString()}`, { scroll: false })
+    setCurrentPage(page)
+  }
 
   // Check permissions once at the top level to avoid hook issues
   const canViewFinancialData = ['admin', 'manager', 'executive'].includes(userRole)
@@ -241,7 +263,7 @@ export function LoftsList({
               setStatusFilter("all")
               setOwnerFilter("all")
               setZoneFilter("all")
-              setCurrentPage(1)
+              updatePageInUrl(1)
             }}
             className="flex items-center gap-2"
           >
@@ -329,14 +351,14 @@ export function LoftsList({
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                          <Link href={`/${locale}/lofts/${loft.id}`} className="flex items-center gap-2">
+                          <Link href={`/${locale}/lofts/${loft.id}?returnPage=${currentPage}`} className="flex items-center gap-2">
                             <Eye className="h-4 w-4" />
                             {tCommon('view')}
                           </Link>
                         </DropdownMenuItem>
                         {userRole === 'client' && loft.status === 'available' ? (
                           <DropdownMenuItem asChild>
-                            <Link href={`/${locale}/lofts/${loft.id}/book`} className="flex items-center gap-2 text-green-600">
+                            <Link href={`/${locale}/lofts/${loft.id}/book?returnPage=${currentPage}`} className="flex items-center gap-2 text-green-600">
                               <Calendar className="h-4 w-4" />
                               Réserver
                             </Link>
@@ -344,7 +366,7 @@ export function LoftsList({
                         ) : (
                           <>
                             <DropdownMenuItem asChild>
-                              <Link href={`/${locale}/lofts/${loft.id}/edit`} className="flex items-center gap-2">
+                              <Link href={`/${locale}/lofts/${loft.id}/edit?returnPage=${currentPage}`} className="flex items-center gap-2">
                                 <Edit className="h-4 w-4" />
                                 {tCommon('edit')}
                               </Link>
@@ -381,7 +403,7 @@ export function LoftsList({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(currentPage - 1)}
+              onClick={() => updatePageInUrl(currentPage - 1)}
               disabled={currentPage === 1}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -393,7 +415,7 @@ export function LoftsList({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(currentPage + 1)}
+              onClick={() => updatePageInUrl(currentPage + 1)}
               disabled={currentPage === totalPages}
             >
               {tCommon('next')}

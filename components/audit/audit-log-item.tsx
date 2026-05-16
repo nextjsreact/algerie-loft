@@ -30,7 +30,9 @@ const FIELD_DISPLAY_NAMES: Record<string, Record<string, string>> = {
     date: 'Date',
     category: 'Catégorie',
     loft_id: 'Loft',
+    loft_name: 'Loft',
     currency_id: 'Devise',
+    currency_code: 'Devise',
     payment_method_id: 'Méthode de paiement',
     ratio_at_transaction: 'Taux de change',
     equivalent_amount_default_currency: 'Montant équivalent'
@@ -47,6 +49,7 @@ const FIELD_DISPLAY_NAMES: Record<string, Record<string, string>> = {
     status: 'Statut',
     payment_status: 'Statut du paiement',
     loft_id: 'Loft',
+    loft_name: 'Loft',
     base_price: 'Prix de base',
     cleaning_fee: 'Frais de ménage',
     service_fee: 'Frais de service',
@@ -107,12 +110,12 @@ function formatAuditValue(tableName: string, fieldName: string, value: string | 
   }
 
   // Mapping des lofts - utiliser les données enrichies si disponibles
-  if (fieldName === 'loft_id') {
+  if (fieldName === 'loft_id' || fieldName === 'loft_name') {
     if (enrichedData?.loft_name) {
       return enrichedData.loft_name
     }
     // Si c'est un UUID, afficher une version tronquée
-    if (value.length === 36 && value.includes('-')) {
+    if (value && value.length === 36 && value.includes('-')) {
       return `Loft: ${value.substring(0, 8)}...`
     }
     return value
@@ -424,6 +427,12 @@ export function AuditLogItem({ log, className, showDetails = false }: AuditLogIt
                       // Ignorer les champs techniques
                       if (['created_at', 'updated_at', 'id'].includes(key)) return null
                       
+                      // Ignorer loft_id si loft_name existe (on affichera loft_name à la place)
+                      if (key === 'loft_id' && log.newValues?.loft_name) return null
+                      
+                      // Ignorer currency_id si currency_code existe
+                      if (key === 'currency_id' && log.newValues?.currency_code) return null
+                      
                       return (
                         <div key={key} className="grid grid-cols-2 gap-4 text-sm">
                           <div className="font-medium text-muted-foreground">
@@ -449,6 +458,12 @@ export function AuditLogItem({ log, className, showDetails = false }: AuditLogIt
                     {Object.entries(log.oldValues).map(([key, value]) => {
                       // Ignorer les champs techniques
                       if (['created_at', 'updated_at', 'id'].includes(key)) return null
+                      
+                      // Ignorer loft_id si loft_name existe
+                      if (key === 'loft_id' && log.oldValues?.loft_name) return null
+                      
+                      // Ignorer currency_id si currency_code existe
+                      if (key === 'currency_id' && log.oldValues?.currency_code) return null
                       
                       return (
                         <div key={key} className="grid grid-cols-2 gap-4 text-sm">

@@ -604,6 +604,8 @@ export class AuditService {
     try {
       const supabase = await createClient();
       
+      logger.info('Starting enrichment', { totalLogs: logs.length });
+      
       // Collecter tous les IDs à résoudre
       const loftIds = new Set<string>();
       const currencyIds = new Set<string>();
@@ -624,6 +626,8 @@ export class AuditService {
         }
       });
 
+      logger.info('Collected IDs', { loftIds: Array.from(loftIds), currencyIds: Array.from(currencyIds) });
+
       // Récupérer les noms des lofts en une seule requête
       const loftNames = new Map<string, string>();
       if (loftIds.size > 0) {
@@ -632,7 +636,10 @@ export class AuditService {
           .select('id, name')
           .in('id', Array.from(loftIds));
 
-        if (!error && lofts) {
+        if (error) {
+          logger.error('Error fetching lofts for enrichment', error);
+        } else if (lofts) {
+          logger.info('Fetched lofts', { count: lofts.length, lofts });
           lofts.forEach(loft => {
             loftNames.set(loft.id, loft.name);
           });
@@ -653,6 +660,8 @@ export class AuditService {
           });
         }
       }
+
+      logger.info('Starting log enrichment', { loftNamesCount: loftNames.size, currencyCodesCount: currencyCodes.size });
 
       // Enrichir les logs avec les noms des lofts et devises
       const enrichedLogs = logs.map(log => {
@@ -712,6 +721,7 @@ export class AuditService {
           // Enrichir les anciennes valeurs
           if (enrichedLog.oldValues?.loft_id) {
             const loftName = loftNames.get(enrichedLog.oldValues.loft_id);
+            logger.info('Enriching old loft_id', { loft_id: enrichedLog.oldValues.loft_id, loftName });
             if (loftName) {
               enrichedLog.oldValues = {
                 ...enrichedLog.oldValues,
@@ -723,6 +733,7 @@ export class AuditService {
           // Enrichir les nouvelles valeurs
           if (enrichedLog.newValues?.loft_id) {
             const loftName = loftNames.get(enrichedLog.newValues.loft_id);
+            logger.info('Enriching new loft_id', { loft_id: enrichedLog.newValues.loft_id, loftName });
             if (loftName) {
               enrichedLog.newValues = {
                 ...enrichedLog.newValues,
@@ -736,6 +747,8 @@ export class AuditService {
         
         return log;
       });
+
+      logger.info('Enrichment complete', { enrichedCount: enrichedLogs.length });
 
       return enrichedLogs;
 

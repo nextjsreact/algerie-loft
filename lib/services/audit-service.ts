@@ -123,8 +123,11 @@ export class AuditService {
         filters 
       });
 
+      // Enrichir les logs avec les noms des relations
+      const enrichedLogs = await this.enrichAuditLogsWithRelationNames(logs);
+
       return {
-        logs,
+        logs: enrichedLogs,
         total
       };
 

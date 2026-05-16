@@ -24,7 +24,8 @@ import {
   Flame,
   ExternalLink,
   Edit,
-  Home
+  Home,
+  ArrowLeft
 } from "lucide-react"
 
 // Traductions simples pour les 3 langues
@@ -140,10 +141,18 @@ const getTranslations = (locale: string) => {
   return translations[locale as keyof typeof translations] || translations.fr
 }
 
-export default async function LoftDetailPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
+export default async function LoftDetailPage({ 
+  params,
+  searchParams 
+}: { 
+  params: Promise<{ id: string; locale: string }>
+  searchParams: Promise<{ returnPage?: string }>
+}) {
   const awaitedParams = await params;
+  const awaitedSearchParams = await searchParams;
   const locale = awaitedParams.locale as 'fr' | 'en' | 'ar';
   const t = getTranslations(locale);
+  const returnPage = awaitedSearchParams.returnPage || '1';
 
   try {
     const session = await requireRole(["admin", "manager", "executive", "client"], locale)
@@ -183,6 +192,16 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
 
     return (
       <div className="max-w-7xl mx-auto space-y-8 p-6">
+        {/* Bouton Retour */}
+        <div>
+          <Button asChild variant="ghost" size="sm">
+            <Link href={`/${locale}/lofts?page=${returnPage}`} className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Retour à la liste
+            </Link>
+          </Button>
+        </div>
+
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="space-y-2">
@@ -205,14 +224,14 @@ export default async function LoftDetailPage({ params }: { params: Promise<{ id:
               showFallback={false}
             >
               <Button asChild variant="outline">
-                <Link href={`/${locale}/lofts/${awaitedParams.id}/edit`}>
+                <Link href={`/${locale}/lofts/${awaitedParams.id}/edit?returnPage=${returnPage}`}>
                   <Edit className="h-4 w-4 mr-2" />
                   {t.editLoft}
                 </Link>
               </Button>
               {loft.airbnb_listing_id && (
                 <Button asChild>
-                  <Link href={`/${locale}/lofts/${awaitedParams.id}/link-airbnb`}>
+                  <Link href={`/${locale}/lofts/${awaitedParams.id}/link-airbnb?returnPage=${returnPage}`}>
                     <ExternalLink className="h-4 w-4 mr-2" />
                     {t.linkToAirbnb}
                   </Link>

@@ -126,20 +126,24 @@ export async function markBillAsPaid(
     // This will be handled by the user manually until the root cause is resolved.
       
     // Send confirmation notification to loft owner
-    // TEMPORARILY DISABLED - May be causing the error
-    /*
-    if (loft.owner_id) {
-      await createNotification(
-        loft.owner_id,
-        `${getUtilityLabel(utilityType)} Bill Paid - ${loft.name}`,
-        `${getUtilityLabel(utilityType)} bill payment of $${amount} has been recorded.`,
-        'success',
-        `/lofts/${loftId}`
-      )
+    try {
+      if (loft.owner_id) {
+        await createNotification(
+          loft.owner_id,
+          `${getUtilityLabel(utilityType)} Bill Paid - ${loft.name}`,
+          `${getUtilityLabel(utilityType)} bill payment of $${amount} has been recorded.`,
+          'success',
+          `/lofts/${loftId}`
+        )
+        console.log('[REBUILD v2.0.1] Notification sent successfully')
+      } else {
+        console.log('[REBUILD v2.0.1] No owner_id, skipping notification')
+      }
+    } catch (notificationError) {
+      // Don't fail the whole operation if notification fails
+      console.error('[REBUILD v2.0.1 WARNING] Failed to send notification:', notificationError)
+      console.error('[REBUILD v2.0.1 WARNING] Continuing anyway - transaction was successful')
     }
-    */
-
-    console.log('[REBUILD v2.0.1] Skipping notification (temporarily disabled)')
 
     // Revalidate the loft page to show updated data
     revalidatePath(`/lofts/${loftId}`)

@@ -71,24 +71,7 @@ export async function markBillAsPaid(
       throw new Error('Loft not found')
     }
 
-    // Get the category ID for this utility type
-    // First try exact match with the utility type (eau, energie, telephone, internet)
-    console.log('[REBUILD v2.0.1] Looking for category for utility:', utilityType)
-    
-    const { data: category, error: categoryError } = await supabase
-      .from('categories')
-      .select('id, name')
-      .eq('type', 'expense')
-      .eq('name', utilityType)
-      .maybeSingle()
-
-    if (!category) {
-      console.error('[REBUILD v2.0.1 ERROR] Category not found for utility type:', utilityType)
-      console.error('[REBUILD v2.0.1 ERROR] Category error:', categoryError)
-      throw new Error(`Category not found for utility type: ${utilityType}. Please create a category named "${utilityType}" with type "expense" in the categories table.`)
-    }
-
-    console.log('[REBUILD v2.0.1 SUCCESS] Found category:', category.name, '(ID:', category.id, ') for utility:', utilityType)
+    console.log('[REBUILD v2.0.1] Creating transaction for utility:', utilityType, 'loft:', loft.name)
 
     // Get currency information for conversion if needed
     let currencyData = null
@@ -110,11 +93,11 @@ export async function markBillAsPaid(
       }
     }
 
-    // Create transaction record with proper category ID
+    // Create transaction record with category NAME (not ID)
     const transactionData = {
       loft_id: loftId,
       transaction_type: 'expense',
-      category: category.id, // Use category ID instead of name
+      category: utilityType, // Use the utility type name directly (eau, energie, telephone, internet)
       status: 'completed',
       description: description || `${getUtilityLabel(utilityType)} bill payment`,
       date: new Date().toISOString().split('T')[0],

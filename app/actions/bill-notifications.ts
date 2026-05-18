@@ -19,6 +19,9 @@ const UTILITY_CATEGORIES = {
   internet: 'Internet Bill'
 }
 
+// Force rebuild marker - v2.0.1
+const FORCE_REBUILD_VERSION = '2.0.1'
+
 function getUtilityLabel(utility: string): string {
   const labels = {
     eau: 'Water',
@@ -39,14 +42,15 @@ export async function markBillAsPaid(
 ) {
   const supabase = await createClient()
 
-  // Force rebuild - Version 2.0
-  console.log('[DEBUG v2.0] markBillAsPaid called with:', {
+  // Force rebuild marker - v2.0.1
+  console.log('[REBUILD v2.0.1] markBillAsPaid called with:', {
     loftId,
     utilityType,
     amount,
     description,
     currencyId,
-    paymentMethodId
+    paymentMethodId,
+    version: FORCE_REBUILD_VERSION
   })
 
   try {
@@ -69,7 +73,7 @@ export async function markBillAsPaid(
 
     // Get the category ID for this utility type
     // First try exact match with the utility type (eau, energie, telephone, internet)
-    console.log('[DEBUG v2.0] Looking for category for utility:', utilityType)
+    console.log('[REBUILD v2.0.1] Looking for category for utility:', utilityType)
     
     const { data: category, error: categoryError } = await supabase
       .from('categories')
@@ -79,12 +83,12 @@ export async function markBillAsPaid(
       .maybeSingle()
 
     if (!category) {
-      console.error('[ERROR v2.0] Category not found for utility type:', utilityType)
-      console.error('[ERROR v2.0] Category error:', categoryError)
+      console.error('[REBUILD v2.0.1 ERROR] Category not found for utility type:', utilityType)
+      console.error('[REBUILD v2.0.1 ERROR] Category error:', categoryError)
       throw new Error(`Category not found for utility type: ${utilityType}. Please create a category named "${utilityType}" with type "expense" in the categories table.`)
     }
 
-    console.log('[SUCCESS v2.0] Found category:', category.name, '(ID:', category.id, ') for utility:', utilityType)
+    console.log('[REBUILD v2.0.1 SUCCESS] Found category:', category.name, '(ID:', category.id, ') for utility:', utilityType)
 
     // Get currency information for conversion if needed
     let currencyData = null
@@ -126,11 +130,11 @@ export async function markBillAsPaid(
       .insert([transactionData])
 
     if (transactionError) {
-      console.error('[ERROR v2.0] Transaction insert error:', transactionError)
+      console.error('[REBUILD v2.0.1 ERROR] Transaction insert error:', transactionError)
       throw transactionError
     }
 
-    console.log('[SUCCESS v2.0] Transaction created successfully for utility:', utilityType, 'amount:', amount)
+    console.log('[REBUILD v2.0.1 SUCCESS] Transaction created successfully for utility:', utilityType, 'amount:', amount)
 
     // Update next bill date if frequency is set
     // Since we are not fetching the frequency, we cannot update the next bill date.

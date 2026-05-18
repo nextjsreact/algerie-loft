@@ -2,6 +2,7 @@
 
 import { requireRole, requireAuth } from "@/lib/auth"
 import { redirect } from "next/navigation"
+import { revalidatePath } from "next/cache"
 import { transactionSchema } from "@/lib/validations"
 import type { Database } from "@/lib/types"
 import { getCurrencies } from "@/app/actions/currencies"

@@ -156,8 +156,10 @@ export async function markBillAsPaid(
     
     return { success: true, message: 'Bill marked as paid successfully' }
   } catch (error) {
-    console.error('Error marking bill as paid:', error)
-    return { success: false, message: 'Failed to mark bill as paid' }
+    console.error('[REBUILD v2.0.1 ERROR] Error marking bill as paid:', error)
+    // Return the actual error message instead of generic message
+    const errorMessage = error instanceof Error ? error.message : 'Failed to mark bill as paid'
+    return { success: false, message: errorMessage }
   }
 }
 

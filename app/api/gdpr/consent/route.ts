@@ -3,6 +3,10 @@ import { getSession } from '@/lib/auth'
 import { gdprService } from '@/lib/services/gdpr-compliance'
 import { hasPermission } from '@/lib/permissions'
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession()

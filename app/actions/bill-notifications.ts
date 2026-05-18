@@ -96,6 +96,7 @@ export async function markBillAsPaid(
     // Create transaction record with category NAME (not ID)
     const transactionData = {
       loft_id: loftId,
+      user_id: user.id, // Add user_id
       transaction_type: 'expense',
       category: utilityType, // Use the utility type name directly (eau, energie, telephone, internet)
       status: 'completed',
@@ -114,7 +115,8 @@ export async function markBillAsPaid(
 
     if (transactionError) {
       console.error('[REBUILD v2.0.1 ERROR] Transaction insert error:', transactionError)
-      throw transactionError
+      console.error('[REBUILD v2.0.1 ERROR] Transaction data:', JSON.stringify(transactionData, null, 2))
+      throw new Error(`Transaction insert failed: ${transactionError.message} (code: ${transactionError.code})`)
     }
 
     console.log('[REBUILD v2.0.1 SUCCESS] Transaction created successfully for utility:', utilityType, 'amount:', amount)

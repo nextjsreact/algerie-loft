@@ -5,6 +5,7 @@
  */
 import { createClient } from '@/utils/supabase/server'
 import { getSession } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 
 export interface PartnerInfo {
   ownerId: string
@@ -26,6 +27,16 @@ export async function getPartnerInfo(): Promise<PartnerInfo | null> {
   const session = await getSession()
   if (!session) return null
   return findOwner(supabase, session.user.id, session.user.email)
+}
+
+export async function requireVerifiedPartner(): Promise<PartnerInfo> {
+  const partnerInfo = await getPartnerInfo()
+  
+  if (!partnerInfo) {
+    redirect('/login')
+  }
+  
+  return partnerInfo
 }
 
 async function findOwner(supabase: any, userId: string, userEmail: string | null | undefined): Promise<PartnerInfo | null> {

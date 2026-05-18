@@ -4,6 +4,10 @@ import { hasPermission } from '@/lib/permissions'
 import { bookingAuditService } from '@/lib/services/booking-audit'
 import { gdprService } from '@/lib/services/gdpr-compliance'
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getSession()

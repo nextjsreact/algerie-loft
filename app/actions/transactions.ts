@@ -271,16 +271,26 @@ export async function updateTransaction(id: string, data: unknown) {
 }
 
 export async function deleteTransaction(id: string) {
-  const session = await requireRole(["admin"])
+  try {
+    const session = await requireRole(["admin"])
 
-  const supabase = await createClient()
-  const { error } = await supabase.from("transactions").delete().eq("id", id)
+    const supabase = await createClient()
+    const { error } = await supabase.from("transactions").delete().eq("id", id)
 
-  if (error) {
+    if (error) {
+      console.error("Error deleting transaction:", error)
+      return { success: false, error: error.message }
+    }
+
+    revalidatePath("/transactions")
+    return { success: true }
+  } catch (error) {
+    // Handle redirect exceptions from requireRole
+    if (error && typeof error === 'object' && 'digest' in error) {
+      // This is a Next.js redirect, re-throw it
+      throw error
+    }
     console.error("Error deleting transaction:", error)
-    return { success: false, error: error.message }
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" }
   }
-
-  revalidatePath("/transactions")
-  return { success: true }
 }

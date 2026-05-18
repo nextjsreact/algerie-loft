@@ -1,7 +1,7 @@
 # ✅ STATUS - Déploiement v2.0.1 PRÊT
 
 **Date:** 2026-05-18  
-**Commit:** `f5aeb56` ✅ **POUSSÉ VERS GITHUB**  
+**Commits:** `f5aeb56` + `1eb5125` ✅ **POUSSÉS VERS GITHUB**  
 **Status:** 🟢 **PRÊT POUR DÉPLOIEMENT**
 
 ---
@@ -140,12 +140,13 @@ Si bug: 2026-11-18 (+ 6 mois) ❌
 
 ## 📊 Résumé des corrections
 
-| Problème | Cause | Solution | Status |
-|----------|-------|----------|--------|
-| Build GitHub échoue | Node.js 18 au lieu de 20 | Forcer Node 20 partout | ✅ Corrigé |
-| Paiement de facture échoue | `category` UUID au lieu de VARCHAR | Utiliser le nom de la catégorie | ✅ Corrigé |
-| Pas de logs de débogage | Manque de visibilité | Ajouter logs client/serveur | ✅ Ajouté |
-| Bug fréquence bimestriel | +6 mois au lieu de +2 mois | À investiguer | ⏳ En attente |
+| Problème | Cause | Solution | Commit | Status |
+|----------|-------|----------|--------|--------|
+| Build GitHub échoue | Node.js 18 au lieu de 20 | Forcer Node 20 partout | `f5aeb56` | ✅ Corrigé |
+| Paiement de facture échoue | `category` UUID au lieu de VARCHAR | Utiliser le nom de la catégorie | `f5aeb56` | ✅ Corrigé |
+| Pas de logs de débogage | Manque de visibilité | Ajouter logs client/serveur | `f5aeb56` | ✅ Ajouté |
+| Commande lint échoue | `next lint` sans répertoire explicite | Ajouter `.` à `next lint` | `1eb5125` | ✅ Corrigé |
+| Bug fréquence bimestriel | +6 mois au lieu de +2 mois | À investiguer | - | ⏳ En attente |
 
 ---
 
@@ -167,8 +168,9 @@ Si bug: 2026-11-18 (+ 6 mois) ❌
 
 ---
 
-## 📝 Fichiers modifiés dans ce commit
+## 📝 Fichiers modifiés
 
+### Commit f5aeb56 (Corrections principales)
 ```
 modified:   .nvmrc
 modified:   package.json
@@ -176,6 +178,11 @@ modified:   .github/workflows/ci-cd.yml
 modified:   .github/workflows/test-e2e.yml
 modified:   app/actions/bill-notifications.ts
 modified:   components/forms/bill-payment-form.tsx
+```
+
+### Commit 1eb5125 (Correction lint)
+```
+modified:   package.json (script lint: "next lint .")
 ```
 
 ---

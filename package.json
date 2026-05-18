@@ -13,7 +13,7 @@
     "build:webpack": "next build --webpack",
     "dev:clear": "node scripts/clear-cache.js && next dev",
     "dev:fresh": "powershell -ExecutionPolicy Bypass -File scripts/dev-fresh.ps1",
-    "lint": "next lint --dir .",
+    "lint": "next lint",
     "test": "node test-runner.js",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

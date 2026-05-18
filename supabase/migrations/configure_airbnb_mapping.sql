@@ -13,7 +13,7 @@ SELECT
   id,
   name,
   address,
-  city,
+  status,
   airbnb_listing_id,
   CASE 
     WHEN airbnb_listing_id IS NOT NULL THEN '✓ Mappé'

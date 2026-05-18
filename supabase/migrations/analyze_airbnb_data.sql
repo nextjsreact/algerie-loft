@@ -14,7 +14,7 @@ SELECT
   name,
   airbnb_listing_id,
   address,
-  city,
+  status,
   created_at
 FROM lofts
 WHERE airbnb_listing_id IS NOT NULL

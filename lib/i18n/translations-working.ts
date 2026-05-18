@@ -307,6 +307,7 @@ export const translations = {
       due: "Due",
       days: "days",
       markPaid: "Mark Paid",
+      successMessage: "Bill marked as paid successfully",
       utilities: {
         telephone: "Telephone",
         internet: "Internet",
@@ -795,6 +796,7 @@ export const translations = {
       due: "Échéance",
       days: "jours",
       markPaid: "Marquer Payé",
+      successMessage: "Facture marquée comme payée avec succès",
       utilities: {
         telephone: "Téléphone",
         internet: "Internet",

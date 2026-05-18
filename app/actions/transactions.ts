@@ -278,8 +278,9 @@ export async function deleteTransaction(id: string) {
 
   if (error) {
     console.error("Error deleting transaction:", error)
-    throw error
+    return { success: false, error: error.message }
   }
 
-  redirect("/transactions")
+  revalidatePath("/transactions")
+  return { success: true }
 }

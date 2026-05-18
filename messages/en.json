@@ -826,7 +826,8 @@
     },
     "bills": {
       "title": "Title",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "successMessage": "Bill marked as paid successfully"
     },
     "active": "Active",
     "management": {

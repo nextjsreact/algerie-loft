@@ -838,6 +838,7 @@
       "descriptionPlaceholder": "Entrez une description (optionnel)",
       "recordPayment": "Enregistrer le paiement",
       "recording": "Enregistrement en cours...",
+      "successMessage": "Facture marquée comme payée avec succès",
       "errorMessage": "Échec de l'enregistrement du paiement",
       "utilities": {
         "eau": "Facture d'eau",

@@ -1,0 +1,64 @@
+{
+  "reservations": [
+    {
+      "id": "HMTEST001",
+      "listing_id": "12345678",
+      "statut": "Confirmée",
+      "voyageur": "Ahmed Benali",
+      "nb_voyageurs": 2,
+      "date_arrivee": "2026-06-01",
+      "date_depart": "2026-06-05",
+      "nb_nuits": 4,
+      "montant_total": 40000.00,
+      "devise": "DZD",
+      "base_price": 35000.00,
+      "cleaning_fee": 3000.00,
+      "service_fee": 1500.00,
+      "taxes": 500.00,
+      "guest_email": "ahmed.benali@example.com",
+      "guest_phone": "+213555123456",
+      "guest_nationality": "DZ",
+      "special_requests": "Arrivée tardive vers 22h"
+    },
+    {
+      "id": "HMTEST002",
+      "listing_id": "12345678",
+      "statut": "En attente",
+      "voyageur": "Sarah Martin",
+      "nb_voyageurs": 3,
+      "date_arrivee": "2026-06-10",
+      "date_depart": "2026-06-15",
+      "nb_nuits": 5,
+      "montant_total": 50000.00,
+      "devise": "DZD",
+      "base_price": 45000.00,
+      "cleaning_fee": 3000.00,
+      "service_fee": 1500.00,
+      "taxes": 500.00,
+      "guest_email": "sarah.martin@example.com",
+      "guest_phone": "+33612345678",
+      "guest_nationality": "FR"
+    },
+    {
+      "id": "HMTEST003",
+      "listing_id": "99999999",
+      "statut": "Confirmée",
+      "voyageur": "John Doe",
+      "nb_voyageurs": 1,
+      "date_arrivee": "2026-06-20",
+      "date_depart": "2026-06-22",
+      "nb_nuits": 2,
+      "montant_total": 20000.00,
+      "devise": "DZD",
+      "base_price": 18000.00,
+      "cleaning_fee": 1500.00,
+      "service_fee": 500.00,
+      "guest_email": "john.doe@example.com"
+    }
+  ],
+  "sync_metadata": {
+    "sync_type": "manual",
+    "timestamp": "2026-05-18T12:00:00Z",
+    "script_version": "2.0.0"
+  }
+}

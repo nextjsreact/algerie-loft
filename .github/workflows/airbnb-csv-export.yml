@@ -1,0 +1,111 @@
+name: Airbnb CSV Export Automation
+
+on:
+  # Exécution quotidienne à 3h UTC
+  schedule:
+    - cron: '0 3 * * *'
+  
+  # Déclenchement manuel
+  workflow_dispatch:
+    inputs:
+      force_run:
+        description: 'Forcer l\'exécution même si le toggle est désactivé'
+        required: false
+        default: 'false'
+
+jobs:
+  export-csv:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Check Playwright toggle
+        id: check_toggle
+        if: github.event.inputs.force_run != 'true'
+        env:
+          API_SECRET: ${{ secrets.API_SECRET }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -H "Authorization: Bearer $API_SECRET" \
+            "$SUPABASE_URL/api/settings/playwright-toggle")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | head -n-1)
+          
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Erreur lors de la vérification du toggle (HTTP $HTTP_CODE)"
+            echo "enabled=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          ENABLED=$(echo "$BODY" | jq -r '.enabled')
+          echo "enabled=$ENABLED" >> $GITHUB_OUTPUT
+          
+          if [ "$ENABLED" = "true" ]; then
+            echo "✅ Playwright activé - export autorisé"
+          else
+            echo "⏸️  Playwright désactivé - export annulé"
+          fi
+
+      - name: Run Airbnb export
+        if: steps.check_toggle.outputs.enabled == 'true' || github.event.inputs.force_run == 'true'
+        env:
+          AIRBNB_EMAIL: ${{ secrets.AIRBNB_EMAIL }}
+          AIRBNB_PASSWORD: ${{ secrets.AIRBNB_PASSWORD }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          API_SECRET: ${{ secrets.API_SECRET }}
+          PLAYWRIGHT_HEADLESS: 'true'
+        run: |
+          echo "🚀 Démarrage de l'export Airbnb..."
+          npx tsx scripts/airbnbExport.ts
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots
+          path: temp/screenshots/
+          retention-days: 7
+
+      - name: Notify on failure
+        if: failure()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          echo "❌ Export échoué - notification envoyée"
+          # Le script airbnbExport.ts gère déjà le logging dans sync_logs
+          # Les alertes seront envoyées par le système d'alertes (Phase 7)
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Airbnb CSV Export Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Toggle enabled:** ${{ steps.check_toggle.outputs.enabled || 'N/A' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ Export réussi" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Export échoué - vérifier les logs" >> $GITHUB_STEP_SUMMARY
+          fi

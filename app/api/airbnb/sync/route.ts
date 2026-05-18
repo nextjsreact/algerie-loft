@@ -1,189 +1,321 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { createClient } from '@/lib/supabase/server';
+import { AirbnbSyncService } from '@/lib/services/airbnb-sync-service';
+import type { AirbnbSyncRequest, AirbnbSyncResponse } from '@/lib/types/airbnb';
 
-export const dynamic = 'force-dynamic'
+// ============================================================================
+// VALIDATION SCHEMA (Zod)
+// ============================================================================
 
-interface ICalEvent {
-  uid: string
-  dtstart: string
-  dtend: string
-  summary: string
-  description: string
-}
+const ReservationSchema = z.object({
+  id: z.string().min(1, 'Reservation ID is required'),
+  listing_id: z.string().min(1, 'Listing ID is required'),
+  statut: z.string().min(1, 'Status is required'),
+  voyageur: z.string().min(1, 'Guest name is required'),
+  nb_voyageurs: z.number().int().positive('Guest count must be positive'),
+  date_arrivee: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid check-in date format (expected YYYY-MM-DD)'),
+  date_depart: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid check-out date format (expected YYYY-MM-DD)'),
+  nb_nuits: z.number().int().positive('Nights must be positive'),
+  montant_total: z.number().nonnegative('Total amount must be >= 0'),
+  devise: z.string().length(3, 'Currency code must be 3 characters'),
+  base_price: z.number().nonnegative().optional(),
+  cleaning_fee: z.number().nonnegative().optional(),
+  service_fee: z.number().nonnegative().optional(),
+  taxes: z.number().nonnegative().optional(),
+  guest_email: z.string().email().optional().or(z.literal('')),
+  guest_phone: z.string().optional(),
+  guest_nationality: z.string().length(2).optional().or(z.literal('')),
+  special_requests: z.string().optional(),
+});
 
-function parseICS(icsText: string): ICalEvent[] {
-  const events: ICalEvent[] = []
-  const lines = icsText.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n')
+const SyncMetadataSchema = z.object({
+  sync_type: z.enum(['ical_watcher', 'targeted', 'full', 'manual']),
+  timestamp: z.string().datetime(),
+  script_version: z.string().min(1),
+});
 
-  let current: Partial<ICalEvent> | null = null
+const SyncRequestSchema = z.object({
+  reservations: z.array(ReservationSchema).min(1, 'At least one reservation is required').max(100, 'Maximum 100 reservations per request'),
+  sync_metadata: SyncMetadataSchema,
+});
 
-  for (const line of lines) {
-    if (line === 'BEGIN:VEVENT') {
-      current = {}
-    } else if (line === 'END:VEVENT' && current) {
-      if (current.uid && current.dtstart && current.dtend) {
-        events.push(current as ICalEvent)
-      }
-      current = null
-    } else if (current) {
-      if (line.startsWith('UID:')) current.uid = line.slice(4).trim()
-      else if (line.startsWith('DTSTART') && line.includes(':')) {
-        current.dtstart = line.split(':')[1].trim().slice(0, 8) // YYYYMMDD
-      }
-      else if (line.startsWith('DTEND') && line.includes(':')) {
-        current.dtend = line.split(':')[1].trim().slice(0, 8)
-      }
-      else if (line.startsWith('SUMMARY:')) current.summary = line.slice(8).trim()
-      else if (line.startsWith('DESCRIPTION:')) current.description = line.slice(12).trim()
-    }
+// ============================================================================
+// RATE LIMITING (Simple in-memory implementation)
+// ============================================================================
+
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 100;
+
+function checkRateLimit(apiKey: string): { allowed: boolean; remaining: number; resetAt: number } {
+  const now = Date.now();
+  const record = rateLimitMap.get(apiKey);
+
+  if (!record || now > record.resetAt) {
+    // Nouvelle fenêtre
+    rateLimitMap.set(apiKey, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - 1, resetAt: now + RATE_LIMIT_WINDOW_MS };
   }
 
-  return events
+  if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
+    // Limite atteinte
+    return { allowed: false, remaining: 0, resetAt: record.resetAt };
+  }
+
+  // Incrémenter le compteur
+  record.count++;
+  return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - record.count, resetAt: record.resetAt };
 }
 
-function icsDateToISO(icsDate: string): string {
-  // YYYYMMDD → YYYY-MM-DD
-  return `${icsDate.slice(0, 4)}-${icsDate.slice(4, 6)}-${icsDate.slice(6, 8)}`
-}
+// ============================================================================
+// API ENDPOINT: POST /api/airbnb/sync
+// ============================================================================
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
+
   try {
-    const supabase = await createClient(true)
-    const body = await request.json()
-    const { loft_id } = body
-
-    // Get loft with ical url
-    const query = supabase
-      .from('lofts')
-      .select('id, name, airbnb_ical_url')
-
-    const { data: lofts } = loft_id
-      ? await query.eq('id', loft_id)
-      : await query.not('airbnb_ical_url', 'is', null).neq('airbnb_ical_url', '')
-
-    if (!lofts || lofts.length === 0) {
-      return NextResponse.json({ message: 'No lofts with iCal URL found' })
+    // ========================================================================
+    // 1. VÉRIFIER SI LA SYNCHRONISATION EST ACTIVÉE
+    // ========================================================================
+    const syncEnabled = process.env.AIRBNB_SYNC_ENABLED === 'true';
+    if (!syncEnabled) {
+      return NextResponse.json(
+        { success: false, error: 'Airbnb synchronization is disabled' },
+        { status: 503 }
+      );
     }
 
-    const results = []
-
-    for (const loft of lofts) {
-      if (!loft.airbnb_ical_url) continue
-
-      try {
-        // Fetch the iCal file
-        const response = await fetch(loft.airbnb_ical_url, {
-          headers: { 'User-Agent': 'LoftAlgerie/1.0' },
-          signal: AbortSignal.timeout(10000),
-        })
-
-        if (!response.ok) {
-          results.push({ loft: loft.name, error: `HTTP ${response.status}` })
-          continue
-        }
-
-        const icsText = await response.text()
-        const events = parseICS(icsText)
-
-        let reservationsCreated = 0
-        let blocksCreated = 0
-
-        for (const event of events) {
-          const checkIn = icsDateToISO(event.dtstart)
-          const checkOut = icsDateToISO(event.dtend)
-          const isReservation = event.summary?.toLowerCase().includes('reserved')
-          const isBlock = event.summary?.toLowerCase().includes('not available') || event.summary?.toLowerCase().includes('airbnb')
-
-          if (isReservation) {
-            // Extract phone last 4 digits from description
-            const phoneMatch = event.description?.match(/Phone Number \(Last 4 Digits\): (\d{4})/)
-            const phoneLast4 = phoneMatch ? phoneMatch[1] : '0000'
-
-            // Extract reservation code from URL
-            const urlMatch = event.description?.match(/reservations\/details\/([A-Z0-9]+)/)
-            const reservationCode = urlMatch ? urlMatch[1] : event.uid.slice(0, 10)
-
-            // Check if already exists (by UID stored in special_requests or guest_email)
-            const { data: existing } = await supabase
-              .from('reservations')
-              .select('id')
-              .eq('loft_id', loft.id)
-              .eq('check_in_date', checkIn)
-              .eq('check_out_date', checkOut)
-              .limit(1)
-
-            if (!existing || existing.length === 0) {
-              await supabase.from('reservations').insert({
-                loft_id: loft.id,
-                guest_name: `Airbnb ${reservationCode}`,
-                guest_email: `airbnb+${reservationCode.toLowerCase()}@airbnb.com`,
-                guest_phone: `xxxx${phoneLast4}`,
-                guest_nationality: 'XX',
-                check_in_date: checkIn,
-                check_out_date: checkOut,
-                base_price: 0,
-                total_amount: 0,
-                status: 'confirmed',
-                special_requests: `Airbnb UID: ${event.uid}`,
-              })
-              reservationsCreated++
-            }
-          } else if (isBlock) {
-            // Block dates in loft_availability
-            const start = new Date(checkIn)
-            const end = new Date(checkOut)
-            const datesToBlock = []
-
-            for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
-              datesToBlock.push({
-                loft_id: loft.id,
-                date: d.toISOString().split('T')[0],
-                is_available: false,
-                blocked_reason: 'personal_use',
-              })
-            }
-
-            if (datesToBlock.length > 0) {
-              await supabase
-                .from('loft_availability')
-                .upsert(datesToBlock, { onConflict: 'loft_id,date', ignoreDuplicates: true })
-              blocksCreated += datesToBlock.length
-            }
-          }
-        }
-
-        // Update last sync timestamp
-        await supabase
-          .from('lofts')
-          .update({ updated_at: new Date().toISOString() })
-          .eq('id', loft.id)
-
-        results.push({
-          loft: loft.name,
-          events: events.length,
-          reservationsCreated,
-          blocksCreated,
-        })
-      } catch (err) {
-        results.push({ loft: loft.name, error: err instanceof Error ? err.message : 'Unknown error' })
+    // ========================================================================
+    // 2. AUTHENTIFICATION (API Key ou Requête Interne)
+    // ========================================================================
+    const authHeader = request.headers.get('authorization');
+    const isInternalRequest = !authHeader; // Requête depuis l'interface admin
+    
+    let apiKey = 'internal';
+    
+    if (!isInternalRequest) {
+      // Requête externe (script Python) - vérifier l'API Key
+      if (!authHeader.startsWith('Bearer ')) {
+        return NextResponse.json(
+          { success: false, error: 'Missing or invalid Authorization header' },
+          { status: 401 }
+        );
       }
+
+      apiKey = authHeader.substring(7); // Remove "Bearer "
+      const expectedApiKey = process.env.AIRBNB_API_SECRET;
+
+      if (!expectedApiKey) {
+        console.error('[Airbnb Sync] AIRBNB_API_SECRET not configured');
+        return NextResponse.json(
+          { success: false, error: 'Server configuration error' },
+          { status: 500 }
+        );
+      }
+
+      if (apiKey !== expectedApiKey) {
+        console.warn('[Airbnb Sync] Invalid API key attempt');
+        return NextResponse.json(
+          { success: false, error: 'Invalid API key' },
+          { status: 401 }
+        );
+      }
+    } else {
+      // Requête interne (interface admin) - pas besoin d'API Key
+      console.log('[Airbnb Sync] Internal request from admin interface');
     }
 
-    return NextResponse.json({ success: true, results })
-  } catch (err) {
-    console.error('[airbnb-sync]', err)
-    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
+    // ========================================================================
+    // 3. RATE LIMITING
+    // ========================================================================
+    const rateLimit = checkRateLimit(apiKey);
+    if (!rateLimit.allowed) {
+      const resetIn = Math.ceil((rateLimit.resetAt - Date.now()) / 1000);
+      return NextResponse.json(
+        { success: false, error: `Rate limit exceeded. Try again in ${resetIn} seconds.` },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': RATE_LIMIT_MAX_REQUESTS.toString(),
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': rateLimit.resetAt.toString(),
+          },
+        }
+      );
+    }
+
+    // ========================================================================
+    // 4. PARSER ET VALIDER LE PAYLOAD
+    // ========================================================================
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch (error) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid JSON payload' },
+        { status: 400 }
+      );
+    }
+
+    const validation = SyncRequestSchema.safeParse(body);
+    if (!validation.success) {
+      console.error('[Airbnb Sync] Validation failed:', validation.error.errors);
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Validation failed',
+          details: validation.error.errors,
+        },
+        { status: 400 }
+      );
+    }
+
+    const syncRequest: AirbnbSyncRequest = validation.data;
+
+    // ========================================================================
+    // 5. GÉNÉRER UN SYNC_BATCH_ID
+    // ========================================================================
+    const syncBatchId = crypto.randomUUID();
+
+    console.log(`[Airbnb Sync] Starting sync batch ${syncBatchId}`, {
+      sync_type: syncRequest.sync_metadata.sync_type,
+      reservations_count: syncRequest.reservations.length,
+      script_version: syncRequest.sync_metadata.script_version,
+    });
+
+    // ========================================================================
+    // 6. CRÉER UN LOG DE SYNCHRONISATION (status='started')
+    // ========================================================================
+    const supabase = await createClient(true); // useServiceRole = true
+    const { error: logError } = await supabase.from('airbnb_sync_logs').insert({
+      sync_type: syncRequest.sync_metadata.sync_type,
+      sync_batch_id: syncBatchId,
+      status: 'started',
+      reservations_received: syncRequest.reservations.length,
+      started_at: new Date().toISOString(),
+      script_version: syncRequest.sync_metadata.script_version,
+      triggered_by: 'api',
+    });
+
+    if (logError) {
+      console.error('[Airbnb Sync] Failed to create sync log:', logError);
+    }
+
+    // ========================================================================
+    // 7. TRAITER LES RÉSERVATIONS
+    // ========================================================================
+    const syncService = await AirbnbSyncService.create(syncBatchId, syncRequest.sync_metadata.sync_type);
+    await syncService.processReservations(syncRequest.reservations);
+
+    const metrics = syncService.getMetrics();
+    const errors = syncService.getErrors();
+    const warnings = syncService.getWarnings();
+
+    // ========================================================================
+    // 8. METTRE À JOUR LE LOG DE SYNCHRONISATION (status='success' ou 'partial')
+    // ========================================================================
+    const duration = Date.now() - startTime;
+    const finalStatus = errors.length === 0 ? 'success' : metrics.created + metrics.updated > 0 ? 'partial' : 'failed';
+
+    const { error: updateLogError } = await supabase
+      .from('airbnb_sync_logs')
+      .update({
+        status: finalStatus,
+        lofts_processed: new Set(syncRequest.reservations.map((r) => r.listing_id)).size,
+        reservations_created: metrics.created,
+        reservations_updated: metrics.updated,
+        reservations_skipped: metrics.skipped,
+        reservations_failed: metrics.failed,
+        conflicts_detected: metrics.conflicts,
+        errors: errors.length > 0 ? errors : null,
+        warnings: warnings.length > 0 ? warnings : null,
+        duration_ms: duration,
+        completed_at: new Date().toISOString(),
+      })
+      .eq('sync_batch_id', syncBatchId);
+
+    if (updateLogError) {
+      console.error('[Airbnb Sync] Failed to update sync log:', updateLogError);
+    }
+
+    // ========================================================================
+    // 9. ENVOYER LA RÉPONSE
+    // ========================================================================
+    const response: AirbnbSyncResponse = {
+      success: finalStatus !== 'failed',
+      sync_batch_id: syncBatchId,
+      metrics,
+      errors,
+      warnings,
+    };
+
+    console.log(`[Airbnb Sync] Completed sync batch ${syncBatchId}`, {
+      status: finalStatus,
+      duration_ms: duration,
+      metrics,
+    });
+
+    return NextResponse.json(response, {
+      status: 200,
+      headers: {
+        'X-RateLimit-Limit': RATE_LIMIT_MAX_REQUESTS.toString(),
+        'X-RateLimit-Remaining': rateLimit.remaining.toString(),
+        'X-RateLimit-Reset': rateLimit.resetAt.toString(),
+      },
+    });
+  } catch (error) {
+    console.error('[Airbnb Sync] Unexpected error:', error);
+
+    // Essayer de logger l'erreur dans la DB
+    try {
+      const supabase = await createClient(true);
+      await supabase.from('airbnb_sync_logs').insert({
+        sync_type: 'manual',
+        sync_batch_id: crypto.randomUUID(),
+        status: 'failed',
+        started_at: new Date().toISOString(),
+        completed_at: new Date().toISOString(),
+        errors: [{ error: error instanceof Error ? error.message : 'Unknown error' }],
+        triggered_by: 'api',
+      });
+    } catch (logError) {
+      console.error('[Airbnb Sync] Failed to log error:', logError);
+    }
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
 
-// GET — sync all lofts (for cron)
-export async function GET(request: NextRequest) {
-  // Verify cron secret
-  const authHeader = request.headers.get('authorization')
-  const cronSecret = process.env.CRON_SECRET || 'loft-algerie-cron'
-  if (authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+// ============================================================================
+// MÉTHODES NON SUPPORTÉES
+// ============================================================================
 
-  return POST(new NextRequest(request.url, { method: 'POST', body: JSON.stringify({}) }))
+export async function GET() {
+  return NextResponse.json(
+    { error: 'Method not allowed. Use POST to sync reservations.' },
+    { status: 405 }
+  );
+}
+
+export async function PUT() {
+  return NextResponse.json(
+    { error: 'Method not allowed. Use POST to sync reservations.' },
+    { status: 405 }
+  );
+}
+
+export async function DELETE() {
+  return NextResponse.json(
+    { error: 'Method not allowed. Use POST to sync reservations.' },
+    { status: 405 }
+  );
 }

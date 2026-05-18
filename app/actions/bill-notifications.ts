@@ -39,6 +39,15 @@ export async function markBillAsPaid(
 ) {
   const supabase = await createClient()
 
+  console.log('[DEBUG] markBillAsPaid called with:', {
+    loftId,
+    utilityType,
+    amount,
+    description,
+    currencyId,
+    paymentMethodId
+  })
+
   try {
     // Get current user
     const { data: { user }, error: userError } = await supabase.auth.getUser()
@@ -58,41 +67,23 @@ export async function markBillAsPaid(
     }
 
     // Get the category ID for this utility type
-    // Try multiple name variations to find the category
-    const categoryNames = [
-      utilityType, // eau, energie, telephone, internet
-      utilityType.toLowerCase(),
-      UTILITY_LABELS[utilityType], // Water, Energy, Phone, Internet
-      UTILITY_LABELS[utilityType].toLowerCase(),
-      UTILITY_CATEGORIES[utilityType], // Water Bill, Energy Bill, etc.
-    ]
-
-    let category = null
-    let categoryError = null
-
-    for (const name of categoryNames) {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('id, name')
-        .eq('type', 'expense')
-        .ilike('name', name)
-        .maybeSingle()
-
-      if (data) {
-        category = data
-        break
-      }
-      if (error) {
-        categoryError = error
-      }
-    }
+    // First try exact match with the utility type (eau, energie, telephone, internet)
+    console.log('[DEBUG] Looking for category for utility:', utilityType)
+    
+    const { data: category, error: categoryError } = await supabase
+      .from('categories')
+      .select('id, name')
+      .eq('type', 'expense')
+      .eq('name', utilityType)
+      .maybeSingle()
 
     if (!category) {
-      console.error('Category not found for utility type:', utilityType, 'Tried names:', categoryNames, 'Error:', categoryError)
+      console.error('[ERROR] Category not found for utility type:', utilityType)
+      console.error('[ERROR] Category error:', categoryError)
       throw new Error(`Category not found for utility type: ${utilityType}. Please create a category named "${utilityType}" with type "expense" in the categories table.`)
     }
 
-    console.log('Found category:', category.name, 'for utility:', utilityType)
+    console.log('[SUCCESS] Found category:', category.name, '(ID:', category.id, ') for utility:', utilityType)
 
     // Get currency information for conversion if needed
     let currencyData = null
@@ -134,9 +125,11 @@ export async function markBillAsPaid(
       .insert([transactionData])
 
     if (transactionError) {
-      console.error('Transaction insert error:', transactionError)
+      console.error('[ERROR] Transaction insert error:', transactionError)
       throw transactionError
     }
+
+    console.log('[SUCCESS] Transaction created successfully for utility:', utilityType, 'amount:', amount)
 
     // Update next bill date if frequency is set
     // Since we are not fetching the frequency, we cannot update the next bill date.

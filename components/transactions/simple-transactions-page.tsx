@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { deleteTransaction } from "@/app/actions/transactions"
 import { 
   Plus, 
   DollarSign, 
@@ -66,6 +69,7 @@ export function SimpleTransactionsPage({
 }: SimpleTransactionsPageProps) {
   const t = useTranslations("transactions")
   const tCommon = useTranslations("common")
+  const router = useRouter()
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions)
   const [searchTerm, setSearchTerm] = useState("")
   const [typeFilter, setTypeFilter] = useState<string>("all")
@@ -76,9 +80,37 @@ export function SimpleTransactionsPage({
   const [paymentMethodFilter, setPaymentMethodFilter] = useState<string>("all")
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const defaultCurrency = currencies.find(c => c.is_default)
   const defaultCurrencySymbol = defaultCurrency?.symbol || "DA"
+
+  // Fonction de suppression
+  const handleDelete = async (transactionId: string, description: string) => {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer cette transaction ?\n\n${description}`)) {
+      return
+    }
+
+    setDeletingId(transactionId)
+    
+    try {
+      const result = await deleteTransaction(transactionId)
+      
+      if (result.success) {
+        // Retirer la transaction de la liste locale
+        setTransactions(prev => prev.filter(t => t.id !== transactionId))
+        toast.success("Transaction supprimée avec succès")
+        router.refresh()
+      } else {
+        toast.error(result.error || "Erreur lors de la suppression")
+      }
+    } catch (error) {
+      console.error("Error deleting transaction:", error)
+      toast.error("Erreur lors de la suppression de la transaction")
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   // Filtrage complet
   const filteredTransactions = useMemo(() => {
@@ -661,7 +693,13 @@ export function SimpleTransactionsPage({
                                     </Link>
                                   </Button>
                                   
-                                  <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                    onClick={() => handleDelete(transaction.id, transaction.description)}
+                                    disabled={deletingId === transaction.id}
+                                  >
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
                                 </>

@@ -57,6 +57,19 @@ export async function markBillAsPaid(
       throw new Error('Loft not found')
     }
 
+    // Get the category ID for this utility type
+    const { data: category, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('name', utilityType)
+      .eq('type', 'expense')
+      .single()
+
+    if (categoryError || !category) {
+      console.error('Category not found for utility type:', utilityType, categoryError)
+      throw new Error(`Category not found for utility type: ${utilityType}`)
+    }
+
     // Get currency information for conversion if needed
     let currencyData = null
     let convertedAmount = amount
@@ -77,11 +90,11 @@ export async function markBillAsPaid(
       }
     }
 
-    // Create transaction record with proper category
+    // Create transaction record with proper category ID
     const transactionData = {
       loft_id: loftId,
       transaction_type: 'expense',
-      category: utilityType, // This will match our seeded categories: eau, energie, telephone, internet
+      category: category.id, // Use category ID instead of name
       status: 'completed',
       description: description || `${getUtilityLabel(utilityType)} bill payment`,
       date: new Date().toISOString().split('T')[0],
@@ -97,6 +110,7 @@ export async function markBillAsPaid(
       .insert([transactionData])
 
     if (transactionError) {
+      console.error('Transaction insert error:', transactionError)
       throw transactionError
     }
 

@@ -788,6 +788,7 @@
   },
   "bills": {
     "amount": "Montant",
+    "amountPlaceholder": "Entrez le montant",
     "cancel": "Annuler",
     "dayOverdue": "1 jour de retard",
     "days": "jours",
@@ -827,7 +828,25 @@
     },
     "bills": {
       "title": "Titre",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "due": "Dû le",
+      "amount": "Montant",
+      "paymentDate": "Date de paiement",
+      "paymentMethod": "Méthode de paiement",
+      "selectPaymentMethod": "Sélectionner une méthode de paiement",
+      "description": "Description",
+      "descriptionPlaceholder": "Entrez une description (optionnel)",
+      "recordPayment": "Enregistrer le paiement",
+      "recording": "Enregistrement en cours...",
+      "errorMessage": "Échec de l'enregistrement du paiement",
+      "utilities": {
+        "eau": "Facture d'eau",
+        "energie": "Facture d'électricité",
+        "gas": "Facture de gaz",
+        "internet": "Facture d'internet",
+        "telephone": "Facture de téléphone",
+        "tv": "Facture de télévision"
+      }
     },
     "active": "Actif",
     "management": {

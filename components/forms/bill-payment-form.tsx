@@ -186,6 +186,16 @@ export function BillPaymentForm({
         }
       }
       
+      // CLIENT LOG v2.0.1 - Before calling markBillAsPaid
+      console.log('[CLIENT v2.0.1] About to call markBillAsPaid with:', {
+        loftId,
+        utilityType,
+        amount: data.amount,
+        description: data.description,
+        currency_id: data.currency_id || selectedCurrencyId,
+        payment_method_id: data.payment_method_id
+      })
+      
       // Get the category ID for this utility type
       const result = await markBillAsPaid(
         loftId,
@@ -196,9 +206,15 @@ export function BillPaymentForm({
         data.payment_method_id
       );
 
+      // CLIENT LOG v2.0.1 - After calling markBillAsPaid
+      console.log('[CLIENT v2.0.1] markBillAsPaid result:', result)
+
       if (!result.success) {
+        console.error('[CLIENT v2.0.1 ERROR] markBillAsPaid failed:', result.message)
         throw new Error(result.message);
       }
+
+      console.log('[CLIENT v2.0.1 SUCCESS] Bill payment recorded successfully')
 
       // Safe success message
       const successMsg = t('bills.successMessage', { utility: getUtilityLabelSafe() })
@@ -206,7 +222,7 @@ export function BillPaymentForm({
       toast.success(successMsg)
       onSuccess()
     } catch (error) {
-      console.error('Error recording bill payment:', error)
+      console.error('[CLIENT v2.0.1 ERROR] Error recording bill payment:', error)
       const errorMsg = t('bills.errorMessage')
       toast.error(errorMsg)
     } finally {

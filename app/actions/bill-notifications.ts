@@ -58,17 +58,41 @@ export async function markBillAsPaid(
     }
 
     // Get the category ID for this utility type
-    const { data: category, error: categoryError } = await supabase
-      .from('categories')
-      .select('id')
-      .eq('name', utilityType)
-      .eq('type', 'expense')
-      .single()
+    // Try multiple name variations to find the category
+    const categoryNames = [
+      utilityType, // eau, energie, telephone, internet
+      utilityType.toLowerCase(),
+      UTILITY_LABELS[utilityType], // Water, Energy, Phone, Internet
+      UTILITY_LABELS[utilityType].toLowerCase(),
+      UTILITY_CATEGORIES[utilityType], // Water Bill, Energy Bill, etc.
+    ]
 
-    if (categoryError || !category) {
-      console.error('Category not found for utility type:', utilityType, categoryError)
-      throw new Error(`Category not found for utility type: ${utilityType}`)
+    let category = null
+    let categoryError = null
+
+    for (const name of categoryNames) {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('id, name')
+        .eq('type', 'expense')
+        .ilike('name', name)
+        .maybeSingle()
+
+      if (data) {
+        category = data
+        break
+      }
+      if (error) {
+        categoryError = error
+      }
     }
+
+    if (!category) {
+      console.error('Category not found for utility type:', utilityType, 'Tried names:', categoryNames, 'Error:', categoryError)
+      throw new Error(`Category not found for utility type: ${utilityType}. Please create a category named "${utilityType}" with type "expense" in the categories table.`)
+    }
+
+    console.log('Found category:', category.name, 'for utility:', utilityType)
 
     // Get currency information for conversion if needed
     let currencyData = null

@@ -4,9 +4,11 @@ import type { AirbnbReservationStatus } from '@/lib/types/airbnb';
  * Mapping des statuts français (Airbnb) vers statuts anglais (DB)
  */
 const STATUS_MAP: Record<string, AirbnbReservationStatus> = {
-  // Statuts confirmés
+  // Statuts confirmés (avec et sans accents)
   'Confirmée': 'confirmed',
   'Confirmé': 'confirmed',
+  'Confirmee': 'confirmed',  // Sans accent
+  'Confirme': 'confirmed',   // Sans accent
   'Confirmed': 'confirmed',
   
   // Statuts en attente
@@ -15,15 +17,19 @@ const STATUS_MAP: Record<string, AirbnbReservationStatus> = {
   'En cours': 'pending',
   'Awaiting': 'pending',
   
-  // Statuts annulés
+  // Statuts annulés (avec et sans accents)
   'Annulée': 'cancelled',
   'Annulé': 'cancelled',
+  'Annulee': 'cancelled',    // Sans accent
+  'Annule': 'cancelled',     // Sans accent
   'Cancelled': 'cancelled',
   'Canceled': 'cancelled',
   
-  // Statuts terminés
+  // Statuts terminés (avec et sans accents)
   'Terminée': 'completed',
   'Terminé': 'completed',
+  'Terminee': 'completed',   // Sans accent
+  'Termine': 'completed',    // Sans accent
   'Completed': 'completed',
   'Finished': 'completed',
 };

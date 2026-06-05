@@ -3,7 +3,7 @@
 import { LanguageSelector } from "@/components/ui/language-selector"
 import { UserAvatarDropdown } from "@/components/auth/user-avatar-dropdown"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { NotificationBell } from "@/components/layout/notification-bell"
+import { UnifiedNotificationBell } from "@/components/layout/unified-notification-bell"
 import { useLocale } from "next-intl"
 import Image from "next/image"
 
@@ -26,8 +26,8 @@ export function DesktopHeader() {
 
       {/* Right side controls */}
       <div className="flex items-center gap-3">
-        {/* Notifications bell dropdown */}
-        <NotificationBell />
+        {/* Unified Notifications bell (Normal + Airbnb) */}
+        <UnifiedNotificationBell />
 
         {/* Language and Theme Controls */}
         <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl p-1 gap-1 border border-gray-200 dark:border-gray-700">

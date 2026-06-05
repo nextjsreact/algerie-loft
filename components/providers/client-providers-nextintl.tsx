@@ -21,6 +21,7 @@ import { SuperuserSidebar } from "@/components/admin/superuser/superuser-sidebar
 import { Header } from "@/components/layout/header-nextintl"
 import { AdaptiveHeader } from "@/components/layout/adaptive-header"
 import { MobileHeader } from "@/components/layout/mobile-header"
+import nextIntlConfig from '@/next-intl.config'
 // ErrorBoundary removed - causing compatibility issues with Next.js 15
 // import { ErrorBoundary } from "@/components/error-boundary"
 
@@ -163,7 +164,7 @@ export default function ClientProviders({ children, session: serverSession, unre
    // Show loading state only for non-OAuth scenarios
    if (isLoading && !pathname?.includes('oauth-success')) {
      return (
-       <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos">
+       <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos" {...nextIntlConfig}>
          <ThemeProvider
            attribute="class"
            defaultTheme="system"
@@ -182,7 +183,7 @@ export default function ClientProviders({ children, session: serverSession, unre
      <>
        {!session || isAuthPage || isPublicPage ? (
          // For pages without session OR auth pages OR public pages, use minimal providers
-         <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos">
+         <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos" {...nextIntlConfig}>
            <ThemeProvider
              attribute="class"
              defaultTheme="system"
@@ -196,7 +197,7 @@ export default function ClientProviders({ children, session: serverSession, unre
          </NextIntlClientProvider>
        ) : session?.user?.id ? (
          // For authenticated pages (non-auth), use full provider stack
-         <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos">
+         <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos" {...nextIntlConfig}>
            <SupabaseProvider>
              <ThemeProvider
                attribute="class"
@@ -249,7 +250,7 @@ export default function ClientProviders({ children, session: serverSession, unre
          </NextIntlClientProvider>
        ) : (
          // Fallback if session exists but user.id is missing
-         <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos">
+         <NextIntlClientProvider locale={locale} messages={messages} timeZone="Africa/Lagos" {...nextIntlConfig}>
            <ThemeProvider
              attribute="class"
              defaultTheme="system"

@@ -212,15 +212,11 @@ export default function NotificationsListOptimized({
             result = t('notificationReadMessage', { taskTitle, userName });
           } else {
             // If no pattern matches, try to translate as a direct key
-            try {
-              const translated = t(messageKey);
-              if (translated !== messageKey) { // Only use if translation actually worked
-                result = translated;
-              } else {
-                result = messageKey; // Fallback to original
-              }
-            } catch {
-              result = messageKey; // Fallback to original if translation fails
+            const translated = t(messageKey);
+            if (translated !== messageKey) { // Only use if translation actually worked
+              result = translated;
+            } else {
+              result = messageKey; // Fallback to original
             }
           }
         }
@@ -348,7 +344,7 @@ export default function NotificationsListOptimized({
     if (notification.title) return notification.title;
     // Old format: translation key
     if (notification.title_key) {
-      try { return t(notification.title_key, notification.title_payload) } catch { return notification.title_key }
+      return t(notification.title_key, notification.title_payload || {});
     }
     return '';
   }, [t])
@@ -363,7 +359,7 @@ export default function NotificationsListOptimized({
         if (!payload.taskTitle) payload.taskTitle = 'Unknown Task';
         if (!payload.userName || payload.userName === 'unknownUser') payload.userName = t('unknownUser');
       }
-      try { return t(notification.message_key, payload) } catch { return notification.message_key }
+      return t(notification.message_key, payload);
     }
     if (notification.message_key) {
       return parseAndTranslateOldMessage(notification.message_key);

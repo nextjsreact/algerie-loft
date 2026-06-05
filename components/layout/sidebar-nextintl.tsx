@@ -1,16 +1,16 @@
 "use client"
 
-import { 
-  Building2, Calendar, DollarSign, Home, Settings, Users, 
+import {
+  Building2, Calendar, DollarSign, Home, Settings, Users,
   ClipboardList, UserCheck, ChevronDown, ChevronRight, LayoutDashboard, CreditCard, MessageSquare, Bell, CalendarCheck, Shield,
-  Database, Wrench, Activity, Archive, Lock, AlertTriangle, UserPlus
+  Database, Wrench, Activity, Archive, Lock, AlertTriangle, UserPlus, ShieldAlert, Link2
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { User } from "@/lib/types"
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { NotificationBadge } from "@/components/ui/notification-badge"
 import { useEnhancedRealtime } from "@/components/providers/enhanced-realtime-provider"
@@ -27,7 +27,35 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(pathname?.startsWith('/settings') || false)
   const { unreadMessagesCount } = useEnhancedRealtime()
   const { unreadCount: realtimeUnreadCount } = useNotifications()
+  const [airbnbUnreadCount, setAirbnbUnreadCount] = useState(0)
   const locale = useLocale() as 'fr' | 'en' | 'ar'
+  
+  // Fetch Airbnb notifications count
+  const fetchAirbnbUnreadCount = useCallback(async () => {
+    try {
+      const res = await fetch('/api/airbnb/notifications?unread=true&limit=1')
+      if (res.ok) {
+        const data = await res.json()
+        setAirbnbUnreadCount(data.unreadCount || 0)
+      }
+    } catch (error) {
+      console.error('Error fetching Airbnb unread count:', error)
+    }
+  }, [])
+
+  // Poll for Airbnb notifications every 30 seconds
+  useEffect(() => {
+    fetchAirbnbUnreadCount()
+    const interval = setInterval(fetchAirbnbUnreadCount, 30000)
+    return () => clearInterval(interval)
+  }, [fetchAirbnbUnreadCount])
+
+  // Sync Airbnb unread count when other components (e.g. UnifiedNotificationBell) mark notifications as read
+  useEffect(() => {
+    const handler = () => fetchAirbnbUnreadCount()
+    window.addEventListener('airbnb-notifications-changed', handler)
+    return () => window.removeEventListener('airbnb-notifications-changed', handler)
+  }, [fetchAirbnbUnreadCount])
   
   // Traductions pour les 3 langues
   const navTranslations = {
@@ -54,7 +82,9 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
       logout: "Déconnexion",
       signOut: "Déconnexion",
       admins: "Administrateur",
-      admin: "Administrateur"
+      admin: "Administrateur",
+      conflicts: "Conflits Airbnb",
+      reservationsProvenance: "Provenance Réservations"
     },
     en: {
       loftManager: "Loft Manager",
@@ -62,7 +92,7 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
       dashboard: "Dashboard",
       announcements: "Urgent Announcements",
       conversations: "Conversations",
-      notifications: "Notifications", 
+      notifications: "Notifications",
       lofts: "Lofts",
       customers: "Customers",
       reservations: "Reservations",
@@ -79,7 +109,9 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
       logout: "Sign Out",
       signOut: "Sign Out",
       admins: "Administrator",
-      admin: "Administrator"
+      admin: "Administrator",
+      conflicts: "Airbnb Conflicts",
+      reservationsProvenance: "Reservations Provenance"
     },
     ar: {
       loftManager: "مدير الشقق",
@@ -87,7 +119,7 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
       dashboard: "لوحة التحكم",
       announcements: "إعلانات عاجلة",
       conversations: "المحادثات",
-      notifications: "الإشعارات", 
+      notifications: "الإشعارات",
       lofts: "الشقق",
       customers: "العملاء",
       reservations: "الحجوزات",
@@ -104,7 +136,9 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
       logout: "تسجيل الخروج",
       signOut: "تسجيل الخروج",
       admins: "مدير",
-      admin: "مدير"
+      admin: "مدير",
+      conflicts: "تعارضات Airbnb",
+      reservationsProvenance: "مصدر الحجوزات"
     }
   }
   
@@ -124,6 +158,8 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
     { name: t('executive'), href: `/${locale}/executive`, icon: LayoutDashboard, roles: ["executive"], className: "bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold" },
     { name: t('dashboard'), href: `/${locale}/dashboard`, icon: LayoutDashboard, roles: ["admin", "manager", "member"] },
     { name: t('announcements'), href: `/${locale}/admin/announcements`, icon: AlertTriangle, roles: ["admin", "superuser"] },
+    { name: t('conflicts'), href: `/${locale}/admin/conflicts`, icon: ShieldAlert, roles: ["admin", "manager"] },
+    { name: t('reservationsProvenance'), href: `/${locale}/admin/reservations-provenance`, icon: Link2, roles: ["admin", "manager"] },
     { name: t('conversations'), href: `/${locale}/conversations`, icon: MessageSquare, roles: ["admin", "manager", "member", "executive"] },
     { name: t('notifications'), href: `/${locale}/notifications`, icon: Bell, roles: ["admin", "manager", "member"] },
     { name: t('lofts'), href: `/${locale}/lofts`, icon: Building2, roles: ["admin", "manager", "member"] },
@@ -265,8 +301,8 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
                 {item.href === `/${locale}/conversations` && unreadMessagesCount > 0 && (
                   <NotificationBadge count={unreadMessagesCount} className="bg-gradient-to-r from-pink-500 to-rose-500 shadow-lg shadow-pink-500/25 animate-bounce" />
                 )}
-                {item.href === `/${locale}/notifications` && realtimeUnreadCount > 0 && (
-                  <NotificationBadge count={realtimeUnreadCount} className="bg-gradient-to-r from-orange-500 to-red-500 shadow-lg shadow-orange-500/25 animate-pulse" />
+                {item.href === `/${locale}/notifications` && (realtimeUnreadCount + airbnbUnreadCount) > 0 && (
+                  <NotificationBadge count={realtimeUnreadCount + airbnbUnreadCount} className="bg-gradient-to-r from-orange-500 to-red-500 shadow-lg shadow-orange-500/25 animate-pulse" />
                 )}
               </div>
             </Link>

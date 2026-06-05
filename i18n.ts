@@ -1,4 +1,5 @@
 import { getRequestConfig } from 'next-intl/server';
+import config from './next-intl.config';
 
 // Locales supportées
 export const locales = ['fr', 'ar', 'en'] as const;
@@ -35,6 +36,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   return {
     locale,
     messages,
+    ...config,
     // Configuration timezone pour éviter ENVIRONMENT_FALLBACK
     timeZone: 'Europe/Paris',
     getTimeZone: () => 'Europe/Paris',

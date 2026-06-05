@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Sidebar } from "@/components/layout/sidebar"
 import { LanguageSelector } from "@/components/ui/language-selector"
+import { UnifiedNotificationBell } from "@/components/layout/unified-notification-bell"
 import type { User } from "@/lib/types"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useTranslations } from "next-intl"
@@ -24,6 +25,9 @@ export function Header({ user }: HeaderProps) {
         <span className="ml-2 text-xl font-semibold text-white">{t('loftManager')}</span>
       </Link>
       <div className="flex items-center gap-2">
+        {/* Unified Notifications (Normal + Airbnb) */}
+        <UnifiedNotificationBell />
+        
         <div className="flex items-center bg-white/20 dark:bg-gray-800 rounded-md p-1 gap-1">
           <LanguageSelector />
           <ThemeToggle variant="ghost" size="sm" className="text-white hover:text-white" />

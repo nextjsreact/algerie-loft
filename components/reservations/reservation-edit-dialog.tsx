@@ -317,7 +317,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
 
           {/* Nights + availability */}
           <div className="flex items-center gap-3 text-sm">
-            {nights > 0 && <span className="text-muted-foreground">{nights} {nights > 1 ? t('edit.nights_plural', { count: nights }) : t('edit.nights', { count: nights })}</span>}
+            {nights > 0 && <span className="text-muted-foreground">{nights > 1 ? t('edit.nights_plural', { count: nights }) : t('edit.nights', { count: nights })}</span>}
             {checkingAvail && <span className="flex items-center gap-1 text-blue-600"><Loader2 className="h-3 w-3 animate-spin" /> {t('edit.checking')}</span>}
             {availOk === true && <span className="flex items-center gap-1 text-green-600"><CheckCircle className="h-3 w-3" /> {t('edit.available')}</span>}
             {availOk === false && <span className="flex items-center gap-1 text-red-600"><AlertCircle className="h-3 w-3" /> {t('edit.notAvailable')}</span>}

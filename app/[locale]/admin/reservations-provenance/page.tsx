@@ -16,6 +16,7 @@ import {
   Loader2, RefreshCw, AlertTriangle, Search, Download, Link2, Database, User,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 interface Reservation {
   id: string;
@@ -39,6 +40,7 @@ interface Reservation {
 }
 
 export default function ReservationsProvenancePage() {
+  const t = useTranslations('reservationsProvenance');
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [lofts, setLofts] = useState<{ id: string; name: string }[]>([]);
   const [stats, setStats] = useState<any>(null);
@@ -128,25 +130,23 @@ export default function ReservationsProvenancePage() {
     const a = document.createElement('a');
     a.href = url; a.download = `reservations_provenance_${new Date().toISOString().split('T')[0]}.csv`;
     a.click(); URL.revokeObjectURL(url);
-    toast.success('Export CSV téléchargé');
+    toast.success(t('exportSuccess'));
   };
 
   return (
     <div className="container mx-auto py-8 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Provenance des réservations</h1>
-          <p className="text-muted-foreground">
-            Toutes les réservations avec leur source (Airbnb / Manuel) et le type de liaison
-          </p>
+          <h1 className="text-3xl font-bold">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('subtitle')}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={exportCSV} disabled={!reservations.length}>
-            <Download className="w-4 h-4 mr-2" />Export CSV
+            <Download className="w-4 h-4 mr-2" />{t('exportCsv')}
           </Button>
           <Button onClick={fetchData} disabled={loading}>
             <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Actualiser
+            {t('refresh')}
           </Button>
         </div>
       </div>
@@ -154,89 +154,89 @@ export default function ReservationsProvenancePage() {
       {stats && (
         <div className="grid gap-4 md:grid-cols-5">
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-sm">Total</CardTitle></CardHeader>
+            <CardHeader className="pb-2"><CardTitle className="text-sm">{t('stats.total')}</CardTitle></CardHeader>
             <CardContent><div className="text-2xl font-bold">{stats.total}</div></CardContent>
           </Card>
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-sm text-blue-600">Airbnb</CardTitle></CardHeader>
+            <CardHeader className="pb-2"><CardTitle className="text-sm text-blue-600">{t('stats.airbnb')}</CardTitle></CardHeader>
             <CardContent><div className="text-2xl font-bold text-blue-600">{stats.by_source.airbnb_scraper}</div></CardContent>
           </Card>
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-sm text-purple-600">Manuel</CardTitle></CardHeader>
+            <CardHeader className="pb-2"><CardTitle className="text-sm text-purple-600">{t('stats.manual')}</CardTitle></CardHeader>
             <CardContent><div className="text-2xl font-bold text-purple-600">{stats.by_source.manual}</div></CardContent>
           </Card>
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-sm text-amber-600">Liées (fuzzy)</CardTitle></CardHeader>
+            <CardHeader className="pb-2"><CardTitle className="text-sm text-amber-600">{t('stats.fuzzyLinked')}</CardTitle></CardHeader>
             <CardContent><div className="text-2xl font-bold text-amber-600">{stats.by_matched_via.fuzzy_manual}</div></CardContent>
           </Card>
           <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-sm text-orange-600">Éditées manuellement</CardTitle></CardHeader>
+            <CardHeader className="pb-2"><CardTitle className="text-sm text-orange-600">{t('stats.manuallyEdited')}</CardTitle></CardHeader>
             <CardContent><div className="text-2xl font-bold text-orange-600">{stats.with_manual_edit}</div></CardContent>
           </Card>
         </div>
       )}
 
       <Card>
-        <CardHeader><CardTitle>Filtres</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t('filters.title')}</CardTitle></CardHeader>
         <CardContent>
           <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-7">
             <div className="lg:col-span-2">
-              <label className="text-xs font-medium mb-1 block">Recherche (nom)</label>
+              <label className="text-xs font-medium mb-1 block">{t('filters.search')}</label>
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 w-4 h-4 text-muted-foreground" />
-                <Input placeholder="Nom du guest..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-8" />
+                <Input placeholder={t('filters.searchPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)} className="pl-8" />
               </div>
             </div>
             <div>
-              <label className="text-xs font-medium mb-1 block">Source</label>
+              <label className="text-xs font-medium mb-1 block">{t('filters.source')}</label>
               <Select value={sourceFilter} onValueChange={setSourceFilter}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Toutes</SelectItem>
-                  <SelectItem value="airbnb_scraper">Airbnb</SelectItem>
-                  <SelectItem value="manual">Manuel</SelectItem>
+                  <SelectItem value="all">{t('filters.sourceAll')}</SelectItem>
+                  <SelectItem value="airbnb_scraper">{t('filters.sourceAirbnb')}</SelectItem>
+                  <SelectItem value="manual">{t('filters.sourceManual')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <label className="text-xs font-medium mb-1 block">Liaison</label>
+              <label className="text-xs font-medium mb-1 block">{t('filters.link')}</label>
               <Select value={matchedViaFilter} onValueChange={setMatchedViaFilter}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Toutes</SelectItem>
-                  <SelectItem value="airbnb_id">airbnb_id (exact)</SelectItem>
-                  <SelectItem value="fuzzy_manual">fuzzy_manual (lié)</SelectItem>
-                  <SelectItem value="none">none (nouveau)</SelectItem>
+                  <SelectItem value="all">{t('filters.linkAll')}</SelectItem>
+                  <SelectItem value="airbnb_id">{t('filters.linkAirbnbId')}</SelectItem>
+                  <SelectItem value="fuzzy_manual">{t('filters.linkFuzzy')}</SelectItem>
+                  <SelectItem value="none">{t('filters.linkNone')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <label className="text-xs font-medium mb-1 block">Statut</label>
+              <label className="text-xs font-medium mb-1 block">{t('filters.status')}</label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tous</SelectItem>
-                  <SelectItem value="confirmed">Confirmée</SelectItem>
-                  <SelectItem value="pending">En attente</SelectItem>
-                  <SelectItem value="cancelled">Annulée</SelectItem>
+                  <SelectItem value="all">{t('filters.statusAll')}</SelectItem>
+                  <SelectItem value="confirmed">{t('filters.statusConfirmed')}</SelectItem>
+                  <SelectItem value="pending">{t('filters.statusPending')}</SelectItem>
+                  <SelectItem value="cancelled">{t('filters.statusCancelled')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <label className="text-xs font-medium mb-1 block">Du</label>
+              <label className="text-xs font-medium mb-1 block">{t('filters.dateFrom')}</label>
               <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
             </div>
             <div>
-              <label className="text-xs font-medium mb-1 block">Au</label>
+              <label className="text-xs font-medium mb-1 block">{t('filters.dateTo')}</label>
               <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
             </div>
           </div>
           <div className="mt-3">
-            <label className="text-xs font-medium mb-1 block">Loft</label>
+            <label className="text-xs font-medium mb-1 block">{t('filters.loft')}</label>
             <Select value={loftFilter} onValueChange={setLoftFilter}>
               <SelectTrigger className="max-w-xs"><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les lofts</SelectItem>
+                <SelectItem value="all">{t('filters.loftAll')}</SelectItem>
                 {lofts.map((l) => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}
               </SelectContent>
             </Select>
@@ -246,34 +246,33 @@ export default function ReservationsProvenancePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Réservations ({reservations.length})</CardTitle>
+          <CardTitle>{t('table.title', { count: reservations.length })}</CardTitle>
           <CardDescription>
-            Les lignes avec <Badge className="bg-amber-500 mx-1">fuzzy_manual</Badge> ont été liées automatiquement
-            à une saisie manuelle (le système a préservé vos champs admin)
+            {t('table.fuzzyNote')} <Badge className="bg-amber-500 mx-1">fuzzy_manual</Badge> {t('table.fuzzyNoteEnd')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className="flex justify-center py-8"><Loader2 className="w-8 h-8 animate-spin" /></div>
           ) : error ? (
-            <Alert variant="destructive"><AlertTriangle className="h-4 w-4" /><AlertTitle>Erreur</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>
+            <Alert variant="destructive"><AlertTriangle className="h-4 w-4" /><AlertTitle>{t('table.error')}</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>
           ) : reservations.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">Aucune réservation avec ces filtres</div>
+            <div className="text-center py-8 text-muted-foreground">{t('table.noResults')}</div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Guest</TableHead>
-                    <TableHead>Loft</TableHead>
-                    <TableHead>Dates</TableHead>
-                    <TableHead>Nuits</TableHead>
-                    <TableHead>Source</TableHead>
-                    <TableHead>Liaison</TableHead>
-                    <TableHead>Airbnb ID</TableHead>
-                    <TableHead>Statut</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
-                    <TableHead>Édité manuellement</TableHead>
+                    <TableHead>{t('table.guest')}</TableHead>
+                    <TableHead>{t('table.loft')}</TableHead>
+                    <TableHead>{t('table.dates')}</TableHead>
+                    <TableHead>{t('table.nights')}</TableHead>
+                    <TableHead>{t('table.source')}</TableHead>
+                    <TableHead>{t('table.link')}</TableHead>
+                    <TableHead>{t('table.airbnbId')}</TableHead>
+                    <TableHead>{t('table.status')}</TableHead>
+                    <TableHead className="text-right">{t('table.total')}</TableHead>
+                    <TableHead>{t('table.editedManually')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -297,7 +296,7 @@ export default function ReservationsProvenancePage() {
                           r.status === 'confirmed' ? 'border-green-300 text-green-700' :
                           r.status === 'pending' ? 'border-yellow-300 text-yellow-700' : ''
                         }>
-                          {r.status}
+                          {t(`status.${r.status}`, { defaultMessage: r.status })}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right font-mono text-sm">

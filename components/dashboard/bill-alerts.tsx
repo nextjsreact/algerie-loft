@@ -80,7 +80,7 @@ export function BillAlerts() {
     if (diffDays === 0) return t('dueToday');
     if (diffDays === 1) return t('dueTomorrow');
     if (diffDays > 1) return `${diffDays} ${t('days')}`;
-    return `${Math.abs(diffDays)} ${t('daysOverdue')}`;
+    return t('daysOverdue', { count: Math.abs(diffDays) });
   };
 
   if (loading) {
@@ -125,7 +125,7 @@ export function BillAlerts() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-red-600 font-medium">
-                      {bill.days_overdue} {t('daysOverdue')}
+                      {t('daysOverdue', { count: bill.days_overdue })}
                     </p>
                   </div>
                 </div>

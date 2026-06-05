@@ -136,13 +136,24 @@ export interface AirbnbSyncWarning {
 /**
  * Métriques de synchronisation
  */
+export type SyncAction = 'created' | 'updated' | 'linked' | 'skipped' | 'failed';
+
+export interface AffectedReservation {
+  id: string;                   // UUID de la réservation (null si pas encore insérée pour les failed)
+  action: SyncAction;           // Action effectuée
+  airbnb_confirmation_code?: string;  // Code Airbnb pour traçabilité
+  error?: string;               // Message d'erreur si action='failed'
+}
+
 export interface AirbnbSyncMetrics {
   processed: number;             // Nombre de réservations traitées
   created: number;               // Nombre de réservations créées
   updated: number;               // Nombre de réservations mises à jour
+  linked: number;                // Nombre de réservations liées (fuzzy match avec une entrée manuelle)
   skipped: number;               // Nombre de réservations ignorées
   failed: number;                // Nombre de réservations échouées
   conflicts: number;             // Nombre de conflits détectés
+  affected: AffectedReservation[];  // Détail par réservation (pour liaison log↔réservation)
 }
 
 /**
@@ -210,4 +221,28 @@ export interface ValidationError {
   field: string;
   message: string;
   value?: any;
+}
+
+/**
+ * Cache entry : représentation interne d'une réservation existante en base
+ * (utilisée pour dedup exact + fuzzy + smart update)
+ */
+export interface ExistingReservation {
+  id: string;
+  status: string;
+  total_amount: number;
+  loft_id: string;
+  guest_name: string;
+  check_in_date: string;
+  check_out_date: string;
+  special_requests?: string | null;
+  guest_phone?: string | null;
+  guest_email?: string | null;
+  payment_status?: string | null;
+  guest_id?: string | null;
+  cancelled_at?: string | null;
+  cancellation_reason?: string | null;
+  last_manual_edit_at?: string | null;
+  admin_locked_fields: string[];
+  has_manual_edit: boolean;
 }

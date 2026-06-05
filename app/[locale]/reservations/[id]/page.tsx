@@ -9,16 +9,28 @@ import { AuditPermissionManager } from "@/lib/permissions/audit-permissions"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { CalendarDays, MapPin, User, DollarSign } from "lucide-react"
+import { getTranslations, getLocale } from "next-intl/server"
+import { createClient } from "@/utils/supabase/server"
+import { ReservationEditButton } from "@/components/reservations/reservation-edit-button"
 
-export default async function ReservationPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function ReservationPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
+  const { id, locale } = await params;
   const session = await requireRole(["admin", "manager"])
-  
+  const t = await getTranslations("reservations.details")
+  const tStatus = await getTranslations("reservations.status")
+
   const reservation = await getReservation(id);
 
   if (!reservation) {
     notFound()
   }
+
+  const supabase = await createClient()
+  const { data: loftsData } = await supabase
+    .from('lofts')
+    .select('id, name, address')
+    .order('name', { ascending: true })
+  const availableLofts = (loftsData || []).map(l => ({ id: l.id, name: l.name, address: l.address || undefined }))
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -35,12 +47,27 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
     }
   }
 
+  const getStatusLabel = (status: string): string => {
+    try {
+      return tStatus(status as any)
+    } catch {
+      return status
+    }
+  }
+
   // Check if user can view audit history
   const canViewAudit = AuditPermissionManager.canViewEntityAuditHistory(
-    session.user.role, 
-    'reservations', 
+    session.user.role,
+    'reservations',
     reservation.id
   );
+
+  const dateFormatter = new Intl.DateTimeFormat(locale, { day: '2-digit', month: '2-digit', year: 'numeric' })
+  const moneyFormatter = (currency?: string | null) =>
+    new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: currency || 'DZD'
+    })
 
   return (
     <div className="space-y-6">
@@ -48,24 +75,24 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
         <CardHeader>
           <div className="flex justify-between items-start">
             <div>
-              <CardTitle className="text-2xl">Reservation for {reservation.guest_name}</CardTitle>
+              <CardTitle className="text-2xl">{t("reservationFor", { name: reservation.guest_name })}</CardTitle>
               <CardDescription>
-                {new Date(reservation.check_in_date).toLocaleDateString()} - {new Date(reservation.check_out_date).toLocaleDateString()}
+                {dateFormatter.format(new Date(reservation.check_in_date))} - {dateFormatter.format(new Date(reservation.check_out_date))}
               </CardDescription>
             </div>
-            <Badge className={getStatusColor(reservation.status)}>{reservation.status}</Badge>
+            <Badge className={getStatusColor(reservation.status)}>{getStatusLabel(reservation.status)}</Badge>
           </div>
         </CardHeader>
       </Card>
 
       <Tabs defaultValue="details" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="details">Reservation Details</TabsTrigger>
+          <TabsTrigger value="details">{t("reservationTab")}</TabsTrigger>
           {canViewAudit && (
-            <TabsTrigger value="audit">Audit History</TabsTrigger>
+            <TabsTrigger value="audit">{t("auditHistory")}</TabsTrigger>
           )}
         </TabsList>
-        
+
         <TabsContent value="details" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Guest Information */}
@@ -73,49 +100,49 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
-                  Guest Information
+                  {t("guestInformation")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Name</label>
+                  <label className="text-sm font-medium text-muted-foreground">{t("name")}</label>
                   <p className="text-lg">{reservation.guest_name}</p>
                 </div>
                 {reservation.guest_email && (
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Email</label>
+                    <label className="text-sm font-medium text-muted-foreground">{t("email")}</label>
                     <p>{reservation.guest_email}</p>
                   </div>
                 )}
-                {reservation.guest_phone && (
+                {reservation.guest_phone && String(reservation.guest_phone).replace(/\D/g, '').length >= 5 && (
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Phone</label>
+                    <label className="text-sm font-medium text-muted-foreground">{t("phone")}</label>
                     <p>{reservation.guest_phone}</p>
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {/* Reservation Details */}
+            {/* Booking Details */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CalendarDays className="h-5 w-5" />
-                  Booking Details
+                  {t("bookingDetails")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Check-in Date</label>
-                  <p className="text-lg">{new Date(reservation.check_in_date).toLocaleDateString()}</p>
+                  <label className="text-sm font-medium text-muted-foreground">{t("checkInDate")}</label>
+                  <p className="text-lg">{dateFormatter.format(new Date(reservation.check_in_date))}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Check-out Date</label>
-                  <p className="text-lg">{new Date(reservation.check_out_date).toLocaleDateString()}</p>
+                  <label className="text-sm font-medium text-muted-foreground">{t("checkOutDate")}</label>
+                  <p className="text-lg">{dateFormatter.format(new Date(reservation.check_out_date))}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Number of Guests</label>
-                  <p>{reservation.number_of_guests || 'Not specified'}</p>
+                  <label className="text-sm font-medium text-muted-foreground">{t("numberOfGuests")}</label>
+                  <p>{reservation.number_of_guests || t("notSpecified")}</p>
                 </div>
               </CardContent>
             </Card>
@@ -125,24 +152,24 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="h-5 w-5" />
-                  Loft Information
+                  {t("loftInformation")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Loft Name</label>
-                  <p className="text-lg">{reservation.lofts?.name || 'Unknown Loft'}</p>
+                  <label className="text-sm font-medium text-muted-foreground">{t("loftName")}</label>
+                  <p className="text-lg">{reservation.lofts?.name || t("unknownLoft")}</p>
                 </div>
                 {reservation.lofts?.address && (
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Address</label>
+                    <label className="text-sm font-medium text-muted-foreground">{t("address")}</label>
                     <p>{reservation.lofts.address}</p>
                   </div>
                 )}
                 {reservation.loft_id && (
                   <Button asChild variant="outline" size="sm">
-                    <Link href={`/lofts/${reservation.loft_id}`}>
-                      View Loft Details
+                    <Link href={`/${locale}/lofts/${reservation.loft_id}`}>
+                      {t("viewLoftDetails")}
                     </Link>
                   </Button>
                 )}
@@ -154,27 +181,21 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <DollarSign className="h-5 w-5" />
-                  Financial Details
+                  {t("financialDetails")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Total Amount</label>
+                  <label className="text-sm font-medium text-muted-foreground">{t("totalAmount")}</label>
                   <p className="text-2xl font-bold text-green-600">
-                    {new Intl.NumberFormat('fr-FR', { 
-                      style: 'currency', 
-                      currency: 'DZD' 
-                    }).format(reservation.total_amount || 0)}
+                    {moneyFormatter(reservation.currency_code).format(reservation.total_amount || 0)}
                   </p>
                 </div>
                 {reservation.deposit_amount && (
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Deposit</label>
+                    <label className="text-sm font-medium text-muted-foreground">{t("deposit")}</label>
                     <p className="text-lg">
-                      {new Intl.NumberFormat('fr-FR', { 
-                        style: 'currency', 
-                        currency: 'DZD' 
-                      }).format(reservation.deposit_amount)}
+                      {moneyFormatter(reservation.currency_code).format(reservation.deposit_amount)}
                     </p>
                   </div>
                 )}
@@ -186,7 +207,7 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
           {reservation.notes && (
             <Card>
               <CardHeader>
-                <CardTitle>Notes</CardTitle>
+                <CardTitle>{t("notes")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">{reservation.notes}</p>
@@ -198,11 +219,9 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
           <Card>
             <CardContent className="pt-6">
               <div className="flex gap-4">
-                <Button asChild variant="outline">
-                  <Link href={`/reservations/${reservation.id}/edit`}>Edit Reservation</Link>
-                </Button>
+                <ReservationEditButton reservation={reservation} availableLofts={availableLofts} />
                 <Button asChild>
-                  <Link href="/reservations">Back to Reservations</Link>
+                  <Link href={`/${locale}/reservations`}>{t("backToReservations")}</Link>
                 </Button>
               </div>
             </CardContent>
@@ -211,8 +230,8 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
 
         {canViewAudit && (
           <TabsContent value="audit" className="space-y-4">
-            <AuditHistory 
-              tableName="reservations" 
+            <AuditHistory
+              tableName="reservations"
               recordId={reservation.id}
               className="w-full"
             />

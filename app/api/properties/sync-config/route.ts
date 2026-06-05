@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
     const combined = lofts?.map(loft => ({
       loft_id: loft.id,
       loft_name: loft.name,
-      ical_url: configMap.get(loft.id)?.ical_url || null,
+      ical_url: configMap.get(loft.id)?.ical_url_airbnb || null,
       is_active: configMap.get(loft.id)?.is_active || false,
       last_sync_at: configMap.get(loft.id)?.last_sync_at || null,
       last_sync_status: configMap.get(loft.id)?.last_sync_status || null,
@@ -234,7 +234,7 @@ export async function PUT(request: NextRequest) {
     if (existingConfig) {
       // Mettre à jour la config existante
       const updateData: any = {};
-      if (ical_url !== undefined) updateData.ical_url = ical_url;
+      if (ical_url !== undefined) updateData.ical_url_airbnb = ical_url;
       if (is_active !== undefined) updateData.is_active = is_active;
 
       const { data, error } = await supabase
@@ -258,7 +258,7 @@ export async function PUT(request: NextRequest) {
         .from('property_sync_config')
         .insert({
           loft_id,
-          ical_url: ical_url || null,
+          ical_url_airbnb: ical_url || null,
           is_active: is_active !== undefined ? is_active : false,
         })
         .select()

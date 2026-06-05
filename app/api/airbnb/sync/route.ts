@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { AirbnbSyncService } from '@/lib/services/airbnb-sync-service';
+import { AirbnbSyncServiceOptimized } from '@/lib/services/airbnb-sync-service-optimized';
 import type { AirbnbSyncRequest, AirbnbSyncResponse } from '@/lib/types/airbnb';
 
 // ============================================================================
@@ -189,31 +190,52 @@ export async function POST(request: NextRequest) {
     // 6. CRÉER UN LOG DE SYNCHRONISATION (status='started')
     // ========================================================================
     const supabase = await createClient(true); // useServiceRole = true
-    const { error: logError } = await supabase.from('airbnb_sync_logs').insert({
-      sync_type: syncRequest.sync_metadata.sync_type,
-      sync_batch_id: syncBatchId,
-      status: 'started',
-      reservations_received: syncRequest.reservations.length,
-      started_at: new Date().toISOString(),
-      script_version: syncRequest.sync_metadata.script_version,
-      triggered_by: 'api',
-    });
+    const { data: logData, error: logError } = await supabase
+      .from('airbnb_sync_logs')
+      .insert({
+        sync_type: syncRequest.sync_metadata.sync_type,
+        sync_batch_id: syncBatchId,
+        status: 'started',
+        reservations_received: syncRequest.reservations.length,
+        started_at: new Date().toISOString(),
+        script_version: syncRequest.sync_metadata.script_version,
+        triggered_by: 'api',
+      })
+      .select('id')
+      .single();
 
     if (logError) {
       console.error('[Airbnb Sync] Failed to create sync log:', logError);
     }
+    const logId = logData?.id;
 
     // ========================================================================
-    // 7. TRAITER LES RÉSERVATIONS
+    // 7. TRAITER LES RÉSERVATIONS (VERSION OPTIMISÉE)
     // ========================================================================
-    const syncService = await AirbnbSyncService.create(syncBatchId, syncRequest.sync_metadata.sync_type);
-    await syncService.processReservations(syncRequest.reservations);
-
-    const metrics = syncService.getMetrics();
-    const errors = syncService.getErrors();
-    const warnings = syncService.getWarnings();
+    // Utiliser la version optimisée pour de meilleures performances
+    const useOptimized = process.env.AIRBNB_SYNC_OPTIMIZED !== 'false'; // Activé par défaut
+    
+    let metrics, errors, warnings;
+    
+    if (useOptimized) {
+      console.log('[Airbnb Sync] Using OPTIMIZED service');
+      const syncService = await AirbnbSyncServiceOptimized.create(syncBatchId, syncRequest.sync_metadata.sync_type);
+      await syncService.processReservations(syncRequest.reservations);
+      metrics = syncService.getMetrics();
+      errors = syncService.getErrors();
+      warnings = syncService.getWarnings();
+    } else {
+      console.log('[Airbnb Sync] Using ORIGINAL service');
+      const syncService = await AirbnbSyncService.create(syncBatchId, syncRequest.sync_metadata.sync_type);
+      await syncService.processReservations(syncRequest.reservations);
+      metrics = syncService.getMetrics();
+      errors = syncService.getErrors();
+      warnings = syncService.getWarnings();
+    }
 
     // ========================================================================
+    // 8. METTRE À JOUR LE LOG DE SYNCHRONISATION (status='success' ou 'partial')
+    // ========================================================================    // ========================================================================
     // 8. METTRE À JOUR LE LOG DE SYNCHRONISATION (status='success' ou 'partial')
     // ========================================================================
     const duration = Date.now() - startTime;
@@ -226,6 +248,7 @@ export async function POST(request: NextRequest) {
         lofts_processed: new Set(syncRequest.reservations.map((r) => r.listing_id)).size,
         reservations_created: metrics.created,
         reservations_updated: metrics.updated,
+        reservations_linked: metrics.linked ?? 0,
         reservations_skipped: metrics.skipped,
         reservations_failed: metrics.failed,
         conflicts_detected: metrics.conflicts,
@@ -238,6 +261,32 @@ export async function POST(request: NextRequest) {
 
     if (updateLogError) {
       console.error('[Airbnb Sync] Failed to update sync log:', updateLogError);
+    }
+
+    // ========================================================================
+    // 8b. LIEN LOG ↔ RÉSERVATIONS (table airbnb_sync_log_reservations)
+    //     Permet de retrouver QUEL batch a traité QUELLE réservation
+    // ========================================================================
+    if (logId && metrics.affected && metrics.affected.length > 0) {
+      const links = metrics.affected
+        .filter(a => a.id) // skip ceux sans id (failed avant insert)
+        .map(a => ({
+          log_id: logId,
+          reservation_id: a.id,
+          action: a.action,
+        }));
+
+      if (links.length > 0) {
+        const { error: linkError } = await supabase
+          .from('airbnb_sync_log_reservations')
+          .upsert(links, { onConflict: 'log_id,reservation_id', ignoreDuplicates: true });
+
+        if (linkError) {
+          console.error('[Airbnb Sync] Failed to link log to reservations:', linkError);
+        } else {
+          console.log(`[Airbnb Sync] Linked log ${logId} to ${links.length} reservation(s)`);
+        }
+      }
     }
 
     // ========================================================================

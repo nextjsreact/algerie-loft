@@ -124,7 +124,7 @@ export function BillAlerts() {
       if (isOverdue) return t('dayOverdue');
       return t('tomorrow');
     }
-    if (isOverdue) return `${days} ${t('daysOverdue')}`;
+    if (isOverdue) return t('daysOverdue', { count: days });
     return `${days} ${t('days')}`;
   };
 

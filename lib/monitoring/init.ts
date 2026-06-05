@@ -13,8 +13,15 @@ export function initMonitoring() {
 
     // Monitor unhandled errors
     window.addEventListener('error', (event) => {
-      console.error('Unhandled error:', event.error);
-      
+      const err = event.error;
+      if (err) {
+        console.error('Unhandled error:', err);
+      } else if (event.message) {
+        console.error('Unhandled error (message):', event.message, event.filename, event.lineno + ':' + event.colno);
+      } else {
+        console.warn('Unhandled error event without payload (likely resource load failure):', event.target || event.type);
+      }
+
       // Don't send to Sentry here as it's already handled by Sentry's global handler
       // Just log for debugging
     });

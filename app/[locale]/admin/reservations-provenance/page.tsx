@@ -1,0 +1,319 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from '@/components/ui/table';
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import {
+  Loader2, RefreshCw, AlertTriangle, Search, Download, Link2, Database, User,
+} from 'lucide-react';
+import { toast } from 'sonner';
+
+interface Reservation {
+  id: string;
+  guest_name: string;
+  guest_email?: string;
+  guest_phone?: string;
+  guest_count: number;
+  check_in_date: string;
+  check_out_date: string;
+  nights: number;
+  total_amount: number;
+  currency_code: string;
+  status: string;
+  payment_status?: string;
+  airbnb_confirmation_code?: string;
+  source: string;
+  matched_via?: string;
+  special_requests?: string;
+  last_manual_edit_at?: string;
+  loft: { id: string; name: string; airbnb_listing_id?: string } | null;
+}
+
+export default function ReservationsProvenancePage() {
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [lofts, setLofts] = useState<{ id: string; name: string }[]>([]);
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Filtres
+  const [search, setSearch] = useState('');
+  const [sourceFilter, setSourceFilter] = useState('all');
+  const [loftFilter, setLoftFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [matchedViaFilter, setMatchedViaFilter] = useState('all');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+
+  const fetchData = useCallback(async () => {
+    setLoading(true); setError(null);
+    try {
+      const params = new URLSearchParams();
+      if (search) params.append('search', search);
+      if (sourceFilter !== 'all') params.append('source', sourceFilter);
+      if (loftFilter !== 'all') params.append('loft_id', loftFilter);
+      if (statusFilter !== 'all') params.append('status', statusFilter);
+      if (matchedViaFilter !== 'all') params.append('matched_via', matchedViaFilter);
+      if (dateFrom) params.append('date_from', dateFrom);
+      if (dateTo) params.append('date_to', dateTo);
+      params.append('limit', '500');
+
+      const r = await fetch(`/api/admin/reservations-provenance?${params}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = await r.json();
+      setReservations(data.reservations);
+      setStats(data.stats);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Erreur');
+    } finally {
+      setLoading(false);
+    }
+  }, [search, sourceFilter, loftFilter, statusFilter, matchedViaFilter, dateFrom, dateTo]);
+
+  const fetchLofts = useCallback(async () => {
+    try {
+      const r = await fetch('/api/lofts?limit=500');
+      if (r.ok) {
+        const data = await r.json();
+        setLofts(data.lofts || data || []);
+      }
+    } catch {}
+  }, []);
+
+  useEffect(() => { fetchLofts(); }, [fetchLofts]);
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  // Debounce sur la recherche
+  useEffect(() => {
+    const timer = setTimeout(() => fetchData(), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const fmt = (d: string) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+  const fmtMoney = (a: number, c: string) =>
+    new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: c || 'DZD', maximumFractionDigits: 0 }).format(a || 0);
+
+  const sourceBadge = (s: string) => {
+    if (s === 'airbnb_scraper') return <Badge className="bg-blue-500"><Database className="w-3 h-3 mr-1" />Airbnb</Badge>;
+    if (s === 'manual') return <Badge className="bg-purple-500"><User className="w-3 h-3 mr-1" />Manuel</Badge>;
+    return <Badge variant="outline">{s || '—'}</Badge>;
+  };
+
+  const matchedViaBadge = (mv?: string) => {
+    if (!mv || mv === 'none') return <Badge variant="outline">—</Badge>;
+    if (mv === 'airbnb_id') return <Badge className="bg-green-500">airbnb_id</Badge>;
+    if (mv === 'fuzzy_manual') return <Badge className="bg-amber-500"><Link2 className="w-3 h-3 mr-1" />fuzzy_manual</Badge>;
+    return <Badge variant="outline">{mv}</Badge>;
+  };
+
+  const exportCSV = () => {
+    const headers = ['guest_name', 'loft', 'check_in', 'check_out', 'nights', 'status', 'payment_status', 'source', 'matched_via', 'airbnb_confirmation_code', 'total', 'currency', 'special_requests', 'last_manual_edit'];
+    const rows = reservations.map((r) => [
+      r.guest_name, r.loft?.name || '', r.check_in_date, r.check_out_date, r.nights,
+      r.status, r.payment_status || '', r.source, r.matched_via || '', r.airbnb_confirmation_code || '',
+      r.total_amount, r.currency_code, (r.special_requests || '').replace(/"/g, '""'), r.last_manual_edit_at || '',
+    ]);
+    const csv = [headers, ...rows].map((row) => row.map((c) => `"${c}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `reservations_provenance_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+    toast.success('Export CSV téléchargé');
+  };
+
+  return (
+    <div className="container mx-auto py-8 space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Provenance des réservations</h1>
+          <p className="text-muted-foreground">
+            Toutes les réservations avec leur source (Airbnb / Manuel) et le type de liaison
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={exportCSV} disabled={!reservations.length}>
+            <Download className="w-4 h-4 mr-2" />Export CSV
+          </Button>
+          <Button onClick={fetchData} disabled={loading}>
+            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Actualiser
+          </Button>
+        </div>
+      </div>
+
+      {stats && (
+        <div className="grid gap-4 md:grid-cols-5">
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-sm">Total</CardTitle></CardHeader>
+            <CardContent><div className="text-2xl font-bold">{stats.total}</div></CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-sm text-blue-600">Airbnb</CardTitle></CardHeader>
+            <CardContent><div className="text-2xl font-bold text-blue-600">{stats.by_source.airbnb_scraper}</div></CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-sm text-purple-600">Manuel</CardTitle></CardHeader>
+            <CardContent><div className="text-2xl font-bold text-purple-600">{stats.by_source.manual}</div></CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-sm text-amber-600">Liées (fuzzy)</CardTitle></CardHeader>
+            <CardContent><div className="text-2xl font-bold text-amber-600">{stats.by_matched_via.fuzzy_manual}</div></CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-sm text-orange-600">Éditées manuellement</CardTitle></CardHeader>
+            <CardContent><div className="text-2xl font-bold text-orange-600">{stats.with_manual_edit}</div></CardContent>
+          </Card>
+        </div>
+      )}
+
+      <Card>
+        <CardHeader><CardTitle>Filtres</CardTitle></CardHeader>
+        <CardContent>
+          <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-7">
+            <div className="lg:col-span-2">
+              <label className="text-xs font-medium mb-1 block">Recherche (nom)</label>
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 w-4 h-4 text-muted-foreground" />
+                <Input placeholder="Nom du guest..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-8" />
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-medium mb-1 block">Source</label>
+              <Select value={sourceFilter} onValueChange={setSourceFilter}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Toutes</SelectItem>
+                  <SelectItem value="airbnb_scraper">Airbnb</SelectItem>
+                  <SelectItem value="manual">Manuel</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-xs font-medium mb-1 block">Liaison</label>
+              <Select value={matchedViaFilter} onValueChange={setMatchedViaFilter}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Toutes</SelectItem>
+                  <SelectItem value="airbnb_id">airbnb_id (exact)</SelectItem>
+                  <SelectItem value="fuzzy_manual">fuzzy_manual (lié)</SelectItem>
+                  <SelectItem value="none">none (nouveau)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-xs font-medium mb-1 block">Statut</label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous</SelectItem>
+                  <SelectItem value="confirmed">Confirmée</SelectItem>
+                  <SelectItem value="pending">En attente</SelectItem>
+                  <SelectItem value="cancelled">Annulée</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-xs font-medium mb-1 block">Du</label>
+              <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs font-medium mb-1 block">Au</label>
+              <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+            </div>
+          </div>
+          <div className="mt-3">
+            <label className="text-xs font-medium mb-1 block">Loft</label>
+            <Select value={loftFilter} onValueChange={setLoftFilter}>
+              <SelectTrigger className="max-w-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les lofts</SelectItem>
+                {lofts.map((l) => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Réservations ({reservations.length})</CardTitle>
+          <CardDescription>
+            Les lignes avec <Badge className="bg-amber-500 mx-1">fuzzy_manual</Badge> ont été liées automatiquement
+            à une saisie manuelle (le système a préservé vos champs admin)
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="flex justify-center py-8"><Loader2 className="w-8 h-8 animate-spin" /></div>
+          ) : error ? (
+            <Alert variant="destructive"><AlertTriangle className="h-4 w-4" /><AlertTitle>Erreur</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>
+          ) : reservations.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">Aucune réservation avec ces filtres</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Guest</TableHead>
+                    <TableHead>Loft</TableHead>
+                    <TableHead>Dates</TableHead>
+                    <TableHead>Nuits</TableHead>
+                    <TableHead>Source</TableHead>
+                    <TableHead>Liaison</TableHead>
+                    <TableHead>Airbnb ID</TableHead>
+                    <TableHead>Statut</TableHead>
+                    <TableHead className="text-right">Total</TableHead>
+                    <TableHead>Édité manuellement</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {reservations.map((r) => (
+                    <TableRow
+                      key={r.id}
+                      className={r.matched_via === 'fuzzy_manual' ? 'bg-amber-50' : r.last_manual_edit_at ? 'bg-orange-50' : ''}
+                    >
+                      <TableCell className="font-medium">{r.guest_name}</TableCell>
+                      <TableCell>{r.loft?.name || '—'}</TableCell>
+                      <TableCell className="text-xs">{fmt(r.check_in_date)} → {fmt(r.check_out_date)}</TableCell>
+                      <TableCell className="text-center">{r.nights}</TableCell>
+                      <TableCell>{sourceBadge(r.source)}</TableCell>
+                      <TableCell>{matchedViaBadge(r.matched_via)}</TableCell>
+                      <TableCell className="text-xs font-mono">
+                        {r.airbnb_confirmation_code || <span className="text-muted-foreground">—</span>}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className={
+                          r.status === 'cancelled' ? 'border-red-300 text-red-700' :
+                          r.status === 'confirmed' ? 'border-green-300 text-green-700' :
+                          r.status === 'pending' ? 'border-yellow-300 text-yellow-700' : ''
+                        }>
+                          {r.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-mono text-sm">
+                        {fmtMoney(r.total_amount, r.currency_code)}
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {r.last_manual_edit_at ? fmt(r.last_manual_edit_at) : '—'}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

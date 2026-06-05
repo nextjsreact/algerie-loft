@@ -4546,5 +4546,66 @@
       "cloneFailed": "فشل الاستنساخ",
       "operationNotFound": "العملية غير موجودة"
     }
+  },
+  "reservationsProvenance": {
+    "title": "مصدر الحجوزات",
+    "subtitle": "جميع الحجوزات مع مصدرها (Airbnb / يدوي) ونوع الربط",
+    "exportCsv": "تصدير CSV",
+    "refresh": "تحديث",
+    "exportSuccess": "تم تنزيل ملف CSV",
+    "stats": {
+      "total": "الإجمالي",
+      "airbnb": "Airbnb",
+      "manual": "يدوي",
+      "fuzzyLinked": "مرتبطة (fuzzy)",
+      "manuallyEdited": "محررة يدوياً"
+    },
+    "filters": {
+      "title": "الفلاتر",
+      "search": "البحث (الاسم)",
+      "searchPlaceholder": "اسم الضيف...",
+      "source": "المصدر",
+      "sourceAll": "الكل",
+      "sourceAirbnb": "Airbnb",
+      "sourceManual": "يدوي",
+      "link": "الربط",
+      "linkAll": "الكل",
+      "linkAirbnbId": "airbnb_id (دقيق)",
+      "linkFuzzy": "fuzzy_manual (مرتبط)",
+      "linkNone": "none (جديد)",
+      "status": "الحالة",
+      "statusAll": "الكل",
+      "statusConfirmed": "مؤكد",
+      "statusPending": "قيد الانتظار",
+      "statusCancelled": "ملغى",
+      "dateFrom": "من",
+      "dateTo": "إلى",
+      "loft": "الشقة",
+      "loftAll": "كل الشقق"
+    },
+    "table": {
+      "title": "الحجوزات ({count})",
+      "fuzzyNote": "الصفوف ذات",
+      "fuzzyNoteEnd": "تم ربطها تلقائياً بإدخال يدوي (النظام حافظ على حقول المسؤول)",
+      "guest": "الضيف",
+      "loft": "الشقة",
+      "dates": "التواريخ",
+      "nights": "الليالي",
+      "source": "المصدر",
+      "link": "الربط",
+      "airbnbId": "معرف Airbnb",
+      "status": "الحالة",
+      "total": "المجموع",
+      "editedManually": "محرر يدوياً",
+      "loading": "جاري التحميل...",
+      "noResults": "لا توجد حجوزات تطابق هذه الفلاتر",
+      "error": "خطأ"
+    },
+    "status": {
+      "confirmed": "مؤكد",
+      "pending": "قيد الانتظار",
+      "cancelled": "ملغى",
+      "completed": "مكتمل"
+    }
   }
 }

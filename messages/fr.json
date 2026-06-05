@@ -4528,5 +4528,66 @@
       "cloneFailed": "Échec du clonage",
       "operationNotFound": "Opération non trouvée"
     }
+  },
+  "reservationsProvenance": {
+    "title": "Provenance des réservations",
+    "subtitle": "Toutes les réservations avec leur source (Airbnb / Manuel) et le type de liaison",
+    "exportCsv": "Export CSV",
+    "refresh": "Actualiser",
+    "exportSuccess": "Export CSV téléchargé",
+    "stats": {
+      "total": "Total",
+      "airbnb": "Airbnb",
+      "manual": "Manuel",
+      "fuzzyLinked": "Liées (fuzzy)",
+      "manuallyEdited": "Éditées manuellement"
+    },
+    "filters": {
+      "title": "Filtres",
+      "search": "Recherche (nom)",
+      "searchPlaceholder": "Nom du guest...",
+      "source": "Source",
+      "sourceAll": "Toutes",
+      "sourceAirbnb": "Airbnb",
+      "sourceManual": "Manuel",
+      "link": "Liaison",
+      "linkAll": "Toutes",
+      "linkAirbnbId": "airbnb_id (exact)",
+      "linkFuzzy": "fuzzy_manual (lié)",
+      "linkNone": "none (nouveau)",
+      "status": "Statut",
+      "statusAll": "Tous",
+      "statusConfirmed": "Confirmée",
+      "statusPending": "En attente",
+      "statusCancelled": "Annulée",
+      "dateFrom": "Du",
+      "dateTo": "Au",
+      "loft": "Loft",
+      "loftAll": "Tous les lofts"
+    },
+    "table": {
+      "title": "Réservations ({count})",
+      "fuzzyNote": "Les lignes avec",
+      "fuzzyNoteEnd": "ont été liées automatiquement à une saisie manuelle (le système a préservé vos champs admin)",
+      "guest": "Guest",
+      "loft": "Loft",
+      "dates": "Dates",
+      "nights": "Nuits",
+      "source": "Source",
+      "link": "Liaison",
+      "airbnbId": "Airbnb ID",
+      "status": "Statut",
+      "total": "Total",
+      "editedManually": "Édité manuellement",
+      "loading": "Chargement...",
+      "noResults": "Aucune réservation avec ces filtres",
+      "error": "Erreur"
+    },
+    "status": {
+      "confirmed": "Confirmée",
+      "pending": "En attente",
+      "cancelled": "Annulée",
+      "completed": "Terminée"
+    }
   }
 }

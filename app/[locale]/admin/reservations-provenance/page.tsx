@@ -279,7 +279,13 @@ export default function ReservationsProvenancePage() {
                   {reservations.map((r) => (
                     <TableRow
                       key={r.id}
-                      className={r.matched_via === 'fuzzy_manual' ? 'bg-amber-50' : r.last_manual_edit_at ? 'bg-orange-50' : ''}
+                      className={
+                        r.matched_via === 'fuzzy_manual'
+                          ? 'bg-amber-50 dark:bg-amber-950/30'
+                          : r.last_manual_edit_at
+                          ? 'bg-orange-50 dark:bg-orange-950/30'
+                          : ''
+                      }
                     >
                       <TableCell className="font-medium">{r.guest_name}</TableCell>
                       <TableCell>{r.loft?.name || '—'}</TableCell>
@@ -292,11 +298,13 @@ export default function ReservationsProvenancePage() {
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className={
-                          r.status === 'cancelled' ? 'border-red-300 text-red-700' :
-                          r.status === 'confirmed' ? 'border-green-300 text-green-700' :
-                          r.status === 'pending' ? 'border-yellow-300 text-yellow-700' : ''
+                          r.status === 'cancelled' ? 'border-red-300 text-red-700 dark:border-red-700 dark:text-red-400' :
+                          r.status === 'confirmed' ? 'border-green-300 text-green-700 dark:border-green-700 dark:text-green-400' :
+                          r.status === 'completed' ? 'border-blue-300 text-blue-700 dark:border-blue-700 dark:text-blue-400' :
+                          r.status === 'pending' ? 'border-yellow-300 text-yellow-700 dark:border-yellow-700 dark:text-yellow-400' :
+                          'border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-400'
                         }>
-                          {t(`status.${r.status}`, { defaultMessage: r.status })}
+                          {t.has(`status.${r.status}`) ? t(`status.${r.status}`) : r.status}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right font-mono text-sm">

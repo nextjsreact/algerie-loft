@@ -4703,5 +4703,66 @@
       "cloneFailed": "Clone failed",
       "operationNotFound": "Operation not found"
     }
+  },
+  "reservationsProvenance": {
+    "title": "Reservation Sources",
+    "subtitle": "All reservations with their source (Airbnb / Manual) and link type",
+    "exportCsv": "Export CSV",
+    "refresh": "Refresh",
+    "exportSuccess": "CSV export downloaded",
+    "stats": {
+      "total": "Total",
+      "airbnb": "Airbnb",
+      "manual": "Manual",
+      "fuzzyLinked": "Linked (fuzzy)",
+      "manuallyEdited": "Manually Edited"
+    },
+    "filters": {
+      "title": "Filters",
+      "search": "Search (name)",
+      "searchPlaceholder": "Guest name...",
+      "source": "Source",
+      "sourceAll": "All",
+      "sourceAirbnb": "Airbnb",
+      "sourceManual": "Manual",
+      "link": "Link",
+      "linkAll": "All",
+      "linkAirbnbId": "airbnb_id (exact)",
+      "linkFuzzy": "fuzzy_manual (linked)",
+      "linkNone": "none (new)",
+      "status": "Status",
+      "statusAll": "All",
+      "statusConfirmed": "Confirmed",
+      "statusPending": "Pending",
+      "statusCancelled": "Cancelled",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "loft": "Loft",
+      "loftAll": "All lofts"
+    },
+    "table": {
+      "title": "Reservations ({count})",
+      "fuzzyNote": "Rows with",
+      "fuzzyNoteEnd": "were automatically linked to a manual entry (system preserved your admin fields)",
+      "guest": "Guest",
+      "loft": "Loft",
+      "dates": "Dates",
+      "nights": "Nights",
+      "source": "Source",
+      "link": "Link",
+      "airbnbId": "Airbnb ID",
+      "status": "Status",
+      "total": "Total",
+      "editedManually": "Manually Edited",
+      "loading": "Loading...",
+      "noResults": "No reservations match these filters",
+      "error": "Error"
+    },
+    "status": {
+      "confirmed": "Confirmed",
+      "pending": "Pending",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    }
   }
 }

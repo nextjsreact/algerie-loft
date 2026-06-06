@@ -42,6 +42,7 @@ export class AirbnbSyncServiceOptimized {
   private static readonly AIRBNB_FIELDS = [
     'base_price', 'cleaning_fee', 'service_fee', 'taxes',
     'total_amount', 'currency_code', 'currency_ratio',
+    'original_currency_code', 'original_amount',
     'status', 'check_in_date', 'check_out_date', 'nights',
     'guest_name', 'guest_count', 'airbnb_confirmation_code',
     'synced_at',

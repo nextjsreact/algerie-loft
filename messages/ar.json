@@ -4547,6 +4547,65 @@
       "operationNotFound": "العملية غير موجودة"
     }
   },
+  "conflicts": {
+    "title": "تعارضات الحجوزات",
+    "subtitle": "اكتشاف تداخل التواريخ في نفس الشقة",
+    "refresh": "تحديث",
+    "stats": {
+      "total": "الإجمالي",
+      "critical": "حرجة",
+      "warnings": "تحذيرات",
+      "resolved": "محلولة (مفلترة)"
+    },
+    "filters": {
+      "title": "الفلاتر",
+      "status": "الحالة",
+      "statusAll": "الكل",
+      "statusOpen": "مفتوحة",
+      "statusAcknowledged": "مُعترف بها",
+      "statusResolved": "محلولة",
+      "statusFalsePositive": "إيجابية كاذبة",
+      "severity": "الخطورة",
+      "severityAll": "الكل",
+      "severityCritical": "حرجة",
+      "severityWarning": "تحذير",
+      "severityInfo": "معلومة",
+      "loft": "الشقة",
+      "loftAll": "الكل"
+    },
+    "table": {
+      "title": "التعارضات ({count})",
+      "description": "انقر على صف لعرض التفاصيل وحل التعارض",
+      "loading": "جاري التحميل...",
+      "noResults": "لا توجد تعارضات بهذه الفلاتر",
+      "error": "خطأ",
+      "unknownLoft": "شقة غير معروفة",
+      "overlapNights": "{nights} ليلة (ليالٍ) مشتركة",
+      "reservation1": "الحجز 1",
+      "reservation2": "الحجز 2",
+      "missingData": "بيانات مفقودة",
+      "note": "ملاحظة",
+      "airbnbId": "معرف Airbnb",
+      "match": "تطابق",
+      "total": "الإجمالي"
+    },
+    "status": {
+      "open": "مفتوح",
+      "acknowledged": "مُعترف به",
+      "resolved": "محلول",
+      "false_positive": "إيجابي كاذب"
+    },
+    "actions": {
+      "acknowledge": "الاعتراف",
+      "resolve": "حل",
+      "falsePositive": "إيجابي كاذب",
+      "viewLoft": "عرض الشقة",
+      "falsePositivePrompt": "سبب الإيجابي الكاذب:",
+      "resolvedToast": "تم حل التعارض",
+      "acknowledgedToast": "تم الاعتراف بالتعارض",
+      "falsePositiveToast": "تم تصنيف التعارض كإيجابي كاذب"
+    }
+  },
   "reservationsProvenance": {
     "title": "مصدر الحجوزات",
     "subtitle": "جميع الحجوزات مع مصدرها (Airbnb / يدوي) ونوع الربط",

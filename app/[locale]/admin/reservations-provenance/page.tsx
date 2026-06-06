@@ -105,8 +105,8 @@ export default function ReservationsProvenancePage() {
     new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: c || 'DZD', maximumFractionDigits: 0 }).format(a || 0);
 
   const sourceBadge = (s: string) => {
-    if (s === 'airbnb_scraper') return <Badge className="bg-blue-500"><Database className="w-3 h-3 mr-1" />Airbnb</Badge>;
-    if (s === 'manual') return <Badge className="bg-purple-500"><User className="w-3 h-3 mr-1" />Manuel</Badge>;
+    if (s === 'airbnb_scraper') return <Badge className="bg-blue-500 text-white"><Database className="w-3 h-3 mr-1" />Airbnb</Badge>;
+    if (s === 'manual') return <Badge className="bg-purple-500 text-white"><User className="w-3 h-3 mr-1" />Manuel</Badge>;
     return <Badge variant="outline">{s || '—'}</Badge>;
   };
 
@@ -281,9 +281,9 @@ export default function ReservationsProvenancePage() {
                       key={r.id}
                       className={
                         r.matched_via === 'fuzzy_manual'
-                          ? 'bg-amber-50 dark:bg-amber-950/30'
+                          ? 'border-l-4 border-l-amber-500'
                           : r.last_manual_edit_at
-                          ? 'bg-orange-50 dark:bg-orange-950/30'
+                          ? 'border-l-4 border-l-orange-500'
                           : ''
                       }
                     >

@@ -4704,6 +4704,65 @@
       "operationNotFound": "Operation not found"
     }
   },
+  "conflicts": {
+    "title": "Reservation Conflicts",
+    "subtitle": "Detection of date overlaps on the same loft",
+    "refresh": "Refresh",
+    "stats": {
+      "total": "Total",
+      "critical": "Critical",
+      "warnings": "Warnings",
+      "resolved": "Resolved (filtered)"
+    },
+    "filters": {
+      "title": "Filters",
+      "status": "Status",
+      "statusAll": "All",
+      "statusOpen": "Open",
+      "statusAcknowledged": "Acknowledged",
+      "statusResolved": "Resolved",
+      "statusFalsePositive": "False positives",
+      "severity": "Severity",
+      "severityAll": "All",
+      "severityCritical": "Critical",
+      "severityWarning": "Warning",
+      "severityInfo": "Info",
+      "loft": "Loft",
+      "loftAll": "All"
+    },
+    "table": {
+      "title": "Conflicts ({count})",
+      "description": "Click a row to see details and resolve",
+      "loading": "Loading...",
+      "noResults": "No conflicts with these filters",
+      "error": "Error",
+      "unknownLoft": "Unknown loft",
+      "overlapNights": "{nights} night(s) in common",
+      "reservation1": "Reservation 1",
+      "reservation2": "Reservation 2",
+      "missingData": "missing data",
+      "note": "Note",
+      "airbnbId": "Airbnb ID",
+      "match": "Match",
+      "total": "Total"
+    },
+    "status": {
+      "open": "Open",
+      "acknowledged": "Acknowledged",
+      "resolved": "Resolved",
+      "false_positive": "False positive"
+    },
+    "actions": {
+      "acknowledge": "Acknowledge",
+      "resolve": "Resolve",
+      "falsePositive": "False positive",
+      "viewLoft": "View loft",
+      "falsePositivePrompt": "Reason for false positive:",
+      "resolvedToast": "Conflict resolved",
+      "acknowledgedToast": "Conflict acknowledged",
+      "falsePositiveToast": "Conflict marked as false positive"
+    }
+  },
   "reservationsProvenance": {
     "title": "Reservation Sources",
     "subtitle": "All reservations with their source (Airbnb / Manual) and link type",

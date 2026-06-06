@@ -4529,6 +4529,65 @@
       "operationNotFound": "Opération non trouvée"
     }
   },
+  "conflicts": {
+    "title": "Conflits de réservations",
+    "subtitle": "Détection de chevauchements de dates sur un même loft",
+    "refresh": "Actualiser",
+    "stats": {
+      "total": "Total",
+      "critical": "Critiques",
+      "warnings": "Warnings",
+      "resolved": "Résolus (filtré)"
+    },
+    "filters": {
+      "title": "Filtres",
+      "status": "Statut",
+      "statusAll": "Tous",
+      "statusOpen": "Ouverts",
+      "statusAcknowledged": "Acquittés",
+      "statusResolved": "Résolus",
+      "statusFalsePositive": "Faux positifs",
+      "severity": "Sévérité",
+      "severityAll": "Toutes",
+      "severityCritical": "Critique",
+      "severityWarning": "Warning",
+      "severityInfo": "Info",
+      "loft": "Loft",
+      "loftAll": "Tous"
+    },
+    "table": {
+      "title": "Conflits ({count})",
+      "description": "Cliquez sur une ligne pour voir les détails et résoudre",
+      "loading": "Chargement...",
+      "noResults": "Aucun conflit avec ces filtres",
+      "error": "Erreur",
+      "unknownLoft": "Loft inconnu",
+      "overlapNights": "{nights} nuit(s) en commun",
+      "reservation1": "Réservation 1",
+      "reservation2": "Réservation 2",
+      "missingData": "données manquantes",
+      "note": "Note",
+      "airbnbId": "Airbnb ID",
+      "match": "Match",
+      "total": "Total"
+    },
+    "status": {
+      "open": "Ouvert",
+      "acknowledged": "Acquitté",
+      "resolved": "Résolu",
+      "false_positive": "Faux positif"
+    },
+    "actions": {
+      "acknowledge": "Acquitter",
+      "resolve": "Résoudre",
+      "falsePositive": "Faux positif",
+      "viewLoft": "Voir le loft",
+      "falsePositivePrompt": "Raison du faux positif :",
+      "resolvedToast": "Conflit résolu",
+      "acknowledgedToast": "Conflit acquitté",
+      "falsePositiveToast": "Conflit marqué faux positif"
+    }
+  },
   "reservationsProvenance": {
     "title": "Provenance des réservations",
     "subtitle": "Toutes les réservations avec leur source (Airbnb / Manuel) et le type de liaison",

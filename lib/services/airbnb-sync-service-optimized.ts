@@ -720,6 +720,9 @@ export class AirbnbSyncServiceOptimized {
       airbnb_confirmation_code: parsed.airbnb_id,
       source: 'airbnb_scraper',
       synced_at: new Date().toISOString(),
+      // === Champs NOT NULL (toujours envoyés, défaut = '' pour eviter violation) ===
+      guest_email: parsed.guest_email || '',
+      guest_nationality: parsed.guest_nationality || '',
       // Tracking du type de lien
       matched_via: matchType,
     };
@@ -750,13 +753,13 @@ export class AirbnbSyncServiceOptimized {
       } else {
         payload.guest_phone = existing.guest_phone || null;
       }
-      // guest_email : idem
+      // guest_email : idem (NOT NULL → '' si vide, jamais null)
       if (!lockedFields.includes('guest_email')) {
         payload.guest_email = (existing.guest_email && existing.guest_email.trim())
           || (parsed.guest_email && parsed.guest_email.trim())
-          || null;
+          || '';
       } else {
-        payload.guest_email = existing.guest_email || null;
+        payload.guest_email = existing.guest_email || '';
       }
       // Champs admin toujours preserves
       if (!lockedFields.includes('payment_status')) {
@@ -777,7 +780,7 @@ export class AirbnbSyncServiceOptimized {
       // Nouvelle resa : utiliser directement les valeurs Airbnb
       payload.special_requests = parsed.special_requests || null;
       payload.guest_phone = (parsed.guest_phone && parsed.guest_phone !== 'N/A') ? parsed.guest_phone : null;
-      payload.guest_email = parsed.guest_email || null;
+      payload.guest_email = parsed.guest_email || '';  // NOT NULL → '' si vide
       payload.payment_status = 'pending';
     }
 

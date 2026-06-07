@@ -10,12 +10,21 @@ const STATUS_MAP: Record<string, AirbnbReservationStatus> = {
   'Confirmee': 'confirmed',  // Sans accent
   'Confirme': 'confirmed',   // Sans accent
   'Confirmed': 'confirmed',
+  'Acceptée': 'confirmed',   // Airbnb peut utiliser "Acceptée"
+  'Accepte': 'confirmed',
+  'Accepted': 'confirmed',
+  'Réservée': 'confirmed',   // Airbnb peut utiliser "Réservée"
+  'Reservee': 'confirmed',
+  'Reserved': 'confirmed',
+  'Booked': 'confirmed',
   
   // Statuts en attente
   'En attente': 'pending',
   'Pending': 'pending',
   'En cours': 'pending',
   'Awaiting': 'pending',
+  'Demande': 'pending',      // Demande de réservation non confirmée
+  'Request': 'pending',
   
   // Statuts annulés (avec et sans accents)
   'Annulée': 'cancelled',
@@ -32,6 +41,9 @@ const STATUS_MAP: Record<string, AirbnbReservationStatus> = {
   'Termine': 'completed',    // Sans accent
   'Completed': 'completed',
   'Finished': 'completed',
+  'Passée': 'completed',     // Réservation passée
+  'Passee': 'completed',
+  'Past': 'completed',
 };
 
 /**
@@ -44,7 +56,7 @@ const STATUS_MAP: Record<string, AirbnbReservationStatus> = {
  * translateAirbnbStatus("Confirmée") // "confirmed"
  * translateAirbnbStatus("En attente") // "pending"
  * translateAirbnbStatus("Annulée") // "cancelled"
- * translateAirbnbStatus("Inconnu") // "pending" (valeur par défaut)
+ * translateAirbnbStatus("Inconnu") // "confirmed" (valeur par défaut pour Airbnb car les réservations scrapées sont normalement confirmées)
  */
 export function translateAirbnbStatus(frenchStatus: string): AirbnbReservationStatus {
   // Normaliser le statut (trim + première lettre en majuscule)
@@ -57,10 +69,12 @@ export function translateAirbnbStatus(frenchStatus: string): AirbnbReservationSt
     return englishStatus;
   }
   
-  // Si statut inconnu, logger et retourner "pending" par défaut
-  console.warn(`[Airbnb Status Translator] Unknown status: "${frenchStatus}". Defaulting to "pending".`);
+  // Si statut inconnu, logger et retourner "confirmed" par défaut
+  // Note: Pour Airbnb, les réservations scrapées sont normalement déjà confirmées
+  // Si elles sont en attente ou annulées, Airbnb utilise des statuts spécifiques
+  console.warn(`[Airbnb Status Translator] Unknown status: "${frenchStatus}". Defaulting to "confirmed" (Airbnb reservations are typically confirmed).`);
   
-  return 'pending';
+  return 'confirmed';
 }
 
 /**

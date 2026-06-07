@@ -42,8 +42,8 @@ export interface AirbnbReservationInput {
   date_arrivee: string;          // ISO 8601 (ex: "2026-05-20")
   date_depart: string;           // ISO 8601 (ex: "2026-05-25")
   nb_nuits: number;              // Nombre de nuits
-  montant_total: number;         // Montant total
-  devise: string;                // Code devise (ex: "DZD", "EUR")
+  montant_total: number;         // Montant total (converti en DZD par le scraper)
+  devise: string;                // Code devise finale (ex: "DZD" après conversion)
   base_price?: number;           // Prix de base (optionnel)
   cleaning_fee?: number;         // Frais de ménage (optionnel)
   service_fee?: number;          // Frais de service (optionnel)
@@ -52,6 +52,9 @@ export interface AirbnbReservationInput {
   guest_phone?: string;          // Téléphone du voyageur (optionnel)
   guest_nationality?: string;    // Nationalité (code pays, ex: "FR")
   special_requests?: string;     // Demandes spéciales (optionnel)
+  currency_ratio?: number;       // Taux de conversion (ex: 270 pour GBP→DZD)
+  original_amount?: number;      // Montant dans la devise source avant conversion (ex: 314.28)
+  original_currency_code?: string; // Devise source avant conversion (ex: "GBP")
 }
 
 /**
@@ -93,6 +96,9 @@ export interface AirbnbReservationParsed {
   guest_phone?: string;
   guest_nationality?: string;
   special_requests?: string;
+  currency_ratio?: number;
+  original_amount?: number;
+  original_currency_code?: string;
 }
 
 /**

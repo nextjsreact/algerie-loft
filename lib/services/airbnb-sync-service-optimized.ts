@@ -617,6 +617,9 @@ export class AirbnbSyncServiceOptimized {
       taxes: input.taxes || 0,
       total_amount: input.montant_total,
       currency_code: input.devise,
+      currency_ratio: input.currency_ratio,
+      original_amount: input.original_amount,
+      original_currency_code: input.original_currency_code,
       status: translateAirbnbStatus(input.statut),
       guest_email: input.guest_email || undefined,
       guest_phone: input.guest_phone || undefined,
@@ -742,11 +745,14 @@ export class AirbnbSyncServiceOptimized {
       source: 'airbnb_scraper',
       synced_at: new Date().toISOString(),
       // === Devise originale (tracabilite avant conversion en DA) ===
-      // Si la devise Airbnb n'est pas DZD, on preserve la devise source
-      original_currency_code: (parsed.currency_code && parsed.currency_code !== 'DZD')
-        ? parsed.currency_code : null,
-      original_amount: (parsed.currency_code && parsed.currency_code !== 'DZD')
-        ? parsed.total_amount : null,
+      // Priorité: valeur passée par le scraper (parsed.original_*) > re-à partir de currency_code
+      original_currency_code: parsed.original_currency_code
+        || ((parsed.currency_code && parsed.currency_code !== 'DZD')
+          ? parsed.currency_code : null),
+      original_amount: parsed.original_amount
+        || ((parsed.currency_code && parsed.currency_code !== 'DZD')
+          ? parsed.total_amount : null),
+      currency_ratio: parsed.currency_ratio || null,
       // === Champs NOT NULL (toujours envoyés, défaut = '' pour eviter violation) ===
       guest_email: parsed.guest_email || '',
       guest_nationality: parsed.guest_nationality || '',

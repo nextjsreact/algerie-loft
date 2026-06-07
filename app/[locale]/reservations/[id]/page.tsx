@@ -196,6 +196,42 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
                     </p>
                   )}
                 </div>
+
+                {/* Prix par nuit */}
+                {reservation.price_per_night_input && (
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">{t("pricePerNight") || "Prix / nuit"}</label>
+                    <p className="text-lg">
+                      {moneyFormatter(reservation.currency_code).format(reservation.price_per_night_input)}
+                    </p>
+                  </div>
+                )}
+
+                {/* Taux de change */}
+                {reservation.currency_ratio && reservation.currency_code && reservation.currency_code !== 'DZD' && (
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">{t("exchangeRate") || "Taux de change"}</label>
+                    <p className="text-base">
+                      1 {reservation.currency_code} = {reservation.currency_ratio.toLocaleString('fr-DZ')} DZD
+                    </p>
+                  </div>
+                )}
+
+                {/* Devise originale (réservations Airbnb avec devise étrangère) */}
+                {reservation.original_currency_code && reservation.original_currency_code !== 'DZD' && !reservation.currency_ratio && (
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">{t("originalCurrency") || "Devise originale"}</label>
+                    <p className="text-base font-medium">
+                      {reservation.original_currency_code}
+                      {reservation.original_amount && (
+                        <span className="text-muted-foreground ml-2">
+                          ({moneyFormatter(reservation.original_currency_code).format(reservation.original_amount)})
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                )}
+
                 {reservation.deposit_amount && (
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">{t("deposit")}</label>

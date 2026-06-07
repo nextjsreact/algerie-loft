@@ -2153,6 +2153,9 @@
       "reservationFor": "Reservation for {name}",
       "reservationTab": "Reservation Details",
       "totalAmount": "Total Amount",
+      "pricePerNight": "Price / night",
+      "exchangeRate": "Exchange rate",
+      "originalCurrency": "Original currency",
       "unknownLoft": "Unknown Loft",
       "viewLoftDetails": "View Loft Details"
     },

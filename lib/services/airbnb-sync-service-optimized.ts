@@ -741,6 +741,12 @@ export class AirbnbSyncServiceOptimized {
       airbnb_confirmation_code: parsed.airbnb_id,
       source: 'airbnb_scraper',
       synced_at: new Date().toISOString(),
+      // === Devise originale (tracabilite avant conversion en DA) ===
+      // Si la devise Airbnb n'est pas DZD, on preserve la devise source
+      original_currency_code: (parsed.currency_code && parsed.currency_code !== 'DZD')
+        ? parsed.currency_code : null,
+      original_amount: (parsed.currency_code && parsed.currency_code !== 'DZD')
+        ? parsed.total_amount : null,
       // === Champs NOT NULL (toujours envoyés, défaut = '' pour eviter violation) ===
       guest_email: parsed.guest_email || '',
       guest_nationality: parsed.guest_nationality || '',

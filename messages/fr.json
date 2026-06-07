@@ -2168,6 +2168,9 @@
       "reservationFor": "Réservation pour {name}",
       "reservationTab": "Détails de la réservation",
       "totalAmount": "Montant total",
+      "pricePerNight": "Prix / nuit",
+      "exchangeRate": "Taux de change",
+      "originalCurrency": "Devise originale",
       "unknownLoft": "Appartement inconnu",
       "viewLoftDetails": "Voir les détails de l'appartement"
     },

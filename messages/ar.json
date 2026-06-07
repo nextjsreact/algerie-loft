@@ -2166,6 +2166,9 @@
       "reservationFor": "حجز باسم {name}",
       "reservationTab": "تفاصيل الحجز",
       "totalAmount": "المبلغ الإجمالي",
+      "pricePerNight": "السعر / الليلة",
+      "exchangeRate": "سعر الصرف",
+      "originalCurrency": "العملة الأصلية",
       "unknownLoft": "شقة غير معروفة",
       "viewLoftDetails": "عرض تفاصيل الشقة"
     },

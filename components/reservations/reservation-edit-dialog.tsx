@@ -112,11 +112,37 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
 
     const ratio = origRatio || 1
     const isDefault = origCode === 'DZD' || origCode === ''
+
+    const rsvNights = reservation.check_in_date && reservation.check_out_date
+      ? Math.ceil(
+          (new Date(reservation.check_out_date).getTime() -
+           new Date(reservation.check_in_date).getTime()) /
+            (1000 * 60 * 60 * 24)
+        )
+      : 0
+
+    const dbTotal = reservation.total_amount || 0
+    const hasBreakdown =
+      (reservation.base_price || 0) > 0 ||
+      (reservation.cleaning_fee || 0) > 0 ||
+      (reservation.service_fee || 0) > 0 ||
+      (reservation.taxes || 0) > 0
+
+    const showTotalAsBase = isDefault && !hasBreakdown && dbTotal > 0
+
     if (isDefault) {
-      setBasePrice(String(reservation.base_price ?? 0))
+      if (showTotalAsBase) {
+        setBasePrice(String(Math.round(dbTotal * 100) / 100))
+      } else {
+        setBasePrice(String(reservation.base_price ?? 0))
+      }
       setCleaningFee(String(reservation.cleaning_fee ?? 0))
       setServiceFee(String(reservation.service_fee ?? 0))
       setTaxes(String(reservation.taxes ?? 0))
+
+      if (showTotalAsBase && rsvNights > 0) {
+        setPricePerNight(String(Math.round((dbTotal / rsvNights) * 100) / 100))
+      }
     } else {
       setBasePrice(String(reservation.base_price ? Math.round((reservation.base_price / ratio) * 100) / 100 : 0))
       setCleaningFee(String(reservation.cleaning_fee ? Math.round((reservation.cleaning_fee / ratio) * 100) / 100 : 0))

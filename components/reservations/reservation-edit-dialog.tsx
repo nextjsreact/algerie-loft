@@ -354,7 +354,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
             {/* Header: label + currency selector */}
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-gray-700">{t('edit.pricing')}</p>
-              {currencies.length > 1 && (
+              {(currencies.length > 1 || selectedCurrencyCode !== 'DZD') && (
                 <Select value={selectedCurrencyCode} onValueChange={(code) => {
                   setSelectedCurrencyCode(code)
                   const cur = currencies.find(c => c.code === code)
@@ -364,11 +364,17 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {currencies.map(c => (
-                      <SelectItem key={c.code} value={c.code} className="text-xs">
-                        {c.symbol} {c.code}
+                    {currencies.length > 0 ? (
+                      currencies.map(c => (
+                        <SelectItem key={c.code} value={c.code} className="text-xs">
+                          {c.symbol} {c.code}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value={selectedCurrencyCode} className="text-xs">
+                        {selectedCurrencyCode}
                       </SelectItem>
-                    ))}
+                    )}
                   </SelectContent>
                 </Select>
               )}

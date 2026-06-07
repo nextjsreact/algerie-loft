@@ -69,6 +69,22 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
       currency: currency || 'DZD'
     })
 
+  // Calculer le currency_ratio pour les réservations Airbnb si nécessaire
+  const effectiveCurrencyCode = reservation.currency_code || 'DZD'
+  let effectiveCurrencyRatio = reservation.currency_ratio || 1
+  
+  // Si c'est une réservation Airbnb avec devise étrangère mais sans currency_ratio
+  // Calculer le ratio : total_amount_dzd / original_amount = ratio
+  if (effectiveCurrencyCode !== 'DZD' && effectiveCurrencyRatio === 1 && reservation.original_amount && reservation.total_amount) {
+    effectiveCurrencyRatio = reservation.total_amount / reservation.original_amount
+  }
+  
+  // Calculer le prix par nuit dans la devise originale si nécessaire
+  const nights = Math.ceil((new Date(reservation.check_out_date).getTime() - new Date(reservation.check_in_date).getTime()) / (1000 * 60 * 60 * 24))
+  const effectivePricePerNight = reservation.price_per_night_input 
+    ? reservation.price_per_night_input 
+    : (reservation.original_amount && nights > 0 ? reservation.original_amount / nights : null)
+
   return (
     <div className="space-y-6">
       <Card>
@@ -185,58 +201,76 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                {/* Montant total dans la devise d'affichage */}
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t("totalAmount")}</label>
                   <p className="text-2xl font-bold text-green-600">
-                    {moneyFormatter(reservation.currency_code).format(reservation.total_amount || 0)}
+                    {effectiveCurrencyCode !== 'DZD' && reservation.original_amount
+                      ? moneyFormatter(effectiveCurrencyCode).format(reservation.original_amount)
+                      : moneyFormatter('DZD').format(reservation.total_amount || 0)
+                    }
                   </p>
-                  {reservation.original_amount && reservation.original_currency_code && reservation.original_currency_code !== 'DZD' && (
+                  {/* Montant converti en DZD si devise étrangère */}
+                  {effectiveCurrencyCode !== 'DZD' && reservation.total_amount && (
                     <p className="text-sm text-muted-foreground mt-1">
-                      ≈ {moneyFormatter(reservation.original_currency_code).format(reservation.original_amount)}
+                      ≈ {moneyFormatter('DZD').format(reservation.total_amount)}
                     </p>
                   )}
                 </div>
 
                 {/* Prix par nuit */}
-                {reservation.price_per_night_input && (
+                {effectivePricePerNight && (
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">{t("pricePerNight") || "Prix / nuit"}</label>
-                    <p className="text-lg">
-                      {moneyFormatter(reservation.currency_code).format(reservation.price_per_night_input)}
+                    <p className="text-lg font-medium">
+                      {moneyFormatter(effectiveCurrencyCode).format(effectivePricePerNight)}
                     </p>
+                    {effectiveCurrencyCode !== 'DZD' && effectiveCurrencyRatio > 1 && (
+                      <p className="text-sm text-muted-foreground">
+                        ≈ {moneyFormatter('DZD').format(effectivePricePerNight * effectiveCurrencyRatio)} / nuit
+                      </p>
+                    )}
                   </div>
                 )}
 
-                {/* Taux de change */}
-                {reservation.currency_ratio && reservation.currency_code && reservation.currency_code !== 'DZD' && (
-                  <div>
+                {/* Nombre de nuits */}
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">{t("nights") || "Nuits"}</label>
+                  <p className="text-lg">
+                    {nights} {nights > 1 ? 'nuits' : 'nuit'}
+                  </p>
+                </div>
+
+                {/* Taux de change - Affiché pour toutes les devises étrangères */}
+                {effectiveCurrencyCode !== 'DZD' && effectiveCurrencyRatio > 1 && (
+                  <div className="border-t pt-4">
                     <label className="text-sm font-medium text-muted-foreground">{t("exchangeRate") || "Taux de change"}</label>
-                    <p className="text-base">
-                      1 {reservation.currency_code} = {reservation.currency_ratio.toLocaleString('fr-DZ')} DZD
+                    <p className="text-base font-medium">
+                      1 {effectiveCurrencyCode} = {effectiveCurrencyRatio.toLocaleString('fr-DZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DZD
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {reservation.currency_ratio 
+                        ? "Taux configuré lors de la saisie" 
+                        : "Taux calculé depuis les montants Airbnb"
+                      }
                     </p>
                   </div>
                 )}
 
-                {/* Devise originale (réservations Airbnb avec devise étrangère) */}
-                {reservation.original_currency_code && reservation.original_currency_code !== 'DZD' && !reservation.currency_ratio && (
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">{t("originalCurrency") || "Devise originale"}</label>
-                    <p className="text-base font-medium">
-                      {reservation.original_currency_code}
-                      {reservation.original_amount && (
-                        <span className="text-muted-foreground ml-2">
-                          ({moneyFormatter(reservation.original_currency_code).format(reservation.original_amount)})
-                        </span>
-                      )}
-                    </p>
+                {/* Badge de source */}
+                {reservation.source === 'airbnb_scraper' && (
+                  <div className="border-t pt-4">
+                    <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                      📱 Synchronisé depuis Airbnb
+                    </Badge>
                   </div>
                 )}
 
                 {reservation.deposit_amount && (
-                  <div>
+                  <div className="border-t pt-4">
                     <label className="text-sm font-medium text-muted-foreground">{t("deposit")}</label>
                     <p className="text-lg">
-                      {moneyFormatter(reservation.currency_code).format(reservation.deposit_amount)}
+                      {moneyFormatter(effectiveCurrencyCode).format(reservation.deposit_amount)}
                     </p>
                   </div>
                 )}

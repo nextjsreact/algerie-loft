@@ -39,6 +39,8 @@ interface ReservationEditDialogProps {
     price_per_night_input?: number
     original_amount?: number
     original_currency_code?: string
+    source?: string
+    airbnb_confirmation_code?: string
     lofts?: { name: string }
   } | null
   open: boolean
@@ -255,17 +257,31 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
   if (!reservation) return null
 
   const sym = selectedCurrency?.symbol || 'DA'
+  const isAirbnbReservation = reservation.source === 'airbnb_scraper' || !!reservation.airbnb_confirmation_code
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-blue-600" />
-            {t('edit.title')}
-          </DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-blue-600" />
+              {t('edit.title')}
+            </DialogTitle>
+            {isAirbnbReservation && (
+              <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-md border border-blue-200">
+                <span>📱</span>
+                <span>Airbnb</span>
+              </div>
+            )}
+          </div>
           <p className="text-sm text-muted-foreground">
             {reservation.guest_name}
+            {reservation.airbnb_confirmation_code && (
+              <span className="ml-2 text-xs text-blue-600">
+                ({reservation.airbnb_confirmation_code})
+              </span>
+            )}
           </p>
         </DialogHeader>
 
@@ -393,6 +409,17 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
                 </Select>
               )}
             </div>
+
+            {/* Info pour réservations Airbnb */}
+            {isAirbnbReservation && selectedCurrencyCode !== 'DZD' && (
+              <div className="flex items-start gap-2 bg-blue-50 border border-blue-200 rounded px-3 py-2">
+                <span className="text-blue-600 text-xs mt-0.5">ℹ️</span>
+                <p className="text-xs text-blue-700">
+                  Prix d'origine Airbnb : <strong>{sym} {parseFloat(pricePerNight || basePrice).toLocaleString()}</strong>
+                  {!reservation.currency_ratio && ' (taux calculé automatiquement)'}
+                </p>
+              </div>
+            )}
 
             {/* Editable exchange rate */}
             {!isDefaultCurrency && (

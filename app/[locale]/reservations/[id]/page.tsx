@@ -190,6 +190,11 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
                   <p className="text-2xl font-bold text-green-600">
                     {moneyFormatter(reservation.currency_code).format(reservation.total_amount || 0)}
                   </p>
+                  {reservation.original_amount && reservation.original_currency_code && reservation.original_currency_code !== 'DZD' && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      ≈ {moneyFormatter(reservation.original_currency_code).format(reservation.original_amount)}
+                    </p>
+                  )}
                 </div>
                 {reservation.deposit_amount && (
                   <div>

@@ -270,6 +270,27 @@ export class AirbnbSyncServiceOptimized {
           }
         }
 
+        // === Couche 2b : overlap match si pas de fuzzy match ===
+        // (loft + DATES EXACTEMENT identiques avec résa manuelle sans airbnb_confirmation_code)
+        // → C'est le cas qui a créé le doublon Camomille (Mohamed Karim vs +34647371387)
+        // → On link l'entrée manuelle avec l'airbnb_confirmation_code au lieu de créer un doublon
+        if (!existing) {
+          for (const manual of this.manualReservations.values()) {
+            if (manual.loft_id !== loftId) continue;
+            if (manual.check_in_date === parsed.check_in_date &&
+                manual.check_out_date === parsed.check_out_date) {
+              existing = manual;
+              matchType = 'fuzzy_manual';  // Même traitement que fuzzy match
+              console.log(
+                `[Airbnb Sync Optimized] OVERLAP MATCH (same loft + exact dates): ${parsed.airbnb_id} ` +
+                `(${parsed.guest_name}, ${parsed.check_in_date}→${parsed.check_out_date}) ` +
+                `→ manual entry ${manual.id} (guest_name was "${manual.guest_name || 'empty'}")`
+              );
+              break;
+            }
+          }
+        }
+
         // === Couche 3+4 : construire le payload selon le type de match ===
         if (matchType === 'airbnb_id' && existing) {
           // UPDATE avec smart update (preserve admin fields)

@@ -47,6 +47,34 @@ export async function DELETE(
       timestamp: new Date().toISOString(),
     })
 
+    // Si c'est une réservation Airbnb, nettoyer les données liées avant suppression
+    // (au cas où les contraintes ON DELETE CASCADE ne sont pas encore appliquées)
+    if (reservation.source === 'airbnb_scraper' || reservation.airbnb_confirmation_code) {
+      // Supprimer les notifications Airbnb liées (si ON DELETE CASCADE pas encore actif)
+      await supabase
+        .from('airbnb_notifications')
+        .delete()
+        .eq('reservation_id', id)
+        .then(() => {}) // Ignore errors - cascade will handle it
+        .catch(() => {})
+
+      // Supprimer les conflits liés (si ON DELETE CASCADE pas encore actif)
+      await supabase
+        .from('airbnb_conflicts')
+        .delete()
+        .or(`reservation_1_id.eq.${id},reservation_2_id.eq.${id}`)
+        .then(() => {}) // Ignore errors - cascade will handle it
+        .catch(() => {})
+
+      // Mettre à NULL la référence dans staging (si ON DELETE SET NULL pas encore actif)
+      await supabase
+        .from('airbnb_reservations_staging')
+        .update({ reservation_id: null })
+        .eq('reservation_id', id)
+        .then(() => {}) // Ignore errors - cascade will handle it
+        .catch(() => {})
+    }
+
     // Delete the reservation
     const { error: deleteErr } = await supabase
       .from('reservations')
@@ -54,7 +82,11 @@ export async function DELETE(
       .eq('id', id)
 
     if (deleteErr) {
-      return NextResponse.json({ error: deleteErr.message }, { status: 500 })
+      console.error('[DELETE reservation] Error:', deleteErr)
+      return NextResponse.json({ 
+        error: 'Erreur lors de la suppression',
+        details: deleteErr.message 
+      }, { status: 500 })
     }
 
     // Free up the blocked dates in loft_availability

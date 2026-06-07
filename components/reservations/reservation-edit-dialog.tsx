@@ -37,6 +37,8 @@ interface ReservationEditDialogProps {
     currency_code?: string
     currency_ratio?: number
     price_per_night_input?: number
+    original_amount?: number
+    original_currency_code?: string
     lofts?: { name: string }
   } | null
   open: boolean
@@ -98,17 +100,19 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
     setSelectedStatus(reservation.status || 'pending')
 
     // Restore original currency if stored
+    // Pour les réservations Airbnb : currency_code existe mais pas toujours currency_ratio
+    // On doit calculer le ratio à partir de original_amount et total_amount
     const origCode = reservation.currency_code || 'DZD'
-    const origRatio = reservation.currency_ratio || 1
+    let origRatio = reservation.currency_ratio || 1
+    
+    // Si c'est une réservation Airbnb avec devise étrangère mais sans currency_ratio
+    // Calculer le ratio : total_amount_dzd / original_amount = ratio
+    if (origCode !== 'DZD' && origRatio === 1 && reservation.original_amount && reservation.total_amount) {
+      origRatio = reservation.total_amount / reservation.original_amount
+    }
+    
     setSelectedCurrencyCode(origCode)
     setCustomRatio(origRatio)
-
-    // If we have a stored per-night price, use it; otherwise derive from base_price / nights
-    if (reservation.price_per_night_input) {
-      setPricePerNight(String(reservation.price_per_night_input))
-    } else {
-      setPricePerNight('')
-    }
 
     const ratio = origRatio || 1
     const isDefault = origCode === 'DZD' || origCode === ''
@@ -120,6 +124,16 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
             (1000 * 60 * 60 * 24)
         )
       : 0
+
+    // If we have a stored per-night price, use it; otherwise derive from original_amount or base_price
+    if (reservation.price_per_night_input) {
+      setPricePerNight(String(reservation.price_per_night_input))
+    } else if (!isDefault && reservation.original_amount && rsvNights > 0) {
+      // Pour les réservations Airbnb sans price_per_night_input, calculer depuis original_amount
+      setPricePerNight(String(Math.round((reservation.original_amount / rsvNights) * 100) / 100))
+    } else {
+      setPricePerNight('')
+    }
 
     const dbTotal = reservation.total_amount || 0
     const hasBreakdown =

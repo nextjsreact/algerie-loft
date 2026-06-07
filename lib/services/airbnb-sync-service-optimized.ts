@@ -727,6 +727,35 @@ export class AirbnbSyncServiceOptimized {
   ): Record<string, any> {
     const lockedFields = existing?.admin_locked_fields || [];
 
+    // === Devise originale : logique améliorée ===
+    // Si le scraper envoie currency_code = 'DZD' mais que les données originales sont présentes,
+    // on les utilise. Sinon, on utilise currency_code comme fallback.
+    let finalOriginalCurrencyCode = parsed.original_currency_code;
+    let finalOriginalAmount = parsed.original_amount;
+    let finalCurrencyRatio = parsed.currency_ratio;
+
+    // Si original_currency_code est fourni, on l'utilise
+    if (parsed.original_currency_code && parsed.original_amount) {
+      finalOriginalCurrencyCode = parsed.original_currency_code;
+      finalOriginalAmount = parsed.original_amount;
+      // Calculer currency_ratio si non fourni
+      if (!finalCurrencyRatio && finalOriginalAmount > 0) {
+        finalCurrencyRatio = parsed.total_amount / finalOriginalAmount;
+      }
+    } 
+    // Sinon, si currency_code n'est pas DZD, utiliser currency_code comme fallback
+    else if (parsed.currency_code && parsed.currency_code !== 'DZD') {
+      finalOriginalCurrencyCode = parsed.currency_code;
+      finalOriginalAmount = parsed.total_amount;
+      finalCurrencyRatio = parsed.currency_ratio || 1;
+    }
+    // Sinon (currency_code = 'DZD' et pas de données originales), laisser NULL
+    else {
+      finalOriginalCurrencyCode = null;
+      finalOriginalAmount = null;
+      finalCurrencyRatio = null;
+    }
+
     const payload: Record<string, any> = {
       // === Champs Airbnb (toujours ecrases) ===
       loft_id: loftId,
@@ -745,14 +774,9 @@ export class AirbnbSyncServiceOptimized {
       source: 'airbnb_scraper',
       synced_at: new Date().toISOString(),
       // === Devise originale (tracabilite avant conversion en DA) ===
-      // Priorité: valeur passée par le scraper (parsed.original_*) > re-à partir de currency_code
-      original_currency_code: parsed.original_currency_code
-        || ((parsed.currency_code && parsed.currency_code !== 'DZD')
-          ? parsed.currency_code : null),
-      original_amount: parsed.original_amount
-        || ((parsed.currency_code && parsed.currency_code !== 'DZD')
-          ? parsed.total_amount : null),
-      currency_ratio: parsed.currency_ratio || null,
+      original_currency_code: finalOriginalCurrencyCode,
+      original_amount: finalOriginalAmount,
+      currency_ratio: finalCurrencyRatio,
       // === Champs NOT NULL (toujours envoyés, défaut = '' pour eviter violation) ===
       guest_email: parsed.guest_email || '',
       guest_nationality: parsed.guest_nationality || '',

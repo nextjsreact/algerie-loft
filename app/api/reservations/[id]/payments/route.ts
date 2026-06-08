@@ -17,15 +17,23 @@ export async function GET(
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-    // Also get reservation total
+    // Also get reservation total and payment status
     const { data: reservation } = await supabase
       .from('reservations')
-      .select('total_amount, guest_name, check_in_date, check_out_date')
+      .select('total_amount, guest_name, check_in_date, check_out_date, payment_status, source')
       .eq('id', id)
       .single()
 
-    const totalPaid = (data || []).reduce((s, p) => s + Number(p.amount), 0)
+    const paymentsSum = (data || []).reduce((s, p) => s + Number(p.amount), 0)
     const totalDue = Number(reservation?.total_amount || 0)
+    
+    // Pour les réservations Airbnb avec payment_status='paid', 
+    // considérer le montant total comme payé même sans enregistrement de paiement
+    const isAirbnbPaid = reservation?.source === 'airbnb_scraper' && reservation?.payment_status === 'paid'
+    const totalPaid = isAirbnbPaid && paymentsSum === 0 
+      ? totalDue  // Airbnb confirmée sans paiements enregistrés → considérer comme payé
+      : paymentsSum
+    
     const balance = totalDue - totalPaid
 
     return NextResponse.json({

@@ -70,7 +70,8 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
     })
 
   // Calculer le currency_ratio pour les réservations Airbnb si nécessaire
-  const effectiveCurrencyCode = reservation.currency_code || 'DZD'
+  // IMPORTANT: Utiliser original_currency_code en priorité pour l'affichage
+  const effectiveCurrencyCode = reservation.original_currency_code || reservation.currency_code || 'DZD'
   let effectiveCurrencyRatio = reservation.currency_ratio || 1
   
   // Si c'est une réservation Airbnb avec devise étrangère mais sans currency_ratio

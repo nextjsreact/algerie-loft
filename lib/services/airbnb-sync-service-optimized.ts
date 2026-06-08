@@ -382,6 +382,15 @@ export class AirbnbSyncServiceOptimized {
         this.metrics.affected = this.metrics.affected.map(a =>
           a.action === 'created' ? { ...a, action: 'failed' as const, error: createError.message } : a
         );
+        
+        // 🔧 FIX: Enregistrer les erreurs d'insertion batch dans this.errors
+        // Les 19 réservations manquantes étaient dues à ce bug
+        toCreate.forEach(item => {
+          this.errors.push({
+            reservation_id: item.staging.airbnb_id,
+            error: `Bulk insert failed: ${createError.message}`,
+          });
+        });
       } else if (createdReservations) {
         createdReservationIds.push(...createdReservations);
         // Patch les affected[].id pour les created (qui étaient vides)
@@ -428,6 +437,14 @@ export class AirbnbSyncServiceOptimized {
         this.metrics.affected = this.metrics.affected.map(a =>
           (a.action === 'updated' || a.action === 'linked') ? { ...a, action: 'failed' as const, error: updateError.message } : a
         );
+        
+        // 🔧 FIX: Enregistrer les erreurs de mise à jour batch dans this.errors
+        toUpdate.forEach(item => {
+          this.errors.push({
+            reservation_id: item.staging.airbnb_id,
+            error: `Bulk update failed: ${updateError.message}`,
+          });
+        });
       } else if (updatedReservations) {
         // Notifications : un type special pour les "linked" (fuzzy match)
         // → on envoie 'updated' avec metadata.matched_via='fuzzy_manual' pour

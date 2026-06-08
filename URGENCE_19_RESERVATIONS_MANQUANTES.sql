@@ -92,23 +92,23 @@ ORDER BY nb_manquantes DESC;
 -- 1e. Calcul du montant total manquant
 SELECT 
   COUNT(*) as total_reservations_manquantes,
-  SUM((s.raw_data->>'montant_total')::numeric) as montant_total_manquant_brut,
-  s.raw_data->>'devise' as devise,
-  CASE 
-    WHEN s.raw_data->>'devise' = 'DZD' THEN SUM((s.raw_data->>'montant_total')::numeric)
-    WHEN s.raw_data->>'devise' IS NOT NULL THEN 
-      SUM((s.raw_data->>'montant_total')::numeric) * 
-      COALESCE((s.raw_data->>'currency_ratio')::numeric, 270)
-    ELSE SUM((s.raw_data->>'montant_total')::numeric)
-  END as montant_total_manquant_dzd
+  SUM(
+    CASE 
+      WHEN (s.raw_data->>'devise') = 'DZD' 
+      THEN (s.raw_data->>'montant_total')::numeric
+      WHEN (s.raw_data->>'devise') IS NOT NULL 
+      THEN (s.raw_data->>'montant_total')::numeric * COALESCE((s.raw_data->>'currency_ratio')::numeric, 270)
+      ELSE (s.raw_data->>'montant_total')::numeric
+    END
+  ) as montant_total_manquant_dzd,
+  STRING_AGG(DISTINCT s.raw_data->>'devise', ', ') as devises_presentes
 FROM airbnb_reservations_staging s
 WHERE s.validation_status = 'valid'
   AND s.mapping_status = 'mapped'
   AND NOT EXISTS (
     SELECT 1 FROM reservations r 
     WHERE r.airbnb_confirmation_code = s.airbnb_id
-  )
-GROUP BY s.raw_data->>'devise';
+  );
 
 -- ================================================================
 -- ÉTAPE 2: RÉCUPÉRATION MASSIVE - Insérer les 19 réservations

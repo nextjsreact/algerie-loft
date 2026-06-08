@@ -820,7 +820,15 @@ export class AirbnbSyncServiceOptimized {
       }
       // Champs admin toujours preserves
       if (!lockedFields.includes('payment_status')) {
-        payload.payment_status = existing.payment_status || 'pending';
+        // Pour les réservations Airbnb confirmées, le paiement est géré par Airbnb → 'paid'
+        // Sauf si l'admin a déjà modifié manuellement le statut
+        if (existing.payment_status && existing.payment_status !== 'pending') {
+          // L'admin a modifié manuellement, on garde sa valeur
+          payload.payment_status = existing.payment_status;
+        } else {
+          // Statut automatique basé sur le statut de la réservation
+          payload.payment_status = parsed.status === 'confirmed' ? 'paid' : 'pending';
+        }
       } else {
         payload.payment_status = existing.payment_status;
       }
@@ -838,7 +846,8 @@ export class AirbnbSyncServiceOptimized {
       payload.special_requests = parsed.special_requests || null;
       payload.guest_phone = (parsed.guest_phone && parsed.guest_phone !== 'N/A') ? parsed.guest_phone : null;
       payload.guest_email = parsed.guest_email || '';  // NOT NULL → '' si vide
-      payload.payment_status = 'pending';
+      // Pour les nouvelles réservations Airbnb : 'paid' si confirmée, 'pending' sinon
+      payload.payment_status = parsed.status === 'confirmed' ? 'paid' : 'pending';
     }
 
     return payload;

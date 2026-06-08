@@ -36,11 +36,23 @@ const totalPaid = isAirbnbPaid && paymentsSum === 0
 - ✅ Aucun paiement enregistré dans `reservation_payments`
 - → **Considérer le montant total comme payé**
 
-### Solution 2 : Script SQL pour mettre à jour payment_status
+### Solution 2 : Scripts SQL pour cohérence complète
 
-**Fichier** : `fix-airbnb-confirmed-payment-now.sql`
+**2 scripts créés** :
 
-Ce script met à jour `payment_status = 'paid'` pour toutes les réservations Airbnb confirmées.
+1. **`fix-airbnb-confirmed-payment-now.sql`** (Simple)
+   - Met à jour `payment_status = 'paid'` uniquement
+   - Rapide mais pas de traçabilité dans `reservation_payments`
+
+2. **`fix-airbnb-create-payments.sql`** (Complet - RECOMMANDÉ ⭐)
+   - Met à jour `payment_status = 'paid'`
+   - **ET** crée des enregistrements dans `reservation_payments`
+   - Traçabilité complète + cohérence des données
+   - Les paiements créés auront :
+     - `payment_method = 'airbnb'`
+     - `transaction_id = airbnb_confirmation_code`
+     - `processor_response = 'Paiement automatique via Airbnb'`
+     - Montants en devises originales préservés
 
 ---
 
@@ -71,26 +83,28 @@ Reste : 0 DA
 
 ## 🚀 Actions à Faire
 
-### Action 1 : Exécuter le script SQL ⭐ PRIORITÉ
+### Action 1 : Exécuter le script SQL COMPLET ⭐ PRIORITÉ
 
-**Fichier** : `fix-airbnb-confirmed-payment-now.sql`
+**Fichier recommandé** : `fix-airbnb-create-payments.sql`
+
+Ce script fait TOUT :
+1. Met à jour `payment_status = 'paid'` dans `reservations`
+2. Crée des enregistrements dans `reservation_payments` pour traçabilité
 
 ```sql
--- 1. Voir combien de réservations sont concernées
-SELECT COUNT(*) FROM reservations
-WHERE source = 'airbnb_scraper'
-  AND status = 'confirmed'
-  AND payment_status != 'paid';
+-- ÉTAPE 1 : Voir combien de réservations
+SELECT ... 
 
--- 2. Décommenter et exécuter l'UPDATE
-UPDATE reservations
-SET payment_status = 'paid', updated_at = NOW()
-WHERE source = 'airbnb_scraper'
-  AND status = 'confirmed'
-  AND payment_status != 'paid';
+-- ÉTAPE 2 : Décommenter et exécuter UPDATE payment_status
+
+-- ÉTAPE 3 : Décommenter et exécuter INSERT INTO reservation_payments
+
+-- ÉTAPE 4 : Vérifier les paiements créés
 ```
 
-**Temps** : 30 secondes
+**Temps** : 2 minutes
+
+**Alternative simple** : `fix-airbnb-confirmed-payment-now.sql` (met seulement à jour payment_status, pas de création de paiements)
 
 ---
 

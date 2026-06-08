@@ -44,6 +44,45 @@ const STATUS_MAP: Record<string, AirbnbReservationStatus> = {
   'Passée': 'completed',     // Réservation passée
   'Passee': 'completed',
   'Past': 'completed',
+  
+  // ═══════════════════════════════════════════════════════════════════
+  // NOUVEAUX STATUTS AIRBNB DÉTECTÉS (2026-06-08)
+  // Ces statuts ont été trouvés dans airbnb_reservations_staging
+  // ═══════════════════════════════════════════════════════════════════
+  
+  // Séjour en cours - Le client est actuellement dans le loft
+  'Séjour en cours': 'confirmed',
+  'Sejour en cours': 'confirmed',        // Sans accent
+  'Stay in progress': 'confirmed',
+  'Currently hosting': 'confirmed',
+  
+  // Départ aujourd'hui - Le client part aujourd'hui
+  'Départ aujourd\'hui': 'confirmed',
+  'Depart aujourd\'hui': 'confirmed',    // Sans accent
+  'Checkout today': 'confirmed',
+  'Checking out today': 'confirmed',
+  
+  // Séjours terminés - En attente d'avis client/hôte
+  'En attente de commentaire du voyageur': 'completed',
+  'Laissez un commentaire sur le voyageur': 'completed',
+  'Leave a review': 'completed',
+  'Awaiting review': 'completed',
+  'Write a review': 'completed',
+  'Review pending': 'completed',
+  
+  // Anciens voyageurs - Séjours terminés il y a longtemps
+  'Ancien voyageur': 'completed',
+  'Past guest': 'completed',
+  'Previous guest': 'completed',
+  
+  // Arrivées imminentes (pour future compatibilité)
+  'Arrivée aujourd\'hui': 'confirmed',
+  'Arrivée demain': 'confirmed',
+  'Arrivee aujourd\'hui': 'confirmed',   // Sans accent
+  'Arrivee demain': 'confirmed',         // Sans accent
+  'Arriving today': 'confirmed',
+  'Arriving tomorrow': 'confirmed',
+  'Check-in today': 'confirmed',
 };
 
 /**

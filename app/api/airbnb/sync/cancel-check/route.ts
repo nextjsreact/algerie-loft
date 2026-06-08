@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'listing_id requis' }, { status: 400 });
     }
 
-    const supabase = await createClient();
+    const supabase = await createClient(true); // useServiceRole = true
 
     // Résoudre le loft_id
     const { data: lofts } = await supabase
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       .not('airbnb_confirmation_code', 'is', null);
 
     if (!activeReservations || activeReservations.length === 0) {
-      return NextResponse.json({ cancelled_count: 0 });
+      return NextResponse.json({ cancelled_count: 0, message: 'Aucune résa active avec confirmation_code' });
     }
 
     const now = new Date().toISOString();

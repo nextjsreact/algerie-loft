@@ -60,10 +60,58 @@ EXCEPTION
     RAISE NOTICE 'guest_phone était déjà nullable ou erreur: %', SQLERRM;
 END $$;
 
+-- Rendre base_price nullable (Airbnb n'envoie pas toujours le détail)
+DO $$ 
+BEGIN
+  ALTER TABLE reservations
+    ALTER COLUMN base_price DROP NOT NULL;
+  RAISE NOTICE 'base_price est maintenant nullable ✅';
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE NOTICE 'base_price était déjà nullable ou erreur: %', SQLERRM;
+END $$;
+
+-- Rendre cleaning_fee nullable
+DO $$ 
+BEGIN
+  ALTER TABLE reservations
+    ALTER COLUMN cleaning_fee DROP NOT NULL;
+  RAISE NOTICE 'cleaning_fee est maintenant nullable ✅';
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE NOTICE 'cleaning_fee était déjà nullable ou erreur: %', SQLERRM;
+END $$;
+
+-- Rendre service_fee nullable
+DO $$ 
+BEGIN
+  ALTER TABLE reservations
+    ALTER COLUMN service_fee DROP NOT NULL;
+  RAISE NOTICE 'service_fee est maintenant nullable ✅';
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE NOTICE 'service_fee était déjà nullable ou erreur: %', SQLERRM;
+END $$;
+
+-- Rendre taxes nullable
+DO $$ 
+BEGIN
+  ALTER TABLE reservations
+    ALTER COLUMN taxes DROP NOT NULL;
+  RAISE NOTICE 'taxes est maintenant nullable ✅';
+EXCEPTION
+  WHEN OTHERS THEN
+    RAISE NOTICE 'taxes était déjà nullable ou erreur: %', SQLERRM;
+END $$;
+
 -- Ajouter commentaires
 COMMENT ON COLUMN reservations.guest_email IS 'Email du voyageur. NULL si non disponible (scraping Airbnb).';
 COMMENT ON COLUMN reservations.guest_nationality IS 'Nationalité du voyageur (code ISO 2 lettres). NULL si non disponible.';
 COMMENT ON COLUMN reservations.guest_phone IS 'Téléphone du voyageur. NULL si non disponible.';
+COMMENT ON COLUMN reservations.base_price IS 'Prix de base. NULL si Airbnb n''envoie que le total.';
+COMMENT ON COLUMN reservations.cleaning_fee IS 'Frais de ménage. NULL si non détaillé.';
+COMMENT ON COLUMN reservations.service_fee IS 'Frais de service. NULL si non détaillé.';
+COMMENT ON COLUMN reservations.taxes IS 'Taxes. NULL si non détaillées.';
 
 -- Vérifier que la contrainte a été supprimée
 SELECT 
@@ -76,7 +124,7 @@ SELECT
   END as status
 FROM information_schema.columns
 WHERE table_name = 'reservations'
-  AND column_name IN ('guest_email', 'guest_nationality', 'guest_phone')
+  AND column_name IN ('guest_email', 'guest_nationality', 'guest_phone', 'base_price', 'cleaning_fee', 'service_fee', 'taxes')
 ORDER BY column_name;
 
 -- ================================================================
@@ -188,7 +236,9 @@ RETURNING
 SELECT 
   COUNT(*) as total_reservations_airbnb,
   COUNT(CASE WHEN guest_nationality IS NOT NULL THEN 1 END) as avec_nationalite,
-  COUNT(CASE WHEN guest_nationality IS NULL THEN 1 END) as sans_nationalite
+  COUNT(CASE WHEN guest_nationality IS NULL THEN 1 END) as sans_nationalite,
+  COUNT(CASE WHEN base_price IS NOT NULL THEN 1 END) as avec_base_price,
+  COUNT(CASE WHEN base_price IS NULL THEN 1 END) as sans_base_price
 FROM reservations
 WHERE source = 'airbnb_scraper';
 -- Devrait être 76 + 19 = 95 réservations
@@ -257,10 +307,15 @@ WHERE synced_at > NOW() - INTERVAL '5 minutes'
 ✅ guest_email maintenant nullable
 ✅ guest_nationality maintenant nullable
 ✅ guest_phone maintenant nullable
+✅ base_price maintenant nullable (Airbnb n'envoie pas toujours les détails)
+✅ cleaning_fee maintenant nullable
+✅ service_fee maintenant nullable
+✅ taxes maintenant nullable
 
 ÉTAPE 2 - INSERTION:
 ✅ 19 réservations insérées avec succès
 ✅ Certaines avec guest_nationality NULL (normal pour Airbnb)
+✅ Certaines avec base_price NULL (Airbnb envoie seulement total_amount)
 
 ÉTAPE 3 - VÉRIFICATION:
 ┌──────────────────────────────────┬─────────┐

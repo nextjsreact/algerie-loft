@@ -142,11 +142,13 @@ export class AvailabilityService {
       }
 
       // Check for existing reservations that conflict
+      // IMPORTANT: Check ALL non-cancelled reservations, not just 'confirmed' and 'pending'
+      // This includes Airbnb reservations with 'completed' status that should still block availability
       const { data: conflictingReservations, error: reservationError } = await this.supabase
         .from('reservations')
         .select('check_in, check_out, status')
         .eq('loft_id', loftId)
-        .in('status', ['confirmed', 'pending'])
+        .neq('status', 'cancelled')
         .or(`and(check_in.lt.${dates.checkOut},check_out.gt.${dates.checkIn})`);
 
       if (reservationError) {
@@ -371,12 +373,13 @@ export class AvailabilityService {
       // Clean up expired reservation locks
       await this.cleanupExpiredLocks();
 
-      // Update availability based on confirmed reservations
+      // Update availability based on all non-cancelled reservations
+      // IMPORTANT: Include ALL active reservations, not just 'confirmed'
       const { data: reservations, error: reservationError } = await this.supabase
         .from('reservations')
         .select('check_in, check_out')
         .eq('loft_id', loftId)
-        .eq('status', 'confirmed');
+        .neq('status', 'cancelled');
 
       if (reservationError) {
         throw new Error('Failed to fetch reservations for synchronization');

@@ -30,8 +30,7 @@ ORDER BY ABS(r.total_amount - COALESCE(SUM(p.amount), 0)) DESC;
 /*
 UPDATE reservation_payments p
 SET 
-  amount = r.total_amount,
-  updated_at = NOW()
+  amount = r.total_amount
 FROM reservations r
 WHERE p.reservation_id = r.id
   AND r.source = 'airbnb_scraper'
@@ -50,14 +49,13 @@ SELECT
   r.airbnb_confirmation_code,
   r.total_amount as montant_du,
   p.amount as montant_paye,
-  r.total_amount - p.amount as difference,
-  p.updated_at
+  r.total_amount - p.amount as difference
 FROM reservations r
 INNER JOIN reservation_payments p ON p.reservation_id = r.id
 WHERE r.source = 'airbnb_scraper'
   AND r.status = 'confirmed'
-  AND p.updated_at > NOW() - INTERVAL '2 minutes'
-ORDER BY p.updated_at DESC;
+  AND p.processed_at > NOW() - INTERVAL '5 minutes'
+ORDER BY p.processed_at DESC;
 */
 
 -- ÉTAPE 4: Vérification spécifique pour Adrian Patterson

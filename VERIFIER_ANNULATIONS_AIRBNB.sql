@@ -73,11 +73,40 @@ SELECT
   reservations_received,
   reservations_created,
   reservations_updated,
-  reservations_linked,
-  error_message
+  reservations_skipped,
+  reservations_failed,
+  conflicts_detected,
+  duration_ms,
+  errors,
+  warnings
 FROM airbnb_sync_logs
 ORDER BY started_at DESC
 LIMIT 10;
+
+-- 5b. Vérifier s'il y a eu des erreurs lors des dernières syncs
+SELECT 
+  sync_batch_id,
+  sync_type,
+  started_at,
+  status,
+  reservations_failed,
+  jsonb_array_length(COALESCE(errors, '[]'::jsonb)) as nombre_erreurs,
+  jsonb_array_length(COALESCE(warnings, '[]'::jsonb)) as nombre_warnings
+FROM airbnb_sync_logs
+WHERE status != 'success' OR reservations_failed > 0
+ORDER BY started_at DESC
+LIMIT 5;
+
+-- 5c. Détail des erreurs (si présentes)
+SELECT 
+  sync_batch_id,
+  started_at,
+  jsonb_array_elements(errors) as erreur_detail
+FROM airbnb_sync_logs
+WHERE errors IS NOT NULL 
+  AND jsonb_array_length(errors) > 0
+ORDER BY started_at DESC
+LIMIT 20;
 
 -- 6. Tester si une réservation annulée bloque la disponibilité (ne devrait PAS bloquer)
 DO $$

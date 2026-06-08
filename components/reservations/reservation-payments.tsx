@@ -99,7 +99,7 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
         : amountDZD
           ? Number(amountDZD)
           : rate
-            ? Math.round(originalAmt * rate)
+            ? Math.round((originalAmt * rate) * 100) / 100  // Arrondir à 2 décimales
             : null  // unknown rate
 
       // Block submission if foreign currency and no DZD equivalent available
@@ -286,7 +286,7 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
                   // Auto-fill DZD equivalent when amount changes
                   if (payCurrency !== 'DZD' && currencyRates[payCurrency]) {
                     const rate = currencyRates[payCurrency]
-                    const converted = Math.round(Number(e.target.value) * rate)
+                    const converted = Math.round((Number(e.target.value) * rate) * 100) / 100 // Arrondir à 2 décimales
                     setAmountDZD(String(converted))
                   }
                 }}
@@ -317,7 +317,7 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
                 // Auto-fill DZD equivalent when currency changes
                 if (newCurrency !== 'DZD' && amount && currencyRates[newCurrency]) {
                   const rate = currencyRates[newCurrency]
-                  const converted = Math.round(Number(amount) * rate)
+                  const converted = Math.round((Number(amount) * rate) * 100) / 100 // Arrondir à 2 décimales
                   setAmountDZD(String(converted))
                 } else if (newCurrency === 'DZD') {
                   setAmountDZD('')
@@ -342,11 +342,11 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
               {currencyRates[payCurrency] ? (
                 <>
                   <p className="text-amber-800 font-medium">
-                    {amount} {payCurrency} = <strong>{Math.round(Number(amount) * currencyRates[payCurrency]).toLocaleString('fr-DZ')} DA</strong>
+                    {amount} {payCurrency} = <strong>{(Math.round((Number(amount) * currencyRates[payCurrency]) * 100) / 100).toLocaleString('fr-DZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</strong>
                   </p>
                   <p className="text-xs text-amber-600 mt-1">
                     Taux officiel : 1 {payCurrency} = {currencyRates[payCurrency]} DA
-                    {amountDZD && Number(amountDZD) !== Math.round(Number(amount) * currencyRates[payCurrency]) && (
+                    {amountDZD && Number(amountDZD) !== Math.round((Number(amount) * currencyRates[payCurrency]) * 100) / 100 && (
                       <span> • Taux personnalisé : {(Number(amountDZD) / Number(amount)).toFixed(2)} DA</span>
                     )}
                   </p>
@@ -358,9 +358,9 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
                 <Label className="text-xs text-amber-700 font-semibold">
                   Équivalent DA {payCurrency !== 'DZD' && !currencyRates[payCurrency] && <span className="text-red-500">*</span>}
                 </Label>
-                <Input type="number" min="0" step="any" value={amountDZD}
+                <Input type="number" min="0" step="0.01" value={amountDZD}
                   onChange={e => setAmountDZD(e.target.value)}
-                  placeholder={currencyRates[payCurrency] ? String(Math.round(Number(amount) * currencyRates[payCurrency])) : 'Saisir le montant DA'}
+                  placeholder={currencyRates[payCurrency] ? String(Math.round((Number(amount) * currencyRates[payCurrency]) * 100) / 100) : 'Saisir le montant DA'}
                   className="h-7 w-32 text-xs bg-white border-amber-300"
                   required={payCurrency !== 'DZD' && !currencyRates[payCurrency]}
                 />

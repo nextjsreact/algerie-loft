@@ -10,7 +10,7 @@ SELECT
   s.check_out_date,
   s.raw_data->>'statut' as statut_airbnb_brut,
   s.created_at as date_scraping,
-  s.updated_at as derniere_maj,
+  s.processed_at as derniere_maj,
   s.validation_status,
   s.mapping_status,
   r.id as reservation_id,
@@ -19,8 +19,8 @@ SELECT
 FROM airbnb_reservations_staging s
 LEFT JOIN reservations r ON r.airbnb_confirmation_code = s.airbnb_id
 WHERE s.raw_data->>'statut' IN ('Annulée', 'Annulé', 'Cancelled')
-  AND DATE(s.updated_at) = '2026-06-08'  -- Aujourd'hui
-ORDER BY s.updated_at DESC;
+  AND DATE(s.created_at) = CURRENT_DATE  -- Aujourd'hui
+ORDER BY s.created_at DESC;
 
 -- 2. Vérifier toutes les annulations Airbnb (peu importe la date)
 SELECT 
@@ -29,7 +29,7 @@ SELECT
   s.check_in_date,
   s.check_out_date,
   s.raw_data->>'statut' as statut_airbnb,
-  DATE(s.updated_at) as date_annulation,
+  DATE(s.created_at) as date_scraping,
   r.id as reservation_id,
   r.status as status_dans_db,
   CASE 
@@ -40,7 +40,7 @@ SELECT
 FROM airbnb_reservations_staging s
 LEFT JOIN reservations r ON r.airbnb_confirmation_code = s.airbnb_id
 WHERE s.raw_data->>'statut' IN ('Annulée', 'Annulé', 'Cancelled')
-ORDER BY s.updated_at DESC;
+ORDER BY s.created_at DESC;
 
 -- 3. Compter les annulations par statut de synchronisation
 SELECT 
@@ -69,11 +69,12 @@ SELECT
   r.check_out_date,
   r.updated_at,
   r.synced_at,
-  s.raw_data->>'statut' as statut_airbnb_actuel
+  s.raw_data->>'statut' as statut_airbnb_actuel,
+  s.created_at as date_scraping
 FROM reservations r
 INNER JOIN airbnb_reservations_staging s ON s.airbnb_id = r.airbnb_confirmation_code
 WHERE r.source = 'airbnb_scraper'
-  AND (DATE(r.updated_at) = '2026-06-08' OR DATE(r.synced_at) = '2026-06-08')
+  AND (DATE(r.updated_at) = CURRENT_DATE OR DATE(r.synced_at) = CURRENT_DATE)
 ORDER BY r.updated_at DESC
 LIMIT 20;
 

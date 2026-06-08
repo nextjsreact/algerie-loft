@@ -55,7 +55,7 @@ SELECT
   r.total_amount,
   r.currency_code,
   l.name as loft_name,
-  DATE(s.updated_at) as date_annulation_airbnb
+  DATE(s.created_at) as date_scraping
 FROM reservations r
 INNER JOIN airbnb_reservations_staging s ON s.airbnb_id = r.airbnb_confirmation_code
 INNER JOIN lofts l ON l.id = r.loft_id

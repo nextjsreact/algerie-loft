@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
       guest_count, check_in_date, check_out_date, special_requests,
       customer_id, base_price, cleaning_fee, service_fee, taxes, total_amount,
       currency_code, currency_ratio, price_per_night_input,
+      original_currency_code, original_amount,
       source, // 'client' = public booking page, absent = employee dashboard
     } = body
 
@@ -126,6 +127,8 @@ export async function POST(request: NextRequest) {
         currency_code: currency_code || 'DZD',
         currency_ratio: currency_ratio || 1,
         price_per_night_input: price_per_night_input || null,
+        original_currency_code: original_currency_code || null,
+        original_amount: original_amount || null,
       })
       .select('*, lofts:loft_id(id, name, address, price_per_night)')
       .single()

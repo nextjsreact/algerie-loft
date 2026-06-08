@@ -1,0 +1,118 @@
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                         🚀 COMMENCER ICI                                     ║
+║                                                                              ║
+║                   Résolution Erreur SQL Airbnb                               ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🔴 PROBLÈME                                                                  │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Erreur SQL: column "airbnb_confirmation_code" does not exist
+
+  Cause: Les migrations SQL n'ont pas été appliquées dans Supabase DEV
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ✅ SOLUTION (10 minutes)                                                     │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  1️⃣  Ouvrir ce fichier:
+      → ACTION_IMMEDIATE_REQUISE.md
+
+  2️⃣  Suivre les 3 étapes simples
+
+  3️⃣  Problème résolu !
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 📁 FICHIERS CRÉÉS POUR VOUS                                                  │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Documentation:
+    ✅ ACTION_IMMEDIATE_REQUISE.md              ← COMMENCER ICI
+    ✅ GUIDE_APPLICATION_MIGRATIONS_AIRBNB.md   ← Guide complet
+    ✅ STATUT_INTEGRATION_AIRBNB.md             ← Statut détaillé
+    ✅ RESUME_SITUATION_AIRBNB.txt              ← Résumé visuel
+    ✅ FICHIERS_CREES_POUR_VOUS.md              ← Liste complète
+
+  Scripts SQL (Supabase):
+    ✅ APPLY_ALL_AIRBNB_MIGRATIONS.sql          ← À EXÉCUTER
+    ✅ verify_airbnb_import.sql                 ← Vérification
+    ✅ list_airbnb_listings_for_mapping.sql     ← Mapping lofts
+
+  Scripts Python:
+    ✅ transform-and-send-airbnb-data.py        ← Synchronisation
+    ✅ send-airbnb-data-to-api.py               ← Alternative
+
+  Scripts PowerShell:
+    ✅ airbnb-full-sync.ps1                     ← Automatisation
+    ✅ start-dev.ps1                            ← Démarre Next.js
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 🎯 ORDRE D'UTILISATION                                                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Phase 1 (10 min):
+    1. Lire: ACTION_IMMEDIATE_REQUISE.md
+    2. Exécuter: APPLY_ALL_AIRBNB_MIGRATIONS.sql dans Supabase
+    3. Vérifier: Colonnes et tables créées
+
+  Phase 2 (40-50 min):
+    4. Démarrer: start-dev.ps1
+    5. Exécuter: transform-and-send-airbnb-data.py
+    6. Vérifier: verify_airbnb_import.sql
+
+  Phase 3 (2-3 heures):
+    7. Exécuter: list_airbnb_listings_for_mapping.sql
+    8. Créer: Mapping des 102 annonces Airbnb
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 📊 DONNÉES DISPONIBLES                                                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  Fichier: d:\Airbnb_transfer_v2\output\reservations_airbnb.json
+  Taille:  2.2 MB
+  Contenu: 6177 réservations Airbnb
+           102 annonces différentes
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ⚠️  IMPORTANT                                                                │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  ✅ Environnement: DEV uniquement (zlpzuyctjhajdwlxzdzk)
+  ❌ NE PAS exécuter sur PROD (mhngbluefyucoesgcjoy)
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 💰 ÉCONOMIES RÉALISÉES                                                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+  vs Beds24 (10-25 propriétés):
+    • Annuel:    €3,060 - €5,100
+    • 10 ans:    €30,600 - €51,000
+
+  vs Beds24 (100 propriétés):
+    • Annuel:    €12,000 - €18,000
+    • 10 ans:    €120,000 - €180,000
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                        🚀 PROCHAINE ACTION                                   ║
+║                                                                              ║
+║                  Ouvrir: ACTION_IMMEDIATE_REQUISE.md                         ║
+║                                                                              ║
+║                         Temps estimé: 10 minutes                             ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+                              Bonne chance ! 🍀

@@ -1,0 +1,90 @@
+# ============================================================================
+# Docker Compose pour Airbnb Scraper
+# ============================================================================
+
+services:
+  # ── Service principal: Scraper complet (manuel ou cron) ──────────────────
+  airbnb-scraper-full:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: airbnb_scraper_full
+    environment:
+      # Airbnb credentials
+      - AIRBNB_EMAIL=${AIRBNB_EMAIL}
+      - AIRBNB_PASSWORD=${AIRBNB_PASSWORD}
+      - TOTP_SECRET=${TOTP_SECRET}
+      
+      # API Next.js
+      - NEXTJS_API_URL=${NEXTJS_API_URL:-http://host.docker.internal:3000/api/airbnb/sync}
+      - NEXTJS_API_KEY=${NEXTJS_API_KEY}
+      
+      # Output
+      - OUTPUT_CSV=/app/output/reservations_airbnb.csv
+      - OUTPUT_JSON=/app/output/reservations_airbnb.json
+      
+      # Mode
+      - HEADLESS=true
+    volumes:
+      - airbnb-output:/app/output
+    networks:
+      - airbnb-network
+    restart: "no"  # Manuel
+    profiles:
+      - manual
+
+  # ── Service iCal Watcher: Surveillance légère (toutes les heures) ─────────
+  airbnb-ical-watcher:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: airbnb_ical_watcher
+    environment:
+      - AIRBNB_EMAIL=${AIRBNB_EMAIL}
+      - AIRBNB_PASSWORD=${AIRBNB_PASSWORD}
+      - TOTP_SECRET=${TOTP_SECRET}
+      - NEXTJS_API_URL=${NEXTJS_API_URL:-http://host.docker.internal:3000/api/airbnb/sync}
+      - NEXTJS_API_KEY=${NEXTJS_API_KEY}
+      - OUTPUT_CSV=/app/output/reservations_ical.csv
+      - OUTPUT_JSON=/app/output/reservations_ical.json
+      - HEADLESS=true
+      - SYNC_TYPE=ical_watcher
+    volumes:
+      - airbnb-output:/app/output
+    networks:
+      - airbnb-network
+    restart: unless-stopped
+    profiles:
+      - ical
+
+  # ── Service Targeted: Scraping ciblé (quotidien) ──────────────────────────
+  airbnb-scraper-targeted:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: airbnb_scraper_targeted
+    environment:
+      - AIRBNB_EMAIL=${AIRBNB_EMAIL}
+      - AIRBNB_PASSWORD=${AIRBNB_PASSWORD}
+      - TOTP_SECRET=${TOTP_SECRET}
+      - NEXTJS_API_URL=${NEXTJS_API_URL:-http://host.docker.internal:3000/api/airbnb/sync}
+      - NEXTJS_API_KEY=${NEXTJS_API_KEY}
+      - OUTPUT_CSV=/app/output/reservations_targeted.csv
+      - OUTPUT_JSON=/app/output/reservations_targeted.json
+      - HEADLESS=true
+      - SYNC_TYPE=targeted
+    volumes:
+      - airbnb-output:/app/output
+    networks:
+      - airbnb-network
+    restart: unless-stopped
+    profiles:
+      - targeted
+
+volumes:
+  airbnb-output:
+    driver: local
+
+networks:
+  airbnb-network:
+    driver: bridge

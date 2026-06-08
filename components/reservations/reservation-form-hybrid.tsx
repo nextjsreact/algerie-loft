@@ -371,6 +371,9 @@ export default function ReservationFormHybrid({
           currency_code: selectedCurrency?.code || 'DZD',
           currency_ratio: effectiveRatio,
           price_per_night_input: pricePerNightInput !== '' ? parseFloat(pricePerNightInput) : null,
+          // Original currency tracking (for non-DZD reservations)
+          original_currency_code: selectedCurrency?.code !== 'DZD' ? selectedCurrency?.code : null,
+          original_amount: selectedCurrency?.code !== 'DZD' ? parseFloat(totalAmountInput) || 0 : null,
         }),
       });
 

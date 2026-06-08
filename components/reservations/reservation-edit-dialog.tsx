@@ -410,14 +410,21 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
               )}
             </div>
 
-            {/* Info pour réservations Airbnb */}
-            {isAirbnbReservation && selectedCurrencyCode !== 'DZD' && (
+            {/* Info pour réservations avec devise étrangère (Airbnb ou manuelle) */}
+            {(isAirbnbReservation || (reservation.original_currency_code && reservation.original_currency_code !== 'DZD')) && selectedCurrencyCode !== 'DZD' && (
               <div className="flex items-start gap-2 bg-blue-50 border border-blue-200 rounded px-3 py-2">
                 <span className="text-blue-600 text-xs mt-0.5">ℹ️</span>
-                <p className="text-xs text-blue-700">
-                  Prix d'origine Airbnb : <strong>{sym} {parseFloat(pricePerNight || basePrice).toLocaleString()}</strong>
-                  {!reservation.currency_ratio && ' (taux calculé automatiquement)'}
-                </p>
+                <div className="flex flex-col gap-0.5">
+                  <p className="text-xs text-blue-700">
+                    Prix d'origine Airbnb : <strong>{sym} {parseFloat(pricePerNight || basePrice).toLocaleString()}</strong>
+                    {!reservation.currency_ratio && ' (taux calculé automatiquement)'}
+                  </p>
+                  {reservation.original_amount && reservation.original_currency_code && reservation.original_currency_code !== reservation.currency_code && (
+                    <p className="text-xs text-blue-600">
+                      Montant original : <strong>{reservation.original_amount.toLocaleString()} {reservation.original_currency_code}</strong>
+                    </p>
+                  )}
+                </div>
               </div>
             )}
 

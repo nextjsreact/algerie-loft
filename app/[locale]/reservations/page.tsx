@@ -782,7 +782,12 @@ function ReservationsPageContent() {
                                   {t(`status.${res.status}`)}
                                 </Badge>
                                 {res.total_amount > 0 && (
-                                  <span className="text-sm font-semibold text-gray-700">{res.total_amount.toLocaleString()} {defaultCurrencySymbol}</span>
+                                  <div className="flex flex-col items-end">
+                                    <span className="text-sm font-semibold text-gray-700">{res.total_amount.toLocaleString()} {defaultCurrencySymbol}</span>
+                                    {res.original_currency_code && res.original_currency_code !== res.currency_code && res.original_amount > 0 && (
+                                      <span className="text-xs text-gray-500">({res.original_amount.toLocaleString()} {res.original_currency_code})</span>
+                                    )}
+                                  </div>
                                 )}
                               </>
                             )}
@@ -1137,6 +1142,9 @@ function ReservationsPageContent() {
                         {t('details.total')}
                       </h4>
                       <p className="text-2xl font-bold text-emerald-600">{selectedReservation.total_amount} {defaultCurrencySymbol}</p>
+                      {selectedReservation.original_currency_code && selectedReservation.original_currency_code !== selectedReservation.currency_code && selectedReservation.original_amount > 0 && (
+                        <p className="text-sm text-gray-500 mt-1">Montant original : {selectedReservation.original_amount.toLocaleString()} {selectedReservation.original_currency_code}</p>
+                      )}
                     </CardContent>
                   </Card>
                 </div>

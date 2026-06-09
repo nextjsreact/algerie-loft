@@ -285,13 +285,12 @@ export function PartnerReservationsView({ partnerId }: PartnerReservationsViewPr
     }
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('fr-DZ', {
-      style: 'currency',
-      currency: 'DZD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount)
+  const formatCurrency = (amount: number, currency: string = 'DZD') => {
+    // Format français avec espaces comme séparateurs de milliers
+    return amount.toLocaleString('fr-FR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }) + ' ' + currency
   }
 
   const exportReservations = () => {
@@ -554,10 +553,7 @@ export function PartnerReservationsView({ partnerId }: PartnerReservationsViewPr
                     <TableCell>
                       <div>
                         <p className="font-medium">
-                          {formatCurrency(reservation.pricing.total_amount)}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {reservation.pricing.currency}
+                          {formatCurrency(reservation.pricing.total_amount, reservation.pricing.currency)}
                         </p>
                       </div>
                     </TableCell>
@@ -653,23 +649,23 @@ export function PartnerReservationsView({ partnerId }: PartnerReservationsViewPr
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span>Base Price:</span>
-                    <span>{formatCurrency(selectedReservation.pricing.breakdown.base_price)}</span>
+                    <span>{formatCurrency(selectedReservation.pricing.breakdown.base_price, selectedReservation.pricing.currency)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Cleaning Fee:</span>
-                    <span>{formatCurrency(selectedReservation.pricing.breakdown.cleaning_fee)}</span>
+                    <span>{formatCurrency(selectedReservation.pricing.breakdown.cleaning_fee, selectedReservation.pricing.currency)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Service Fee:</span>
-                    <span>{formatCurrency(selectedReservation.pricing.breakdown.service_fee)}</span>
+                    <span>{formatCurrency(selectedReservation.pricing.breakdown.service_fee, selectedReservation.pricing.currency)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Taxes:</span>
-                    <span>{formatCurrency(selectedReservation.pricing.breakdown.taxes)}</span>
+                    <span>{formatCurrency(selectedReservation.pricing.breakdown.taxes, selectedReservation.pricing.currency)}</span>
                   </div>
                   <div className="flex justify-between font-semibold border-t pt-2">
                     <span>Total:</span>
-                    <span>{formatCurrency(selectedReservation.pricing.total_amount)}</span>
+                    <span>{formatCurrency(selectedReservation.pricing.total_amount, selectedReservation.pricing.currency)}</span>
                   </div>
                 </div>
               </div>

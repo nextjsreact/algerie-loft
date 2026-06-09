@@ -202,19 +202,19 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Montant total dans la devise d'affichage */}
+                {/* Montant total - Devise originale en premier */}
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t("totalAmount")}</label>
                   <p className="text-2xl font-bold text-green-600">
                     {effectiveCurrencyCode !== 'DZD' && reservation.original_amount
-                      ? moneyFormatter(effectiveCurrencyCode).format(reservation.original_amount)
-                      : moneyFormatter('DZD').format(reservation.total_amount || 0)
+                      ? `${reservation.original_amount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${effectiveCurrencyCode}`
+                      : `${(reservation.total_amount || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA`
                     }
                   </p>
-                  {/* Montant converti en DZD si devise étrangère */}
+                  {/* Montant converti en DZD si devise étrangère - en second */}
                   {effectiveCurrencyCode !== 'DZD' && reservation.total_amount && (
                     <p className="text-sm text-muted-foreground mt-1">
-                      ≈ {moneyFormatter('DZD').format(reservation.total_amount)}
+                      Montant original : {(reservation.total_amount).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA
                     </p>
                   )}
                 </div>
@@ -224,11 +224,11 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">{t("pricePerNight") || "Prix / nuit"}</label>
                     <p className="text-lg font-medium">
-                      {moneyFormatter(effectiveCurrencyCode).format(effectivePricePerNight)}
+                      {effectivePricePerNight.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {effectiveCurrencyCode}
                     </p>
                     {effectiveCurrencyCode !== 'DZD' && effectiveCurrencyRatio > 1 && (
                       <p className="text-sm text-muted-foreground">
-                        ≈ {moneyFormatter('DZD').format(effectivePricePerNight * effectiveCurrencyRatio)} / nuit
+                        ≈ {(effectivePricePerNight * effectiveCurrencyRatio).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA / nuit
                       </p>
                     )}
                   </div>

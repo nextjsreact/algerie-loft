@@ -1069,6 +1069,11 @@ function ReservationsPageContent() {
                       ) : (
                         <p className="text-gray-400 italic text-sm">Nom non renseigné</p>
                       )}
+                      {selectedReservation.guest_count && (
+                        <p className="text-sm text-gray-600 mt-1">
+                          👤 {selectedReservation.guest_count} {selectedReservation.guest_count > 1 ? 'invités' : 'invité'}
+                        </p>
+                      )}
                       {selectedReservation.guest_phone ? (
                         <div className="flex items-center gap-2 mt-2">
                           <a href={`tel:${selectedReservation.guest_phone}`}
@@ -1141,9 +1146,20 @@ function ReservationsPageContent() {
                         <TrendingUp className="h-4 w-4 text-emerald-600" />
                         {t('details.total')}
                       </h4>
-                      <p className="text-2xl font-bold text-emerald-600">{selectedReservation.total_amount} {defaultCurrencySymbol}</p>
-                      {selectedReservation.original_currency_code && selectedReservation.original_currency_code !== selectedReservation.currency_code && selectedReservation.original_amount > 0 && (
-                        <p className="text-sm text-gray-500 mt-1">Montant original : {selectedReservation.original_amount.toLocaleString()} {selectedReservation.original_currency_code}</p>
+                      {/* Display original currency FIRST if it exists, otherwise show DZD */}
+                      {selectedReservation.original_currency_code && selectedReservation.original_currency_code !== 'DZD' && selectedReservation.original_amount ? (
+                        <>
+                          <p className="text-2xl font-bold text-emerald-600">
+                            {selectedReservation.original_amount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {selectedReservation.original_currency_code}
+                          </p>
+                          <p className="text-sm text-gray-500 mt-1">
+                            Montant original : {selectedReservation.total_amount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {defaultCurrencySymbol}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-2xl font-bold text-emerald-600">
+                          {(selectedReservation.total_amount || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {defaultCurrencySymbol}
+                        </p>
                       )}
                     </CardContent>
                   </Card>

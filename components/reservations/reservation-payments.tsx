@@ -146,7 +146,7 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
     } catch { toast.error('Erreur réseau') }
   }
 
-  const fmt = (n: number) => n.toLocaleString('fr-DZ') + ' ' + currency
+  const fmt = (n: number) => n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + currency
   const getMethod = (v: string) => PAYMENT_METHODS.find(m => m.value === v) || PAYMENT_METHODS[PAYMENT_METHODS.length - 1]
 
   // Map DB fields to display fields
@@ -247,9 +247,9 @@ export function ReservationPayments({ reservationId, totalAmount, currency = 'DA
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm">{mapped.amount.toLocaleString('fr-DZ')} {mapped.currency}</span>
+                      <span className="font-semibold text-sm">{mapped.amount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {mapped.currency}</span>
                       {mapped.currency !== 'DZD' && mapped.amount_dzd && (
-                        <span className="text-xs opacity-50">≈ {mapped.amount_dzd.toLocaleString('fr-DZ')} DA</span>
+                        <span className="text-xs opacity-50">≈ {mapped.amount_dzd.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DA</span>
                       )}
                       <span className="text-xs opacity-70">• {m.label}</span>
                       {mapped.reference && <span className="text-xs opacity-60">#{mapped.reference}</span>}

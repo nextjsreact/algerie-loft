@@ -36,7 +36,7 @@ export async function createAirbnbNotification({
     // Récupérer les informations de la réservation
     const { data: reservation } = await supabase
       .from('reservations')
-      .select('guest_name, check_in_date, check_out_date, total_amount, currency_code, status')
+      .select('guest_name, guest_count, check_in_date, check_out_date, total_amount, currency_code, status')
       .eq('id', reservationId)
       .single();
 
@@ -64,6 +64,7 @@ export async function createAirbnbNotification({
         metadata: {
           ...metadata,
           guest_name: reservation.guest_name,
+          guest_count: reservation.guest_count,
           check_in: reservation.check_in_date,
           check_out: reservation.check_out_date,
           total_price: reservation.total_amount,

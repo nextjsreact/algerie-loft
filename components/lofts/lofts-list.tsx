@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useTranslations, useLocale } from "next-intl"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
@@ -59,7 +59,15 @@ interface LoftsListProps {
   userRole?: UserRole
 }
 
-export function LoftsList({
+export function LoftsList(props: LoftsListProps) {
+  return (
+    <Suspense fallback={<div className="py-8 text-center text-gray-500">Chargement...</div>}>
+      <LoftsListInner {...props} />
+    </Suspense>
+  )
+}
+
+function LoftsListInner({
   lofts,
   owners,
   zoneAreas,

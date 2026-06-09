@@ -15,7 +15,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { NotificationBadge } from "@/components/ui/notification-badge"
 import { useEnhancedRealtime } from "@/components/providers/enhanced-realtime-provider"
 import { useNotifications } from "@/components/providers/notification-context"
-import { useTranslations, useLocale, useMessages } from "next-intl"
+import { useLocale } from "next-intl"
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   user: User;
@@ -150,7 +150,7 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
 
   // Ne pas afficher le sidebar d'employé pour les clients et partenaires
   if (user.role === 'client' || user.role === 'partner') {
-    return null
+    return <></>
   }
 
 

@@ -215,7 +215,7 @@ export default function ClientProviders({ children, session: serverSession, unre
                        <div className="flex w-72 flex-shrink-0 z-10">
                          <SuperuserSidebar />
                        </div>
-                     ) : !shouldHideSidebar && (
+                     ) : !shouldHideSidebar && session.user.role !== 'client' && session.user.role !== 'partner' && (
                        <div className="hidden md:flex md:w-72 md:flex-shrink-0 md:z-10">
                          <Sidebar user={session.user} unreadCount={unreadCount} />
                        </div>

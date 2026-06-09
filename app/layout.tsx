@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "Loft Algérie - Gestion des Lofts",
   description: "Application complète de gestion des lofts",
   metadataBase: new URL('https://www.loftalgerie.com'),
-  manifest: 'https://www.loftalgerie.com/manifest.json',
+  manifest: '/manifest.webmanifest',
   alternates: {
     canonical: '/',
     languages: {
@@ -70,7 +70,6 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <head>
-        <link rel="manifest" href="/manifest.json" crossOrigin="use-credentials" />
         <meta name="theme-color" content="#2563eb" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />

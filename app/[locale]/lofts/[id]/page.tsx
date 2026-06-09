@@ -571,14 +571,19 @@ export default async function LoftDetailPage({
               </Card>
             </RoleBasedAccess>
 
-            {/* Section pleine largeur - Services & Utilitaires */}
-            <Card className="w-full">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="h-5 w-5" />
-                  {t.servicesUtilities}
-                </CardTitle>
-              </CardHeader>
+            {/* Section pleine largeur - Services & Utilitaires - Uniquement pour le personnel */}
+            <RoleBasedAccess 
+              userRole={session.user.role}
+              allowedRoles={['admin', 'manager', 'member']}
+              showFallback={false}
+            >
+              <Card className="w-full">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Zap className="h-5 w-5" />
+                    {t.servicesUtilities}
+                  </CardTitle>
+                </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {/* Eau */}
@@ -733,6 +738,7 @@ export default async function LoftDetailPage({
                 )}
               </CardContent>
             </Card>
+            </RoleBasedAccess>
           </TabsContent>
           
           {canViewAudit && (

@@ -47,10 +47,9 @@ export function UnifiedNotificationBell() {
   const [lastAirbnbNotificationId, setLastAirbnbNotificationId] = useState<string | null>(null)
   const ref = useRef<HTMLDivElement>(null)
 
-  // Ne pas afficher les notifications pour les clients
-  if (!session || !session.user || (session.user.role !== 'admin' && session.user.role !== 'manager' && session.user.role !== 'member' && session.user.role !== 'executive')) {
-    return null
-  }
+  // Vérifier le rôle (APRÈS les hooks — jamais avant)
+  const staffRoles = ['admin', 'manager', 'member', 'executive']
+  const isStaff = session?.user && staffRoles.includes(session.user.role)
 
   // Close on outside click
   useEffect(() => {
@@ -243,6 +242,8 @@ export function UnifiedNotificationBell() {
   }
 
   return (
+    // Ne rien afficher pour les non-staff (clients, guests...)
+    !isStaff ? null :
     <div ref={ref} className="relative">
       {/* Bell button */}
       <button

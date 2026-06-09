@@ -301,13 +301,19 @@ export default async function LoftDetailPage({
                           </div>
                         )}
                         {(loft as any).client_phone && (
-                          <div className="flex items-center gap-3">
-                            <Phone className="h-5 w-5 text-green-600" />
-                            <div>
-                              <p className="text-sm text-muted-foreground">📞 N° client téléphone (facture)</p>
-                              <p className="font-medium">{(loft as any).client_phone}</p>
+                          <RoleBasedAccess
+                            userRole={session.user.role}
+                            allowedRoles={['admin', 'manager', 'member']}
+                            showFallback={false}
+                          >
+                            <div className="flex items-center gap-3">
+                              <Phone className="h-5 w-5 text-green-600" />
+                              <div>
+                                <p className="text-sm text-muted-foreground">📞 N° client téléphone (facture)</p>
+                                <p className="font-medium">{(loft as any).client_phone}</p>
+                              </div>
                             </div>
-                          </div>
+                          </RoleBasedAccess>
                         )}
                         {(loft as any).gps_coordinates && (
                           <div className="flex items-center gap-3">
@@ -446,7 +452,12 @@ export default async function LoftDetailPage({
                   </div>
                 </RoleBasedAccess>
 
-                {/* Statistiques et métriques */}
+                {/* Statistiques et métriques - staff seulement */}
+                <RoleBasedAccess
+                  userRole={session.user.role}
+                  allowedRoles={['admin', 'manager', 'member', 'executive']}
+                  showFallback={false}
+                >
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -476,9 +487,15 @@ export default async function LoftDetailPage({
                     </div>
                   </CardContent>
                 </Card>
+                </RoleBasedAccess>
 
-                {/* Informations Airbnb */}
+                {/* Informations Airbnb - staff seulement */}
                 {loft.airbnb_listing_id && (
+                  <RoleBasedAccess
+                    userRole={session.user.role}
+                    allowedRoles={['admin', 'manager', 'member']}
+                    showFallback={false}
+                  >
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
@@ -513,6 +530,7 @@ export default async function LoftDetailPage({
                       </div>
                     </CardContent>
                   </Card>
+                  </RoleBasedAccess>
                 )}
               </div>
 

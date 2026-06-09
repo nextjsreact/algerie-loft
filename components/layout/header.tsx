@@ -11,12 +11,15 @@ import type { User } from "@/lib/types"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useTranslations } from "next-intl"
 
+const STAFF_ROLES = ['admin', 'manager', 'member', 'executive']
+
 interface HeaderProps {
   user: User
 }
 
 export function Header({ user }: HeaderProps) {
   const t = useTranslations('nav')
+  const isStaff = user?.role && STAFF_ROLES.includes(user.role)
 
   return (
     <header className="flex h-16 items-center justify-between bg-gray-900 px-4 md:hidden">
@@ -25,8 +28,8 @@ export function Header({ user }: HeaderProps) {
         <span className="ml-2 text-xl font-semibold text-white">{t('loftManager')}</span>
       </Link>
       <div className="flex items-center gap-2">
-        {/* Unified Notifications (Normal + Airbnb) */}
-        <UnifiedNotificationBell />
+        {/* Notifications : staff seulement */}
+        {isStaff && <UnifiedNotificationBell />}
         
         <div className="flex items-center bg-white/20 dark:bg-gray-800 rounded-md p-1 gap-1">
           <LanguageSelector />

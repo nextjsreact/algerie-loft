@@ -222,7 +222,7 @@ export default function ClientProviders({ children, session: serverSession, unre
                      )}
                      <div className="flex flex-1 flex-col min-w-0">
                        {/* Desktop header - sticky, in normal flow */}
-                       <DesktopHeader />
+                       <DesktopHeader userRole={session.user.role} />
                        
                        {/* Mobile header - always shows burger menu */}
                        <MobileHeader 

@@ -312,15 +312,16 @@ export default async function LoftDetailPage({
                         {(loft as any).gps_coordinates && (
                           <div className="flex items-center gap-3">
                             <MapPin className="h-5 w-5 text-red-600" />
-                            <div>
-                              <p className="text-sm text-muted-foreground">📍 Coordonnées GPS</p>
+                            <div className="flex-1">
+                              <p className="text-sm text-muted-foreground">📍 Localisation</p>
                               <a
                                 href={(loft as any).gps_coordinates}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="font-medium text-blue-600 hover:underline"
+                                className="inline-flex items-center gap-2 font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
                               >
-                                {(loft as any).gps_coordinates}
+                                <span>Voir sur la carte</span>
+                                <ExternalLink className="h-4 w-4" />
                               </a>
                             </div>
                           </div>

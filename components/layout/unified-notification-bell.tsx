@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { useNotifications } from "@/components/providers/notification-context"
 import { CheckCheck, Bell, ExternalLink } from "lucide-react"
 import { toast } from "sonner"
+import { useAuth } from "@/components/providers/auth-provider"
 
 interface AirbnbNotification {
   id: string
@@ -35,6 +36,7 @@ interface AirbnbNotification {
 export function UnifiedNotificationBell() {
   const locale = useLocale()
   const router = useRouter()
+  const { user } = useAuth()
   const { unreadCount: normalUnreadCount, markAllAsRead, refreshNotifications } = useNotifications()
   const [open, setOpen] = useState(false)
   const [normalNotifications, setNormalNotifications] = useState<any[]>([])
@@ -44,6 +46,11 @@ export function UnifiedNotificationBell() {
   const [marking, setMarking] = useState(false)
   const [lastAirbnbNotificationId, setLastAirbnbNotificationId] = useState<string | null>(null)
   const ref = useRef<HTMLDivElement>(null)
+
+  // Ne pas afficher les notifications pour les clients
+  if (!user || (user.role !== 'admin' && user.role !== 'manager' && user.role !== 'member' && user.role !== 'executive')) {
+    return null
+  }
 
   // Close on outside click
   useEffect(() => {

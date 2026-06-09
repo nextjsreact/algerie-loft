@@ -34,6 +34,7 @@ interface ReservationEditDialogProps {
     taxes?: number
     total_amount?: number
     guest_name?: string
+    guest_count?: number
     currency_code?: string
     currency_ratio?: number
     price_per_night_input?: number
@@ -65,6 +66,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
   const [checkingAvail, setCheckingAvail] = useState(false)
   const [availOk, setAvailOk] = useState<boolean | null>(null)
   const [selectedStatus, setSelectedStatus] = useState<string>('')
+  const [guestCount, setGuestCount] = useState<number>(1)
 
   // Currency state
   const [currencies, setCurrencies] = useState<Currency[]>([])
@@ -100,6 +102,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
     setError('')
     setAvailOk(null)
     setSelectedStatus(reservation.status || 'pending')
+    setGuestCount(reservation.guest_count || 1)
 
     // Restore original currency if stored
     // Pour les réservations Airbnb : currency_code existe mais pas toujours currency_ratio
@@ -237,6 +240,7 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
           currency_ratio: effectiveRatio,
           price_per_night_input: pricePerNight !== '' ? parseFloat(pricePerNight) || null : null,
           status: selectedStatus,
+          guest_count: guestCount,
         }),
       })
       const data = await res.json()
@@ -369,6 +373,19 @@ export function ReservationEditDialog({ reservation, open, onOpenChange, onSucce
                 </SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Number of guests */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Nombre d'invités</Label>
+            <Input
+              type="number"
+              min="1"
+              value={guestCount}
+              onChange={(e) => setGuestCount(parseInt(e.target.value) || 1)}
+              className="h-9"
+              placeholder="Nombre de personnes"
+            />
           </div>
 
           {/* Nights + availability */}

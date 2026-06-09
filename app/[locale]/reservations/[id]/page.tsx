@@ -159,7 +159,7 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">{t("numberOfGuests")}</label>
-                  <p>{reservation.number_of_guests || t("notSpecified")}</p>
+                  <p className="text-lg">{reservation.guest_count || t("notSpecified")}</p>
                 </div>
               </CardContent>
             </Card>

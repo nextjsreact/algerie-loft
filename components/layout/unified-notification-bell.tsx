@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation"
 import { useNotifications } from "@/components/providers/notification-context"
 import { CheckCheck, Bell, ExternalLink } from "lucide-react"
 import { toast } from "sonner"
-import { useAuth } from "@/lib/hooks/use-auth"
 
 interface AirbnbNotification {
   id: string
@@ -33,10 +32,13 @@ interface AirbnbNotification {
   }
 }
 
-export function UnifiedNotificationBell() {
+interface UnifiedNotificationBellProps {
+  userRole?: string
+}
+
+export function UnifiedNotificationBell({ userRole }: UnifiedNotificationBellProps) {
   const locale = useLocale()
   const router = useRouter()
-  const { session } = useAuth()
   const { unreadCount: normalUnreadCount, markAllAsRead, refreshNotifications } = useNotifications()
   const [open, setOpen] = useState(false)
   const [normalNotifications, setNormalNotifications] = useState<any[]>([])
@@ -47,9 +49,9 @@ export function UnifiedNotificationBell() {
   const [lastAirbnbNotificationId, setLastAirbnbNotificationId] = useState<string | null>(null)
   const ref = useRef<HTMLDivElement>(null)
 
-  // Vérifier le rôle (APRÈS les hooks — jamais avant)
+  // Vérifier le rôle
   const staffRoles = ['admin', 'manager', 'member', 'executive']
-  const isStaff = session?.user && staffRoles.includes(session.user.role)
+  const isStaff = userRole && staffRoles.includes(userRole)
 
   // Close on outside click
   useEffect(() => {
@@ -241,9 +243,10 @@ export function UnifiedNotificationBell() {
     return `Il y a ${days} jour${days > 1 ? 's' : ''}`
   }
 
+  // Ne rien afficher pour les non-staff (clients, guests...)
+  if (!isStaff) return null
+
   return (
-    // Ne rien afficher pour les non-staff (clients, guests...)
-    !isStaff ? null :
     <div ref={ref} className="relative">
       {/* Bell button */}
       <button

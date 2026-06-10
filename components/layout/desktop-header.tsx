@@ -35,7 +35,7 @@ export function DesktopHeader({ userRole }: DesktopHeaderProps) {
       {/* Right side controls */}
       <div className="flex items-center gap-3">
         {/* Notifications : staff seulement (admin, manager, member, executive) */}
-        {isStaff && <UnifiedNotificationBell />}
+        {isStaff && <UnifiedNotificationBell userRole={userRole} />}
 
         {/* Language and Theme Controls */}
         <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl p-1 gap-1 border border-gray-200 dark:border-gray-700">

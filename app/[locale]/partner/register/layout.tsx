@@ -19,7 +19,7 @@ export default async function RegisterLayout({
     <div className="min-h-screen flex flex-col">
       {/* Desktop header */}
       <div className="hidden md:block fixed top-0 right-0 left-0 z-20">
-        <DesktopHeader />
+        <DesktopHeader userRole={session?.user.role} />
       </div>
       
       {/* Mobile header */}

@@ -279,19 +279,12 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
                   transition={{ duration: 0.6, delay: index * 0.2 }}
                   className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] group"
                 >
-                  <div className="relative h-64 overflow-hidden bg-black flex items-center justify-center">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
-                    {loft.photo ? (
-                      <img 
-                        src={loft.photo} 
-                        alt={loft.name}
-                        style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', display: 'block' }}
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                        <MapPin className="h-16 w-16 text-gray-400" />
-                      </div>
-                    )}
+                  <div className="relative h-64 overflow-hidden rounded-t-2xl">
+                    <img 
+                      src={loft.photo || ''} 
+                      alt={loft.name}
+                      className="w-full h-full object-cover"
+                    />
                     {loft.average_rating && (
                       <div className="absolute top-4 right-4 z-20">
                         <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">

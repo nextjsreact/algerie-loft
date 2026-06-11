@@ -239,28 +239,39 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
         )}
 
         {/* Lofts disponibles — EXACTEMENT comme la homepage */}
-        <section>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: 'Caveat, cursive' }}>
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                {searchData.destination ? t("loftsAt", { zone: searchData.destination }) : t("availableLofts")}
-              </span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              {t("availableLoftsSubtitle")} — {t("loftsFound", { count: filteredLofts.length })}
-            </p>
-          </div>
+        <motion.section 
+          id="featured-lofts"
+          className="py-20 relative overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-blue-50"></div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {filteredLofts.length === 0 && (
-              <div className="col-span-3 text-center py-12 text-gray-400">
-                <div className="animate-pulse">Chargement des appartements...</div>
-              </div>
-            )}
-            {filteredLofts.slice(0, 15).map((loft: any, index: number) => {
-              const location = loft.zone || loft.address
+          <div className="container mx-auto px-4 relative z-10">
+            <motion.div 
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: 'Caveat, cursive' }}>
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  {searchData.destination ? t("loftsAt", { zone: searchData.destination }) : t("availableLofts")}
+                </span>
+              </h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                {t("availableLoftsSubtitle")} — {t("loftsFound", { count: filteredLofts.length })}
+              </p>
+            </motion.div>
 
-              return (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {filteredLofts.length === 0 && (
+                <div className="col-span-3 text-center py-12 text-gray-400">
+                  <div className="animate-pulse">Chargement des appartements...</div>
+                </div>
+              )}
+              {filteredLofts.slice(0, 15).map((loft: any, index: number) => {
+                const location = loft.zone || loft.address
+
+                return (
                 <motion.div
                   key={loft.id}
                   initial={{ opacity: 0, y: 50 }}
@@ -268,17 +279,27 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
                   transition={{ duration: 0.6, delay: index * 0.2 }}
                   className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] group"
                 >
-                  <div className="relative h-64 overflow-hidden bg-black flex items-center justify-center">
+                  <div className="relative h-64 overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
                     {loft.photo ? (
                       <img 
                         src={loft.photo} 
                         alt={loft.name}
-                        style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', display: 'block' }}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
                         <MapPin className="h-16 w-16 text-gray-400" />
+                      </div>
+                    )}
+                    {loft.average_rating && (
+                      <div className="absolute top-4 right-4 z-20">
+                        <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
+                          <div className="flex items-center space-x-1">
+                            <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                            <span className="text-sm font-semibold text-gray-900">{loft.average_rating}</span>
+                          </div>
+                        </div>
                       </div>
                     )}
                     <div className="absolute bottom-4 left-4 right-4 z-20">
@@ -313,7 +334,7 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
                         whileHover={{ scale: 1.05, y: -1 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => {
-                          window.location.href = `/${locale}/lofts/${loft.id}`;
+                          window.location.href = `/${locale}/client/lofts/${loft.id}`;
                         }}
                         className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg"
                       >
@@ -323,10 +344,11 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
                     </div>
                   </div>
                 </motion.div>
-              )
-            })}
+                )
+              })}
+            </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Message si pas de réservations */}
         {bookings.length === 0 && (

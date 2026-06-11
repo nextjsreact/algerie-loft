@@ -1063,14 +1063,14 @@ export default function LandingV3({ locale }: LandingV3Props) {
           >
             <ul className="space-y-5" style={{ fontFamily: "'Inter', sans-serif" }}>
               {[
-                { icon: Camera,       text: locale === 'ar' ? 'تصوير احترافي مجاني عند الانضمام' : locale === 'en' ? 'Free professional photography on joining' : 'Photographie professionnelle offerte à l\'inscription' },
-                { icon: ClipboardCheck, text: locale === 'ar' ? 'تقييم وتهيئة الشقة وفق معاييرنا' : locale === 'en' ? 'Loft evaluation & setup to our standards' : 'Évaluation et aménagement du loft selon nos standards' },
-                { icon: CalendarDays, text: locale === 'ar' ? 'إدارة الحجوزات والتوافر' : locale === 'en' ? 'Booking & availability management' : 'Gestion complète des réservations et de la disponibilité' },
-                { icon: ConciergeBell, text: locale === 'ar' ? 'خدمة ضيوف 24/7 باسمك' : locale === 'en' ? '24/7 guest service in your name' : 'Service voyageurs 24h/24 en votre nom' },
-                { icon: Sparkles,     text: locale === 'ar' ? 'تنظيف الشقة، تسجيل الدخول والخروج' : locale === 'en' ? 'Cleaning, check-in & check-out management' : 'Nettoyage, check-in et check-out pris en charge' },
-                { icon: BadgeCheck,   text: locale === 'ar' ? 'دفع شهري مضمون وفي الموعد، بدون رسوم خفية' : locale === 'en' ? 'Guaranteed on-time monthly payment, no hidden fees' : 'Paiement mensuel garanti et ponctuel, sans frais cachés' },
-                { icon: BarChart3,    text: locale === 'ar' ? 'تتبع الإيرادات والمصروفات بشفافية تامة عبر التطبيق' : locale === 'en' ? 'Full income & expense tracking via the app' : 'Suivi transparent des revenus et dépenses via l\'application' },
-                { icon: ShieldCheck,  text: locale === 'ar' ? 'مراقبة الدخول والخروج في الوقت الفعلي (كاميرا + تطبيق)' : locale === 'en' ? 'Real-time entry/exit monitoring (camera + app)' : 'Surveillance entrées/sorties en temps réel (caméra + application)' },
+                { icon: Camera,        bg: 'bg-violet-100 dark:bg-violet-900/40', color: 'text-violet-600 dark:text-violet-400', text: locale === 'ar' ? 'تصوير احترافي مجاني عند الانضمام' : locale === 'en' ? 'Free professional photography on joining' : 'Photographie professionnelle offerte à l\'inscription' },
+                { icon: ClipboardCheck,bg: 'bg-amber-100 dark:bg-amber-900/40',   color: 'text-amber-600 dark:text-amber-400',   text: locale === 'ar' ? 'تقييم وتهيئة الشقة وفق معاييرنا' : locale === 'en' ? 'Loft evaluation & setup to our standards' : 'Évaluation et aménagement du loft selon nos standards' },
+                { icon: CalendarDays,  bg: 'bg-blue-100 dark:bg-blue-900/40',     color: 'text-blue-600 dark:text-blue-400',     text: locale === 'ar' ? 'إدارة الحجوزات والتوافر' : locale === 'en' ? 'Booking & availability management' : 'Gestion complète des réservations et de la disponibilité' },
+                { icon: ConciergeBell, bg: 'bg-orange-100 dark:bg-orange-900/40', color: 'text-orange-500 dark:text-orange-400', text: locale === 'ar' ? 'خدمة ضيوف 24/7 باسمك' : locale === 'en' ? '24/7 guest service in your name' : 'Service voyageurs 24h/24 en votre nom' },
+                { icon: Sparkles,      bg: 'bg-cyan-100 dark:bg-cyan-900/40',     color: 'text-cyan-600 dark:text-cyan-400',     text: locale === 'ar' ? 'تنظيف الشقة، تسجيل الدخول والخروج' : locale === 'en' ? 'Cleaning, check-in & check-out management' : 'Nettoyage, check-in et check-out pris en charge' },
+                { icon: BadgeCheck,    bg: 'bg-green-100 dark:bg-green-900/40',   color: 'text-green-600 dark:text-green-400',   text: locale === 'ar' ? 'دفع شهري مضمون وفي الموعد، بدون رسوم خفية' : locale === 'en' ? 'Guaranteed on-time monthly payment, no hidden fees' : 'Paiement mensuel garanti et ponctuel, sans frais cachés' },
+                { icon: BarChart3,     bg: 'bg-indigo-100 dark:bg-indigo-900/40', color: 'text-indigo-600 dark:text-indigo-400', text: locale === 'ar' ? 'تتبع الإيرادات والمصروفات بشفافية تامة عبر التطبيق' : locale === 'en' ? 'Full income & expense tracking via the app' : 'Suivi transparent des revenus et dépenses via l\'application' },
+                { icon: ShieldCheck,   bg: 'bg-rose-100 dark:bg-rose-900/40',     color: 'text-rose-600 dark:text-rose-400',     text: locale === 'ar' ? 'مراقبة الدخول والخروج في الوقت الفعلي (كاميرا + تطبيق)' : locale === 'en' ? 'Real-time entry/exit monitoring (camera + app)' : 'Surveillance entrées/sorties en temps réel (caméra + application)' },
               ].map((item, i) => (
                 <motion.li
                   key={i}
@@ -1080,8 +1080,8 @@ export default function LandingV3({ locale }: LandingV3Props) {
                   transition={{ duration: 0.45, delay: i * 0.06 }}
                   className="flex items-center gap-4"
                 >
-                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800">
-                    <item.icon className="h-5 w-5 text-neutral-700 dark:text-neutral-300" strokeWidth={1.5} />
+                  <span className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl ${item.bg}`}>
+                    <item.icon className={`h-5 w-5 ${item.color}`} strokeWidth={1.5} />
                   </span>
                   <span className="text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">{item.text}</span>
                 </motion.li>

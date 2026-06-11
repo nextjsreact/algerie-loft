@@ -844,99 +844,24 @@ export default function LandingV3({ locale }: LandingV3Props) {
           {/* ─ Séparateur ─ */}
           <div className="my-20 border-t border-white/10" />
 
-          {/* Service partenaires — mis en évidence */}
-          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.7 }}
+          {/* Aperçu partenaires — lien vers la section dédiée */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center"
+          >
+            <p className="text-sm text-white/50 mb-4" style={{ fontFamily: "'Inter', sans-serif" }}>
+              {locale === 'ar' ? 'هل أنت مالك لوفت؟' : locale === 'en' ? 'Do you own a loft?' : 'Vous êtes propriétaire d\'un loft ?'}
+            </p>
+            <button
+              onClick={goToPartner}
+              className="inline-flex items-center gap-2 rounded-full border border-white/30 px-8 py-3.5 text-sm font-medium text-white transition-all hover:bg-white/10"
             >
-              <span className="inline-block rounded-full border border-white/20 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.3em] text-white/60 mb-6" style={{ fontFamily: "'Inter', sans-serif" }}>
-                {locale === 'ar' ? 'للمالكين والشركاء' : locale === 'en' ? 'For owners & partners' : 'Pour les propriétaires & partenaires'}
-              </span>
-              <h3 className="text-3xl font-medium leading-tight text-white sm:text-5xl">
-                {locale === 'ar'
-                  ? 'حوّل شقتك إلى مصدر دخل ثابت.'
-                  : locale === 'en'
-                  ? 'Turn your loft into a steady income.'
-                  : 'Transformez votre loft en revenu stable.'}
-              </h3>
-              <p className="mt-6 text-base leading-relaxed text-white/60 max-w-lg" style={{ fontFamily: "'Inter', sans-serif" }}>
-                {locale === 'ar'
-                  ? 'نتولى كل شيء — التصوير، الحجوزات، خدمة الضيوف — وأنت تجني دخلاً شهرياً مضموناً، بدون قلق.'
-                  : locale === 'en'
-                  ? 'We handle everything — photography, bookings, guest service — while you receive a guaranteed monthly income, stress-free.'
-                  : 'Nous gérons tout — photographie, réservations, accueil des voyageurs — pendant que vous percevez un revenu mensuel garanti, sans contrainte.'}
-              </p>
-
-              {/* Avantages clés */}
-              <ul className="mt-8 space-y-3" style={{ fontFamily: "'Inter', sans-serif" }}>
-                {[
-                  locale === 'ar' ? '📸 تصوير احترافي مجاني عند الانضمام' : locale === 'en' ? '📸 Free professional photography on joining' : '📸 Photographie professionnelle offerte à l\'inscription',
-                  locale === 'ar' ? '📅 إدارة الحجوزات والتوافر' : locale === 'en' ? '📅 Booking & availability management' : '📅 Gestion des réservations et de la disponibilité',
-                  locale === 'ar' ? '🛎️ خدمة الضيوف 24/7 باسمك' : locale === 'en' ? '🛎️ 24/7 guest service in your name' : '🛎️ Service voyageurs 24h/24 en votre nom',
-                  locale === 'ar' ? '💰 دفع شهري مضمون وفي الموعد' : locale === 'en' ? '💰 Guaranteed on-time monthly payment' : '💰 Paiement mensuel garanti et ponctuel',
-                ].map((item, i) => (
-                  <motion.li
-                    key={i}
-                    initial={{ opacity: 0, x: -16 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.1 * i }}
-                    className="flex items-center gap-3 text-sm text-white/80"
-                  >
-                    <span>{item}</span>
-                  </motion.li>
-                ))}
-              </ul>
-
-              <div className="mt-10 flex flex-col gap-3 sm:flex-row" style={{ fontFamily: "'Inter', sans-serif" }}>
-                <button
-                  onClick={goToPartner}
-                  className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-semibold text-neutral-900 transition-all hover:bg-neutral-100"
-                >
-                  {locale === 'ar' ? 'انضم كشريك الآن' : locale === 'en' ? 'Become a partner now' : 'Devenir partenaire maintenant'}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </button>
-                <a
-                  href={PHONE_LINK}
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-8 py-4 text-sm font-medium text-white transition-all hover:bg-white/10"
-                >
-                  <Phone className="h-4 w-4" />
-                  {PHONE_DISPLAY}
-                </a>
-              </div>
-            </motion.div>
-
-            {/* Stats partenaires */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.7, delay: 0.15 }}
-              className="grid grid-cols-2 gap-4"
-            >
-              {[
-                { value: '150+', label: locale === 'ar' ? 'شقة مُدارة' : locale === 'en' ? 'Managed lofts' : 'Lofts gérés' },
-                { value: '98%', label: locale === 'ar' ? 'شركاء راضون' : locale === 'en' ? 'Satisfied partners' : 'Partenaires satisfaits' },
-                { value: '72h', label: locale === 'ar' ? 'للبدء بعد التسجيل' : locale === 'en' ? 'To launch after signup' : 'Pour démarrer après inscription' },
-                { value: '0 DA', label: locale === 'ar' ? 'تكاليف مخفية' : locale === 'en' ? 'Hidden fees' : 'Frais cachés' },
-              ].map((s, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2 + i * 0.1 }}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center"
-                >
-                  <div className="text-4xl font-medium text-white">{s.value}</div>
-                  <div className="mt-2 text-xs text-white/40 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>{s.label}</div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
+              {locale === 'ar' ? 'اكتشف خدماتنا للشركاء ←' : locale === 'en' ? 'Discover our partner services →' : 'Découvrir nos services pour partenaires →'}
+            </button>
+          </motion.div>
         </div>
       </section>
 
@@ -1106,49 +1031,63 @@ export default function LandingV3({ locale }: LandingV3Props) {
         </div>
       </section>
 
-      {/* ─── OWNERS ─── */}
+      {/* ─── OWNERS — section fusionnée ─── */}
       <section className="mx-auto max-w-6xl px-6 py-24 sm:px-8">
-        <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-2">
+
+        {/* Titre centré */}
+        <div className="mb-16 text-center">
+          <SectionOverline>{t.ownerEyebrow}</SectionOverline>
+          <h2 className="mx-auto max-w-3xl text-3xl font-medium leading-tight text-neutral-900 dark:text-white sm:text-5xl">
+            {t.ownerTitle}
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-neutral-600 dark:text-neutral-400" style={{ fontFamily: "'Inter', sans-serif" }}>
+            {t.ownerSubtitle}
+          </p>
+        </div>
+
+        {/* Grille principale */}
+        <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2">
+
+          {/* Colonne gauche — services complets */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.7 }}
           >
-            <SectionOverline>{t.ownerEyebrow}</SectionOverline>
-            <h2 className="max-w-md text-3xl font-medium leading-tight text-neutral-900 dark:text-white sm:text-5xl">{t.ownerTitle}</h2>
-            <p
-              className="mt-5 max-w-md text-neutral-600 dark:text-neutral-400"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              {t.ownerSubtitle}
-            </p>
-            <ul className="mt-8 space-y-4" style={{ fontFamily: "'Inter', sans-serif" }}>
-              {ownerBenefits.map((b, i) => (
+            <ul className="space-y-4" style={{ fontFamily: "'Inter', sans-serif" }}>
+              {[
+                { emoji: '📸', text: locale === 'ar' ? 'تصوير احترافي مجاني عند الانضمام' : locale === 'en' ? 'Free professional photography on joining' : 'Photographie professionnelle offerte à l\'inscription' },
+                { emoji: '📅', text: locale === 'ar' ? 'إدارة الحجوزات والتوافر' : locale === 'en' ? 'Booking & availability management' : 'Gestion complète des réservations et de la disponibilité' },
+                { emoji: '🛎️', text: locale === 'ar' ? 'خدمة ضيوف 24/7 باسمك' : locale === 'en' ? '24/7 guest service in your name' : 'Service voyageurs 24h/24 en votre nom' },
+                { emoji: '🧹', text: locale === 'ar' ? 'تنظيف الشقة، تسجيل الدخول والخروج' : locale === 'en' ? 'Cleaning, check-in & check-out management' : 'Nettoyage, check-in et check-out pris en charge' },
+                { emoji: '💰', text: locale === 'ar' ? 'دفع شهري مضمون وفي الموعد، بدون رسوم خفية' : locale === 'en' ? 'Guaranteed on-time monthly payment, no hidden fees' : 'Paiement mensuel garanti et ponctuel, sans frais cachés' },
+                { emoji: '📊', text: locale === 'ar' ? 'تتبع الإيرادات والمصروفات بشفافية تامة عبر التطبيق' : locale === 'en' ? 'Full income & expense tracking via the app' : 'Suivi transparent des revenus et dépenses via l\'application' },
+                { emoji: '📷', text: locale === 'ar' ? 'مراقبة الدخول والخروج في الوقت الفعلي (كاميرا + تطبيق)' : locale === 'en' ? 'Real-time entry/exit monitoring (camera + app)' : 'Surveillance entrées/sorties en temps réel (caméra + application)' },
+              ].map((item, i) => (
                 <motion.li
                   key={i}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -16 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  transition={{ duration: 0.5, delay: i * 0.07 }}
                   className="flex items-start gap-3"
                 >
-                  <span className="mt-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-neutral-900 dark:border-neutral-100">
-                    <svg className="h-2.5 w-2.5" viewBox="0 0 12 12" fill="none">
-                      <path d="M2.5 6.5L5 9L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                  <span className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800 text-base">
+                    {item.emoji}
                   </span>
-                  <span className="text-neutral-700 dark:text-neutral-300">{b}</span>
+                  <span className="text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">{item.text}</span>
                 </motion.li>
               ))}
             </ul>
+
             <div className="mt-10 flex flex-col gap-3 sm:flex-row" style={{ fontFamily: "'Inter', sans-serif" }}>
               <button
                 onClick={goToPartner}
-                className="group inline-flex items-center justify-center gap-2 rounded-full bg-neutral-900 px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
+                className="group inline-flex items-center justify-center gap-2 rounded-full bg-neutral-900 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
               >
                 {t.ownerCta}
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
               </button>
               <a
                 href={PHONE_LINK}
@@ -1160,30 +1099,56 @@ export default function LandingV3({ locale }: LandingV3Props) {
             </div>
           </motion.div>
 
+          {/* Colonne droite — revenus + stats */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="rounded-3xl border border-neutral-200 bg-white p-9 dark:border-neutral-800 dark:bg-neutral-900"
+            className="space-y-4"
           >
-            <div className="flex items-center gap-2 text-neutral-500 dark:text-neutral-400" style={{ fontFamily: "'Inter', sans-serif" }}>
-              <Star className="h-5 w-5" strokeWidth={1.5} />
-              <span className="text-sm">{t.avgRevenue}</span>
-            </div>
-            <div className="mt-7 space-y-5" style={{ fontFamily: "'Inter', sans-serif" }}>
-              {revenues.map((r, i) => (
-                <div key={i} className="flex items-center justify-between border-b border-neutral-100 pb-4 last:border-0 dark:border-neutral-800">
-                  <span className="text-neutral-600 dark:text-neutral-300">{r.city}</span>
-                  <span className="text-xl font-semibold text-neutral-900 dark:text-white">{r.amount}</span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-7 rounded-2xl bg-neutral-900 p-6 text-center text-white dark:bg-black">
-              <div className="text-2xl font-semibold leading-tight">✓ Revenus assurés</div>
-              <div className="mt-1 text-sm text-white/60" style={{ fontFamily: "'Inter', sans-serif" }}>
-                {t.revenueUp}
+            {/* Carte revenus */}
+            <div className="rounded-3xl border border-neutral-200 bg-white p-9 dark:border-neutral-800 dark:bg-neutral-900">
+              <div className="flex items-center gap-2 text-neutral-500 dark:text-neutral-400" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <Star className="h-5 w-5" strokeWidth={1.5} />
+                <span className="text-sm">{t.avgRevenue}</span>
               </div>
+              <div className="mt-7 space-y-5" style={{ fontFamily: "'Inter', sans-serif" }}>
+                {revenues.map((r, i) => (
+                  <div key={i} className="flex items-center justify-between border-b border-neutral-100 pb-4 last:border-0 dark:border-neutral-800">
+                    <span className="text-neutral-600 dark:text-neutral-300">{r.city}</span>
+                    <span className="text-xl font-semibold text-neutral-900 dark:text-white">{r.amount}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-7 rounded-2xl bg-neutral-900 p-6 text-center text-white dark:bg-black">
+                <div className="text-2xl font-semibold leading-tight">✓ {locale === 'ar' ? 'دخل مضمون' : locale === 'en' ? 'Secured income' : 'Revenus assurés'}</div>
+                <div className="mt-1 text-sm text-white/60" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  {t.revenueUp}
+                </div>
+              </div>
+            </div>
+
+            {/* Stats 4 cases */}
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { value: '150+', label: locale === 'ar' ? 'شقة مُدارة' : locale === 'en' ? 'Managed lofts' : 'Lofts gérés' },
+                { value: '98%', label: locale === 'ar' ? 'شركاء راضون' : locale === 'en' ? 'Satisfied partners' : 'Partenaires satisfaits' },
+                { value: '72h', label: locale === 'ar' ? 'للبدء بعد التسجيل' : locale === 'en' ? 'To launch after signup' : 'Pour démarrer après inscription' },
+                { value: '0 DA', label: locale === 'ar' ? 'تكاليف مخفية' : locale === 'en' ? 'Hidden fees' : 'Frais cachés' },
+              ].map((s, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 + i * 0.08 }}
+                  className="rounded-2xl border border-neutral-200 bg-neutral-50 p-5 text-center dark:border-neutral-800 dark:bg-neutral-900"
+                >
+                  <div className="text-3xl font-medium text-neutral-900 dark:text-white">{s.value}</div>
+                  <div className="mt-1.5 text-xs text-neutral-500 uppercase tracking-wider dark:text-neutral-400" style={{ fontFamily: "'Inter', sans-serif" }}>{s.label}</div>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>

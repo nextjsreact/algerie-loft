@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -21,6 +21,7 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { getZoneAreas } from "@/app/actions/zone-areas"
 
 interface Loft {
   id: string
@@ -57,12 +58,11 @@ export function ClientLoftsView({ lofts, locale }: ClientLoftsViewProps) {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000])
   const [selectedZone, setSelectedZone] = useState<string>("all")
   const [favorites, setFavorites] = useState<Set<string>>(new Set())
+  const [allZones, setAllZones] = useState<{ id: string; name: string }[]>([])
 
-  // Extraire les zones uniques
-  const zones = useMemo(() => {
-    const uniqueZones = new Set(lofts.map(loft => loft.zone_areas?.name).filter(Boolean))
-    return Array.from(uniqueZones)
-  }, [lofts])
+  useEffect(() => {
+    getZoneAreas().then((data) => setAllZones(data))
+  }, [])
 
   // Filtrer les lofts
   const filteredLofts = useMemo(() => {
@@ -122,8 +122,8 @@ export function ClientLoftsView({ lofts, locale }: ClientLoftsViewProps) {
                 className="flex h-12 w-full md:w-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
                 <option value="all">Toutes les zones</option>
-                {zones.map(zone => (
-                  <option key={zone} value={zone}>{zone}</option>
+                {allZones.map(zone => (
+                  <option key={zone.id} value={zone.name}>{zone.name}</option>
                 ))}
               </select>
               

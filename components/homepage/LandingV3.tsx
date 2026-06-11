@@ -24,6 +24,12 @@ import {
   ChevronDown,
   Send,
   Heart,
+  Camera,
+  CalendarDays,
+  ConciergeBell,
+  BadgeCheck,
+  BarChart3,
+  ClipboardCheck,
 } from 'lucide-react';
 import PublicHeader from '@/components/public/PublicHeader';
 import BackToTop from '@/components/ui/BackToTop';
@@ -1055,26 +1061,27 @@ export default function LandingV3({ locale }: LandingV3Props) {
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.7 }}
           >
-            <ul className="space-y-4" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <ul className="space-y-5" style={{ fontFamily: "'Inter', sans-serif" }}>
               {[
-                { emoji: '📸', text: locale === 'ar' ? 'تصوير احترافي مجاني عند الانضمام' : locale === 'en' ? 'Free professional photography on joining' : 'Photographie professionnelle offerte à l\'inscription' },
-                { emoji: '📅', text: locale === 'ar' ? 'إدارة الحجوزات والتوافر' : locale === 'en' ? 'Booking & availability management' : 'Gestion complète des réservations et de la disponibilité' },
-                { emoji: '🛎️', text: locale === 'ar' ? 'خدمة ضيوف 24/7 باسمك' : locale === 'en' ? '24/7 guest service in your name' : 'Service voyageurs 24h/24 en votre nom' },
-                { emoji: '🧹', text: locale === 'ar' ? 'تنظيف الشقة، تسجيل الدخول والخروج' : locale === 'en' ? 'Cleaning, check-in & check-out management' : 'Nettoyage, check-in et check-out pris en charge' },
-                { emoji: '💰', text: locale === 'ar' ? 'دفع شهري مضمون وفي الموعد، بدون رسوم خفية' : locale === 'en' ? 'Guaranteed on-time monthly payment, no hidden fees' : 'Paiement mensuel garanti et ponctuel, sans frais cachés' },
-                { emoji: '📊', text: locale === 'ar' ? 'تتبع الإيرادات والمصروفات بشفافية تامة عبر التطبيق' : locale === 'en' ? 'Full income & expense tracking via the app' : 'Suivi transparent des revenus et dépenses via l\'application' },
-                { emoji: '📷', text: locale === 'ar' ? 'مراقبة الدخول والخروج في الوقت الفعلي (كاميرا + تطبيق)' : locale === 'en' ? 'Real-time entry/exit monitoring (camera + app)' : 'Surveillance entrées/sorties en temps réel (caméra + application)' },
+                { icon: Camera,       text: locale === 'ar' ? 'تصوير احترافي مجاني عند الانضمام' : locale === 'en' ? 'Free professional photography on joining' : 'Photographie professionnelle offerte à l\'inscription' },
+                { icon: ClipboardCheck, text: locale === 'ar' ? 'تقييم وتهيئة الشقة وفق معاييرنا' : locale === 'en' ? 'Loft evaluation & setup to our standards' : 'Évaluation et aménagement du loft selon nos standards' },
+                { icon: CalendarDays, text: locale === 'ar' ? 'إدارة الحجوزات والتوافر' : locale === 'en' ? 'Booking & availability management' : 'Gestion complète des réservations et de la disponibilité' },
+                { icon: ConciergeBell, text: locale === 'ar' ? 'خدمة ضيوف 24/7 باسمك' : locale === 'en' ? '24/7 guest service in your name' : 'Service voyageurs 24h/24 en votre nom' },
+                { icon: Sparkles,     text: locale === 'ar' ? 'تنظيف الشقة، تسجيل الدخول والخروج' : locale === 'en' ? 'Cleaning, check-in & check-out management' : 'Nettoyage, check-in et check-out pris en charge' },
+                { icon: BadgeCheck,   text: locale === 'ar' ? 'دفع شهري مضمون وفي الموعد، بدون رسوم خفية' : locale === 'en' ? 'Guaranteed on-time monthly payment, no hidden fees' : 'Paiement mensuel garanti et ponctuel, sans frais cachés' },
+                { icon: BarChart3,    text: locale === 'ar' ? 'تتبع الإيرادات والمصروفات بشفافية تامة عبر التطبيق' : locale === 'en' ? 'Full income & expense tracking via the app' : 'Suivi transparent des revenus et dépenses via l\'application' },
+                { icon: ShieldCheck,  text: locale === 'ar' ? 'مراقبة الدخول والخروج في الوقت الفعلي (كاميرا + تطبيق)' : locale === 'en' ? 'Real-time entry/exit monitoring (camera + app)' : 'Surveillance entrées/sorties en temps réel (caméra + application)' },
               ].map((item, i) => (
                 <motion.li
                   key={i}
                   initial={{ opacity: 0, x: -16 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.07 }}
-                  className="flex items-start gap-3"
+                  transition={{ duration: 0.45, delay: i * 0.06 }}
+                  className="flex items-center gap-4"
                 >
-                  <span className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800 text-base">
-                    {item.emoji}
+                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800">
+                    <item.icon className="h-5 w-5 text-neutral-700 dark:text-neutral-300" strokeWidth={1.5} />
                   </span>
                   <span className="text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">{item.text}</span>
                 </motion.li>

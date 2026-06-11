@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import PublicHeader from '@/components/public/PublicHeader';
 import BackToTop from '@/components/ui/BackToTop';
+import UrgentAnnouncementBanner from '@/components/UrgentAnnouncementBanner';
 
 interface LandingV3Props {
   locale: string;
@@ -636,6 +637,8 @@ export default function LandingV3({ locale }: LandingV3Props) {
         href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet"
       />
+      {/* Bannière annonces urgentes */}
+      <UrgentAnnouncementBanner locale={locale} />
       <PublicHeader locale={locale} text={{ login: t.footerClient }} />
 
       {/* ─── HERO ─── */}

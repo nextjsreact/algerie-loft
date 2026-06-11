@@ -18,6 +18,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { motion } from "framer-motion"
 import { getZoneAreas } from "@/app/actions/zone-areas"
 import { useTranslations, useLocale } from "next-intl"
 
@@ -250,68 +251,80 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
 
         {/* Lofts — même API que la homepage */}
         <section>
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
                 {searchData.destination ? t("loftsAt", { zone: searchData.destination }) : t("availableLofts")}
               </h2>
-              <p className="text-gray-600">{t("availableLoftsSubtitle")}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t("availableLoftsSubtitle")}</p>
             </div>
             <Link href={`/${locale}/client/lofts`}>
-              <Button variant="outline">
+              <Button variant="outline" className="gap-2">
                 {t("viewAll")}
-                <ArrowRight className="h-4 w-4 ml-2" />
+                <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {filteredLofts.length === 0 && (
-              <div className="col-span-3 text-center py-12 text-gray-400">
-                <MapPin className="h-16 w-16 mx-auto mb-4" />
-                <p className="text-lg">{t("noLoftsFound")}</p>
+              <div className="col-span-3 text-center py-16 text-gray-400">
+                <MapPin className="h-14 w-14 mx-auto mb-4 opacity-40" />
+                <p className="text-base">{t("noLoftsFound")}</p>
               </div>
             )}
-            {filteredLofts.map((loft: any) => {
+            {filteredLofts.map((loft: any, i: number) => {
               const location = loft.zone || loft.address
-
               return (
-                <Link 
-                  key={loft.id} 
-                  href={`/${locale}/client/lofts/${loft.id}`}
-                  className="group block"
+                <motion.div
+                  key={loft.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.6, delay: (i % 3) * 0.08, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <div className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300">
-                    <div className="relative h-64">
+                  <Link href={`/${locale}/client/lofts/${loft.id}`} className="group block">
+                    {/* Photo — même ratio que landing page */}
+                    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-neutral-200 dark:bg-neutral-800">
                       {loft.photo ? (
-                        <img 
-                          src={loft.photo} 
+                        <Image
+                          src={loft.photo}
                           alt={loft.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                         />
                       ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                          <MapPin className="h-16 w-16 text-gray-400" />
+                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700">
+                          <MapPin className="h-12 w-12 text-neutral-400" />
                         </div>
                       )}
+                      {/* Overlay hover */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                     </div>
-                    <div className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-bold text-gray-900 truncate">{loft.name}</h3>
-                          <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                            <MapPin className="h-3 w-3 flex-shrink-0" />
+
+                    {/* Infos */}
+                    <div className="mt-4 flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h3 className="text-lg font-medium text-neutral-900 dark:text-white truncate">{loft.name}</h3>
+                        {location && (
+                          <p className="mt-1 flex items-center gap-1.5 text-sm text-neutral-500 dark:text-neutral-400">
+                            <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
                             <span className="truncate">{location}</span>
                           </p>
-                        </div>
-                        <div className="text-right ml-4 flex-shrink-0">
-                          <span className="text-lg font-bold text-gray-900">{loft.price_per_night?.toLocaleString()} DA</span>
-                          <span className="block text-sm text-gray-500">{t("perNight")}</span>
-                        </div>
+                        )}
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <span className="text-base font-semibold text-neutral-900 dark:text-white">
+                          {loft.price_per_night?.toLocaleString()} DA
+                        </span>
+                        <span className="block text-xs text-neutral-500 dark:text-neutral-400">
+                          {t("perNight")}
+                        </span>
                       </div>
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+                </motion.div>
               )
             })}
           </div>

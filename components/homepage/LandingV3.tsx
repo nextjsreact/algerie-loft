@@ -100,7 +100,7 @@ const fallbackLofts: Loft[] = [
 
 const copy = {
   fr: {
-    heroEyebrow: 'Lofts d\'exception — Alger · Oran · Constantine',
+    heroEyebrow: 'Lofts d\'exception — Grand Alger · Oran · Béjaïa · Jijel',
     heroTitle: 'L\'art de séjourner en Algérie',
     heroSubtitle:
       'Une collection de lofts choisis pour leur caractère, leur lumière et leur emplacement. Réservation directe, accueil soigné, expérience irréprochable.',
@@ -199,7 +199,7 @@ const copy = {
     rights: 'Tous droits réservés',
   },
   en: {
-    heroEyebrow: 'Exceptional lofts — Algiers · Oran · Constantine',
+    heroEyebrow: 'Exceptional lofts — Greater Algiers · Oran · Béjaïa · Jijel',
     heroTitle: 'The art of staying in Algeria',
     heroSubtitle:
       'A collection of lofts chosen for their character, light and location. Direct booking, attentive welcome, a flawless experience.',
@@ -297,7 +297,7 @@ const copy = {
     rights: 'All rights reserved',
   },
   ar: {
-    heroEyebrow: 'شقق استثنائية — الجزائر · وهران · قسنطينة',
+    heroEyebrow: 'شقق استثنائية — الجزائر الكبرى · وهران · بجاية · جيجل',
     heroTitle: 'فن الإقامة في الجزائر',
     heroSubtitle:
       'مجموعة من الشقق المختارة بعناية لطابعها وإضاءتها وموقعها. حجز مباشر، استقبال راقٍ، تجربة لا تشوبها شائبة.',
@@ -455,7 +455,7 @@ function TestimonialCard({
           </div>
           <div>
             <div className="text-sm font-semibold text-neutral-900 dark:text-white">{author}</div>
-            <div className="text-xs text-neutral-500" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <div className="text-xs text-neutral-500 dark:text-neutral-400" style={{ fontFamily: "'Inter', sans-serif" }}>
               {role}
             </div>
           </div>
@@ -573,7 +573,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
   const revenues = [
     { city: 'Alger · Hydra', amount: '45 000 DA' },
     { city: 'Oran · Centre', amount: '38 000 DA' },
-    { city: 'Constantine', amount: '28 000 DA' },
+    { city: 'Béjaïa · Jijel', amount: '25 000 DA' },
   ];
 
   const ownerBenefits = [t.ownerB1, t.ownerB2, t.ownerB3, t.ownerB4];
@@ -694,7 +694,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
           >
             <button
               onClick={goToSearch}
-              className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-medium text-neutral-900 transition-all duration-300 hover:bg-white/90"
+              className="group inline-flex items-center justify-center gap-2 rounded-full bg-neutral-900/80 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:bg-neutral-900"
             >
               {t.heroCtaPrimary}
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
@@ -703,7 +703,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/40 px-7 py-3.5 text-sm font-medium text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/10"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/50 bg-white/10 px-7 py-3.5 text-sm font-medium text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
             >
               <Phone className="h-4 w-4" />
               {t.heroCtaSecondary}
@@ -724,7 +724,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
               transition={{ duration: 0.6, delay: i * 0.08 }}
               className="text-center"
             >
-              <div className="text-4xl font-medium tracking-tight sm:text-5xl">{s.value}</div>
+              <div className="text-4xl font-medium tracking-tight text-neutral-900 dark:text-white sm:text-5xl">{s.value}</div>
               <div
                 className="mt-2 text-xs uppercase tracking-[0.2em] text-neutral-500 dark:text-neutral-400"
                 style={{ fontFamily: "'Inter', sans-serif" }}
@@ -741,7 +741,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
         <div className="mb-14 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
           <div>
             <SectionOverline>{t.collectionEyebrow}</SectionOverline>
-            <h2 className="max-w-xl text-3xl font-medium leading-tight sm:text-5xl">
+            <h2 className="max-w-xl text-3xl font-medium leading-tight text-neutral-900 dark:text-white sm:text-5xl">
               {t.collectionTitle}
             </h2>
             <p
@@ -786,7 +786,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
               </div>
               <div className="mt-5 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-xl font-medium">{loft.name}</h3>
+                  <h3 className="text-xl font-medium text-neutral-900 dark:text-white">{loft.name}</h3>
                   {(loft.zone || loft.address) && (
                     <p
                       className="mt-1 flex items-center gap-1.5 text-sm text-neutral-500 dark:text-neutral-400"
@@ -798,7 +798,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
                   )}
                 </div>
                 <div className="text-right rtl:text-left" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  <div className="text-base font-semibold">{formatPrice(loft.price_per_night)} DA</div>
+                  <div className="text-base font-semibold text-neutral-900 dark:text-white">{formatPrice(loft.price_per_night)} DA</div>
                   <div className="text-xs text-neutral-500 dark:text-neutral-400">{t.perNight}</div>
                 </div>
               </div>
@@ -812,7 +812,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
         <div className="mx-auto max-w-6xl px-6 py-24 sm:px-8">
           <div className="mb-16 max-w-2xl">
             <SectionOverline>{t.promiseEyebrow}</SectionOverline>
-            <h2 className="text-3xl font-medium leading-tight sm:text-5xl">{t.promiseTitle}</h2>
+            <h2 className="text-3xl font-medium leading-tight text-white sm:text-5xl">{t.promiseTitle}</h2>
           </div>
           <div className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl bg-white/10 md:grid-cols-3">
             {features.map((f, i) => {
@@ -827,7 +827,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
                   className="bg-neutral-900 p-10 dark:bg-black"
                 >
                   <Icon className="h-7 w-7 text-white" strokeWidth={1.5} />
-                  <h3 className="mt-6 text-xl font-medium">{f.title}</h3>
+                  <h3 className="mt-6 text-xl font-medium text-white">{f.title}</h3>
                   <p
                     className="mt-3 text-sm leading-relaxed text-white/60"
                     style={{ fontFamily: "'Inter', sans-serif" }}
@@ -845,7 +845,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
       <section className="mx-auto max-w-6xl px-6 py-24 sm:px-8">
         <div className="mb-14 max-w-2xl">
           <SectionOverline>{t.testimonialsEyebrow}</SectionOverline>
-          <h2 className="text-3xl font-medium leading-tight sm:text-5xl">{t.testimonialsTitle}</h2>
+          <h2 className="text-3xl font-medium leading-tight text-neutral-900 dark:text-white sm:text-5xl">{t.testimonialsTitle}</h2>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {testimonials.map((tmn, i) => (
@@ -859,7 +859,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
         <div className="mx-auto max-w-6xl px-6 py-24 sm:px-8">
           <div className="mb-16 text-center">
             <SectionOverline>{t.processEyebrow}</SectionOverline>
-            <h2 className="text-3xl font-medium leading-tight sm:text-5xl">{t.processTitle}</h2>
+            <h2 className="text-3xl font-medium leading-tight text-neutral-900 dark:text-white sm:text-5xl">{t.processTitle}</h2>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {processSteps.map((step, i) => {
@@ -879,7 +879,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
                   <div className="mb-3 text-sm font-medium text-neutral-400" style={{ fontFamily: "'Inter', sans-serif" }}>
                     0{i + 1}
                   </div>
-                  <h3 className="mb-3 text-xl font-medium">{step.title}</h3>
+                  <h3 className="mb-3 text-xl font-medium text-neutral-900 dark:text-white">{step.title}</h3>
                   <p className="mx-auto max-w-xs text-sm leading-relaxed text-neutral-600 dark:text-neutral-400" style={{ fontFamily: "'Inter', sans-serif" }}>
                     {step.desc}
                   </p>
@@ -897,7 +897,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
       <section className="mx-auto max-w-6xl px-6 py-24 sm:px-8">
         <div className="mb-14 max-w-2xl">
           <SectionOverline>{t.galleryEyebrow}</SectionOverline>
-          <h2 className="text-3xl font-medium leading-tight sm:text-5xl">{t.galleryTitle}</h2>
+          <h2 className="text-3xl font-medium leading-tight text-neutral-900 dark:text-white sm:text-5xl">{t.galleryTitle}</h2>
         </div>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {collection.slice(0, 4).map((loft, i) => (
@@ -931,54 +931,77 @@ export default function LandingV3({ locale }: LandingV3Props) {
         </div>
       </section>
 
-      {/* ─── SPONSORS ─── */}
-      <section className="border-y border-neutral-200/70 bg-white dark:border-neutral-800 dark:bg-neutral-900">
-        <div className="mx-auto max-w-6xl px-6 py-16 sm:px-8">
-          <div className="mb-12 text-center">
-            <SectionOverline>{t.sponsorsEyebrow}</SectionOverline>
-            <h2 className="text-2xl font-medium sm:text-3xl">{t.sponsorsTitle}</h2>
-          </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {sponsors.map((sponsor, i) => (
-              <motion.a
+      {/* ─── SPONSORS — banderole défilante ─── */}
+      <section className="overflow-hidden border-y border-neutral-200/70 bg-white py-14 dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="mb-10 text-center px-6">
+          <SectionOverline>{t.sponsorsEyebrow}</SectionOverline>
+          <h2 className="text-2xl font-medium text-neutral-900 dark:text-white sm:text-3xl">{t.sponsorsTitle}</h2>
+        </div>
+
+        {/* Banderole défilante infinie */}
+        <div className="relative overflow-hidden">
+          {/* Fondu gauche */}
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-white to-transparent dark:from-neutral-900" />
+          {/* Fondu droit */}
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-white to-transparent dark:from-neutral-900" />
+
+          <style>{`
+            @keyframes scroll-sponsors {
+              0%   { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+            .sponsors-track {
+              animation: scroll-sponsors 22s linear infinite;
+              will-change: transform;
+            }
+            .sponsors-track:hover {
+              animation-play-state: paused;
+            }
+          `}</style>
+
+          <div className="sponsors-track flex w-max items-center gap-10">
+            {[...sponsors, ...sponsors].map((sponsor, i) => (
+              <a
                 key={i}
                 href={sponsor.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="group flex items-center justify-center rounded-2xl border border-neutral-100 bg-white p-5 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-800"
+                className="group flex shrink-0 flex-col items-center gap-2.5"
                 title={sponsor.name}
               >
-                <div className="relative h-12 w-full">
-                  <Image
-                    src={sponsor.logo}
-                    alt={`${sponsor.name} logo`}
-                    fill
-                    sizes="(max-width: 640px) 40vw, (max-width: 1024px) 25vw, 14vw"
-                    className={`object-contain opacity-60 grayscale transition-all duration-300 group-hover:opacity-100 group-hover:grayscale-0 ${sponsor.logoDark ? 'dark:hidden' : ''}`}
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const parent = target.parentElement;
-                      if (parent) {
-                        parent.innerHTML = `<div class="flex items-center justify-center w-full h-full text-neutral-400 font-medium text-sm">${sponsor.name}</div>`;
-                      }
-                    }}
-                  />
-                  {sponsor.logoDark && (
+                <div className="relative flex h-16 w-36 shrink-0 items-center justify-center rounded-2xl border border-neutral-100 bg-neutral-50 px-5 py-3 shadow-sm transition-all duration-300 group-hover:border-neutral-300 group-hover:shadow-md dark:border-neutral-700/60 dark:bg-neutral-800">
+                  <div className="relative h-8 w-full">
                     <Image
-                      src={sponsor.logoDark}
+                      src={sponsor.logo}
                       alt={`${sponsor.name} logo`}
                       fill
-                      sizes="(max-width: 640px) 40vw, (max-width: 1024px) 25vw, 14vw"
-                      className="hidden object-contain opacity-60 grayscale transition-all duration-300 group-hover:opacity-100 group-hover:grayscale-0 dark:block"
+                      sizes="144px"
+                      className={`object-contain opacity-40 grayscale transition-all duration-300 group-hover:opacity-100 group-hover:grayscale-0 ${sponsor.logoDark ? 'dark:hidden' : ''}`}
+                      onError={(e) => {
+                        const el = e.target as HTMLImageElement;
+                        el.style.display = 'none';
+                        const p = el.parentElement;
+                        if (p) p.innerHTML = `<div class="flex items-center justify-center w-full h-full text-neutral-400 dark:text-neutral-500 font-medium text-xs">${sponsor.name}</div>`;
+                      }}
                     />
-                  )}
+                    {sponsor.logoDark && (
+                      <Image
+                        src={sponsor.logoDark}
+                        alt={`${sponsor.name} logo`}
+                        fill
+                        sizes="144px"
+                        className="hidden object-contain opacity-40 grayscale transition-all duration-300 group-hover:opacity-100 group-hover:grayscale-0 dark:block"
+                      />
+                    )}
+                  </div>
                 </div>
-              </motion.a>
+                <span
+                  className="text-[11px] font-medium text-neutral-400 transition-colors duration-300 group-hover:text-neutral-600 dark:text-neutral-500 dark:group-hover:text-neutral-300"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {sponsor.name}
+                </span>
+              </a>
             ))}
           </div>
         </div>
@@ -994,7 +1017,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
             transition={{ duration: 0.7 }}
           >
             <SectionOverline>{t.ownerEyebrow}</SectionOverline>
-            <h2 className="max-w-md text-3xl font-medium leading-tight sm:text-5xl">{t.ownerTitle}</h2>
+            <h2 className="max-w-md text-3xl font-medium leading-tight text-neutral-900 dark:text-white sm:text-5xl">{t.ownerTitle}</h2>
             <p
               className="mt-5 max-w-md text-neutral-600 dark:text-neutral-400"
               style={{ fontFamily: "'Inter', sans-serif" }}
@@ -1023,7 +1046,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
             <div className="mt-10 flex flex-col gap-3 sm:flex-row" style={{ fontFamily: "'Inter', sans-serif" }}>
               <button
                 onClick={goToPartner}
-                className="group inline-flex items-center justify-center gap-2 rounded-full bg-neutral-900 px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-white/90"
+                className="group inline-flex items-center justify-center gap-2 rounded-full bg-neutral-900 px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
               >
                 {t.ownerCta}
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
@@ -1053,7 +1076,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
               {revenues.map((r, i) => (
                 <div key={i} className="flex items-center justify-between border-b border-neutral-100 pb-4 last:border-0 dark:border-neutral-800">
                   <span className="text-neutral-600 dark:text-neutral-300">{r.city}</span>
-                  <span className="text-xl font-semibold">{r.amount}</span>
+                  <span className="text-xl font-semibold text-neutral-900 dark:text-white">{r.amount}</span>
                 </div>
               ))}
             </div>
@@ -1072,7 +1095,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
         <div className="mx-auto max-w-3xl px-6 py-24 sm:px-8">
           <div className="mb-14 text-center">
             <SectionOverline>{t.faqEyebrow}</SectionOverline>
-            <h2 className="text-3xl font-medium leading-tight sm:text-5xl">{t.faqTitle}</h2>
+            <h2 className="text-3xl font-medium leading-tight text-neutral-900 dark:text-white sm:text-5xl">{t.faqTitle}</h2>
           </div>
           <div>
             {faqItems.map((item, i) => (
@@ -1107,7 +1130,8 @@ export default function LandingV3({ locale }: LandingV3Props) {
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row" style={{ fontFamily: "'Inter', sans-serif" }}>
             <button
               onClick={goToSearch}
-              className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-medium text-neutral-900 transition-all hover:bg-white/90"
+              className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-semibold text-neutral-900 transition-all hover:bg-neutral-100"
+              style={{ color: '#171717' }}
             >
               {t.ctaPrimary}
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
@@ -1136,8 +1160,8 @@ export default function LandingV3({ locale }: LandingV3Props) {
             className="rounded-3xl border border-neutral-200 bg-[#faf9f7] p-8 dark:border-neutral-800 dark:bg-neutral-950 sm:p-12"
           >
             <div className="mx-auto max-w-xl text-center">
-              <MessageCircle className="mx-auto mb-4 h-8 w-8 text-neutral-400" strokeWidth={1.5} />
-              <h3 className="text-2xl font-medium sm:text-3xl">{t.newsletterTitle}</h3>
+              <MessageCircle className="mx-auto mb-4 h-8 w-8 text-neutral-400 dark:text-neutral-500" strokeWidth={1.5} />
+              <h3 className="text-2xl font-medium text-neutral-900 dark:text-white sm:text-3xl">{t.newsletterTitle}</h3>
               <p className="mt-3 text-neutral-600 dark:text-neutral-400" style={{ fontFamily: "'Inter', sans-serif" }}>
                 {t.newsletterSubtitle}
               </p>
@@ -1147,14 +1171,14 @@ export default function LandingV3({ locale }: LandingV3Props) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t.newsletterPlaceholder}
-                  className="flex-1 rounded-full border border-neutral-300 bg-white px-6 py-3.5 text-sm text-neutral-900 outline-none transition-colors focus:border-neutral-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white"
+                  className="flex-1 rounded-full border border-neutral-300 bg-white px-6 py-3.5 text-sm text-neutral-900 outline-none transition-colors focus:border-neutral-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:placeholder-neutral-500 dark:focus:border-neutral-500"
                 />
                 <button className="inline-flex items-center justify-center gap-2 rounded-full bg-neutral-900 px-8 py-3.5 text-sm font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-white/90">
                   <Send className="h-4 w-4" />
                   {t.newsletterButton}
                 </button>
               </div>
-              <p className="mt-4 text-xs text-neutral-500" style={{ fontFamily: "'Inter', sans-serif" }}>
+              <p className="mt-4 text-xs text-neutral-500 dark:text-neutral-500" style={{ fontFamily: "'Inter', sans-serif" }}>
                 {t.newsletterPrivacy}
               </p>
             </div>
@@ -1167,18 +1191,18 @@ export default function LandingV3({ locale }: LandingV3Props) {
         <div className="mx-auto max-w-6xl px-6 py-16 sm:px-8" style={{ fontFamily: "'Inter', sans-serif" }}>
           <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
             <div>
-              <div className="text-2xl font-medium" style={{ fontFamily: "'Fraunces', serif" }}>
+              <div className="text-2xl font-medium text-neutral-900 dark:text-white" style={{ fontFamily: "'Fraunces', serif" }}>
                 Loft Algérie
               </div>
               <p className="mt-3 max-w-xs text-sm text-neutral-500 dark:text-neutral-400">{t.footerTagline}</p>
-              <div className="mt-4 flex items-center gap-1.5 text-sm">
+              <div className="mt-4 flex items-center gap-1.5 text-sm text-neutral-700 dark:text-neutral-300">
                 <Star className="h-4 w-4 fill-current text-yellow-500" />
                 <span className="font-medium">4,9</span>
-                <span className="text-neutral-400">/ 5</span>
+                <span className="text-neutral-400 dark:text-neutral-500">/ 5</span>
               </div>
             </div>
             <div>
-              <h4 className="text-xs uppercase tracking-[0.2em] text-neutral-400">{t.footerExplore}</h4>
+              <h4 className="text-xs uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">{t.footerExplore}</h4>
               <ul className="mt-5 space-y-3 text-sm">
                 <li><a href={`/${locale}/client/search`} className="text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white">{t.footerLofts}</a></li>
                 <li><a href={`/${locale}/register?role=partner`} className="text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white">{t.footerOwners}</a></li>
@@ -1187,7 +1211,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
               </ul>
             </div>
             <div>
-              <h4 className="text-xs uppercase tracking-[0.2em] text-neutral-400">{t.footerContact}</h4>
+              <h4 className="text-xs uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">{t.footerContact}</h4>
               <ul className="mt-5 space-y-3 text-sm">
                 <li>
                   <a href={PHONE_LINK} className="flex items-center gap-2 text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white">
@@ -1212,7 +1236,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
           </div>
           <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-neutral-200 pt-8 text-sm text-neutral-500 dark:border-neutral-800 dark:text-neutral-400 sm:flex-row">
             <span>&copy; {new Date().getFullYear()} Loft Algérie — {t.rights}</span>
-            <span className="flex items-center gap-1.5">
+            <span className="flex items-center gap-1.5 text-neutral-500 dark:text-neutral-400">
               <Heart className="h-3.5 w-3.5" /> Crafted with care in Algeria
             </span>
           </div>

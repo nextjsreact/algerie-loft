@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -20,6 +20,8 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { getZoneAreas } from "@/app/actions/zone-areas"
+import { motion } from "framer-motion"
 
 interface ClientDashboardViewProps {
   lofts: any[]
@@ -36,6 +38,11 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
     checkOut: "",
     guests: 1
   })
+  const [zones, setZones] = useState<{ id: string; name: string }[]>([])
+
+  useEffect(() => {
+    getZoneAreas().then((data) => setZones(data))
+  }, [])
 
   const handleSearch = () => {
     const params = new URLSearchParams({
@@ -85,12 +92,16 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
                   <label className="text-xs font-semibold text-gray-700 ml-4 mb-1 block">Destination</label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      placeholder="Où allez-vous ?"
+                    <select
                       value={searchData.destination}
                       onChange={(e) => setSearchData({ ...searchData, destination: e.target.value })}
-                      className="pl-10 border-0 focus-visible:ring-0"
-                    />
+                      className="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    >
+                      <option value="">Choisir une zone</option>
+                      {zones.map((zone) => (
+                        <option key={zone.id} value={zone.name}>{zone.name}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 
@@ -231,50 +242,72 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {lofts.map((loft) => (
-              <Card key={loft.id} className="overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
-                <div className="relative h-56 group">
+            {lofts.map((loft, index) => (
+              <motion.div
+                key={loft.id}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] group"
+              >
+                <div className="relative h-64 overflow-hidden bg-black flex items-center justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
                   {loft.loft_photos?.[0]?.url ? (
-                    <Image
-                      src={loft.loft_photos[0].url}
+                    <img 
+                      src={loft.loft_photos[0].url} 
                       alt={loft.name}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
                       <MapPin className="h-16 w-16 text-gray-400" />
                     </div>
                   )}
-                  <button className="absolute top-3 right-3 p-2 bg-white/90 rounded-full hover:bg-white transition-colors">
-                    <Heart className="h-5 w-5 text-gray-600" />
-                  </button>
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-bold text-lg">{loft.name}</h3>
-                    <div className="flex items-center gap-1 text-sm">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold">{loft.average_rating || "Nouveau"}</span>
+                  {loft.average_rating && (
+                    <div className="absolute top-4 right-4 z-20">
+                      <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
+                        <div className="flex items-center space-x-1">
+                          <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                          <span className="text-sm font-semibold text-gray-900">{loft.average_rating}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div className="absolute bottom-4 left-4 right-4 z-20">
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="w-4 h-4 text-white" />
+                      <span className="text-sm text-white font-medium">{loft.address}</span>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-600 mb-3 flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    {loft.address}
-                  </p>
-                  <div className="flex items-center justify-between pt-3 border-t">
+                </div>
+
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
+                    {loft.name}
+                  </h3>
+                  
+                  {loft.description && (
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                      {loft.description}
+                    </p>
+                  )}
+
+                  <div className="flex items-center justify-between mt-6">
                     <div>
-                      <span className="font-bold text-xl text-blue-600">{loft.price_per_night?.toLocaleString()} DA</span>
-                      <span className="text-sm text-gray-600"> / nuit</span>
+                      <span className="text-2xl font-bold text-gray-900">
+                        {loft.price_per_night?.toLocaleString()} DA
+                      </span>
+                      <span className="text-gray-600 text-sm ml-1">/ nuit</span>
                     </div>
                     <Link href={`/${locale}/lofts/${loft.id}/book`}>
-                      <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600">
+                      <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg">
+                        <Calendar className="w-4 h-4 inline mr-1" />
                         Réserver
-                      </Button>
+                      </button>
                     </Link>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </motion.div>
             ))}
           </div>
         </section>

@@ -163,7 +163,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
       // Stats
       happyGuests: "Clients Satisfaits",
       loftsAvailable: "Lofts Disponibles",
-      citiesCovered: "Villes Couvertes",
+      citiesCovered: "Zones Couvertes",
       avgRating: "Note Moyenne",
       
       // Featured section
@@ -205,7 +205,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
       
       happyGuests: "Happy Guests",
       loftsAvailable: "Available Lofts",
-      citiesCovered: "Cities Covered",
+      citiesCovered: "Zones Covered",
       avgRating: "Average Rating",
       
       featuredTitle: "Recommended Lofts",
@@ -242,7 +242,7 @@ export default function FusionDualAudienceHomepage({ locale }: FusionDualAudienc
       
       happyGuests: "ضيوف راضون",
       loftsAvailable: "شقق متاحة",
-      citiesCovered: "مدن مغطاة",
+      citiesCovered: "مناطق مغطاة",
       avgRating: "التقييم المتوسط",
       
       featuredTitle: "الشقق الموصى بها",

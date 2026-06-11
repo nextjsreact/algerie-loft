@@ -4826,5 +4826,38 @@
       "cancelled": "Cancelled",
       "completed": "Completed"
     }
+  },
+  "client": {
+    "dashboard": {
+      "welcome": "Welcome, {name}! 👋",
+      "subtitle": "Find your ideal loft in Algeria",
+      "destination": "Destination",
+      "destinationPlaceholder": "Choose a zone",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "guests": "Guests",
+      "searchButton": "Search",
+      "myBookings": "My Bookings",
+      "myBookingsSubtitle": "Manage your upcoming and past stays",
+      "viewAll": "View All",
+      "availableLofts": "Available Lofts",
+      "availableLoftsSubtitle": "Discover our best offers",
+      "loftsAt": "Lofts in {zone}",
+      "loftsFound": "{count} loft found",
+      "loftsFound_plural": "{count} lofts found",
+      "noLoftsFound": "No lofts found for this zone",
+      "perNight": "/ night",
+      "bookNow": "Book now",
+      "details": "Details",
+      "discoverLofts": "Discover Lofts",
+      "noBookings": "No bookings yet",
+      "noBookingsDescription": "Start exploring our lofts and book your ideal stay!"
+    },
+    "bookingStatus": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    }
   }
 }

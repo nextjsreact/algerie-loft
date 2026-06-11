@@ -4651,5 +4651,38 @@
       "cancelled": "Annulée",
       "completed": "Terminée"
     }
+  },
+  "client": {
+    "dashboard": {
+      "welcome": "Bienvenue, {name} ! 👋",
+      "subtitle": "Trouvez votre loft idéal en Algérie",
+      "destination": "Destination",
+      "destinationPlaceholder": "Choisir une zone",
+      "checkIn": "Arrivée",
+      "checkOut": "Départ",
+      "guests": "Voyageurs",
+      "searchButton": "Rechercher",
+      "myBookings": "Mes réservations",
+      "myBookingsSubtitle": "Gérez vos séjours à venir et passés",
+      "viewAll": "Voir tout",
+      "availableLofts": "Lofts disponibles",
+      "availableLoftsSubtitle": "Découvrez nos meilleures offres",
+      "loftsAt": "Lofts à {zone}",
+      "loftsFound": "{count} loft trouvé",
+      "loftsFound_plural": "{count} lofts trouvés",
+      "noLoftsFound": "Aucun loft trouvé pour cette zone",
+      "perNight": "/ nuit",
+      "bookNow": "Réserver",
+      "details": "Détails",
+      "discoverLofts": "Découvrir les lofts",
+      "noBookings": "Aucune réservation pour le moment",
+      "noBookingsDescription": "Commencez à explorer nos lofts et réservez votre séjour idéal !"
+    },
+    "bookingStatus": {
+      "pending": "En attente",
+      "confirmed": "Confirmée",
+      "cancelled": "Annulée",
+      "completed": "Terminée"
+    }
   }
 }

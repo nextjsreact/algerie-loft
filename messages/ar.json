@@ -4669,5 +4669,38 @@
       "cancelled": "ملغى",
       "completed": "مكتمل"
     }
+  },
+  "client": {
+    "dashboard": {
+      "welcome": "!{name}، مرحباً بك 👋",
+      "subtitle": "ابحث عن لوفتك المثالية في الجزائر",
+      "destination": "الوجهة",
+      "destinationPlaceholder": "اختر المنطقة",
+      "checkIn": "تاريخ الوصول",
+      "checkOut": "تاريخ المغادرة",
+      "guests": "الضيوف",
+      "searchButton": "بحث",
+      "myBookings": "حجوزاتي",
+      "myBookingsSubtitle": "إدارة إقاماتك القادمة والسابقة",
+      "viewAll": "عرض الكل",
+      "availableLofts": "اللوفتات المتاحة",
+      "availableLoftsSubtitle": "اكتشف أفضل عروضنا",
+      "loftsAt": "لوفتات في {zone}",
+      "loftsFound": "تم العثور على {count} لوفت",
+      "loftsFound_plural": "تم العثور على {count} لوفتات",
+      "noLoftsFound": "لم يتم العثور على لوفتات لهذه المنطقة",
+      "perNight": "/ ليلة",
+      "bookNow": "احجز الآن",
+      "details": "التفاصيل",
+      "discoverLofts": "اكتشف اللوفتات",
+      "noBookings": "لا توجد حجوزات بعد",
+      "noBookingsDescription": "ابدأ في استكشاف لوفتاتنا واحجز إقامتك المثالية!"
+    },
+    "bookingStatus": {
+      "pending": "قيد الانتظار",
+      "confirmed": "مؤكد",
+      "cancelled": "ملغى",
+      "completed": "مكتمل"
+    }
   }
 }

@@ -23,15 +23,7 @@ import {
   MessageCircle,
   ChevronDown,
   Send,
-  Building2,
-  Award,
-  Users,
-  Clock,
   Heart,
-  Zap,
-  Globe,
-  Lock,
-  TrendingUp,
 } from 'lucide-react';
 import PublicHeader from '@/components/public/PublicHeader';
 import BackToTop from '@/components/ui/BackToTop';
@@ -607,12 +599,12 @@ export default function LandingV3({ locale }: LandingV3Props) {
   ];
 
   const sponsors = [
-    { name: 'Airbnb', icon: Globe },
-    { name: 'Booking.com', icon: Building2 },
-    { name: 'Djezzy', icon: Zap },
-    { name: 'Ooredoo', icon: TrendingUp },
-    { name: 'Condor', icon: Award },
-    { name: 'Cevital', icon: Users },
+    { name: 'Airbnb',            logo: '/partners/airbnb-logo.svg',                 website: 'https://www.airbnb.com' },
+    { name: 'Booking.com',       logo: '/partners/booking-logo.svg',                website: 'https://www.booking.com' },
+    { name: 'Expedia',           logo: '/partners/expedia-logo.svg',                website: 'https://www.expedia.com' },
+    { name: 'TripAdvisor',       logo: '/partners/tripadvisor-logo.svg',            website: 'https://www.tripadvisor.com' },
+    { name: 'Hotels.com',        logo: '/partners/hotels-logo.svg',                 website: 'https://www.hotels.com' },
+    { name: 'Destination Algeria', logo: '/partners/destination-algerie-light-logo.svg', logoDark: '/partners/destination-algerie-dark-logo.svg', website: 'https://www.destination-algeria.com' },
   ];
 
   const openLightbox = (index: number) => {
@@ -946,25 +938,48 @@ export default function LandingV3({ locale }: LandingV3Props) {
             <SectionOverline>{t.sponsorsEyebrow}</SectionOverline>
             <h2 className="text-2xl font-medium sm:text-3xl">{t.sponsorsTitle}</h2>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
-            {sponsors.map((sponsor, i) => {
-              const Icon = sponsor.icon;
-              return (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.08 }}
-                  className="group flex items-center gap-3 text-neutral-400 transition-colors duration-300 hover:text-neutral-700 dark:hover:text-neutral-200"
-                >
-                  <Icon className="h-6 w-6" strokeWidth={1.5} />
-                  <span className="text-sm font-medium tracking-wide" style={{ fontFamily: "'Inter', sans-serif" }}>
-                    {sponsor.name}
-                  </span>
-                </motion.div>
-              );
-            })}
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {sponsors.map((sponsor, i) => (
+              <motion.a
+                key={i}
+                href={sponsor.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                className="group flex items-center justify-center rounded-2xl border border-neutral-100 bg-white p-5 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-lg dark:border-neutral-700 dark:bg-neutral-800"
+                title={sponsor.name}
+              >
+                <div className="relative h-12 w-full">
+                  <Image
+                    src={sponsor.logo}
+                    alt={`${sponsor.name} logo`}
+                    fill
+                    sizes="(max-width: 640px) 40vw, (max-width: 1024px) 25vw, 14vw"
+                    className={`object-contain opacity-60 grayscale transition-all duration-300 group-hover:opacity-100 group-hover:grayscale-0 ${sponsor.logoDark ? 'dark:hidden' : ''}`}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `<div class="flex items-center justify-center w-full h-full text-neutral-400 font-medium text-sm">${sponsor.name}</div>`;
+                      }
+                    }}
+                  />
+                  {sponsor.logoDark && (
+                    <Image
+                      src={sponsor.logoDark}
+                      alt={`${sponsor.name} logo`}
+                      fill
+                      sizes="(max-width: 640px) 40vw, (max-width: 1024px) 25vw, 14vw"
+                      className="hidden object-contain opacity-60 grayscale transition-all duration-300 group-hover:opacity-100 group-hover:grayscale-0 dark:block"
+                    />
+                  )}
+                </div>
+              </motion.a>
+            ))}
           </div>
         </div>
       </section>

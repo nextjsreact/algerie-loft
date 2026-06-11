@@ -11,23 +11,57 @@ export default async function ClientDashboardPage({
   const session = await requireRole(["client"], locale)
   const supabase = await createClient(true)
 
-  // Récupérer les lofts disponibles
-  const { data: loftsData } = await supabase
-    .from("lofts")
-    .select("*")
-    .eq("status", "available")
-    .order("created_at", { ascending: false })
-    .limit(6)
-
-  // Récupérer les photos
+  // Récupérer les photos pour déterminer la cover
   const { data: photosData } = await supabase
     .from("loft_photos")
-    .select("*")
+    .select("loft_id, url, is_cover, mime_type")
+    .order("is_cover", { ascending: false })
+    .order("created_at", { ascending: true })
 
-  // Combiner lofts avec photos
+  // Construire la map loft_id -> meilleure photo (cover d'abord, puis première photo)
+  const photoMap = new Map<string, string>()
+  const mimeMap = new Map<string, string>()
+  photosData?.forEach((p: any) => {
+    if (p.is_cover === true) {
+      photoMap.set(p.loft_id, p.url)
+      mimeMap.set(p.loft_id, p.mime_type || '')
+    }
+  })
+  photosData?.forEach((p: any) => {
+    if (!photoMap.has(p.loft_id)) {
+      photoMap.set(p.loft_id, p.url)
+      mimeMap.set(p.loft_id, p.mime_type || '')
+    }
+  })
+
+  // Filtrer les lofts HEIC (non affichables dans les navigateurs)
+  const validLoftIds = Array.from(photoMap.keys()).filter(id => {
+    const mime = mimeMap.get(id) || ''
+    const url = photoMap.get(id) || ''
+    const isHeic = mime.includes('heic') || mime.includes('heif') ||
+                   url.toLowerCase().includes('.heic') || url.toLowerCase().includes('.heif')
+    return !isHeic
+  })
+
+  // Récupérer les lofts avec jointure zone_areas
+  const { data: loftsData } = await supabase
+    .from("lofts")
+    .select("id, name, address, description, price_per_night, zone_area_id, is_published, created_at, zone_areas!lofts_zone_area_id_fkey(name)")
+    .eq("status", "available")
+    .in("id", validLoftIds)
+    .order("created_at", { ascending: false })
+    .limit(20)
+
+  // Combiner lofts avec photo et zone
   const lofts = (loftsData || []).map(loft => ({
-    ...loft,
-    loft_photos: photosData?.filter(p => p.loft_id === loft.id) || []
+    id: loft.id,
+    name: loft.name,
+    address: loft.address || '',
+    description: loft.description || '',
+    price_per_night: loft.price_per_night || 0,
+    zone: (loft.zone_areas as any)?.name || loft.address?.split(',')[0] || '',
+    photo: photoMap.get(loft.id) || '',
+    average_rating: null,
   }))
 
   // Récupérer les réservations du client
@@ -45,7 +79,7 @@ export default async function ClientDashboardPage({
   if (loftIds.length > 0) {
     const { data } = await supabase
       .from("lofts")
-      .select("*")
+      .select("*, zone_areas!lofts_zone_area_id_fkey(name)")
       .in("id", loftIds)
     bookingLoftsData = data || []
   }

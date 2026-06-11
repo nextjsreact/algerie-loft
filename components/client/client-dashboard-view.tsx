@@ -51,7 +51,7 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
   const filteredLofts = useMemo(() => {
     if (!searchData.destination) return lofts
     return lofts.filter((loft) => {
-      const zoneName = loft.zone_areas?.name || loft.address
+      const zoneName = loft.zone || loft.address
       return zoneName?.toLowerCase().includes(searchData.destination.toLowerCase())
     })
   }, [lofts, searchData.destination])
@@ -84,7 +84,7 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Hero Section avec barre de recherche */}
+      {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
         <div className="absolute inset-0 opacity-10">
           <div className="w-full h-full" style={{
@@ -96,7 +96,7 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
           <h1 className="text-4xl font-bold mb-2">{t("welcome", { name: clientName })}</h1>
           <p className="text-blue-100 text-lg mb-8">{t("subtitle")}</p>
           
-          {/* Barre de recherche style Airbnb */}
+          {/* Barre de recherche */}
           <Card className="max-w-5xl mx-auto shadow-2xl">
             <CardContent className="p-2">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
@@ -238,34 +238,27 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
           </section>
         )}
 
-        {/* Lofts disponibles */}
+        {/* Lofts disponibles — EXACTEMENT comme la homepage */}
         <section>
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: 'Caveat, cursive' }}>
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 {searchData.destination ? t("loftsAt", { zone: searchData.destination }) : t("availableLofts")}
-              </h2>
-              <p className="text-gray-600">
-                {t("loftsFound", { count: filteredLofts.length })}
-              </p>
-            </div>
-            <Link href={`/${locale}/client/lofts`}>
-              <Button variant="outline">
-                {t("viewAll")}
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            </Link>
+              </span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              {t("availableLoftsSubtitle")} — {t("loftsFound", { count: filteredLofts.length })}
+            </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {filteredLofts.length === 0 && (
               <div className="col-span-3 text-center py-12 text-gray-400">
-                <MapPin className="h-16 w-16 mx-auto mb-4" />
-                <p className="text-lg">{t("noLoftsFound")}</p>
+                <div className="animate-pulse">Chargement des appartements...</div>
               </div>
             )}
-            {filteredLofts.map((loft, index) => {
-              const location = loft.zone_areas?.name || loft.address
+            {filteredLofts.slice(0, 15).map((loft: any, index: number) => {
+              const location = loft.zone || loft.address
 
               return (
                 <motion.div
@@ -277,25 +270,15 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
                 >
                   <div className="relative h-64 overflow-hidden bg-black flex items-center justify-center">
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
-                    {loft.loft_photos?.[0]?.url ? (
+                    {loft.photo ? (
                       <img 
-                        src={loft.loft_photos[0].url} 
+                        src={loft.photo} 
                         alt={loft.name}
                         style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', display: 'block' }}
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
                         <MapPin className="h-16 w-16 text-gray-400" />
-                      </div>
-                    )}
-                    {loft.average_rating && (
-                      <div className="absolute top-4 right-4 z-20">
-                        <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
-                          <div className="flex items-center space-x-1">
-                            <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                            <span className="text-sm font-semibold text-gray-900">{loft.average_rating}</span>
-                          </div>
-                        </div>
                       </div>
                     )}
                     <div className="absolute bottom-4 left-4 right-4 z-20">

@@ -22,13 +22,12 @@ import { getZoneAreas } from "@/app/actions/zone-areas"
 import { useTranslations, useLocale } from "next-intl"
 
 interface ClientDashboardViewProps {
-  lofts: any[]
   bookings: any[]
   locale: string
   clientName: string
 }
 
-export function ClientDashboardView({ lofts, bookings, locale, clientName }: ClientDashboardViewProps) {
+export function ClientDashboardView({ bookings, locale, clientName }: ClientDashboardViewProps) {
   const router = useRouter()
   const t = useTranslations("client.dashboard")
   const tStatus = useTranslations("client.bookingStatus")
@@ -40,9 +39,24 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
     guests: 1
   })
   const [zones, setZones] = useState<{ id: string; name: string }[]>([])
+  const [lofts, setLofts] = useState<any[]>([])
 
   useEffect(() => {
     getZoneAreas().then((data) => setZones(data))
+  }, [])
+
+  // Fetcher les lofts depuis la MÊME API que la homepage
+  useEffect(() => {
+    const controller = new AbortController()
+    fetch('/api/public/featured-lofts?limit=25&randomize=true', { signal: controller.signal })
+      .then(r => r.json())
+      .then(data => {
+        if (data.lofts?.length > 0) {
+          setLofts(data.lofts)
+        }
+      })
+      .catch(e => console.error('[dashboard] fetch lofts error:', e))
+    return () => controller.abort()
   }, [])
 
   const filteredLofts = useMemo(() => {
@@ -93,7 +107,6 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
           <h1 className="text-4xl font-bold mb-2">{t("welcome", { name: clientName })}</h1>
           <p className="text-blue-100 text-lg mb-8">{t("subtitle")}</p>
           
-          {/* Barre de recherche */}
           <Card className="max-w-5xl mx-auto shadow-2xl">
             <CardContent className="p-2">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
@@ -235,7 +248,7 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
           </section>
         )}
 
-        {/* Lofts — IDENTIQUE page d'accueil */}
+        {/* Lofts — même API que la homepage */}
         <section>
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -259,7 +272,7 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
                 <p className="text-lg">{t("noLoftsFound")}</p>
               </div>
             )}
-            {filteredLofts.map((loft) => {
+            {filteredLofts.map((loft: any) => {
               const location = loft.zone || loft.address
 
               return (

@@ -11,8 +11,6 @@ import {
   MapPin, 
   Calendar, 
   Users, 
-  Heart,
-  Star,
   ArrowRight,
   Clock,
   CheckCircle,
@@ -21,7 +19,6 @@ import {
 import Link from "next/link"
 import Image from "next/image"
 import { getZoneAreas } from "@/app/actions/zone-areas"
-import { motion } from "framer-motion"
 import { useTranslations, useLocale } from "next-intl"
 
 interface ClientDashboardViewProps {
@@ -238,110 +235,74 @@ export function ClientDashboardView({ lofts, bookings, locale, clientName }: Cli
           </section>
         )}
 
-        {/* Featured Lofts Section — IDENTIQUE homepage */}
-        <motion.section 
-          id="featured-lofts"
-          className="py-20 relative overflow-hidden"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-blue-50"></div>
-          
-          <div className="container mx-auto px-4 relative z-10">
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: 'Caveat, cursive' }}>
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  {searchData.destination ? t("loftsAt", { zone: searchData.destination }) : t("availableLofts")}
-                </span>
+        {/* Lofts — IDENTIQUE page d'accueil */}
+        <section>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900">
+                {searchData.destination ? t("loftsAt", { zone: searchData.destination }) : t("availableLofts")}
               </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                {t("availableLoftsSubtitle")} — {t("loftsFound", { count: filteredLofts.length })}
-              </p>
-            </motion.div>
+              <p className="text-gray-600">{t("availableLoftsSubtitle")}</p>
+            </div>
+            <Link href={`/${locale}/client/lofts`}>
+              <Button variant="outline">
+                {t("viewAll")}
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredLofts.length === 0 && (
+              <div className="col-span-3 text-center py-12 text-gray-400">
+                <MapPin className="h-16 w-16 mx-auto mb-4" />
+                <p className="text-lg">{t("noLoftsFound")}</p>
+              </div>
+            )}
+            {filteredLofts.map((loft) => {
+              const location = loft.zone || loft.address
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {filteredLofts.length === 0 && (
-                <div className="col-span-3 text-center py-12 text-gray-400">
-                  <div className="animate-pulse">Chargement des appartements...</div>
-                </div>
-              )}
-              {filteredLofts.slice(0, 15).map((loft: any, index: number) => {
-                const location = loft.zone || loft.address
-
-                return (
-                <motion.div
-                  key={loft.id}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.2 }}
-                  className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] group"
+              return (
+                <Link 
+                  key={loft.id} 
+                  href={`/${locale}/client/lofts/${loft.id}`}
+                  className="group block"
                 >
-                  <div className="relative h-64 overflow-hidden rounded-t-2xl">
-                    <img 
-                      src={loft.photo || ''} 
-                      alt={loft.name}
-                      className="w-full h-full object-cover"
-                    />
-                    {loft.average_rating && (
-                      <div className="absolute top-4 right-4 z-20">
-                        <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
-                          <div className="flex items-center space-x-1">
-                            <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                            <span className="text-sm font-semibold text-gray-900">{loft.average_rating}</span>
-                          </div>
+                  <div className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300">
+                    <div className="relative h-64">
+                      {loft.photo ? (
+                        <img 
+                          src={loft.photo} 
+                          alt={loft.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                          <MapPin className="h-16 w-16 text-gray-400" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-bold text-gray-900 truncate">{loft.name}</h3>
+                          <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                            <MapPin className="h-3 w-3 flex-shrink-0" />
+                            <span className="truncate">{location}</span>
+                          </p>
+                        </div>
+                        <div className="text-right ml-4 flex-shrink-0">
+                          <span className="text-lg font-bold text-gray-900">{loft.price_per_night?.toLocaleString()} DA</span>
+                          <span className="block text-sm text-gray-500">{t("perNight")}</span>
                         </div>
                       </div>
-                    )}
-                    <div className="absolute bottom-4 left-4 right-4 z-20">
-                      <div className="flex items-center space-x-2">
-                        <MapPin className="w-4 h-4 text-white" />
-                        <span className="text-sm text-white font-medium">{location}</span>
-                      </div>
                     </div>
                   </div>
-
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2" style={{ fontFamily: 'Caveat, cursive' }}>
-                      {loft.name}
-                    </h3>
-                    
-                    {loft.description && (
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                        {loft.description}
-                      </p>
-                    )}
-
-                    <div className="flex items-center justify-between mt-6">
-                      <div>
-                        <span className="text-2xl font-bold text-gray-900" style={{ fontFamily: 'Caveat, cursive' }}>
-                          {loft.price_per_night?.toLocaleString()} DA
-                        </span>
-                        <span className="text-gray-600 text-sm ml-1">
-                          {t("perNight")}
-                        </span>
-                      </div>
-                      <motion.button 
-                        whileHover={{ scale: 1.05, y: -1 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => {
-                          window.location.href = `/${locale}/client/lofts/${loft.id}`;
-                        }}
-                        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg"
-                      >
-                        <Calendar className="w-4 h-4 inline mr-1" />
-                        {t("bookNow")}
-                      </motion.button>
-                    </div>
-                  </div>
-                </motion.div>
-                )
-              })}
-            </div>
+                </Link>
+              )
+            })}
           </div>
-        </motion.section>
+        </section>
 
         {/* Message si pas de réservations */}
         {bookings.length === 0 && (

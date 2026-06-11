@@ -179,7 +179,7 @@ const copy = {
     ownerCta: 'Estimer mes revenus',
     ownerCtaSecondary: 'Nous appeler',
     avgRevenue: 'Revenu mensuel moyen',
-    revenueUp: 'Hausse moyenne des revenus',
+    revenueUp: 'Revenus garantis, versés chaque mois',
     ctaTitle: 'Votre prochain séjour commence ici',
     ctaSubtitle:
       'Dites-nous où et quand. Nous nous occupons du reste.',
@@ -278,7 +278,7 @@ const copy = {
     ownerCta: 'Estimate my income',
     ownerCtaSecondary: 'Call us',
     avgRevenue: 'Average monthly revenue',
-    revenueUp: 'Average revenue increase',
+    revenueUp: 'Guaranteed income, paid every month',
     ctaTitle: 'Your next stay begins here',
     ctaSubtitle: 'Tell us where and when. We take care of the rest.',
     ctaPrimary: 'Browse lofts',
@@ -373,7 +373,7 @@ const copy = {
     ownerCta: 'قدّر دخلي',
     ownerCtaSecondary: 'اتصل بنا',
     avgRevenue: 'متوسط الدخل الشهري',
-    revenueUp: 'متوسط زيادة الدخل',
+    revenueUp: 'دخل مضمون، يُصرف كل شهر بانتظام',
     ctaTitle: 'إقامتك القادمة تبدأ هنا',
     ctaSubtitle: 'أخبرنا أين ومتى. نحن نتولى الباقي.',
     ctaPrimary: 'تصفح الشقق',
@@ -549,7 +549,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
   }, []);
 
   const heroLoft = lofts[0];
-  const collection = useMemo(() => lofts.slice(0, 6), [lofts]);
+  const collection = useMemo(() => lofts.slice(0, 9), [lofts]);
 
   const goToSearch = () => {
     window.location.href = `/${locale}/client/search`;
@@ -572,9 +572,9 @@ export default function LandingV3({ locale }: LandingV3Props) {
   ];
 
   const revenues = [
-    { city: 'Alger · Hydra', amount: '45 000 DA' },
-    { city: 'Oran · Centre', amount: '38 000 DA' },
-    { city: 'Béjaïa · Jijel', amount: '25 000 DA' },
+    { city: 'Alger · Centre', amount: '+145 000 DA' },
+    { city: 'Oran · Centre', amount: '+120 000 DA' },
+    { city: 'Béjaïa · Jijel', amount: '+100 000 DA' },
   ];
 
   const ownerBenefits = [t.ownerB1, t.ownerB2, t.ownerB3, t.ownerB4];
@@ -810,9 +810,11 @@ export default function LandingV3({ locale }: LandingV3Props) {
         </div>
       </section>
 
-      {/* ─── PROMISE ─── */}
+      {/* ─── PROMISE / SERVICES ─── */}
       <section id="services" className="bg-neutral-900 text-white dark:bg-black">
         <div className="mx-auto max-w-6xl px-6 py-24 sm:px-8">
+
+          {/* Services voyageurs */}
           <div className="mb-16 max-w-2xl">
             <SectionOverline>{t.promiseEyebrow}</SectionOverline>
             <h2 className="text-3xl font-medium leading-tight text-white sm:text-5xl">{t.promiseTitle}</h2>
@@ -831,15 +833,109 @@ export default function LandingV3({ locale }: LandingV3Props) {
                 >
                   <Icon className="h-7 w-7 text-white" strokeWidth={1.5} />
                   <h3 className="mt-6 text-xl font-medium text-white">{f.title}</h3>
-                  <p
-                    className="mt-3 text-sm leading-relaxed text-white/60"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
+                  <p className="mt-3 text-sm leading-relaxed text-white/60" style={{ fontFamily: "'Inter', sans-serif" }}>
                     {f.desc}
                   </p>
                 </motion.div>
               );
             })}
+          </div>
+
+          {/* ─ Séparateur ─ */}
+          <div className="my-20 border-t border-white/10" />
+
+          {/* Service partenaires — mis en évidence */}
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.7 }}
+            >
+              <span className="inline-block rounded-full border border-white/20 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.3em] text-white/60 mb-6" style={{ fontFamily: "'Inter', sans-serif" }}>
+                {locale === 'ar' ? 'للمالكين والشركاء' : locale === 'en' ? 'For owners & partners' : 'Pour les propriétaires & partenaires'}
+              </span>
+              <h3 className="text-3xl font-medium leading-tight text-white sm:text-5xl">
+                {locale === 'ar'
+                  ? 'حوّل شقتك إلى مصدر دخل ثابت.'
+                  : locale === 'en'
+                  ? 'Turn your loft into a steady income.'
+                  : 'Transformez votre loft en revenu stable.'}
+              </h3>
+              <p className="mt-6 text-base leading-relaxed text-white/60 max-w-lg" style={{ fontFamily: "'Inter', sans-serif" }}>
+                {locale === 'ar'
+                  ? 'نتولى كل شيء — التصوير، الحجوزات، خدمة الضيوف — وأنت تجني دخلاً شهرياً مضموناً، بدون قلق.'
+                  : locale === 'en'
+                  ? 'We handle everything — photography, bookings, guest service — while you receive a guaranteed monthly income, stress-free.'
+                  : 'Nous gérons tout — photographie, réservations, accueil des voyageurs — pendant que vous percevez un revenu mensuel garanti, sans contrainte.'}
+              </p>
+
+              {/* Avantages clés */}
+              <ul className="mt-8 space-y-3" style={{ fontFamily: "'Inter', sans-serif" }}>
+                {[
+                  locale === 'ar' ? '📸 تصوير احترافي مجاني عند الانضمام' : locale === 'en' ? '📸 Free professional photography on joining' : '📸 Photographie professionnelle offerte à l\'inscription',
+                  locale === 'ar' ? '📅 إدارة الحجوزات والتوافر' : locale === 'en' ? '📅 Booking & availability management' : '📅 Gestion des réservations et de la disponibilité',
+                  locale === 'ar' ? '🛎️ خدمة الضيوف 24/7 باسمك' : locale === 'en' ? '🛎️ 24/7 guest service in your name' : '🛎️ Service voyageurs 24h/24 en votre nom',
+                  locale === 'ar' ? '💰 دفع شهري مضمون وفي الموعد' : locale === 'en' ? '💰 Guaranteed on-time monthly payment' : '💰 Paiement mensuel garanti et ponctuel',
+                ].map((item, i) => (
+                  <motion.li
+                    key={i}
+                    initial={{ opacity: 0, x: -16 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.1 * i }}
+                    className="flex items-center gap-3 text-sm text-white/80"
+                  >
+                    <span>{item}</span>
+                  </motion.li>
+                ))}
+              </ul>
+
+              <div className="mt-10 flex flex-col gap-3 sm:flex-row" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <button
+                  onClick={goToPartner}
+                  className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-semibold text-neutral-900 transition-all hover:bg-neutral-100"
+                >
+                  {locale === 'ar' ? 'انضم كشريك الآن' : locale === 'en' ? 'Become a partner now' : 'Devenir partenaire maintenant'}
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </button>
+                <a
+                  href={PHONE_LINK}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-8 py-4 text-sm font-medium text-white transition-all hover:bg-white/10"
+                >
+                  <Phone className="h-4 w-4" />
+                  {PHONE_DISPLAY}
+                </a>
+              </div>
+            </motion.div>
+
+            {/* Stats partenaires */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.7, delay: 0.15 }}
+              className="grid grid-cols-2 gap-4"
+            >
+              {[
+                { value: '150+', label: locale === 'ar' ? 'شقة مُدارة' : locale === 'en' ? 'Managed lofts' : 'Lofts gérés' },
+                { value: '98%', label: locale === 'ar' ? 'شركاء راضون' : locale === 'en' ? 'Satisfied partners' : 'Partenaires satisfaits' },
+                { value: '72h', label: locale === 'ar' ? 'للبدء بعد التسجيل' : locale === 'en' ? 'To launch after signup' : 'Pour démarrer après inscription' },
+                { value: '0 DA', label: locale === 'ar' ? 'تكاليف مخفية' : locale === 'en' ? 'Hidden fees' : 'Frais cachés' },
+              ].map((s, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 + i * 0.1 }}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center"
+                >
+                  <div className="text-4xl font-medium text-white">{s.value}</div>
+                  <div className="mt-2 text-xs text-white/40 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>{s.label}</div>
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
         </div>
       </section>
@@ -1084,7 +1180,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
               ))}
             </div>
             <div className="mt-7 rounded-2xl bg-neutral-900 p-6 text-center text-white dark:bg-black">
-              <div className="text-4xl font-medium">+40%</div>
+              <div className="text-2xl font-semibold leading-tight">✓ Revenus assurés</div>
               <div className="mt-1 text-sm text-white/60" style={{ fontFamily: "'Inter', sans-serif" }}>
                 {t.revenueUp}
               </div>

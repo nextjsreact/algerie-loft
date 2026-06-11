@@ -808,7 +808,7 @@ export default function LandingV3({ locale }: LandingV3Props) {
       </section>
 
       {/* ─── PROMISE ─── */}
-      <section className="bg-neutral-900 text-white dark:bg-black">
+      <section id="services" className="bg-neutral-900 text-white dark:bg-black">
         <div className="mx-auto max-w-6xl px-6 py-24 sm:px-8">
           <div className="mb-16 max-w-2xl">
             <SectionOverline>{t.promiseEyebrow}</SectionOverline>

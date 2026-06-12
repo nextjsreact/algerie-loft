@@ -368,7 +368,7 @@ export function SimpleLoginFormNextIntl() {
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'google',
                         options: {
-                          redirectTo: `${window.location.origin}/api/auth/callback?next=${locale}`
+                          redirectTo: `${window.location.origin}/api/auth/callback?next=${locale}&role=${selectedRole || 'employee'}`
                         }
                       })
                       if (error) {
@@ -455,7 +455,7 @@ export function SimpleLoginFormNextIntl() {
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'github',
                         options: {
-                          redirectTo: `${window.location.origin}/api/auth/callback?next=${locale}`
+                          redirectTo: `${window.location.origin}/api/auth/callback?next=${locale}&role=${selectedRole || 'employee'}`
                         }
                       })
                       if (error) {

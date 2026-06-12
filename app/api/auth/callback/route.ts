@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/'
-  const selectedRole = searchParams.get('role') ?? 'client'
+  const selectedRole = searchParams.get('role') ?? 'employee'
   const state = searchParams.get('state')
   const error_param = searchParams.get('error')
 
@@ -105,24 +105,39 @@ export async function GET(request: NextRequest) {
         const locale = next.replace('/', '') || 'fr'
         console.log('🔥 [PRODUCTION] Locale extracted:', locale)
         
-        // Redirection selon le CONTEXTE DE CONNEXION (basé sur le rôle DB)
-        console.log('🔥 [PRODUCTION] Determining redirect URL...')
-        
-        if (actualDbRole === 'client') {
+        // Redirection selon le CONTEXTE DE CONNEXION choisi par l'utilisateur
+        // (un employé peut être à la fois client/partner/employee — c'est le choix au login qui prime)
+        console.log('🔥 [PRODUCTION] Determining redirect URL based on loginContext:', loginContext)
+
+        if (loginContext === 'client') {
           redirectUrl = `${origin}/${locale}/client/dashboard`
           console.log('🔥 [PRODUCTION] 🚀 CLIENT REDIRECT:', redirectUrl)
-        } else if (actualDbRole === 'partner') {
+        } else if (loginContext === 'partner') {
           redirectUrl = `${origin}/${locale}/partner/dashboard`
           console.log('🔥 [PRODUCTION] 🚀 PARTNER REDIRECT:', redirectUrl)
-        } else if (actualDbRole === 'executive') {
-          redirectUrl = `${origin}/${locale}/executive`
-          console.log('🔥 [PRODUCTION] 🚀 EXECUTIVE REDIRECT:', redirectUrl)
-        } else if (['admin', 'manager', 'member', 'superuser'].includes(actualDbRole)) {
-          redirectUrl = `${origin}/${locale}/dashboard`
+        } else if (loginContext === 'employee') {
+          // Employé : sous-routage selon le rôle DB
+          if (actualDbRole === 'superuser') {
+            redirectUrl = `${origin}/${locale}/admin/superuser/dashboard`
+          } else if (actualDbRole === 'executive') {
+            redirectUrl = `${origin}/${locale}/executive`
+          } else if (['admin', 'manager', 'member'].includes(actualDbRole)) {
+            redirectUrl = `${origin}/${locale}/dashboard`
+          } else {
+            redirectUrl = `${origin}/${locale}/dashboard`
+          }
           console.log('🔥 [PRODUCTION] 🚀 EMPLOYEE REDIRECT:', redirectUrl)
         } else {
-          // Fallback absolu
-          redirectUrl = `${origin}/${locale}/client/dashboard`
+          // Fallback : utiliser le rôle DB
+          if (actualDbRole === 'client') {
+            redirectUrl = `${origin}/${locale}/client/dashboard`
+          } else if (actualDbRole === 'partner') {
+            redirectUrl = `${origin}/${locale}/partner/dashboard`
+          } else if (actualDbRole === 'executive') {
+            redirectUrl = `${origin}/${locale}/executive`
+          } else {
+            redirectUrl = `${origin}/${locale}/dashboard`
+          }
           console.log('🔥 [PRODUCTION] 🚀 FALLBACK REDIRECT:', redirectUrl)
         }
         

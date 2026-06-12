@@ -106,6 +106,9 @@ export function SimpleLoginFormNextIntl() {
           : selectedRole === 'partner' ? 'partner'
           : 'employee'
 
+        // Effacer l'ancien cookie puis écrire le nouveau
+        document.cookie = `login_context=; path=/; max-age=0; SameSite=Lax`
+
         try {
           await fetch('/api/auth/set-login-context', {
             method: 'POST',

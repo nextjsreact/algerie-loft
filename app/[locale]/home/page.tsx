@@ -18,12 +18,27 @@ export default async function HomePage({ params }: HomePageProps) {
   const cookieStore = await cookies();
   const loginContext = cookieStore.get('login_context')?.value;
 
-  if (loginContext === 'client' || session.user.role === 'client') {
+  // Un employé connecté en tant qu'employé ne doit JAMAIS être redirigé vers client/partner
+  // même si son rôle DB est 'admin', 'manager', etc.
+  const isStaffRole = ['admin', 'manager', 'member', 'executive', 'superuser'].includes(session.user.role)
+
+  // Redirection client : seulement si le contexte de login est explicitement 'client'
+  // ET que le rôle DB est bien 'client' (pas un employé qui se connecte en mode client)
+  if (loginContext === 'client' && !isStaffRole) {
     redirect(`/${locale}/client/dashboard`)
   }
-  if (loginContext === 'partner' || session.user.role === 'partner') {
+  if (loginContext === 'partner' && !isStaffRole) {
     redirect(`/${locale}/partner/dashboard`)
   }
+
+  // Si rôle DB est client ou partner sans contexte, rediriger vers leur espace
+  if (!isStaffRole && session.user.role === 'client') {
+    redirect(`/${locale}/client/dashboard`)
+  }
+  if (!isStaffRole && session.user.role === 'partner') {
+    redirect(`/${locale}/partner/dashboard`)
+  }
+
   if (session.user.role === 'executive') {
     redirect(`/${locale}/executive`);
   }

@@ -4,10 +4,11 @@ import { useState, useEffect, use } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
+import { createClient } from '@/utils/supabase/client'
 import {
   ArrowLeft, MapPin, X, ChevronLeft, ChevronRight,
   Users, BedDouble, Bath, Maximize2, Phone, Mail,
-  Calendar, Star, Wifi, Car, Coffee, Tv, Wind, Shield,
+  Calendar, Wifi, Car, Coffee, Tv, Wind, Shield,
   Grid2x2
 } from 'lucide-react'
 
@@ -20,6 +21,7 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const locale = resolvedParams.locale || 'fr'
+  const supabase = createClient()
 
   const [loft, setLoft] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -32,7 +34,7 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
   const [lightboxIndex, setLightboxIndex] = useState(0)
   const [activePhoto, setActivePhoto] = useState(0)
 
-  // Form state
+  // Form state — pré-rempli avec les données du client connecté
   const [checkIn, setCheckIn] = useState(searchParams.get('check_in') || '')
   const [checkOut, setCheckOut] = useState(searchParams.get('check_out') || '')
   const [guests, setGuests] = useState(Number(searchParams.get('guests')) || 1)
@@ -40,7 +42,9 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
   const [guestEmail, setGuestEmail] = useState('')
   const [guestPhone, setGuestPhone] = useState('')
   const [specialRequests, setSpecialRequests] = useState('')
+  const [clientId, setClientId] = useState<string | null>(null)
 
+  // ── Charger le loft
   useEffect(() => {
     fetch(`/api/lofts/${resolvedParams.id}`)
       .then(r => r.json())
@@ -51,6 +55,27 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
       .catch(() => setError('Erreur de chargement'))
       .finally(() => setLoading(false))
   }, [resolvedParams.id])
+
+  // ── Pré-remplir les infos du client connecté
+  useEffect(() => {
+    const loadClientInfo = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      setClientId(user.id)
+      setGuestEmail(user.email || '')
+
+      // Récupérer le profil pour le nom et le téléphone
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, phone')
+        .eq('id', user.id)
+        .single()
+
+      if (profile?.full_name) setGuestName(profile.full_name)
+      if (profile?.phone) setGuestPhone(profile.phone)
+    }
+    loadClientInfo()
+  }, [])
 
   // Lightbox — fermer avec Escape
   useEffect(() => {
@@ -121,8 +146,26 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
         }),
       })
       const data = await res.json()
-      if (data.success || data.data?.id) setSuccess(true)
-      else alert(data.error || 'Erreur lors de la réservation')
+      if (data.success || data.data?.id) {
+        // ── Notifier les admins et managers
+        try {
+          await fetch('/api/notifications/booking-alert', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              loft_name: loft.name,
+              guest_name: guestName || guestEmail || 'Client',
+              check_in: checkIn,
+              check_out: checkOut,
+              total,
+              booking_id: data.data?.id || data.booking_id || null,
+            }),
+          })
+        } catch { /* non bloquant */ }
+        setSuccess(true)
+      } else {
+        alert(data.error || 'Erreur lors de la réservation')
+      }
     } catch {
       alert('Erreur réseau')
     }

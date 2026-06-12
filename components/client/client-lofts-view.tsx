@@ -1,24 +1,8 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { 
-  Search, 
-  MapPin, 
-  Star,
-  Heart,
-  Filter,
-  SlidersHorizontal,
-  Bed,
-  Bath,
-  Users,
-  Wifi,
-  Car
-} from "lucide-react"
+import { motion } from "framer-motion"
+import { Search, MapPin, Heart, SlidersHorizontal, Users, BedDouble, Bath } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { getZoneAreas } from "@/app/actions/zone-areas"
@@ -35,16 +19,8 @@ interface Loft {
   amenities?: string[]
   average_rating?: number
   status?: string
-  loft_photos?: Array<{
-    id: string
-    url: string
-    order_index?: number
-    display_order?: number
-  }>
-  zone_areas?: {
-    id: string
-    name: string
-  }
+  loft_photos?: Array<{ id: string; url: string; order_index?: number; display_order?: number }>
+  zone_areas?: { id: string; name: string }
 }
 
 interface ClientLoftsViewProps {
@@ -53,203 +29,172 @@ interface ClientLoftsViewProps {
 }
 
 export function ClientLoftsView({ lofts, locale }: ClientLoftsViewProps) {
-  const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000])
   const [selectedZone, setSelectedZone] = useState<string>("all")
   const [favorites, setFavorites] = useState<Set<string>>(new Set())
   const [allZones, setAllZones] = useState<{ id: string; name: string }[]>([])
 
   useEffect(() => {
-    getZoneAreas().then((data) => setAllZones(data))
+    getZoneAreas().then(data => setAllZones(data))
   }, [])
 
-  // Filtrer les lofts
   const filteredLofts = useMemo(() => {
     return lofts.filter(loft => {
-      const matchesSearch = loft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           loft.address.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesPrice = loft.price_per_night >= priceRange[0] && loft.price_per_night <= priceRange[1]
+      const matchesSearch =
+        loft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        loft.address.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesZone = selectedZone === "all" || loft.zone_areas?.name === selectedZone
-      
-      return matchesSearch && matchesPrice && matchesZone
+      return matchesSearch && matchesZone
     })
-  }, [lofts, searchQuery, priceRange, selectedZone])
+  }, [lofts, searchQuery, selectedZone])
 
-  const toggleFavorite = (loftId: string) => {
+  const toggleFavorite = (e: React.MouseEvent, loftId: string) => {
+    e.preventDefault()
     setFavorites(prev => {
-      const newFavorites = new Set(prev)
-      if (newFavorites.has(loftId)) {
-        newFavorites.delete(loftId)
-      } else {
-        newFavorites.add(loftId)
-      }
-      return newFavorites
+      const next = new Set(prev)
+      next.has(loftId) ? next.delete(loftId) : next.add(loftId)
+      return next
     })
   }
 
-  const getBestPhoto = (loft: Loft) => {
-    if (!loft.loft_photos || loft.loft_photos.length === 0) return null
+  const getBestPhoto = (loft: Loft): string | null => {
+    if (!loft.loft_photos?.length) return null
     return loft.loft_photos.sort((a, b) => {
-      const orderA = a.order_index ?? a.display_order ?? 999
-      const orderB = b.order_index ?? b.display_order ?? 999
-      return orderA - orderB
-    })[0]
+      const oa = a.order_index ?? a.display_order ?? 999
+      const ob = b.order_index ?? b.display_order ?? 999
+      return oa - ob
+    })[0]?.url || null
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
-      {/* Header avec recherche */}
-      <div className="bg-white border-b sticky top-0 z-10 shadow-sm">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col md:flex-row gap-4 items-center">
-            <div className="flex-1 w-full">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <Input
-                  placeholder="Rechercher par nom ou adresse..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 h-12 text-base"
-                />
-              </div>
+    <div className="min-h-screen bg-[#faf9f7] dark:bg-neutral-950" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+      {/* ─── Barre de recherche sticky ─── */}
+      <div className="sticky top-0 z-20 border-b border-neutral-200/70 bg-white/90 backdrop-blur-md dark:border-neutral-800 dark:bg-neutral-950/90">
+        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            {/* Recherche */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+              <input
+                type="text"
+                placeholder="Rechercher un loft, une adresse…"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="w-full rounded-full border border-neutral-200 bg-white pl-10 pr-4 py-2.5 text-sm outline-none transition-colors focus:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white dark:placeholder-neutral-500"
+              />
             </div>
-            
-            <div className="flex gap-2 w-full md:w-auto">
-              <select
-                value={selectedZone}
-                onChange={(e) => setSelectedZone(e.target.value)}
-                className="flex h-12 w-full md:w-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm"
-              >
-                <option value="all">Toutes les zones</option>
-                {allZones.map(zone => (
-                  <option key={zone.id} value={zone.name}>{zone.name}</option>
-                ))}
-              </select>
-              
-              <Button variant="outline" size="lg" className="gap-2">
-                <SlidersHorizontal className="h-4 w-4" />
-                Filtres
-              </Button>
-            </div>
+
+            {/* Filtre zone */}
+            <select
+              value={selectedZone}
+              onChange={e => setSelectedZone(e.target.value)}
+              className="rounded-full border border-neutral-200 bg-white px-4 py-2.5 text-sm outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white sm:w-48"
+            >
+              <option value="all">Toutes les zones</option>
+              {allZones.map(zone => (
+                <option key={zone.id} value={zone.name}>{zone.name}</option>
+              ))}
+            </select>
           </div>
-          
-          <div className="mt-4 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
-              <span className="font-semibold">{filteredLofts.length}</span> loft{filteredLofts.length > 1 ? 's' : ''} disponible{filteredLofts.length > 1 ? 's' : ''}
-            </p>
-          </div>
+
+          <p className="mt-2.5 text-xs text-neutral-500 dark:text-neutral-400">
+            <span className="font-medium text-neutral-900 dark:text-white">{filteredLofts.length}</span> loft{filteredLofts.length > 1 ? 's' : ''} disponible{filteredLofts.length > 1 ? 's' : ''}
+          </p>
         </div>
       </div>
 
-      {/* Grille de lofts */}
-      <div className="container mx-auto px-4 py-8">
+      {/* ─── Grille — 4 colonnes ─── */}
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
         {filteredLofts.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-              <Search className="h-12 w-12 text-gray-400" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">Aucun loft trouvé</h3>
-            <p className="text-gray-600">Essayez de modifier vos critères de recherche</p>
+          <div className="py-20 text-center">
+            <Search className="mx-auto mb-4 h-12 w-12 text-neutral-300" />
+            <p className="text-neutral-500">Aucun loft correspond à votre recherche.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredLofts.map((loft) => {
-              const bestPhoto = getBestPhoto(loft)
-              const isFavorite = favorites.has(loft.id)
-              
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-5">
+            {filteredLofts.map((loft, i) => {
+              const photo = getBestPhoto(loft)
+              const isFav = favorites.has(loft.id)
+
               return (
-                <Card key={loft.id} className="overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 group">
-                  <div className="relative h-64">
-                    {bestPhoto?.url ? (
-                      <Image
-                        src={bestPhoto.url}
-                        alt={loft.name}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                        <MapPin className="h-16 w-16 text-gray-400" />
-                      </div>
-                    )}
-                    
-                    {/* Bouton favori */}
-                    <button
-                      onClick={() => toggleFavorite(loft.id)}
-                      className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-all shadow-lg"
-                    >
-                      <Heart 
-                        className={`h-5 w-5 transition-colors ${
-                          isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-600'
-                        }`}
-                      />
-                    </button>
-                    
-                    {/* Badge zone */}
-                    {loft.zone_areas?.name && (
-                      <div className="absolute bottom-3 left-3">
-                        <Badge className="bg-white/90 backdrop-blur-sm text-gray-900 hover:bg-white">
-                          <MapPin className="h-3 w-3 mr-1" />
+                <motion.div
+                  key={loft.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: (i % 4) * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <Link href={`/${locale}/client/lofts/${loft.id}`} className="group block">
+                    {/* Photo */}
+                    <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-neutral-200 dark:bg-neutral-800">
+                      {photo ? (
+                        <Image
+                          src={photo}
+                          alt={loft.name}
+                          fill
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center">
+                          <MapPin className="h-8 w-8 text-neutral-400" />
+                        </div>
+                      )}
+
+                      {/* Overlay hover */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+                      {/* Bouton favori */}
+                      <button
+                        onClick={e => toggleFavorite(e, loft.id)}
+                        className="absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm transition-all hover:bg-white dark:bg-black/50 dark:hover:bg-black/70"
+                        aria-label="Favori"
+                      >
+                        <Heart className={`h-4 w-4 transition-colors ${isFav ? 'fill-red-500 text-red-500' : 'text-neutral-600 dark:text-white'}`} />
+                      </button>
+
+                      {/* Badge zone */}
+                      {loft.zone_areas?.name && (
+                        <div className="absolute bottom-2.5 left-2.5 rounded-full bg-white/85 px-2.5 py-1 text-[10px] font-medium text-neutral-800 backdrop-blur-sm dark:bg-black/60 dark:text-white">
                           {loft.zone_areas.name}
-                        </Badge>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Infos */}
+                    <div className="mt-3 space-y-1">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="text-sm font-medium leading-tight text-neutral-900 dark:text-white line-clamp-1"
+                          style={{ fontFamily: "'Fraunces', serif" }}>
+                          {loft.name}
+                        </h3>
+                        <div className="text-right flex-shrink-0">
+                          <span className="text-sm font-semibold text-neutral-900 dark:text-white">
+                            {loft.price_per_night.toLocaleString('fr-FR')} DA
+                          </span>
+                          <span className="block text-[10px] text-neutral-500">/nuit</span>
+                        </div>
                       </div>
-                    )}
-                  </div>
-                  
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-bold text-lg line-clamp-1">{loft.name}</h3>
-                      {loft.average_rating && (
-                        <div className="flex items-center gap-1 text-sm flex-shrink-0 ml-2">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="font-semibold">{loft.average_rating.toFixed(1)}</span>
+
+                      {loft.address && (
+                        <p className="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
+                          <MapPin className="h-3 w-3 flex-shrink-0" />
+                          <span className="truncate">{loft.address}</span>
+                        </p>
+                      )}
+
+                      {/* Caractéristiques */}
+                      {(loft.bedrooms || loft.bathrooms || loft.max_guests) && (
+                        <div className="flex items-center gap-3 text-[11px] text-neutral-400 dark:text-neutral-500">
+                          {loft.bedrooms && <span className="flex items-center gap-1"><BedDouble className="h-3 w-3" />{loft.bedrooms}</span>}
+                          {loft.bathrooms && <span className="flex items-center gap-1"><Bath className="h-3 w-3" />{loft.bathrooms}</span>}
+                          {loft.max_guests && <span className="flex items-center gap-1"><Users className="h-3 w-3" />{loft.max_guests}</span>}
                         </div>
                       )}
                     </div>
-                    
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-1 flex items-center gap-1">
-                      <MapPin className="h-3 w-3 flex-shrink-0" />
-                      {loft.address}
-                    </p>
-                    
-                    {/* Caractéristiques */}
-                    <div className="flex items-center gap-3 mb-3 text-sm text-gray-600">
-                      {loft.bedrooms && (
-                        <div className="flex items-center gap-1">
-                          <Bed className="h-4 w-4" />
-                          <span>{loft.bedrooms}</span>
-                        </div>
-                      )}
-                      {loft.bathrooms && (
-                        <div className="flex items-center gap-1">
-                          <Bath className="h-4 w-4" />
-                          <span>{loft.bathrooms}</span>
-                        </div>
-                      )}
-                      {loft.max_guests && (
-                        <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4" />
-                          <span>{loft.max_guests}</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex items-center justify-between pt-3 border-t">
-                      <div>
-                        <span className="font-bold text-xl text-blue-600">
-                          {loft.price_per_night.toLocaleString()} DA
-                        </span>
-                        <span className="text-sm text-gray-600"> / nuit</span>
-                      </div>
-                      <Link href={`/${locale}/lofts/${loft.id}/book`}>
-                        <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                          Réserver
-                        </Button>
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
+                  </Link>
+                </motion.div>
               )
             })}
           </div>

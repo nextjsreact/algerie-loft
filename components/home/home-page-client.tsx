@@ -31,9 +31,26 @@ import Link from "next/link"
 import { useTranslations, useLocale } from "next-intl"
 import { ContractAlerts } from "@/components/dashboard/contract-alerts"
 
-function HomePageContent({ session }: { session: AuthSession }) {
+function HomePageContent({ session, loading }: { session: AuthSession | null; loading: boolean }) {
   const t = useTranslations('dashboard')
   const locale = useLocale()
+
+  // Early returns AFTER all hooks have been called — keeps hook order stable.
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Chargement de la page d'accueil...</div>
+      </div>
+    )
+  }
+
+  if (!session) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Veuillez vous connecter pour accéder à la page d'accueil.</div>
+      </div>
+    )
+  }
 
   // Sections communes pour Admin, Manager et Member uniquement
   const commonSections = [
@@ -342,26 +359,11 @@ export function HomePageClient() {
     fetchSession()
   }, [])
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Chargement de la page d'accueil...</div>
-      </div>
-    )
-  }
-
-  if (!session) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Veuillez vous connecter pour accéder à la page d'accueil.</div>
-      </div>
-    )
-  }
-
-  // Use main layout sidebar instead of own sidebar - let ClientProviders handle it
+  // Always render HomePageContent so hooks are called consistently.
+  // It handles loading/no-session states internally.
   return (
     <div className="min-h-screen">
-      <HomePageContent session={session} />
+      <HomePageContent session={session} loading={loading} />
     </div>
   )
 }

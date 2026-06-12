@@ -59,15 +59,20 @@ export function InstallPrompt({ userRole }: InstallPromptProps) {
 
   useEffect(() => {
     const handler = (e: Event) => {
-      e.preventDefault()
-      setDeferredPrompt(e as BeforeInstallPromptEvent)
-      
+      // Stocker l'événement pour utilisation ultérieure
+      const promptEvent = e as BeforeInstallPromptEvent
+
       // Vérifier si on doit afficher le prompt avec nos règles intelligentes
       if (shouldShowPrompt()) {
+        // Empêcher le mini-banner natif du navigateur SEULEMENT si on va afficher notre propre UI
+        e.preventDefault()
+        setDeferredPrompt(promptEvent)
         setShowInstallPrompt(true)
         // Enregistrer quand on l'a montré
         localStorage.setItem(STORAGE_KEYS.LAST_SHOWN, Date.now().toString())
       }
+      // Si on ne doit pas afficher (NEVER_ASK, mauvais rôle, etc.), on laisse
+      // le navigateur afficher son propre mini-banner — pas de preventDefault().
     }
 
     window.addEventListener('beforeinstallprompt', handler)

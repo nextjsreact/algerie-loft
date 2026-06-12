@@ -116,7 +116,7 @@ const copy = {
     scroll: 'Découvrir',
     statsGuests: 'Voyageurs accueillis',
     statsLofts: 'Lofts d\'exception',
-    statsCities: 'Villes',
+    statsCities: 'Localités',
     statsRating: 'Note moyenne',
     collectionEyebrow: 'La collection',
     collectionTitle: 'Des adresses qui ont une âme',

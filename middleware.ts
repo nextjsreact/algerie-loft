@@ -16,6 +16,19 @@ export default function middleware(request: NextRequest) {
     console.log(`🔄 [Middleware] Skipping intl for auth route: ${pathname}`)
     return NextResponse.next()
   }
+
+  // Exclure les fichiers spéciaux PWA/SEO à la racine
+  if (
+    pathname === '/manifest.webmanifest' ||
+    pathname === '/manifest.json' ||
+    pathname === '/robots.txt' ||
+    pathname === '/sitemap.xml' ||
+    pathname === '/browserconfig.xml' ||
+    pathname.startsWith('/sw.') ||
+    pathname.startsWith('/workbox-')
+  ) {
+    return NextResponse.next()
+  }
   
   // Appliquer le middleware d'internationalisation
   const response = intlMiddleware(request)

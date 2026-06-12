@@ -62,17 +62,24 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       setClientId(user.id)
-      setGuestEmail(user.email || '')
 
-      // Récupérer le profil pour le nom et le téléphone
+      // Email depuis l'auth
+      if (user.email) setGuestEmail(user.email)
+
+      // Nom : priorité profil → user_metadata → email
+      const nameFromMeta = user.user_metadata?.full_name || user.user_metadata?.name || ''
+      const phoneFromMeta = user.user_metadata?.phone || user.phone || ''
+
+      // Récupérer le profil pour full_name
       const { data: profile } = await supabase
         .from('profiles')
-        .select('full_name, phone')
+        .select('full_name')
         .eq('id', user.id)
         .single()
 
-      if (profile?.full_name) setGuestName(profile.full_name)
-      if (profile?.phone) setGuestPhone(profile.phone)
+      const finalName = profile?.full_name || nameFromMeta || ''
+      if (finalName) setGuestName(finalName)
+      if (phoneFromMeta) setGuestPhone(phoneFromMeta)
     }
     loadClientInfo()
   }, [])
@@ -121,6 +128,7 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
     if (cin < today) { alert("La date d'arrivée ne peut pas être dans le passé"); return }
     if (cout <= cin) { alert("La date de départ doit être après la date d'arrivée"); return }
     if (!guestPhone.trim()) { alert('Le numéro de téléphone est obligatoire'); return }
+    if (!guestName.trim()) { alert('Le nom est obligatoire'); return }
 
     setSubmitting(true)
     try {
@@ -453,11 +461,13 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
 
                 {/* Téléphone */}
                 <input type="tel" value={guestPhone} onChange={e => setGuestPhone(e.target.value)}
-                  placeholder="Téléphone *" required
+                  placeholder="Téléphone *"
+                  required
                   className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-neutral-400 dark:border-neutral-700 dark:bg-transparent dark:text-white dark:placeholder-neutral-600" />
 
                 <input type="text" value={guestName} onChange={e => setGuestName(e.target.value)}
-                  placeholder="Nom (optionnel)"
+                  placeholder="Nom complet *"
+                  required
                   className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-neutral-400 dark:border-neutral-700 dark:bg-transparent dark:text-white dark:placeholder-neutral-600" />
 
                 <input type="email" value={guestEmail} onChange={e => setGuestEmail(e.target.value)}

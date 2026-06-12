@@ -52,7 +52,18 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
       .finally(() => setLoading(false))
   }, [resolvedParams.id])
 
-  // Lightbox
+  // Lightbox — fermer avec Escape
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (!lightboxOpen) return
+      if (e.key === 'Escape') closeLightbox()
+      if (e.key === 'ArrowRight') nextPhoto()
+      if (e.key === 'ArrowLeft') prevPhoto()
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [lightboxOpen, lightboxIndex])
+
   const openLightbox = (index: number) => {
     setLightboxIndex(index)
     setLightboxOpen(true)
@@ -446,40 +457,46 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm"
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/97"
             onClick={closeLightbox}
           >
-            {/* Fermer */}
+            {/* Bouton fermer — grand, visible, coin haut droit */}
             <button
-              onClick={closeLightbox}
-              className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+              onClick={e => { e.stopPropagation(); closeLightbox() }}
+              className="absolute right-4 top-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition-all hover:bg-white/30 hover:scale-110 sm:right-6 sm:top-6"
+              aria-label="Fermer"
             >
-              <X className="h-5 w-5" />
+              <X className="h-6 w-6" />
             </button>
 
-            {/* Compteur */}
-            <div className="absolute top-5 left-1/2 -translate-x-1/2 text-xs text-white/50">
-              {lightboxIndex + 1} / {photos.length}
+            {/* Texte "Appuyez sur Échap pour fermer" — mobile */}
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 pointer-events-none">
+              <span className="text-xs text-white/40 hidden sm:block">Échap pour fermer</span>
+              <span className="text-xs text-white/60 font-medium">
+                {lightboxIndex + 1} / {photos.length}
+              </span>
             </div>
 
             {/* Prev */}
             {photos.length > 1 && (
               <button
                 onClick={e => { e.stopPropagation(); prevPhoto() }}
-                className="absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:left-8"
+                className="absolute left-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition-all hover:bg-white/30 sm:left-6 sm:h-14 sm:w-14"
+                aria-label="Photo précédente"
               >
-                <ChevronLeft className="h-6 w-6" />
+                <ChevronLeft className="h-6 w-6 sm:h-7 sm:w-7" />
               </button>
             )}
 
-            {/* Image */}
+            {/* Image principale */}
             <motion.div
               key={lightboxIndex}
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
+              exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="relative mx-12 aspect-[4/3] w-full max-w-5xl overflow-hidden rounded-2xl"
+              className="relative mx-16 w-full max-w-5xl overflow-hidden rounded-xl sm:mx-24"
+              style={{ aspectRatio: '4/3' }}
               onClick={e => e.stopPropagation()}
             >
               <Image
@@ -487,7 +504,8 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
                 alt={`${loft.name} — photo ${lightboxIndex + 1}`}
                 fill
                 sizes="(max-width: 1280px) 100vw, 1280px"
-                className="object-cover"
+                className="object-contain"
+                priority
               />
             </motion.div>
 
@@ -495,20 +513,29 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
             {photos.length > 1 && (
               <button
                 onClick={e => { e.stopPropagation(); nextPhoto() }}
-                className="absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:right-8"
+                className="absolute right-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-sm transition-all hover:bg-white/30 sm:right-6 sm:h-14 sm:w-14"
+                aria-label="Photo suivante"
               >
-                <ChevronRight className="h-6 w-6" />
+                <ChevronRight className="h-6 w-6 sm:h-7 sm:w-7" />
               </button>
             )}
 
-            {/* Thumbnails */}
+            {/* Thumbnails en bas */}
             {photos.length > 1 && (
-              <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-2 overflow-x-auto max-w-[90vw] pb-1">
+              <div
+                className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 overflow-x-auto pb-1 max-w-[85vw]"
+                onClick={e => e.stopPropagation()}
+                style={{ scrollbarWidth: 'none' }}
+              >
                 {photos.map((photo, i) => (
                   <button
                     key={i}
                     onClick={e => { e.stopPropagation(); setLightboxIndex(i) }}
-                    className={`relative h-12 w-16 flex-shrink-0 overflow-hidden rounded-md transition-all ${i === lightboxIndex ? 'ring-2 ring-white' : 'opacity-50 hover:opacity-80'}`}
+                    className={`relative h-12 w-16 flex-shrink-0 overflow-hidden rounded-lg transition-all ${
+                      i === lightboxIndex
+                        ? 'ring-2 ring-white opacity-100'
+                        : 'opacity-40 hover:opacity-70'
+                    }`}
                   >
                     <Image src={photo} alt="" fill sizes="64px" className="object-cover" />
                   </button>

@@ -19,16 +19,29 @@ export async function getSession(): Promise<AuthSession | null> {
   const { detectUserRole } = await import('@/lib/auth/role-detection');
   
   // Read login_context cookie here and pass it to detectUserRole
-  let loginContext: string | undefined;
+  let loginContext: string | null = null;
   try {
     const { cookies } = await import('next/headers');
     const cookieStore = await cookies();
-    loginContext = cookieStore.get('login_context')?.value;
+    loginContext = cookieStore.get('login_context')?.value ?? null;
   } catch {
     // ignore
   }
-  
-  const role = await detectUserRole(user.id, user.email, loginContext);
+
+  // Normalize cookie values to avoid accidental misrouting.
+  // Anything employee/admin/manager/executive/superuser should behave as "employee"
+  // from the routing perspective on pages like /[locale]/home.
+  if (loginContext) {
+    const normalized = loginContext.toLowerCase();
+    if (["employee", "admin", "manager", "member", "executive", "superuser"].includes(normalized)) {
+      loginContext = "employee";
+    } else if (!["client", "partner"].includes(normalized)) {
+      // Unknown value -> fallback to employee routing
+      loginContext = "employee";
+    }
+  }
+
+  const role = await detectUserRole(user.id, user.email, loginContext ?? null);
   
   // Get user profile for display name
   let full_name = user.user_metadata?.full_name || user.email?.split('@')[0] || null;

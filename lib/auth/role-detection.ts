@@ -40,6 +40,20 @@ export async function detectUserRole(userId: string, userEmail: string | null, l
     }
 
     // Route based on login_context chosen at login
+    if (loginContext === 'employee') {
+      // For employee context, never "convert" to client/partner.
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', userId)
+        .single();
+
+      if (profile?.role) {
+        return profile.role as UserRole;
+      }
+      return 'member';
+    }
+
     if (loginContext === 'client') {
       // Verify user is actually in customers table
       const { data: customer } = await supabase

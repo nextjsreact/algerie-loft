@@ -3,6 +3,13 @@
 import { useState, useEffect, use } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  ArrowLeft, MapPin, X, ChevronLeft, ChevronRight,
+  Users, BedDouble, Bath, Maximize2, Phone, Mail,
+  Calendar, Star, Wifi, Car, Coffee, Tv, Wind, Shield,
+  Grid2x2
+} from 'lucide-react'
 
 interface LoftDetailPageProps {
   params: Promise<{ id: string; locale: string }>
@@ -19,6 +26,11 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
+
+  // Galerie
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState(0)
+  const [activePhoto, setActivePhoto] = useState(0)
 
   // Form state
   const [checkIn, setCheckIn] = useState(searchParams.get('check_in') || '')
@@ -40,6 +52,25 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
       .finally(() => setLoading(false))
   }, [resolvedParams.id])
 
+  // Lightbox
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index)
+    setLightboxOpen(true)
+    document.body.style.overflow = 'hidden'
+  }
+  const closeLightbox = () => {
+    setLightboxOpen(false)
+    document.body.style.overflow = ''
+  }
+  const nextPhoto = () => {
+    const photos = loft?.photos || []
+    setLightboxIndex(prev => (prev + 1) % photos.length)
+  }
+  const prevPhoto = () => {
+    const photos = loft?.photos || []
+    setLightboxIndex(prev => (prev - 1 + photos.length) % photos.length)
+  }
+
   const nights = checkIn && checkOut
     ? Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000)
     : 0
@@ -48,13 +79,12 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!checkIn || !checkOut) { alert('Veuillez sélectionner les dates'); return }
-    const today = new Date(); today.setHours(0,0,0,0)
-    const cin = new Date(checkIn); cin.setHours(0,0,0,0)
-    const cout = new Date(checkOut); cout.setHours(0,0,0,0)
-    if (cin < today) { alert('La date d\'arrivée ne peut pas être dans le passé'); return }
-    if (cout <= cin) { alert('La date de départ doit être après la date d\'arrivée'); return }
+    const today = new Date(); today.setHours(0, 0, 0, 0)
+    const cin = new Date(checkIn); cin.setHours(0, 0, 0, 0)
+    const cout = new Date(checkOut); cout.setHours(0, 0, 0, 0)
+    if (cin < today) { alert("La date d'arrivée ne peut pas être dans le passé"); return }
+    if (cout <= cin) { alert("La date de départ doit être après la date d'arrivée"); return }
     if (!guestPhone.trim()) { alert('Le numéro de téléphone est obligatoire'); return }
-    if (nights <= 0) { alert('La date de départ doit être après la date d\'arrivée'); return }
 
     setSubmitting(true)
     try {
@@ -76,177 +106,418 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
           taxes: 0,
           total_amount: total,
           special_requests: specialRequests || null,
-          source: 'client', // ← identifies this as a public client booking
+          source: 'client',
         }),
       })
       const data = await res.json()
-      if (data.success || data.data?.id) {
-        setSuccess(true)
-      } else {
-        alert(data.error || 'Erreur lors de la réservation')
-      }
+      if (data.success || data.data?.id) setSuccess(true)
+      else alert(data.error || 'Erreur lors de la réservation')
     } catch {
       alert('Erreur réseau')
     }
     setSubmitting(false)
   }
 
+  /* ─── États de chargement ─── */
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center"><div className="text-5xl mb-4">🔄</div><p className="text-gray-500">Chargement...</p></div>
-    </div>
-  )
-
-  if (error || !loft) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <div className="text-5xl mb-4">❌</div>
-        <p className="text-gray-700 mb-4">{error || 'Loft non trouvé'}</p>
-        <button onClick={() => router.back()} className="bg-blue-600 text-white px-6 py-2 rounded-lg">Retour</button>
+    <div className="min-h-screen flex items-center justify-center bg-[#faf9f7] dark:bg-neutral-950">
+      <div className="flex flex-col items-center gap-4">
+        <div className="h-10 w-10 rounded-full border-2 border-neutral-300 border-t-neutral-900 animate-spin dark:border-neutral-700 dark:border-t-white" />
+        <p className="text-sm text-neutral-500">Chargement…</p>
       </div>
     </div>
   )
 
-  if (success) return (
-    <div className="min-h-screen flex items-center justify-center bg-green-50">
-      <div className="text-center max-w-md mx-auto p-8 bg-white rounded-2xl shadow-xl">
-        <div className="text-6xl mb-4">🎉</div>
-        <h2 className="text-2xl font-bold text-green-700 mb-2">Réservation envoyée !</h2>
-        <p className="text-gray-600 mb-6">Votre demande de réservation pour <strong>{loft.name}</strong> a été envoyée. Notre équipe vous contactera pour confirmer.</p>
-        <button onClick={() => router.push(`/${locale}`)} className="bg-green-600 text-white px-8 py-3 rounded-xl font-semibold">
-          Retour à l'accueil
+  if (error || !loft) return (
+    <div className="min-h-screen flex items-center justify-center bg-[#faf9f7] dark:bg-neutral-950">
+      <div className="text-center">
+        <p className="text-neutral-600 dark:text-neutral-400 mb-6">{error || 'Loft non trouvé'}</p>
+        <button onClick={() => router.back()} className="rounded-full bg-neutral-900 px-6 py-3 text-sm font-medium text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900">
+          Retour
         </button>
       </div>
     </div>
   )
 
+  if (success) return (
+    <div className="min-h-screen flex items-center justify-center bg-[#faf9f7] dark:bg-neutral-950">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="text-center max-w-md mx-auto p-10 bg-white dark:bg-neutral-900 rounded-3xl shadow-xl border border-neutral-100 dark:border-neutral-800"
+      >
+        <div className="text-5xl mb-5">🎉</div>
+        <h2 className="text-2xl font-medium text-neutral-900 dark:text-white mb-3">Réservation envoyée !</h2>
+        <p className="text-neutral-500 dark:text-neutral-400 mb-8 text-sm leading-relaxed">
+          Votre demande pour <strong className="text-neutral-900 dark:text-white">{loft.name}</strong> a bien été envoyée. Notre équipe vous contactera pour confirmer.
+        </p>
+        <button onClick={() => router.push(`/${locale}`)} className="rounded-full bg-neutral-900 px-8 py-3.5 text-sm font-medium text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900">
+          Retour à l'accueil
+        </button>
+      </motion.div>
+    </div>
+  )
+
+  const photos: string[] = loft.photos?.length ? loft.photos : loft.cover_photo ? [loft.cover_photo] : []
+
+  /* ─── Page principale ─── */
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b px-4 py-4">
-        <div className="max-w-4xl mx-auto">
-          <button onClick={() => router.back()} className="text-blue-600 hover:underline mb-2 flex items-center gap-1">
-            ← Retour
+    <div className="min-h-screen bg-[#faf9f7] dark:bg-neutral-950" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+      {/* ─── Header ─── */}
+      <div className="sticky top-0 z-30 border-b border-neutral-200/70 bg-white/90 backdrop-blur-md dark:border-neutral-800 dark:bg-neutral-950/90">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
+          <button
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-2 text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Retour
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">{loft.name}</h1>
-          {loft.address && <p className="text-gray-500 text-sm mt-1">📍 {loft.address}</p>}
+          <h1 className="text-base font-medium text-neutral-900 dark:text-white truncate max-w-xs hidden sm:block"
+            style={{ fontFamily: "'Fraunces', serif" }}
+          >
+            {loft.name}
+          </h1>
+          <div className="w-16" />
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Left: Loft info */}
-          <div className="space-y-6">
-            {/* Photo */}
-            <div className="rounded-xl overflow-hidden bg-gray-200 h-64 flex items-center justify-center">
-              {loft.cover_photo ? (
-                <img src={loft.cover_photo} alt={loft.name} className="w-full h-full object-contain" />
-              ) : (
-                <span className="text-6xl">🏠</span>
-              )}
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* ─── GALERIE PHOTOS ─── */}
+        {photos.length > 0 && (
+          <div className="mb-10">
+            {/* Layout galerie : grande photo + grille */}
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-4 md:grid-rows-2" style={{ height: 480 }}>
+              {/* Photo principale */}
+              <div
+                className="group relative col-span-2 row-span-2 cursor-pointer overflow-hidden rounded-2xl md:rounded-r-none bg-neutral-200 dark:bg-neutral-800"
+                onClick={() => openLightbox(0)}
+              >
+                <Image
+                  src={photos[0]}
+                  alt={loft.name}
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
+              </div>
+
+              {/* Photos secondaires */}
+              {photos.slice(1, 5).map((photo, i) => (
+                <div
+                  key={i}
+                  className="group relative cursor-pointer overflow-hidden bg-neutral-200 dark:bg-neutral-800"
+                  style={{
+                    borderRadius: i === 1 ? '0 1rem 0 0' : i === 3 ? '0 0 1rem 0' : undefined
+                  }}
+                  onClick={() => openLightbox(i + 1)}
+                >
+                  <Image
+                    src={photo}
+                    alt={`${loft.name} ${i + 2}`}
+                    fill
+                    sizes="25vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/15" />
+                  {/* Bouton "voir tout" sur la dernière */}
+                  {i === 3 && photos.length > 5 && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                      <button
+                        onClick={e => { e.stopPropagation(); openLightbox(4) }}
+                        className="flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-neutral-900 backdrop-blur-sm transition-transform hover:scale-105"
+                      >
+                        <Grid2x2 className="h-4 w-4" />
+                        +{photos.length - 5} photos
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {/* Si moins de 5 photos, remplir */}
+              {photos.length < 5 && Array.from({ length: 4 - (photos.length - 1) }).map((_, i) => (
+                <div key={`empty-${i}`} className="bg-neutral-100 dark:bg-neutral-800/50"
+                  style={{
+                    borderRadius: photos.length === 1 && i === 0 ? '0 1rem 0 0'
+                      : photos.length === 1 && i === 2 ? '0 0 1rem 0' : undefined
+                  }}
+                />
+              ))}
             </div>
 
-            {/* Price */}
-            <div className="bg-white rounded-xl p-4 border">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-600">Prix par nuit</span>
-                <span className="text-2xl font-bold text-blue-600">{loft.price_per_night?.toLocaleString()} DA</span>
+            {/* Thumbnails scrollables (mobile) */}
+            {photos.length > 1 && (
+              <div className="mt-3 flex gap-2 overflow-x-auto pb-1 md:hidden" style={{ scrollbarWidth: 'none' }}>
+                {photos.map((photo, i) => (
+                  <button
+                    key={i}
+                    onClick={() => openLightbox(i)}
+                    className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${i === activePhoto ? 'border-neutral-900 dark:border-white' : 'border-transparent'}`}
+                  >
+                    <Image src={photo} alt="" fill sizes="64px" className="object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ─── CONTENU ─── */}
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
+          {/* Colonne gauche — infos */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Titre + localisation */}
+            <div className="border-b border-neutral-200/70 pb-8 dark:border-neutral-800">
+              <h1 className="text-3xl font-medium leading-tight text-neutral-900 dark:text-white sm:text-4xl" style={{ fontFamily: "'Fraunces', serif" }}>
+                {loft.name}
+              </h1>
+              {(loft.address || loft.zone_name) && (
+                <p className="mt-3 flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
+                  <MapPin className="h-4 w-4 flex-shrink-0" />
+                  {loft.zone_name || loft.address}
+                </p>
+              )}
+
+              {/* Caractéristiques */}
+              <div className="mt-5 flex flex-wrap gap-4 text-sm text-neutral-600 dark:text-neutral-400">
+                {loft.max_guests && (
+                  <span className="flex items-center gap-1.5"><Users className="h-4 w-4" />{loft.max_guests} voyageurs</span>
+                )}
+                {loft.bedrooms && (
+                  <span className="flex items-center gap-1.5"><BedDouble className="h-4 w-4" />{loft.bedrooms} chambre{loft.bedrooms > 1 ? 's' : ''}</span>
+                )}
+                {loft.bathrooms && (
+                  <span className="flex items-center gap-1.5"><Bath className="h-4 w-4" />{loft.bathrooms} salle{loft.bathrooms > 1 ? 's' : ''} de bain</span>
+                )}
+                {loft.area_sqm && (
+                  <span className="flex items-center gap-1.5"><Maximize2 className="h-4 w-4" />{loft.area_sqm} m²</span>
+                )}
               </div>
             </div>
 
             {/* Description */}
             {loft.description && (
-              <div className="bg-white rounded-xl p-4 border">
-                <h3 className="font-semibold mb-2">Description</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{loft.description}</p>
+              <div className="border-b border-neutral-200/70 pb-8 dark:border-neutral-800">
+                <h2 className="mb-4 text-xl font-medium text-neutral-900 dark:text-white" style={{ fontFamily: "'Fraunces', serif" }}>
+                  À propos de ce loft
+                </h2>
+                <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{loft.description}</p>
+              </div>
+            )}
+
+            {/* Équipements */}
+            <div className="border-b border-neutral-200/70 pb-8 dark:border-neutral-800">
+              <h2 className="mb-5 text-xl font-medium text-neutral-900 dark:text-white" style={{ fontFamily: "'Fraunces', serif" }}>
+                Ce que propose ce loft
+              </h2>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {[
+                  { icon: Wifi, label: 'WiFi gratuit' },
+                  { icon: Car, label: 'Parking' },
+                  { icon: Coffee, label: 'Cuisine équipée' },
+                  { icon: Tv, label: 'Télévision' },
+                  { icon: Wind, label: 'Climatisation' },
+                  { icon: Shield, label: 'Sécurisé' },
+                ].map((a, i) => (
+                  <div key={i} className="flex items-center gap-3 rounded-xl border border-neutral-200 px-4 py-3 dark:border-neutral-800">
+                    <a.icon className="h-4 w-4 text-neutral-500 dark:text-neutral-400" strokeWidth={1.5} />
+                    <span className="text-sm text-neutral-700 dark:text-neutral-300">{a.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Règles check-in/out */}
+            {(loft.check_in_time || loft.check_out_time || loft.house_rules) && (
+              <div>
+                <h2 className="mb-5 text-xl font-medium text-neutral-900 dark:text-white" style={{ fontFamily: "'Fraunces', serif" }}>
+                  Règles du loft
+                </h2>
+                <div className="space-y-3 text-sm">
+                  {loft.check_in_time && (
+                    <div className="flex items-center gap-3 text-neutral-600 dark:text-neutral-400">
+                      <Calendar className="h-4 w-4 flex-shrink-0" />
+                      <span>Arrivée : à partir de {loft.check_in_time}</span>
+                    </div>
+                  )}
+                  {loft.check_out_time && (
+                    <div className="flex items-center gap-3 text-neutral-600 dark:text-neutral-400">
+                      <Calendar className="h-4 w-4 flex-shrink-0" />
+                      <span>Départ : avant {loft.check_out_time}</span>
+                    </div>
+                  )}
+                  {loft.house_rules && (
+                    <p className="mt-2 text-neutral-600 dark:text-neutral-400">{loft.house_rules}</p>
+                  )}
+                </div>
               </div>
             )}
           </div>
 
-          {/* Right: Booking form */}
-          <div>
-            <form onSubmit={handleSubmit} className="bg-white rounded-xl border p-6 space-y-4 sticky top-4">
-              <h2 className="text-xl font-bold text-gray-900">Réserver ce loft</h2>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-medium text-gray-600 block mb-1">Arrivée</label>
-                  <input type="date" value={checkIn}
-                    onChange={e => {
-                      const val = e.target.value
-                      setCheckIn(val)
-                      // Reset checkout if it's no longer valid
-                      if (checkOut && checkOut <= val) setCheckOut('')
-                    }}
-                    min={new Date().toISOString().split('T')[0]}
-                    className="w-full border rounded-lg px-3 py-2 text-sm" required />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-gray-600 block mb-1">Départ</label>
-                  <input type="date" value={checkOut}
-                    onChange={e => setCheckOut(e.target.value)}
-                    min={checkIn
-                      ? new Date(new Date(checkIn + 'T00:00:00').getTime() + 86400000).toISOString().split('T')[0]
-                      : new Date(new Date().getTime() + 86400000).toISOString().split('T')[0]}
-                    className="w-full border rounded-lg px-3 py-2 text-sm" required />
-                </div>
+          {/* Colonne droite — formulaire réservation sticky */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-24 rounded-3xl border border-neutral-200 bg-white p-7 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+              {/* Prix */}
+              <div className="mb-6 flex items-baseline gap-2">
+                <span className="text-3xl font-medium text-neutral-900 dark:text-white" style={{ fontFamily: "'Fraunces', serif" }}>
+                  {loft.price_per_night?.toLocaleString('fr-FR')} DA
+                </span>
+                <span className="text-sm text-neutral-500 dark:text-neutral-400">/ nuit</span>
               </div>
 
-              <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Nombre d'invités</label>
-                <input type="number" min="1" max={loft.max_guests || 10} value={guests}
-                  onChange={e => setGuests(Number(e.target.value))}
-                  className="w-full border rounded-lg px-3 py-2 text-sm" />
-              </div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Dates */}
+                <div className="grid grid-cols-2 gap-2 overflow-hidden rounded-2xl border border-neutral-200 dark:border-neutral-700">
+                  <div className="border-r border-neutral-200 px-3 py-2.5 dark:border-neutral-700">
+                    <label className="block text-[10px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Arrivée</label>
+                    <input type="date" value={checkIn}
+                      onChange={e => { setCheckIn(e.target.value); if (checkOut && checkOut <= e.target.value) setCheckOut('') }}
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full text-sm font-medium text-neutral-900 dark:text-white bg-transparent outline-none" required />
+                  </div>
+                  <div className="px-3 py-2.5">
+                    <label className="block text-[10px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Départ</label>
+                    <input type="date" value={checkOut}
+                      onChange={e => setCheckOut(e.target.value)}
+                      min={checkIn ? new Date(new Date(checkIn + 'T00:00:00').getTime() + 86400000).toISOString().split('T')[0] : new Date(Date.now() + 86400000).toISOString().split('T')[0]}
+                      className="w-full text-sm font-medium text-neutral-900 dark:text-white bg-transparent outline-none" required />
+                  </div>
+                </div>
 
-              <hr />
+                {/* Voyageurs */}
+                <div className="rounded-2xl border border-neutral-200 px-3 py-2.5 dark:border-neutral-700">
+                  <label className="block text-[10px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Voyageurs</label>
+                  <input type="number" min="1" max={loft.max_guests || 10} value={guests}
+                    onChange={e => setGuests(Number(e.target.value))}
+                    className="w-full text-sm font-medium text-neutral-900 dark:text-white bg-transparent outline-none" />
+                </div>
 
-              <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Téléphone <span className="text-red-500">*</span></label>
+                {/* Téléphone */}
                 <input type="tel" value={guestPhone} onChange={e => setGuestPhone(e.target.value)}
-                  placeholder="+213 XX XX XX XX" className="w-full border rounded-lg px-3 py-2 text-sm" required />
-              </div>
+                  placeholder="Téléphone *" required
+                  className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-neutral-400 dark:border-neutral-700 dark:bg-transparent dark:text-white dark:placeholder-neutral-600" />
 
-              <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Nom (optionnel)</label>
                 <input type="text" value={guestName} onChange={e => setGuestName(e.target.value)}
-                  placeholder="Votre nom" className="w-full border rounded-lg px-3 py-2 text-sm" />
-              </div>
+                  placeholder="Nom (optionnel)"
+                  className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-neutral-400 dark:border-neutral-700 dark:bg-transparent dark:text-white dark:placeholder-neutral-600" />
 
-              <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Email (optionnel)</label>
                 <input type="email" value={guestEmail} onChange={e => setGuestEmail(e.target.value)}
-                  placeholder="votre@email.com" className="w-full border rounded-lg px-3 py-2 text-sm" />
-              </div>
+                  placeholder="Email (optionnel)"
+                  className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-neutral-400 dark:border-neutral-700 dark:bg-transparent dark:text-white dark:placeholder-neutral-600" />
 
-              <div>
-                <label className="text-xs font-medium text-gray-600 block mb-1">Demandes spéciales (optionnel)</label>
                 <textarea value={specialRequests} onChange={e => setSpecialRequests(e.target.value)}
-                  rows={2} className="w-full border rounded-lg px-3 py-2 text-sm resize-none" />
-              </div>
+                  rows={2} placeholder="Demandes spéciales (optionnel)"
+                  className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-neutral-400 resize-none dark:border-neutral-700 dark:bg-transparent dark:text-white dark:placeholder-neutral-600" />
 
-              {/* Price summary */}
-              {nights > 0 && (
-                <div className="bg-blue-50 rounded-lg p-3 space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{nights} nuit{nights > 1 ? 's' : ''} × {loft.price_per_night?.toLocaleString()} DA</span>
-                    <span>{total.toLocaleString()} DA</span>
+                {/* Résumé prix */}
+                {nights > 0 && (
+                  <div className="rounded-2xl bg-neutral-50 p-4 space-y-2 text-sm dark:bg-neutral-800">
+                    <div className="flex justify-between text-neutral-600 dark:text-neutral-400">
+                      <span>{loft.price_per_night?.toLocaleString('fr-FR')} DA × {nights} nuit{nights > 1 ? 's' : ''}</span>
+                      <span>{total.toLocaleString('fr-FR')} DA</span>
+                    </div>
+                    <div className="flex justify-between border-t border-neutral-200 pt-2 font-semibold text-neutral-900 dark:border-neutral-700 dark:text-white">
+                      <span>Total</span>
+                      <span>{total.toLocaleString('fr-FR')} DA</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between font-bold text-base border-t pt-1 mt-1">
-                    <span>Total</span>
-                    <span className="text-blue-700">{total.toLocaleString()} DA</span>
-                  </div>
-                </div>
-              )}
+                )}
 
-              <button type="submit" disabled={submitting || nights <= 0}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white py-3 rounded-xl font-semibold transition-colors">
-                {submitting ? 'Envoi en cours...' : `Demander la réservation${nights > 0 ? ` — ${total.toLocaleString()} DA` : ''}`}
-              </button>
-            </form>
+                <button type="submit" disabled={submitting || nights <= 0}
+                  className="w-full rounded-full bg-neutral-900 py-4 text-sm font-semibold text-white transition-all hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100">
+                  {submitting ? 'Envoi…' : nights > 0 ? `Demander — ${total.toLocaleString('fr-FR')} DA` : 'Choisir les dates'}
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* ─── LIGHTBOX ─── */}
+      <AnimatePresence>
+        {lightboxOpen && photos.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm"
+            onClick={closeLightbox}
+          >
+            {/* Fermer */}
+            <button
+              onClick={closeLightbox}
+              className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {/* Compteur */}
+            <div className="absolute top-5 left-1/2 -translate-x-1/2 text-xs text-white/50">
+              {lightboxIndex + 1} / {photos.length}
+            </div>
+
+            {/* Prev */}
+            {photos.length > 1 && (
+              <button
+                onClick={e => { e.stopPropagation(); prevPhoto() }}
+                className="absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:left-8"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+            )}
+
+            {/* Image */}
+            <motion.div
+              key={lightboxIndex}
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.2 }}
+              className="relative mx-12 aspect-[4/3] w-full max-w-5xl overflow-hidden rounded-2xl"
+              onClick={e => e.stopPropagation()}
+            >
+              <Image
+                src={photos[lightboxIndex]}
+                alt={`${loft.name} — photo ${lightboxIndex + 1}`}
+                fill
+                sizes="(max-width: 1280px) 100vw, 1280px"
+                className="object-cover"
+              />
+            </motion.div>
+
+            {/* Next */}
+            {photos.length > 1 && (
+              <button
+                onClick={e => { e.stopPropagation(); nextPhoto() }}
+                className="absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:right-8"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+            )}
+
+            {/* Thumbnails */}
+            {photos.length > 1 && (
+              <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-2 overflow-x-auto max-w-[90vw] pb-1">
+                {photos.map((photo, i) => (
+                  <button
+                    key={i}
+                    onClick={e => { e.stopPropagation(); setLightboxIndex(i) }}
+                    className={`relative h-12 w-16 flex-shrink-0 overflow-hidden rounded-md transition-all ${i === lightboxIndex ? 'ring-2 ring-white' : 'opacity-50 hover:opacity-80'}`}
+                  >
+                    <Image src={photo} alt="" fill sizes="64px" className="object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

@@ -74,7 +74,6 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Loft Algérie" />
-        <link rel="apple-touch-icon" href="/logo.png" />
         
         {/* Google Analytics */}
         {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
@@ -137,7 +136,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
         <DatabaseInitializer enableSeeding={process.env.NODE_ENV !== 'production'}>
           <LogoInitializer>
             <AnalyticsProvider>

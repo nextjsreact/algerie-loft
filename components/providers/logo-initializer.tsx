@@ -1,19 +1,17 @@
 'use client';
 
-import { useEffect } from 'react';
-import { initializeLogoAssets } from '@/lib/logo-asset-manager';
+import { ReactNode } from 'react';
 
 interface LogoInitializerProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
+/**
+ * LogoInitializer — désactivé.
+ * L'ancien système de vérification des logos causait des timeouts (3s × 3 fichiers)
+ * et des ralentissements importants au chargement de chaque page.
+ * Le logo est géré directement par les composants (DesktopHeader, etc.)
+ */
 export function LogoInitializer({ children }: LogoInitializerProps) {
-  useEffect(() => {
-    // Initialize logo assets on app startup
-    initializeLogoAssets().catch(error => {
-      console.error('Failed to initialize logo assets:', error);
-    });
-  }, []);
-
   return <>{children}</>;
 }

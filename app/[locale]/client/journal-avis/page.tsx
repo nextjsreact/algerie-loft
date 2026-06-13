@@ -311,7 +311,9 @@ export default function ClientJournalAvisPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">{error || t('loading')}</p>
+              <p className="text-sm text-muted-foreground">
+                {error || t('loading', { defaultValue: 'Chargement...' })}
+              </p>
           </CardContent>
         </Card>
       </div>
@@ -322,13 +324,15 @@ export default function ClientJournalAvisPage() {
     <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">{t('title')}</h1>
-          <p className="text-sm text-muted-foreground mt-1">{t('subtitle')}</p>
+          <h1 className="text-3xl font-bold">{t('title', { defaultValue: 'Journal & Avis' })}</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {t('subtitle', { defaultValue: 'Votre historique et vos appréciations, au même endroit.' })}
+          </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 justify-end">
           <Badge variant="secondary" className="bg-blue-50 text-blue-700 border border-blue-200">
             <MessageSquareText className="h-3.5 w-3.5 mr-1" />
-            {t('journalCount', { count: journalEntriesCount })}
+            {t('journalCount', { count: journalEntriesCount, defaultValue: `Journal (${journalEntriesCount})` })}
           </Badge>
           <Badge variant="secondary" className="bg-purple-50 text-purple-700 border border-purple-200">
             <CalendarDays className="h-3.5 w-3.5 mr-1" />
@@ -336,7 +340,7 @@ export default function ClientJournalAvisPage() {
           </Badge>
           <Badge variant="secondary" className="bg-yellow-50 text-yellow-700 border border-yellow-200">
             <ThumbsUp className="h-3.5 w-3.5 mr-1" />
-            {t('reviewCount', { count: reviews.length })}
+            {t('reviewCount', { count: reviews.length, defaultValue: `Avis (${reviews.length})` })}
           </Badge>
         </div>
       </div>
@@ -346,7 +350,7 @@ export default function ClientJournalAvisPage() {
           <CardHeader className="bg-muted/30 border-b">
             <CardTitle className="flex items-center gap-2">
               <MessageSquareText className="h-5 w-5" />
-              {t('journalTitle')}
+              {t('journalTitle', { defaultValue: 'Journal' })}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -364,8 +368,12 @@ export default function ClientJournalAvisPage() {
             {bookings.length > 0 && (
               <div className="border-t p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold">{t('recentStays')}</h3>
-                  <Badge variant="outline">{t('stayCount', { count: bookings.length })}</Badge>
+                  <h3 className="text-sm font-semibold">
+                    {t('recentStays', { defaultValue: 'Séjours récents' })}
+                  </h3>
+                  <Badge variant="outline">
+                    {t('stayCount', { count: bookings.length, defaultValue: `Séjours (${bookings.length})` })}
+                  </Badge>
                 </div>
                 <div className="space-y-3">
                   {bookings.slice(0, 5).map((booking) => {
@@ -374,7 +382,9 @@ export default function ClientJournalAvisPage() {
                       <div key={booking.id} className="rounded-lg border bg-muted/20 p-3">
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="text-sm font-semibold truncate">{booking.loft_name || t('unknownLoft')}</p>
+                            <p className="text-sm font-semibold truncate">
+                              {booking.loft_name || t('unknownLoft', { defaultValue: 'Loft' })}
+                            </p>
                             <p className="text-xs text-muted-foreground mt-1">
                               {formatDateRange(booking.check_in, booking.check_out, locale)}
                               {nights !== null ? ` · ${t('nights', { count: nights })}` : ''}
@@ -382,9 +392,11 @@ export default function ClientJournalAvisPage() {
                           </div>
                           <Badge className={getBookingStatusClass(booking.status)}>{booking.status}</Badge>
                         </div>
+
                         {booking.total_price !== null && booking.total_price !== undefined && (
                           <p className="text-xs text-muted-foreground mt-2">{formatMoney(booking.total_price)}</p>
                         )}
+
                         {booking.status === 'completed' && (
                           <Button
                             type="button"
@@ -393,7 +405,7 @@ export default function ClientJournalAvisPage() {
                             className="mt-3"
                             onClick={() => openReviewForm(booking.id)}
                           >
-                            {t('addReviewButton')}
+                            {t('addReviewButton', { defaultValue: 'Donner mon avis' })}
                           </Button>
                         )}
                       </div>
@@ -409,20 +421,24 @@ export default function ClientJournalAvisPage() {
           <CardHeader className="bg-muted/30 border-b">
             <CardTitle className="flex items-center gap-2">
               <Star className="h-5 w-5" />
-              {t('reviewsTitle')}
+              {t('reviewsTitle', { defaultValue: 'Appréciations' })}
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-4">
             {completedBookings.length > 0 && (
               <form ref={reviewFormRef} onSubmit={handleReviewSubmit} className="mb-6 rounded-lg border bg-muted/20 p-4">
                 <div className="mb-4">
-                  <h3 className="text-sm font-semibold">{t('addReviewTitle')}</h3>
-                  <p className="text-xs text-muted-foreground mt-1">{t('addReviewDescription')}</p>
+                  <h3 className="text-sm font-semibold">
+                    {t('addReviewTitle', { defaultValue: 'Donner un avis' })}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {t('addReviewDescription', { defaultValue: 'Sélectionnez votre séjour, donnez une note et laissez un commentaire.' })}
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <label className="text-sm">
-                    <span className="mb-1 block font-medium">{t('selectStay')}</span>
+                    <span className="mb-1 block font-medium">{t('selectStay', { defaultValue: 'Séjour' })}</span>
                     <select
                       value={reviewBookingId}
                       onChange={(event) => setReviewBookingId(event.target.value)}
@@ -431,14 +447,14 @@ export default function ClientJournalAvisPage() {
                     >
                       {completedBookings.map((booking) => (
                           <option key={booking.id} value={booking.id}>
-                            {booking.loft_name || t('unknownLoft')} · {formatDateRange(booking.check_in, booking.check_out, locale)}
+                          {booking.loft_name || t('unknownLoft', { defaultValue: 'Loft' })} · {formatDateRange(booking.check_in, booking.check_out, locale)}
                           </option>
                         ))}
                     </select>
                   </label>
 
                   <label className="text-sm">
-                    <span className="mb-1 block font-medium">{t('rating')}</span>
+                    <span className="mb-1 block font-medium">{t('rating', { defaultValue: 'Note' })}</span>
                     <select
                       value={reviewRating}
                       onChange={(event) => setReviewRating(Number(event.target.value))}
@@ -455,11 +471,11 @@ export default function ClientJournalAvisPage() {
                 </div>
 
                 <label className="mt-4 block text-sm">
-                  <span className="mb-1 block font-medium">{t('commentLabel')}</span>
+                  <span className="mb-1 block font-medium">{t('commentLabel', { defaultValue: 'Commentaire' })}</span>
                   <textarea
                     value={reviewText}
                     onChange={(event) => setReviewText(event.target.value)}
-                    placeholder={t('commentPlaceholder')}
+                    placeholder={t('commentPlaceholder', { defaultValue: 'Écrivez votre commentaire...' })}
                     className="min-h-24 w-full rounded-md border bg-background px-3 py-2 text-sm"
                     disabled={submittingReview}
                   />
@@ -467,7 +483,9 @@ export default function ClientJournalAvisPage() {
 
                 <div className="mt-4 flex items-center justify-end">
                   <Button type="submit" disabled={submittingReview || !reviewBookingId}>
-                    {submittingReview ? t('sendingReview') : t('submitReview')}
+                    {submittingReview
+                      ? t('sendingReview', { defaultValue: 'Envoi...' })
+                      : t('submitReview', { defaultValue: 'Envoyer l’avis' })}
                   </Button>
                 </div>
               </form>
@@ -476,12 +494,16 @@ export default function ClientJournalAvisPage() {
             {completedBookings.length === 0 ? (
               <div className="text-center py-12">
                 <Star className="mx-auto h-10 w-10 text-muted-foreground/40 mb-3" />
-                <p className="text-sm text-muted-foreground">{t('noCompletedStays')}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('noCompletedStays', { defaultValue: 'Aucun séjour terminé pour le moment.' })}
+                </p>
               </div>
             ) : reviews.length === 0 ? (
               <div className="text-center py-12">
                 <Star className="mx-auto h-10 w-10 text-muted-foreground/40 mb-3" />
-                <p className="text-sm text-muted-foreground">{t('noReviews')}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t('noReviews', { defaultValue: 'Aucun avis pour le moment.' })}
+                </p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -498,7 +520,7 @@ export default function ClientJournalAvisPage() {
                           </span>
                         </div>
                         <p className="text-sm font-semibold text-foreground truncate">
-                          {review.loft_name || t('unknownLoft')}
+                          {review.loft_name || t('unknownLoft', { defaultValue: 'Loft' })}
                         </p>
                         {(review.booking_check_in || review.booking_check_out) && (
                           <p className="text-xs text-muted-foreground mt-1">
@@ -511,12 +533,16 @@ export default function ClientJournalAvisPage() {
                     {review.review_text ? (
                       <p className="text-sm text-muted-foreground mt-3 whitespace-pre-wrap">{review.review_text}</p>
                     ) : (
-                      <p className="text-sm text-muted-foreground mt-3">{t('emptyReviewText')}</p>
+                      <p className="text-sm text-muted-foreground mt-3">
+                        {t('emptyReviewText', { defaultValue: 'Texte indisponible.' })}
+                      </p>
                     )}
 
                     {review.response_text ? (
                       <div className="mt-3 pt-3 border-t">
-                        <div className="text-xs text-muted-foreground font-medium mb-1">{t('responseLabel')}</div>
+                        <div className="text-xs text-muted-foreground font-medium mb-1">
+                          {t('responseLabel', { defaultValue: 'Réponse' })}
+                        </div>
                         <p className="text-sm text-muted-foreground whitespace-pre-wrap">{review.response_text}</p>
                       </div>
                     ) : null}
@@ -529,7 +555,7 @@ export default function ClientJournalAvisPage() {
       </div>
 
       <div className="text-xs text-muted-foreground">
-        {t('footnote')}
+        {t('footnote', { defaultValue: 'Les avis sont affichés à partir de vos séjours terminés.' })}
       </div>
     </div>
   )

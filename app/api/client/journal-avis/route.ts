@@ -245,16 +245,15 @@ async function fetchContactAliases(supabase: any, session: AuthSession): Promise
 
   try {
     const queries: any[] = []
-    queries.push(supabase.from("customers").select("email, phone, auth_user_id").eq("auth_user_id", session.user.id))
     queries.push(supabase.from("profiles").select("email").eq("id", session.user.id))
-    if (email) queries.push(supabase.from("customers").select("email, phone, auth_user_id").eq("email", email))
+    if (email) queries.push(supabase.from("customers").select("email, phone").eq("email", email))
 
     const results = await Promise.all(queries)
     for (const { data } of results) {
-      for (const customer of data || []) {
-        const customerEmail = asEmail(customer.email)
-        if (customerEmail) emails.add(customerEmail)
-        if (customer.phone) phones.add(customer.phone)
+      for (const row of data || []) {
+        const rowEmail = asEmail(row.email)
+        if (rowEmail) emails.add(rowEmail)
+        if (row.phone) phones.add(row.phone)
       }
     }
   } catch {

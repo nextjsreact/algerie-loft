@@ -642,7 +642,7 @@ export async function GET(_request: NextRequest) {
 
     const { data: notificationsData, error: notificationsError } = await supabase
       .from("notifications")
-      .select("*, sender:sender_id(id, full_name, email, avatar_url)")
+      .select("*")
       .eq("user_id", session.user.id)
       .order("created_at", { ascending: false })
       .limit(100)

@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useEffect, useMemo, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { NotificationsWrapper, type AirbnbNotificationItem } from '@/components/notifications/notifications-wrapper'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -133,6 +133,7 @@ export default function ClientJournalAvisPage() {
   const [reviewRating, setReviewRating] = useState(5)
   const [reviewText, setReviewText] = useState('')
   const [submittingReview, setSubmittingReview] = useState(false)
+  const reviewFormRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -284,6 +285,13 @@ export default function ClientJournalAvisPage() {
     }
   }
 
+  const openReviewForm = (bookingId: string) => {
+    setReviewBookingId(bookingId)
+    window.setTimeout(() => {
+      reviewFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 0)
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -377,6 +385,17 @@ export default function ClientJournalAvisPage() {
                         {booking.total_price !== null && booking.total_price !== undefined && (
                           <p className="text-xs text-muted-foreground mt-2">{formatMoney(booking.total_price)}</p>
                         )}
+                        {booking.status === 'completed' && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="mt-3"
+                            onClick={() => openReviewForm(booking.id)}
+                          >
+                            {t('addReviewButton')}
+                          </Button>
+                        )}
                       </div>
                     )
                   })}
@@ -395,7 +414,7 @@ export default function ClientJournalAvisPage() {
           </CardHeader>
           <CardContent className="pt-4">
             {completedBookings.length > 0 && (
-              <form onSubmit={handleReviewSubmit} className="mb-6 rounded-lg border bg-muted/20 p-4">
+              <form ref={reviewFormRef} onSubmit={handleReviewSubmit} className="mb-6 rounded-lg border bg-muted/20 p-4">
                 <div className="mb-4">
                   <h3 className="text-sm font-semibold">{t('addReviewTitle')}</h3>
                   <p className="text-xs text-muted-foreground mt-1">{t('addReviewDescription')}</p>

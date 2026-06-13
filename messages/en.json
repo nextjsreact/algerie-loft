@@ -4888,6 +4888,7 @@
       "commentLabel": "Comment",
       "commentPlaceholder": "Describe your experience...",
       "submitReview": "Publish review",
+      "addReviewButton": "Add review",
       "sendingReview": "Submitting...",
       "reviewSubmitted": "Review published",
       "reviewSubmitError": "Unable to publish review",

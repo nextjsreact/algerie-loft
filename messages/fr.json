@@ -4713,6 +4713,7 @@
       "commentLabel": "Commentaire",
       "commentPlaceholder": "Racontez votre expérience...",
       "submitReview": "Publier l’avis",
+      "addReviewButton": "Ajouter un avis",
       "sendingReview": "Envoi...",
       "reviewSubmitted": "Avis publié",
       "reviewSubmitError": "Impossible de publier l’avis",

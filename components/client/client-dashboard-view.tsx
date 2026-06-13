@@ -14,7 +14,8 @@ import {
   ArrowRight,
   Clock,
   CheckCircle,
-  XCircle
+  XCircle,
+  MessageSquareText
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -181,6 +182,28 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      <div className="container mx-auto px-4 -mt-8 relative z-10">
+        <Card className="p-4 shadow-lg">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-full bg-blue-50 text-blue-700">
+                <MessageSquareText className="h-5 w-5" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">{t("journalAvis")}</h2>
+                <p className="text-sm text-gray-500 mt-1">{t("journalAvisSubtitle")}</p>
+              </div>
+            </div>
+            <Link href={`/${locale}/client/journal-avis`}>
+              <Button variant="outline">
+                {t("openJournalAvis")}
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </Card>
       </div>
 
       <div className="container mx-auto px-4 py-12 space-y-12">

@@ -4694,13 +4694,37 @@
       "details": "التفاصيل",
       "discoverLofts": "اكتشف اللوفتات",
       "noBookings": "لا توجد حجوزات بعد",
-      "noBookingsDescription": "ابدأ في استكشاف لوفتاتنا واحجز إقامتك المثالية!"
+      "noBookingsDescription": "ابدأ في استكشاف لوفتاتنا واحجز إقامتك المثالية!",
+      "journalAvis": "السجل والتقييمات",
+      "journalAvisSubtitle": "اطلع على سجلك وإشعاراتك وتقييماتك.",
+      "openJournalAvis": "فتح السجل"
     },
     "bookingStatus": {
       "pending": "قيد الانتظار",
       "confirmed": "مؤكد",
       "cancelled": "ملغى",
       "completed": "مكتمل"
+    },
+    "journalAvis": {
+      "title": "السجل والتقييمات",
+      "subtitle": "سجلك وتقييماتك في مكان واحد.",
+      "loading": "جاري تحميل السجل والتقييمات...",
+      "journalTitle": "السجل",
+      "reviewsTitle": "التقييمات",
+      "recentStays": "الإقامات الأخيرة",
+      "journalCount": "عنصر واحد",
+      "journalCount_plural": "{count} عنصر",
+      "stayCount": "إقامة واحدة",
+      "stayCount_plural": "{count} إقامة",
+      "reviewCount": "تقييم واحد",
+      "reviewCount_plural": "{count} تقييم",
+      "nights": "ليلة واحدة",
+      "nights_plural": "{count} ليلة",
+      "unknownLoft": "لوفت",
+      "noReviews": "لا توجد تقييمات حتى الآن.",
+      "emptyReviewText": "النص غير متوفر.",
+      "responseLabel": "الرد",
+      "footnote": "التقييمات المعروضة هي تقييماتك المرتبطة بإقاماتك. يجمع السجل إشعارات التطبيق وحجوزات Airbnb المكتشفة عبر البريد الإلكتروني."
     }
   }
 }

@@ -4676,13 +4676,37 @@
       "details": "Détails",
       "discoverLofts": "Découvrir les lofts",
       "noBookings": "Aucune réservation pour le moment",
-      "noBookingsDescription": "Commencez à explorer nos lofts et réservez votre séjour idéal !"
+      "noBookingsDescription": "Commencez à explorer nos lofts et réservez votre séjour idéal !",
+      "journalAvis": "Journal & Avis",
+      "journalAvisSubtitle": "Consultez votre historique, vos notifications et vos appréciations.",
+      "openJournalAvis": "Voir le journal"
     },
     "bookingStatus": {
       "pending": "En attente",
       "confirmed": "Confirmée",
       "cancelled": "Annulée",
       "completed": "Terminée"
+    },
+    "journalAvis": {
+      "title": "Journal & Avis",
+      "subtitle": "Votre historique et vos appréciations, au même endroit.",
+      "loading": "Chargement du journal & des avis...",
+      "journalTitle": "Journal",
+      "reviewsTitle": "Appréciations",
+      "recentStays": "Séjours récents",
+      "journalCount": "{count} élément",
+      "journalCount_plural": "{count} éléments",
+      "stayCount": "{count} séjour",
+      "stayCount_plural": "{count} séjours",
+      "reviewCount": "{count} avis",
+      "reviewCount_plural": "{count} avis",
+      "nights": "{count} nuit",
+      "nights_plural": "{count} nuits",
+      "unknownLoft": "Loft",
+      "noReviews": "Aucun avis pour le moment.",
+      "emptyReviewText": "Texte indisponible.",
+      "responseLabel": "Réponse",
+      "footnote": "Les avis affichés sont les vôtres, liés à vos séjours. Le journal regroupe vos notifications in-app et vos réservations Airbnb détectées par email."
     }
   }
 }

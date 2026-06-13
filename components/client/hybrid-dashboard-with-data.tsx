@@ -87,26 +87,39 @@ export default function HybridDashboardWithData() {
           {[
             { key: 'upcoming', label: 'À venir', icon: Calendar, count: data.upcomingBookings.length },
             { key: 'past', label: 'Historique', icon: Clock, count: data.pastBookings.length },
-            { key: 'wishlist', label: 'Favoris', icon: Heart, count: data.stats.favorites }
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key as any)}
-              className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all ${
-                activeTab === tab.key
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105'
-                  : 'bg-white text-gray-600 hover:bg-gray-50 shadow'
-              }`}
-            >
-              <tab.icon className="w-5 h-5" />
-              {tab.label}
-              <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-                activeTab === tab.key ? 'bg-white/20' : 'bg-gray-100'
-              }`}>
-                {tab.count}
-              </span>
-            </button>
-          ))}
+            { key: 'wishlist', label: 'Favoris', icon: Heart, count: data.stats.favorites },
+            { key: 'journal', label: 'Journal & Avis', icon: MessageSquare, count: '-' }
+          ].map((tab) => {
+            const isJournal = tab.key === 'journal'
+            const isActive = !isJournal && activeTab === tab.key
+
+            return (
+              <button
+                key={tab.key}
+                onClick={() => {
+                  if (isJournal) {
+                    const locale = window.location.pathname.split('/')[1] || 'fr'
+                    router.push(`/${locale}/client/journal-avis`)
+                    return
+                  }
+                  setActiveTab(tab.key as any)
+                }}
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all ${
+                  isActive
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105'
+                    : 'bg-white text-gray-600 hover:bg-gray-50 shadow'
+                }`}
+              >
+                <tab.icon className="w-5 h-5" />
+                {tab.label}
+                <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                  isActive ? 'bg-white/20' : 'bg-gray-100'
+                }`}>
+                  {tab.count}
+                </span>
+              </button>
+            )
+          })}
         </div>
 
         {/* Content */}

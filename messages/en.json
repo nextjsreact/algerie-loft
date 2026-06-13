@@ -4851,13 +4851,37 @@
       "details": "Details",
       "discoverLofts": "Discover Lofts",
       "noBookings": "No bookings yet",
-      "noBookingsDescription": "Start exploring our lofts and book your ideal stay!"
+      "noBookingsDescription": "Start exploring our lofts and book your ideal stay!",
+      "journalAvis": "Journal & Reviews",
+      "journalAvisSubtitle": "View your history, notifications, and feedback.",
+      "openJournalAvis": "Open journal"
     },
     "bookingStatus": {
       "pending": "Pending",
       "confirmed": "Confirmed",
       "cancelled": "Cancelled",
       "completed": "Completed"
+    },
+    "journalAvis": {
+      "title": "Journal & Reviews",
+      "subtitle": "Your history and feedback, in one place.",
+      "loading": "Loading journal and reviews...",
+      "journalTitle": "Journal",
+      "reviewsTitle": "Reviews",
+      "recentStays": "Recent stays",
+      "journalCount": "{count} item",
+      "journalCount_plural": "{count} items",
+      "stayCount": "{count} stay",
+      "stayCount_plural": "{count} stays",
+      "reviewCount": "{count} review",
+      "reviewCount_plural": "{count} reviews",
+      "nights": "{count} night",
+      "nights_plural": "{count} nights",
+      "unknownLoft": "Loft",
+      "noReviews": "No reviews yet.",
+      "emptyReviewText": "Text unavailable.",
+      "responseLabel": "Response",
+      "footnote": "Displayed reviews are yours and linked to your stays. The journal combines your in-app notifications and Airbnb reservations detected by email."
     }
   }
 }

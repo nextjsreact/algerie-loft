@@ -75,53 +75,56 @@ export async function POST(request: Request) {
     }
 
     const body = (await request.json()) as ReviewPayload
-    const bookingId = typeof body.booking_id === "string" ? body.booking_id : null
+    const bookingId = typeof body.booking_id === "string" && body.booking_id ? body.booking_id : null
     const rating = typeof body.rating === "number" ? body.rating : null
     const reviewText = typeof body.review_text === "string" ? body.review_text.trim() : null
 
-    if (!bookingId) {
-      return NextResponse.json({ error: "Séjour obligatoire" }, { status: 400 })
+    if (!rating || rating < 1 || rating > 5) {
+      return NextResponse.json({ error: "Note invalide (1 à 5)" }, { status: 400 })
     }
 
-    if (!rating || rating < 1 || rating > 5) {
-      return NextResponse.json({ error: "Note invalide" }, { status: 400 })
+    if (!reviewText) {
+      return NextResponse.json({ error: "Commentaire obligatoire" }, { status: 400 })
     }
 
     const supabase = await createClient(true)
     const customer = await fetchCustomer(supabase, session)
     const customerId = customer?.id || session.user.id
-    const booking = await fetchBookingForClient(supabase, customerId, bookingId)
 
-    if (!booking) {
-      return NextResponse.json({ error: "Séjour introuvable" }, { status: 404 })
-    }
+    let booking = null
+    let loftId = null
 
-    // Accepter completed OU confirmed avec check-out dépassé
-    const checkOutPast = booking.check_out ? new Date(booking.check_out) < new Date() : false
-    const isEligible = booking.status === "completed" || (booking.status === "confirmed" && checkOutPast)
+    if (bookingId) {
+      booking = await fetchBookingForClient(supabase, customerId, bookingId)
+      if (!booking) {
+        return NextResponse.json({ error: "Séjour introuvable" }, { status: 404 })
+      }
+      // Accepter completed OU confirmed avec check-out dépassé
+      const checkOutPast = booking.check_out ? new Date(booking.check_out) < new Date() : false
+      const isEligible = booking.status === "completed" || (booking.status === "confirmed" && checkOutPast) || booking.status === "confirmed"
+      if (!isEligible) {
+        return NextResponse.json({ error: "Séjour non éligible" }, { status: 400 })
+      }
+      loftId = booking.loft_id
 
-    if (!isEligible) {
-      return NextResponse.json({ error: "Seuls les séjours terminés peuvent être évalués" }, { status: 400 })
-    }
+      // Vérifier si avis déjà existant
+      const { data: existing } = await supabase
+        .from("loft_reviews")
+        .select("id")
+        .eq("booking_id", bookingId)
+        .eq("client_id", customerId)
+        .maybeSingle()
 
-    const existingReview = await supabase
-      .from("loft_reviews")
-      .select("id")
-      .eq("booking_id", bookingId)
-      .eq("client_id", customerId)
-      .maybeSingle()
-
-    if (existingReview.error) throw existingReview.error
-
-    if (existingReview.data) {
-      return NextResponse.json({ error: "Vous avez déjà évalué ce séjour" }, { status: 409 })
+      if (existing) {
+        return NextResponse.json({ error: "Vous avez déjà évalué ce séjour" }, { status: 409 })
+      }
     }
 
     const { data: insertedReview, error: insertError } = await supabase
       .from("loft_reviews")
       .insert({
-        booking_id: bookingId,
-        loft_id: booking.loft_id,
+        booking_id: bookingId || null,
+        loft_id: loftId || booking?.loft_id || "00000000-0000-0000-0000-000000000000",
         client_id: customerId,
         rating,
         review_text: reviewText || null,

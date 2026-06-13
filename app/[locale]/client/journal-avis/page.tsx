@@ -445,84 +445,103 @@ export default function ClientJournalAvisPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-4">
-            {completedBookings.length > 0 ? (
-              <form ref={reviewFormRef} onSubmit={handleReviewSubmit} className="mb-6 rounded-xl border-2 border-yellow-200 bg-yellow-50 dark:border-yellow-800/40 dark:bg-yellow-900/10 p-5">
-                <div className="mb-4 flex items-center gap-2">
-                  <Star className="h-5 w-5 text-yellow-500 fill-yellow-400" />
-                  <h3 className="text-sm font-semibold">
-                    {t('addReviewTitle', { defaultValue: 'Donner un avis sur votre séjour' })}
-                  </h3>
-                </div>
-                <p className="text-xs text-muted-foreground mb-4">
-                  {t('addReviewDescription', { defaultValue: 'Sélectionnez votre séjour, donnez une note et laissez un commentaire.' })}
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <label className="text-sm">
-                    <span className="mb-1 block font-medium">{t('selectStay', { defaultValue: 'Séjour' })}</span>
-                    <select
-                      value={reviewBookingId}
-                      onChange={(event) => setReviewBookingId(event.target.value)}
-                      className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                      disabled={submittingReview}
-                    >
-                      {completedBookings.map((booking) => (
-                        <option key={booking.id} value={booking.id}>
-                          {booking.loft_name || t('unknownLoft', { defaultValue: 'Loft' })} · {formatDateRange(booking.check_in, booking.check_out, locale)}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <label className="text-sm">
-                    <span className="mb-1 block font-medium">{t('rating', { defaultValue: 'Note' })}</span>
-                    <div className="flex items-center gap-1 mt-1">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                          key={star}
-                          type="button"
-                          onClick={() => setReviewRating(star)}
-                          disabled={submittingReview}
-                          className="focus:outline-none"
-                        >
-                          <Star className={`h-7 w-7 transition-colors ${star <= reviewRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
-                        </button>
-                      ))}
-                      <span className="ml-1 text-sm font-medium text-muted-foreground">{reviewRating}/5</span>
-                    </div>
-                  </label>
-                </div>
-
-                <label className="mt-4 block text-sm">
-                  <span className="mb-1 block font-medium">{t('commentLabel', { defaultValue: 'Votre commentaire' })}</span>
-                  <textarea
-                    value={reviewText}
-                    onChange={(event) => setReviewText(event.target.value)}
-                    placeholder={t('commentPlaceholder', { defaultValue: 'Partagez votre expérience : propreté, accueil, confort...' })}
-                    rows={4}
-                    className="min-h-24 w-full rounded-md border bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-yellow-300"
-                    disabled={submittingReview}
-                  />
-                </label>
-
-                <div className="mt-4 flex items-center justify-end">
-                  <Button type="submit" disabled={submittingReview || !reviewBookingId} className="bg-yellow-500 hover:bg-yellow-600 text-white">
-                    {submittingReview ? (
-                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" />{t('sendingReview', { defaultValue: 'Envoi...' })}</>
-                    ) : (
-                      <><Star className="h-4 w-4 mr-2" />{t('submitReview', { defaultValue: 'Publier mon avis' })}</>
-                    )}
-                  </Button>
-                </div>
-              </form>
-            ) : (
-              <div className="rounded-xl border border-dashed p-5 mb-6 text-center">
-                <Star className="mx-auto h-8 w-8 text-muted-foreground/40 mb-2" />
-                <p className="text-sm text-muted-foreground">
-                  {t('noCompletedStays', { defaultValue: 'Aucun séjour terminé. Le formulaire apparaîtra après votre premier séjour.' })}
-                </p>
+            {/* Formulaire toujours visible */}
+            <form ref={reviewFormRef} onSubmit={handleReviewSubmit} className="mb-6 rounded-xl border-2 border-yellow-200 bg-yellow-50 dark:border-yellow-800/40 dark:bg-yellow-900/10 p-5">
+              <div className="mb-4 flex items-center gap-2">
+                <Star className="h-5 w-5 text-yellow-500 fill-yellow-400" />
+                <h3 className="text-sm font-semibold">
+                  {t('addReviewTitle', { defaultValue: 'Donner un avis sur votre séjour' })}
+                </h3>
               </div>
-            )}
+
+              {/* Sélecteur de séjour si disponible, sinon champ libre */}
+              {completedBookings.length > 0 ? (
+                <label className="block text-sm mb-4">
+                  <span className="mb-1 block font-medium">{t('selectStay', { defaultValue: 'Séjour concerné' })}</span>
+                  <select
+                    value={reviewBookingId}
+                    onChange={(event) => setReviewBookingId(event.target.value)}
+                    className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                    disabled={submittingReview}
+                  >
+                    <option value="">— Choisir un séjour —</option>
+                    {completedBookings.map((booking) => (
+                      <option key={booking.id} value={booking.id}>
+                        {booking.loft_name || 'Loft'} · {formatDateRange(booking.check_in, booking.check_out, locale)}
+                      </option>
+                    ))}
+                    {bookings.filter(b => !completedBookings.find(c => c.id === b.id)).map((booking) => (
+                      <option key={booking.id} value={booking.id}>
+                        {booking.loft_name || 'Loft'} · {formatDateRange(booking.check_in, booking.check_out, locale)} ({booking.status})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ) : bookings.length > 0 ? (
+                <label className="block text-sm mb-4">
+                  <span className="mb-1 block font-medium">{t('selectStay', { defaultValue: 'Séjour concerné' })}</span>
+                  <select
+                    value={reviewBookingId}
+                    onChange={(event) => setReviewBookingId(event.target.value)}
+                    className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                    disabled={submittingReview}
+                  >
+                    <option value="">— Choisir un séjour —</option>
+                    {bookings.map((booking) => (
+                      <option key={booking.id} value={booking.id}>
+                        {booking.loft_name || 'Loft'} · {formatDateRange(booking.check_in, booking.check_out, locale)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ) : null}
+
+              {/* Étoiles */}
+              <label className="block text-sm mb-4">
+                <span className="mb-1 block font-medium">{t('rating', { defaultValue: 'Note' })}</span>
+                <div className="flex items-center gap-1 mt-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewRating(star)}
+                      disabled={submittingReview}
+                      className="focus:outline-none"
+                    >
+                      <Star className={`h-8 w-8 transition-colors ${star <= reviewRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 hover:text-yellow-300'}`} />
+                    </button>
+                  ))}
+                  <span className="ml-2 text-sm font-medium text-muted-foreground">{reviewRating}/5</span>
+                </div>
+              </label>
+
+              {/* Commentaire */}
+              <label className="block text-sm mb-4">
+                <span className="mb-1 block font-medium">{t('commentLabel', { defaultValue: 'Votre commentaire' })}</span>
+                <textarea
+                  value={reviewText}
+                  onChange={(event) => setReviewText(event.target.value)}
+                  placeholder={t('commentPlaceholder', { defaultValue: 'Partagez votre expérience : propreté, accueil, confort...' })}
+                  rows={4}
+                  className="w-full rounded-md border bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-yellow-300"
+                  disabled={submittingReview}
+                />
+              </label>
+
+              <div className="flex items-center justify-end">
+                <Button
+                  type="submit"
+                  disabled={submittingReview || !reviewText.trim()}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                >
+                  {submittingReview ? (
+                    <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Envoi...</>
+                  ) : (
+                    <><Star className="h-4 w-4 mr-2" />Publier mon avis</>
+                  )}
+                </Button>
+              </div>
+            </form>
 
             {reviews.length === 0 ? (
               <div className="text-center py-12">

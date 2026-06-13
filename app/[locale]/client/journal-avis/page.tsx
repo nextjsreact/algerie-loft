@@ -174,6 +174,8 @@ export default function ClientJournalAvisPage() {
   const notifications = payload?.notifications || []
   const airbnbNotifications = payload?.airbnbNotifications || []
   const bookings = payload?.bookings || []
+  const reviews = reviewsSorted
+  const completedBookings = bookings.filter((booking) => booking.status === 'completed')
 
   useEffect(() => {
     if (!reviewBookingId && completedBookings.length > 0) {
@@ -181,8 +183,6 @@ export default function ClientJournalAvisPage() {
     }
   }, [completedBookings, reviewBookingId])
 
-  const reviews = reviewsSorted
-  const completedBookings = bookings.filter((booking) => booking.status === 'completed')
   const journalEntriesCount = notifications.length + airbnbNotifications.length
   const userRole = (payload?.user.role || 'client') as UserRole
   const userId = payload?.user.id || ''

@@ -96,7 +96,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Séjour introuvable" }, { status: 404 })
     }
 
-    if (booking.status !== "completed") {
+    // Accepter completed OU confirmed avec check-out dépassé
+    const checkOutPast = booking.check_out ? new Date(booking.check_out) < new Date() : false
+    const isEligible = booking.status === "completed" || (booking.status === "confirmed" && checkOutPast)
+
+    if (!isEligible) {
       return NextResponse.json({ error: "Seuls les séjours terminés peuvent être évalués" }, { status: 400 })
     }
 

@@ -522,7 +522,9 @@ export default function ClientJournalAvisPage() {
                   {t('noCompletedStays', { defaultValue: 'Aucun séjour terminé. Le formulaire apparaîtra après votre premier séjour.' })}
                 </p>
               </div>
-            ) : reviews.length === 0 ? (
+            )}
+
+            {reviews.length === 0 ? (
               <div className="text-center py-12">
                 <Star className="mx-auto h-10 w-10 text-muted-foreground/40 mb-3" />
                 <p className="text-sm text-muted-foreground">

@@ -4724,6 +4724,17 @@
       "noReviews": "لا توجد تقييمات حتى الآن.",
       "emptyReviewText": "النص غير متوفر.",
       "responseLabel": "الرد",
+      "addReviewTitle": "إضافة تقييم",
+      "addReviewDescription": "قيّم إقامة مكتملة وأضف تعليقًا يظهر في سجلك.",
+      "selectStay": "الإقامة",
+      "rating": "التقييم",
+      "commentLabel": "التعليق",
+      "commentPlaceholder": "اكتب تجربتك...",
+      "submitReview": "نشر التقييم",
+      "sendingReview": "جار الإرسال...",
+      "reviewSubmitted": "تم نشر التقييم",
+      "reviewSubmitError": "تعذر نشر التقييم",
+      "noCompletedStays": "لا توجد إقامات مكتملة لإضافة تقييم.",
       "footnote": "التقييمات المعروضة هي تقييماتك المرتبطة بإقاماتك. يجمع السجل إشعارات التطبيق وحجوزات Airbnb المكتشفة عبر البريد الإلكتروني."
     }
   }

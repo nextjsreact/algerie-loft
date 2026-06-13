@@ -4706,6 +4706,17 @@
       "noReviews": "Aucun avis pour le moment.",
       "emptyReviewText": "Texte indisponible.",
       "responseLabel": "Réponse",
+      "addReviewTitle": "Ajouter un avis",
+      "addReviewDescription": "Évaluez un séjour terminé et ajoutez un commentaire visible dans votre journal.",
+      "selectStay": "Séjour",
+      "rating": "Note",
+      "commentLabel": "Commentaire",
+      "commentPlaceholder": "Racontez votre expérience...",
+      "submitReview": "Publier l’avis",
+      "sendingReview": "Envoi...",
+      "reviewSubmitted": "Avis publié",
+      "reviewSubmitError": "Impossible de publier l’avis",
+      "noCompletedStays": "Aucun séjour terminé n’est disponible pour ajouter un avis.",
       "footnote": "Les avis affichés sont les vôtres, liés à vos séjours. Le journal regroupe vos notifications in-app et vos réservations Airbnb détectées par email."
     }
   }

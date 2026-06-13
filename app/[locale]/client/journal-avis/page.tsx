@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { NotificationsWrapper, type AirbnbNotificationItem } from '@/components/notifications/notifications-wrapper'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Loader2, Star, MessageSquareText, ThumbsUp, CalendarDays } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import { useTranslations } from 'next-intl'
@@ -128,6 +129,10 @@ export default function ClientJournalAvisPage() {
   const [loading, setLoading] = useState(true)
   const [payload, setPayload] = useState<Payload | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [reviewBookingId, setReviewBookingId] = useState('')
+  const [reviewRating, setReviewRating] = useState(5)
+  const [reviewText, setReviewText] = useState('')
+  const [submittingReview, setSubmittingReview] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -168,8 +173,16 @@ export default function ClientJournalAvisPage() {
 
   const notifications = payload?.notifications || []
   const airbnbNotifications = payload?.airbnbNotifications || []
-  const reviews = reviewsSorted
   const bookings = payload?.bookings || []
+
+  useEffect(() => {
+    if (!reviewBookingId && completedBookings.length > 0) {
+      setReviewBookingId(completedBookings[0].id)
+    }
+  }, [completedBookings, reviewBookingId])
+
+  const reviews = reviewsSorted
+  const completedBookings = bookings.filter((booking) => booking.status === 'completed')
   const journalEntriesCount = notifications.length + airbnbNotifications.length
   const userRole = (payload?.user.role || 'client') as UserRole
   const userId = payload?.user.id || ''
@@ -237,6 +250,38 @@ export default function ClientJournalAvisPage() {
         })),
       }
     })
+  }
+
+  const handleReviewSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!reviewBookingId || !payload) return
+
+    setSubmittingReview(true)
+    try {
+      const res = await fetch('/api/client/journal-avis/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          booking_id: reviewBookingId,
+          rating: reviewRating,
+          review_text: reviewText,
+        }),
+      })
+
+      if (!res.ok) {
+        const error = await res.json().catch(() => null)
+        throw new Error(error?.error || 'Erreur lors de l’envoi de l’avis')
+      }
+
+      const review = await res.json()
+      setPayload((current) => current ? { ...current, reviews: [review, ...current.reviews] } : current)
+      setReviewText('')
+      toast.success(t('reviewSubmitted'))
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t('reviewSubmitError'))
+    } finally {
+      setSubmittingReview(false)
+    }
   }
 
   if (loading) {
@@ -349,7 +394,72 @@ export default function ClientJournalAvisPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-4">
-            {reviews.length === 0 ? (
+            {completedBookings.length > 0 && (
+              <form onSubmit={handleReviewSubmit} className="mb-6 rounded-lg border bg-muted/20 p-4">
+                <div className="mb-4">
+                  <h3 className="text-sm font-semibold">{t('addReviewTitle')}</h3>
+                  <p className="text-xs text-muted-foreground mt-1">{t('addReviewDescription')}</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label className="text-sm">
+                    <span className="mb-1 block font-medium">{t('selectStay')}</span>
+                    <select
+                      value={reviewBookingId}
+                      onChange={(event) => setReviewBookingId(event.target.value)}
+                      className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                      disabled={submittingReview}
+                    >
+                      {completedBookings.map((booking) => (
+                          <option key={booking.id} value={booking.id}>
+                            {booking.loft_name || t('unknownLoft')} · {formatDateRange(booking.check_in, booking.check_out, locale)}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+
+                  <label className="text-sm">
+                    <span className="mb-1 block font-medium">{t('rating')}</span>
+                    <select
+                      value={reviewRating}
+                      onChange={(event) => setReviewRating(Number(event.target.value))}
+                      className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                      disabled={submittingReview}
+                    >
+                      {[5, 4, 3, 2, 1].map((value) => (
+                        <option key={value} value={value}>
+                          {value}/5
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+
+                <label className="mt-4 block text-sm">
+                  <span className="mb-1 block font-medium">{t('commentLabel')}</span>
+                  <textarea
+                    value={reviewText}
+                    onChange={(event) => setReviewText(event.target.value)}
+                    placeholder={t('commentPlaceholder')}
+                    className="min-h-24 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                    disabled={submittingReview}
+                  />
+                </label>
+
+                <div className="mt-4 flex items-center justify-end">
+                  <Button type="submit" disabled={submittingReview || !reviewBookingId}>
+                    {submittingReview ? t('sendingReview') : t('submitReview')}
+                  </Button>
+                </div>
+              </form>
+            )}
+
+            {completedBookings.length === 0 ? (
+              <div className="text-center py-12">
+                <Star className="mx-auto h-10 w-10 text-muted-foreground/40 mb-3" />
+                <p className="text-sm text-muted-foreground">{t('noCompletedStays')}</p>
+              </div>
+            ) : reviews.length === 0 ? (
               <div className="text-center py-12">
                 <Star className="mx-auto h-10 w-10 text-muted-foreground/40 mb-3" />
                 <p className="text-sm text-muted-foreground">{t('noReviews')}</p>

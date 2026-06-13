@@ -4881,6 +4881,17 @@
       "noReviews": "No reviews yet.",
       "emptyReviewText": "Text unavailable.",
       "responseLabel": "Response",
+      "addReviewTitle": "Add a review",
+      "addReviewDescription": "Rate a completed stay and add a comment visible in your journal.",
+      "selectStay": "Stay",
+      "rating": "Rating",
+      "commentLabel": "Comment",
+      "commentPlaceholder": "Describe your experience...",
+      "submitReview": "Publish review",
+      "sendingReview": "Submitting...",
+      "reviewSubmitted": "Review published",
+      "reviewSubmitError": "Unable to publish review",
+      "noCompletedStays": "No completed stays are available for adding a review.",
       "footnote": "Displayed reviews are yours and linked to your stays. The journal combines your in-app notifications and Airbnb reservations detected by email."
     }
   }

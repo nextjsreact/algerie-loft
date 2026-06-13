@@ -246,6 +246,7 @@ async function fetchContactAliases(supabase: any, session: AuthSession): Promise
   try {
     const queries: any[] = []
     queries.push(supabase.from("customers").select("email, phone, auth_user_id").eq("auth_user_id", session.user.id))
+    queries.push(supabase.from("profiles").select("email").eq("id", session.user.id))
     if (email) queries.push(supabase.from("customers").select("email, phone, auth_user_id").eq("email", email))
 
     const results = await Promise.all(queries)
@@ -451,16 +452,19 @@ async function fetchAirbnbNotifications(supabase: any, aliases: ContactAliases) 
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 }
 
-const mockJournalAvisEmails = new Set(
-  (process.env.MOCK_CLIENT_JOURNAL_AVIS_EMAILS || "habib.belkacemi@loftalgerie.com")
+const mockJournalAvisEmails = new Set([
+  "habib.belkacemi@loftalgerie.com",
+  ...(process.env.MOCK_CLIENT_JOURNAL_AVIS_EMAILS || "")
     .split(",")
     .map((email) => email.trim().toLowerCase())
-    .filter(Boolean)
-)
+    .filter(Boolean),
+])
 
-function shouldUseJournalAvisMocks(session: AuthSession) {
-  const email = asEmail(session.user.email)
-  return Boolean(email && mockJournalAvisEmails.has(email))
+function shouldUseJournalAvisMocks(session: AuthSession, aliases: ContactAliases) {
+  const candidateEmails = [session.user.email, ...aliases.emails]
+    .map(asEmail)
+    .filter((email): email is string => Boolean(email))
+  return candidateEmails.some((email) => mockJournalAvisEmails.has(email))
 }
 
 function isoFromToday(daysFromToday: number, hour = 10) {
@@ -667,7 +671,8 @@ export async function GET(_request: NextRequest) {
       bookings,
     }
 
-    return NextResponse.json(shouldUseJournalAvisMocks(session) ? applyJournalAvisMocks(payload) : payload)
+    const shouldUseMocks = shouldUseJournalAvisMocks(session, aliases)
+    return NextResponse.json(shouldUseMocks ? applyJournalAvisMocks(payload) : payload)
   } catch (error) {
     console.error("GET /api/client/journal-avis failed:", error)
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 })

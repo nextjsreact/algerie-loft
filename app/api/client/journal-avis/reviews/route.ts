@@ -2,6 +2,11 @@ import { NextResponse } from "next/server"
 import { createClient } from "@/utils/supabase/server"
 import { requireRoleAPI, type AuthSession } from "@/lib/auth"
 
+type Customer = {
+  id: string
+  email: string | null
+}
+
 type ReviewPayload = {
   booking_id?: string | null
   loft_id?: string | null
@@ -28,12 +33,33 @@ function normalizeReview(row: any, booking: any, loft: any) {
   }
 }
 
-async function fetchBookingForClient(supabase: any, session: AuthSession, bookingId: string) {
+async function fetchCustomer(supabase: any, session: AuthSession): Promise<Customer | null> {
+  const email = session.user.email?.trim().toLowerCase()
+  if (!email) return null
+
+  const { data: customerByEmail } = await supabase
+    .from("customers")
+    .select("id, email")
+    .eq("email", email)
+    .maybeSingle()
+
+  if (customerByEmail) return customerByEmail
+
+  const { data: customerById } = await supabase
+    .from("customers")
+    .select("id, email")
+    .eq("id", session.user.id)
+    .maybeSingle()
+
+  return customerById
+}
+
+async function fetchBookingForClient(supabase: any, customerId: string, bookingId: string) {
   const { data, error } = await supabase
     .from("bookings")
     .select("id, loft_id, client_id, check_in, check_out, status, payment_status, booking_reference, created_at, loft:loft_id(id, name, address)")
     .eq("id", bookingId)
-    .eq("client_id", session.user.id)
+    .eq("client_id", customerId)
     .single()
 
   if (error || !data) return null
@@ -62,7 +88,9 @@ export async function POST(request: Request) {
     }
 
     const supabase = await createClient(true)
-    const booking = await fetchBookingForClient(supabase, session, bookingId)
+    const customer = await fetchCustomer(supabase, session)
+    const customerId = customer?.id || session.user.id
+    const booking = await fetchBookingForClient(supabase, customerId, bookingId)
 
     if (!booking) {
       return NextResponse.json({ error: "Séjour introuvable" }, { status: 404 })
@@ -76,7 +104,7 @@ export async function POST(request: Request) {
       .from("loft_reviews")
       .select("id")
       .eq("booking_id", bookingId)
-      .eq("client_id", session.user.id)
+      .eq("client_id", customerId)
       .maybeSingle()
 
     if (existingReview.error) throw existingReview.error
@@ -90,7 +118,7 @@ export async function POST(request: Request) {
       .insert({
         booking_id: bookingId,
         loft_id: booking.loft_id,
-        client_id: session.user.id,
+        client_id: customerId,
         rating,
         review_text: reviewText || null,
         is_published: true,

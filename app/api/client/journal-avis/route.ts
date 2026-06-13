@@ -21,8 +21,15 @@ type Review = {
   booking_check_out: string | null
 }
 
+type Customer = {
+  id: string
+  email: string | null
+  phone: string | null
+}
+
 type Booking = {
   id: string
+  client_id: string | null
   loft_id: string | null
   loft_name: string | null
   loft_address: string | null
@@ -41,8 +48,9 @@ type JournalAvisPayload = {
     id: string
     email: string | null
     full_name: string | null
-    role: UserRole
-  }
+  role: UserRole
+  customer: Customer | null
+}
   notifications: Notification[]
   airbnbNotifications: AirbnbNotificationItem[]
   reviews: Review[]
@@ -88,6 +96,7 @@ function normalizeBooking(row: any, lofts: Map<string, any>): Booking {
   const loft = lofts.get(row.loft_id)
   return {
     id: row.id,
+    client_id: row.client_id ?? null,
     loft_id: row.loft_id ?? null,
     loft_name: loft?.name ?? null,
     loft_address: loft?.address ?? null,
@@ -237,11 +246,35 @@ function toAdminAirbnbNotification(row: any, lofts: Map<string, any>): AirbnbNot
   }
 }
 
-async function fetchContactAliases(supabase: any, session: AuthSession): Promise<ContactAliases> {
+async function fetchCustomer(supabase: any, session: AuthSession): Promise<Customer | null> {
+  const email = asEmail(session.user.email)
+
+  if (!email) return null
+
+  const { data: customerByEmail } = await supabase
+    .from("customers")
+    .select("id, email, phone")
+    .eq("email", email)
+    .maybeSingle()
+
+  if (customerByEmail) return customerByEmail
+
+  const { data: customerById } = await supabase
+    .from("customers")
+    .select("id, email, phone")
+    .eq("id", session.user.id)
+    .maybeSingle()
+
+  return customerById
+}
+
+async function fetchContactAliases(supabase: any, session: AuthSession, customer: Customer | null): Promise<ContactAliases> {
   const emails = new Set<string>()
   const phones = new Set<string>()
   const email = asEmail(session.user.email)
   if (email) emails.add(email)
+  if (customer?.email) emails.add(asEmail(customer.email))
+  if (customer?.phone) phones.add(customer.phone)
 
   try {
     const queries: any[] = []
@@ -284,11 +317,11 @@ async function fetchLoftMap(supabase: any, ids: string[]) {
   }
 }
 
-async function fetchBookings(supabase: any, userId: string): Promise<Booking[]> {
+async function fetchBookings(supabase: any, customerId: string): Promise<Booking[]> {
   const { data, error } = await supabase
     .from("bookings")
     .select("id, loft_id, client_id, check_in, check_out, guests, total_price, status, payment_status, booking_reference, created_at")
-    .eq("client_id", userId)
+    .eq("client_id", customerId)
     .order("created_at", { ascending: false })
     .limit(100)
 
@@ -300,12 +333,12 @@ async function fetchBookings(supabase: any, userId: string): Promise<Booking[]> 
   return bookings.map((booking) => normalizeBooking({ ...booking, loft: loftMap.get(booking.loft_id) }, loftMap))
 }
 
-async function fetchReviews(supabase: any, userId: string, bookings: Booking[]): Promise<Review[]> {
+async function fetchReviews(supabase: any, customerId: string, bookings: Booking[]): Promise<Review[]> {
   const bookingIds = bookings.map((booking) => booking.id)
   let query = supabase
     .from("loft_reviews")
     .select("id, booking_id, loft_id, client_id, rating, review_text, created_at, is_published, response_text, response_date")
-    .eq("client_id", userId)
+    .eq("client_id", customerId)
     .eq("is_published", true)
     .order("created_at", { ascending: false })
     .limit(100)
@@ -475,6 +508,7 @@ function isoFromToday(daysFromToday: number, hour = 10) {
 
 function applyJournalAvisMocks(payload: JournalAvisPayload): JournalAvisPayload {
   const userId = payload.user.id
+  const customerId = payload.user.customer?.id || payload.user.id
   const mockLofts = {
     oran: {
       id: "11111111-1111-1111-1111-111111111111",
@@ -496,6 +530,7 @@ function applyJournalAvisMocks(payload: JournalAvisPayload): JournalAvisPayload 
   const mockBookings: Booking[] = [
     {
       id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      client_id: customerId,
       loft_id: mockLofts.oran.id,
       loft_name: mockLofts.oran.name,
       loft_address: mockLofts.oran.address,
@@ -510,6 +545,7 @@ function applyJournalAvisMocks(payload: JournalAvisPayload): JournalAvisPayload 
     },
     {
       id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      client_id: customerId,
       loft_id: mockLofts.alger.id,
       loft_name: mockLofts.alger.name,
       loft_address: mockLofts.alger.address,
@@ -529,7 +565,7 @@ function applyJournalAvisMocks(payload: JournalAvisPayload): JournalAvisPayload 
       id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
       booking_id: mockBookings[1].id,
       loft_id: mockLofts.alger.id,
-      client_id: userId,
+      client_id: customerId,
       rating: 5,
       review_text: "Séjour excellent. L’appartement était propre, bien situé et l’équipe a été très réactive.",
       created_at: isoFromToday(-28, 18),
@@ -649,12 +685,15 @@ export async function GET(_request: NextRequest) {
 
     if (notificationsError) throw notificationsError
 
+    const customer = await fetchCustomer(supabase, session)
+    const customerId = customer?.id || session.user.id
+
     const [bookings, aliases] = await Promise.all([
-      fetchBookings(supabase, session.user.id),
-      fetchContactAliases(supabase, session),
+      fetchBookings(supabase, customerId),
+      fetchContactAliases(supabase, session, customer),
     ])
 
-    const reviews = await fetchReviews(supabase, session.user.id, bookings)
+    const reviews = await fetchReviews(supabase, customerId, bookings)
     const airbnbNotifications = await fetchAirbnbNotifications(supabase, aliases)
 
     const payload: JournalAvisPayload = {
@@ -663,6 +702,13 @@ export async function GET(_request: NextRequest) {
         email: session.user.email,
         full_name: session.user.full_name,
         role: session.user.role,
+        customer: customer
+          ? {
+              id: customer.id,
+              email: customer.email,
+              phone: customer.phone,
+            }
+          : null,
       },
       notifications: (notificationsData || []).map(normalizeNotification),
       airbnbNotifications,

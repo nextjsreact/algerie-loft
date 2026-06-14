@@ -15,7 +15,7 @@ interface NotificationsListProps {
   userRole: UserRole
   userId: string
   assignedTaskIds?: string[]
-  onNotificationRead?: (id: string) => Promise<void>
+  disableFiltering?: boolean
 }
 
 // Component to handle async message translation
@@ -129,7 +129,7 @@ export default function NotificationsListOptimized({
   userRole, 
   userId, 
   assignedTaskIds = [],
-  onNotificationRead,
+  disableFiltering = false,
 }: NotificationsListProps) {
   const t = useTranslations("notifications")
   const tTasks = useTranslations("tasks")
@@ -150,6 +150,8 @@ export default function NotificationsListOptimized({
     showOnlyUnread: false,
     priorityFilter: 'all'
   })
+
+  const visibleNotifications = disableFiltering ? notifications : filteredNotifications
 
   const typeLabels = useNotificationTypeLabels(userRole)
 
@@ -393,49 +395,13 @@ export default function NotificationsListOptimized({
     </div>
   ), [t, getFallbackMessage, stats.total])
 
-  if (filteredNotifications.length === 0) {
+  if (visibleNotifications.length === 0) {
     return emptyState
   }
 
   return (
     <div className="space-y-4">
-      {/* Performance indicator */}
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-        <h4 className="font-semibold text-green-800 flex items-center gap-2">
-          <CheckCircle className="h-5 w-5" />
-          {t('optimizedBanner.title')}
-        </h4>
-        <p className="text-green-700 text-sm mt-1">
-          {t('optimizedBanner.description')}
-        </p>
-      </div>
-
-      {/* Statistics summary for admin/manager roles */}
-      {['admin', 'manager'].includes(userRole) && stats.total > 0 && (
-        <div className="bg-gray-50 rounded-lg p-4 mb-6">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Notification Summary</h4>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div>
-              <span className="text-gray-500">Total:</span>
-              <span className="ml-1 font-medium">{stats.total}</span>
-            </div>
-            <div>
-              <span className="text-gray-500">Unread:</span>
-              <span className="ml-1 font-medium text-blue-600">{stats.unread}</span>
-            </div>
-            <div>
-              <span className="text-gray-500">High Priority:</span>
-              <span className="ml-1 font-medium text-red-600">{stats.byPriority.high}</span>
-            </div>
-            <div>
-              <span className="text-gray-500">Medium Priority:</span>
-              <span className="ml-1 font-medium text-orange-600">{stats.byPriority.medium}</span>
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {filteredNotifications.map((notification) => {
+      {visibleNotifications.map((notification) => {
         const priority = getNotificationPriority(notification)
         
         return (

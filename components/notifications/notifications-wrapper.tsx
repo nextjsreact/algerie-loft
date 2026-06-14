@@ -249,6 +249,7 @@ export function NotificationsWrapper({
             userRole={userRole}
             userId={userId}
             assignedTaskIds={assignedTaskIds}
+            disableFiltering
             onNotificationRead={handleNotificationRead}
           />
         </div>

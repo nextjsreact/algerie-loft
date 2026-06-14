@@ -101,26 +101,21 @@ export async function GET() {
 
     const bookingIds = bookings.map((b: any) => b.id).filter(Boolean)
 
-    // Reviews — récupérés via booking_id (infaillible) + fallback client_id
+    // Reviews — récupérés uniquement via booking_id
     let reviews: any[] = []
     try {
-      let reviewsQuery = adminSupabase
-        .from('loft_reviews')
-        .select(`
-          id, booking_id, rating, review_text, created_at,
-          is_published, response_text, response_date, loft_id,
-          booking:booking_id ( check_in, check_out ),
-          loft:loft_id ( name, address )
-        `)
-        .order('created_at', { ascending: false })
-
-      if (bookingIds.length > 0) {
-        reviewsQuery = reviewsQuery.in('booking_id', bookingIds)
-      } else {
-        reviewsQuery = reviewsQuery.eq('client_id', userId)
-      }
-
-      const { data: reviewsData, error: reviewsError } = await reviewsQuery
+      const { data: reviewsData, error: reviewsError } = bookingIds.length > 0
+        ? await adminSupabase
+          .from('loft_reviews')
+          .select(`
+            id, booking_id, rating, review_text, created_at,
+            is_published, response_text, response_date, loft_id,
+            booking:booking_id ( check_in, check_out ),
+            loft:loft_id ( name, address )
+          `)
+          .in('booking_id', bookingIds)
+          .order('created_at', { ascending: false })
+        : { data: [], error: null }
 
       if (reviewsError) {
         console.error('[journal-avis] reviews error:', reviewsError.message, JSON.stringify(reviewsError))

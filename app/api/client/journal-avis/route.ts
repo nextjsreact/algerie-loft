@@ -31,7 +31,13 @@ export async function GET() {
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(50)
-      if (!error) notifications = data || []
+      if (!error) {
+        notifications = (data || []).filter((notification: any) => {
+          const title = `${notification.title || ''} ${notification.title_key || ''}`.toLowerCase()
+          const message = `${notification.message || ''} ${notification.message_key || ''} ${JSON.stringify(notification.message_payload || {})}`.toLowerCase()
+          return !title.includes('mock') && !message.includes('mock') && !title.includes('version optimisée')
+        })
+      }
     } catch { /* ignore */ }
 
     // ─── Airbnb notifications ────────────────────────────────────
@@ -102,6 +108,14 @@ export async function GET() {
     }))
 
     const bookingIds = bookings.map((b: any) => b.id).filter(Boolean)
+    const normalizedBookings = bookings
+      .map((b: any) => ({
+        id: b.id,
+        loft_id: b.loft_id,
+        checkInKey: b.check_in ? String(b.check_in).slice(0, 10) : null,
+        checkOutKey: b.check_out ? String(b.check_out).slice(0, 10) : null,
+      }))
+      .filter((b: any) => b.loft_id && b.checkInKey && b.checkOutKey)
 
     // ─── Reviews (plats, sans relations nested) ─────────────────
     let reviews: any[] = []
@@ -112,7 +126,7 @@ export async function GET() {
         .order('created_at', { ascending: false })
 
       if (bookingIds.length > 0) {
-        query = query.in('booking_id', bookingIds)
+        query = query.or(`booking_id.in.(${bookingIds.join(',')}),client_id.eq.${userId}`)
       } else {
         query = query.eq('client_id', userId)
       }
@@ -121,7 +135,18 @@ export async function GET() {
       if (error) {
         console.error('[journal-avis] reviews error:', error.message)
       } else {
-        reviews = (reviewsData || []).map((r: any) => ({
+        reviews = (reviewsData || []).filter((r: any) => {
+          if (r.booking_id && bookingIds.includes(r.booking_id)) return true
+          if (r.client_id === userId) return true
+
+          const checkInKey = r.booking_check_in ? String(r.booking_check_in).slice(0, 10) : null
+          const checkOutKey = r.booking_check_out ? String(r.booking_check_out).slice(0, 10) : null
+          return normalizedBookings.some((booking: any) => (
+            booking.loft_id === r.loft_id &&
+            booking.checkInKey === checkInKey &&
+            booking.checkOutKey === checkOutKey
+          ))
+        }).map((r: any) => ({
           id: r.id,
           booking_id: r.booking_id,
           rating: r.rating,

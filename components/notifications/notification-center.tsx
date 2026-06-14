@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Bell, X, Filter, MoreVertical } from 'lucide-react'
+import { Bell, X as XIcon, Filter, MoreVertical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -131,7 +131,7 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
               size="sm"
               onClick={() => setIsOpen(false)}
             >
-              <X className="h-4 w-4" />
+              <XIcon className="h-4 w-4" />
             </Button>
           </div>
         </div>

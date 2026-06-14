@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, X } from 'lucide-react'
+import { Search, X as XIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -60,7 +60,7 @@ export function SearchInput({
           onClick={handleClear}
           className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 p-0 hover:bg-muted"
         >
-          <X className="h-3 w-3" />
+          <XIcon className="h-3 w-3" />
         </Button>
       )}
     </div>

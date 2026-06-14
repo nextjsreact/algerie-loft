@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from 'react'
-import { X, CheckCircle, AlertCircle, Info } from 'lucide-react'
+import { X as XIcon, CheckCircle, AlertCircle, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Toast } from '@/hooks/use-toast'
 
@@ -70,7 +70,7 @@ export function Toast({ toast, onDismiss }: ToastProps) {
         onClick={() => onDismiss(toast.id)}
         className="ml-2 opacity-60 hover:opacity-100 transition-opacity"
       >
-        <X className="h-4 w-4" />
+        <XIcon className="h-4 w-4" />
       </button>
     </div>
   )

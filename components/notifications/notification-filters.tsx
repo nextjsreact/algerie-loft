@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Filter, X } from 'lucide-react'
+import { Filter, X as XIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
@@ -72,7 +72,7 @@ export function NotificationFilters({
                 onClick={clearFilters}
                 className="h-auto p-1 text-xs"
               >
-                <X className="h-3 w-3 mr-1" />
+                <XIcon className="h-3 w-3 mr-1" />
                 Clear
               </Button>
             )}

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Filter, X } from 'lucide-react'
+import { Filter, X as XIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -114,7 +114,7 @@ export function Filters({ filterGroups, activeFilters, onFilterChange, onClearAl
                     className="h-auto p-0 text-muted-foreground hover:text-foreground"
                     onClick={() => removeFilter(filterKey, value)}
                   >
-                    <X className="h-3 w-3" />
+                    <XIcon className="h-3 w-3" />
                   </Button>
                 </Badge>
               )

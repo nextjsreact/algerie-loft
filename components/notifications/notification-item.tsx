@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { formatDistanceToNow } from 'date-fns'
-import { Bell, MessageSquare, Calendar, CreditCard, AlertTriangle, Info, CheckCircle, X, MoreVertical } from 'lucide-react'
+import { Bell, MessageSquare, Calendar, CreditCard, AlertTriangle, Info, CheckCircle, MoreVertical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'

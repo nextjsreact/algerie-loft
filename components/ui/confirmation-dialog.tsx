@@ -3,7 +3,7 @@
 import React from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertTriangle, X } from "lucide-react"
+import { AlertTriangle, X as XIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 interface ConfirmationDialogProps {
@@ -96,7 +96,7 @@ export function ConfirmationDialog({
               onClick={onClose}
               className="flex-shrink-0 h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800"
             >
-              <X className="h-4 w-4" />
+              <XIcon className="h-4 w-4" />
             </Button>
           </div>
         </CardHeader>

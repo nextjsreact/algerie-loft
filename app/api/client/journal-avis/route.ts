@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
-import { getNotifications } from '@/app/actions/notifications'
 import { detectUserRole } from '@/lib/auth/role-detection'
 
 export async function GET() {
   try {
     const supabase = await createClient()
+    const supabaseAdmin = await createClient(true)
 
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -21,8 +21,13 @@ export async function GET() {
       if (profile?.full_name) full_name = profile.full_name
     } catch { /* ignore */ }
 
-    // Notifications
-    const { data: notifications } = await getNotifications(userId)
+    // Notifications — service role pour bypasser RLS
+    const { data: notifications } = await supabaseAdmin
+      .from('notifications')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(50)
 
     const { data: airbnbData } = await supabase
       .from('airbnb_reservations')

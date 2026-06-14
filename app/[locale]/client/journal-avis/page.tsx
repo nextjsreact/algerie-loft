@@ -309,25 +309,52 @@ export default function ClientJournalAvisPage() {
     )
   }
 
-  if (error || !payload) {
-    return (
-      <div className="container mx-auto px-4 py-10 max-w-5xl">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquareText className="h-5 w-5" />
-              {t('title')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-              <p className="text-sm text-muted-foreground">
-                {error || t('loading', { defaultValue: 'Chargement...' })}
-              </p>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
+  // Ne jamais bloquer l’affichage du formulaire :
+  // - loader tant que le fetch n’est pas terminé
+  // - en cas d’erreur : on affiche l’UI avec valeurs sûres (formulaire fonctionnel)
+  //   (seulement la liste des avis/séjours dépendra des données)
+  const safePayload: Payload =
+    payload ?? {
+      user: {
+        id: '',
+        email: null,
+        full_name: null,
+        role: 'client',
+      },
+      notifications: [],
+      airbnbNotifications: [],
+      reviews: [],
+      bookings: [],
+    }
+
+  const safeNotifications = safePayload.notifications || []
+  const safeAirbnbNotifications = safePayload.airbnbNotifications || []
+  const safeBookings = safePayload.bookings || []
+  const safeReviewsSorted = useMemo(() => {
+    const rs = safePayload.reviews || []
+    return [...rs].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [safePayload.reviews])
+
+  const safeReviews = safeReviewsSorted
+  const safeUserRole = (safePayload.user.role || 'client') as UserRole
+  const safeUserId = safePayload.user.id || ''
+
+  // Rebind variables utilisées par le JSX
+  const journalEntriesCount = safeNotifications.length + safeAirbnbNotifications.length
+  const bookingsForUi = safeBookings
+  const reviewsForUi = safeReviews
+
+  const completedBookingsForUi = bookingsForUi.filter((booking) => {
+    if (booking.status === 'completed') return true
+    if (booking.status === 'confirmed' && booking.check_out) {
+      return new Date(booking.check_out) < now
+    }
+    return false
+  })
+
+  // Petit bandeau d’erreur (optionnel) mais on rend quand même le formulaire
+  const showError = Boolean(error)
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
@@ -345,11 +372,11 @@ export default function ClientJournalAvisPage() {
           </Badge>
           <Badge variant="secondary" className="bg-purple-50 text-purple-700 border border-purple-200">
             <CalendarDays className="h-3.5 w-3.5 mr-1" />
-            {t('stayCount', { count: bookings.length })}
+            {t('stayCount', { count: bookingsForUi.length })}
           </Badge>
           <Badge variant="secondary" className="bg-yellow-50 text-yellow-700 border border-yellow-200">
             <ThumbsUp className="h-3.5 w-3.5 mr-1" />
-            {t('reviewCount', { count: reviews.length, defaultValue: `Avis (${reviews.length})` })}
+            {t('reviewCount', { count: reviewsForUi.length, defaultValue: `Avis (${reviewsForUi.length})` })}
           </Badge>
         </div>
       </div>
@@ -363,77 +390,83 @@ export default function ClientJournalAvisPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
+            {showError ? (
+              <div className="mb-3 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                {t('loading', { defaultValue: error || 'Impossible de charger le journal & les avis.' })}
+              </div>
+            ) : null}
+
             <NotificationsWrapper
-              notifications={notifications}
-              userRole={userRole}
-              userId={userId}
-              airbnbNotifications={airbnbNotifications}
+              notifications={safeNotifications}
+              userRole={safeUserRole}
+              userId={safeUserId}
+              airbnbNotifications={safeAirbnbNotifications}
               onNotificationRead={handleNotificationRead}
               onMarkAllRead={handleMarkAllNotificationsRead}
               onAirbnbNotificationRead={handleAirbnbNotificationRead}
               onAirbnbMarkAllRead={handleAirbnbMarkAllRead}
             />
 
-            {bookings.length > 0 && (
-              <div className="border-t p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold">
-                    {t('recentStays', { defaultValue: 'Séjours récents' })}
-                  </h3>
-                  <Badge variant="outline">
-                    {t('stayCount', { count: bookings.length, defaultValue: `Séjours (${bookings.length})` })}
-                  </Badge>
-                </div>
-                <div className="space-y-3">
-                  {bookings.slice(0, 5).map((booking) => {
-                    const nights = getNights(booking.check_in, booking.check_out)
-                    return (
-                      <div key={booking.id} className="rounded-lg border bg-muted/20 p-3">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <p className="text-sm font-semibold truncate">
-                              {booking.loft_name || t('unknownLoft', { defaultValue: 'Loft' })}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {formatDateRange(booking.check_in, booking.check_out, locale)}
-                              {nights !== null ? ` · ${t('nights', { count: nights })}` : ''}
-                            </p>
-                          </div>
-                          <Badge className={getBookingStatusClass(booking.status)}>{booking.status}</Badge>
-                        </div>
-
-                        {booking.total_price !== null && booking.total_price !== undefined && (
-                          <p className="text-xs text-muted-foreground mt-2">{formatMoney(booking.total_price)}</p>
-                        )}
-
-                        {booking.status === 'completed' && (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="mt-3"
-                            onClick={() => openReviewForm(booking.id)}
-                          >
-                            {t('addReviewButton', { defaultValue: 'Donner mon avis' })}
-                          </Button>
-                        )}
-                        {booking.status === 'confirmed' && booking.check_out && new Date(booking.check_out) < new Date() && (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="mt-3"
-                            onClick={() => openReviewForm(booking.id)}
-                          >
-                            {t('addReviewButton', { defaultValue: 'Donner mon avis' })}
-                          </Button>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
+            {bookingsForUi.length > 0 && (
+               <div className="border-t p-4">
+                 <div className="flex items-center justify-between mb-3">
+                   <h3 className="text-sm font-semibold">
+                     {t('recentStays', { defaultValue: 'Séjours récents' })}
+                   </h3>
+                   <Badge variant="outline">
+                    {t('stayCount', { count: bookingsForUi.length, defaultValue: `Séjours (${bookingsForUi.length})` })}
+                   </Badge>
+                 </div>
+                 <div className="space-y-3">
+                  {bookingsForUi.slice(0, 5).map((booking) => {
+                     const nights = getNights(booking.check_in, booking.check_out)
+                     return (
+                       <div key={booking.id} className="rounded-lg border bg-muted/20 p-3">
+                         <div className="flex items-start justify-between gap-3">
+                           <div className="min-w-0">
+                             <p className="text-sm font-semibold truncate">
+                               {booking.loft_name || t('unknownLoft', { defaultValue: 'Loft' })}
+                             </p>
+                             <p className="text-xs text-muted-foreground mt-1">
+                               {formatDateRange(booking.check_in, booking.check_out, locale)}
+                               {nights !== null ? ` · ${t('nights', { count: nights })}` : ''}
+                             </p>
+                           </div>
+                           <Badge className={getBookingStatusClass(booking.status)}>{booking.status}</Badge>
+                         </div>
+ 
+                         {booking.total_price !== null && booking.total_price !== undefined && (
+                           <p className="text-xs text-muted-foreground mt-2">{formatMoney(booking.total_price)}</p>
+                         )}
+ 
+                         {booking.status === 'completed' && (
+                           <Button
+                             type="button"
+                             variant="outline"
+                             size="sm"
+                             className="mt-3"
+                             onClick={() => openReviewForm(booking.id)}
+                           >
+                             {t('addReviewButton', { defaultValue: 'Donner mon avis' })}
+                           </Button>
+                         )}
+                         {booking.status === 'confirmed' && booking.check_out && new Date(booking.check_out) < new Date() && (
+                           <Button
+                             type="button"
+                             variant="outline"
+                             size="sm"
+                             className="mt-3"
+                             onClick={() => openReviewForm(booking.id)}
+                           >
+                             {t('addReviewButton', { defaultValue: 'Donner mon avis' })}
+                           </Button>
+                         )}
+                       </div>
+                     )
+                   })}
+                 </div>
+               </div>
+             )}
           </CardContent>
         </Card>
 
@@ -455,46 +488,46 @@ export default function ClientJournalAvisPage() {
               </div>
 
               {/* Sélecteur de séjour si disponible, sinon champ libre */}
-              {completedBookings.length > 0 ? (
-                <label className="block text-sm mb-4">
-                  <span className="mb-1 block font-medium">{t('selectStay', { defaultValue: 'Séjour concerné' })}</span>
-                  <select
-                    value={reviewBookingId}
-                    onChange={(event) => setReviewBookingId(event.target.value)}
-                    className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                    disabled={submittingReview}
-                  >
-                    <option value="">— Choisir un séjour —</option>
-                    {completedBookings.map((booking) => (
-                      <option key={booking.id} value={booking.id}>
-                        {booking.loft_name || 'Loft'} · {formatDateRange(booking.check_in, booking.check_out, locale)}
-                      </option>
-                    ))}
-                    {bookings.filter(b => !completedBookings.find(c => c.id === b.id)).map((booking) => (
-                      <option key={booking.id} value={booking.id}>
-                        {booking.loft_name || 'Loft'} · {formatDateRange(booking.check_in, booking.check_out, locale)} ({booking.status})
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              ) : bookings.length > 0 ? (
-                <label className="block text-sm mb-4">
-                  <span className="mb-1 block font-medium">{t('selectStay', { defaultValue: 'Séjour concerné' })}</span>
-                  <select
-                    value={reviewBookingId}
-                    onChange={(event) => setReviewBookingId(event.target.value)}
-                    className="w-full rounded-md border bg-background px-3 py-2 text-sm"
-                    disabled={submittingReview}
-                  >
-                    <option value="">— Choisir un séjour —</option>
-                    {bookings.map((booking) => (
-                      <option key={booking.id} value={booking.id}>
-                        {booking.loft_name || 'Loft'} · {formatDateRange(booking.check_in, booking.check_out, locale)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              ) : null}
+              {completedBookingsForUi.length > 0 ? (
+                 <label className="block text-sm mb-4">
+                   <span className="mb-1 block font-medium">{t('selectStay', { defaultValue: 'Séjour concerné' })}</span>
+                   <select
+                     value={reviewBookingId}
+                     onChange={(event) => setReviewBookingId(event.target.value)}
+                     className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                     disabled={submittingReview}
+                   >
+                     <option value="">— Choisir un séjour —</option>
+                     {completedBookingsForUi.map((booking) => (
+                        <option key={booking.id} value={booking.id}>
+                          {booking.loft_name || 'Loft'} · {formatDateRange(booking.check_in, booking.check_out, locale)}
+                        </option>
+                      ))}
+                     {bookingsForUi.filter(b => !completedBookingsForUi.find(c => c.id === b.id)).map((booking) => (
+                        <option key={booking.id} value={booking.id}>
+                          {booking.loft_name || 'Loft'} · {formatDateRange(booking.check_in, booking.check_out, locale)} ({booking.status})
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+               ) : bookingsForUi.length > 0 ? (
+                  <label className="block text-sm mb-4">
+                    <span className="mb-1 block font-medium">{t('selectStay', { defaultValue: 'Séjour concerné' })}</span>
+                    <select
+                      value={reviewBookingId}
+                      onChange={(event) => setReviewBookingId(event.target.value)}
+                      className="w-full rounded-md border bg-background px-3 py-2 text-sm"
+                      disabled={submittingReview}
+                    >
+                      <option value="">— Choisir un séjour —</option>
+                      {bookingsForUi.map((booking) => (
+                        <option key={booking.id} value={booking.id}>
+                          {booking.loft_name || 'Loft'} · {formatDateRange(booking.check_in, booking.check_out, locale)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+               ) : null}
 
               {/* Étoiles */}
               <label className="block text-sm mb-4">

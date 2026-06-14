@@ -1,143 +1,89 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@/utils/supabase/server"
-import { requireAuthAPI, type AuthSession } from "@/lib/auth"
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/utils/supabase/server'
 
-type Customer = {
-  id: string
-  email: string | null
-}
-
-type ReviewPayload = {
-  booking_id?: string | null
-  loft_id?: string | null
-  rating?: number | null
-  review_text?: string | null
-}
-
-function normalizeReview(row: any, booking: any, loft: any) {
-  return {
-    id: row.id,
-    booking_id: row.booking_id,
-    loft_id: row.loft_id,
-    client_id: row.client_id,
-    rating: row.rating,
-    review_text: row.review_text,
-    created_at: row.created_at,
-    is_published: row.is_published,
-    response_text: row.response_text ?? null,
-    response_date: row.response_date ?? null,
-    loft_name: loft?.name ?? booking?.loft?.name ?? null,
-    loft_address: loft?.address ?? booking?.loft?.address ?? null,
-    booking_check_in: booking?.check_in ?? null,
-    booking_check_out: booking?.check_out ?? null,
-  }
-}
-
-async function fetchCustomer(supabase: any, session: AuthSession): Promise<Customer | null> {
-  const email = session.user.email?.trim().toLowerCase()
-  if (!email) return null
-
-  const { data: customerByEmail } = await supabase
-    .from("customers")
-    .select("id, email")
-    .eq("email", email)
-    .maybeSingle()
-
-  if (customerByEmail) return customerByEmail
-
-  const { data: customerById } = await supabase
-    .from("customers")
-    .select("id, email")
-    .eq("id", session.user.id)
-    .maybeSingle()
-
-  return customerById
-}
-
-async function fetchBookingForClient(supabase: any, customerId: string, bookingId: string) {
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("id, loft_id, client_id, check_in, check_out, status, payment_status, booking_reference, created_at, loft:loft_id(id, name, address)")
-    .eq("id", bookingId)
-    .eq("client_id", customerId)
-    .single()
-
-  if (error || !data) return null
-  return data
-}
-
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const session = await requireAuthAPI()
+    const supabase = await createClient()
 
-    if (!session) {
-      return NextResponse.json({ error: "Non authentifié" }, { status: 401 })
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
     }
 
-    const body = (await request.json()) as ReviewPayload
-    const bookingId = typeof body.booking_id === "string" && body.booking_id ? body.booking_id : null
-    const rating = typeof body.rating === "number" ? body.rating : null
-    const reviewText = typeof body.review_text === "string" ? body.review_text.trim() : null
+    const body = await request.json()
+    const { booking_id, rating, review_text } = body
 
-    if (!rating || rating < 1 || rating > 5) {
-      return NextResponse.json({ error: "Note invalide (1 à 5)" }, { status: 400 })
+    if (!booking_id || !rating) {
+      return NextResponse.json({ error: 'booking_id et rating requis' }, { status: 400 })
     }
 
-    if (!reviewText) {
-      return NextResponse.json({ error: "Commentaire obligatoire" }, { status: 400 })
+    if (rating < 1 || rating > 5) {
+      return NextResponse.json({ error: 'La note doit être entre 1 et 5' }, { status: 400 })
     }
 
-    const supabase = await createClient(true)
-    const customer = await fetchCustomer(supabase, session)
-    const customerId = customer?.id || session.user.id
-
-    let booking = null
-    let loftId = null
-
-    if (bookingId) {
-      booking = await fetchBookingForClient(supabase, customerId, bookingId)
-      if (!booking) {
-        return NextResponse.json({ error: "Séjour introuvable" }, { status: 404 })
-      }
-      // Accepter completed OU confirmed avec check-out dépassé
-      const checkOutPast = booking.check_out ? new Date(booking.check_out) < new Date() : false
-      const isEligible = booking.status === "completed" || (booking.status === "confirmed" && checkOutPast) || booking.status === "confirmed"
-      if (!isEligible) {
-        return NextResponse.json({ error: "Séjour non éligible" }, { status: 400 })
-      }
-      loftId = booking.loft_id
-
-      // Vérifier si avis déjà existant
-      const { data: existing } = await supabase
-        .from("loft_reviews")
-        .select("id")
-        .eq("booking_id", bookingId)
-        .eq("client_id", customerId)
-        .maybeSingle()
-
-      if (existing) {
-        return NextResponse.json({ error: "Vous avez déjà évalué ce séjour" }, { status: 409 })
-      }
-    }
-
-    const { data: insertedReview, error: insertError } = await supabase
-      .from("loft_reviews")
-      .insert({
-        booking_id: bookingId || null,
-        loft_id: loftId || booking?.loft_id || "00000000-0000-0000-0000-000000000000",
-        client_id: customerId,
-        rating,
-        review_text: reviewText || null,
-        is_published: true,
-      })
-      .select("id, booking_id, loft_id, client_id, rating, review_text, created_at, is_published, response_text, response_date")
+    // Vérifier que la réservation appartient bien à l'utilisateur et est terminée
+    const { data: booking, error: bookingError } = await supabase
+      .from('bookings')
+      .select('id, loft_id, status, check_out')
+      .eq('id', booking_id)
+      .eq('client_id', user.id)
       .single()
 
-    if (insertError) throw insertError
+    if (bookingError || !booking) {
+      return NextResponse.json({ error: 'Réservation introuvable' }, { status: 404 })
+    }
 
-    return NextResponse.json(normalizeReview(insertedReview, booking, null), { status: 201 })
+    // Vérifier qu'un avis n'existe pas déjà
+    const { data: existing } = await supabase
+      .from('loft_reviews')
+      .select('id')
+      .eq('booking_id', booking_id)
+      .single()
+
+    if (existing) {
+      return NextResponse.json({ error: 'Un avis existe déjà pour cette réservation' }, { status: 409 })
+    }
+
+    const { data: review, error: insertError } = await supabase
+      .from('loft_reviews')
+      .insert({
+        booking_id,
+        loft_id: booking.loft_id,
+        client_id: user.id,
+        rating,
+        review_text: review_text || null,
+        is_published: true,
+      })
+      .select(`
+        id, booking_id, loft_id, rating, review_text, created_at,
+        is_published, response_text, response_date,
+        booking:booking_id ( check_in, check_out ),
+        loft:loft_id ( name, address )
+      `)
+      .single()
+
+    if (insertError) {
+      console.error('[journal-avis/reviews] insert error:', insertError)
+      return NextResponse.json({ error: "Erreur lors de l'enregistrement" }, { status: 500 })
+    }
+
+    return NextResponse.json({
+      id: review.id,
+      booking_id: review.booking_id,
+      rating: review.rating,
+      review_text: review.review_text,
+      created_at: review.created_at,
+      is_published: review.is_published,
+      response_text: review.response_text,
+      response_date: review.response_date,
+      loft_id: review.loft_id,
+      loft_name: review.loft?.name || null,
+      loft_address: review.loft?.address || null,
+      booking_check_in: review.booking?.check_in || null,
+      booking_check_out: review.booking?.check_out || null,
+    })
   } catch (error) {
-    console.error("POST /api/client/journal-avis/reviews failed:", error)
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 })
+    console.error('[journal-avis/reviews] POST error:', error)
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
 }

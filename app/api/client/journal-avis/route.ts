@@ -4,9 +4,15 @@ import { detectUserRole } from '@/lib/auth/role-detection'
 
 function normalizeDate(value: string | null | undefined) {
   if (!value) return null
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return value
-  return date.toISOString().slice(0, 10)
+  const raw = String(value)
+  const dateOnly = raw.slice(0, 10)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateOnly)) return dateOnly
+  const date = new Date(raw)
+  if (Number.isNaN(date.getTime())) return raw
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 export async function GET() {
@@ -111,75 +117,73 @@ export async function GET() {
       console.error('[journal-avis] bookings exception:', err)
     }
 
-    const bookingIds = bookings.map((b: any) => b.id).filter(Boolean)
-
-    // Reviews — récupérés via booking_id, puis réconciliés par séjour si les IDs ne correspondent pas
+    // Reviews — récupérés directement par séjour affiché, indépendamment du booking_id
     let reviews: any[] = []
     try {
-      let reviewsData: any[] = []
-      let reviewsError: any = null
-
-      const { data: allClientReviews, error: allClientReviewsError } = await adminSupabase
-        .from('loft_reviews')
-        .select(`
-          id, booking_id, rating, review_text, created_at,
-          is_published, response_text, response_date, loft_id, client_id,
-          booking:booking_id ( check_in, check_out, check_in_date, check_out_date ),
-          loft:loft_id ( name, address )
-        `)
-        .eq('client_id', userId)
-        .order('created_at', { ascending: false })
-
-      if (allClientReviewsError) {
-        reviewsError = allClientReviewsError
-      } else {
-        const bookingIdSet = new Set(bookingIds)
-        const normalizedBookings = bookings
-          .map((b: any) => ({
-            id: b.id,
-            loft_id: b.loft_id,
-            checkInKey: normalizeDate(b.check_in),
-            checkOutKey: normalizeDate(b.check_out),
-          }))
-          .filter((b: any) => b.loft_id && b.checkInKey && b.checkOutKey)
-
-        reviewsData = (allClientReviews || []).filter((review: any) => {
-          if (review.booking_id && bookingIdSet.has(review.booking_id)) return true
-
-          const reviewLoftId = review.loft_id || review.loft?.id
-          const reviewCheckIn = review.booking?.check_in || review.booking?.check_in_date
-          const reviewCheckOut = review.booking?.check_out || review.booking?.check_out_date
-          const reviewCheckInKey = normalizeDate(reviewCheckIn)
-          const reviewCheckOutKey = normalizeDate(reviewCheckOut)
-
-          return normalizedBookings.some((booking: any) => (
-            booking.loft_id === reviewLoftId &&
-            booking.checkInKey === reviewCheckInKey &&
-            booking.checkOutKey === reviewCheckOutKey
-          ))
-        })
-      }
-
-      if (reviewsError) {
-        console.error('[journal-avis] reviews error:', reviewsError.message, JSON.stringify(reviewsError))
-      } else {
-        reviews = (reviewsData || []).map((r: any) => ({
-          id: r.id,
-          booking_id: r.booking_id,
-          rating: r.rating,
-          review_text: r.review_text,
-          created_at: r.created_at,
-          is_published: r.is_published,
-          response_text: r.response_text,
-          response_date: r.response_date,
-          loft_id: r.loft_id,
-          loft_name: r.loft?.name || null,
-          loft_address: r.loft?.address || null,
-          booking_check_in: r.booking?.check_in || r.booking?.check_in_date || null,
-          booking_check_out: r.booking?.check_out || r.booking?.check_out_date || null,
+      const normalizedBookings = bookings
+        .map((b: any) => ({
+          id: b.id,
+          loft_id: b.loft_id,
+          checkInKey: normalizeDate(b.check_in),
+          checkOutKey: normalizeDate(b.check_out),
         }))
-        console.log('[journal-avis] reviews count:', reviews.length, 'via bookingIds:', bookingIds.length)
+        .filter((b: any) => b.loft_id && b.checkInKey && b.checkOutKey)
+
+      const reviewLoftIds = Array.from(new Set(normalizedBookings.map((b: any) => b.loft_id)))
+      let reviewsData: any[] = []
+
+      if (reviewLoftIds.length > 0) {
+        const { data, error } = await adminSupabase
+          .from('loft_reviews')
+          .select(`
+            id, booking_id, rating, review_text, created_at,
+            is_published, response_text, response_date, loft_id, client_id,
+            booking:booking_id ( check_in, check_out, check_in_date, check_out_date ),
+            loft:loft_id ( name, address )
+          `)
+          .eq('client_id', userId)
+          .in('loft_id', reviewLoftIds)
+          .order('created_at', { ascending: false })
+
+        if (error) {
+          console.error('[journal-avis] reviews error:', error.message, JSON.stringify(error))
+        } else {
+          reviewsData = (data || []).filter((review: any) => {
+            const reviewLoftId = review.loft_id
+            const reviewCheckIn = review.booking?.check_in || review.booking?.check_in_date
+            const reviewCheckOut = review.booking?.check_out || review.booking?.check_out_date
+            const reviewCheckInKey = normalizeDate(reviewCheckIn)
+            const reviewCheckOutKey = normalizeDate(reviewCheckOut)
+
+            if (review.booking_id && normalizedBookings.some((b: any) => b.id === review.booking_id)) {
+              return true
+            }
+
+            return normalizedBookings.some((booking: any) => (
+              booking.loft_id === reviewLoftId &&
+              booking.checkInKey === reviewCheckInKey &&
+              booking.checkOutKey === reviewCheckOutKey
+            ))
+          })
+        }
       }
+
+      reviews = reviewsData.map((r: any) => ({
+        id: r.id,
+        booking_id: r.booking_id,
+        rating: r.rating,
+        review_text: r.review_text,
+        created_at: r.created_at,
+        is_published: r.is_published,
+        response_text: r.response_text,
+        response_date: r.response_date,
+        loft_id: r.loft_id,
+        loft_name: r.loft?.name || null,
+        loft_address: r.loft?.address || null,
+        booking_check_in: r.booking?.check_in || r.booking?.check_in_date || null,
+        booking_check_out: r.booking?.check_out || r.booking?.check_out_date || null,
+      }))
+      console.log('[journal-avis] reviews count:', reviews.length, 'via stay keys:', normalizedBookings.length)
     } catch (err) {
       console.error('[journal-avis] reviews exception:', err)
     }

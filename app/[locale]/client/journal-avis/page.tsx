@@ -329,20 +329,13 @@ export default function ClientJournalAvisPage() {
   const safeNotifications = safePayload.notifications || []
   const safeAirbnbNotifications = safePayload.airbnbNotifications || []
   const safeBookings = safePayload.bookings || []
-  const safeReviewsSorted = useMemo(() => {
-    const rs = safePayload.reviews || []
-    return [...rs].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [safePayload.reviews])
-
-  const safeReviews = safeReviewsSorted
   const safeUserRole = (safePayload.user.role || 'client') as UserRole
   const safeUserId = safePayload.user.id || ''
 
   // Rebind variables utilisées par le JSX
   const journalEntriesCount = safeNotifications.length + safeAirbnbNotifications.length
   const bookingsForUi = safeBookings
-  const reviewsForUi = safeReviews
+  const reviewsForUi = [...(safePayload.reviews || [])].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
   const completedBookingsForUi = bookingsForUi.filter((booking) => {
     if (booking.status === 'completed') return true

@@ -2,6 +2,13 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { detectUserRole } from '@/lib/auth/role-detection'
 
+function normalizeDate(value: string | null | undefined) {
+  if (!value) return null
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+  return date.toISOString().slice(0, 10)
+}
+
 export async function GET() {
   try {
     const supabase = await createClient()
@@ -106,27 +113,57 @@ export async function GET() {
 
     const bookingIds = bookings.map((b: any) => b.id).filter(Boolean)
 
-    // Reviews — récupérés uniquement via booking_id
+    // Reviews — récupérés via booking_id, puis réconciliés par séjour si les IDs ne correspondent pas
     let reviews: any[] = []
     try {
-      const { data: reviewsData, error: reviewsError } = bookingIds.length > 0
-        ? await adminSupabase
-          .from('loft_reviews')
-          .select(`
-            id, booking_id, rating, review_text, created_at,
-            is_published, response_text, response_date, loft_id,
-            booking:booking_id ( check_in, check_out ),
-            loft:loft_id ( name, address )
-          `)
-          .in('booking_id', bookingIds)
-          .order('created_at', { ascending: false })
-        : { data: [], error: null }
+      let reviewsData: any[] = []
+      let reviewsError: any = null
+
+      const { data: allClientReviews, error: allClientReviewsError } = await adminSupabase
+        .from('loft_reviews')
+        .select(`
+          id, booking_id, rating, review_text, created_at,
+          is_published, response_text, response_date, loft_id, client_id,
+          booking:booking_id ( check_in, check_out, check_in_date, check_out_date ),
+          loft:loft_id ( name, address )
+        `)
+        .eq('client_id', userId)
+        .order('created_at', { ascending: false })
+
+      if (allClientReviewsError) {
+        reviewsError = allClientReviewsError
+      } else {
+        const bookingIdSet = new Set(bookingIds)
+        const normalizedBookings = bookings
+          .map((b: any) => ({
+            id: b.id,
+            loft_id: b.loft_id,
+            checkInKey: normalizeDate(b.check_in),
+            checkOutKey: normalizeDate(b.check_out),
+          }))
+          .filter((b: any) => b.loft_id && b.checkInKey && b.checkOutKey)
+
+        reviewsData = (allClientReviews || []).filter((review: any) => {
+          if (review.booking_id && bookingIdSet.has(review.booking_id)) return true
+
+          const reviewLoftId = review.loft_id || review.loft?.id
+          const reviewCheckIn = review.booking?.check_in || review.booking?.check_in_date
+          const reviewCheckOut = review.booking?.check_out || review.booking?.check_out_date
+          const reviewCheckInKey = normalizeDate(reviewCheckIn)
+          const reviewCheckOutKey = normalizeDate(reviewCheckOut)
+
+          return normalizedBookings.some((booking: any) => (
+            booking.loft_id === reviewLoftId &&
+            booking.checkInKey === reviewCheckInKey &&
+            booking.checkOutKey === reviewCheckOutKey
+          ))
+        })
+      }
 
       if (reviewsError) {
         console.error('[journal-avis] reviews error:', reviewsError.message, JSON.stringify(reviewsError))
       } else {
-        const fetchedReviews = reviewsData || []
-        reviews = fetchedReviews.map((r: any) => ({
+        reviews = (reviewsData || []).map((r: any) => ({
           id: r.id,
           booking_id: r.booking_id,
           rating: r.rating,
@@ -138,8 +175,8 @@ export async function GET() {
           loft_id: r.loft_id,
           loft_name: r.loft?.name || null,
           loft_address: r.loft?.address || null,
-          booking_check_in: r.booking?.check_in || null,
-          booking_check_out: r.booking?.check_out || null,
+          booking_check_in: r.booking?.check_in || r.booking?.check_in_date || null,
+          booking_check_out: r.booking?.check_out || r.booking?.check_out_date || null,
         }))
         console.log('[journal-avis] reviews count:', reviews.length, 'via bookingIds:', bookingIds.length)
       }

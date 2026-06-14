@@ -197,6 +197,8 @@ export async function GET() {
       airbnbNotifications,
       reviews,
       bookings,
+      journalEntries: (notifications || []).length + airbnbNotifications.length,
+      reviewEntries: reviews.length,
     })
   } catch (error) {
     console.error('[journal-avis] GET error:', error)

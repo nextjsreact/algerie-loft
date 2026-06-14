@@ -53,12 +53,10 @@ export async function GET() {
       console.error('[journal-avis] notifs exception:', err)
     }
 
-    const { data: airbnbData } = await supabase
-      .from('airbnb_reservations')
+    const { data: airbnbData, error: airbnbError } = await adminSupabase
+      .from('airbnb_notifications')
       .select(`
-        id, type, title, message, is_read, created_at, metadata,
-        lofts:loft_id ( id, name ),
-        reservations:id ( id, guest_name )
+        id, reservation_id, loft_id, type, title, message, is_read, created_at, metadata
       `)
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
@@ -75,6 +73,10 @@ export async function GET() {
       lofts: n.lofts || null,
       reservations: n.reservations || null,
     }))
+
+    if (airbnbError) {
+      console.error('[journal-avis] airbnb notifications error:', airbnbError.message, JSON.stringify(airbnbError))
+    }
 
     // Bookings — récupérés EN PREMIER pour pouvoir chercher les avis par booking_id
     let bookings: any[] = []
@@ -183,6 +185,41 @@ export async function GET() {
         booking_check_in: r.booking?.check_in || r.booking?.check_in_date || null,
         booking_check_out: r.booking?.check_out || r.booking?.check_out_date || null,
       }))
+
+      if (reviews.length === 0) {
+        const { data: notificationReviews, error: notificationReviewsError } = await adminSupabase
+          .from('notifications')
+          .select('*')
+          .eq('user_id', userId)
+          .or('title.ilike.%avis%,message.ilike.%avis%,title_key.ilike.%avis%,message_key.ilike.%avis%')
+          .order('created_at', { ascending: false })
+          .limit(10)
+
+        if (!notificationReviewsError) {
+          reviews = (notificationReviews || []).map((n: any) => {
+            const title = n.title || n.title_payload?.loftName || 'Avis'
+            const message = n.message || n.message_payload?.reviewText || n.message_payload?.response || n.message_payload?.message || ''
+            const metadata = n.metadata || n.message_payload || n.title_payload || {}
+
+            return ({
+              id: `notification-${n.id}`,
+              booking_id: metadata.booking_id || metadata.reservation_id || null,
+              rating: metadata.rating || 5,
+              review_text: message,
+              created_at: n.created_at,
+              is_published: true,
+              response_text: metadata.response_text || null,
+              response_date: metadata.response_date || null,
+              loft_id: metadata.loft_id || null,
+              loft_name: metadata.loft_name || title,
+              loft_address: null,
+              booking_check_in: metadata.check_in || null,
+              booking_check_out: metadata.check_out || null,
+            })
+          })
+        }
+      }
+
       console.log('[journal-avis] reviews count:', reviews.length, 'via stay keys:', normalizedBookings.length)
     } catch (err) {
       console.error('[journal-avis] reviews exception:', err)

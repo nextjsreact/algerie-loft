@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/utils/supabase/server"
-import { requireRoleAPI, type AuthSession } from "@/lib/auth"
+import { requireAuthAPI, type AuthSession } from "@/lib/auth"
 import { type AirbnbNotificationItem } from "@/components/notifications/notifications-wrapper"
 import { type Notification, type UserRole } from "@/lib/types"
 
@@ -668,7 +668,7 @@ export const dynamic = "force-dynamic"
 
 export async function GET(_request: NextRequest) {
   try {
-    const session = await requireRoleAPI(["client"])
+    const session = await requireAuthAPI()
 
     if (!session) {
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 })

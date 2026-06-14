@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/utils/supabase/server"
-import { requireRoleAPI, type AuthSession } from "@/lib/auth"
+import { requireAuthAPI, type AuthSession } from "@/lib/auth"
 
 type Customer = {
   id: string
@@ -68,7 +68,7 @@ async function fetchBookingForClient(supabase: any, customerId: string, bookingI
 
 export async function POST(request: Request) {
   try {
-    const session = await requireRoleAPI(["client"])
+    const session = await requireAuthAPI()
 
     if (!session) {
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 })

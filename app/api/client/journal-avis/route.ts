@@ -334,27 +334,35 @@ async function fetchBookings(supabase: any, customerId: string): Promise<Booking
 }
 
 async function fetchReviews(supabase: any, customerId: string, bookings: Booking[]): Promise<Review[]> {
-  const bookingIds = bookings.map((booking) => booking.id)
-  let query = supabase
-    .from("loft_reviews")
-    .select("id, booking_id, loft_id, client_id, rating, review_text, created_at, is_published, response_text, response_date")
-    .eq("client_id", customerId)
-    .eq("is_published", true)
-    .order("created_at", { ascending: false })
-    .limit(100)
+  try {
+    const bookingIds = bookings.map((booking) => booking.id)
+    let query = supabase
+      .from("loft_reviews")
+      .select("id, booking_id, loft_id, client_id, rating, review_text, created_at, is_published, response_text, response_date")
+      .eq("client_id", customerId)
+      .eq("is_published", true)
+      .order("created_at", { ascending: false })
+      .limit(100)
 
-  if (bookingIds.length > 0) {
-    query = query.in("booking_id", bookingIds)
+    if (bookingIds.length > 0) {
+      query = query.in("booking_id", bookingIds)
+    }
+
+    const { data, error } = await query
+    // Si la table n'existe pas encore, retourner tableau vide sans crasher
+    if (error) {
+      console.warn("fetchReviews error (table may not exist yet):", error.message)
+      return []
+    }
+
+    const reviews = (data || []).map((review: any) => normalizeReview(review, new Map(), new Map()))
+    const loftMap = await fetchLoftMap(supabase, reviews.map((review) => review.loft_id).filter(Boolean) as string[])
+    const bookingMap = new Map(bookings.map((booking) => [booking.id, booking]))
+
+    return reviews.map((review) => normalizeReview({ ...review, loft: loftMap.get(review.loft_id), booking: bookingMap.get(review.booking_id || "") }, loftMap, bookingMap))
+  } catch {
+    return []
   }
-
-  const { data, error } = await query
-  if (error) throw error
-
-  const reviews = (data || []).map((review: any) => normalizeReview(review, new Map(), new Map()))
-  const loftMap = await fetchLoftMap(supabase, reviews.map((review) => review.loft_id).filter(Boolean) as string[])
-  const bookingMap = new Map(bookings.map((booking) => [booking.id, booking]))
-
-  return reviews.map((review) => normalizeReview({ ...review, loft: loftMap.get(review.loft_id), booking: bookingMap.get(review.booking_id || "") }, loftMap, bookingMap))
 }
 
 async function fetchAirbnbBookingsByAliases(supabase: any, aliases: ContactAliases) {

@@ -114,9 +114,27 @@ export class DataFilterService {
         hasSecurityFiltering = filteredData.length < totalCount;
         break;
 
+      case 'client':
+      case 'partner':
+        // Clients and partners can see their own notifications
+        filteredData = notifications.filter(notification =>
+          notification.user_id === userId
+        );
+        hasSecurityFiltering = filteredData.length < totalCount;
+        break;
+
+      case 'superuser':
+        // Superuser has full access like admin
+        filteredData = notifications;
+        break;
+
       case 'guest':
-      default:
         // No notification access for guests
+        filteredData = [];
+        hasSecurityFiltering = totalCount > 0;
+        break;
+
+      default:
         filteredData = [];
         hasSecurityFiltering = totalCount > 0;
         break;

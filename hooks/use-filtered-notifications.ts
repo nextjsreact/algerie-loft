@@ -152,6 +152,8 @@ export function useFilteredNotifications(
         case 'admin':
         case 'manager':
           return 'No notifications at this time. You\'ll receive updates about system events, tasks, and administrative activities.';
+        case 'client':
+          return 'Vous n\'avez pas de notifications pour le moment. Vous recevrez des mises à jour sur vos réservations et séjours.';
         case 'guest':
         default:
           return 'No notifications available.';

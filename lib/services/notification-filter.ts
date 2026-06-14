@@ -68,6 +68,7 @@ export const ROLE_NOTIFICATION_ACCESS = {
   manager: [...NOTIFICATION_TYPE_CATEGORIES.TASK, ...NOTIFICATION_TYPE_CATEGORIES.FINANCIAL, ...NOTIFICATION_TYPE_CATEGORIES.SYSTEM, ...NOTIFICATION_TYPE_CATEGORIES.GENERAL],
   executive: [...NOTIFICATION_TYPE_CATEGORIES.EXECUTIVE, ...NOTIFICATION_TYPE_CATEGORIES.FINANCIAL, ...NOTIFICATION_TYPE_CATEGORIES.GENERAL],
   member: [...NOTIFICATION_TYPE_CATEGORIES.TASK, ...NOTIFICATION_TYPE_CATEGORIES.GENERAL],
+  client: [...NOTIFICATION_TYPE_CATEGORIES.GENERAL],
   guest: []
 } as const;
 
@@ -111,6 +112,10 @@ export class NotificationFilterService {
         // Member can only see task-related and general notifications
         return notificationType.startsWith('task_') ||
                NOTIFICATION_TYPE_CATEGORIES.GENERAL.includes(notificationType as any);
+
+      case 'client':
+        // Clients can see their own notifications of any type
+        return true;
 
       case 'guest':
       default:

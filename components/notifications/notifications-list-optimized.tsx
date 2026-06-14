@@ -264,14 +264,16 @@ export default function NotificationsListOptimized({
   }, [refreshNotifications])
 
   // Mark unread notifications as read when component mounts (calls onNotificationRead for each)
-  useEffect(() => {
-    const unreadIds = filteredNotifications.filter(n => !n.is_read).map(n => n.id)
-    if (unreadIds.length > 0 && onNotificationRead) {
-      unreadIds.forEach(id => onNotificationRead(id).catch(console.error))
-    } else if (unreadIds.length > 0) {
-      batchMarkAsRead(unreadIds)
-    }
-  }, []) // Only on mount
+  // DISABLED: auto-marking notifications as read on mount causes notifications to disappear
+  // immediately when the user opens the page, which is confusing.
+  // useEffect(() => {
+  //   const unreadIds = filteredNotifications.filter(n => !n.is_read).map(n => n.id)
+  //   if (unreadIds.length > 0 && onNotificationRead) {
+  //     unreadIds.forEach(id => onNotificationRead(id).catch(console.error))
+  //   } else if (unreadIds.length > 0) {
+  //     batchMarkAsRead(unreadIds)
+  //   }
+  // }, []) // Only on mount
 
   // Memoized icon getter with priority support
   const getNotificationIcon = useCallback((notification: Notification) => {

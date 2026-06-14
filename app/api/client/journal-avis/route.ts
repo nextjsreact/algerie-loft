@@ -63,10 +63,48 @@ export async function GET() {
       reservations: n.reservations || null,
     }))
 
-    // Reviews — utilise le service role pour bypass RLS (comme les notifications)
+    // Bookings — récupérés EN PREMIER pour pouvoir chercher les avis par booking_id
+    let bookings: any[] = []
+    try {
+      const { data: bookingsData, error: bookingsError } = await adminSupabase
+        .from('bookings')
+        .select(`
+          id, loft_id, check_in, check_out, guests, total_price,
+          status, payment_status, booking_reference, created_at,
+          loft:lofts ( name, address )
+        `)
+        .eq('client_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(50)
+
+      if (bookingsError) {
+        console.error('[journal-avis] bookings error:', bookingsError.message)
+      } else {
+        bookings = (bookingsData || []).map((b: any) => ({
+          id: b.id,
+          loft_id: b.loft_id,
+          loft_name: b.loft?.name || null,
+          loft_address: b.loft?.address || null,
+          check_in: b.check_in,
+          check_out: b.check_out,
+          guests: b.guests,
+          total_price: b.total_price,
+          status: b.status,
+          payment_status: b.payment_status,
+          booking_reference: b.booking_reference,
+          created_at: b.created_at,
+        }))
+      }
+    } catch (err) {
+      console.error('[journal-avis] bookings exception:', err)
+    }
+
+    const bookingIds = bookings.map((b: any) => b.id).filter(Boolean)
+
+    // Reviews — récupérés via booking_id (infaillible) + fallback client_id
     let reviews: any[] = []
     try {
-      const { data: reviewsData, error: reviewsError } = await adminSupabase
+      let reviewsQuery = adminSupabase
         .from('loft_reviews')
         .select(`
           id, booking_id, rating, review_text, created_at,
@@ -74,8 +112,15 @@ export async function GET() {
           booking:booking_id ( check_in, check_out ),
           loft:loft_id ( name, address )
         `)
-        .eq('client_id', userId)
         .order('created_at', { ascending: false })
+
+      if (bookingIds.length > 0) {
+        reviewsQuery = reviewsQuery.in('booking_id', bookingIds)
+      } else {
+        reviewsQuery = reviewsQuery.eq('client_id', userId)
+      }
+
+      const { data: reviewsData, error: reviewsError } = await reviewsQuery
 
       if (reviewsError) {
         console.error('[journal-avis] reviews error:', reviewsError.message, JSON.stringify(reviewsError))
@@ -95,38 +140,11 @@ export async function GET() {
           booking_check_in: r.booking?.check_in || null,
           booking_check_out: r.booking?.check_out || null,
         }))
-        console.log('[journal-avis] reviews count:', reviews.length)
+        console.log('[journal-avis] reviews count:', reviews.length, 'via bookingIds:', bookingIds.length)
       }
     } catch (err) {
       console.error('[journal-avis] reviews exception:', err)
     }
-
-    // Bookings
-    const { data: bookingsData } = await supabase
-      .from('bookings')
-      .select(`
-        id, loft_id, check_in, check_out, guests, total_price,
-        status, payment_status, booking_reference, created_at,
-        loft:lofts ( name, address )
-      `)
-      .eq('client_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(50)
-
-    const bookings = (bookingsData || []).map((b: any) => ({
-      id: b.id,
-      loft_id: b.loft_id,
-      loft_name: b.loft?.name || null,
-      loft_address: b.loft?.address || null,
-      check_in: b.check_in,
-      check_out: b.check_out,
-      guests: b.guests,
-      total_price: b.total_price,
-      status: b.status,
-      payment_status: b.payment_status,
-      booking_reference: b.booking_reference,
-      created_at: b.created_at,
-    }))
 
     return NextResponse.json({
       user: { id: userId, email: user.email, full_name, role },

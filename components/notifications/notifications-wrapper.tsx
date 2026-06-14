@@ -51,22 +51,22 @@ export function NotificationsWrapper({
   const locale = useLocale()
   const router = useRouter()
   const { markAllAsRead } = useNotifications()
-  const [localNotifications, setLocalNotifications] = useState<Notification[]>([])
-  const [localAirbnb, setLocalAirbnb] = useState<AirbnbNotificationItem[]>([])
+  const [localNotifications, setLocalNotifications] = useState<Notification[]>(notifications)
+  const [localAirbnb, setLocalAirbnb] = useState<AirbnbNotificationItem[]>(airbnbNotifications)
   const [isMarking, setIsMarking] = useState(false)
   const initialSynced = useRef(false)
   const initialAirbnbSynced = useRef(false)
 
-  // Only sync from parent on initial load (when data first arrives)
+  // Sync once from parent when the API payload is available, including empty arrays
   useEffect(() => {
-    if (!initialSynced.current && notifications.length > 0) {
+    if (!initialSynced.current) {
       setLocalNotifications(notifications)
       initialSynced.current = true
     }
   }, [notifications])
 
   useEffect(() => {
-    if (!initialAirbnbSynced.current && airbnbNotifications.length > 0) {
+    if (!initialAirbnbSynced.current) {
       setLocalAirbnb(airbnbNotifications)
       initialAirbnbSynced.current = true
     }

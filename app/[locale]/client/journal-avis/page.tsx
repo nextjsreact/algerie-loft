@@ -573,7 +573,7 @@ export default function ClientJournalAvisPage() {
                 <Star className="mx-auto h-10 w-10 text-muted-foreground/40 mb-3" />
                 <p className="text-sm text-muted-foreground">
                   {completedBookingsForUi.length > 0
-                    ? t('noReviewsYet', { defaultValue: 'Vous n’avez pas encore publié d’avis.' })
+                    ? t('noReviewsYet', { defaultValue: 'Vous avez terminé un séjour, mais aucun avis n’est enregistré dans la base pour le moment.' })
                     : t('noReviews', { defaultValue: 'Aucun avis pour le moment.' })}
                 </p>
               </div>

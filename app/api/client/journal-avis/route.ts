@@ -46,7 +46,11 @@ export async function GET() {
       if (error) {
         console.error('[journal-avis] notifs error:', error.message, JSON.stringify(error))
       } else {
-        notifications = data || []
+        notifications = (data || []).filter((notification: any) => {
+          const title = `${notification.title || ''} ${notification.title_key || ''}`.toLowerCase()
+          const message = `${notification.message || ''} ${notification.message_key || ''} ${JSON.stringify(notification.message_payload || {})}`.toLowerCase()
+          return !title.includes('mock') && !message.includes('mock') && !title.includes('version optimisée')
+        })
         console.log('[journal-avis] notifs count:', count)
       }
     } catch (err) {

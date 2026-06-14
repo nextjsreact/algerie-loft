@@ -193,7 +193,6 @@ export default function ClientJournalAvisPage() {
     }
   }, [completedBookings, reviewBookingId])
 
-  const journalEntriesCount = notifications.length + airbnbNotifications.length
   const userRole = (payload?.user.role || 'client') as UserRole
   const userId = payload?.user.id || ''
 

@@ -69,7 +69,7 @@ export async function GET() {
       const { data: bookingsData, error: bookingsError } = await adminSupabase
         .from('bookings')
         .select(`
-          id, loft_id, check_in, check_out, guests, total_price,
+          id, loft_id, check_in, check_out, check_in_date, check_out_date, guests, total_price,
           status, payment_status, booking_reference, created_at,
           loft:lofts ( name, address )
         `)
@@ -80,20 +80,25 @@ export async function GET() {
       if (bookingsError) {
         console.error('[journal-avis] bookings error:', bookingsError.message)
       } else {
-        bookings = (bookingsData || []).map((b: any) => ({
-          id: b.id,
-          loft_id: b.loft_id,
-          loft_name: b.loft?.name || null,
-          loft_address: b.loft?.address || null,
-          check_in: b.check_in,
-          check_out: b.check_out,
-          guests: b.guests,
-          total_price: b.total_price,
-          status: b.status,
-          payment_status: b.payment_status,
-          booking_reference: b.booking_reference,
-          created_at: b.created_at,
-        }))
+        bookings = (bookingsData || []).map((b: any) => {
+          const checkIn = b.check_in || b.check_in_date || null
+          const checkOut = b.check_out || b.check_out_date || null
+
+          return ({
+            id: b.id,
+            loft_id: b.loft_id,
+            loft_name: b.loft?.name || null,
+            loft_address: b.loft?.address || null,
+            check_in: checkIn,
+            check_out: checkOut,
+            guests: b.guests,
+            total_price: b.total_price,
+            status: b.status,
+            payment_status: b.payment_status,
+            booking_reference: b.booking_reference,
+            created_at: b.created_at || null,
+          })
+        })
       }
     } catch (err) {
       console.error('[journal-avis] bookings exception:', err)
@@ -120,7 +125,8 @@ export async function GET() {
       if (reviewsError) {
         console.error('[journal-avis] reviews error:', reviewsError.message, JSON.stringify(reviewsError))
       } else {
-        reviews = (reviewsData || []).map((r: any) => ({
+        const fetchedReviews = reviewsData || []
+        reviews = fetchedReviews.map((r: any) => ({
           id: r.id,
           booking_id: r.booking_id,
           rating: r.rating,

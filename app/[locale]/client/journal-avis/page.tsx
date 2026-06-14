@@ -572,7 +572,9 @@ export default function ClientJournalAvisPage() {
               <div className="text-center py-12">
                 <Star className="mx-auto h-10 w-10 text-muted-foreground/40 mb-3" />
                 <p className="text-sm text-muted-foreground">
-                  {t('noReviews', { defaultValue: 'Aucun avis pour le moment.' })}
+                  {completedBookingsForUi.length > 0
+                    ? t('noReviewsYet', { defaultValue: 'Vous n’avez pas encore publié d’avis.' })
+                    : t('noReviews', { defaultValue: 'Aucun avis pour le moment.' })}
                 </p>
               </div>
             ) : (

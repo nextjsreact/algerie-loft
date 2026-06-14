@@ -136,10 +136,11 @@ export async function GET() {
         .filter((b: any) => b.loft_id && b.checkInKey && b.checkOutKey)
 
       const reviewLoftIds = Array.from(new Set(normalizedBookings.map((b: any) => b.loft_id)))
+      const bookingIds = normalizedBookings.map((b: any) => b.id).filter(Boolean)
       let reviewsData: any[] = []
 
       if (reviewLoftIds.length > 0) {
-        const { data, error } = await adminSupabase
+        let query = adminSupabase
           .from('loft_reviews')
           .select(`
             id, booking_id, rating, review_text, created_at,
@@ -147,23 +148,29 @@ export async function GET() {
             booking:booking_id ( check_in, check_out, check_in_date, check_out_date ),
             loft:loft_id ( name, address )
           `)
-          .eq('client_id', userId)
           .in('loft_id', reviewLoftIds)
           .order('created_at', { ascending: false })
+
+        if (bookingIds.length > 0) {
+          query = query.or(`booking_id.in.(${bookingIds.join(',')}),client_id.eq.${userId}`)
+        } else {
+          query = query.eq('client_id', userId)
+        }
+
+        const { data, error } = await query
 
         if (error) {
           console.error('[journal-avis] reviews error:', error.message, JSON.stringify(error))
         } else {
           reviewsData = (data || []).filter((review: any) => {
+            if (review.booking_id && bookingIds.includes(review.booking_id)) return true
+            if (review.client_id === userId) return true
+
             const reviewLoftId = review.loft_id
             const reviewCheckIn = review.booking?.check_in || review.booking?.check_in_date
             const reviewCheckOut = review.booking?.check_out || review.booking?.check_out_date
             const reviewCheckInKey = normalizeDate(reviewCheckIn)
             const reviewCheckOutKey = normalizeDate(reviewCheckOut)
-
-            if (review.booking_id && normalizedBookings.some((b: any) => b.id === review.booking_id)) {
-              return true
-            }
 
             return normalizedBookings.some((booking: any) => (
               booking.loft_id === reviewLoftId &&

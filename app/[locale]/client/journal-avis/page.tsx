@@ -333,10 +333,10 @@ export default function ClientJournalAvisPage() {
   const safeUserId = safePayload.user.id || ''
 
   // Rebind variables utilisées par le JSX
+  const reviewsForUi = [...(safePayload.reviews || [])].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
   const journalEntriesCount = safePayload.journalEntries ?? (safeNotifications.length + safeAirbnbNotifications.length)
   const reviewEntriesCount = safePayload.reviewEntries ?? reviewsForUi.length
   const bookingsForUi = safeBookings
-  const reviewsForUi = [...(safePayload.reviews || [])].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
   const completedBookingsForUi = bookingsForUi.filter((booking) => {
     if (booking.status === 'completed') return true

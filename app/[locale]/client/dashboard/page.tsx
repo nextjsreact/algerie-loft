@@ -18,6 +18,7 @@ export default async function ClientDashboardPage({
   const { variant } = await searchParams
   const session = await requireRole(["client"], locale)
 
+
   const supabase = await createClient(true)
   const { data: bookingsData } = await supabase
     .from("bookings")

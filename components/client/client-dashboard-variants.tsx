@@ -31,7 +31,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
-type DashboardVariant = "executive" | "luxury" | "compact"
+import { ClientDashboardCustomVariants } from "@/components/client/client-dashboard-variants-custom"
+
+type DashboardVariant = "executive" | "luxury" | "compact" | "cards" | "master-detail" | "progress"
+
 
 interface DashboardVariantProps {
   bookings: any[]
@@ -514,7 +517,23 @@ function CompactDashboard({ bookings, locale, clientName }: { bookings: any[]; l
 export function ClientDashboardVariants({ bookings, locale, clientName, variant }: DashboardVariantProps) {
   const dashboardBookings = useMemo(() => bookings || [], [bookings])
 
+  // legacy variants
   if (variant === "luxury") return <LuxuryDashboard bookings={dashboardBookings} locale={locale} clientName={clientName} />
   if (variant === "compact") return <CompactDashboard bookings={dashboardBookings} locale={locale} clientName={clientName} />
+  if (variant === "executive") return <ExecutiveDashboard bookings={dashboardBookings} locale={locale} clientName={clientName} />
+
+  // new testable variants
+  if (variant === "cards" || variant === "master-detail" || variant === "progress") {
+    return (
+      <ClientDashboardCustomVariants
+        bookings={dashboardBookings}
+        locale={locale}
+        clientName={clientName}
+        variant={variant}
+      />
+    )
+  }
+
   return <ExecutiveDashboard bookings={dashboardBookings} locale={locale} clientName={clientName} />
 }
+

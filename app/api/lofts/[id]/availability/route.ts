@@ -26,7 +26,7 @@ export async function GET(
       );
     }
 
-    const supabase = await createClient();
+    const supabase = await createClient(true);
 
     // Check if loft exists and is published
     const { data: loft, error: loftError } = await supabase
@@ -49,8 +49,8 @@ export async function GET(
       });
     }
 
-    // Check for unavailable dates in the range
-    const { data: unavailableDates, error: availabilityError } = await supabase
+    // Check for unavailable dates (manually blocked)
+    const { data: blockedDates, error: blockError } = await supabase
       .from('loft_availability')
       .select('date, notes')
       .eq('loft_id', id)
@@ -58,8 +58,25 @@ export async function GET(
       .gte('date', checkIn)
       .lt('date', checkOut);
 
-    if (availabilityError) {
-      console.error("Availability check error:", availabilityError);
+    if (blockError) {
+      console.error("Blocked dates check error:", blockError);
+      return NextResponse.json(
+        { error: "Failed to check availability" },
+        { status: 500 }
+      );
+    }
+
+    // Check for overlapping reservations (confirmed or pending)
+    const { data: conflicts, error: conflictError } = await supabase
+      .from('reservations')
+      .select('id, check_in_date, check_out_date, status')
+      .eq('loft_id', id)
+      .in('status', ['confirmed', 'pending'])
+      .lt('check_in_date', checkOut)
+      .gt('check_out_date', checkIn);
+
+    if (conflictError) {
+      console.error("Reservation check error:", conflictError);
       return NextResponse.json(
         { error: "Failed to check availability" },
         { status: 500 }
@@ -71,19 +88,39 @@ export async function GET(
     const checkOutDate = new Date(checkOut);
     const stayDuration = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24));
 
-    // Check minimum and maximum stay requirements
+    // Determine availability
     let available = true;
-    let reason = "";
+    let reason = "Available for booking";
 
-    if (unavailableDates && unavailableDates.length > 0) {
+    if (blockedDates && blockedDates.length > 0) {
       available = false;
-      reason = "Some dates in the selected range are not available";
+      reason = "Certaines dates sont bloquées dans cette période";
+    } else if (conflicts && conflicts.length > 0) {
+      available = false;
+      reason = "Le loft est déjà réservé pour certaines de ces dates";
     } else if (loft.minimum_stay && stayDuration < loft.minimum_stay) {
       available = false;
-      reason = `Minimum stay is ${loft.minimum_stay} nights`;
+      reason = `Séjour minimum : ${loft.minimum_stay} nuits`;
     } else if (loft.maximum_stay && stayDuration > loft.maximum_stay) {
       available = false;
-      reason = `Maximum stay is ${loft.maximum_stay} nights`;
+      reason = `Séjour maximum : ${loft.maximum_stay} nuits`;
+    }
+
+    // Build the full list of unavailable dates for calendar display
+    const allUnavailableDates = [...(blockedDates || [])]
+    if (conflicts) {
+      conflicts.forEach((res: any) => {
+        const start = new Date(res.check_in_date)
+        const end = new Date(res.check_out_date)
+        const current = new Date(start)
+        while (current < end) {
+          const dateStr = current.toISOString().split('T')[0]
+          if (!allUnavailableDates.find(d => d.date === dateStr)) {
+            allUnavailableDates.push({ date: dateStr, notes: `Réservé (${res.status})` })
+          }
+          current.setDate(current.getDate() + 1)
+        }
+      })
     }
 
     return NextResponse.json({
@@ -92,7 +129,7 @@ export async function GET(
       stay_duration: stayDuration,
       minimum_stay: loft.minimum_stay,
       maximum_stay: loft.maximum_stay,
-      unavailable_dates: unavailableDates || []
+      unavailable_dates: allUnavailableDates
     });
 
   } catch (error) {

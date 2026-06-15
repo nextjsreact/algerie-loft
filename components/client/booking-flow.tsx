@@ -22,6 +22,7 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { ClientLoftView } from '@/lib/types'
+import { DateRangePicker } from '@/components/reservations/date-range-picker'
 
 interface BookingFlowProps {
   loft: ClientLoftView
@@ -327,30 +328,14 @@ export function BookingFlow({ loft, onBack, onComplete }: BookingFlowProps) {
               {/* Step 1: Dates and Guests */}
               {currentStep === 1 && (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="checkIn">Date d'arrivée</Label>
-                      <Input
-                        id="checkIn"
-                        type="date"
-                        value={bookingData.checkIn}
-                        onChange={(e) => handleInputChange('checkIn', e.target.value)}
-                        min={new Date().toISOString().split('T')[0]}
-                        className="h-12 md:h-10 text-base md:text-sm"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="checkOut">Date de départ</Label>
-                      <Input
-                        id="checkOut"
-                        type="date"
-                        value={bookingData.checkOut}
-                        onChange={(e) => handleInputChange('checkOut', e.target.value)}
-                        min={bookingData.checkIn || new Date().toISOString().split('T')[0]}
-                        className="h-12 md:h-10 text-base md:text-sm"
-                      />
-                    </div>
-                  </div>
+                  {/* Calendrier visuel avec jours indisponibles grisés */}
+                  <DateRangePicker
+                    loftId={loft.id}
+                    checkIn={bookingData.checkIn}
+                    checkOut={bookingData.checkOut}
+                    onCheckInChange={(date) => handleInputChange('checkIn', date)}
+                    onCheckOutChange={(date) => handleInputChange('checkOut', date)}
+                  />
 
                   <div className="space-y-2">
                     <Label htmlFor="guests">Nombre de voyageurs</Label>

@@ -19,6 +19,7 @@ export async function GET(
 
     const supabase = await createClient(true)
 
+    // 1. Réservations confirmées/pending
     let query = supabase
       .from('reservations')
       .select('check_in_date, check_out_date, status')
@@ -29,15 +30,32 @@ export async function GET(
       query = query.neq('id', excludeId)
     }
 
-    const { data, error } = await query
+    const { data: reservations, error: resvError } = await query
+    if (resvError) return NextResponse.json({ error: resvError.message }, { status: 500 })
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    // 2. Dates bloquées manuellement (loft_availability.is_available = false)
+    const { data: blockedDates, error: blockError } = await supabase
+      .from('loft_availability')
+      .select('date')
+      .eq('loft_id', id)
+      .eq('is_available', false)
 
-    // Return ranges — client will expand them into individual dates
-    const ranges = (data || []).map((r: any) => ({
+    if (blockError) return NextResponse.json({ error: blockError.message }, { status: 500 })
+
+    // Ranges des réservations
+    const reservationRanges = (reservations || []).map((r: any) => ({
       from: r.check_in_date,
-      to: r.check_out_date, // exclusive (checkout day is free)
+      to: r.check_out_date,
     }))
+
+    // Chaque jour bloqué devient un range d'un jour (from = date, to = date+1)
+    const blockedRanges = (blockedDates || []).map((b: any) => {
+      const d = new Date(b.date)
+      d.setDate(d.getDate() + 1)
+      return { from: b.date, to: d.toISOString().split('T')[0] }
+    })
+
+    const ranges = [...reservationRanges, ...blockedRanges]
 
     return NextResponse.json({ ranges })
   } catch (err) {

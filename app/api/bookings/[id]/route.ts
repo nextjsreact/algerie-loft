@@ -10,40 +10,22 @@ export async function GET(
     const { id } = await params;
     const supabase = await createClient()
 
-    // Get reservation with related data from reservations table
-    const { data: reservation, error } = await supabase
-      .from('reservations')
+    // Get booking with related data from bookings table
+    const { data: booking, error } = await supabase
+      .from('bookings')
       .select(`
         *,
         loft:lofts(*),
-        customer:customers(*)
+        partner:partners(id, name, business_name)
       `)
       .eq('id', id)
       .single()
 
-    if (error || !reservation) {
+    if (error || !booking) {
       return NextResponse.json(
         { error: 'Réservation non trouvée' },
         { status: 404 }
       )
-    }
-
-    // Transform reservation data to match expected booking format
-    const booking = {
-      id: reservation.id,
-      loft_id: reservation.loft_id,
-      customer_id: reservation.customer_id,
-      check_in_date: reservation.check_in_date,
-      check_out_date: reservation.check_out_date,
-      nights: reservation.nights,
-      guest_info: reservation.guest_info,
-      pricing: reservation.pricing,
-      status: reservation.status,
-      special_requests: reservation.special_requests,
-      created_at: reservation.created_at,
-      updated_at: reservation.updated_at,
-      loft: reservation.loft,
-      customer: reservation.customer
     }
 
     return NextResponse.json(booking)

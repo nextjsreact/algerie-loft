@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Search, MapPin, Heart, SlidersHorizontal, Users, BedDouble, Bath } from "lucide-react"
+import { Search, MapPin, Heart, SlidersHorizontal, Users, BedDouble, Bath, ArrowLeft } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { getZoneAreas } from "@/app/actions/zone-areas"
@@ -72,7 +72,14 @@ export function ClientLoftsView({ lofts, locale }: ClientLoftsViewProps) {
 
       {/* ─── Barre de recherche sticky ─── */}
       <div className="sticky top-0 z-20 border-b border-neutral-200/70 bg-white/90 backdrop-blur-md dark:border-neutral-800 dark:bg-neutral-950/90">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6">
+        <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6">
+          {/* Bouton retour */}
+          <div className="mb-3">
+            <button onClick={() => window.history.back()}
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-500 transition-colors hover:text-neutral-900 dark:hover:text-white">
+              <ArrowLeft className="h-4 w-4" /> Retour
+            </button>
+          </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             {/* Recherche */}
             <div className="relative flex-1">

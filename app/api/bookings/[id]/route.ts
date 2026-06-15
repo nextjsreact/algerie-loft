@@ -10,7 +10,7 @@ export async function GET(
     const { id } = await params;
     const supabase = await createClient()
 
-    // Get booking with related data from bookings table
+    // Try bookings table first, fall back to reservations
     const { data: booking, error } = await supabase
       .from('bookings')
       .select(`
@@ -19,16 +19,47 @@ export async function GET(
         partner:partners(id, name, business_name)
       `)
       .eq('id', id)
-      .single()
+      .maybeSingle()
 
-    if (error || !booking) {
+    if (booking) {
+      return NextResponse.json(booking)
+    }
+
+    // Fallback: check reservations table
+    const { data: reservation, error: resError } = await supabase
+      .from('reservations')
+      .select(`
+        *,
+        loft:lofts(*),
+        customer:customers(*)
+      `)
+      .eq('id', id)
+      .maybeSingle()
+
+    if (resError || !reservation) {
       return NextResponse.json(
         { error: 'Réservation non trouvée' },
         { status: 404 }
       )
     }
 
-    return NextResponse.json(booking)
+    // Transform to match the frontend BookingDetails shape
+    const bookingFromReservation = {
+      id: reservation.id,
+      booking_reference: reservation.booking_reference || reservation.id.slice(0, 8),
+      check_in: reservation.check_in_date,
+      check_out: reservation.check_out_date,
+      guests: reservation.guest_info?.adults || 1,
+      total_price: reservation.pricing?.total || reservation.pricing?.total_amount || 0,
+      status: reservation.status || 'confirmed',
+      payment_status: reservation.payment_status || 'paid',
+      special_requests: reservation.special_requests || null,
+      created_at: reservation.created_at,
+      loft: reservation.loft || null,
+      partner: null,
+    }
+
+    return NextResponse.json(bookingFromReservation)
 
   } catch (error) {
     console.error('Error fetching booking:', error)

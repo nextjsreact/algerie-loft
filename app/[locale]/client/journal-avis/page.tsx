@@ -6,7 +6,7 @@ import { NotificationsWrapper, type AirbnbNotificationItem } from '@/components/
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Loader2, Star, MessageSquareText, ThumbsUp, CalendarDays } from 'lucide-react'
+import { Loader2, Star, MessageSquareText, ThumbsUp, CalendarDays, ArrowLeft } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
@@ -351,6 +351,10 @@ export default function ClientJournalAvisPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
+      <button onClick={() => router.back()}
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-500 transition-colors hover:text-neutral-900 dark:hover:text-white mb-2">
+        <ArrowLeft className="h-4 w-4" /> Retour
+      </button>
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">{t('title', { defaultValue: 'Journal & Avis' })}</h1>

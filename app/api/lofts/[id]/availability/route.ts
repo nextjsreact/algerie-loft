@@ -66,8 +66,8 @@ export async function GET(
       );
     }
 
-    // Check for overlapping reservations (confirmed or pending)
-    const { data: conflicts, error: conflictError } = await supabase
+    // Check for overlapping reservations (table: reservations, employés)
+    const { data: resvConflicts, error: resvError } = await supabase
       .from('reservations')
       .select('id, check_in_date, check_out_date, status')
       .eq('loft_id', id)
@@ -75,13 +75,30 @@ export async function GET(
       .lt('check_in_date', checkOut)
       .gt('check_out_date', checkIn);
 
-    if (conflictError) {
-      console.error("Reservation check error:", conflictError);
+    if (resvError) {
+      console.error("Reservation check error:", resvError);
+      return NextResponse.json({ error: "Failed to check availability" }, { status: 500 });
+    }
+
+    // Check for overlapping bookings (table: bookings, clients)
+    const { data: bookConflicts, error: bookError } = await supabase
+      .from('bookings')
+      .select('id, check_in, check_out, status')
+      .eq('loft_id', id)
+      .in('status', ['confirmed', 'pending'])
+      .lt('check_in', checkOut)
+      .gt('check_out', checkIn);
+
+    if (bookError) {
+      console.error("Booking check error:", bookError);
       return NextResponse.json(
         { error: "Failed to check availability" },
         { status: 500 }
       );
     }
+
+    // Merge all conflicts
+    const allConflicts = [...(resvConflicts || []), ...(bookConflicts || [])]
 
     // Calculate stay duration
     const checkInDate = new Date(checkIn);
@@ -95,7 +112,7 @@ export async function GET(
     if (blockedDates && blockedDates.length > 0) {
       available = false;
       reason = "Certaines dates sont bloquées dans cette période";
-    } else if (conflicts && conflicts.length > 0) {
+    } else if (allConflicts.length > 0) {
       available = false;
       reason = "Le loft est déjà réservé pour certaines de ces dates";
     } else if (loft.minimum_stay && stayDuration < loft.minimum_stay) {
@@ -108,20 +125,18 @@ export async function GET(
 
     // Build the full list of unavailable dates for calendar display
     const allUnavailableDates = [...(blockedDates || [])]
-    if (conflicts) {
-      conflicts.forEach((res: any) => {
-        const start = new Date(res.check_in_date)
-        const end = new Date(res.check_out_date)
-        const current = new Date(start)
-        while (current < end) {
-          const dateStr = current.toISOString().split('T')[0]
-          if (!allUnavailableDates.find(d => d.date === dateStr)) {
-            allUnavailableDates.push({ date: dateStr, notes: `Réservé (${res.status})` })
-          }
-          current.setDate(current.getDate() + 1)
+    allConflicts.forEach((res: any) => {
+      const start = new Date(res.check_in_date || res.check_in)
+      const end = new Date(res.check_out_date || res.check_out)
+      const current = new Date(start)
+      while (current < end) {
+        const dateStr = current.toISOString().split('T')[0]
+        if (!allUnavailableDates.find(d => d.date === dateStr)) {
+          allUnavailableDates.push({ date: dateStr, notes: `Réservé (${res.status})` })
         }
-      })
-    }
+        current.setDate(current.getDate() + 1)
+      }
+    })
 
     return NextResponse.json({
       available,

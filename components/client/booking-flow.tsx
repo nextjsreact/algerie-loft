@@ -87,17 +87,26 @@ export function BookingFlow({ loft, onBack, onComplete }: BookingFlowProps) {
 
       if (response.ok) {
         if (data.available) {
-          setPricing(data.pricing)
+          const nights = data.stay_duration ||
+            Math.ceil((new Date(bookingData.checkOut).getTime() - new Date(bookingData.checkIn).getTime()) / 86400000)
+          const basePrice = nights * loft.price_per_night
+          setPricing({
+            basePrice,
+            nights,
+            pricePerNight: loft.price_per_night,
+            fees: { service: 0, cleaning: 0 },
+            total: basePrice
+          })
           setError(null)
         } else {
-          setError(data.message || 'Le loft n\'est pas disponible pour ces dates')
+          setError(data.reason || 'Le loft n\'est pas disponible pour ces dates')
           setPricing(null)
         }
       } else {
         setError(data.error || 'Erreur lors de la vérification de disponibilité')
         setPricing(null)
       }
-    } catch (err) {
+    } catch {
       setError('Erreur de connexion')
       setPricing(null)
     } finally {

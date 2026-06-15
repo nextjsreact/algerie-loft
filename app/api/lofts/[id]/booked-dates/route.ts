@@ -19,21 +19,31 @@ export async function GET(
 
     const supabase = await createClient(true)
 
-    // 1. Réservations confirmées/pending
-    let query = supabase
+    // 1. Réservations employés (reservations table)
+    let resvQuery = supabase
       .from('reservations')
       .select('check_in_date, check_out_date, status')
       .eq('loft_id', id)
       .in('status', ['confirmed', 'pending'])
 
     if (excludeId) {
-      query = query.neq('id', excludeId)
+      resvQuery = resvQuery.neq('id', excludeId)
     }
 
-    const { data: reservations, error: resvError } = await query
+    const { data: reservations, error: resvError } = await resvQuery
     if (resvError) return NextResponse.json({ error: resvError.message }, { status: 500 })
 
-    // 2. Dates bloquées manuellement (loft_availability.is_available = false)
+    // 2. Réservations client (bookings table)
+    let bookQuery = supabase
+      .from('bookings')
+      .select('check_in, check_out, status')
+      .eq('loft_id', id)
+      .in('status', ['confirmed', 'pending'])
+
+    const { data: bookings, error: bookError } = await bookQuery
+    if (bookError) return NextResponse.json({ error: bookError.message }, { status: 500 })
+
+    // 3. Dates bloquées manuellement (loft_availability.is_available = false)
     const { data: blockedDates, error: blockError } = await supabase
       .from('loft_availability')
       .select('date')
@@ -42,10 +52,16 @@ export async function GET(
 
     if (blockError) return NextResponse.json({ error: blockError.message }, { status: 500 })
 
-    // Ranges des réservations
+    // Ranges des réservations (reservations)
     const reservationRanges = (reservations || []).map((r: any) => ({
       from: r.check_in_date,
       to: r.check_out_date,
+    }))
+
+    // Ranges des bookings (clients)
+    const bookingRanges = (bookings || []).map((b: any) => ({
+      from: b.check_in,
+      to: b.check_out,
     }))
 
     // Chaque jour bloqué devient un range d'un jour (from = date, to = date+1)
@@ -55,7 +71,7 @@ export async function GET(
       return { from: b.date, to: d.toISOString().split('T')[0] }
     })
 
-    const ranges = [...reservationRanges, ...blockedRanges]
+    const ranges = [...reservationRanges, ...bookingRanges, ...blockedRanges]
 
     return NextResponse.json({ ranges })
   } catch (err) {

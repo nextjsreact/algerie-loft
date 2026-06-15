@@ -143,6 +143,54 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Vérifier les conflits de dates (bookings existants)
+    const { data: conflictBookings, error: conflictBookError } = await supabase
+      .from('bookings')
+      .select('id')
+      .eq('loft_id', loft_id)
+      .in('status', ['confirmed', 'pending'])
+      .lt('check_in', check_out)
+      .gt('check_out', check_in)
+
+    if (conflictBookError) {
+      console.error('[API Bookings] Conflict check error:', conflictBookError)
+      return NextResponse.json(
+        { error: 'Erreur lors de la vérification des conflits' },
+        { status: 500 }
+      )
+    }
+
+    if (conflictBookings && conflictBookings.length > 0) {
+      return NextResponse.json(
+        { error: 'Ce loft est déjà réservé pour ces dates' },
+        { status: 409 }
+      )
+    }
+
+    // Vérifier les conflits avec les réservations employés
+    const { data: conflictResvs, error: conflictResvError } = await supabase
+      .from('reservations')
+      .select('id')
+      .eq('loft_id', loft_id)
+      .in('status', ['confirmed', 'pending'])
+      .lt('check_in_date', check_out)
+      .gt('check_out_date', check_in)
+
+    if (conflictResvError) {
+      console.error('[API Bookings] Conflict check error (reservations):', conflictResvError)
+      return NextResponse.json(
+        { error: 'Erreur lors de la vérification des conflits' },
+        { status: 500 }
+      )
+    }
+
+    if (conflictResvs && conflictResvs.length > 0) {
+      return NextResponse.json(
+        { error: 'Ce loft est déjà réservé pour ces dates' },
+        { status: 409 }
+      )
+    }
+
     // Créer la réservation
     const { data: booking, error: bookingError } = await supabase
       .from('bookings')

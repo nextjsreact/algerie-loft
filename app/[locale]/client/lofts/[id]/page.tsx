@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/utils/supabase/client'
+import { DateRangePicker } from '@/components/reservations/date-range-picker'
 import {
   ArrowLeft, MapPin, X, ChevronLeft, ChevronRight,
   Users, BedDouble, Bath, Maximize2, Phone, Mail,
@@ -433,23 +434,15 @@ export default function LoftDetailPage({ params }: LoftDetailPageProps) {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Dates */}
-                <div className="grid grid-cols-2 gap-2 overflow-hidden rounded-2xl border border-neutral-200 dark:border-neutral-700">
-                  <div className="border-r border-neutral-200 px-3 py-2.5 dark:border-neutral-700">
-                    <label className="block text-[10px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Arrivée</label>
-                    <input type="date" value={checkIn}
-                      onChange={e => { setCheckIn(e.target.value); if (checkOut && checkOut <= e.target.value) setCheckOut('') }}
-                      min={new Date().toISOString().split('T')[0]}
-                      className="w-full text-sm font-medium text-neutral-900 dark:text-white bg-transparent outline-none" required />
-                  </div>
-                  <div className="px-3 py-2.5">
-                    <label className="block text-[10px] font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">Départ</label>
-                    <input type="date" value={checkOut}
-                      onChange={e => setCheckOut(e.target.value)}
-                      min={checkIn ? new Date(new Date(checkIn + 'T00:00:00').getTime() + 86400000).toISOString().split('T')[0] : new Date(Date.now() + 86400000).toISOString().split('T')[0]}
-                      className="w-full text-sm font-medium text-neutral-900 dark:text-white bg-transparent outline-none" required />
-                  </div>
-                </div>
+                {/* Calendrier disponibilités */}
+                <DateRangePicker
+                  loftId={resolvedParams.id}
+                  checkIn={checkIn}
+                  checkOut={checkOut}
+                  onCheckInChange={(date) => { setCheckIn(date); if (checkOut && checkOut <= date) setCheckOut('') }}
+                  onCheckOutChange={setCheckOut}
+                  numberOfMonths={1}
+                />
 
                 {/* Voyageurs */}
                 <div className="rounded-2xl border border-neutral-200 px-3 py-2.5 dark:border-neutral-700">

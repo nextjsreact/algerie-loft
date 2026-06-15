@@ -15,6 +15,7 @@ interface DateRangePickerProps {
   onCheckOutChange: (date: string) => void
   excludeReservationId?: string
   isEmployee?: boolean
+  numberOfMonths?: number
 }
 
 export function DateRangePicker({
@@ -25,6 +26,7 @@ export function DateRangePicker({
   onCheckOutChange,
   excludeReservationId,
   isEmployee = false,
+  numberOfMonths = 2,
 }: DateRangePickerProps) {
   const [bookedRanges, setBookedRanges] = useState<{ from: string; to: string }[]>([])
   const [loading, setLoading] = useState(false)
@@ -180,7 +182,7 @@ export function DateRangePicker({
           onDayClick={handleDayClick}
           disabled={isDisabled}
           locale={fr}
-          numberOfMonths={typeof window !== 'undefined' && window.innerWidth < 640 ? 1 : 2}
+          numberOfMonths={typeof window !== 'undefined' && window.innerWidth < 640 ? 1 : numberOfMonths}
           modifiers={{ booked: bookedDates }}
           modifiersStyles={{
             booked: {

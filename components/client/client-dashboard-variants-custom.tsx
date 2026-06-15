@@ -147,9 +147,10 @@ function ReferralSponsorCard({ locale }: { locale: string }) {
   )
 }
 
-type CustomVariant = "cards" | "master-detail" | "progress"
+export type CustomVariant = "cards" | "master-detail" | "progress"
 
 export function ClientDashboardCustomVariants({
+
   bookings,
   locale,
   clientName,

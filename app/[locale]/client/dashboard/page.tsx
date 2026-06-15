@@ -3,9 +3,12 @@ import { createClient } from "@/utils/supabase/server"
 import { ClientDashboardView } from "@/components/client/client-dashboard-view"
 import { ClientDashboardVariants } from "@/components/client/client-dashboard-variants"
 import { ClientDashboardPremiumVariants, type PremiumVariant } from "@/components/client/client-dashboard-premium-variants"
+import { ClientDashboardCustomVariants, type CustomVariant } from "@/components/client/client-dashboard-variants-custom"
 
 const PREMIUM_VARIANTS = ["elegant", "glass", "editorial"]
 const LEGACY_VARIANTS = ["executive", "luxury", "compact"]
+const CUSTOM_VARIANTS: CustomVariant[] = ["cards", "master-detail", "progress"]
+
 
 export default async function ClientDashboardPage({
   params,
@@ -64,6 +67,17 @@ export default async function ClientDashboardPage({
     )
   }
 
+  if (variant && CUSTOM_VARIANTS.includes(variant as CustomVariant)) {
+    return (
+      <ClientDashboardCustomVariants
+        bookings={bookings || []}
+        locale={locale}
+        clientName={session.user.full_name || session.user.email}
+        variant={variant as CustomVariant}
+      />
+    )
+  }
+
   if (variant && LEGACY_VARIANTS.includes(variant)) {
     return (
       <ClientDashboardVariants
@@ -74,6 +88,7 @@ export default async function ClientDashboardPage({
       />
     )
   }
+
 
   return (
     <ClientDashboardView

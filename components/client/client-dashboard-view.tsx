@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -88,6 +88,14 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
   [bookings])
   const completed = useMemo(() => bookings.filter(b => b.status === "completed"), [bookings])
   const totalSpent = useMemo(() => bookings.reduce((s, b) => s + Number(b.total_price || 0), 0), [bookings])
+
+  const [lofts, setLofts] = useState<any[]>([])
+  useEffect(() => {
+    fetch("/api/public/featured-lofts?limit=20&randomize=true")
+      .then(r => r.json())
+      .then(data => { if (data.lofts) setLofts(data.lofts.filter((l: any) => l.photo)) })
+      .catch(() => {})
+  }, [])
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
@@ -272,28 +280,98 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
         </div>
       </div>
 
-      {/* ═══════ QUICK LINKS ═══════ */}
+      {/* ═══════ CONCIERGE + DISCOVER ═══════ */}
       <div className="mx-auto max-w-7xl px-6 pb-10 lg:px-8">
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {[
-            { href: `/${locale}/client/lofts`, label: "Découvrir les lofts", icon: Search, color: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950" },
-            { href: `/${locale}/client/bookings`, label: "Mes réservations", icon: Calendar, color: "text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950" },
-            { href: `/${locale}/client/journal-avis`, label: "Journal & avis", icon: MessageSquareHeart, color: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950" },
-            { href: `/${locale}/client/profile`, label: "Mon profil", icon: Users, color: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950" },
-          ].map(link => (
-            <Link key={link.href} href={link.href}>
-              <Card className="border-0 bg-white dark:bg-neutral-900 shadow-sm hover:shadow-md transition cursor-pointer h-full">
-                <CardContent className="p-4 flex items-center gap-3">
-                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${link.color}`}>
-                    <link.icon className="h-5 w-5" />
-                  </div>
-                  <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{link.label}</span>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+        <div className="grid gap-4 lg:grid-cols-[1fr_1.5fr]">
+          {/* Concierge */}
+          <Card className="border-0 bg-neutral-950 dark:bg-neutral-800 text-white shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#c7a56e]/20 mb-4">
+                <MessageSquareHeart className="h-5 w-5 text-[#c7a56e]" />
+              </div>
+              <h3 className="text-lg font-semibold">Conciergerie</h3>
+              <p className="mt-2 text-sm text-white/50 leading-relaxed">
+                Check-in, besoins spécifiques, factures et assistance séjour centralisés.
+              </p>
+              <div className="mt-5 space-y-2">
+                <a href="tel:+213555000000" className="flex items-center gap-2 text-sm text-[#c7a56e] hover:underline">
+                  <span className="font-medium">+213 555 00 00 00</span>
+                </a>
+                <a href="mailto:conciergerie@loftalgerie.com" className="flex items-center gap-2 text-sm text-[#c7a56e] hover:underline">
+                  <span className="font-medium">conciergerie@loftalgerie.com</span>
+                </a>
+              </div>
+              <Button className="mt-6 w-full bg-white text-neutral-950 hover:bg-white/90 rounded-xl py-5 text-sm font-medium">
+                Contacter le support
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Discover button */}
+          <Link href={`/${locale}/client/lofts`}>
+            <Card className="border-0 bg-[#c7a56e] text-[#1a1a1a] shadow-lg hover:shadow-xl transition cursor-pointer h-full">
+              <CardContent className="p-6 flex flex-col justify-center h-full">
+                <Search className="h-8 w-8 mb-4" />
+                <h3 className="text-2xl font-semibold">Découvrir les lofts</h3>
+                <p className="mt-2 text-sm text-[#1a1a1a]/60">
+                  Explorez nos lofts à travers toute l&apos;Algérie
+                </p>
+                <div className="mt-6 flex items-center gap-2 text-sm font-medium">
+                  Voir la collection <ArrowRight className="h-4 w-4" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       </div>
+
+      {/* ═══════ LOFTS GRID ═══════ */}
+      {lofts.length > 0 && (
+        <div className="mx-auto max-w-7xl px-6 pb-16 lg:px-8">
+          <div className="flex items-end justify-between mb-7">
+            <div>
+              <h2 className="text-2xl font-light text-neutral-900 dark:text-white">Nos lofts</h2>
+              <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Sélection inspirante à travers l&apos;Algérie</p>
+            </div>
+            <Link href={`/${locale}/client/lofts`}>
+              <Button variant="ghost" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white text-sm">
+                Tout voir <ArrowRight className="ml-1.5 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {lofts.slice(0, 16).map((loft: any, i: number) => (
+              <motion.div
+                key={loft.id}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-30px" }}
+                transition={{ duration: 0.4, delay: i * 0.04 }}
+              >
+                <Link href={`/${locale}/client/lofts/${loft.id}`} className="group block">
+                  <div className="overflow-hidden rounded-2xl border border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 transition hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30">
+                    <div className="relative aspect-[4/3] bg-neutral-100 dark:bg-neutral-800">
+                      <Image src={loft.photo} alt={loft.name} fill sizes="(max-width:640px)100vw,(max-width:1024px)50vw,25vw" className="object-cover transition duration-500 group-hover:scale-105" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-medium text-neutral-900 dark:text-white truncate text-sm">{loft.name}</h3>
+                      <p className="mt-1 flex items-center gap-1 text-xs text-neutral-400 dark:text-neutral-500 truncate">
+                        <MapPin className="h-3 w-3 shrink-0" />{loft.zone || loft.address}
+                      </p>
+                      <div className="mt-3 flex items-center justify-between">
+                        <span className="text-sm font-semibold text-neutral-900 dark:text-white">{loft.price_per_night?.toLocaleString()} DA</span>
+                        <span className="text-[10px] text-neutral-400 dark:text-neutral-500">/ nuit</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

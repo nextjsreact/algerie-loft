@@ -1,13 +1,17 @@
 import { requireRole } from "@/lib/auth"
 import { createClient } from "@/utils/supabase/server"
 import { ClientDashboardView } from "@/components/client/client-dashboard-view"
+import { ClientDashboardVariants } from "@/components/client/client-dashboard-variants"
 
 export default async function ClientDashboardPage({
-  params
+  params,
+  searchParams
 }: {
   params: Promise<{ locale: string }>
+  searchParams: Promise<{ variant?: string }>
 }) {
   const { locale } = await params
+  const { variant } = await searchParams
   const session = await requireRole(["client"], locale)
 
   // Récupérer les réservations du client
@@ -44,6 +48,17 @@ export default async function ClientDashboardPage({
       lofts: loft ? { ...loft, loft_photos: loftPhotos } : null
     }
   })
+
+  if (variant === "executive" || variant === "luxury" || variant === "compact") {
+    return (
+      <ClientDashboardVariants
+        bookings={bookings || []}
+        locale={locale}
+        clientName={session.user.full_name || session.user.email}
+        variant={variant}
+      />
+    )
+  }
 
   return (
     <ClientDashboardView

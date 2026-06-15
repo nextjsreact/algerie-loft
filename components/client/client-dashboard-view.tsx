@@ -139,13 +139,12 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
       <div className="relative overflow-hidden bg-neutral-950 dark:bg-neutral-900">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_50%,rgba(199,165,110,0.2),transparent_60%)] dark:bg-[radial-gradient(ellipse_at_20%_50%,rgba(199,165,110,0.15),transparent_60%)]" />
         <div className="relative mx-auto max-w-7xl px-6 pt-16 pb-20 lg:px-8">
-          <p className="text-[10px] font-medium tracking-[0.3em] text-[#c7a56e]/70 uppercase">Loft Algérie</p>
           <h1 className="mt-5 max-w-2xl text-4xl font-light leading-tight text-white lg:text-6xl">
-            {clientName.split(" ")[0]},<br />
-            <span className="font-normal text-[#c7a56e]">bonjour.</span>
+            Bonjour <span className="font-normal text-[#c7a56e]">{clientName.split(" ")[0]}</span>,
           </h1>
           <p className="mt-5 max-w-lg text-lg text-white/45 leading-relaxed">
-            Réservations, découvertes et souvenirs — tout au même endroit.
+            Conciergerie Loft Algérie<br />
+            Check-in, besoins spécifiques, factures et assistance séjour centralisés.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href={`/${locale}/client/lofts`}>
@@ -157,6 +156,11 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
               <Button variant="outline" className="border-white/15 text-white hover:bg-white/10 rounded-full px-7 py-5 text-sm font-medium tracking-wide">
                 <MessageSquareHeart className="mr-2 h-4 w-4" /> Mon journal
               </Button>
+            </Link>
+          </div>
+          <div className="mt-6">
+            <Link href={`/${locale}/client/support`}>
+              <span className="text-sm text-[#c7a56e] hover:underline cursor-pointer">Contacter le support</span>
             </Link>
           </div>
         </div>

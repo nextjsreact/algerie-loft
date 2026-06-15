@@ -289,16 +289,19 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#c7a56e]/20 mb-4">
                 <MessageSquareHeart className="h-5 w-5 text-[#c7a56e]" />
               </div>
-              <h3 className="text-lg font-semibold">Conciergerie</h3>
+              <h3 className="text-lg font-semibold text-white">Conciergerie</h3>
               <p className="mt-2 text-sm text-white/50 leading-relaxed">
                 Check-in, besoins spécifiques, factures et assistance séjour centralisés.
               </p>
               <div className="mt-5 space-y-2">
-                <a href="tel:+213555000000" className="flex items-center gap-2 text-sm text-[#c7a56e] hover:underline">
-                  <span className="font-medium">+213 555 00 00 00</span>
+                <a href="tel:+213560362543" className="flex items-center gap-2 text-sm text-[#c7a56e] hover:underline">
+                  <span className="font-medium">+213 560 36 25 43</span>
                 </a>
-                <a href="mailto:conciergerie@loftalgerie.com" className="flex items-center gap-2 text-sm text-[#c7a56e] hover:underline">
-                  <span className="font-medium">conciergerie@loftalgerie.com</span>
+                <a href="mailto:contact@loftalgerie.com" className="flex items-center gap-2 text-sm text-[#c7a56e] hover:underline">
+                  <span className="font-medium">contact@loftalgerie.com</span>
+                </a>
+                <a href="https://wa.me/213560362543" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-[#c7a56e] hover:underline">
+                  <span className="font-medium">WhatsApp</span>
                 </a>
               </div>
               <Button className="mt-6 w-full bg-white text-neutral-950 hover:bg-white/90 rounded-xl py-5 text-sm font-medium">
@@ -309,14 +312,14 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
 
           {/* Discover button */}
           <Link href={`/${locale}/client/lofts`}>
-            <Card className="border-0 bg-[#c7a56e] text-[#1a1a1a] shadow-lg hover:shadow-xl transition cursor-pointer h-full">
+            <Card className="border-0 bg-[#c7a56e] shadow-lg hover:shadow-xl transition cursor-pointer h-full">
               <CardContent className="p-6 flex flex-col justify-center h-full">
-                <Search className="h-8 w-8 mb-4" />
-                <h3 className="text-2xl font-semibold">Découvrir les lofts</h3>
+                <Search className="h-8 w-8 mb-4 text-[#1a1a1a]" />
+                <h3 className="text-2xl font-semibold text-[#1a1a1a]">Découvrir les lofts</h3>
                 <p className="mt-2 text-sm text-[#1a1a1a]/60">
                   Explorez nos lofts à travers toute l&apos;Algérie
                 </p>
-                <div className="mt-6 flex items-center gap-2 text-sm font-medium">
+                <div className="mt-6 flex items-center gap-2 text-sm font-medium text-[#1a1a1a]">
                   Voir la collection <ArrowRight className="h-4 w-4" />
                 </div>
               </CardContent>

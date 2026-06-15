@@ -6,22 +6,80 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { 
-  Search, 
-  MapPin, 
-  Calendar, 
-  Users, 
+import {
+  Search,
+  MapPin,
+  Calendar,
+  Users,
   ArrowRight,
   Clock,
-  CheckCircle,
+  CheckCircle2,
   XCircle,
-  MessageSquareText
+  MessageSquareHeart,
+  Home,
+  Wallet,
+  Sunrise,
+  Sparkles,
+  ChevronRight,
+  Globe,
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { getZoneAreas } from "@/app/actions/zone-areas"
 import { useTranslations, useLocale } from "next-intl"
+
+/* ─── helpers ─────────────────────────────────────────────── */
+
+function fmtDate(value: string | undefined, locale: string) {
+  if (!value) return "—"
+  const loc = locale === "ar" ? "ar-DZ" : locale === "en" ? "en-US" : "fr-FR"
+  return new Date(value).toLocaleDateString(loc, { day: "numeric", month: "short" })
+}
+
+function fmtDateFull(value: string | undefined, locale: string) {
+  if (!value) return "—"
+  const loc = locale === "ar" ? "ar-DZ" : locale === "en" ? "en-US" : "fr-FR"
+  return new Date(value).toLocaleDateString(loc, { day: "numeric", month: "long", year: "numeric" })
+}
+
+function nights(a?: string, b?: string) {
+  if (!a || !b) return null
+  const ms = new Date(b).getTime() - new Date(a).getTime()
+  return Number.isNaN(ms) ? null : Math.max(0, Math.round(ms / 864e5))
+}
+
+function statusCfg(s: string) {
+  const m: Record<string, { l: string; c: string; dc: string; i: typeof Clock }> = {
+    pending:   { l: "En attente",  c: "bg-amber-50 text-amber-700 border-amber-200",  dc: "dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800",  i: Clock },
+    confirmed: { l: "Confirmée",   c: "bg-emerald-50 text-emerald-700 border-emerald-200", dc: "dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800", i: CheckCircle2 },
+    completed: { l: "Terminée",    c: "bg-sky-50 text-sky-700 border-sky-200",       dc: "dark:bg-sky-950 dark:text-sky-300 dark:border-sky-800",       i: CheckCircle2 },
+    cancelled: { l: "Annulée",     c: "bg-rose-50 text-rose-700 border-rose-200",     dc: "dark:bg-rose-950 dark:text-rose-300 dark:border-rose-800",     i: XCircle },
+  }
+  return m[s] || m.pending
+}
+
+function Pill({ status }: { status: string }) {
+  const { l, c, dc, i: I } = statusCfg(status)
+  return (
+    <Badge className={`${c} ${dc} border font-medium rounded-full px-2.5 py-0.5 text-[11px]`}>
+      <I className="h-3 w-3 mr-1" />{l}
+    </Badge>
+  )
+}
+
+function getProgress(b: any) {
+  if (b.status === "cancelled") return 0
+  if (b.status === "completed") return 100
+  const now = Date.now()
+  const start = new Date(b.check_in).getTime()
+  const end = new Date(b.check_out).getTime()
+  if (now < start) return 0
+  if (now > end) return 100
+  return Math.round(((now - start) / (end - start)) * 100)
+}
+
+/* ─── component ───────────────────────────────────────────── */
 
 interface ClientDashboardViewProps {
   bookings: any[]
@@ -34,316 +92,233 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
   const t = useTranslations("client.dashboard")
   const tStatus = useTranslations("client.bookingStatus")
   const currentLocale = useLocale()
-  const [searchData, setSearchData] = useState({
-    destination: "",
-    checkIn: "",
-    checkOut: "",
-    guests: 1
-  })
+
+  const [searchData, setSearchData] = useState({ destination: "", checkIn: "", checkOut: "", guests: 1 })
   const [zones, setZones] = useState<{ id: string; name: string }[]>([])
   const [lofts, setLofts] = useState<any[]>([])
 
-  useEffect(() => {
-    getZoneAreas().then((data) => setZones(data))
-  }, [])
+  useEffect(() => { getZoneAreas().then(data => setZones(data)) }, [])
 
-  // Fetcher les lofts depuis la MÊME API que la homepage
   useEffect(() => {
     const controller = new AbortController()
-    fetch('/api/public/featured-lofts?limit=25&randomize=true', { signal: controller.signal })
+    fetch("/api/public/featured-lofts?limit=25&randomize=true", { signal: controller.signal })
       .then(r => r.json())
-      .then(data => {
-        if (data.lofts?.length > 0) {
-          setLofts(data.lofts)
-        }
-      })
-      .catch(e => console.error('[dashboard] fetch lofts error:', e))
+      .then(data => { if (data.lofts?.length > 0) setLofts(data.lofts) })
+      .catch(() => {})
     return () => controller.abort()
   }, [])
 
   const filteredLofts = useMemo(() => {
     if (!searchData.destination) return lofts
-    return lofts.filter((loft) => {
-      const zoneName = loft.zone || loft.address
-      return zoneName?.toLowerCase().includes(searchData.destination.toLowerCase())
+    return lofts.filter(loft => {
+      const zone = loft.zone || loft.address
+      return zone?.toLowerCase().includes(searchData.destination.toLowerCase())
     })
   }, [lofts, searchData.destination])
+
+  const upcoming = useMemo(() =>
+    bookings.filter(b => b.status !== "cancelled" && new Date(b.check_in) >= new Date()),
+  [bookings])
+  const completed = useMemo(() => bookings.filter(b => b.status === "completed"), [bookings])
+  const totalSpent = useMemo(() => bookings.reduce((s, b) => s + Number(b.total_price || 0), 0), [bookings])
+  const nextStay = upcoming[0]
 
   const handleSearch = () => {
     const params = new URLSearchParams({
       destination: searchData.destination,
       checkIn: searchData.checkIn,
       checkOut: searchData.checkOut,
-      guests: searchData.guests.toString()
+      guests: searchData.guests.toString(),
     })
     router.push(`/${locale}/client/search?${params}`)
   }
 
-  const getBookingStatusBadge = (status: string) => {
-    const config: Record<string, { label: string; className: string; icon: any }> = {
-      pending: { label: tStatus("pending"), className: "bg-yellow-100 text-yellow-800", icon: Clock },
-      confirmed: { label: tStatus("confirmed"), className: "bg-green-100 text-green-800", icon: CheckCircle },
-      cancelled: { label: tStatus("cancelled"), className: "bg-red-100 text-red-800", icon: XCircle },
-      completed: { label: tStatus("completed"), className: "bg-blue-100 text-blue-800", icon: CheckCircle }
-    }
-    const { label, className, icon: Icon } = config[status] || config.pending
-    return (
-      <Badge className={className}>
-        <Icon className="h-3 w-3 mr-1" />
-        {label}
-      </Badge>
-    )
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
-        <div className="absolute inset-0 opacity-10">
-          <div className="w-full h-full" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }}></div>
-        </div>
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <h1 className="text-4xl font-bold mb-2">{t("welcome", { name: clientName })}</h1>
-          <p className="text-blue-100 text-lg mb-8">{t("subtitle")}</p>
-          
-          <Card className="max-w-5xl mx-auto shadow-2xl">
-            <CardContent className="p-2">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-                <div className="relative">
-                  <label className="text-xs font-semibold text-gray-700 ml-4 mb-1 block">{t("destination")}</label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <select
-                      value={searchData.destination}
-                      onChange={(e) => setSearchData({ ...searchData, destination: e.target.value })}
-                      className="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    >
-                      <option value="">{t("destinationPlaceholder")}</option>
-                      {zones.map((zone) => (
-                        <option key={zone.id} value={zone.name}>{zone.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                
-                <div className="relative">
-                  <label className="text-xs font-semibold text-gray-700 ml-4 mb-1 block">{t("checkIn")}</label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      type="date"
-                      value={searchData.checkIn}
-                      onChange={(e) => setSearchData({ ...searchData, checkIn: e.target.value })}
-                      min={new Date().toISOString().split('T')[0]}
-                      className="pl-10 border-0 focus-visible:ring-0"
-                    />
-                  </div>
-                </div>
-                
-                <div className="relative">
-                  <label className="text-xs font-semibold text-gray-700 ml-4 mb-1 block">{t("checkOut")}</label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      type="date"
-                      value={searchData.checkOut}
-                      onChange={(e) => setSearchData({ ...searchData, checkOut: e.target.value })}
-                      min={searchData.checkIn || new Date().toISOString().split('T')[0]}
-                      className="pl-10 border-0 focus-visible:ring-0"
-                    />
-                  </div>
-                </div>
-                
-                <div className="relative">
-                  <label className="text-xs font-semibold text-gray-700 ml-4 mb-1 block">{t("guests")}</label>
-                  <div className="relative">
-                    <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      type="number"
-                      min={1}
-                      value={searchData.guests}
-                      onChange={(e) => setSearchData({ ...searchData, guests: parseInt(e.target.value) })}
-                      className="pl-10 border-0 focus-visible:ring-0"
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <Button 
-                onClick={handleSearch}
-                className="w-full mt-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-6"
-              >
-                <Search className="h-5 w-5 mr-2" />
-                {t("searchButton")}
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-4 -mt-8 relative z-10">
-        <Card className="p-4 shadow-lg">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-full bg-blue-50 text-blue-700">
-                <MessageSquareText className="h-5 w-5" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900">{t("journalAvis")}</h2>
-                <p className="text-sm text-gray-500 mt-1">{t("journalAvisSubtitle")}</p>
-              </div>
-            </div>
-            <Link href={`/${locale}/client/journal-avis`}>
-              <Button variant="outline">
-                {t("openJournalAvis")}
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            </Link>
-          </div>
-        </Card>
-      </div>
-
-      <div className="container mx-auto px-4 py-12 space-y-12">
-        {/* Mes réservations */}
-        {bookings.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-3xl font-bold text-gray-900">{t("myBookings")}</h2>
-                <p className="text-gray-600">{t("myBookingsSubtitle")}</p>
-              </div>
-              <Link href={`/${locale}/client/bookings`}>
-                <Button variant="outline">
-                  {t("viewAll")}
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </Link>
-            </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {bookings.map((booking) => (
-                <Card key={booking.id} className="overflow-hidden hover:shadow-xl transition-shadow">
-                  <div className="relative h-48">
-                    {booking.lofts?.loft_photos?.[0]?.url ? (
-                      <Image
-                        src={booking.lofts.loft_photos[0].url}
-                        alt={booking.lofts.name}
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                        <MapPin className="h-16 w-16 text-gray-400" />
-                      </div>
-                    )}
-                    <div className="absolute top-3 right-3">
-                      {getBookingStatusBadge(booking.status)}
-                    </div>
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-bold text-lg mb-2">{booking.lofts?.name}</h3>
-                    <p className="text-sm text-gray-600 mb-3 flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {booking.lofts?.address}
-                    </p>
-                    <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
-                        {new Date(booking.check_in_date).toLocaleDateString(currentLocale === 'ar' ? 'ar-DZ' : currentLocale === 'en' ? 'en-US' : 'fr-FR')}
-                      </span>
-                      <span>→</span>
-                      <span>{new Date(booking.check_out_date).toLocaleDateString(currentLocale === 'ar' ? 'ar-DZ' : currentLocale === 'en' ? 'en-US' : 'fr-FR')}</span>
-                    </div>
-                    <div className="flex items-center justify-between pt-3 border-t">
-                      <span className="font-bold text-lg text-blue-600">
-                        {booking.total_price?.toLocaleString()} DA
-                      </span>
-                      <Link href={`/${locale}/client/bookings/${booking.id}`}>
-                        <Button size="sm" variant="outline">{t("details")}</Button>
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Lofts — même API que la homepage */}
-        <section>
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                {searchData.destination ? t("loftsAt", { zone: searchData.destination }) : t("availableLofts")}
-              </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t("availableLoftsSubtitle")}</p>
-            </div>
+    <div className="min-h-screen bg-[#faf9f6] dark:bg-neutral-950">
+      {/* ═══════ HERO ═══════ */}
+      <div className="relative overflow-hidden bg-neutral-950 dark:bg-neutral-900">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_50%,rgba(199,165,110,0.2),transparent_60%)] dark:bg-[radial-gradient(ellipse_at_20%_50%,rgba(199,165,110,0.15),transparent_60%)]" />
+        <div className="relative mx-auto max-w-7xl px-6 pt-16 pb-20 lg:px-8">
+          <p className="text-[10px] font-medium tracking-[0.3em] text-[#c7a56e]/70 uppercase">Loft Algérie</p>
+          <h1 className="mt-5 max-w-2xl text-4xl font-light leading-tight text-white lg:text-6xl">
+            {clientName.split(" ")[0]},<br />
+            <span className="font-normal text-[#c7a56e]">bonjour.</span>
+          </h1>
+          <p className="mt-5 max-w-lg text-lg text-white/45 leading-relaxed">
+            Réservations, découvertes et souvenirs — tout au même endroit.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
             <Link href={`/${locale}/client/lofts`}>
-              <Button variant="outline" className="gap-2">
-                {t("viewAll")}
-                <ArrowRight className="h-4 w-4" />
+              <Button className="bg-[#c7a56e] text-[#1a1a1a] hover:bg-[#d4b67a] rounded-full px-7 py-5 text-sm font-medium tracking-wide">
+                <Search className="mr-2 h-4 w-4" /> Réserver un loft
+              </Button>
+            </Link>
+            <Link href={`/${locale}/client/journal-avis`}>
+              <Button variant="outline" className="border-white/15 text-white hover:bg-white/10 rounded-full px-7 py-5 text-sm font-medium tracking-wide">
+                <MessageSquareHeart className="mr-2 h-4 w-4" /> Mon journal
               </Button>
             </Link>
           </div>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredLofts.length === 0 && (
-              <div className="col-span-3 text-center py-16 text-gray-400">
-                <MapPin className="h-14 w-14 mx-auto mb-4 opacity-40" />
-                <p className="text-base">{t("noLoftsFound")}</p>
+      {/* ═══════ STATS ═══════ */}
+      <div className="mx-auto max-w-7xl px-6 -mt-8 relative z-10 lg:px-8">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {[
+            { icon: Home, label: "Séjours", v: bookings.length, color: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950" },
+            { icon: Sunrise, label: "À venir", v: upcoming.length, color: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950" },
+            { icon: CheckCircle2, label: "Terminés", v: completed.length, color: "text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950" },
+            { icon: Wallet, label: "Dépensé", v: `${totalSpent.toLocaleString("fr-DZ")} DA`, color: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950" },
+          ].map(s => (
+            <Card key={s.label} className="border-0 bg-white dark:bg-neutral-900 shadow-lg shadow-black/5 dark:shadow-black/20 rounded-2xl">
+              <CardContent className="p-5 flex items-center gap-3.5">
+                <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${s.color}`}>
+                  <s.icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-[11px] text-neutral-500 dark:text-neutral-400">{s.label}</p>
+                  <p className="text-xl font-bold text-neutral-900 dark:text-white">{s.v}</p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* ═══════ NEXT STAY ═══════ */}
+      {nextStay && (
+        <div className="mx-auto max-w-7xl px-6 mt-10 lg:px-8">
+          <h2 className="text-[10px] font-medium tracking-[0.3em] text-neutral-400 dark:text-neutral-500 uppercase mb-5">Prochain séjour</h2>
+          <Link href={`/${locale}/client/bookings/${nextStay.id}`} className="group block">
+            <div className="overflow-hidden rounded-3xl border border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-lg shadow-black/5 dark:shadow-black/20">
+              <div className="grid lg:grid-cols-[1fr_1.3fr]">
+                <div className="relative h-56 lg:h-auto lg:min-h-[280px]">
+                  {nextStay.lofts?.loft_photos?.[0]?.url ? (
+                    <Image src={nextStay.lofts.loft_photos[0].url} alt={nextStay.lofts?.name || ""} fill className="object-cover transition duration-700 group-hover:scale-105" />
+                  ) : (
+                    <div className="h-full bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700 flex items-center justify-center">
+                      <Home className="h-14 w-14 text-neutral-300 dark:text-neutral-600" />
+                    </div>
+                  )}
+                </div>
+                <div className="p-7 lg:p-10 flex flex-col justify-center">
+                  <div className="flex items-center gap-3">
+                    <Pill status={nextStay.status} />
+                    {getProgress(nextStay) > 0 && getProgress(nextStay) < 100 && (
+                      <span className="text-[11px] font-bold text-blue-600 dark:text-blue-400">{getProgress(nextStay)}% en cours</span>
+                    )}
+                  </div>
+                  <h3 className="mt-4 text-2xl lg:text-3xl font-light text-neutral-900 dark:text-white">{nextStay.lofts?.name || "Séjour"}</h3>
+                  <p className="mt-2 flex items-center gap-1.5 text-sm text-neutral-500 dark:text-neutral-400">
+                    <MapPin className="h-3.5 w-3.5" /> {nextStay.lofts?.address}
+                  </p>
+
+                  {/* progress bar */}
+                  {getProgress(nextStay) > 0 && getProgress(nextStay) < 100 && (
+                    <div className="mt-5 flex items-center gap-3">
+                      <div className="h-2 flex-1 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                        <div className="h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all duration-700" style={{ width: `${getProgress(nextStay)}%` }} />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-6 grid grid-cols-3 gap-3">
+                    {[
+                      { l: "Arrivée", v: fmtDate(nextStay.check_in, locale) },
+                      { l: "Départ", v: fmtDate(nextStay.check_out, locale) },
+                      { l: "Durée", v: `${nights(nextStay.check_in, nextStay.check_out) || "—"} nuits` },
+                    ].map(x => (
+                      <div key={x.l} className="rounded-xl bg-neutral-50 dark:bg-neutral-800 p-3.5 text-center">
+                        <p className="text-[9px] tracking-widest text-neutral-400 dark:text-neutral-500 uppercase">{x.l}</p>
+                        <p className="mt-1 text-sm font-medium text-neutral-900 dark:text-white">{x.v}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 flex items-center gap-2 text-sm font-medium text-[#c7a56e] group-hover:gap-3 transition-all">
+                    Voir les détails <ChevronRight className="h-4 w-4" />
+                  </div>
+                </div>
               </div>
-            )}
-            {filteredLofts.map((loft: any, i: number) => {
-              const location = loft.zone || loft.address
+            </div>
+          </Link>
+        </div>
+      )}
+
+      {/* ═══════ BOOKINGS ═══════ */}
+      <div className="mx-auto max-w-7xl px-6 mt-14 lg:px-8">
+        <div className="flex items-end justify-between mb-7">
+          <div>
+            <h2 className="text-2xl font-light text-neutral-900 dark:text-white">Mes séjours</h2>
+            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Historique de vos réservations</p>
+          </div>
+          <Link href={`/${locale}/client/bookings`}>
+            <Button variant="ghost" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white text-sm">
+              Tout voir <ArrowRight className="ml-1.5 h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
+
+        {bookings.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-neutral-200 dark:border-neutral-700 py-16 text-center">
+            <Home className="mx-auto h-12 w-12 text-neutral-300 dark:text-neutral-600" />
+            <p className="mt-4 text-neutral-500 dark:text-neutral-400">Aucun séjour pour le moment</p>
+            <Link href={`/${locale}/client/lofts`}>
+              <Button className="mt-6 bg-[#c7a56e] text-[#1a1a1a] hover:bg-[#d4b67a] rounded-full px-7">
+                Découvrir les lofts <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {bookings.slice(0, 6).map((b, i) => {
+              const progress = getProgress(b)
               return (
                 <motion.div
-                  key={loft.id}
-                  initial={{ opacity: 0, y: 30 }}
+                  key={b.id}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.6, delay: (i % 3) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.5, delay: i * 0.06 }}
                 >
-                  <Link href={`/${locale}/client/lofts/${loft.id}`} className="group block">
-                    {/* Photo — même ratio que landing page */}
-                    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-neutral-200 dark:bg-neutral-800">
-                      {loft.photo ? (
-                        <Image
-                          src={loft.photo}
-                          alt={loft.name}
-                          fill
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700">
-                          <MapPin className="h-12 w-12 text-neutral-400" />
-                        </div>
-                      )}
-                      {/* Overlay hover */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                    </div>
-
-                    {/* Infos */}
-                    <div className="mt-4 flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <h3 className="text-lg font-medium text-neutral-900 dark:text-white truncate">{loft.name}</h3>
-                        {location && (
-                          <p className="mt-1 flex items-center gap-1.5 text-sm text-neutral-500 dark:text-neutral-400">
-                            <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
-                            <span className="truncate">{location}</span>
-                          </p>
+                  <Link href={`/${locale}/client/bookings/${b.id}`} className="group block">
+                    <div className="overflow-hidden rounded-2xl border border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 transition hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30">
+                      <div className="relative aspect-[4/3] bg-neutral-100 dark:bg-neutral-800">
+                        {b.lofts?.loft_photos?.[0]?.url ? (
+                          <Image src={b.lofts.loft_photos[0].url} alt={b.lofts?.name || ""} fill className="object-cover transition duration-500 group-hover:scale-105" />
+                        ) : (
+                          <div className="flex h-full items-center justify-center"><Home className="h-10 w-10 text-neutral-300 dark:text-neutral-600" /></div>
                         )}
+                        <div className="absolute left-3 top-3"><Pill status={b.status} /></div>
+
+                        {/* overlay price on hover */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100">
+                          <p className="text-sm font-semibold text-white">{Number(b.total_price || 0).toLocaleString("fr-DZ")} DA</p>
+                        </div>
                       </div>
-                      <div className="text-right flex-shrink-0">
-                        <span className="text-base font-semibold text-neutral-900 dark:text-white">
-                          {loft.price_per_night?.toLocaleString()} DA
-                        </span>
-                        <span className="block text-xs text-neutral-500 dark:text-neutral-400">
-                          {t("perNight")}
-                        </span>
+
+                      <div className="p-4">
+                        <h3 className="font-medium text-neutral-900 dark:text-white truncate">{b.lofts?.name || "Loft"}</h3>
+                        <p className="mt-1 flex items-center gap-1 text-xs text-neutral-400 dark:text-neutral-500 truncate">
+                          <MapPin className="h-3 w-3 shrink-0" />{b.lofts?.address}
+                        </p>
+
+                        {/* mini progress */}
+                        {progress > 0 && progress < 100 && (
+                          <div className="mt-3 flex items-center gap-2">
+                            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                              <div className="h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400" style={{ width: `${progress}%` }} />
+                            </div>
+                            <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400">{progress}%</span>
+                          </div>
+                        )}
+
+                        <div className="mt-3 flex items-center justify-between border-t border-neutral-50 dark:border-neutral-800 pt-3">
+                          <span className="text-xs text-neutral-400 dark:text-neutral-500">{fmtDate(b.check_in, locale)} → {fmtDate(b.check_out, locale)}</span>
+                          <span className="text-sm font-semibold text-neutral-900 dark:text-white">{Number(b.total_price || 0).toLocaleString("fr-DZ")} DA</span>
+                        </div>
                       </div>
                     </div>
                   </Link>
@@ -351,22 +326,108 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
               )
             })}
           </div>
-        </section>
-
-        {/* Message si pas de réservations */}
-        {bookings.length === 0 && (
-          <Card className="p-12 text-center">
-            <Calendar className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-            <h3 className="text-2xl font-bold mb-2">{t("noBookings")}</h3>
-            <p className="text-gray-600 mb-6">{t("noBookingsDescription")}</p>
-            <Link href={`/${locale}/client/lofts`}>
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600">
-                {t("discoverLofts")}
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            </Link>
-          </Card>
         )}
+      </div>
+
+      {/* ═══════ SEARCH LOFTS ═══════ */}
+      <div className="mx-auto max-w-7xl px-6 mt-16 lg:px-8">
+        <div className="flex items-end justify-between mb-7">
+          <div>
+            <h2 className="text-2xl font-light text-neutral-900 dark:text-white">
+              {searchData.destination ? `Lofts à ${searchData.destination}` : "Découvrir nos lofts"}
+            </h2>
+            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Sélection inspirante à travers l&apos;Algérie</p>
+          </div>
+          <Link href={`/${locale}/client/lofts`}>
+            <Button variant="ghost" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white text-sm">
+              Tout voir <ArrowRight className="ml-1.5 h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
+
+        {/* mini search bar */}
+        <div className="mb-8 rounded-2xl border border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3 shadow-sm">
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+              <select
+                value={searchData.destination}
+                onChange={e => setSearchData({ ...searchData, destination: e.target.value })}
+                className="w-full rounded-xl border-0 bg-neutral-50 dark:bg-neutral-800 pl-9 pr-3 py-2.5 text-sm text-neutral-900 dark:text-white outline-none"
+              >
+                <option value="">Toutes les zones</option>
+                {zones.map(z => <option key={z.id} value={z.name}>{z.name}</option>)}
+              </select>
+            </div>
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+              <Input type="date" value={searchData.checkIn} onChange={e => setSearchData({ ...searchData, checkIn: e.target.value })} min={new Date().toISOString().split("T")[0]} className="pl-9 border-0 bg-neutral-50 dark:bg-neutral-800 rounded-xl" />
+            </div>
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
+              <Input type="date" value={searchData.checkOut} onChange={e => setSearchData({ ...searchData, checkOut: e.target.value })} min={searchData.checkIn || new Date().toISOString().split("T")[0]} className="pl-9 border-0 bg-neutral-50 dark:bg-neutral-800 rounded-xl" />
+            </div>
+            <Button onClick={handleSearch} className="bg-[#c7a56e] text-[#1a1a1a] hover:bg-[#d4b67a] rounded-xl py-5 font-medium">
+              <Search className="h-4 w-4 mr-2" /> Rechercher
+            </Button>
+          </div>
+        </div>
+
+        {filteredLofts.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-neutral-200 dark:border-neutral-700 py-16 text-center">
+            <MapPin className="mx-auto h-12 w-12 text-neutral-300 dark:text-neutral-600" />
+            <p className="mt-4 text-neutral-500 dark:text-neutral-400">Aucun loft trouvé</p>
+          </div>
+        ) : (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredLofts.slice(0, 6).map((loft: any, i: number) => (
+              <motion.div
+                key={loft.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: i * 0.06 }}
+              >
+                <Link href={`/${locale}/client/lofts/${loft.id}`} className="group block">
+                  <div className="overflow-hidden rounded-2xl border border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 transition hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30">
+                    <div className="relative aspect-[4/3] bg-neutral-100 dark:bg-neutral-800">
+                      {loft.photo ? (
+                        <Image src={loft.photo} alt={loft.name} fill sizes="(max-width:640px)100vw,(max-width:1024px)50vw,33vw" className="object-cover transition duration-500 group-hover:scale-105" />
+                      ) : (
+                        <div className="flex h-full items-center justify-center"><MapPin className="h-10 w-10 text-neutral-300 dark:text-neutral-600" /></div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-medium text-neutral-900 dark:text-white truncate">{loft.name}</h3>
+                      <p className="mt-1 flex items-center gap-1 text-xs text-neutral-400 dark:text-neutral-500 truncate">
+                        <MapPin className="h-3 w-3 shrink-0" />{loft.zone || loft.address}
+                      </p>
+                      <div className="mt-3 flex items-center justify-between">
+                        <span className="text-base font-semibold text-neutral-900 dark:text-white">{loft.price_per_night?.toLocaleString()} DA</span>
+                        <span className="text-[11px] text-neutral-400 dark:text-neutral-500">/ nuit</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ═══════ FOOTER CTA ═══════ */}
+      <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+        <div className="rounded-[2rem] bg-neutral-950 dark:bg-neutral-900 border border-neutral-800 p-12 text-center lg:p-16">
+          <Globe className="mx-auto h-7 w-7 text-[#c7a56e]" />
+          <h2 className="mt-5 text-2xl lg:text-3xl font-light text-white">Prêt pour la prochaine aventure ?</h2>
+          <p className="mt-3 text-white/40">Des lofts uniques à travers toute l&apos;Algérie</p>
+          <Link href={`/${locale}/client/lofts`}>
+            <Button className="mt-7 bg-[#c7a56e] text-[#1a1a1a] hover:bg-[#d4b67a] rounded-full px-9 py-5 font-medium">
+              Explorer <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   )

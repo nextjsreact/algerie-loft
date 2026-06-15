@@ -3,12 +3,9 @@ import { createClient } from "@/utils/supabase/server"
 import { ClientDashboardView } from "@/components/client/client-dashboard-view"
 import { ClientDashboardVariants } from "@/components/client/client-dashboard-variants"
 import { ClientDashboardPremiumVariants, type PremiumVariant } from "@/components/client/client-dashboard-premium-variants"
-import { ClientDashboardCustomVariants, type CustomVariant } from "@/components/client/client-dashboard-variants-custom"
 
 const PREMIUM_VARIANTS = ["elegant", "glass", "editorial", "master-detail", "progress"]
 const LEGACY_VARIANTS = ["executive", "luxury", "compact"]
-const CUSTOM_VARIANTS: CustomVariant[] = ["cards", "master-detail", "progress"]
-
 
 export default async function ClientDashboardPage({
   params,
@@ -20,7 +17,6 @@ export default async function ClientDashboardPage({
   const { locale } = await params
   const { variant } = await searchParams
   const session = await requireRole(["client"], locale)
-
 
   const supabase = await createClient(true)
   const { data: bookingsData } = await supabase
@@ -56,45 +52,15 @@ export default async function ClientDashboardPage({
     }
   })
 
-  if (variant && PREMIUM_VARIANTS.includes(variant)) {
-    return (
-      <ClientDashboardPremiumVariants
-        bookings={bookings || []}
-        locale={locale}
-        clientName={session.user.full_name || session.user.email}
-        variant={variant as PremiumVariant}
-      />
-    )
-  }
+  const clientName = session.user.full_name || session.user.email
 
-  if (variant && CUSTOM_VARIANTS.includes(variant as CustomVariant)) {
-    return (
-      <ClientDashboardCustomVariants
-        bookings={bookings || []}
-        locale={locale}
-        clientName={session.user.full_name || session.user.email}
-        variant={variant as CustomVariant}
-      />
-    )
+  if (variant && PREMIUM_VARIANTS.includes(variant)) {
+    return <ClientDashboardPremiumVariants bookings={bookings} locale={locale} clientName={clientName} variant={variant as PremiumVariant} />
   }
 
   if (variant && LEGACY_VARIANTS.includes(variant)) {
-    return (
-      <ClientDashboardVariants
-        bookings={bookings || []}
-        locale={locale}
-        clientName={session.user.full_name || session.user.email}
-        variant={variant as any}
-      />
-    )
+    return <ClientDashboardVariants bookings={bookings} locale={locale} clientName={clientName} variant={variant as any} />
   }
 
-
-  return (
-    <ClientDashboardView
-      bookings={bookings || []}
-      locale={locale}
-      clientName={session.user.full_name || session.user.email}
-    />
-  )
+  return <ClientDashboardView bookings={bookings} locale={locale} clientName={clientName} />
 }

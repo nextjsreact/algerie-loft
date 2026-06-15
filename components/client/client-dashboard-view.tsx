@@ -304,7 +304,7 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
                   <span className="font-medium">WhatsApp</span>
                 </a>
               </div>
-              <Button className="mt-6 w-full bg-white text-neutral-950 hover:bg-white/90 rounded-xl py-5 text-sm font-medium">
+              <Button className="mt-6 w-full !bg-white !text-neutral-950 hover:!bg-white/90 rounded-xl py-5 text-sm font-medium">
                 Contacter le support
               </Button>
             </CardContent>
@@ -312,7 +312,7 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
 
           {/* Discover button */}
           <Link href={`/${locale}/client/lofts`}>
-            <Card className="border-0 bg-[#c7a56e] shadow-lg hover:shadow-xl transition cursor-pointer h-full">
+            <Card className="border-0 !bg-[#c7a56e] shadow-lg hover:shadow-xl transition cursor-pointer h-full">
               <CardContent className="p-6 flex flex-col justify-center h-full">
                 <Search className="h-8 w-8 mb-4 text-[#1a1a1a]" />
                 <h3 className="text-2xl font-semibold text-[#1a1a1a]">Découvrir les lofts</h3>

@@ -32,9 +32,7 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient(true) // service role to bypass RLS
 
-    // Check availability — a loft is available if no confirmed/pending reservation overlaps
-    // Rule: checkout_date of existing = check_in_date of new is ALLOWED (same-day turnover)
-    // Overlap condition: existing.check_in < new.check_out AND existing.check_out > new.check_in
+    // Check availability — réservations employés
     const { data: conflicting, error: availError } = await supabase
       .from('reservations')
       .select('id, check_in_date, check_out_date')
@@ -49,6 +47,24 @@ export async function POST(request: NextRequest) {
     }
 
     if (conflicting && conflicting.length > 0) {
+      return NextResponse.json({ error: "Les dates sélectionnées ne sont pas disponibles" }, { status: 400 })
+    }
+
+    // Check availability — bookings clients
+    const { data: conflictingBookings, error: bookAvailError } = await supabase
+      .from('bookings')
+      .select('id')
+      .eq('loft_id', loft_id)
+      .in('status', ['confirmed', 'pending'])
+      .lt('check_in', check_out_date)
+      .gt('check_out', check_in_date)
+
+    if (bookAvailError) {
+      console.error('Booking availability check error:', bookAvailError)
+      return NextResponse.json({ error: "Erreur lors de la vérification de disponibilité" }, { status: 500 })
+    }
+
+    if (conflictingBookings && conflictingBookings.length > 0) {
       return NextResponse.json({ error: "Les dates sélectionnées ne sont pas disponibles" }, { status: 400 })
     }
 

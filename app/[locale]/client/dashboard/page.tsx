@@ -5,7 +5,7 @@ import { ClientDashboardVariants } from "@/components/client/client-dashboard-va
 import { ClientDashboardPremiumVariants, type PremiumVariant } from "@/components/client/client-dashboard-premium-variants"
 import { ClientDashboardCustomVariants, type CustomVariant } from "@/components/client/client-dashboard-variants-custom"
 
-const PREMIUM_VARIANTS = ["elegant", "glass", "editorial"]
+const PREMIUM_VARIANTS = ["elegant", "glass", "editorial", "master-detail", "progress"]
 const LEGACY_VARIANTS = ["executive", "luxury", "compact"]
 const CUSTOM_VARIANTS: CustomVariant[] = ["cards", "master-detail", "progress"]
 

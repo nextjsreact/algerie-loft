@@ -177,9 +177,13 @@ export default function ClientJournalAvisPage() {
   const bookings = payload?.bookings || []
   const reviews = reviewsSorted
 
+  // Set of booking IDs that already have a review
+  const reviewedBookingIds = new Set(reviews.map(r => r.booking_id).filter(Boolean))
+
   // Séjours éligibles à un avis : completed OU confirmed avec check-out dépassé
   const now = new Date()
   const completedBookings = bookings.filter((booking) => {
+    if (reviewedBookingIds.has(booking.id)) return false
     if (booking.status === 'completed') return true
     if (booking.status === 'confirmed' && booking.check_out) {
       return new Date(booking.check_out) < now
@@ -338,9 +342,6 @@ export default function ClientJournalAvisPage() {
   const reviewEntriesCount = safePayload.reviewEntries ?? reviewsForUi.length
   const bookingsForUi = safeBookings
 
-  // Set of booking IDs that already have a review
-  const reviewedBookingIds = new Set(reviews.map(r => r.booking_id).filter(Boolean))
-
   const completedBookingsForUi = bookingsForUi.filter((booking) => {
     if (reviewedBookingIds.has(booking.id)) return false
     if (booking.status === 'completed') return true
@@ -440,18 +441,18 @@ export default function ClientJournalAvisPage() {
                            <p className="text-xs text-muted-foreground mt-2">{formatMoney(booking.total_price)}</p>
                          )}
  
-                         {booking.status === 'completed' && (
-                           <Button
-                             type="button"
-                             variant="outline"
-                             size="sm"
-                             className="mt-3"
-                             onClick={() => openReviewForm(booking.id)}
-                           >
-                             {t('addReviewButton', { defaultValue: 'Donner mon avis' })}
-                           </Button>
-                         )}
-                         {booking.status === 'confirmed' && booking.check_out && new Date(booking.check_out) < new Date() && (
+                          {booking.status === 'completed' && !reviewedBookingIds.has(booking.id) && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="mt-3"
+                              onClick={() => openReviewForm(booking.id)}
+                            >
+                              {t('addReviewButton', { defaultValue: 'Donner mon avis' })}
+                            </Button>
+                          )}
+                          {booking.status === 'confirmed' && booking.check_out && new Date(booking.check_out) < new Date() && !reviewedBookingIds.has(booking.id) && (
                            <Button
                              type="button"
                              variant="outline"

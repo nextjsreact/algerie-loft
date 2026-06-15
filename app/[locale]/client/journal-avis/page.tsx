@@ -338,7 +338,11 @@ export default function ClientJournalAvisPage() {
   const reviewEntriesCount = safePayload.reviewEntries ?? reviewsForUi.length
   const bookingsForUi = safeBookings
 
+  // Set of booking IDs that already have a review
+  const reviewedBookingIds = new Set(reviews.map(r => r.booking_id).filter(Boolean))
+
   const completedBookingsForUi = bookingsForUi.filter((booking) => {
+    if (reviewedBookingIds.has(booking.id)) return false
     if (booking.status === 'completed') return true
     if (booking.status === 'confirmed' && booking.check_out) {
       return new Date(booking.check_out) < now

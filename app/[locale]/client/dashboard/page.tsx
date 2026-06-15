@@ -2,6 +2,10 @@ import { requireRole } from "@/lib/auth"
 import { createClient } from "@/utils/supabase/server"
 import { ClientDashboardView } from "@/components/client/client-dashboard-view"
 import { ClientDashboardVariants } from "@/components/client/client-dashboard-variants"
+import { ClientDashboardPremiumVariants, type PremiumVariant } from "@/components/client/client-dashboard-premium-variants"
+
+const PREMIUM_VARIANTS = ["elegant", "glass", "editorial"]
+const LEGACY_VARIANTS = ["executive", "luxury", "compact"]
 
 export default async function ClientDashboardPage({
   params,
@@ -14,18 +18,17 @@ export default async function ClientDashboardPage({
   const { variant } = await searchParams
   const session = await requireRole(["client"], locale)
 
-  // Récupérer les réservations du client
   const supabase = await createClient(true)
   const { data: bookingsData } = await supabase
     .from("bookings")
     .select("*")
     .eq("client_id", session.user.id)
     .order("created_at", { ascending: false })
-    .limit(5)
+    .limit(12)
 
   const loftIds = bookingsData?.map(b => b.loft_id).filter(Boolean) || []
   let bookingLoftsData: any[] = []
-  
+
   if (loftIds.length > 0) {
     const { data } = await supabase
       .from("lofts")
@@ -49,13 +52,24 @@ export default async function ClientDashboardPage({
     }
   })
 
-  if (variant === "executive" || variant === "luxury" || variant === "compact") {
+  if (variant && PREMIUM_VARIANTS.includes(variant)) {
+    return (
+      <ClientDashboardPremiumVariants
+        bookings={bookings || []}
+        locale={locale}
+        clientName={session.user.full_name || session.user.email}
+        variant={variant as PremiumVariant}
+      />
+    )
+  }
+
+  if (variant && LEGACY_VARIANTS.includes(variant)) {
     return (
       <ClientDashboardVariants
         bookings={bookings || []}
         locale={locale}
         clientName={session.user.full_name || session.user.email}
-        variant={variant}
+        variant={variant as any}
       />
     )
   }

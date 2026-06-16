@@ -29,7 +29,6 @@ export interface SmartDashboardProps {
     transactions?: any[];
     stats?: any;
     recentTasks?: any[];
-    monthlyRevenue?: any[];
   };
   /** Any errors that occurred during data loading */
   errors?: string[];
@@ -98,7 +97,6 @@ export function SmartDashboard({
           transactions: filterResults.transactions?.data || [],
           stats: data.stats,
           recentTasks: filterResults.tasks?.data?.slice(0, 10) || [],
-          monthlyRevenue: user.role === 'member' ? [] : (data.monthlyRevenue || [])
         },
         securityInfo: {
           hasFiltering,
@@ -315,7 +313,6 @@ function AdminDashboardContainer({
         userName={user.name || 'User'}
         stats={data.stats}
         recentTasks={data.recentTasks}
-        monthlyRevenue={data.monthlyRevenue}
         userTasks={data.tasks}
         errors={errors}
         useSmartDashboard={false}

@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Building2, ClipboardList, DollarSign, Users } from "lucide-react"
+import { Building2, ClipboardList, AlertTriangle, Users } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 interface StatsCardsProps {
@@ -9,8 +9,9 @@ interface StatsCardsProps {
     totalLofts: number
     occupiedLofts: number
     activeTasks: number
-    monthlyRevenue: number
+    monthlyRevenue?: number
     totalTeams: number
+    overdueBills?: number
   } | null,
   defaultCurrencySymbol?: string
 }
@@ -24,7 +25,8 @@ export function StatsCards({ stats, defaultCurrencySymbol = "DA" }: StatsCardsPr
     occupiedLofts: 0,
     activeTasks: 0,
     monthlyRevenue: 0,
-    totalTeams: 0
+    totalTeams: 0,
+    overdueBills: 0,
   };
   
   const cards = [
@@ -41,10 +43,10 @@ export function StatsCards({ stats, defaultCurrencySymbol = "DA" }: StatsCardsPr
       description: t('inProgress'),
     },
     {
-      title: t('monthlyRevenue'),
-      value: `${defaultCurrencySymbol}${safeStats.monthlyRevenue.toLocaleString()}`,
-      icon: DollarSign,
-      description: t('thisMonth'),
+      title: t('actionRequired'),
+      value: safeStats.overdueBills,
+      icon: AlertTriangle,
+      description: t('billsPastDue'),
     },
     {
       title: t('teams'),

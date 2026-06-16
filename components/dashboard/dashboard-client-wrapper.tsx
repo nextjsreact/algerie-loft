@@ -95,9 +95,9 @@ function AdminManagerDashboardContent({ session }: { session: AuthSession }) {
     occupiedLofts: 0,
     activeTasks: 0,
     monthlyRevenue: 0,
-    totalTeams: 0
+    totalTeams: 0,
+    overdueBills: 0,
   })
-  const [monthlyRevenue, setMonthlyRevenue] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -106,49 +106,26 @@ function AdminManagerDashboardContent({ session }: { session: AuthSession }) {
         const { createClient } = await import('@/utils/supabase/client')
         const supabase = createClient()
         const today = new Date()
-        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0]
-        const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0]
 
-        const [loftsRes, tasksRes, teamsRes, revenueRes] = await Promise.all([
+        const [loftsRes, tasksRes, teamsRes, billRes] = await Promise.all([
           supabase.from('lofts').select('id, status'),
           supabase.from('tasks').select('id').in('status', ['todo', 'in_progress']),
           supabase.from('teams').select('id'),
-          supabase.from('reservations')
-            .select('total_amount')
-            .gte('check_in_date', monthStart)
-            .lte('check_in_date', monthEnd)
-            .in('status', ['confirmed', 'completed', 'pending']),
+          supabase.from('bills').select('id').in('status', ['overdue', 'pending']),
         ])
 
         const lofts = loftsRes.data || []
         const occupied = lofts.filter((l: any) => l.status === 'occupied').length
-        const revenue = (revenueRes.data || []).reduce((s: number, r: any) => s + (r.total_amount || 0), 0)
+        const overdueBills = (billRes.data || []).length
 
         setStats({
           totalLofts: lofts.length,
           occupiedLofts: occupied,
           activeTasks: (tasksRes.data || []).length,
-          monthlyRevenue: Math.round(revenue),
+          monthlyRevenue: 0,
           totalTeams: (teamsRes.data || []).length,
+          overdueBills,
         })
-
-        // Last 6 months revenue
-        const months = []
-        for (let i = 5; i >= 0; i--) {
-          const d = new Date(today.getFullYear(), today.getMonth() - i, 1)
-          const start = d.toISOString().split('T')[0]
-          const end = new Date(d.getFullYear(), d.getMonth() + 1, 0).toISOString().split('T')[0]
-          const label = d.toLocaleDateString('fr-FR', { month: 'short' })
-          const { data } = await supabase
-            .from('reservations')
-            .select('total_amount')
-            .gte('check_in_date', start)
-            .lte('check_in_date', end)
-            .in('status', ['confirmed', 'completed', 'pending'])
-          const rev = (data || []).reduce((s: number, r: any) => s + (r.total_amount || 0), 0)
-          months.push({ month: label, revenue: Math.round(rev), expenses: 0 })
-        }
-        setMonthlyRevenue(months)
       } catch (e) {
         console.error('Dashboard stats error:', e)
       } finally {
@@ -172,7 +149,6 @@ function AdminManagerDashboardContent({ session }: { session: AuthSession }) {
         transactions: [],
         stats,
         recentTasks: [],
-        monthlyRevenue,
       }}
       errors={[]}
       isLoading={isLoading}

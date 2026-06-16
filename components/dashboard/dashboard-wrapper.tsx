@@ -2,7 +2,6 @@
 
 import { useTranslation } from "@/lib/i18n/context"
 import { StatsCards } from "@/components/dashboard/stats-cards"
-import { RevenueChart } from "@/components/dashboard/revenue-chart"
 import { RecentTasks } from "@/components/dashboard/recent-tasks"
 import { BillAlerts } from "@/components/dashboard/bill-alerts-original"
 import { BillMonitoringStats } from "@/components/dashboard/bill-monitoring-stats"
@@ -20,7 +19,6 @@ interface DashboardWrapperProps {
   userId?: string
   stats?: any
   recentTasks?: any[]
-  monthlyRevenue?: any[]
   userTasks?: any[]
   errors?: string[]
   /** Whether to use the new SmartDashboard (recommended) */
@@ -37,7 +35,6 @@ export function DashboardWrapper({
   userId,
   stats,
   recentTasks,
-  monthlyRevenue,
   userTasks,
   errors = [],
   useSmartDashboard = true,
@@ -154,28 +151,7 @@ export function DashboardWrapper({
           </div>
         </RoleBasedAccess>
 
-        {/* Role-based access control for revenue chart - FULL WIDTH */}
-        <RoleBasedAccess 
-          userRole={userRole as UserRole} 
-          resource="financial" 
-          action="read"
-          fallback={
-            <div className="w-full">
-              <Alert>
-                <Shield className="h-4 w-4" />
-                <AlertDescription>
-                  Revenue information is not available for your role.
-                </AlertDescription>
-              </Alert>
-            </div>
-          }
-        >
-          <div className="w-full">
-            <RevenueChart monthlyRevenue={monthlyRevenue || []} />
-          </div>
-        </RoleBasedAccess>
-
-        {/* Tasks section below the chart */}
+        {/* Tasks section */}
         <RoleBasedAccess 
           userRole={userRole as UserRole} 
           resource="tasks" 

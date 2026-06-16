@@ -28,8 +28,6 @@ import {
   BarChart3,
   Sparkles,
   RefreshCw,
-  ArrowUpRight,
-  ArrowDownRight,
   Building,
   Tag,
   CreditCard,
@@ -134,26 +132,9 @@ export function SimpleTransactionsPage({
   }, [transactions, searchTerm, typeFilter, statusFilter, categoryFilter, loftFilter, 
       currencyFilter, paymentMethodFilter, startDate, endDate])
 
-  // Calculs des totaux avec conversion de devises
-  const { totalIncome, totalExpenses, netTotal } = useMemo(() => {
-    return filteredTransactions.reduce(
-      (acc, transaction) => {
-        // Utiliser le montant converti en devise par défaut si disponible, sinon le montant original
-        const amount = transaction.equivalent_amount_default_currency 
-          ? parseFloat(transaction.equivalent_amount_default_currency.toString())
-          : parseFloat(transaction.amount.toString())
-        
-        if (transaction.transaction_type === "income") {
-          acc.totalIncome += amount
-        } else {
-          acc.totalExpenses += amount
-        }
-        acc.netTotal = acc.totalIncome - acc.totalExpenses
-        return acc
-      },
-      { totalIncome: 0, totalExpenses: 0, netTotal: 0 }
-    )
-  }, [filteredTransactions])
+  const pendingCount = useMemo(() => filteredTransactions.filter(t => t.status === 'pending').length, [filteredTransactions])
+  const completedCount = useMemo(() => filteredTransactions.filter(t => t.status === 'completed').length, [filteredTransactions])
+  const failedCount = useMemo(() => filteredTransactions.filter(t => t.status === 'failed').length, [filteredTransactions])
 
   const formatAmount = (amount: number) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -226,24 +207,46 @@ export function SimpleTransactionsPage({
 
         {/* Stats avec design amélioré */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-yellow-50 hover:shadow-xl transition-all duration-300">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-amber-700">
+                  En attente
+                </CardTitle>
+                <div className="p-2 bg-amber-500 rounded-full">
+                  <Clock className="h-4 w-4 text-white" />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-bold text-amber-600">
+                  {pendingCount}
+                </span>
+                <span className="text-amber-600 font-medium">{t('transactions')}</span>
+                <Clock className="h-4 w-4 text-amber-500" />
+              </div>
+            </CardContent>
+          </Card>
+
           <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-emerald-50 hover:shadow-xl transition-all duration-300">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm font-medium text-green-700">
-                  {t('totalIncome')}
+                  Complétées
                 </CardTitle>
                 <div className="p-2 bg-green-500 rounded-full">
-                  <TrendingUp className="h-4 w-4 text-white" />
+                  <CheckCircle className="h-4 w-4 text-white" />
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-green-600">
-                  {formatAmount(totalIncome)}
+                  {completedCount}
                 </span>
-                <span className="text-green-600 font-medium">{defaultCurrencySymbol}</span>
-                <ArrowUpRight className="h-4 w-4 text-green-500" />
+                <span className="text-green-600 font-medium">{t('transactions')}</span>
+                <CheckCircle className="h-4 w-4 text-green-500" />
               </div>
             </CardContent>
           </Card>
@@ -252,47 +255,20 @@ export function SimpleTransactionsPage({
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm font-medium text-red-700">
-                  {t('totalExpenses')}
+                  Échouées
                 </CardTitle>
                 <div className="p-2 bg-red-500 rounded-full">
-                  <TrendingDown className="h-4 w-4 text-white" />
+                  <XCircle className="h-4 w-4 text-white" />
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-red-600">
-                  {formatAmount(totalExpenses)}
+                  {failedCount}
                 </span>
-                <span className="text-red-600 font-medium">{defaultCurrencySymbol}</span>
-                <ArrowDownRight className="h-4 w-4 text-red-500" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-cyan-50 hover:shadow-xl transition-all duration-300">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-blue-700">
-                  {t('netIncome')}
-                </CardTitle>
-                <div className="p-2 bg-blue-500 rounded-full">
-                  <DollarSign className="h-4 w-4 text-white" />
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-2">
-                <span className={`text-2xl font-bold ${netTotal >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {formatAmount(Math.abs(netTotal))}
-                </span>
-                <span className={`font-medium ${netTotal >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {defaultCurrencySymbol}
-                </span>
-                {netTotal >= 0 ? 
-                  <ArrowUpRight className="h-4 w-4 text-green-500" /> : 
-                  <ArrowDownRight className="h-4 w-4 text-red-500" />
-                }
+                <span className="text-red-600 font-medium">{t('transactions')}</span>
+                <XCircle className="h-4 w-4 text-red-500" />
               </div>
             </CardContent>
           </Card>

@@ -292,12 +292,12 @@ function ReservationsPageContent() {
       color: 'bg-blue-500'
     },
     {
-      title: tAnalytics('monthlyRevenue'),
-      value: `${defaultCurrencySymbol}${reservationStats.monthlyRevenue.toLocaleString()}`,
-      change: `${Math.round(((reservationStats.monthlyRevenue - reservationStats.monthlyRevenueLastMonth) / (reservationStats.monthlyRevenueLastMonth || 1)) * 100)}%`,
-      trend: reservationStats.monthlyRevenue >= reservationStats.monthlyRevenueLastMonth ? 'up' : 'down',
-      icon: TrendingUp,
-      color: 'bg-green-500'
+      title: 'En attente',
+      value: allReservations.filter(r => r.status === 'pending').length,
+      change: allReservations.filter(r => r.status === 'pending').length > 0 ? 'Action requise' : 'Aucune',
+      trend: 'up',
+      icon: Clock,
+      color: 'bg-amber-500'
     },
     {
       title: tAnalytics('occupancyRate'),
@@ -310,8 +310,8 @@ function ReservationsPageContent() {
     {
       title: tAnalytics('guestSatisfaction'),
       value: reservationStats.guestSatisfaction.toFixed(1),
-      change: '0', // Placeholder
-      trend: 'up', // Placeholder
+      change: '0',
+      trend: 'up',
       icon: Star,
       color: 'bg-yellow-500'
     }
@@ -811,8 +811,6 @@ function ReservationsPageContent() {
               ) : reservationStats ? (() => {
                 const totalRes = reservationStats.totalReservations ?? 0
                 const totalResLast = reservationStats.totalReservationsLastMonth ?? 0
-                const revenue = reservationStats.monthlyRevenue ?? 0
-                const revenueLast = reservationStats.monthlyRevenueLastMonth ?? 0
                 const occupancy = Math.round(reservationStats.occupancyRate ?? 0)
                 const occupancyLast = Math.round(reservationStats.occupancyRateLastMonth ?? 0)
 
@@ -831,6 +829,12 @@ function ReservationsPageContent() {
                   return (p >= 0 ? '+' : '') + p + '%'
                 }
 
+                const today = new Date().toISOString().split('T')[0]
+                const activeStays = allReservations.filter(r =>
+                  r.status !== 'cancelled' && r.status !== 'completed' &&
+                  r.check_in_date <= today && r.check_out_date >= today
+                ).length
+
                 const metrics = [
                   {
                     title: tAnalytics('totalReservations'),
@@ -841,11 +845,11 @@ function ReservationsPageContent() {
                     color: 'from-blue-600 to-indigo-600'
                   },
                   {
-                    title: tAnalytics('totalRevenue'),
-                    value: revenue.toLocaleString('fr-DZ') + ' DA',
-                    change: pct(revenue, revenueLast),
-                    up: revenue >= revenueLast,
-                    icon: TrendingUp,
+                    title: 'Séjours en cours',
+                    value: activeStays.toString(),
+                    change: '—',
+                    up: true,
+                    icon: Clock,
                     color: 'from-green-600 to-emerald-600'
                   },
                   {
@@ -890,28 +894,27 @@ function ReservationsPageContent() {
               )}
             </div>
 
-            {/* Top lofts by revenue */}
+            {/* Top lofts par réservations */}
             {allReservations.length > 0 && (() => {
-              const byLoft = new Map<string, { name: string; revenue: number; count: number }>()
+              const byLoft = new Map<string, { name: string; count: number }>()
               allReservations
-                .filter(r => r.status !== 'cancelled' && r.total_amount > 0)
+                .filter(r => r.status !== 'cancelled')
                 .forEach(r => {
                   const key = r.loft_id
                   const name = r.lofts?.name || '—'
-                  if (!byLoft.has(key)) byLoft.set(key, { name, revenue: 0, count: 0 })
+                  if (!byLoft.has(key)) byLoft.set(key, { name, count: 0 })
                   const entry = byLoft.get(key)!
-                  entry.revenue += r.total_amount
                   entry.count++
                 })
-              const sorted = Array.from(byLoft.values()).sort((a, b) => b.revenue - a.revenue).slice(0, 10)
-              const maxRev = sorted[0]?.revenue || 1
+              const sorted = Array.from(byLoft.values()).sort((a, b) => b.count - a.count).slice(0, 10)
+              const maxCount = sorted[0]?.count || 1
 
               return (
                 <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
                   <CardHeader className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
                     <CardTitle className="flex items-center gap-3">
                       <BarChart3 className="h-5 w-5" />
-                      Top lofts par revenus
+                      Top lofts les plus réservés
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6 space-y-3">
@@ -922,10 +925,10 @@ function ReservationsPageContent() {
                         <div className="flex-1 bg-gray-100 rounded-full h-5 relative overflow-hidden">
                           <div
                             className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full"
-                            style={{ width: `${Math.round((loft.revenue / maxRev) * 100)}%` }}
+                            style={{ width: `${Math.round((loft.count / maxCount) * 100)}%` }}
                           />
                           <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-700">
-                            {loft.revenue.toLocaleString('fr-DZ')} DA
+                            {loft.count} réservation{loft.count > 1 ? 's' : ''}
                           </span>
                         </div>
                         <span className="text-xs text-gray-400 w-16 text-right">{loft.count} rés.</span>

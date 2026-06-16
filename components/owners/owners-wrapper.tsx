@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Plus, Users, Building2, Mail, Phone, MapPin, Trash2, Edit, Eye, DollarSign, UserPlus } from "lucide-react"
+import { Plus, Users, Building2, Mail, Phone, MapPin, Trash2, Edit, Eye, UserPlus } from "lucide-react"
 import Link from "next/link"
 import { deleteOwner } from "@/app/actions/owners"
 import type { LoftOwner } from "@/lib/types"
@@ -84,16 +84,19 @@ export function OwnersWrapper({ owners }: OwnersWrapperProps) {
           </CardContent>
         </Card>
         
-        <Card className="border-l-4 border-l-orange-500">
+        <Card className="border-l-4 border-l-purple-500">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">{t('totalMonthlyValue')}</p>
+                <p className="text-sm font-medium text-gray-600">Avec accès</p>
                 <p className="text-3xl font-bold text-gray-900">
-                  {owners.reduce((total, owner) => total + parseFloat(owner.total_monthly_value), 0).toLocaleString()} DZD
+                  {owners.filter(o => o.user_id).length}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  sur {owners.length} propriétaire{owners.length > 1 ? 's' : ''}
                 </p>
               </div>
-              <DollarSign className="h-8 w-8 text-orange-500" />
+              <UserPlus className="h-8 w-8 text-purple-500" />
             </div>
           </CardContent>
         </Card>
@@ -139,10 +142,7 @@ export function OwnersWrapper({ owners }: OwnersWrapperProps) {
                         )}
                       </CardTitle>
                       <CardDescription className="text-sm text-gray-600">
-                        {t('propertiesCount', { count: parseInt(owner.loft_count) })} • 
-                        <span className="font-medium text-green-600 ml-1">
-                          {parseFloat(owner.total_monthly_value).toLocaleString()} DZD/mois
-                        </span>
+                        {parseInt(owner.loft_count)} propriété{parseInt(owner.loft_count) > 1 ? 's' : ''}
                       </CardDescription>
                     </div>
                     <Badge className={getOwnershipColor(owner.ownership_type)}>

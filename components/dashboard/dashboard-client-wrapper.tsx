@@ -105,18 +105,24 @@ function AdminManagerDashboardContent({ session }: { session: AuthSession }) {
       try {
         const { createClient } = await import('@/utils/supabase/client')
         const supabase = createClient()
-        const today = new Date()
 
-        const [loftsRes, tasksRes, teamsRes, billRes] = await Promise.all([
+        const [loftsRes, tasksRes, teamsRes] = await Promise.all([
           supabase.from('lofts').select('id, status'),
           supabase.from('tasks').select('id').in('status', ['todo', 'in_progress']),
           supabase.from('teams').select('id'),
-          supabase.from('bills').select('id').in('status', ['overdue', 'pending']),
         ])
+
+        let overdueBills = 0
+        try {
+          const billRes = await fetch('/api/bill-monitoring/stats')
+          const billData = await billRes.json()
+          if (billData.success) {
+            overdueBills = (billData.data.overdueBills || 0) + (billData.data.dueToday || 0)
+          }
+        } catch {}
 
         const lofts = loftsRes.data || []
         const occupied = lofts.filter((l: any) => l.status === 'occupied').length
-        const overdueBills = (billRes.data || []).length
 
         setStats({
           totalLofts: lofts.length,

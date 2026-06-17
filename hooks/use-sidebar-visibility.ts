@@ -16,7 +16,8 @@ export function useSidebarVisibility({ userRole, hideSidebar = false }: UseSideb
     const isAuthPage = pathname?.includes('/login') || 
                        pathname?.includes('/register') || 
                        pathname?.includes('/forgot-password') || 
-                       pathname?.includes('/reset-password')
+                       pathname?.includes('/reset-password') ||
+                       pathname?.includes('/access-pending')
     
     // Pages publiques (seulement les pages racines de locale, pas les sous-pages)
     const isPublicPage = pathname?.includes('/public') || 
@@ -43,7 +44,8 @@ export function useSidebarVisibility({ userRole, hideSidebar = false }: UseSideb
   const isAuthPage = pathname?.includes('/login') || 
                      pathname?.includes('/register') || 
                      pathname?.includes('/forgot-password') || 
-                     pathname?.includes('/reset-password')
+                     pathname?.includes('/reset-password') ||
+                     pathname?.includes('/access-pending')
   
   const isPublicPage = pathname?.includes('/public') || 
                        pathname?.includes('/site-public') ||

@@ -96,6 +96,76 @@ export async function requireAuthAPI(): Promise<AuthSession | null> {
   return session
 }
 
+/**
+ * Vérifie si un utilisateur de rôle "member" est un employé confirmé
+ * (profiles.is_staff = true). Les autres rôles staff sont considérés comme staff.
+ *
+ * @returns true si l'utilisateur est autorisé à accéder à l'interface employé
+ */
+export async function getMemberStaffStatus(userId: string): Promise<boolean> {
+  try {
+    const serviceSupabase = await createClient(true);
+    const { data: profile } = await serviceSupabase
+      .from('profiles')
+      .select('role, is_staff')
+      .eq('id', userId)
+      .single();
+
+    // Profil introuvable → on bloque par sécurité
+    if (!profile) return false;
+
+    // Les rôles staff supérieurs (admin, manager, executive, superuser) sont
+    // toujours considérés comme staff, indépendamment de is_staff.
+    const elevatedRoles: UserRole[] = ['admin', 'manager', 'executive', 'superuser'];
+    if (elevatedRoles.includes(profile.role as UserRole)) {
+      return true;
+    }
+
+    // Pour le rôle "member", on exige is_staff = true
+    return profile.is_staff === true;
+  } catch (error) {
+    console.error('[getMemberStaffStatus] Error:', error);
+    // En cas d'erreur DB, on bloque par sécurité
+    return false;
+  }
+}
+
+/**
+ * Garde d'accès pour l'interface employé.
+ *
+ * - Authentifie l'utilisateur (sinon → /login).
+ * - Si l'utilisateur est un client/partner → redirigé vers son dashboard.
+ * - Si l'utilisateur est un employé "member" sans is_staff → /access-pending
+ *   (message "contactez l'administrateur").
+ * - Les autres rôles staff (admin, manager, executive, superuser) passent.
+ *
+ * À utiliser à la place de requireAuth() sur les pages d'entrée de l'app employé.
+ */
+export async function requireEmployeeAccess(locale?: string): Promise<AuthSession> {
+  const session = await requireAuth();
+  const targetLocale = locale || 'fr';
+  const role = session.user.role;
+
+  // Client / partner → leur espace dédié
+  if (role === 'client') {
+    redirect(`/${targetLocale}/client/dashboard`);
+  }
+  if (role === 'partner') {
+    redirect(`/${targetLocale}/partner/dashboard`);
+  }
+
+  // Pour le rôle member, on exige is_staff = true
+  if (role === 'member') {
+    const isStaff = await getMemberStaffStatus(session.user.id);
+    if (!isStaff) {
+      redirect(`/${targetLocale}/access-pending`);
+    }
+  }
+
+  // admin, manager, executive, superuser → accès autorisé
+  return session;
+}
+
 export async function requireRole(allowedRoles: UserRole[], locale?: string): Promise<AuthSession> {
   const session = await getSession()
   
@@ -157,6 +227,15 @@ export async function requireRole(allowedRoles: UserRole[], locale?: string): Pr
   if (!allowedRoles.includes(dbRole)) {
     console.log('[requireRole] Access denied - DB role not in allowed roles')
     redirect(`/${targetLocale}/unauthorized`)
+  }
+
+  // Garde is_staff : un employé "member" doit être confirmé (is_staff = true)
+  // pour accéder aux pages employé protégées par requireRole.
+  if (dbRole === 'member') {
+    const isStaff = await getMemberStaffStatus(session.user.id);
+    if (!isStaff) {
+      redirect(`/${targetLocale}/access-pending`)
+    }
   }
 
   return session

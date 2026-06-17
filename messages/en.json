@@ -486,6 +486,12 @@
     }
   },
   "auth": {
+    "accessPending": {
+      "title": "Access pending activation",
+      "description": "Your employee account has not been activated yet.",
+      "message": "To access the management interface, please contact the platform administrator so they can activate your account.",
+      "backHome": "Back to home"
+    },
     "admin": "Admin",
     "createAccount": "Create Account",
     "demoAccounts": "Demo Accounts",

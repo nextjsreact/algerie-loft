@@ -486,6 +486,12 @@
     }
   },
   "auth": {
+    "accessPending": {
+      "title": "Accès en attente d'activation",
+      "description": "Votre compte employé n'a pas encore été activé.",
+      "message": "Pour accéder à l'interface de gestion, veuillez contacter l'administrateur de la plateforme afin qu'il active votre compte.",
+      "backHome": "Retour à l'accueil"
+    },
     "admin": "Admin",
     "createAccount": "Créer un compte",
     "demoAccounts": "Comptes de démonstration",

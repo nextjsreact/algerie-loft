@@ -158,6 +158,14 @@ export async function requireEmployeeAccess(locale?: string): Promise<AuthSessio
   if (role === 'member') {
     const isStaff = await getMemberStaffStatus(session.user.id);
     if (!isStaff) {
+      // Déconnecter l'utilisateur non autorisé avant redirection
+      const supabase = await createClient(false);
+      await supabase.auth.signOut();
+      try {
+        const { cookies } = await import('next/headers');
+        const cookieStore = await cookies();
+        cookieStore.delete('login_context');
+      } catch { /* ignore */ }
       redirect(`/${targetLocale}/access-pending`);
     }
   }
@@ -234,6 +242,14 @@ export async function requireRole(allowedRoles: UserRole[], locale?: string): Pr
   if (dbRole === 'member') {
     const isStaff = await getMemberStaffStatus(session.user.id);
     if (!isStaff) {
+      // Déconnecter l'utilisateur non autorisé avant redirection
+      const supabase = await createClient(false);
+      await supabase.auth.signOut();
+      try {
+        const { cookies } = await import('next/headers');
+        const cookieStore = await cookies();
+        cookieStore.delete('login_context');
+      } catch { /* ignore */ }
       redirect(`/${targetLocale}/access-pending`)
     }
   }

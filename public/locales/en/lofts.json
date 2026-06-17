@@ -211,6 +211,7 @@
   "updateError": "Failed to save changes. Check your data and try again",
   "systemErrorDescription": "An unexpected error occurred during update. Contact support if the problem persists",
   "managePropertiesDescription": "Manage your properties - Discover and manage your real estate portfolio with style",
+  "totalCapitalValue": "Rental Capital",
   "totalRevenue": "Total Revenue",
   "filterTitle": "Filter your lofts",
   "available": "Available",

@@ -203,6 +203,7 @@
   "updateError": "Impossible de sauvegarder les modifications. Vérifiez vos données et réessayez",
   "systemErrorDescription": "Une erreur inattendue s'est produite lors de la mise à jour. Contactez le support si le problème persiste",
   "managePropertiesDescription": "Gérez vos propriétés - Découvrez et gérez votre portfolio immobilier avec style",
+  "totalCapitalValue": "Capital locatif",
   "totalRevenue": "Revenus Total",
   "filterTitle": "Filtrer vos lofts",
   "available": "Disponibles",

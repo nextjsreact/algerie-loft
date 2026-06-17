@@ -102,7 +102,7 @@ export function OwnerLoftsWrapper({
         <div className="bg-gradient-to-br from-purple-50 to-violet-100 p-6 rounded-2xl border border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-purple-600 text-sm font-medium">Revenus Totaux</p>
+              <p className="text-purple-600 text-sm font-medium">Capital locatif</p>
               <p className="text-2xl font-bold text-purple-700">{formatCurrencyAuto(totalRevenue, 'DZD', `/${locale}/lofts`)}</p>
             </div>
             <div className="p-3 bg-purple-200 rounded-full">

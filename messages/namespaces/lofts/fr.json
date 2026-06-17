@@ -208,6 +208,7 @@
   "systemErrorDescription": "Une erreur inattendue s'est produite lors de la mise à jour. Contactez le support si le problème persiste",
   "title": "Lofts",
   "total": "Total",
+  "totalCapitalValue": "Capital locatif",
   "totalRevenue": "Revenus Total",
   "tv": "TV",
   "tvBillFrequency": "Fréquence de l'abonnement TV",

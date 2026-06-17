@@ -1536,6 +1536,7 @@
     "systemErrorDescription": "An unexpected error occurred during update. Contact support if the problem persists",
     "title": "Lofts",
     "total": "Total",
+    "totalCapitalValue": "Rental Capital",
     "totalRevenue": "Total Revenue",
     "tv": "TV",
     "tvBillFrequency": "TV Subscription Frequency",

@@ -68,7 +68,7 @@ function HomePageContent({ session, loading }: { session: AuthSession | null; lo
       href: `/${locale}/reservations`,
       icon: Calendar,
       color: "from-green-500 to-green-600",
-      roles: ['admin', 'manager', 'member']
+      roles: ['admin', 'manager']
     },
     {
       title: t('sections.availability.title'),
@@ -76,7 +76,7 @@ function HomePageContent({ session, loading }: { session: AuthSession | null; lo
       href: `/${locale}/availability`,
       icon: CalendarCheck,
       color: "from-purple-500 to-purple-600",
-      roles: ['admin', 'manager', 'member']
+      roles: ['admin', 'manager']
     },
     {
       title: t('sections.tasks.title'),

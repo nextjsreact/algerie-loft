@@ -21,17 +21,20 @@ export default function NotificationsPage() {
       }
       const sessionData = await sessionRes.json()
       setSession(sessionData)
+      const role = sessionData?.user?.role
 
-      const [notifRes, airbnbRes] = await Promise.all([
-        fetch('/api/notifications', { cache: 'no-store' }),
-        fetch('/api/airbnb/notifications?limit=100', { cache: 'no-store' }),
-      ])
+      const fetches = [fetch('/api/notifications', { cache: 'no-store' })]
+      if (role === 'admin' || role === 'manager') {
+        fetches.push(fetch('/api/airbnb/notifications?limit=100', { cache: 'no-store' }))
+      }
+
+      const [notifRes, airbnbRes] = await Promise.all(fetches)
 
       if (notifRes.ok) {
         const { notifications: notifs } = await notifRes.json()
         setNotifications(notifs || [])
       }
-      if (airbnbRes.ok) {
+      if (airbnbRes?.ok) {
         const data = await airbnbRes.json()
         setAirbnbNotifications(data.notifications || [])
       }
@@ -49,6 +52,8 @@ export default function NotificationsPage() {
   }, [loadNotifications])
 
   useEffect(() => {
+    const role = session?.user?.role
+    if (role !== 'admin' && role !== 'manager') return
     const handler = () => {
       fetch('/api/airbnb/notifications?limit=100', { cache: 'no-store' })
         .then(r => r.ok ? r.json() : null)
@@ -57,7 +62,7 @@ export default function NotificationsPage() {
     }
     window.addEventListener('airbnb-notifications-changed', handler)
     return () => window.removeEventListener('airbnb-notifications-changed', handler)
-  }, [])
+  }, [session?.user?.role])
 
   if (loading) {
     return (

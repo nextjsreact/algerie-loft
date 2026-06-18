@@ -62,8 +62,9 @@ export function UnifiedNotificationBell({ userRole }: UnifiedNotificationBellPro
     return () => document.removeEventListener("mousedown", handler)
   }, [])
 
-  // Fetch Airbnb notifications
+  // Fetch Airbnb notifications (admin/manager only)
   const fetchAirbnbNotifications = useCallback(async () => {
+    if (userRole !== 'admin' && userRole !== 'manager') return
     try {
       const res = await fetch('/api/airbnb/notifications?unread=true&limit=20')
       if (res.ok) {
@@ -87,7 +88,7 @@ export function UnifiedNotificationBell({ userRole }: UnifiedNotificationBellPro
     } catch (error) {
       console.error('Error fetching Airbnb notifications:', error)
     }
-  }, [lastAirbnbNotificationId])
+  }, [lastAirbnbNotificationId, userRole])
 
   // Fetch normal notifications
   const fetchNormalNotifications = useCallback(async () => {
@@ -112,22 +113,24 @@ export function UnifiedNotificationBell({ userRole }: UnifiedNotificationBellPro
     setLoading(false)
   }, [fetchNormalNotifications, fetchAirbnbNotifications])
 
-  // Polling for Airbnb notifications (every 30 seconds)
+  // Polling for Airbnb notifications (every 30 seconds, admin/manager only)
   useEffect(() => {
+    if (userRole !== 'admin' && userRole !== 'manager') return
     fetchAirbnbNotifications()
     const interval = setInterval(fetchAirbnbNotifications, 30000)
     return () => clearInterval(interval)
-  }, [fetchAirbnbNotifications])
+  }, [fetchAirbnbNotifications, userRole])
 
-  // Sync bell state when other components (e.g. Notifications page) mark an Airbnb notif as read
+  // Sync bell state when other components mark an Airbnb notif as read
   useEffect(() => {
+    if (userRole !== 'admin' && userRole !== 'manager') return
     const handler = () => {
       fetchAirbnbNotifications()
       fetchNormalNotifications()
     }
     window.addEventListener('airbnb-notifications-changed', handler)
     return () => window.removeEventListener('airbnb-notifications-changed', handler)
-  }, [fetchAirbnbNotifications, fetchNormalNotifications])
+  }, [fetchAirbnbNotifications, fetchNormalNotifications, userRole])
 
   const handleOpen = () => {
     setOpen(v => {

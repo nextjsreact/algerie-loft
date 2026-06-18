@@ -30,8 +30,9 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
   const [airbnbUnreadCount, setAirbnbUnreadCount] = useState(0)
   const locale = useLocale() as 'fr' | 'en' | 'ar'
   
-  // Fetch Airbnb notifications count
+  // Fetch Airbnb notifications count (admin/manager only)
   const fetchAirbnbUnreadCount = useCallback(async () => {
+    if (user.role !== 'admin' && user.role !== 'manager') return
     try {
       const res = await fetch('/api/airbnb/notifications?unread=true&limit=1')
       if (res.ok) {
@@ -41,21 +42,23 @@ export function Sidebar({ user, unreadCount, className }: SidebarProps) {
     } catch (error) {
       console.error('Error fetching Airbnb unread count:', error)
     }
-  }, [])
+  }, [user.role])
 
-  // Poll for Airbnb notifications every 30 seconds
+  // Poll for Airbnb notifications every 30 seconds (admin/manager only)
   useEffect(() => {
+    if (user.role !== 'admin' && user.role !== 'manager') return
     fetchAirbnbUnreadCount()
     const interval = setInterval(fetchAirbnbUnreadCount, 30000)
     return () => clearInterval(interval)
-  }, [fetchAirbnbUnreadCount])
+  }, [fetchAirbnbUnreadCount, user.role])
 
-  // Sync Airbnb unread count when other components (e.g. UnifiedNotificationBell) mark notifications as read
+  // Sync Airbnb unread count when other components mark notifications as read
   useEffect(() => {
+    if (user.role !== 'admin' && user.role !== 'manager') return
     const handler = () => fetchAirbnbUnreadCount()
     window.addEventListener('airbnb-notifications-changed', handler)
     return () => window.removeEventListener('airbnb-notifications-changed', handler)
-  }, [fetchAirbnbUnreadCount])
+  }, [fetchAirbnbUnreadCount, user.role])
   
   // Traductions pour les 3 langues
   const navTranslations = {

@@ -61,7 +61,7 @@ export default function LoftCard({
     setIsAutoPlaying(true);
     slideTimerRef.current = setInterval(() => {
       setCurrentImageIndex(prev => (prev + 1) % loft.images.length);
-    }, 1000);
+    }, 1500);
   }, [hasMultiple, loft.images.length]);
 
   const handleMouseEnter = useCallback(() => {

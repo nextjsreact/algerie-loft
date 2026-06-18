@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { LoftCardImage } from '@/components/client/loft-card-image';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -47,6 +48,7 @@ type Loft = {
   price_per_night?: number;
   zone?: string;
   photo?: string;
+  loft_photos?: string[];
 };
 
 const WHATSAPP_URL = 'https://wa.me/213560362543';
@@ -557,6 +559,9 @@ export default function LandingV3({ locale }: LandingV3Props) {
   const heroLoft = lofts[0];
   const collection = useMemo(() => lofts.slice(0, 9), [lofts]);
 
+  const getLoftPhotos = useCallback((loft: Loft) =>
+    (loft.loft_photos || (loft.photo ? [loft.photo] : [])).map(url => ({ id: url, url })), [])
+
   const goToSearch = () => {
     window.location.href = `/${locale}/client/search`;
   };
@@ -782,16 +787,13 @@ export default function LandingV3({ locale }: LandingV3Props) {
               onClick={() => openLightbox(i)}
             >
               <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-neutral-200 dark:bg-neutral-800">
-                {loft.photo && (
-                  <Image
-                    src={loft.photo}
-                    alt={loft.name}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                  />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <LoftCardImage
+                  photos={getLoftPhotos(loft)}
+                  name={loft.name}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
+                </LoftCardImage>
               </div>
               <div className="mt-5 flex items-start justify-between gap-4">
                 <div>
@@ -942,20 +944,17 @@ export default function LandingV3({ locale }: LandingV3Props) {
               }`}
               onClick={() => openLightbox(i)}
             >
-              {loft.photo && (
-                <Image
-                  src={loft.photo}
-                  alt={loft.name}
-                  fill
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              )}
-              <div className="absolute inset-0 bg-black/0 transition-all duration-500 group-hover:bg-black/30" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                <p className="text-sm font-medium text-white">{loft.name}</p>
-                <p className="text-xs text-white/70" style={{ fontFamily: "'Inter', sans-serif" }}>{loft.zone}</p>
-              </div>
+              <LoftCardImage
+                photos={getLoftPhotos(loft)}
+                name={loft.name}
+                sizes={i === 0 ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 50vw, 25vw"}
+              >
+                <div className="absolute inset-0 bg-black/0 transition-all duration-500 group-hover:bg-black/30 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                  <p className="text-sm font-medium text-white">{loft.name}</p>
+                  <p className="text-xs text-white/70" style={{ fontFamily: "'Inter', sans-serif" }}>{loft.zone}</p>
+                </div>
+              </LoftCardImage>
             </motion.div>
           ))}
         </div>

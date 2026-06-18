@@ -2,18 +2,19 @@
 
 import { useState, useEffect, useRef, useCallback, type ReactNode } from "react"
 import Image from "next/image"
-import { MapPin } from "lucide-react"
+import { Home } from "lucide-react"
 
 interface LoftCardImageProps {
   photos: Array<{ id: string; url: string; order_index?: number; display_order?: number }>
   name: string
   children?: ReactNode
+  sizes?: string
 }
 
 const HOVER_DELAY = 1500
 const SLIDE_INTERVAL = 2000
 
-export function LoftCardImage({ photos, name, children }: LoftCardImageProps) {
+export function LoftCardImage({ photos, name, children, sizes }: LoftCardImageProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
   const [isAutoPlaying, setIsAutoPlaying] = useState(false)
@@ -28,6 +29,7 @@ export function LoftCardImage({ photos, name, children }: LoftCardImageProps) {
       return oa - ob
     })
     .map(p => p.url)
+    .filter(url => url && typeof url === 'string' && url.trim().length > 0)
 
   const hasMultiplePhotos = sortedPhotos.length > 1
 
@@ -71,8 +73,8 @@ export function LoftCardImage({ photos, name, children }: LoftCardImageProps) {
 
   if (!sortedPhotos.length) {
     return (
-      <div className="relative flex h-full w-full items-center justify-center">
-        <MapPin className="h-8 w-8 text-neutral-400" />
+      <div className="relative flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700">
+        <Home className="h-16 w-16 text-neutral-300 dark:text-neutral-600" />
         {children}
       </div>
     )
@@ -90,7 +92,7 @@ export function LoftCardImage({ photos, name, children }: LoftCardImageProps) {
           src={src}
           alt={`${name} - Photo ${index + 1}`}
           fill
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          sizes={sizes || "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
           className={`object-cover transition-opacity duration-700 ease-in-out ${
             index === currentIndex ? "opacity-100" : "opacity-0"
           }`}

@@ -23,34 +23,19 @@ export async function GET(request: Request) {
       return NextResponse.json({ lofts: [] })
     }
 
-    // Build map: loft_id -> best photo url (cover first, then first photo)
-    const photoMap = new Map<string, string>()
-    const mimeMap = new Map<string, string>()
-    // First pass: set cover photos
+    // Build map: loft_id -> array of non-HEIC photo URLs (ordered by is_cover then created_at)
+    const photosByLoft = new Map<string, string[]>()
     photos.forEach((p: any) => {
-      if (p.is_cover === true) {
-        photoMap.set(p.loft_id, p.url)
-        mimeMap.set(p.loft_id, p.mime_type || '')
-      }
-    })
-    // Second pass: fill in lofts without cover using first available photo
-    photos.forEach((p: any) => {
-      if (!photoMap.has(p.loft_id)) {
-        photoMap.set(p.loft_id, p.url)
-        mimeMap.set(p.loft_id, p.mime_type || '')
-      }
-    })
-
-    // Filter out HEIC photos (not displayable in browsers → black image)
-    const validLoftIds = Array.from(photoMap.keys()).filter(id => {
-      const mime = mimeMap.get(id) || ''
-      const url = photoMap.get(id) || ''
+      const mime = p.mime_type || ''
+      const url = p.url || ''
       const isHeic = mime.includes('heic') || mime.includes('heif') ||
                      url.toLowerCase().includes('.heic') || url.toLowerCase().includes('.heif')
-      return !isHeic
+      if (isHeic) return
+      const list = photosByLoft.get(p.loft_id)
+      if (list) { list.push(url) } else { photosByLoft.set(p.loft_id, [url]) }
     })
 
-    const loftIds = validLoftIds
+    const loftIds = Array.from(photosByLoft.keys())
 
     // Fetch those lofts — published first, then all others with photos
     const { data: lofts, error } = await supabase
@@ -69,7 +54,8 @@ export async function GET(request: Request) {
       description: l.description || '',
       price_per_night: l.price_per_night || 0,
       zone: (l.zone_areas as any)?.name || l.address?.split(',')[0] || '',
-      photo: photoMap.get(l.id) || '',
+      photo: photosByLoft.get(l.id)?.[0] || '',
+      loft_photos: photosByLoft.get(l.id) || [],
       is_published: l.is_published,
       created_at: l.created_at,
     }))

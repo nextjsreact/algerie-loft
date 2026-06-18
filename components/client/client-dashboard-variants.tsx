@@ -1,7 +1,7 @@
 "use client"
 
+import { LoftCardImage } from "@/components/client/loft-card-image"
 import Link from "next/link"
-import Image from "next/image"
 import { useMemo } from "react"
 import { useLocale } from "next-intl"
 import {
@@ -214,12 +214,12 @@ function ExecutiveDashboard({ bookings, locale, clientName }: { bookings: any[];
                   {bookings.slice(0, 6).map((booking) => (
                     <div key={booking.id} className="group overflow-hidden rounded-3xl border bg-white transition hover:shadow-lg">
                       <div className="relative h-44 bg-slate-100">
-                        {booking.lofts?.loft_photos?.[0]?.url ? (
-                          <Image src={booking.lofts.loft_photos[0].url} alt={booking.lofts.name || ""} fill className="object-cover transition duration-500 group-hover:scale-105" />
-                        ) : (
-                          <div className="flex h-full items-center justify-center text-slate-400"><Home className="h-12 w-12" /></div>
-                        )}
-                        <div className="absolute left-3 top-3"><StatusBadge status={booking.status} /></div>
+                        <LoftCardImage
+                          photos={booking.lofts?.loft_photos || []}
+                          name={booking.lofts?.name || ""}
+                        >
+                          <div className="absolute left-3 top-3 z-10"><StatusBadge status={booking.status} /></div>
+                        </LoftCardImage>
                       </div>
                       <div className="space-y-3 p-5">
                         <div>
@@ -312,17 +312,17 @@ function LuxuryDashboard({ bookings, locale, clientName }: { bookings: any[]; lo
 
           <Card className="overflow-hidden border-0 shadow-2xl">
             <div className="relative h-72 bg-stone-200">
-              {nextStay?.lofts?.loft_photos?.[0]?.url ? (
-                <Image src={nextStay.lofts.loft_photos[0].url} alt={nextStay.lofts.name || ""} fill className="object-cover" />
-              ) : (
-                <div className="flex h-full items-center justify-center bg-gradient-to-br from-amber-100 to-rose-100"><Home className="h-20 w-20 text-stone-300" /></div>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 text-white">
-                <p className="text-sm uppercase tracking-[0.3em] text-white/60">Prochaine expérience</p>
-                <h2 className="mt-2 text-3xl font-semibold">{nextStay?.lofts?.name || "Aucun séjour prévu"}</h2>
-                <p className="mt-2 flex items-center text-white/70"><MapPin className="mr-1 h-4 w-4" />{nextStay?.lofts?.address}</p>
-              </div>
+              <LoftCardImage
+                photos={nextStay?.lofts?.loft_photos || []}
+                name={nextStay?.lofts?.name || ""}
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-transparent pointer-events-none" />
+                <div className="absolute bottom-6 left-6 right-6 text-white">
+                  <p className="text-sm uppercase tracking-[0.3em] text-white/60">Prochaine expérience</p>
+                  <h2 className="mt-2 text-3xl font-semibold">{nextStay?.lofts?.name || "Aucun séjour prévu"}</h2>
+                  <p className="mt-2 flex items-center text-white/70"><MapPin className="mr-1 h-4 w-4" />{nextStay?.lofts?.address}</p>
+                </div>
+              </LoftCardImage>
             </div>
             <CardContent className="grid gap-3 p-6 md:grid-cols-3">
               <div><p className="text-xs text-muted-foreground">Arrivée</p><p className="mt-1 font-semibold">{nextStay ? formatDate(nextStay.check_in, locale) : "—"}</p></div>
@@ -352,11 +352,10 @@ function LuxuryDashboard({ bookings, locale, clientName }: { bookings: any[]; lo
                     <div key={booking.id} className="grid gap-4 rounded-3xl border p-4 transition hover:border-amber-200 hover:shadow-md md:grid-cols-[1fr_auto]">
                       <div className="flex gap-4">
                         <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-stone-100">
-                          {booking.lofts?.loft_photos?.[0]?.url ? (
-                            <Image src={booking.lofts.loft_photos[0].url} alt={booking.lofts.name || ""} fill className="object-cover" />
-                          ) : (
-                            <div className="flex h-full items-center justify-center text-stone-300"><Home className="h-8 w-8" /></div>
-                          )}
+                          <LoftCardImage
+                            photos={booking.lofts?.loft_photos || []}
+                            name={booking.lofts?.name || ""}
+                          />
                         </div>
                         <div>
                           <div className="mb-2"><StatusBadge status={booking.status} /></div>

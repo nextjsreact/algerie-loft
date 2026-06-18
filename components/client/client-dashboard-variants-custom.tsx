@@ -1,7 +1,7 @@
 "use client"
 
+import { LoftCardImage } from "@/components/client/loft-card-image"
 import Link from "next/link"
-import Image from "next/image"
 import { useMemo, useState } from "react"
 import {
   ArrowRight,
@@ -315,21 +315,14 @@ function CardsVariant({ bookings, locale, clientName }: { bookings: any[]; local
                   {bookings.slice(0, 6).map((booking) => (
                     <div key={booking.id} className="group overflow-hidden rounded-3xl border bg-white transition hover:shadow-lg">
                       <div className="relative h-36 bg-slate-100">
-                        {booking.lofts?.loft_photos?.[0]?.url ? (
-                          <Image
-                            src={booking.lofts.loft_photos[0].url}
-                            alt={booking.lofts?.name || ""}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="flex h-full items-center justify-center text-slate-400">
-                            <Home className="h-12 w-12" />
+                        <LoftCardImage
+                          photos={booking.lofts?.loft_photos || []}
+                          name={booking.lofts?.name || ""}
+                        >
+                          <div className="absolute left-3 top-3 z-10">
+                            <StatusBadge status={booking.status} />
                           </div>
-                        )}
-                        <div className="absolute left-3 top-3">
-                          <StatusBadge status={booking.status} />
-                        </div>
+                        </LoftCardImage>
                       </div>
                       <div className="space-y-3 p-5">
                         <div>

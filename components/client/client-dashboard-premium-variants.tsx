@@ -1,7 +1,7 @@
 "use client"
 
+import { LoftCardImage } from "@/components/client/loft-card-image"
 import Link from "next/link"
-import Image from "next/image"
 import { useMemo, useState } from "react"
 import {
   CheckCircle2,
@@ -132,13 +132,11 @@ function ElegantDashboard({ bookings, locale, clientName }: { bookings: any[]; l
             <div className="overflow-hidden rounded-3xl bg-white shadow-lg shadow-black/5">
               <div className="grid lg:grid-cols-[1fr_1.2fr]">
                 <div className="relative h-64 lg:h-auto">
-                  {next.lofts?.loft_photos?.[0]?.url ? (
-                    <Image src={next.lofts.loft_photos[0].url} alt={next.lofts?.name || ""} fill className="object-cover transition duration-700 group-hover:scale-105" />
-                  ) : (
-                    <div className="h-full bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center">
-                      <Home className="h-16 w-16 text-neutral-300" />
-                    </div>
-                  )}
+                  <LoftCardImage
+                    photos={next.lofts?.loft_photos || []}
+                    name={next.lofts?.name || ""}
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                  />
                 </div>
                 <div className="p-8 lg:p-12 flex flex-col justify-center">
                   <Pill status={next.status} />
@@ -195,12 +193,12 @@ function ElegantDashboard({ bookings, locale, clientName }: { bookings: any[]; l
               <Link key={b.id} href={`/${locale}/client/bookings/${b.id}`} className="group block">
                 <div className="overflow-hidden rounded-3xl border border-neutral-100 bg-white transition hover:shadow-lg hover:shadow-black/5">
                   <div className="relative aspect-[4/3] bg-neutral-100">
-                    {b.lofts?.loft_photos?.[0]?.url ? (
-                      <Image src={b.lofts.loft_photos[0].url} alt={b.lofts?.name || ""} fill className="object-cover transition duration-500 group-hover:scale-105" />
-                    ) : (
-                      <div className="flex h-full items-center justify-center"><Home className="h-12 w-12 text-neutral-300" /></div>
-                    )}
-                    <div className="absolute left-3 top-3"><Pill status={b.status} /></div>
+                    <LoftCardImage
+                      photos={b.lofts?.loft_photos || []}
+                      name={b.lofts?.name || ""}
+                    >
+                      <div className="absolute left-3 top-3 z-10"><Pill status={b.status} /></div>
+                    </LoftCardImage>
                   </div>
                   <div className="p-5">
                     <h3 className="font-medium text-neutral-900">{b.lofts?.name || "Loft"}</h3>
@@ -316,13 +314,11 @@ function GlassDashboard({ bookings, locale, clientName }: { bookings: any[]; loc
             <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl">
               <div className="grid lg:grid-cols-[1fr_1.2fr]">
                 <div className="relative h-64 lg:h-auto">
-                  {next.lofts?.loft_photos?.[0]?.url ? (
-                    <Image src={next.lofts.loft_photos[0].url} alt={next.lofts?.name || ""} fill className="object-cover transition duration-700 group-hover:scale-105" />
-                  ) : (
-                    <div className="h-full bg-gradient-to-br from-purple-900/50 to-blue-900/50 flex items-center justify-center">
-                      <Home className="h-16 w-16 text-white/20" />
-                    </div>
-                  )}
+                  <LoftCardImage
+                    photos={next.lofts?.loft_photos || []}
+                    name={next.lofts?.name || ""}
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                  />
                 </div>
                 <div className="p-8 lg:p-12 flex flex-col justify-center">
                   <Pill status={next.status} />
@@ -377,12 +373,12 @@ function GlassDashboard({ bookings, locale, clientName }: { bookings: any[]; loc
               <Link key={b.id} href={`/${locale}/client/bookings/${b.id}`} className="group block">
                 <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl transition hover:bg-white/10">
                   <div className="relative aspect-[4/3] bg-white/5">
-                    {b.lofts?.loft_photos?.[0]?.url ? (
-                      <Image src={b.lofts.loft_photos[0].url} alt={b.lofts?.name || ""} fill className="object-cover transition duration-500 group-hover:scale-105" />
-                    ) : (
-                      <div className="flex h-full items-center justify-center"><Home className="h-12 w-12 text-white/10" /></div>
-                    )}
-                    <div className="absolute left-3 top-3"><Pill status={b.status} /></div>
+                    <LoftCardImage
+                      photos={b.lofts?.loft_photos || []}
+                      name={b.lofts?.name || ""}
+                    >
+                      <div className="absolute left-3 top-3 z-10"><Pill status={b.status} /></div>
+                    </LoftCardImage>
                   </div>
                   <div className="p-5">
                     <h3 className="font-medium text-white">{b.lofts?.name || "Loft"}</h3>
@@ -461,20 +457,19 @@ function EditorialDashboard({ bookings, locale, clientName }: { bookings: any[];
         </div>
         {/* Right: image / gradient */}
         <div className="relative hidden lg:block">
-          {next?.lofts?.loft_photos?.[0]?.url ? (
-            <Image src={next.lofts.loft_photos[0].url} alt="" fill className="object-cover" />
-          ) : (
-            <div className="h-full bg-gradient-to-br from-neutral-100 to-neutral-200" />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/40 to-transparent" />
-          {/* floating stat card */}
-          {next && (
-            <div className="absolute bottom-12 left-12 rounded-3xl bg-white/90 backdrop-blur-xl p-6 shadow-2xl max-w-xs">
-              <p className="text-[10px] tracking-widest text-neutral-400 uppercase">Prochain séjour</p>
-              <p className="mt-2 text-xl font-semibold text-neutral-900">{next.lofts?.name || "Séjour"}</p>
-              <p className="mt-1 text-sm text-neutral-500">{fmtDate(next.check_in, locale)} → {fmtDate(next.check_out, locale)}</p>
-            </div>
-          )}
+          <LoftCardImage
+            photos={next?.lofts?.loft_photos || []}
+            name={next?.lofts?.name || ""}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-white via-white/40 to-transparent pointer-events-none" />
+            {next && (
+              <div className="absolute bottom-12 left-12 rounded-3xl bg-white/90 backdrop-blur-xl p-6 shadow-2xl max-w-xs z-10">
+                <p className="text-[10px] tracking-widest text-neutral-400 uppercase">Prochain séjour</p>
+                <p className="mt-2 text-xl font-semibold text-neutral-900">{next.lofts?.name || "Séjour"}</p>
+                <p className="mt-1 text-sm text-neutral-500">{fmtDate(next.check_in, locale)} → {fmtDate(next.check_out, locale)}</p>
+              </div>
+            )}
+          </LoftCardImage>
         </div>
       </div>
 
@@ -521,16 +516,16 @@ function EditorialDashboard({ bookings, locale, clientName }: { bookings: any[];
               <Link key={b.id} href={`/${locale}/client/bookings/${b.id}`} className="group block">
                 <div className={`overflow-hidden ${i === 0 ? 'rounded-[2rem]' : 'rounded-3xl'}`}>
                   <div className={`relative ${i === 0 ? 'aspect-[3/4]' : 'aspect-[4/3]'} bg-neutral-100`}>
-                    {b.lofts?.loft_photos?.[0]?.url ? (
-                      <Image src={b.lofts.loft_photos[0].url} alt={b.lofts?.name || ""} fill className="object-cover transition duration-700 group-hover:scale-105" />
-                    ) : (
-                      <div className="flex h-full items-center justify-center"><Home className="h-12 w-12 text-neutral-300" /></div>
-                    )}
-                    <div className="absolute left-4 top-4"><Pill status={b.status} /></div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-                    <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100">
-                      <p className="text-sm font-medium text-white">{Number(b.total_price || 0).toLocaleString("fr-DZ")} DA</p>
-                    </div>
+                    <LoftCardImage
+                      photos={b.lofts?.loft_photos || []}
+                      name={b.lofts?.name || ""}
+                    >
+                      <div className="absolute left-4 top-4 z-10"><Pill status={b.status} /></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none" />
+                      <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100">
+                        <p className="text-sm font-medium text-white">{Number(b.total_price || 0).toLocaleString("fr-DZ")} DA</p>
+                      </div>
+                    </LoftCardImage>
                   </div>
                   <div className="p-5">
                     <h3 className="text-lg font-semibold text-neutral-900">{b.lofts?.name || "Loft"}</h3>
@@ -662,11 +657,10 @@ function MasterDetailDashboard({ bookings, locale, clientName }: { bookings: any
                 >
                   <div className="flex items-start gap-3">
                     <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
-                      {b.lofts?.loft_photos?.[0]?.url ? (
-                        <Image src={b.lofts.loft_photos[0].url} alt="" fill className="object-cover" />
-                      ) : (
-                        <div className="flex h-full items-center justify-center"><Home className="h-5 w-5 text-neutral-300" /></div>
-                      )}
+                      <LoftCardImage
+                        photos={b.lofts?.loft_photos || []}
+                        name={b.lofts?.name || ""}
+                      />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
@@ -692,17 +686,15 @@ function MasterDetailDashboard({ bookings, locale, clientName }: { bookings: any
               <div className="overflow-hidden rounded-3xl border border-neutral-100 bg-white shadow-lg shadow-black/5">
                 {/* photo */}
                 <div className="relative h-64 lg:h-80">
-                  {selected.lofts?.loft_photos?.[0]?.url ? (
-                    <Image src={selected.lofts.loft_photos[0].url} alt={selected.lofts?.name || ""} fill className="object-cover" />
-                  ) : (
-                    <div className="h-full bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center">
-                      <Home className="h-16 w-16 text-neutral-300" />
+                  <LoftCardImage
+                    photos={selected.lofts?.loft_photos || []}
+                    name={selected.lofts?.name || ""}
+                  >
+                    <div className="absolute left-4 top-4 z-10"><Pill status={selected.status} /></div>
+                    <div className="absolute right-4 top-4 z-10 rounded-full bg-white/90 backdrop-blur px-3 py-1 text-xs font-medium text-neutral-700">
+                      {relativeTime(selected.check_in)}
                     </div>
-                  )}
-                  <div className="absolute left-4 top-4"><Pill status={selected.status} /></div>
-                  <div className="absolute right-4 top-4 rounded-full bg-white/90 backdrop-blur px-3 py-1 text-xs font-medium text-neutral-700">
-                    {relativeTime(selected.check_in)}
-                  </div>
+                  </LoftCardImage>
                 </div>
 
                 {/* info */}
@@ -874,11 +866,10 @@ function ProgressDashboard({ bookings, locale, clientName }: { bookings: any[]; 
                       <div className="rounded-2xl border border-neutral-100 bg-white p-5 transition hover:shadow-md hover:shadow-black/5">
                         <div className="flex items-start gap-4">
                           <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
-                            {b.lofts?.loft_photos?.[0]?.url ? (
-                              <Image src={b.lofts.loft_photos[0].url} alt="" fill className="object-cover" />
-                            ) : (
-                              <div className="flex h-full items-center justify-center"><Home className="h-5 w-5 text-neutral-300" /></div>
-                            )}
+                            <LoftCardImage
+                              photos={b.lofts?.loft_photos || []}
+                              name={b.lofts?.name || ""}
+                            />
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between gap-2">

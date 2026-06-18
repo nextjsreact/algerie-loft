@@ -93,12 +93,10 @@ export function LoftCardImage({ photos, name, children, sizes }: LoftCardImagePr
           alt={`${name} - Photo ${index + 1}`}
           fill
           sizes={sizes || "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
-          className={`object-cover transition-all duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          className={`object-cover transition-all duration-[800ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
             index === currentIndex
               ? "scale-100 opacity-100"
-              : index === (currentIndex + 1) % sortedPhotos.length && isAutoPlaying
-                ? "scale-[1.03] opacity-0"
-                : "scale-[0.97] opacity-0"
+              : "scale-[1.01] opacity-0"
           }`}
           draggable={false}
         />

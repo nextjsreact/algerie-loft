@@ -12,11 +12,30 @@ export async function GET(request: NextRequest) {
 
     const serviceSupabase = await createClient(true)
 
-    const { count, error } = await serviceSupabase
+    // Detect user role to filter notifications for members
+    const { data: profile } = await serviceSupabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    const userRole = profile?.role || 'member'
+    const isMemberRestricted = userRole === 'member'
+
+    let query = serviceSupabase
       .from('notifications')
-      .select('id', { count: 'exact', head: true })
+      .select('id, type, notification_category', { count: 'exact', head: true })
       .eq('user_id', user.id)
       .eq('is_read', false)
+
+    // For members: only count task and general notifications
+    if (isMemberRestricted) {
+      query = query.or(
+        'notification_category.in.(task,general),and(notification_category.is.null,type.in.(task_assigned,task_updated,task_completed,task_overdue,task_reassigned,task_due_date_changed,task_status_changed,task_deleted,newTaskAssigned,info,success,warning,error,welcome,profile_updated,password_changed))'
+      )
+    }
+
+    const { count, error } = await query
 
     if (error) {
       console.error('Error counting notifications:', error)

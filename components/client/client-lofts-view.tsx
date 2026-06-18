@@ -2,10 +2,10 @@
 
 import { useState, useMemo, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Search, MapPin, Heart, SlidersHorizontal, Users, BedDouble, Bath, ArrowLeft } from "lucide-react"
-import Image from "next/image"
+import { Search, MapPin, Heart, Users, BedDouble, Bath, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { getZoneAreas } from "@/app/actions/zone-areas"
+import { LoftCardImage } from "./loft-card-image"
 
 interface Loft {
   id: string
@@ -55,15 +55,6 @@ export function ClientLoftsView({ lofts, locale }: ClientLoftsViewProps) {
       next.has(loftId) ? next.delete(loftId) : next.add(loftId)
       return next
     })
-  }
-
-  const getBestPhoto = (loft: Loft): string | null => {
-    if (!loft.loft_photos?.length) return null
-    return loft.loft_photos.sort((a, b) => {
-      const oa = a.order_index ?? a.display_order ?? 999
-      const ob = b.order_index ?? b.display_order ?? 999
-      return oa - ob
-    })[0]?.url || null
   }
 
   return (
@@ -122,7 +113,6 @@ export function ClientLoftsView({ lofts, locale }: ClientLoftsViewProps) {
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-5">
             {filteredLofts.map((loft, i) => {
-              const photo = getBestPhoto(loft)
               const isFav = favorites.has(loft.id)
 
               return (
@@ -135,19 +125,12 @@ export function ClientLoftsView({ lofts, locale }: ClientLoftsViewProps) {
                   <Link href={`/${locale}/client/lofts/${loft.id}`} className="group block">
                     {/* Photo */}
                     <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-neutral-200 dark:bg-neutral-800">
-                      {photo ? (
-                        <Image
-                          src={photo}
-                          alt={loft.name}
-                          fill
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center">
-                          <MapPin className="h-8 w-8 text-neutral-400" />
-                        </div>
-                      )}
+                      <LoftCardImage
+                        photos={loft.loft_photos || []}
+                        name={loft.name}
+                        zoneName={loft.zone_areas?.name}
+                        href={`/${locale}/client/lofts/${loft.id}`}
+                      />
 
                       {/* Overlay hover */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />

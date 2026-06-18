@@ -61,12 +61,12 @@ export default function LoftCard({
     setIsAutoPlaying(true);
     slideTimerRef.current = setInterval(() => {
       setCurrentImageIndex(prev => (prev + 1) % loft.images.length);
-    }, 2000);
+    }, 1000);
   }, [hasMultiple, loft.images.length]);
 
   const handleMouseEnter = useCallback(() => {
     if (!hasMultiple) return;
-    hoverTimerRef.current = setTimeout(startAutoPlay, 1500);
+    hoverTimerRef.current = setTimeout(startAutoPlay, 400);
   }, [hasMultiple, startAutoPlay]);
 
   const handleMouseLeave = useCallback(() => {
@@ -264,7 +264,7 @@ export default function LoftCard({
 
             {/* Auto-advance indicator */}
             {isAutoPlaying && (
-              <div className="absolute top-3 left-3 flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 backdrop-blur-sm z-10">
+              <div className="absolute top-3 right-12 flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 backdrop-blur-sm z-10">
                 <div className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
                 <span className="text-[10px] font-medium text-white">Auto</span>
               </div>

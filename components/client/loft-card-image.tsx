@@ -11,8 +11,8 @@ interface LoftCardImageProps {
   sizes?: string
 }
 
-const HOVER_DELAY = 1000
-const SLIDE_INTERVAL = 2000
+const HOVER_DELAY = 400
+const SLIDE_INTERVAL = 1000
 
 export function LoftCardImage({ photos, name, children, sizes }: LoftCardImageProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -93,8 +93,12 @@ export function LoftCardImage({ photos, name, children, sizes }: LoftCardImagePr
           alt={`${name} - Photo ${index + 1}`}
           fill
           sizes={sizes || "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
-          className={`object-cover transition-opacity duration-700 ease-in-out ${
-            index === currentIndex ? "opacity-100" : "opacity-0"
+          className={`object-cover transition-all duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            index === currentIndex
+              ? "scale-100 opacity-100"
+              : index === (currentIndex + 1) % sortedPhotos.length && isAutoPlaying
+                ? "scale-[1.03] opacity-0"
+                : "scale-[0.97] opacity-0"
           }`}
           draggable={false}
         />

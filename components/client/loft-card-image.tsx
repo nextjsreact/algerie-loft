@@ -10,7 +10,7 @@ interface LoftCardImageProps {
   children?: ReactNode
 }
 
-const HOVER_DELAY = 3000
+const HOVER_DELAY = 1500
 const SLIDE_INTERVAL = 2000
 
 export function LoftCardImage({ photos, name, children }: LoftCardImageProps) {

@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import {
-  Search,
+import { Search,
   MapPin,
   Calendar,
   Users,
@@ -24,6 +23,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { useTranslations } from "next-intl"
+import { LoftCardImage } from "./loft-card-image"
 
 /* ─── helpers ─────────────────────────────────────────────── */
 
@@ -213,17 +213,15 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
               >
                 {/* photo */}
                 <div className="relative h-64 lg:h-80">
-                  {selected.lofts?.loft_photos?.[0]?.url ? (
-                    <Image src={selected.lofts.loft_photos[0].url} alt={selected.lofts?.name || ""} fill className="object-cover" />
-                  ) : (
-                    <div className="h-full bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700 flex items-center justify-center">
-                      <Home className="h-16 w-16 text-neutral-300 dark:text-neutral-600" />
+                  <LoftCardImage
+                    photos={selected.lofts?.loft_photos || []}
+                    name={selected.lofts?.name || ""}
+                  >
+                    <div className="absolute left-4 top-4 z-10"><Pill status={selected.status} /></div>
+                    <div className="absolute right-4 top-4 z-10 rounded-full bg-white/90 dark:bg-neutral-800/90 backdrop-blur px-3 py-1 text-xs font-medium text-neutral-700 dark:text-neutral-300">
+                      {relativeTime(selected.check_in)}
                     </div>
-                  )}
-                  <div className="absolute left-4 top-4"><Pill status={selected.status} /></div>
-                  <div className="absolute right-4 top-4 rounded-full bg-white/90 dark:bg-neutral-800/90 backdrop-blur px-3 py-1 text-xs font-medium text-neutral-700 dark:text-neutral-300">
-                    {relativeTime(selected.check_in)}
-                  </div>
+                  </LoftCardImage>
                 </div>
 
                 {/* info */}
@@ -355,8 +353,12 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
                 <Link href={`/${locale}/client/lofts/${loft.id}`} className="group block">
                   <div className="overflow-hidden rounded-2xl border border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 transition hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30">
                     <div className="relative aspect-[4/3] bg-neutral-100 dark:bg-neutral-800">
-                      <Image src={loft.photo} alt={loft.name} fill sizes="(max-width:640px)100vw,(max-width:1024px)50vw,25vw" className="object-cover transition duration-500 group-hover:scale-105" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                      <LoftCardImage
+                        photos={[{ id: '0', url: loft.photo }]}
+                        name={loft.name}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none" />
+                      </LoftCardImage>
                     </div>
                     <div className="p-4">
                       <h3 className="font-medium text-neutral-900 dark:text-white truncate text-sm">{loft.name}</h3>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -46,6 +46,38 @@ export default function LoftCard({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [showQuickView, setShowQuickView] = useState(false);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const slideTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const hasMultiple = loft.images.length > 1;
+
+  const clearAutoTimers = useCallback(() => {
+    if (hoverTimerRef.current) { clearTimeout(hoverTimerRef.current); hoverTimerRef.current = null; }
+    if (slideTimerRef.current) { clearInterval(slideTimerRef.current); slideTimerRef.current = null; }
+  }, []);
+
+  const startAutoPlay = useCallback(() => {
+    if (!hasMultiple) return;
+    setIsAutoPlaying(true);
+    slideTimerRef.current = setInterval(() => {
+      setCurrentImageIndex(prev => (prev + 1) % loft.images.length);
+    }, 2000);
+  }, [hasMultiple, loft.images.length]);
+
+  const handleMouseEnter = useCallback(() => {
+    if (!hasMultiple) return;
+    hoverTimerRef.current = setTimeout(startAutoPlay, 1500);
+  }, [hasMultiple, startAutoPlay]);
+
+  const handleMouseLeave = useCallback(() => {
+    clearAutoTimers();
+    setIsAutoPlaying(false);
+    setCurrentImageIndex(0);
+  }, [clearAutoTimers]);
+
+  useEffect(() => {
+    return () => clearAutoTimers();
+  }, [clearAutoTimers]);
 
   // Multilingual content
   const content = {
@@ -139,7 +171,11 @@ export default function LoftCard({
       >
         <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
           {/* Image Gallery - Glissement fluide */}
-          <div className="relative aspect-[4/3] overflow-hidden">
+          <div
+            className="relative aspect-[4/3] overflow-hidden"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
             {/* Container de glissement pour les images */}
             <div className="relative w-full h-full">
               {loft.images.map((image, index) => {
@@ -225,6 +261,14 @@ export default function LoftCard({
             >
               <Heart className={cn("h-4 w-4", isFavorite && "fill-red-500 text-red-500")} />
             </Button>
+
+            {/* Auto-advance indicator */}
+            {isAutoPlaying && (
+              <div className="absolute top-3 left-3 flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 backdrop-blur-sm z-10">
+                <div className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
+                <span className="text-[10px] font-medium text-white">Auto</span>
+              </div>
+            )}
           </div>
 
           <CardContent className="p-4">

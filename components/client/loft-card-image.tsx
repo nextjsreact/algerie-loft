@@ -1,25 +1,24 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, type ReactNode } from "react"
 import Image from "next/image"
 import { MapPin } from "lucide-react"
 
 interface LoftCardImageProps {
   photos: Array<{ id: string; url: string; order_index?: number; display_order?: number }>
   name: string
-  zoneName?: string
-  href: string
+  children?: ReactNode
 }
 
 const HOVER_DELAY = 3000
 const SLIDE_INTERVAL = 2000
 
-export function LoftCardImage({ photos, name, zoneName, href }: LoftCardImageProps) {
+export function LoftCardImage({ photos, name, children }: LoftCardImageProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
   const [isAutoPlaying, setIsAutoPlaying] = useState(false)
-  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const slideTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const slideTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const sortedPhotos = photos
     .slice()
@@ -72,8 +71,9 @@ export function LoftCardImage({ photos, name, zoneName, href }: LoftCardImagePro
 
   if (!sortedPhotos.length) {
     return (
-      <div className="flex h-full w-full items-center justify-center">
+      <div className="relative flex h-full w-full items-center justify-center">
         <MapPin className="h-8 w-8 text-neutral-400" />
+        {children}
       </div>
     )
   }
@@ -98,7 +98,8 @@ export function LoftCardImage({ photos, name, zoneName, href }: LoftCardImagePro
         />
       ))}
 
-      {/* Indicateurs de position */}
+      {children}
+
       {hasMultiplePhotos && (isHovered || isAutoPlaying) && (
         <div className="absolute bottom-2.5 right-2.5 flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 backdrop-blur-sm">
           {sortedPhotos.map((_, index) => (
@@ -114,7 +115,6 @@ export function LoftCardImage({ photos, name, zoneName, href }: LoftCardImagePro
         </div>
       )}
 
-      {/* Indicateur auto-play */}
       {isAutoPlaying && (
         <div className="absolute top-2.5 right-2.5 flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 backdrop-blur-sm">
           <div className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />

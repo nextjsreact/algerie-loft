@@ -128,28 +128,26 @@ export function ClientLoftsView({ lofts, locale }: ClientLoftsViewProps) {
                       <LoftCardImage
                         photos={loft.loft_photos || []}
                         name={loft.name}
-                        zoneName={loft.zone_areas?.name}
-                        href={`/${locale}/client/lofts/${loft.id}`}
-                      />
-
-                      {/* Overlay hover */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-
-                      {/* Bouton favori */}
-                      <button
-                        onClick={e => toggleFavorite(e, loft.id)}
-                        className="absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm transition-all hover:bg-white dark:bg-black/50 dark:hover:bg-black/70"
-                        aria-label="Favori"
                       >
-                        <Heart className={`h-4 w-4 transition-colors ${isFav ? 'fill-red-500 text-red-500' : 'text-neutral-600 dark:text-white'}`} />
-                      </button>
+                        {/* Overlay hover */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
 
-                      {/* Badge zone */}
-                      {loft.zone_areas?.name && (
-                        <div className="absolute bottom-2.5 left-2.5 rounded-full bg-white/85 px-2.5 py-1 text-[10px] font-medium text-neutral-800 backdrop-blur-sm dark:bg-black/60 dark:text-white">
-                          {loft.zone_areas.name}
-                        </div>
-                      )}
+                        {/* Bouton favori */}
+                        <button
+                          onClick={e => toggleFavorite(e, loft.id)}
+                          className="absolute right-2.5 top-2.5 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm transition-all hover:bg-white dark:bg-black/50 dark:hover:bg-black/70"
+                          aria-label="Favori"
+                        >
+                          <Heart className={`h-4 w-4 transition-colors ${isFav ? 'fill-red-500 text-red-500' : 'text-neutral-600 dark:text-white'}`} />
+                        </button>
+
+                        {/* Badge zone */}
+                        {loft.zone_areas?.name && (
+                          <div className="absolute bottom-2.5 left-2.5 z-10 rounded-full bg-white/85 px-2.5 py-1 text-[10px] font-medium text-neutral-800 backdrop-blur-sm dark:bg-black/60 dark:text-white pointer-events-none">
+                            {loft.zone_areas.name}
+                          </div>
+                        )}
+                      </LoftCardImage>
                     </div>
 
                     {/* Infos */}

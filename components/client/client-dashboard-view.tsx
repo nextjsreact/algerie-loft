@@ -354,7 +354,7 @@ export function ClientDashboardView({ bookings, locale, clientName }: ClientDash
                   <div className="overflow-hidden rounded-2xl border border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 transition hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/30">
                     <div className="relative aspect-[4/3] bg-neutral-100 dark:bg-neutral-800">
                       <LoftCardImage
-                        photos={[{ id: '0', url: loft.photo }]}
+                        photos={(loft.loft_photos || [loft.photo]).filter(Boolean).map((url: string) => ({ id: url, url }))}
                         name={loft.name}
                       >
                         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none" />

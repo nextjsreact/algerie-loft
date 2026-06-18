@@ -11,7 +11,7 @@ interface LoftCardImageProps {
   sizes?: string
 }
 
-const HOVER_DELAY = 1500
+const HOVER_DELAY = 1000
 const SLIDE_INTERVAL = 2000
 
 export function LoftCardImage({ photos, name, children, sizes }: LoftCardImageProps) {

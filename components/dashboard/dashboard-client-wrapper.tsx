@@ -112,6 +112,17 @@ function AdminManagerDashboardContent({ session }: { session: AuthSession }) {
           supabase.from('teams').select('id'),
         ])
 
+        // Fetch active reservations to compute real-time occupancy
+        const today = new Date().toISOString().split('T')[0]
+        const { data: activeReservations } = await supabase
+          .from('reservations')
+          .select('loft_id')
+          .in('status', ['confirmed', 'pending'])
+          .lte('check_in_date', today)
+          .gt('check_out_date', today)
+
+        const occupiedLoftIds = new Set((activeReservations || []).map(r => r.loft_id))
+
         let overdueBills = 0
         try {
           const billRes = await fetch('/api/bill-monitoring/stats')
@@ -122,7 +133,7 @@ function AdminManagerDashboardContent({ session }: { session: AuthSession }) {
         } catch {}
 
         const lofts = loftsRes.data || []
-        const occupied = lofts.filter((l: any) => l.status === 'occupied').length
+        const occupied = lofts.filter((l: any) => occupiedLoftIds.has(l.id)).length
 
         setStats({
           totalLofts: lofts.length,

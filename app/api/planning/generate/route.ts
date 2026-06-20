@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
       .from('reservations')
       .select('id, loft_id, check_out_date, guest_name, lofts:loft_id(name, address, gps_coordinates, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
       .eq('check_out_date', targetDateStr)
-      .in('status', ['confirmed', 'completed'])
+      .in('status', ['pending', 'confirmed', 'completed'])
       .order('check_out_date')
 
     // 6. Fetch check-ins for target date (welcome tasks) — include zone + GPS

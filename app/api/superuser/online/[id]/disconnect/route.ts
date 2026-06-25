@@ -29,6 +29,8 @@ export async function POST(
 
     if (updateError) throw updateError
 
+    await supabase.auth.admin.signOut(id).catch(() => {})
+
     try {
       await supabase
         .from('audit_logs')

@@ -53,7 +53,7 @@ export default async function LocaleLayout({
     <div dir={direction} lang={locale}>
       {/* <NuclearSpacingFix /> */}
       <script dangerouslySetInnerHTML={{ __html: `
-(function(){if(typeof __hb!=="undefined")return;__hb=true;
+(function(){if(typeof window.__hb!=="undefined")return;window.__hb=true;
 var i=setInterval(function(){
 fetch('/api/auth/heartbeat',{method:'POST'}).then(function(r){return r.json()}).then(function(d){
 if(d.force_logout){

@@ -26,7 +26,27 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error
 
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/+$/, '')
+    const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/+$/, '')
+    const storageBase = `${supabaseUrl}/storage/v1/object/public/loft-photos/`
+    const proxyBase = `${appUrl}/api/photos`
+
+    const toProxyUrl = (storedUrl: string) => {
+      if (storedUrl.startsWith(storageBase)) {
+        return storedUrl.replace(storageBase, `${proxyBase}/`)
+      }
+      return storedUrl
+    }
+
     const exported = (lofts || []).map(loft => {
+      const photos = (loft.loft_photos || [])
+        .sort((a: any, b: any) => {
+          if (a.is_cover && !b.is_cover) return -1
+          if (!a.is_cover && b.is_cover) return 1
+          return (a.order_index || 999) - (b.order_index || 999)
+        })
+        .map((p: any) => toProxyUrl(p.url))
+
       return {
         id: loft.id,
         name: loft.name,
@@ -47,7 +67,7 @@ export async function GET(request: NextRequest) {
         cleaning_fee: loft.cleaning_fee || null,
         gps_coordinates: loft.gps_coordinates || null,
         wifi_password: loft.wifi_password || null,
-        photos: [],
+        photos,
         owner_name: COMPANY_NAME,
         company_name: COMPANY_NAME,
         company_phone: COMPANY_PHONE,

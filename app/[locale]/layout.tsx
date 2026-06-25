@@ -5,7 +5,6 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getSessionReadOnly } from '@/lib/auth';
 import ClientProviders from '@/components/providers/client-providers-nextintl';
 import { LangSetter } from '@/components/lang-setter';
-import Heartbeat from '@/components/admin/heartbeat';
 import config from '@/next-intl.config';
 // import { NuclearSpacingFix } from '@/components/nuclear-spacing-fix';
 
@@ -53,7 +52,21 @@ export default async function LocaleLayout({
   return (
     <div dir={direction} lang={locale}>
       {/* <NuclearSpacingFix /> */}
-      <Heartbeat />
+      <script dangerouslySetInnerHTML={{ __html: `
+(function(){if(typeof __hb!=="undefined")return;__hb=true;
+var i=setInterval(function(){
+fetch('/api/auth/heartbeat',{method:'POST'}).then(function(r){return r.json()}).then(function(d){
+if(d.force_logout){
+document.cookie.split(';').forEach(function(c){
+document.cookie=c.trim().split('=')[0]+'=;expires=Thu,01-Jan-1970 00:00:00 GMT;path=/'
+});
+window.location.href='/fr/login'
+}
+}).catch(function(){})
+},10000);
+window.__hb_stop=function(){clearInterval(i)}
+})()
+`}} />
       <LangSetter locale={locale} />
       <ClientProviders 
         session={session} 

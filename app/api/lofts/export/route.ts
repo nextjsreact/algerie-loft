@@ -27,16 +27,6 @@ export async function GET(request: NextRequest) {
     if (error) throw error
 
     const exported = (lofts || []).map(loft => {
-      const photos = (loft.loft_photos || [])
-        .sort((a: any, b: any) => {
-          if (a.is_cover && !b.is_cover) return -1
-          if (!a.is_cover && b.is_cover) return 1
-          return (a.order_index || 999) - (b.order_index || 999)
-        })
-        .map((p: any) => p.url)
-
-      const isPartner = !!loft.partner_id
-
       return {
         id: loft.id,
         name: loft.name,
@@ -57,8 +47,8 @@ export async function GET(request: NextRequest) {
         cleaning_fee: loft.cleaning_fee || null,
         gps_coordinates: loft.gps_coordinates || null,
         wifi_password: loft.wifi_password || null,
-        photos,
-        owner_name: isPartner ? COMPANY_NAME : (loft.owner?.business_name || loft.owner?.name || COMPANY_NAME),
+        photos: [],
+        owner_name: COMPANY_NAME,
         company_name: COMPANY_NAME,
         company_phone: COMPANY_PHONE,
         company_email: COMPANY_EMAIL,

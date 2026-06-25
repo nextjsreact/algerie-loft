@@ -39,7 +39,7 @@ export default async function ClientDashboardPage({
 
   const { data: bookingPhotosData } = await supabase
     .from("loft_photos")
-    .select("loft_id, url, is_cover")
+    .select("*")
     .order("is_cover", { ascending: false })
     .order("created_at", { ascending: true })
 

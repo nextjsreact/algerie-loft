@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
-import { verifySuperuserAPI } from '@/lib/superuser/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -9,13 +8,24 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await verifySuperuserAPI()
-    if (!auth.authorized) {
-      return NextResponse.json({ error: auth.error }, { status: 401 })
-    }
-
     const { id } = await params
     const supabase = await createClient(true)
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
+    }
+
+    const { data: profile } = await supabase
+      .from('superuser_profiles')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .single()
+
+    if (!profile) {
+      return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
+    }
 
     const now = new Date().toISOString()
 
@@ -31,21 +41,9 @@ export async function POST(
 
     await supabase.auth.admin.signOut(id).catch(() => {})
 
-    try {
-      await supabase
-        .from('audit_logs')
-        .insert({
-          user_id: auth.superuser?.user_id,
-          action_type: 'force_logout',
-          entity_type: 'user',
-          entity_id: id,
-          details: { forced_by: auth.superuser?.user_id, forced_at: now },
-        })
-    } catch { /* audit_logs table may not exist */ }
-
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('[superuser/online/disconnect]', err)
+    console.error('[disconnect]', err)
     return NextResponse.json({ error: 'Erreur interne' }, { status: 500 })
   }
 }

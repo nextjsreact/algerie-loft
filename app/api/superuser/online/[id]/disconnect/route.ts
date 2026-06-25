@@ -29,15 +29,17 @@ export async function POST(
 
     if (updateError) throw updateError
 
-    await supabase
-      .from('audit_logs')
-      .insert({
-        user_id: auth.superuser?.user_id,
-        action_type: 'force_logout',
-        entity_type: 'user',
-        entity_id: id,
-        details: { forced_by: auth.superuser?.user_id, forced_at: now },
-      })
+    try {
+      await supabase
+        .from('audit_logs')
+        .insert({
+          user_id: auth.superuser?.user_id,
+          action_type: 'force_logout',
+          entity_type: 'user',
+          entity_id: id,
+          details: { forced_by: auth.superuser?.user_id, forced_at: now },
+        })
+    } catch { /* audit_logs table may not exist */ }
 
     return NextResponse.json({ ok: true })
   } catch (err) {

@@ -24,9 +24,6 @@ export async function POST() {
         .update({ force_logout_at: null, is_online: false })
         .eq('id', user.id)
 
-      const signOutClient = await createClient(false)
-      await signOutClient.auth.signOut()
-
       return NextResponse.json({ ok: true, force_logout: true })
     }
 

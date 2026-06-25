@@ -1,35 +1,33 @@
 "use client"
 
-import { useEffect, useRef } from 'react'
-import { createBrowserClient } from '@supabase/ssr'
+import { useEffect } from 'react'
+import { createClient } from '@/utils/supabase/client'
 
 export default function Heartbeat() {
-  const supabaseRef = useRef<ReturnType<typeof createBrowserClient> | null>(null)
-
   useEffect(() => {
-    supabaseRef.current = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-  }, [])
+    const supabase = createClient()
+    let stopped = false
 
-  useEffect(() => {
     const send = async () => {
       try {
         const res = await fetch('/api/auth/heartbeat', { method: 'POST' })
         if (!res.ok) return
         const data = await res.json()
-        if (data.force_logout && supabaseRef.current) {
-          await supabaseRef.current.auth.signOut()
+        if (data.force_logout && !stopped) {
+          await supabase.auth.signOut()
           window.location.href = '/fr/login'
         }
       } catch {
         // ignore
       }
     }
+
     send()
-    const interval = setInterval(send, 30_000)
-    return () => clearInterval(interval)
+    const interval = setInterval(send, 15_000)
+    return () => {
+      stopped = true
+      clearInterval(interval)
+    }
   }, [])
 
   return null

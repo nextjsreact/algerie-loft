@@ -24,7 +24,16 @@ export async function POST() {
         .update({ force_logout_at: null, is_online: false })
         .eq('id', user.id)
 
-      return NextResponse.json({ ok: true, force_logout: true })
+      const { cookies } = await import('next/headers')
+      const cookieStore = await cookies()
+      const all = cookieStore.getAll()
+      const response = NextResponse.json({ ok: true, force_logout: true })
+      for (const c of all) {
+        if (c.name.startsWith('sb-')) {
+          response.cookies.set(c.name, '', { maxAge: 0, path: '/' })
+        }
+      }
+      return response
     }
 
     const now = new Date().toISOString()

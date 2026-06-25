@@ -54,18 +54,12 @@ export default async function LocaleLayout({
       {/* <NuclearSpacingFix /> */}
       <script dangerouslySetInnerHTML={{ __html: `
 (function(){if(typeof window.__hb!=="undefined")return;window.__hb=true;
-var logout=function(){
-document.cookie.split(';').forEach(function(c){
-document.cookie=c.trim().split('=')[0]+'=;expires=Thu,01-Jan-1970 00:00:00 GMT;path=/'
-});
-window.location.href='/fr/login'
-};
 setInterval(function(){
 fetch('/api/auth/heartbeat',{method:'POST'}).then(function(r){
-if(r.status===401){logout();return}
+if(r.status===401){window.location.href='/api/auth/force-logout';return}
 return r.json()
 }).then(function(d){
-if(d&&(d.force_logout||d.error))logout()
+if(d&&d.force_logout)window.location.href='/api/auth/force-logout'
 }).catch(function(){})
 },10000)
 })()

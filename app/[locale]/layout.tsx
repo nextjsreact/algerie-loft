@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getSessionReadOnly } from '@/lib/auth';
 import ClientProviders from '@/components/providers/client-providers-nextintl';
 import { LangSetter } from '@/components/lang-setter';
+import Heartbeat from '@/components/admin/heartbeat';
 import config from '@/next-intl.config';
 // import { NuclearSpacingFix } from '@/components/nuclear-spacing-fix';
 
@@ -52,6 +53,7 @@ export default async function LocaleLayout({
   return (
     <div dir={direction} lang={locale}>
       {/* <NuclearSpacingFix /> */}
+      <Heartbeat />
       <LangSetter locale={locale} />
       <ClientProviders 
         session={session} 

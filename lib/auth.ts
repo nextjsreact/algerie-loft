@@ -60,10 +60,6 @@ export async function getSession(): Promise<AuthSession | null> {
     }
 
     if (profile?.force_logout_at) {
-      await serviceSupabase
-        .from('profiles')
-        .update({ force_logout_at: null })
-        .eq('id', user.id)
       return null
     }
   } catch (error) {

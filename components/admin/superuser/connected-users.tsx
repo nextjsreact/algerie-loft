@@ -15,6 +15,8 @@ export default function ConnectedUsers() {
   const [users, setUsers] = useState<ConnectedUser[]>([])
   const [loading, setLoading] = useState(true)
   const [disconnecting, setDisconnecting] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -23,7 +25,6 @@ export default function ConnectedUsers() {
       const data = await res.json()
       setUsers(data.users || [])
     } catch {
-      // ignore
     } finally {
       setLoading(false)
     }
@@ -35,13 +36,24 @@ export default function ConnectedUsers() {
     return () => clearInterval(interval)
   }, [fetchUsers])
 
-  const handleDisconnect = async (userId: string) => {
+  const handleDisconnect = async (userId: string, userName: string) => {
     setDisconnecting(userId)
+    setError(null)
+    setSuccess(null)
     try {
-      await fetch(`/api/superuser/online/${userId}/disconnect`, { method: 'POST' })
+      const res = await fetch(`/api/superuser/online/${userId}/disconnect`, { method: 'POST' })
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(`Erreur: ${data.error || 'API ' + res.status}`)
+        return
+      }
+
+      setSuccess(`${userName} déconnecté avec succès`)
       setUsers(prev => prev.filter(u => u.id !== userId))
-    } catch {
-      // ignore
+      setTimeout(() => setSuccess(null), 5000)
+    } catch (e: any) {
+      setError(`Erreur réseau: ${e.message}`)
     } finally {
       setDisconnecting(null)
     }
@@ -63,6 +75,18 @@ export default function ConnectedUsers() {
           {users.length} en ligne
         </span>
       </div>
+
+      {error && (
+        <div className="mb-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="mb-3 rounded-md bg-green-50 px-3 py-2 text-sm text-green-700">
+          {success}
+        </div>
+      )}
 
       {loading ? (
         <div className="flex items-center justify-center py-8 text-sm text-gray-400">
@@ -92,7 +116,7 @@ export default function ConnectedUsers() {
                 </div>
               </div>
               <button
-                onClick={() => handleDisconnect(user.id)}
+                onClick={() => handleDisconnect(user.id, user.full_name || user.email || 'Inconnu')}
                 disabled={disconnecting === user.id}
                 className="ml-2 shrink-0 rounded px-2.5 py-1 text-xs font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-50"
               >

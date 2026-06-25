@@ -54,17 +54,20 @@ export default async function LocaleLayout({
       {/* <NuclearSpacingFix /> */}
       <script dangerouslySetInnerHTML={{ __html: `
 (function(){if(typeof window.__hb!=="undefined")return;window.__hb=true;
-var i=setInterval(function(){
-fetch('/api/auth/heartbeat',{method:'POST'}).then(function(r){return r.json()}).then(function(d){
-if(d.force_logout){
+var logout=function(){
 document.cookie.split(';').forEach(function(c){
 document.cookie=c.trim().split('=')[0]+'=;expires=Thu,01-Jan-1970 00:00:00 GMT;path=/'
 });
 window.location.href='/fr/login'
-}
+};
+setInterval(function(){
+fetch('/api/auth/heartbeat',{method:'POST'}).then(function(r){
+if(r.status===401){logout();return}
+return r.json()
+}).then(function(d){
+if(d&&(d.force_logout||d.error))logout()
 }).catch(function(){})
-},10000);
-window.__hb_stop=function(){clearInterval(i)}
+},10000)
 })()
 `}} />
       <LangSetter locale={locale} />

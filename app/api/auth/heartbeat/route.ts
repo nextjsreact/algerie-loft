@@ -12,6 +12,24 @@ export async function POST() {
       return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
     }
 
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('force_logout_at')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.force_logout_at) {
+      await supabase
+        .from('profiles')
+        .update({ force_logout_at: null, is_online: false })
+        .eq('id', user.id)
+
+      const signOutClient = await createClient(false)
+      await signOutClient.auth.signOut()
+
+      return NextResponse.json({ ok: true, force_logout: true })
+    }
+
     const now = new Date().toISOString()
 
     await supabase

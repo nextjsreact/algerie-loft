@@ -60,13 +60,6 @@ export async function getSession(): Promise<AuthSession | null> {
     }
 
     if (profile?.force_logout_at) {
-      const signOutClient = await createClient(false)
-      await signOutClient.auth.signOut()
-      try {
-        const { cookies } = await import('next/headers')
-        const cookieStore = await cookies()
-        cookieStore.delete('login_context')
-      } catch { /* ignore */ }
       await serviceSupabase
         .from('profiles')
         .update({ force_logout_at: null })

@@ -24,6 +24,7 @@ import {
 import { useTranslations, useLocale } from 'next-intl';
 import type { SystemMetrics, SecurityAlert, AuditLogEntry } from '@/types/superuser';
 import { VisitorStatsCard } from './visitor-stats-card';
+import ConnectedUsers from './connected-users';
 
 interface DashboardData {
   systemMetrics: SystemMetrics;
@@ -197,6 +198,9 @@ export function SuperuserDashboard() {
 
         <TabsContent value="overview" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Connected Users */}
+            <ConnectedUsers />
+
             {/* System Performance */}
             <Card>
               <CardHeader>

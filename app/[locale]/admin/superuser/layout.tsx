@@ -1,4 +1,5 @@
 import { requireRole } from '@/lib/auth'
+import Heartbeat from '@/components/admin/heartbeat'
 
 export default async function SuperuserLayout({
   children,
@@ -8,7 +9,10 @@ export default async function SuperuserLayout({
   // Ensure user is authenticated and has superuser role
   await requireRole(['superuser'])
 
-  // Le sidebar sera géré automatiquement par ClientProviders
-  // car il détecte le rôle superuser et affiche le bon sidebar
-  return <>{children}</>
+  return (
+    <>
+      <Heartbeat />
+      {children}
+    </>
+  )
 }

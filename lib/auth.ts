@@ -51,12 +51,27 @@ export async function getSession(): Promise<AuthSession | null> {
     const serviceSupabase = await createClient(true);
     const { data: profile } = await serviceSupabase
       .from('profiles')
-      .select('full_name')
+      .select('full_name, force_logout_at, last_active_at')
       .eq('id', user.id)
       .single();
 
     if (profile?.full_name) {
       full_name = profile.full_name;
+    }
+
+    if (profile?.force_logout_at) {
+      const forceLogoutAt = new Date(profile.force_logout_at).getTime()
+      const lastActiveAt = profile.last_active_at ? new Date(profile.last_active_at).getTime() : 0
+      if (forceLogoutAt > lastActiveAt) {
+        const signOutClient = await createClient(false)
+        await signOutClient.auth.signOut()
+        try {
+          const { cookies } = await import('next/headers')
+          const cookieStore = await cookies()
+          cookieStore.delete('login_context')
+        } catch { /* ignore */ }
+        return null
+      }
     }
   } catch (error) {
     console.warn('Profile name fetch failed:', error);

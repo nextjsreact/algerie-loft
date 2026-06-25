@@ -15,6 +15,22 @@ export async function getSession(): Promise<AuthSession | null> {
     return null;
   }
 
+  // Check if this user has been force-logged out
+  try {
+    const { createClient: createSvc } = await import('@/utils/supabase/server');
+    const svc = await createSvc(true);
+    const { data: profile } = await svc
+      .from('profiles')
+      .select('force_logout_at')
+      .eq('id', user.id)
+      .single();
+    if (profile?.force_logout_at) {
+      return null;
+    }
+  } catch {
+    // If profile check fails, allow session through
+  }
+
   // Use enhanced role detection
   const { detectUserRole } = await import('@/lib/auth/role-detection');
   
@@ -629,8 +645,23 @@ export async function getSessionReadOnly(): Promise<AuthSession | null> {
   const { data: { user }, error: userError } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    // Silently return null for unauthenticated users (expected behavior)
     return null;
+  }
+
+  // Check if this user has been force-logged out
+  try {
+    const { createClient: createSvc } = await import('@/utils/supabase/server');
+    const svc = await createSvc(true);
+    const { data: profile } = await svc
+      .from('profiles')
+      .select('force_logout_at')
+      .eq('id', user.id)
+      .single();
+    if (profile?.force_logout_at) {
+      return null;
+    }
+  } catch {
+    // If profile check fails, allow session through
   }
 
   // Use enhanced role detection (read-only version)

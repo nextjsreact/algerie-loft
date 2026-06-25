@@ -19,30 +19,14 @@ export async function POST() {
       .single()
 
     if (profile?.force_logout_at) {
-      await supabase
-        .from('profiles')
-        .update({ force_logout_at: null, is_online: false })
-        .eq('id', user.id)
-
-      const { cookies } = await import('next/headers')
-      const cookieStore = await cookies()
-      const all = cookieStore.getAll()
-      const response = NextResponse.json({ ok: true, force_logout: true })
-      for (const c of all) {
-        if (c.name.startsWith('sb-')) {
-          response.cookies.set(c.name, '', { maxAge: 0, path: '/' })
-        }
-      }
-      return response
+      return NextResponse.json({ ok: true, force_logout: true })
     }
-
-    const now = new Date().toISOString()
 
     await supabase
       .from('profiles')
       .update({
         is_online: true,
-        last_active_at: now,
+        last_active_at: new Date().toISOString(),
       })
       .eq('id', user.id)
 

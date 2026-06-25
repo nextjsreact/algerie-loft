@@ -4,10 +4,13 @@ import { useEffect } from 'react'
 
 export default function HeartbeatCheck() {
   useEffect(() => {
-    const interval = setInterval(() => {
-      fetch('/api/auth/heartbeat', { method: 'POST' })
+    const check = () => {
+      fetch('/api/auth/heartbeat', { method: 'POST', credentials: 'include' })
         .then(r => {
-          if (r.status === 401) return
+          if (r.status === 401) {
+            window.location.href = '/api/auth/force-logout'
+            return null
+          }
           return r.json()
         })
         .then(d => {
@@ -16,7 +19,10 @@ export default function HeartbeatCheck() {
           }
         })
         .catch(() => {})
-    }, 10000)
+    }
+
+    check()
+    const interval = setInterval(check, 10000)
     return () => clearInterval(interval)
   }, [])
 

@@ -17,7 +17,9 @@ import {
   Server,
   HardDrive,
   Zap,
-  Settings
+  Settings,
+  Download,
+  FileSpreadsheet
 } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import type { SystemMetrics, SecurityAlert, AuditLogEntry } from '@/types/superuser';
@@ -290,6 +292,37 @@ export function SuperuserDashboard() {
                   <Server className="h-4 w-4 mr-2" />
                   {t('dashboard.cards.maintenance.title')}
                 </Button>
+                <div className="border-t border-gray-100 pt-3 mt-1">
+                  <p className="text-xs font-medium text-gray-500 mb-2 px-1">Export lofts</p>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1 justify-start text-xs"
+                      onClick={() => {
+                        const a = document.createElement('a')
+                        a.href = `/api/lofts/export?format=csv`
+                        a.download = `lofts-export-${new Date().toISOString().split('T')[0]}.csv`
+                        a.click()
+                      }}
+                    >
+                      <FileSpreadsheet className="h-4 w-4 mr-2" />
+                      CSV
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="flex-1 justify-start text-xs"
+                      onClick={() => {
+                        const a = document.createElement('a')
+                        a.href = `/api/lofts/export?format=json`
+                        a.download = `lofts-export-${new Date().toISOString().split('T')[0]}.json`
+                        a.click()
+                      }}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      JSON
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>

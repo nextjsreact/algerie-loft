@@ -11,34 +11,15 @@ export async function POST(
     const { id } = await params
     const supabase = await createClient(true)
 
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
-      return NextResponse.json({ error: 'Non authentifie' }, { status: 401 })
-    }
-
-    const { data: profile } = await supabase
-      .from('superuser_profiles')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('is_active', true)
-      .single()
-
-    if (!profile) {
-      return NextResponse.json({ error: 'Non autorise' }, { status: 403 })
-    }
-
-    const now = new Date().toISOString()
-
-    const { error: updateError } = await supabase
+    const { error } = await supabase
       .from('profiles')
-      .update({ force_logout_at: now })
+      .update({ force_logout_at: new Date().toISOString() })
       .eq('id', id)
 
-    if (updateError) throw updateError
+    if (error) throw error
 
     return NextResponse.json({ ok: true })
-  } catch (err) {
-    console.error('[disconnect]', err)
-    return NextResponse.json({ error: 'Erreur interne' }, { status: 500 })
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

@@ -10,23 +10,11 @@ export async function POST(request: Request) {
 
     const supabase = await createClient(true)
 
-    const { data: existing, error: findError } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('id', userId)
+    const { error } = await supabase.rpc('force_kick_user', { target_user_id: userId })
 
-    if (findError) return NextResponse.json({ error: 'find: ' + findError.message }, { status: 500 })
-    if (!existing || existing.length === 0) return NextResponse.json({ error: 'user not found in profiles' }, { status: 404 })
+    if (error) return NextResponse.json({ error: 'rpc: ' + error.message }, { status: 500 })
 
-    const { data, error } = await supabase
-      .from('profiles')
-      .update({ force_logout_at: new Date().toISOString() })
-      .eq('id', userId)
-      .select()
-
-    if (error) return NextResponse.json({ error: 'update: ' + error.message }, { status: 500 })
-
-    return NextResponse.json({ ok: true, updated: data?.length || 0 })
+    return NextResponse.json({ ok: true })
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }

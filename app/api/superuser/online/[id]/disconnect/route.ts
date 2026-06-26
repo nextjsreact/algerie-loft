@@ -11,10 +11,7 @@ export async function POST(
     const { id } = await params
     const supabase = await createClient(true)
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({ force_logout_at: new Date().toISOString() })
-      .eq('id', id)
+    const { error } = await supabase.rpc('force_kick_user', { target_user_id: id })
 
     if (error) throw error
 

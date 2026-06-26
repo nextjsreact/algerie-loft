@@ -13,7 +13,7 @@ export async function POST(
 
     const { data: { user }, error: userError } = await supabase.auth.getUser()
     if (userError || !user) {
-      return NextResponse.json({ error: 'Non authentifiÃ©' }, { status: 401 })
+      return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
     }
 
     const { data: profile } = await supabase
@@ -24,22 +24,17 @@ export async function POST(
       .single()
 
     if (!profile) {
-      return NextResponse.json({ error: 'Non autorisÃ©' }, { status: 403 })
+      return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
     }
 
     const now = new Date().toISOString()
 
     const { error: updateError } = await supabase
       .from('profiles')
-      .update({
-        is_online: false,
-        force_logout_at: now,
-      })
+      .update({ force_logout_at: now })
       .eq('id', id)
 
     if (updateError) throw updateError
-
-    await supabase.auth.admin.signOut(id).catch(() => {})
 
     return NextResponse.json({ ok: true })
   } catch (err) {

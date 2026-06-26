@@ -1,33 +1,33 @@
 "use client"
 
 import { useEffect } from 'react'
-import { createClient } from '@/utils/supabase/client'
 
 export default function HeartbeatCheck() {
   useEffect(() => {
+    let mounted = true
+
     const check = async () => {
       try {
         const r = await fetch('/api/auth/heartbeat', { method: 'POST', credentials: 'include' })
+        if (!mounted) return
+
         if (r.status === 401) {
-          const supabase = createClient()
-          await supabase.auth.signOut()
-          window.location.href = '/fr/login'
+          window.location.href = '/api/auth/force-logout'
           return
         }
+
         const d = await r.json()
-        if (d && d.force_logout) {
-          const supabase = createClient()
-          await supabase.auth.signOut()
-          window.location.href = '/fr/login'
+        if (d?.force_logout) {
+          window.location.href = '/api/auth/force-logout'
         }
       } catch {
-        // ignore
+        // ignore network errors
       }
     }
 
     check()
     const interval = setInterval(check, 10000)
-    return () => clearInterval(interval)
+    return () => { mounted = false; clearInterval(interval) }
   }, [])
 
   return null

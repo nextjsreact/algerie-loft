@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient(true)
     const { data: { user } } = await supabase.auth.getUser()
@@ -11,7 +11,7 @@ export async function GET() {
     if (user) {
       await supabase
         .from('profiles')
-        .update({ force_logout_at: null })
+        .update({ force_logout_at: null, is_online: false })
         .eq('id', user.id)
     }
   } catch {
@@ -21,12 +21,13 @@ export async function GET() {
   const { cookies } = await import('next/headers')
   const cookieStore = await cookies()
   const all = cookieStore.getAll()
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://loftalgerie.com'
-  const response = NextResponse.redirect(new URL('/fr/login', siteUrl))
+
+  const redirectUrl = new URL('/fr/login', request.url)
+  const response = NextResponse.redirect(redirectUrl)
+
   for (const c of all) {
-    if (c.name.startsWith('sb-') || c.name === 'login_context') {
-      response.cookies.set(c.name, '', { maxAge: 0, path: '/' })
-    }
+    response.cookies.set(c.name, '', { maxAge: 0, path: '/' })
   }
+
   return response
 }

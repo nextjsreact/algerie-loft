@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -7,25 +8,25 @@ export async function POST(request: Request) {
     const { userId } = await request.json()
     if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 })
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+    const supabase = await createClient(true)
 
-    const res = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${userId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': serviceKey,
-        'Authorization': `Bearer ${serviceKey}`,
-      },
-      body: JSON.stringify({ force_logout_at: new Date().toISOString() }),
-    })
+    const { data: existing, error: findError } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', userId)
 
-    if (!res.ok) {
-      const text = await res.text()
-      return NextResponse.json({ error: text }, { status: res.status })
-    }
+    if (findError) return NextResponse.json({ error: 'find: ' + findError.message }, { status: 500 })
+    if (!existing || existing.length === 0) return NextResponse.json({ error: 'user not found in profiles' }, { status: 404 })
 
-    return NextResponse.json({ ok: true })
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ force_logout_at: new Date().toISOString() })
+      .eq('id', userId)
+      .select()
+
+    if (error) return NextResponse.json({ error: 'update: ' + error.message }, { status: 500 })
+
+    return NextResponse.json({ ok: true, updated: data?.length || 0 })
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }

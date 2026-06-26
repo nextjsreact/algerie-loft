@@ -13,7 +13,7 @@ export async function POST(
 
     const { data: { user }, error: userError } = await supabase.auth.getUser()
     if (userError || !user) {
-      return NextResponse.json({ error: 'Non authentifié' }, { status: 401 })
+      return NextResponse.json({ error: 'Non authentifie' }, { status: 401 })
     }
 
     const { data: profile } = await supabase
@@ -24,7 +24,7 @@ export async function POST(
       .single()
 
     if (!profile) {
-      return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
+      return NextResponse.json({ error: 'Non autorise' }, { status: 403 })
     }
 
     const now = new Date().toISOString()

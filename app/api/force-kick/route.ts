@@ -9,12 +9,15 @@ export async function POST(request: Request) {
     if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 })
 
     const supabase = await createClient(true)
+
+    await supabase.auth.admin.signOut(userId)
+
     const { error } = await supabase
       .from('profiles')
-      .update({ force_logout_at: new Date().toISOString() })
+      .update({ is_online: false, force_logout_at: new Date().toISOString() })
       .eq('id', userId)
 
-    if (error) throw error
+    if (error) console.error('[force-kick] update error:', error)
 
     return NextResponse.json({ ok: true })
   } catch (err: any) {

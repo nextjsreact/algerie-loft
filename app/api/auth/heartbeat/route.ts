@@ -3,7 +3,7 @@ import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
     const supabase = await createClient(true)
     const { data: { user } } = await supabase.auth.getUser()
@@ -29,6 +29,26 @@ export async function POST() {
         last_active_at: new Date().toISOString(),
       })
       .eq('id', user.id)
+
+    let sessionId: string | null = null
+    let deviceInfo: string | null = null
+    try {
+      const body = await request.json().catch(() => null)
+      sessionId = body?.session_id || null
+      deviceInfo = body?.device_info || null
+    } catch {}
+
+    if (sessionId) {
+      const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null
+      await supabase.rpc('upsert_user_session', {
+        p_user_id: user.id,
+        p_session_id: sessionId,
+        p_device_info: deviceInfo,
+        p_ip_address: ip,
+      })
+    }
+
+    await supabase.rpc('cleanup_expired_sessions')
 
     return NextResponse.json({ ok: true })
   } catch (err) {

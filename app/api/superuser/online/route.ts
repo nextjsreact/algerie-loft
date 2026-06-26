@@ -24,7 +24,38 @@ export async function GET() {
 
     if (error) throw error
 
-    return NextResponse.json({ users: users || [] })
+    const userIds = (users || []).map(u => u.id)
+
+    let sessionsMap: Record<string, Array<{ session_id: string; device_info: string | null; ip_address: string | null; last_seen: string }>> = {}
+
+    if (userIds.length > 0) {
+      const { data: sessions } = await supabase
+        .from('user_sessions')
+        .select('user_id, session_id, device_info, ip_address, last_seen')
+        .in('user_id', userIds)
+        .gte('last_seen', fiveMinutesAgo)
+        .order('last_seen', { ascending: false })
+
+      if (sessions) {
+        for (const s of sessions) {
+          if (!sessionsMap[s.user_id]) sessionsMap[s.user_id] = []
+          sessionsMap[s.user_id].push({
+            session_id: s.session_id,
+            device_info: s.device_info,
+            ip_address: s.ip_address,
+            last_seen: s.last_seen,
+          })
+        }
+      }
+    }
+
+    const enrichedUsers = (users || []).map(u => ({
+      ...u,
+      session_count: sessionsMap[u.id]?.length || 0,
+      sessions: sessionsMap[u.id] || [],
+    }))
+
+    return NextResponse.json({ users: enrichedUsers })
   } catch (err) {
     console.error('[superuser/online]', err)
     return NextResponse.json({ error: 'Erreur interne' }, { status: 500 })

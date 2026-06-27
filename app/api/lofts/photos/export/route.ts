@@ -198,6 +198,9 @@ export async function GET(request: NextRequest) {
     const zipFiles: Array<{ name: string; data: Buffer }> = []
     const csvRows = ['loft_name,loft_id,photo_id,file_name,file_size_kb,mime_type,url,created_at']
 
+    type DownloadEntry = { photo: any; zipName: string; loftName: string }
+    const allEntries: DownloadEntry[] = []
+
     const grouped: Record<string, any[]> = {}
     for (const photo of photos || []) {
       const loftName = loftMap[(photo as any).loft_id] || 'Sans nom'
@@ -225,20 +228,40 @@ export async function GET(request: NextRequest) {
           photo.created_at || '',
         ].join(','))
 
-        try {
-          const res = await fetch(photo.url, { signal: AbortSignal.timeout(15000) })
-          if (res.ok) {
-            const ab = await res.arrayBuffer()
-            zipFiles.push({ name: zipName, data: Buffer.from(ab) })
-          } else {
-            zipFiles.push({ name: zipName + '.txt', data: Buffer.from(`HTTP ${res.status}: ${photo.url}`) })
-          }
-        } catch {
-          zipFiles.push({ name: zipName + '.txt', data: Buffer.from(`Download failed: ${photo.url}`) })
-        }
+        allEntries.push({ photo, zipName, loftName })
       }
     }
 
+    const CONCURRENCY = 30
+    const results: Array<{ name: string; data: Buffer }> = new Array(allEntries.length)
+    let nextIdx = 0
+
+    async function downloadOne(i: number) {
+      const { photo, zipName } = allEntries[i]
+      try {
+        const res = await fetch(photo.url, { signal: AbortSignal.timeout(20000) })
+        if (res.ok) {
+          const ab = await res.arrayBuffer()
+          results[i] = { name: zipName, data: Buffer.from(ab) }
+        } else {
+          results[i] = { name: zipName + '.txt', data: Buffer.from(`HTTP ${res.status}`) }
+        }
+      } catch {
+        results[i] = { name: zipName + '.txt', data: Buffer.from('Download failed') }
+      }
+    }
+
+    async function runWorker() {
+      while (nextIdx < allEntries.length) {
+        const i = nextIdx++
+        await downloadOne(i)
+      }
+    }
+
+    const workers = Array.from({ length: Math.min(CONCURRENCY, allEntries.length) }, () => runWorker())
+    await Promise.all(workers)
+
+    zipFiles.push(...results.filter(Boolean))
     zipFiles.push({ name: 'metadonnees.csv', data: Buffer.from('\uFEFF' + csvRows.join('\n'), 'utf-8') })
 
     const zipBuffer = buildZip(zipFiles)

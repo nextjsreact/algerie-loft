@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { verifySuperuserAPI } from '@/lib/superuser/auth'
-import { Readable, PassThrough } from 'stream'
+import { Readable, Writable } from 'stream'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -108,13 +108,13 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const passThrough = new PassThrough()
-    const archive = archiver('zip', { zlib: { level: 5 } })
+    const { readable, writable } = new TransformStream()
+    const nodeWritable = Writable.fromWeb(writable as WritableStream)
 
+    const archive = archiver('zip', { zlib: { level: 5 } })
     archive.on('warning', () => {})
     archive.on('error', () => {})
-
-    archive.pipe(passThrough)
+    archive.pipe(nodeWritable)
 
     const csvHeaders = ['loft_name', 'loft_id', 'photo_id', 'file_name', 'file_size_kb', 'mime_type', 'url', 'created_at']
     let csvBuffer = '\uFEFF' + csvHeaders.join(',') + '\n'
@@ -166,8 +166,7 @@ export async function GET(request: NextRequest) {
     archive.append(csvBuffer, { name: 'metadonnees.csv' })
     archive.finalize()
 
-    const webStream = Readable.toWeb(passThrough) as any
-    return new NextResponse(webStream, {
+    return new Response(readable, {
       headers: {
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="photos-export-${new Date().toISOString().split('T')[0]}.zip"`,

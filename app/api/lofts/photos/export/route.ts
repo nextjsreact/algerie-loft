@@ -196,10 +196,17 @@ export async function GET(request: NextRequest) {
     }
 
     const zipFiles: Array<{ name: string; data: Buffer }> = []
-    const csvRows = ['loft_name,loft_id,photo_id,file_name,file_size_kb,mime_type,url,created_at']
 
     type DownloadEntry = { photo: any; zipName: string; loftName: string }
     const allEntries: DownloadEntry[] = []
+    const metadataRows: Array<{
+      loft_name: string
+      loft_id: string
+      photo_id: string
+      file_name: string
+      file_size_kb: number
+      mime_type: string
+    }> = []
 
     const grouped: Record<string, any[]> = {}
     for (const photo of photos || []) {
@@ -217,16 +224,14 @@ export async function GET(request: NextRequest) {
         const ext = photo.file_name?.split('.').pop() || 'jpg'
         const zipName = `${folderName}/${String(idx).padStart(2, '0')}_${sanitize(photo.file_name || `photo.${ext}`)}`
 
-        csvRows.push([
-          `"${loftName.replace(/"/g, '""')}"`,
-          photo.loft_id,
-          photo.id,
-          `"${(photo.file_name || '').replace(/"/g, '""')}"`,
-          Math.round((photo.file_size || 0) / 1024),
-          photo.mime_type || '',
-          `"${(photo.url || '').replace(/"/g, '""')}"`,
-          photo.created_at || '',
-        ].join(','))
+        metadataRows.push({
+          loft_name: loftName,
+          loft_id: photo.loft_id,
+          photo_id: photo.id,
+          file_name: photo.file_name || `photo.${ext}`,
+          file_size_kb: Math.round((photo.file_size || 0) / 1024),
+          mime_type: photo.mime_type || '',
+        })
 
         allEntries.push({ photo, zipName, loftName })
       }
@@ -262,7 +267,7 @@ export async function GET(request: NextRequest) {
     await Promise.all(workers)
 
     zipFiles.push(...results.filter(Boolean))
-    zipFiles.push({ name: 'metadonnees.csv', data: Buffer.from('\uFEFF' + csvRows.join('\n'), 'utf-8') })
+    zipFiles.push({ name: 'metadonnees.json', data: Buffer.from(JSON.stringify(metadataRows, null, 2), 'utf-8') })
 
     const zipBuffer = buildZip(zipFiles)
     const dateStr = new Date().toISOString().split('T')[0]

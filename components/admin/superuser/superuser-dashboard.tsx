@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -39,6 +39,17 @@ export function SuperuserDashboard() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loftList, setLoftList] = useState<Array<{ id: string; name: string; photo_count: number }>>([]);
+  const [selectedLoftId, setSelectedLoftId] = useState('');
+
+  const fetchLoftList = useCallback(async () => {
+    try {
+      const res = await fetch('/api/lofts/photos/export?format=lofts')
+      if (res.ok) setLoftList(await res.json())
+    } catch {}
+  }, [])
+
+  useEffect(() => { fetchLoftList() }, [fetchLoftList])
 
   useEffect(() => {
     fetchDashboardData();
@@ -355,9 +366,40 @@ export function SuperuserDashboard() {
                       }}
                     >
                       <Image className="h-4 w-4 mr-2" />
-                      ZIP
+                      Tout ZIP
                     </Button>
                   </div>
+                  {loftList.length > 0 && (
+                    <div className="mt-2 flex gap-2 items-center">
+                      <select
+                        value={selectedLoftId}
+                        onChange={e => setSelectedLoftId(e.target.value)}
+                        className="flex-1 rounded border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                      >
+                        <option value="">-- Choisir un loft --</option>
+                        {loftList.map(loft => (
+                          <option key={loft.id} value={loft.id}>
+                            {loft.name} ({loft.photo_count} photos)
+                          </option>
+                        ))}
+                      </select>
+                      <Button
+                        variant="outline"
+                        className="shrink-0 justify-start text-xs"
+                        disabled={!selectedLoftId}
+                        onClick={() => {
+                          if (!selectedLoftId) return
+                          const a = document.createElement('a')
+                          a.href = `/api/lofts/photos/export?format=zip&loft_id=${selectedLoftId}`
+                          a.download = `photos-export-${new Date().toISOString().split('T')[0]}.zip`
+                          a.click()
+                        }}
+                      >
+                        <Image className="h-4 w-4 mr-2" />
+                        ZIP (ce loft)
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

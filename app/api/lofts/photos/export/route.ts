@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { verifySuperuserAPI } from '@/lib/superuser/auth'
-import { Readable, Writable } from 'stream'
+import { Readable } from 'stream'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -18,6 +18,30 @@ export async function GET(request: NextRequest) {
     const format = searchParams.get('format') || 'csv'
 
     const supabase = await createClient(true)
+
+    if (format === 'lofts') {
+      const { data: lofts } = await supabase
+        .from('lofts')
+        .select('id, name')
+        .order('name')
+
+      const { data: counts } = await supabase
+        .from('loft_photos')
+        .select('loft_id')
+
+      const countMap: Record<string, number> = {}
+      for (const p of counts || []) {
+        countMap[p.loft_id] = (countMap[p.loft_id] || 0) + 1
+      }
+
+      return NextResponse.json(
+        (lofts || []).map(l => ({
+          id: l.id,
+          name: l.name,
+          photo_count: countMap[l.id] || 0,
+        })).filter(l => l.photo_count > 0)
+      )
+    }
 
     let query = supabase
       .from('loft_photos')
@@ -75,8 +99,7 @@ export async function GET(request: NextRequest) {
             }).join(',')
           )
         }
-        const csv = csvLines.join('\n')
-        return new NextResponse(csv, {
+        return new NextResponse(csvLines.join('\n'), {
           headers: {
             'Content-Type': 'text/csv; charset=utf-8',
             'Content-Disposition': `attachment; filename="photos-metadata-${new Date().toISOString().split('T')[0]}.csv"`,
@@ -91,13 +114,6 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    const grouped: Record<string, any[]> = {}
-    for (const photo of photos || []) {
-      const loftName = sanitize(loftMap[(photo as any).loft_id] || 'Sans nom')
-      if (!grouped[loftName]) grouped[loftName] = []
-      grouped[loftName].push(photo)
-    }
-
     let archiver: any
     try {
       archiver = (await import('archiver')).default
@@ -108,19 +124,25 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const { readable, writable } = new TransformStream()
-    const nodeWritable = Writable.fromWeb(writable as WritableStream)
-
+    const chunks: Buffer[] = []
     const archive = archiver('zip', { zlib: { level: 5 } })
+    archive.on('data', (chunk: Buffer) => chunks.push(chunk))
     archive.on('warning', () => {})
-    archive.on('error', () => {})
-    archive.pipe(nodeWritable)
 
-    const csvHeaders = ['loft_name', 'loft_id', 'photo_id', 'file_name', 'file_size_kb', 'mime_type', 'url', 'created_at']
-    let csvBuffer = '\uFEFF' + csvHeaders.join(',') + '\n'
+    const archiveDone = new Promise<void>((resolve, reject) => {
+      archive.on('end', () => resolve())
+      archive.on('error', (err: Error) => reject(err))
+    })
 
-    type PhotoEntry = { photo: any; zipName: string }
-    const allEntries: PhotoEntry[] = []
+    const grouped: Record<string, any[]> = {}
+    for (const photo of photos || []) {
+      const loftName = sanitize(loftMap[(photo as any).loft_id] || 'Sans nom')
+      if (!grouped[loftName]) grouped[loftName] = []
+      grouped[loftName].push(photo)
+    }
+
+    let csvBuffer = '\uFEFFloft_name,loft_id,photo_id,file_name,file_size_kb,mime_type,url,created_at\n'
+    const allEntries: Array<{ photo: any; zipName: string }> = []
 
     for (const [loftName, loftPhotos] of Object.entries(grouped)) {
       const folderName = sanitize(loftName)
@@ -138,7 +160,7 @@ export async function GET(request: NextRequest) {
           `"${(photo.file_name || '').replace(/"/g, '""')}"`,
           Math.round((photo.file_size || 0) / 1024),
           photo.mime_type || '',
-          photo.url || '',
+          `"${(photo.url || '').replace(/"/g, '""')}"`,
           photo.created_at || '',
         ].join(',') + '\n'
 
@@ -157,7 +179,7 @@ export async function GET(request: NextRequest) {
               archive.append(nodeStream, { name: zipName })
             }
           } catch {
-            archive.append(`Failed to download: ${photo.url}`, { name: zipName + '.txt' })
+            archive.append(`Download failed: ${photo.url}`, { name: zipName + '.txt' })
           }
         })
       )
@@ -165,12 +187,16 @@ export async function GET(request: NextRequest) {
 
     archive.append(csvBuffer, { name: 'metadonnees.csv' })
     archive.finalize()
+    await archiveDone
 
-    return new Response(readable, {
+    const buffer = Buffer.concat(chunks)
+    const dateStr = new Date().toISOString().split('T')[0]
+
+    return new NextResponse(buffer, {
       headers: {
         'Content-Type': 'application/zip',
-        'Content-Disposition': `attachment; filename="photos-export-${new Date().toISOString().split('T')[0]}.zip"`,
-        'Cache-Control': 'no-store',
+        'Content-Disposition': `attachment; filename="photos-export-${dateStr}.zip"`,
+        'Content-Length': String(buffer.length),
       },
     })
   } catch (err) {

@@ -19,7 +19,8 @@ import {
   Zap,
   Settings,
   Download,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Image
 } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import type { SystemMetrics, SecurityAlert, AuditLogEntry } from '@/types/superuser';
@@ -324,6 +325,37 @@ export function SuperuserDashboard() {
                     >
                       <Download className="h-4 w-4 mr-2" />
                       JSON
+                    </Button>
+                  </div>
+                </div>
+                <div className="border-t border-gray-100 pt-3 mt-1">
+                  <p className="text-xs font-medium text-gray-500 mb-2 px-1">Export photos</p>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1 justify-start text-xs"
+                      onClick={() => {
+                        const a = document.createElement('a')
+                        a.href = `/api/lofts/photos/export?format=csv`
+                        a.download = `photos-metadata-${new Date().toISOString().split('T')[0]}.csv`
+                        a.click()
+                      }}
+                    >
+                      <FileSpreadsheet className="h-4 w-4 mr-2" />
+                      CSV
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="flex-1 justify-start text-xs"
+                      onClick={() => {
+                        const a = document.createElement('a')
+                        a.href = `/api/lofts/photos/export?format=zip`
+                        a.download = `photos-export-${new Date().toISOString().split('T')[0]}.zip`
+                        a.click()
+                      }}
+                    >
+                      <Image className="h-4 w-4 mr-2" />
+                      ZIP
                     </Button>
                   </div>
                 </div>

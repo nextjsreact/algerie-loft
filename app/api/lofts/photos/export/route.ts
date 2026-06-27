@@ -5,6 +5,88 @@ import { verifySuperuserAPI } from '@/lib/superuser/auth'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
+function crc32(buf: Buffer): number {
+  let crc = 0xFFFFFFFF
+  for (let i = 0; i < buf.length; i++) {
+    crc ^= buf[i]
+    for (let j = 0; j < 8; j++) {
+      crc = (crc >>> 1) ^ (crc & 1 ? 0xEDB88320 : 0)
+    }
+  }
+  return (crc ^ 0xFFFFFFFF) >>> 0
+}
+
+function dosDateTime(date: Date): { time: number; date: number } {
+  const time = (date.getHours() << 11) | (date.getMinutes() << 5) | (date.getSeconds() >> 1)
+  const d = ((date.getFullYear() - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate()
+  return { time, date: d }
+}
+
+function buildZip(files: Array<{ name: string; data: Buffer }>): Buffer {
+  const parts: Buffer[] = []
+  const centralParts: Buffer[] = []
+  let offset = 0
+  const now = dosDateTime(new Date())
+
+  for (const file of files) {
+    const nameBuf = Buffer.from(file.name, 'utf-8')
+    const crc = crc32(file.data)
+
+    const local = Buffer.alloc(30 + nameBuf.length)
+    local.writeUInt32LE(0x04034b50, 0)
+    local.writeUInt16LE(20, 4)
+    local.writeUInt16LE(0, 6)
+    local.writeUInt16LE(0, 8)
+    local.writeUInt16LE(now.time, 10)
+    local.writeUInt16LE(now.date, 12)
+    local.writeUInt32LE(crc, 14)
+    local.writeUInt32LE(file.data.length, 18)
+    local.writeUInt32LE(file.data.length, 22)
+    local.writeUInt16LE(nameBuf.length, 26)
+    local.writeUInt16LE(0, 28)
+    nameBuf.copy(local, 30)
+
+    parts.push(local)
+    parts.push(file.data)
+
+    const central = Buffer.alloc(46 + nameBuf.length)
+    central.writeUInt32LE(0x02014b50, 0)
+    central.writeUInt16LE(20, 4)
+    central.writeUInt16LE(20, 6)
+    central.writeUInt16LE(0, 8)
+    central.writeUInt16LE(0, 10)
+    central.writeUInt16LE(now.time, 12)
+    central.writeUInt16LE(now.date, 14)
+    central.writeUInt32LE(crc, 16)
+    central.writeUInt32LE(file.data.length, 20)
+    central.writeUInt32LE(file.data.length, 24)
+    central.writeUInt16LE(nameBuf.length, 28)
+    central.writeUInt16LE(0, 30)
+    central.writeUInt16LE(0, 32)
+    central.writeUInt16LE(0, 34)
+    central.writeUInt16LE(0, 36)
+    central.writeUInt32LE(0, 38)
+    central.writeUInt32LE(offset, 42)
+    nameBuf.copy(central, 46)
+
+    centralParts.push(central)
+    offset += local.length + file.data.length
+  }
+
+  const centralDirSize = centralParts.reduce((a, b) => a + b.length, 0)
+  const end = Buffer.alloc(22)
+  end.writeUInt32LE(0x06054b50, 0)
+  end.writeUInt16LE(0, 4)
+  end.writeUInt16LE(0, 6)
+  end.writeUInt16LE(files.length, 8)
+  end.writeUInt16LE(files.length, 10)
+  end.writeUInt32LE(centralDirSize, 12)
+  end.writeUInt32LE(offset, 16)
+  end.writeUInt16LE(0, 20)
+
+  return Buffer.concat([...parts, ...centralParts, end])
+}
+
 export async function GET(request: NextRequest) {
   try {
     const auth = await verifySuperuserAPI()
@@ -113,28 +195,8 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    let archiver: any
-    try {
-      archiver = (await import('archiver')).default
-    } catch (importErr) {
-      console.error('[photos/export] archiver import failed:', importErr)
-      return NextResponse.json(
-        { error: 'archiver library not installed. Run: npm install archiver' },
-        { status: 500 }
-      )
-    }
-
-    const chunks: Buffer[] = []
-    const archive = archiver('zip', { zlib: { level: 3 } })
-
-    archive.on('data', (chunk: Buffer) => { chunks.push(chunk) })
-    archive.on('warning', (w: any) => { console.warn('[photos/export] archiver warning:', w) })
-    archive.on('error', (e: Error) => { console.error('[photos/export] archiver error:', e) })
-
-    const archiveDone = new Promise<void>((resolve, reject) => {
-      archive.on('end', () => resolve())
-      archive.on('error', (err: Error) => reject(err))
-    })
+    const zipFiles: Array<{ name: string; data: Buffer }> = []
+    const csvRows = ['loft_name,loft_id,photo_id,file_name,file_size_kb,mime_type,url,created_at']
 
     const grouped: Record<string, any[]> = {}
     for (const photo of photos || []) {
@@ -142,8 +204,6 @@ export async function GET(request: NextRequest) {
       if (!grouped[loftName]) grouped[loftName] = []
       grouped[loftName].push(photo)
     }
-
-    const csvRows = ['loft_name,loft_id,photo_id,file_name,file_size_kb,mime_type,url,created_at']
 
     for (const [loftName, loftPhotos] of Object.entries(grouped)) {
       const folderName = sanitize(loftName)
@@ -169,21 +229,19 @@ export async function GET(request: NextRequest) {
           const res = await fetch(photo.url, { signal: AbortSignal.timeout(15000) })
           if (res.ok) {
             const ab = await res.arrayBuffer()
-            archive.append(Buffer.from(ab), { name: zipName })
+            zipFiles.push({ name: zipName, data: Buffer.from(ab) })
           } else {
-            archive.append(`HTTP ${res.status}: ${photo.url}`, { name: zipName + '.txt' })
+            zipFiles.push({ name: zipName + '.txt', data: Buffer.from(`HTTP ${res.status}: ${photo.url}`) })
           }
-        } catch (dlErr) {
-          archive.append(`Download failed: ${photo.url}`, { name: zipName + '.txt' })
+        } catch {
+          zipFiles.push({ name: zipName + '.txt', data: Buffer.from(`Download failed: ${photo.url}`) })
         }
       }
     }
 
-    archive.append('\uFEFF' + csvRows.join('\n'), { name: 'metadonnees.csv' })
-    archive.finalize()
-    await archiveDone
+    zipFiles.push({ name: 'metadonnees.csv', data: Buffer.from('\uFEFF' + csvRows.join('\n'), 'utf-8') })
 
-    const zipBuffer = Buffer.concat(chunks)
+    const zipBuffer = buildZip(zipFiles)
     const dateStr = new Date().toISOString().split('T')[0]
     const loftSuffix = loftIdFilter ? `-${sanitize(loftMap[loftIdFilter] || loftIdFilter)}` : ''
 

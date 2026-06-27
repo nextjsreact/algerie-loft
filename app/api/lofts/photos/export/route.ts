@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { verifySuperuserAPI } from '@/lib/superuser/auth'
-import { Readable } from 'stream'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -117,7 +116,8 @@ export async function GET(request: NextRequest) {
     let archiver: any
     try {
       archiver = (await import('archiver')).default
-    } catch {
+    } catch (importErr) {
+      console.error('[photos/export] archiver import failed:', importErr)
       return NextResponse.json(
         { error: 'archiver library not installed. Run: npm install archiver' },
         { status: 500 }
@@ -125,9 +125,11 @@ export async function GET(request: NextRequest) {
     }
 
     const chunks: Buffer[] = []
-    const archive = archiver('zip', { zlib: { level: 5 } })
-    archive.on('data', (chunk: Buffer) => chunks.push(chunk))
-    archive.on('warning', () => {})
+    const archive = archiver('zip', { zlib: { level: 3 } })
+
+    archive.on('data', (chunk: Buffer) => { chunks.push(chunk) })
+    archive.on('warning', (w: any) => { console.warn('[photos/export] archiver warning:', w) })
+    archive.on('error', (e: Error) => { console.error('[photos/export] archiver error:', e) })
 
     const archiveDone = new Promise<void>((resolve, reject) => {
       archive.on('end', () => resolve())
@@ -136,13 +138,12 @@ export async function GET(request: NextRequest) {
 
     const grouped: Record<string, any[]> = {}
     for (const photo of photos || []) {
-      const loftName = sanitize(loftMap[(photo as any).loft_id] || 'Sans nom')
+      const loftName = loftMap[(photo as any).loft_id] || 'Sans nom'
       if (!grouped[loftName]) grouped[loftName] = []
       grouped[loftName].push(photo)
     }
 
-    let csvBuffer = '\uFEFFloft_name,loft_id,photo_id,file_name,file_size_kb,mime_type,url,created_at\n'
-    const allEntries: Array<{ photo: any; zipName: string }> = []
+    const csvRows = ['loft_name,loft_id,photo_id,file_name,file_size_kb,mime_type,url,created_at']
 
     for (const [loftName, loftPhotos] of Object.entries(grouped)) {
       const folderName = sanitize(loftName)
@@ -153,7 +154,7 @@ export async function GET(request: NextRequest) {
         const ext = photo.file_name?.split('.').pop() || 'jpg'
         const zipName = `${folderName}/${String(idx).padStart(2, '0')}_${sanitize(photo.file_name || `photo.${ext}`)}`
 
-        csvBuffer += [
+        csvRows.push([
           `"${loftName.replace(/"/g, '""')}"`,
           photo.loft_id,
           photo.id,
@@ -162,41 +163,34 @@ export async function GET(request: NextRequest) {
           photo.mime_type || '',
           `"${(photo.url || '').replace(/"/g, '""')}"`,
           photo.created_at || '',
-        ].join(',') + '\n'
+        ].join(','))
 
-        allEntries.push({ photo, zipName })
+        try {
+          const res = await fetch(photo.url, { signal: AbortSignal.timeout(15000) })
+          if (res.ok) {
+            const ab = await res.arrayBuffer()
+            archive.append(Buffer.from(ab), { name: zipName })
+          } else {
+            archive.append(`HTTP ${res.status}: ${photo.url}`, { name: zipName + '.txt' })
+          }
+        } catch (dlErr) {
+          archive.append(`Download failed: ${photo.url}`, { name: zipName + '.txt' })
+        }
       }
     }
 
-    for (let i = 0; i < allEntries.length; i += 10) {
-      const batch = allEntries.slice(i, i + 10)
-      await Promise.allSettled(
-        batch.map(async ({ photo, zipName }) => {
-          try {
-            const res = await fetch(photo.url, { signal: AbortSignal.timeout(15000) })
-            if (res.ok && res.body) {
-              const nodeStream = Readable.fromWeb(res.body as any)
-              archive.append(nodeStream, { name: zipName })
-            }
-          } catch {
-            archive.append(`Download failed: ${photo.url}`, { name: zipName + '.txt' })
-          }
-        })
-      )
-    }
-
-    archive.append(csvBuffer, { name: 'metadonnees.csv' })
+    archive.append('\uFEFF' + csvRows.join('\n'), { name: 'metadonnees.csv' })
     archive.finalize()
     await archiveDone
 
-    const buffer = Buffer.concat(chunks)
+    const zipBuffer = Buffer.concat(chunks)
     const dateStr = new Date().toISOString().split('T')[0]
+    const loftSuffix = loftIdFilter ? `-${sanitize(loftMap[loftIdFilter] || loftIdFilter)}` : ''
 
-    return new NextResponse(buffer, {
+    return new NextResponse(zipBuffer, {
       headers: {
         'Content-Type': 'application/zip',
-        'Content-Disposition': `attachment; filename="photos-export-${dateStr}.zip"`,
-        'Content-Length': String(buffer.length),
+        'Content-Disposition': `attachment; filename="photos${loftSuffix}-${dateStr}.zip"`,
       },
     })
   } catch (err) {

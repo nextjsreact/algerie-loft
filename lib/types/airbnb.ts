@@ -8,7 +8,7 @@ export type AirbnbReservationStatus = 'confirmed' | 'pending' | 'cancelled' | 'c
 /**
  * Types de synchronisation
  */
-export type AirbnbSyncType = 'ical_watcher' | 'targeted' | 'full' | 'manual';
+export type AirbnbSyncType = 'ical_watcher' | 'targeted' | 'full' | 'manual' | 'periodic';
 
 /**
  * Statuts de mapping listing_id → loft_id

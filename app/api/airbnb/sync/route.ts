@@ -34,7 +34,7 @@ const ReservationSchema = z.object({
 });
 
 const SyncMetadataSchema = z.object({
-  sync_type: z.enum(['ical_watcher', 'targeted', 'full', 'manual']),
+  sync_type: z.enum(['ical_watcher', 'targeted', 'full', 'manual', 'periodic']),
   timestamp: z.string().datetime(),
   script_version: z.string().min(1),
 });

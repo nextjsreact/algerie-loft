@@ -12,6 +12,7 @@ import { CalendarDays, MapPin, User, DollarSign } from "lucide-react"
 import { getTranslations, getLocale } from "next-intl/server"
 import { createClient } from "@/utils/supabase/server"
 import { ReservationEditButton } from "@/components/reservations/reservation-edit-button"
+import SyncLoftButton from "@/components/airbnb/SyncLoftButton"
 
 export default async function ReservationPage({ params }: { params: Promise<{ id: string; locale: string }> }) {
   const { id, locale } = await params;
@@ -20,6 +21,7 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
   const tStatus = await getTranslations("reservations.status")
 
   const reservation = await getReservation(id);
+  const airbnbListingId = reservation?.lofts?.airbnb_listing_id;
 
   if (!reservation) {
     notFound()
@@ -294,8 +296,14 @@ export default async function ReservationPage({ params }: { params: Promise<{ id
           {/* Actions */}
           <Card>
             <CardContent className="pt-6">
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-4">
                 <ReservationEditButton reservation={reservation} availableLofts={availableLofts} />
+                {airbnbListingId && (
+                  <SyncLoftButton
+                    listingId={airbnbListingId}
+                    loftTitle={reservation.lofts?.name || ''}
+                  />
+                )}
                 <Button asChild>
                   <Link href={`/${locale}/reservations`}>{t("backToReservations")}</Link>
                 </Button>

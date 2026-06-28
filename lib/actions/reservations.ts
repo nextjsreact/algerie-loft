@@ -749,7 +749,8 @@ export async function getReservation(id: string): Promise<any> {
       lofts (
         id,
         name,
-        address
+        address,
+        airbnb_listing_id
       )
     `)
     .eq('id', id)

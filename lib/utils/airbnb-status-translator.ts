@@ -65,6 +65,7 @@ const STATUS_MAP: Record<string, AirbnbReservationStatus> = {
   // Séjours terminés - En attente d'avis client/hôte
   'En attente de commentaire du voyageur': 'completed',
   'Laissez un commentaire sur le voyageur': 'completed',
+  'Laissez un commentaire sur le voyageur (expire bientôt)': 'completed',
   'Leave a review': 'completed',
   'Awaiting review': 'completed',
   'Write a review': 'completed',
@@ -74,6 +75,18 @@ const STATUS_MAP: Record<string, AirbnbReservationStatus> = {
   'Ancien voyageur': 'completed',
   'Past guest': 'completed',
   'Previous guest': 'completed',
+  
+  // Annulé par le voyageur
+  'Annulée par le voyageur': 'cancelled',
+  'Annule par le voyageur': 'cancelled',
+  'Cancelled by guest': 'cancelled',
+  
+  // Modifications de voyage
+  'Modification de voyage envoyée': 'confirmed',
+  'Modification de voyage': 'confirmed',
+  'Demande de modification de voyage': 'pending',
+  'Trip modification sent': 'confirmed',
+  'Trip modification requested': 'pending',
   
   // Arrivées imminentes (pour future compatibilité)
   'Arrivée aujourd\'hui': 'confirmed',

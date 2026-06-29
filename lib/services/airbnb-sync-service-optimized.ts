@@ -368,11 +368,11 @@ export class AirbnbSyncServiceOptimized {
 
     const createdReservationIds: { id: string; loft_id: string; airbnb_confirmation_code: string }[] = [];
 
-    // Insérer les nouvelles réservations (1 requête)
+    // Insérer les nouvelles réservations (1 requête — upsert pour gérer les doublons)
     if (toCreate.length > 0) {
       const { data: createdReservations, error: createError } = await this.supabase
         .from('reservations')
-        .insert(toCreate.map(t => t.payload))
+        .upsert(toCreate.map(t => t.payload), { onConflict: 'airbnb_confirmation_code' })
         .select('id, loft_id, airbnb_confirmation_code');
 
       if (createError) {
@@ -387,7 +387,7 @@ export class AirbnbSyncServiceOptimized {
         // Les 19 réservations manquantes étaient dues à ce bug
         toCreate.forEach(item => {
           this.errors.push({
-            reservation_id: item.staging.airbnb_id,
+            reservation_id: item.airbnbId,
             error: `Bulk insert failed: ${createError.message}`,
           });
         });

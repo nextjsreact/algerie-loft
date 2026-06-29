@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     // 1. Fetch reservations
     let query = supabase
       .from('reservations')
-      .select('*, lofts:loft_id(id, name, address)')
+      .select('*, lofts:loft_id(id, name, address, airbnb_listing_id)')
       .order('check_in_date', { ascending: false })
 
     if (loftId) query = query.eq('loft_id', loftId)

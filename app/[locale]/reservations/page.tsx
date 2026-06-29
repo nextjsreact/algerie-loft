@@ -36,6 +36,7 @@ import ReservationFormHybrid from '@/components/reservations/reservation-form-hy
 import AvailabilityManager from '@/components/reservations/availability-manager';
 import { ReservationEditDialog } from '@/components/reservations/reservation-edit-dialog';
 import { ReservationPayments } from '@/components/reservations/reservation-payments';
+import SyncLoftButton from '@/components/airbnb/SyncLoftButton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/utils/supabase/client';
@@ -1294,6 +1295,12 @@ function ReservationsPageContent() {
                     >
                       <span>📱</span> WhatsApp
                     </Button>
+                  )}
+                  {selectedReservation.lofts?.airbnb_listing_id && (
+                    <SyncLoftButton
+                      listingId={selectedReservation.lofts.airbnb_listing_id}
+                      loftTitle={selectedReservation.lofts?.name || '—'}
+                    />
                   )}
                   {selectedReservation.status !== 'cancelled' && (
                     <Button

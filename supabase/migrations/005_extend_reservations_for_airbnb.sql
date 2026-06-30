@@ -29,10 +29,13 @@ ALTER TABLE reservations
   ADD COLUMN IF NOT EXISTS airbnb_confirmation_code VARCHAR(50),
   ADD COLUMN IF NOT EXISTS synced_at TIMESTAMP;
 
--- Ajouter une contrainte UNIQUE sur airbnb_confirmation_code (si non NULL)
-CREATE UNIQUE INDEX IF NOT EXISTS idx_reservations_airbnb_code_unique 
-  ON reservations(airbnb_confirmation_code) 
-  WHERE airbnb_confirmation_code IS NOT NULL;
+-- Ajouter une contrainte UNIQUE sur airbnb_confirmation_code
+-- NOTE: On utilise UNIQUE CONSTRAINT (pas UNIQUE INDEX) pour que PostgREST
+--       puisse utiliser ON CONFLICT dans les upserts du sync service.
+--       PostgreSQL permet les NULLs multiples dans une UNIQUE CONSTRAINT.
+ALTER TABLE reservations
+  ADD CONSTRAINT uq_reservations_airbnb_confirmation_code
+  UNIQUE (airbnb_confirmation_code);
 
 -- Ajouter les indexes pour performance
 CREATE INDEX IF NOT EXISTS idx_reservations_source 

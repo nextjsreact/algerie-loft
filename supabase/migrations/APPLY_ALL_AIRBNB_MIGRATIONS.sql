@@ -20,10 +20,13 @@ ALTER TABLE reservations
   ADD COLUMN IF NOT EXISTS airbnb_confirmation_code VARCHAR(50),
   ADD COLUMN IF NOT EXISTS synced_at TIMESTAMP;
 
--- Ajouter une contrainte UNIQUE sur airbnb_confirmation_code (si non NULL)
-CREATE UNIQUE INDEX IF NOT EXISTS idx_reservations_airbnb_code_unique 
-  ON reservations(airbnb_confirmation_code) 
-  WHERE airbnb_confirmation_code IS NOT NULL;
+-- Ajouter une contrainte UNIQUE sur airbnb_confirmation_code
+-- NOTE: On utilise UNIQUE CONSTRAINT (pas UNIQUE INDEX) pour que PostgREST
+--       puisse utiliser ON CONFLICT dans les upserts du sync service.
+--       PostgreSQL permet les NULLs multiples dans une UNIQUE CONSTRAINT.
+ALTER TABLE reservations
+  ADD CONSTRAINT uq_reservations_airbnb_confirmation_code
+  UNIQUE (airbnb_confirmation_code);
 
 -- Ajouter les indexes pour performance
 CREATE INDEX IF NOT EXISTS idx_reservations_source 
@@ -301,6 +304,31 @@ COMMENT ON TABLE airbnb_conflicts IS 'Conflits de réservation détectés automa
 DO $$ 
 BEGIN
   RAISE NOTICE '✅ Migration 009 terminée';
+END $$;
+
+-- ============================================================================
+-- MIGRATION 015: Convertir UNIQUE INDEX → UNIQUE CONSTRAINT pour PostgREST
+-- ============================================================================
+DO $$ 
+BEGIN
+  RAISE NOTICE '🔧 Migration 015: Conversion UNIQUE INDEX → UNIQUE CONSTRAINT...';
+END $$;
+
+-- Supprimer l'ancien UNIQUE INDEX partiel (créé dans migration 005)
+DROP INDEX IF EXISTS idx_reservations_airbnb_code_unique;
+
+-- Créer une vraie UNIQUE CONSTRAINT pour que PostgREST supporte ON CONFLICT
+-- PostgreSQL traite les NULLs comme distincts (comme l'ancien index partiel)
+ALTER TABLE reservations
+  ADD CONSTRAINT uq_reservations_airbnb_confirmation_code
+  UNIQUE (airbnb_confirmation_code);
+
+COMMENT ON CONSTRAINT uq_reservations_airbnb_confirmation_code ON reservations
+  IS 'Contrainte UNIQUE sur le code de confirmation Airbnb. Permet ON CONFLICT dans PostgREST.';
+
+DO $$ 
+BEGIN
+  RAISE NOTICE '✅ Migration 015 terminée';
 END $$;
 
 -- ============================================================================

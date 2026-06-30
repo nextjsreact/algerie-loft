@@ -35,14 +35,6 @@ export class FallbackAuditContextService {
 
       // Si RPC ne marche pas, on abandonne proprement (plus de fallback SQL brut)
       logger.debug('RPC set_audit_context failed, skipping audit context')
-        
-        if (!error) {
-          logger.debug('Audit context set via exec_sql', { userId, userEmail })
-          return
-        }
-      } catch (sqlError) {
-        logger.debug('exec_sql not available either')
-      }
 
       // Si rien ne marche, juste logger et continuer
       logger.debug('Could not set audit context, continuing without it', { userId, userEmail })

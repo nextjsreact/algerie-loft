@@ -438,10 +438,9 @@ export class AirbnbSyncServiceOptimized {
           (a.action === 'updated' || a.action === 'linked') ? { ...a, action: 'failed' as const, error: updateError.message } : a
         );
         
-        // 🔧 FIX: Enregistrer les erreurs de mise à jour batch dans this.errors
         toUpdate.forEach(item => {
           this.errors.push({
-            reservation_id: item.staging.airbnb_id,
+            reservation_id: item.airbnbId,
             error: `Bulk update failed: ${updateError.message}`,
           });
         });

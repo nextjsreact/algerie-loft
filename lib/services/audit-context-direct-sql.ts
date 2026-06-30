@@ -18,16 +18,11 @@ export class DirectSQLAuditContextService {
     try {
       const supabase = await createClient()
       
-      // Utiliser une requête SQL directe pour définir les variables de session
-      // On utilise une requête SELECT pour exécuter set_config
-      const { data, error } = await supabase
-        .from('audit_logs')
-        .select(`
-          id,
-          (SELECT set_config('audit.current_user_id', '${userId}', true)) as user_id_set,
-          (SELECT set_config('audit.current_user_email', '${userEmail}', true)) as user_email_set
-        `)
-        .limit(1)
+      // Utiliser rpc avec paramètres liés pour éviter l'injection SQL
+      const { error } = await supabase.rpc('set_audit_context', {
+        user_id: userId,
+        user_email: userEmail
+      })
 
       if (error) {
         logger.debug('Could not set audit context via direct SQL', error)

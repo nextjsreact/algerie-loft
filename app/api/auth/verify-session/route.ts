@@ -35,7 +35,6 @@ export async function POST(request: NextRequest) {
           created_at: session.user.created_at,
           updated_at: session.user.updated_at,
         },
-        token: session.token,
       },
     });
   } catch (error) {

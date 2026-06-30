@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireAdmin } from '@/lib/security/require-admin'
 
 const BEDS24_API_KEY = process.env.BEDS24_API_KEY
 const BEDS24_API_BASE = 'https://beds24.com/api/v2'
 
 export async function GET(request: NextRequest) {
+  const auth = await requireAdmin(request)
+  if (!auth.valid) {
+    return NextResponse.json({ error: auth.error }, { status: 401 })
+  }
   try {
     if (!BEDS24_API_KEY) {
       return NextResponse.json(
@@ -34,8 +39,6 @@ export async function GET(request: NextRequest) {
         { 
           error: 'Failed to connect to Beds24',
           status: propertiesResponse.status,
-          details: errorDetails,
-          apiKey: BEDS24_API_KEY ? `${BEDS24_API_KEY.substring(0, 20)}...` : 'not set'
         },
         { status: propertiesResponse.status }
       )
@@ -56,8 +59,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       { 
         error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined
       },
       { status: 500 }
     )

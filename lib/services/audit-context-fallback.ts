@@ -33,11 +33,8 @@ export class FallbackAuditContextService {
         logger.debug('RPC set_audit_context not available, trying alternative')
       }
 
-      // Si RPC ne marche pas, essayer exec_sql
-      try {
-        const { error } = await supabase.rpc('exec_sql', {
-          sql: `SELECT set_config('audit.current_user_id', '${userId}', true), set_config('audit.current_user_email', '${userEmail}', true)`
-        })
+      // Si RPC ne marche pas, on abandonne proprement (plus de fallback SQL brut)
+      logger.debug('RPC set_audit_context failed, skipping audit context')
         
         if (!error) {
           logger.debug('Audit context set via exec_sql', { userId, userEmail })
@@ -71,16 +68,8 @@ export class FallbackAuditContextService {
         logger.debug('RPC clear_audit_context not available')
       }
 
-      // Essayer exec_sql
-      try {
-        await supabase.rpc('exec_sql', {
-          sql: `SELECT set_config('audit.current_user_id', NULL, true), set_config('audit.current_user_email', NULL, true)`
-        })
-        logger.debug('Audit context cleared via exec_sql')
-        return
-      } catch (sqlError) {
-        logger.debug('exec_sql not available for clearing')
-      }
+      // Plus de fallback SQL brut — on abandonne proprement
+      logger.debug('RPC clear_audit_context not available, skipping')
 
     } catch (error) {
       logger.warn('Error clearing audit context', error)

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { requireAdmin } from '@/lib/security/require-admin'
 
 const BEDS24_API_KEY = process.env.BEDS24_API_KEY
 const BEDS24_API_V1 = 'https://api.beds24.com/json'
@@ -24,6 +25,10 @@ const AIRBNB_LISTINGS = [
 ]
 
 export async function POST(request: NextRequest) {
+  const auth = await requireAdmin(request)
+  if (!auth.valid) {
+    return NextResponse.json({ error: auth.error }, { status: 401 })
+  }
   try {
     if (!BEDS24_API_KEY) {
       return NextResponse.json(

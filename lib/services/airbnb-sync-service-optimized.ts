@@ -24,6 +24,15 @@ import { createAirbnbNotification } from '@/lib/airbnb/create-notification';
  * 4. Détection de conflits différée: Fait en une seule requête à la fin
  * 
  * RÉSULTAT: 10-20x plus rapide que la version originale
+ *
+ * FIX (2026-06-30) : Bug "duplicate key uq_reservations_airbnb_confirmation_code"
+ * Cause racine : this.manualReservations n'était jamais retirée de la Map après un
+ * fuzzy/overlap match. Si DEUX réservations Airbnb du même batch correspondaient
+ * (même loft + dates ou même loft + nom + date ±1j) à la MÊME entrée manuelle,
+ * les deux tentaient de poser leur propre airbnb_confirmation_code sur la même
+ * ligne dans le même upsert, provoquant un conflit de contrainte unique.
+ * Correctif : on supprime l'entrée manuelle de la Map dès qu'elle est matchée,
+ * pour qu'elle ne puisse plus être re-matchée dans le reste du batch.
  */
 export class AirbnbSyncServiceOptimized {
   private supabase: Awaited<ReturnType<typeof createClient>>;
@@ -192,6 +201,10 @@ export class AirbnbSyncServiceOptimized {
    *   3. Insert : aucune correspondance → CREATE
    *   4. Smart update : preserve les champs "admin" (special_requests, contacts, payment)
    *      meme si Airbnb envoie une nouvelle valeur
+   *
+   * IMPORTANT : dès qu'une entrée manuelle est matchée (couche 2 ou 2b), elle est
+   * immédiatement retirée de this.manualReservations pour éviter qu'une AUTRE
+   * réservation du même batch ne la matche aussi (cause du bug duplicate key).
    */
   async processReservations(reservations: AirbnbReservationInput[]): Promise<void> {
     const toCreate: { payload: any; airbnbId: string }[] = [];
@@ -200,6 +213,11 @@ export class AirbnbSyncServiceOptimized {
     const stagingRecords: any[] = [];
     const allAffectedForConflictCheck: { id?: string; loft_id: string; check_in_date: string; check_out_date: string; status: string }[] = [];
     this.metrics.affected = [];
+
+    // Garde-fou supplémentaire : empêche aussi deux résa Airbnb du MÊME batch de
+    // matcher le même existing.id par match exact (cas rare mais possible si
+    // l'API renvoie deux fois le même confirmation_code dans un seul payload).
+    const claimedExistingIds = new Set<string>();
 
     // Phase 1: Parser, valider et préparer les opérations (en mémoire, très rapide)
     for (const reservation of reservations) {
@@ -248,6 +266,18 @@ export class AirbnbSyncServiceOptimized {
         let existing = this.existingReservations.get(parsed.airbnb_id);
         let matchType: 'airbnb_id' | 'fuzzy_manual' | 'none' = existing ? 'airbnb_id' : 'none';
 
+        // Garde-fou : si cet existing.id a déjà été "réclamé" plus tôt dans CE batch
+        // (cas pathologique de doublon dans le payload reçu), on traite cette
+        // entrée comme non-matchée pour éviter d'écrire deux fois la même ligne.
+        if (existing && claimedExistingIds.has(existing.id)) {
+          console.warn(
+            `[Airbnb Sync Optimized] SKIP DOUBLE-CLAIM: ${parsed.airbnb_id} pointe vers ` +
+            `${existing.id} déjà traité dans ce batch — traité comme insert/skip pour éviter un conflit.`
+          );
+          existing = undefined;
+          matchType = 'none';
+        }
+
         // === Couche 2 : fuzzy match si pas de match exact ===
         // (loft + nom normalise + check_in ± 1 jour)
         if (!existing) {
@@ -261,6 +291,9 @@ export class AirbnbSyncServiceOptimized {
             if (manualMatch) {
               existing = manualMatch;
               matchType = 'fuzzy_manual';
+              // FIX: retirer immédiatement pour éviter qu'une autre résa Airbnb
+              // du même batch ne la matche aussi (cause du duplicate key bug)
+              this.manualReservations.delete(fuzzyKey);
               console.log(
                 `[Airbnb Sync Optimized] FUZZY MATCH: ${parsed.airbnb_id} (${parsed.guest_name}, ${parsed.check_in_date}) ` +
                 `→ manual entry ${manualMatch.id}`
@@ -275,12 +308,14 @@ export class AirbnbSyncServiceOptimized {
         // → C'est le cas qui a créé le doublon Camomille (Mohamed Karim vs +34647371387)
         // → On link l'entrée manuelle avec l'airbnb_confirmation_code au lieu de créer un doublon
         if (!existing) {
-          for (const manual of this.manualReservations.values()) {
+          let matchedKey: string | undefined;
+          for (const [key, manual] of this.manualReservations.entries()) {
             if (manual.loft_id !== loftId) continue;
             if (manual.check_in_date === parsed.check_in_date &&
                 manual.check_out_date === parsed.check_out_date) {
               existing = manual;
               matchType = 'fuzzy_manual';  // Même traitement que fuzzy match
+              matchedKey = key;
               console.log(
                 `[Airbnb Sync Optimized] OVERLAP MATCH (same loft + exact dates): ${parsed.airbnb_id} ` +
                 `(${parsed.guest_name}, ${parsed.check_in_date}→${parsed.check_out_date}) ` +
@@ -289,11 +324,16 @@ export class AirbnbSyncServiceOptimized {
               break;
             }
           }
+          // FIX: retirer immédiatement pour éviter un re-match dans le même batch
+          if (matchedKey) {
+            this.manualReservations.delete(matchedKey);
+          }
         }
 
         // === Couche 3+4 : construire le payload selon le type de match ===
         if (matchType === 'airbnb_id' && existing) {
           // UPDATE avec smart update (preserve admin fields)
+          claimedExistingIds.add(existing.id);
           const payload = this.buildSmartUpdatePayload(parsed, existing, 'airbnb_id', loftId);
           toUpdate.push({ payload: { ...payload, id: existing.id }, airbnbId: parsed.airbnb_id, matchType: 'airbnb_id' });
           allAffectedForConflictCheck.push({
@@ -309,6 +349,7 @@ export class AirbnbSyncServiceOptimized {
           });
         } else if (matchType === 'fuzzy_manual' && existing) {
           // LINK : on UPDATE l'entree manuelle avec les infos Airbnb + airbnb_confirmation_code
+          claimedExistingIds.add(existing.id);
           const payload = this.buildSmartUpdatePayload(parsed, existing, 'fuzzy_manual', loftId);
           toUpdate.push({ payload: { ...payload, id: existing.id }, airbnbId: parsed.airbnb_id, matchType: 'fuzzy_manual' });
           linkedManualIds.push({
@@ -424,21 +465,37 @@ export class AirbnbSyncServiceOptimized {
 
     // Mettre à jour les réservations existantes (upsert avec on_conflict)
     if (toUpdate.length > 0) {
+      // Garde-fou final avant écriture : dédupliquer par id au cas où, en gardant
+      // la dernière occurrence (ne devrait plus jamais se déclencher grâce au fix
+      // ci-dessus, mais protège contre toute régression future silencieuse).
+      const dedupedById = new Map<string, typeof toUpdate[number]>();
+      for (const item of toUpdate) {
+        const id = item.payload.id;
+        if (dedupedById.has(id)) {
+          console.warn(
+            `[Airbnb Sync Optimized] DEDUP GUARD: id ${id} apparaît plusieurs fois ` +
+            `dans toUpdate pour ce batch — seule la dernière occurrence sera appliquée.`
+          );
+        }
+        dedupedById.set(id, item);
+      }
+      const dedupedToUpdate = Array.from(dedupedById.values());
+
       const { data: updatedReservations, error: updateError } = await this.supabase
         .from('reservations')
-        .upsert(toUpdate.map(t => t.payload), { onConflict: 'id' })
+        .upsert(dedupedToUpdate.map(t => t.payload), { onConflict: 'id' })
         .select('id, loft_id, status, airbnb_confirmation_code');
 
       if (updateError) {
         console.error('[Airbnb Sync Optimized] Bulk update failed:', updateError);
         this.metrics.updated = 0;
         this.metrics.linked = 0;
-        this.metrics.failed += toUpdate.length;
+        this.metrics.failed += dedupedToUpdate.length;
         this.metrics.affected = this.metrics.affected.map(a =>
           (a.action === 'updated' || a.action === 'linked') ? { ...a, action: 'failed' as const, error: updateError.message } : a
         );
         
-        toUpdate.forEach(item => {
+        dedupedToUpdate.forEach(item => {
           this.errors.push({
             reservation_id: item.airbnbId,
             error: `Bulk update failed: ${updateError.message}`,

@@ -59,24 +59,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Tous les agents sont en repos' }, { status: 400 })
     }
 
-    // 4. Determine astreinte for today: next in rotation after yesterday's agent
-    let astreinteAgent = available[0]
-    if (offAgentId) {
-      const offIndex = members.findIndex(m => m.id === offAgentId)
-      // Find next available starting from offIndex+1
-      for (let i = 1; i <= members.length; i++) {
-        const candidate = members[(offIndex + i) % members.length]
-        if (candidate.id !== offAgentId) {
-          astreinteAgent = candidate
-          break
-        }
-      }
-    }
+    // 4. Astreinte pour aujourd'hui : rotation automatique DÉSACTIVÉE
+    // L'admin choisit manuellement qui est en repos et qui fait l'astreinte
+    // On propose juste le premier disponible par défaut, mais c'est modifiable
+    const astreinteAgent = available[0]
 
     // 5. Fetch check-outs for target date (cleaning tasks) — include zone + GPS
     const { data: checkouts } = await supabase
       .from('reservations')
-      .select('id, loft_id, check_out_date, check_in_date, guest_name, guest_count, total_amount, base_price, payment_status, special_requests, lofts:loft_id(name, address, gps_coordinates, check_in_time, check_out_time, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
+      .select('id, loft_id, check_out_date, check_in_date, guest_name, guest_count, total_amount, base_price, payment_status, paid_amount, source, special_requests, lofts:loft_id(name, address, gps_coordinates, check_in_time, check_out_time, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
       .eq('check_out_date', targetDateStr)
       .in('status', ['pending', 'confirmed', 'completed'])
       .order('check_out_date')
@@ -84,7 +75,7 @@ export async function GET(request: NextRequest) {
     // 6. Fetch check-ins for target date (welcome tasks) — include zone + GPS
     const { data: checkins } = await supabase
       .from('reservations')
-      .select('id, loft_id, check_in_date, check_out_date, guest_name, guest_phone, guest_count, total_amount, base_price, payment_status, special_requests, lofts:loft_id(name, address, gps_coordinates, check_in_time, check_out_time, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
+      .select('id, loft_id, check_in_date, check_out_date, guest_name, guest_phone, guest_count, total_amount, base_price, payment_status, paid_amount, source, special_requests, lofts:loft_id(name, address, gps_coordinates, check_in_time, check_out_time, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
       .eq('check_in_date', targetDateStr)
       .in('status', ['confirmed', 'pending'])
       .order('check_in_date')

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -34,16 +34,19 @@ function buildCheckinBlock(r: any, index: number): string {
   const checkOut = r.check_out_date || ''
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : null
   const pricePerNight = nights && r.base_price ? r.base_price / nights : (r.total_amount && nights ? r.total_amount / nights : null)
-  const total = r.total_amount || r.base_price || null
-  const paid = r.payment_status === 'paid' ? total : (r.payment_status === 'partial' ? (r.paid_amount || null) : 0)
-  const remaining = total && paid !== null ? total - paid : null
+  const isPaid = r.payment_status === 'paid'
+  const paidAmount = isPaid ? total : (r.paid_amount || 0)
+  const isAirbnb = r.source && String(r.source).toLowerCase().includes('airbnb')
+  const paidAmount = isPaid ? total : (r.paid_amount || 0)
+  const paid = paidAmount
+  const remaining = !isPaid && total ? total - (paidAmount || 0) : 0
   const guests = r.guest_count || null
   const checkInTime = r.lofts?.check_in_time || null
   const phone = r.guest_phone || null
   const guestName = r.guest_name || null
   const notes = r.special_requests || null
 
-  let block = `  ${index}. 🏠 <b>${loftName}</b>\n`
+  let block = `  ${index}. 🏠 <b>${loftName}</b>${isAirbnb ? ' 🔵 <i>(Airbnb)</i>' : ''}\n`
   if (address) block += `     📍 ${address}\n`
 
   // Dates + nuitées

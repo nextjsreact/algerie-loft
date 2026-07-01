@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -43,43 +43,43 @@ function buildCheckinBlock(r: any, index: number): string {
   const guestName = r.guest_name || null
   const notes = r.special_requests || null
 
-  let block = `  ${index}. ­ƒÅá <b>${loftName}</b>\n`
-  if (address) block += `     ­ƒôì ${address}\n`
+  let block = `  ${index}. 🏠 <b>${loftName}</b>\n`
+  if (address) block += `     📍 ${address}\n`
 
-  // Dates + nuit├®es
+  // Dates + nuitées
   if (checkIn && checkOut) {
     const dateRange = `Du ${fmtShortDate(checkIn)} au ${fmtShortDate(checkOut)}`
-    block += `     ­ƒôà ${dateRange}`
-    if (nights) block += ` ÔÇö ${nights} nuit├®e${nights > 1 ? 's' : ''}`
+    block += `     📅 ${dateRange}`
+    if (nights) block += ` — ${nights} nuitée${nights > 1 ? 's' : ''}`
     block += '\n'
   }
 
   // Tarif
   if (pricePerNight && nights && total) {
-    block += `     ­ƒÆ░ ${formatAmount(pricePerNight)} ├ù ${nights} = <b>${formatAmount(total)}</b>\n`
+    block += `     💰 ${formatAmount(pricePerNight)} × ${nights} = <b>${formatAmount(total)}</b>\n`
   } else if (total) {
-    block += `     ­ƒÆ░ Total : <b>${formatAmount(total)}</b>\n`
+    block += `     💰 Total : <b>${formatAmount(total)}</b>\n`
   }
 
   // Paiement
   if (paid !== null && paid > 0) {
-    block += `     Ô£à Pay├® : ${formatAmount(paid)}`
+    block += `     ✅ Payé : ${formatAmount(paid)}`
     if (r.payment_status === 'partial' || (remaining && remaining > 0)) {
       block += ` (${r.payment_status === 'paid' ? 'CCP' : 'acompte'})`
     }
     block += '\n'
   }
   if (remaining !== null && remaining > 0) {
-    block += `     ÔÜá´©Å Reste : <b>${formatAmount(remaining)}</b> en esp├¿ces\n`
+    block += `     ⚠️ Reste : <b>${formatAmount(remaining)}</b> en espèces\n`
   }
 
-  // Voyageurs + heure d'arriv├®e
-  if (guests) block += `     ­ƒæÑ ${guests} personne${guests > 1 ? 's' : ''}\n`
-  if (checkInTime) block += `     ­ƒòÉ Arriv├®e ├á partir de ${checkInTime.substring(0, 5)}\n`
-  if (guestName) block += `     ­ƒæñ ${guestName}\n`
-  if (phone) block += `     ­ƒô× ${phone}\n`
-  if (notes) block += `     ­ƒôØ ${notes}\n`
-  if (gps) block += `     ­ƒù║´©Å <a href="${gps}">Voir sur Maps</a>\n`
+  // Voyageurs + heure d'arrivée
+  if (guests) block += `     👥 ${guests} personne${guests > 1 ? 's' : ''}\n`
+  if (checkInTime) block += `     🕐 Arrivée à partir de ${checkInTime.substring(0, 5)}\n`
+  if (guestName) block += `     👤 ${guestName}\n`
+  if (phone) block += `     📞 ${phone}\n`
+  if (notes) block += `     📝 ${notes}\n`
+  if (gps) block += `     🗺️ <a href="${gps}">Voir sur Maps</a>\n`
 
   return block
 }
@@ -92,12 +92,12 @@ function buildCheckoutBlock(r: any, index: number): string {
   const checkOutTime = r.lofts?.check_out_time || null
   const guestName = r.guest_name || null
 
-  let block = `  ${index}. ­ƒº╣ <b>${loftName}</b>\n`
-  if (address) block += `     ­ƒôì ${address}\n`
-  if (checkOut) block += `     ­ƒôà D├®part le ${fmtShortDate(checkOut)}\n`
-  if (checkOutTime) block += `     ­ƒòÉ Avant ${checkOutTime}\n`
-  if (guestName) block += `     ­ƒæñ ${guestName}\n`
-  if (gps) block += `     ­ƒù║´©Å <a href="${gps}">Voir sur Maps</a>\n`
+  let block = `  ${index}. 🧹 <b>${loftName}</b>\n`
+  if (address) block += `     📍 ${address}\n`
+  if (checkOut) block += `     📅 Départ le ${fmtShortDate(checkOut)}\n`
+  if (checkOutTime) block += `     🕐 Avant ${checkOutTime}\n`
+  if (guestName) block += `     👤 ${guestName}\n`
+  if (gps) block += `     🗺️ <a href="${gps}">Voir sur Maps</a>\n`
 
   return block
 }
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
     const { date, members, astreinte_agent } = body
 
     if (!date || !members) {
-      return NextResponse.json({ error: 'Donn├®es manquantes' }, { status: 400 })
+      return NextResponse.json({ error: 'Données manquantes' }, { status: 400 })
     }
 
     const dateLabel = fmtDate(date)
@@ -125,25 +125,25 @@ export async function POST(request: NextRequest) {
         continue
       }
 
-      let msg = `­ƒôï <b>Planning du ${dateLabel}</b>\n`
-      msg += `­ƒæñ <b>${agent.full_name}</b>\n\n`
+      let msg = `📋 <b>Planning du ${dateLabel}</b>\n`
+      msg += `👤 <b>${agent.full_name}</b>\n\n`
 
       if (is_off) {
-        msg += `­ƒî┤ <b>JOUR DE REPOS</b>\n`
-        msg += `Tu es en repos aujourd'hui. Bonne journ├®e ! ­ƒÿè\n`
-        msg += `\nÔÜá´©Å Tu seras d'astreinte demain.`
+        msg += `🌴 <b>JOUR DE REPOS</b>\n`
+        msg += `Tu es en repos aujourd'hui. Bonne journée ! 😊\n`
+        msg += `\n⚠️ Tu seras d'astreinte demain.`
       } else {
         if (is_astreinte) {
-          msg += `­ƒöö <b>ASTREINTE DU JOUR</b> ÔÇö Tu es disponible pour toute urgence\n\n`
+          msg += `🔔 <b>ASTREINTE DU JOUR</b> — Tu es disponible pour toute urgence\n\n`
         }
 
         if (cleaning_tasks.length === 0 && welcome_tasks.length === 0) {
-          msg += `Ô£à Aucune t├óche assign├®e pour aujourd'hui.\n`
+          msg += `✅ Aucune tâche assignée pour aujourd'hui.\n`
           if (is_astreinte) msg += `Reste disponible en cas d'urgence.\n`
         }
 
         if (cleaning_tasks.length > 0) {
-          msg += `­ƒº╣ <b>NETTOYAGE (${cleaning_tasks.length} appart${cleaning_tasks.length > 1 ? 's' : ''})</b>\n`
+          msg += `🧹 <b>NETTOYAGE (${cleaning_tasks.length} appart${cleaning_tasks.length > 1 ? 's' : ''})</b>\n`
           cleaning_tasks.forEach((r: any, i: number) => {
             msg += buildCheckoutBlock(r, i + 1)
           })
@@ -151,7 +151,7 @@ export async function POST(request: NextRequest) {
         }
 
         if (welcome_tasks.length > 0) {
-          msg += `­ƒñØ <b>ACCUEIL + CONTRAT (${welcome_tasks.length} arriv├®e${welcome_tasks.length > 1 ? 's' : ''})</b>\n`
+          msg += `🤝 <b>ACCUEIL + CONTRAT (${welcome_tasks.length} arrivée${welcome_tasks.length > 1 ? 's' : ''})</b>\n`
           welcome_tasks.forEach((r: any, i: number) => {
             msg += buildCheckinBlock(r, i + 1)
           })
@@ -159,24 +159,24 @@ export async function POST(request: NextRequest) {
         }
 
         if (item.pending_tasks?.length > 0) {
-          msg += `­ƒôï <b>T├éCHES EN COURS / ├Ç FAIRE (${item.pending_tasks.length})</b>\n`
+          msg += `📋 <b>TÂCHES EN COURS / À FAIRE (${item.pending_tasks.length})</b>\n`
           item.pending_tasks.forEach((t: any, i: number) => {
-            const status = t.status === 'in_progress' ? '­ƒöä' : 'ÔÅ│'
+            const status = t.status === 'in_progress' ? '🔄' : '⏳'
             msg += `  ${i + 1}. ${status} ${t.title}`
-            if (t.lofts?.name) msg += ` ÔÇö ${t.lofts.name}`
-            if (t.due_date) msg += ` (├®ch├®ance: ${new Date(t.due_date).toLocaleDateString('fr-FR')})`
+            if (t.lofts?.name) msg += ` — ${t.lofts.name}`
+            if (t.due_date) msg += ` (échéance: ${new Date(t.due_date).toLocaleDateString('fr-FR')})`
             msg += '\n'
           })
           msg += '\n'
         }
 
-        msg += `\n­ƒô× En cas de probl├¿me, contactez le responsable.`
+        msg += `\n📞 En cas de problème, contactez le responsable.`
       }
 
       try {
         // Send to individual agent's Telegram
         const token = process.env.PLANNING_TELEGRAM_BOT_TOKEN
-        if (!token) throw new Error('PLANNING_TELEGRAM_BOT_TOKEN non configur├®')
+        if (!token) throw new Error('PLANNING_TELEGRAM_BOT_TOKEN non configuré')
 
         const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
           method: 'POST',
@@ -231,26 +231,26 @@ export async function POST(request: NextRequest) {
 }
 
 function buildGroupSummary(date: string, dateLabel: string, members: any[]) {
-  let msg = `­ƒôï <b>Planning ├®quipe ÔÇö ${dateLabel}</b>\n\n`
+  let msg = `📋 <b>Planning équipe — ${dateLabel}</b>\n\n`
 
   const offAgent = members.find(m => m.is_off)
   const astreinteAgent = members.find(m => m.is_astreinte)
 
-  if (offAgent) msg += `­ƒî┤ Repos : <b>${offAgent.agent.full_name}</b>\n`
-  if (astreinteAgent) msg += `­ƒöö Astreinte : <b>${astreinteAgent.agent.full_name}</b>\n\n`
+  if (offAgent) msg += `🌴 Repos : <b>${offAgent.agent.full_name}</b>\n`
+  if (astreinteAgent) msg += `🔔 Astreinte : <b>${astreinteAgent.agent.full_name}</b>\n\n`
 
   const working = members.filter(m => !m.is_off)
   working.forEach(item => {
     const total = item.cleaning_tasks.length + item.welcome_tasks.length
     if (total === 0 && !item.is_astreinte) return
-    msg += `­ƒæñ <b>${item.agent.full_name}</b>`
-    if (item.is_astreinte) msg += ` ­ƒöö`
+    msg += `👤 <b>${item.agent.full_name}</b>`
+    if (item.is_astreinte) msg += ` 🔔`
     msg += '\n'
     if (item.cleaning_tasks.length > 0) {
-      msg += `  ­ƒº╣ ${item.cleaning_tasks.map((r: any) => r.lofts?.name || '?').join(', ')}\n`
+      msg += `  🧹 ${item.cleaning_tasks.map((r: any) => r.lofts?.name || '?').join(', ')}\n`
     }
     if (item.welcome_tasks.length > 0) {
-      msg += `  ­ƒñØ ${item.welcome_tasks.map((r: any) => r.lofts?.name || '?').join(', ')}\n`
+      msg += `  🤝 ${item.welcome_tasks.map((r: any) => r.lofts?.name || '?').join(', ')}\n`
     }
   })
 

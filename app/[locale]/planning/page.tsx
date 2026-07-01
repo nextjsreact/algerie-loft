@@ -428,14 +428,12 @@ function TaskItem({ reservation, type, agentId, otherAgents, onReassign, color }
     ? Math.max(1, Math.round((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000))
     : null
   const total = reservation.total_amount || reservation.base_price || null
-  const isPaid = reservation.payment_status === 'paid'
-  const paidAmount = isPaid ? total : (reservation.paid_amount || 0)
-  const remaining = !isPaid && total ? total - (paidAmount || 0) : 0
   const pricePerNight = nights && total ? Math.round(total / nights) : null
+  const paid = reservation.payment_status === 'paid' ? total : (reservation.paid_amount || 0)
+  const remaining = total && paid !== null ? total - paid : null
   const checkInTime = reservation.lofts?.check_in_time
   const checkOutTime = reservation.lofts?.check_out_time
   const guests = reservation.guest_count
-  const isAirbnb = reservation.source && String(reservation.source).toLowerCase().includes('airbnb')
 
   const fmtShort = (d: string) => new Date(d + 'T00:00:00').toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })
   const fmtMoney = (n: number) => n.toLocaleString('fr-DZ') + ' DA'
@@ -445,10 +443,7 @@ function TaskItem({ reservation, type, agentId, otherAgents, onReassign, color }
       <div className="flex items-start justify-between gap-1">
         <div className="flex-1 min-w-0 space-y-0.5">
           {/* Nom du loft */}
-          <p className={`font-semibold text-sm ${textColor}`}>
-            {reservation.lofts?.name || '—'}
-            {isAirbnb && <span className="ml-1.5 text-blue-500 font-normal">🔵 Airbnb</span>}
-          </p>
+          <p className={`font-semibold text-sm ${textColor}`}>{reservation.lofts?.name || '—'}</p>
 
           {/* Adresse */}
           {reservation.lofts?.address && (
@@ -470,20 +465,20 @@ function TaskItem({ reservation, type, agentId, otherAgents, onReassign, color }
           )}
 
           {/* Prix détaillé (welcome uniquement) — masqué si tout est payé */}
-          {type === 'welcome' && !isPaid && pricePerNight && nights && total && (
+          {type === 'welcome' && pricePerNight && nights && total && reservation.payment_status !== 'paid' && (
             <p className={subColor}>
               💰 {fmtMoney(pricePerNight)} × {nights} = <span className="font-bold">{fmtMoney(total)}</span>
             </p>
           )}
 
-          {/* Paiement */}
-          {type === 'welcome' && isPaid && (
+          {/* Paiement — masqué si tout est payé */}
+          {type === 'welcome' && reservation.payment_status === 'paid' && (
             <p className="text-green-600 font-semibold">✅ Règlement complet</p>
           )}
-          {type === 'welcome' && !isPaid && paidAmount > 0 && (
-            <p className="text-blue-600">✅ Payé : {fmtMoney(paidAmount)}</p>
+          {type === 'welcome' && reservation.payment_status !== 'paid' && paid !== null && paid > 0 && (
+            <p className="text-blue-600">✅ Payé : {fmtMoney(paid)}</p>
           )}
-          {type === 'welcome' && !isPaid && remaining > 0 && (
+          {type === 'welcome' && reservation.payment_status !== 'paid' && remaining !== null && remaining > 0 && (
             <p className="text-red-600 font-semibold">⚠️ Reste : {fmtMoney(remaining)} en espèces</p>
           )}
 

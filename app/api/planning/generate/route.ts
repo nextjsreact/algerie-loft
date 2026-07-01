@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
     // 5. Fetch check-outs for target date (cleaning tasks) — include zone + GPS
     const { data: checkouts } = await supabase
       .from('reservations')
-      .select('id, loft_id, check_out_date, check_in_date, guest_name, guest_count, total_amount, base_price, payment_status, paid_amount, source, special_requests, lofts:loft_id(name, address, gps_coordinates, check_in_time, check_out_time, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
+      .select('id, loft_id, check_out_date, check_in_date, guest_name, guest_count, total_amount, base_price, payment_status, source, special_requests, lofts:loft_id(name, address, gps_coordinates, check_in_time, check_out_time, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
       .eq('check_out_date', targetDateStr)
       .in('status', ['pending', 'confirmed', 'completed'])
       .order('check_out_date')
@@ -84,10 +84,32 @@ export async function GET(request: NextRequest) {
     // 6. Fetch check-ins for target date (welcome tasks) — include zone + GPS
     const { data: checkins } = await supabase
       .from('reservations')
-      .select('id, loft_id, check_in_date, check_out_date, guest_name, guest_phone, guest_count, total_amount, base_price, payment_status, special_requests, lofts:loft_id(name, address, gps_coordinates, check_in_time, check_out_time, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
+      .select('id, loft_id, check_in_date, check_out_date, guest_name, guest_phone, guest_count, total_amount, base_price, payment_status, source, special_requests, lofts:loft_id(name, address, gps_coordinates, check_in_time, check_out_time, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
       .eq('check_in_date', targetDateStr)
       .in('status', ['confirmed', 'pending'])
       .order('check_in_date')
+
+    // 6b. Fetch payments pour calculer le montant réellement payé
+    const allResIds = [
+      ...(checkouts || []).map((r: any) => r.id),
+      ...(checkins || []).map((r: any) => r.id),
+    ]
+    const paymentsByRes = new Map<string, number>()
+    if (allResIds.length > 0) {
+      const { data: payments } = await supabase
+        .from('reservation_payments')
+        .select('reservation_id, amount')
+        .in('reservation_id', allResIds)
+        .eq('status', 'completed')
+      ;(payments || []).forEach((p: any) => {
+        paymentsByRes.set(p.reservation_id, (paymentsByRes.get(p.reservation_id) || 0) + (p.amount || 0))
+      })
+    }
+
+    // Enrichir les réservations avec paid_amount calculé
+    const enrich = (r: any) => ({ ...r, paid_amount: paymentsByRes.get(r.id) || 0 })
+    const enrichedCheckouts = (checkouts || []).map(enrich)
+    const enrichedCheckins = (checkins || []).map(enrich)
 
     // 7. Distribute tasks by team specialty AND preferred zone
     const cleaningAgents = available.filter(a => a.team === 'nettoyage')
@@ -121,12 +143,12 @@ export async function GET(request: NextRequest) {
     const assignWelcome = makeZoneRR()
 
     const cleaningTasks: { agent: any; reservation: any }[] = []
-    ;(checkouts || []).forEach((res) => {
+    ;(enrichedCheckouts).forEach((res) => {
       cleaningTasks.push({ agent: assignCleaning(cleaningPool, res), reservation: res })
     })
 
     const welcomeTasks: { agent: any; reservation: any }[] = []
-    ;(checkins || []).forEach((res) => {
+    ;(enrichedCheckins).forEach((res) => {
       welcomeTasks.push({ agent: assignWelcome(welcomePool, res), reservation: res })
     })
 
@@ -168,8 +190,8 @@ export async function GET(request: NextRequest) {
       astreinte_agent: astreinteAgent,
       members: agentPlanning,
       summary: {
-        total_checkouts: (checkouts || []).length,
-        total_checkins: (checkins || []).length,
+        total_checkouts: enrichedCheckouts.length,
+        total_checkins: enrichedCheckins.length,
         total_members: members.length,
         available_count: available.length,
       }

@@ -35,18 +35,15 @@ function buildCheckinBlock(r: any, index: number): string {
   const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : null
   const pricePerNight = nights && r.base_price ? r.base_price / nights : (r.total_amount && nights ? r.total_amount / nights : null)
   const total = r.total_amount || r.base_price || null
-  // Correction paiement partiel : utiliser paid_amount réel de la DB
-  const isPaid = r.payment_status === 'paid'
-  const paidAmount = isPaid ? total : (r.paid_amount || 0)
-  const remaining = !isPaid && total ? total - paidAmount : 0
-  const isAirbnb = r.source && String(r.source).toLowerCase().includes('airbnb')
+  const paid = r.payment_status === 'paid' ? total : (r.payment_status === 'partial' ? (r.paid_amount || null) : 0)
+  const remaining = total && paid !== null ? total - paid : null
   const guests = r.guest_count || null
   const checkInTime = r.lofts?.check_in_time || null
   const phone = r.guest_phone || null
   const guestName = r.guest_name || null
   const notes = r.special_requests || null
 
-  let block = `  ${index}. 🏠 <b>${loftName}</b>${isAirbnb ? ' 🔵 <i>(Airbnb)</i>' : ''}\n`
+  let block = `  ${index}. 🏠 <b>${loftName}</b>\n`
   if (address) block += `     📍 ${address}\n`
 
   // Dates + nuitées
@@ -57,19 +54,23 @@ function buildCheckinBlock(r: any, index: number): string {
     block += '\n'
   }
 
-  // Tarif — masqué si règlement complet
-  if (!isPaid && pricePerNight && nights && total) {
+  // Tarif
+  if (pricePerNight && nights && total) {
     block += `     💰 ${formatAmount(pricePerNight)} × ${nights} = <b>${formatAmount(total)}</b>\n`
-  } else if (!isPaid && total) {
+  } else if (total) {
     block += `     💰 Total : <b>${formatAmount(total)}</b>\n`
   }
 
   // Paiement
-  if (isPaid) {
-    block += `     ✅ Règlement complet\n`
-  } else {
-    if (paidAmount > 0) block += `     ✅ Payé : ${formatAmount(paidAmount)}\n`
-    if (remaining > 0) block += `     ⚠️ Reste : <b>${formatAmount(remaining)}</b> en espèces\n`
+  if (paid !== null && paid > 0) {
+    block += `     ✅ Payé : ${formatAmount(paid)}`
+    if (r.payment_status === 'partial' || (remaining && remaining > 0)) {
+      block += ` (${r.payment_status === 'paid' ? 'CCP' : 'acompte'})`
+    }
+    block += '\n'
+  }
+  if (remaining !== null && remaining > 0) {
+    block += `     ⚠️ Reste : <b>${formatAmount(remaining)}</b> en espèces\n`
   }
 
   // Voyageurs + heure d'arrivée

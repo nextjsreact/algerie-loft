@@ -487,7 +487,7 @@ function TaskItem({ reservation, type, agentId, otherAgents, onReassign, color }
             <p className={mutedColor}>👥 {guests} personne{guests > 1 ? 's' : ''}</p>
           )}
           {type === 'welcome' && checkInTime && (
-            <p className={mutedColor}>🕐 Arrivée avant {checkInTime}</p>
+            <p className={mutedColor}>🕐 Arrivée à partir de {checkInTime.substring(0, 5)}</p>
           )}
 
           {/* Client */}

@@ -75,7 +75,7 @@ function buildCheckinBlock(r: any, index: number): string {
 
   // Voyageurs + heure d'arrivée
   if (guests) block += `     👥 ${guests} personne${guests > 1 ? 's' : ''}\n`
-  if (checkInTime) block += `     🕐 Arrivée avant ${checkInTime}\n`
+  if (checkInTime) block += `     🕐 Arrivée à partir de ${checkInTime.substring(0, 5)}\n`
   if (guestName) block += `     👤 ${guestName}\n`
   if (phone) block += `     📞 ${phone}\n`
   if (notes) block += `     📝 ${notes}\n`

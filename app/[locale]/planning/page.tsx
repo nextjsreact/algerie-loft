@@ -389,20 +389,93 @@ function TaskItem({ reservation, type, agentId, otherAgents, onReassign, color }
   const [showReassign, setShowReassign] = useState(false)
   const bg = color === 'orange' ? 'bg-orange-50 border-orange-100' : 'bg-green-50 border-green-100'
   const textColor = color === 'orange' ? 'text-orange-800' : 'text-green-800'
-  const subColor = color === 'orange' ? 'text-orange-500' : 'text-green-500'
+  const subColor = color === 'orange' ? 'text-orange-600' : 'text-green-600'
+  const mutedColor = 'text-gray-500'
   const zoneName = (reservation.lofts as any)?.zone_areas?.name
 
+  // Calculs financiers
+  const checkIn = reservation.check_in_date
+  const checkOut = reservation.check_out_date
+  const nights = checkIn && checkOut
+    ? Math.max(1, Math.round((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86400000))
+    : null
+  const total = reservation.total_amount || reservation.base_price || null
+  const pricePerNight = nights && total ? Math.round(total / nights) : null
+  const paid = reservation.payment_status === 'paid' ? total : (reservation.paid_amount || 0)
+  const remaining = total && paid !== null ? total - paid : null
+  const checkInTime = reservation.lofts?.check_in_time
+  const checkOutTime = reservation.lofts?.check_out_time
+  const guests = reservation.guest_count
+
+  const fmtShort = (d: string) => new Date(d + 'T00:00:00').toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })
+  const fmtMoney = (n: number) => n.toLocaleString('fr-DZ') + ' DA'
+
   return (
-    <div className={`rounded-lg px-3 py-2 text-xs border ${bg}`}>
+    <div className={`rounded-lg px-3 py-2.5 text-xs border ${bg}`}>
       <div className="flex items-start justify-between gap-1">
-        <div className="flex-1 min-w-0">
-          <p className={`font-medium ${textColor}`}>{reservation.lofts?.name || '—'}</p>
-          {reservation.lofts?.address && <p className={`${subColor} mt-0.5`}>📍 {reservation.lofts.address}</p>}
-          {zoneName && <p className="text-gray-400 mt-0.5">🗺️ {zoneName}</p>}
-          {type === 'cleaning' && reservation.guest_name && <p className={`${subColor} mt-0.5`}>👤 Départ : {reservation.guest_name}</p>}
-          {type === 'welcome' && reservation.guest_name && <p className={`${subColor} mt-0.5`}>👤 {reservation.guest_name}</p>}
-          {type === 'welcome' && reservation.guest_phone && <p className={`${subColor}`}>📞 {reservation.guest_phone}</p>}
+        <div className="flex-1 min-w-0 space-y-0.5">
+          {/* Nom du loft */}
+          <p className={`font-semibold text-sm ${textColor}`}>{reservation.lofts?.name || '—'}</p>
+
+          {/* Adresse */}
+          {reservation.lofts?.address && (
+            <p className={`${subColor}`}>📍 {reservation.lofts.address}</p>
+          )}
+          {zoneName && <p className={mutedColor}>🗺️ {zoneName}</p>}
+
+          {/* Dates + nuitées (welcome) */}
+          {type === 'welcome' && checkIn && checkOut && (
+            <p className={subColor}>
+              📅 Du {fmtShort(checkIn)} au {fmtShort(checkOut)}
+              {nights && <span className="font-medium"> — {nights} nuitée{nights > 1 ? 's' : ''}</span>}
+            </p>
+          )}
+
+          {/* Date départ (cleaning) */}
+          {type === 'cleaning' && checkOut && (
+            <p className={subColor}>📅 Départ le {fmtShort(checkOut)}{checkOutTime && ` avant ${checkOutTime}`}</p>
+          )}
+
+          {/* Prix détaillé (welcome uniquement) */}
+          {type === 'welcome' && pricePerNight && nights && total && (
+            <p className={subColor}>
+              💰 {fmtMoney(pricePerNight)} × {nights} = <span className="font-bold">{fmtMoney(total)}</span>
+            </p>
+          )}
+
+          {/* Paiement */}
+          {type === 'welcome' && paid !== null && paid > 0 && (
+            <p className="text-blue-600">✅ Payé : {fmtMoney(paid)}</p>
+          )}
+          {type === 'welcome' && remaining !== null && remaining > 0 && (
+            <p className="text-red-600 font-semibold">⚠️ Reste : {fmtMoney(remaining)} en espèces</p>
+          )}
+
+          {/* Voyageurs + heure arrivée */}
+          {type === 'welcome' && guests && (
+            <p className={mutedColor}>👥 {guests} personne{guests > 1 ? 's' : ''}</p>
+          )}
+          {type === 'welcome' && checkInTime && (
+            <p className={mutedColor}>🕐 Arrivée avant {checkInTime}</p>
+          )}
+
+          {/* Client */}
+          {type === 'cleaning' && reservation.guest_name && (
+            <p className={mutedColor}>👤 Départ : {reservation.guest_name}</p>
+          )}
+          {type === 'welcome' && reservation.guest_name && (
+            <p className={mutedColor}>👤 {reservation.guest_name}</p>
+          )}
+          {type === 'welcome' && reservation.guest_phone && (
+            <p className={`${subColor} font-medium`}>📞 {reservation.guest_phone}</p>
+          )}
+
+          {/* Notes spéciales */}
+          {reservation.special_requests && (
+            <p className="text-amber-600 italic">📝 {reservation.special_requests}</p>
+          )}
         </div>
+
         {otherAgents.length > 0 && (
           <button
             onClick={() => setShowReassign(!showReassign)}
@@ -413,6 +486,7 @@ function TaskItem({ reservation, type, agentId, otherAgents, onReassign, color }
           </button>
         )}
       </div>
+
       {showReassign && otherAgents.length > 0 && (
         <div className="mt-2 flex items-center gap-1">
           <Select onValueChange={val => { onReassign(agentId, reservation.id, type, val); setShowReassign(false) }}>

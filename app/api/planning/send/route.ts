@@ -9,6 +9,99 @@ function fmtDate(d: string) {
   })
 }
 
+function fmtShortDate(d: string) {
+  return new Date(d + 'T00:00:00').toLocaleDateString('fr-FR', {
+    day: '2-digit', month: 'long'
+  })
+}
+
+function calcNights(checkIn: string, checkOut: string): number {
+  const a = new Date(checkIn + 'T00:00:00')
+  const b = new Date(checkOut + 'T00:00:00')
+  return Math.max(1, Math.round((b.getTime() - a.getTime()) / 86400000))
+}
+
+function formatAmount(n: number | null | undefined): string {
+  if (!n) return '0 DA'
+  return n.toLocaleString('fr-DZ') + ' DA'
+}
+
+function buildCheckinBlock(r: any, index: number): string {
+  const loftName = r.lofts?.name || 'Loft'
+  const address = r.lofts?.address || ''
+  const gps = r.lofts?.gps_coordinates || ''
+  const checkIn = r.check_in_date || ''
+  const checkOut = r.check_out_date || ''
+  const nights = checkIn && checkOut ? calcNights(checkIn, checkOut) : null
+  const pricePerNight = nights && r.base_price ? r.base_price / nights : (r.total_amount && nights ? r.total_amount / nights : null)
+  const total = r.total_amount || r.base_price || null
+  const paid = r.payment_status === 'paid' ? total : (r.payment_status === 'partial' ? (r.paid_amount || null) : 0)
+  const remaining = total && paid !== null ? total - paid : null
+  const guests = r.guest_count || null
+  const checkInTime = r.lofts?.check_in_time || null
+  const phone = r.guest_phone || null
+  const guestName = r.guest_name || null
+  const notes = r.special_requests || null
+
+  let block = `  ${index}. 🏠 <b>${loftName}</b>\n`
+  if (address) block += `     📍 ${address}\n`
+
+  // Dates + nuitées
+  if (checkIn && checkOut) {
+    const dateRange = `Du ${fmtShortDate(checkIn)} au ${fmtShortDate(checkOut)}`
+    block += `     📅 ${dateRange}`
+    if (nights) block += ` — ${nights} nuitée${nights > 1 ? 's' : ''}`
+    block += '\n'
+  }
+
+  // Tarif
+  if (pricePerNight && nights && total) {
+    block += `     💰 ${formatAmount(pricePerNight)} × ${nights} = <b>${formatAmount(total)}</b>\n`
+  } else if (total) {
+    block += `     💰 Total : <b>${formatAmount(total)}</b>\n`
+  }
+
+  // Paiement
+  if (paid !== null && paid > 0) {
+    block += `     ✅ Payé : ${formatAmount(paid)}`
+    if (r.payment_status === 'partial' || (remaining && remaining > 0)) {
+      block += ` (${r.payment_status === 'paid' ? 'CCP' : 'acompte'})`
+    }
+    block += '\n'
+  }
+  if (remaining !== null && remaining > 0) {
+    block += `     ⚠️ Reste : <b>${formatAmount(remaining)}</b> en espèces\n`
+  }
+
+  // Voyageurs + heure d'arrivée
+  if (guests) block += `     👥 ${guests} personne${guests > 1 ? 's' : ''}\n`
+  if (checkInTime) block += `     🕐 Arrivée avant ${checkInTime}\n`
+  if (guestName) block += `     👤 ${guestName}\n`
+  if (phone) block += `     📞 ${phone}\n`
+  if (notes) block += `     📝 ${notes}\n`
+  if (gps) block += `     🗺️ <a href="${gps}">Voir sur Maps</a>\n`
+
+  return block
+}
+
+function buildCheckoutBlock(r: any, index: number): string {
+  const loftName = r.lofts?.name || 'Loft'
+  const address = r.lofts?.address || ''
+  const gps = r.lofts?.gps_coordinates || ''
+  const checkOut = r.check_out_date || ''
+  const checkOutTime = r.lofts?.check_out_time || null
+  const guestName = r.guest_name || null
+
+  let block = `  ${index}. 🧹 <b>${loftName}</b>\n`
+  if (address) block += `     📍 ${address}\n`
+  if (checkOut) block += `     📅 Départ le ${fmtShortDate(checkOut)}\n`
+  if (checkOutTime) block += `     🕐 Avant ${checkOutTime}\n`
+  if (guestName) block += `     👤 ${guestName}\n`
+  if (gps) block += `     🗺️ <a href="${gps}">Voir sur Maps</a>\n`
+
+  return block
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient(true)
@@ -52,30 +145,15 @@ export async function POST(request: NextRequest) {
         if (cleaning_tasks.length > 0) {
           msg += `🧹 <b>NETTOYAGE (${cleaning_tasks.length} appart${cleaning_tasks.length > 1 ? 's' : ''})</b>\n`
           cleaning_tasks.forEach((r: any, i: number) => {
-            const loftName = r.lofts?.name || r.loft_id
-            const address = r.lofts?.address || ''
-            const gps = r.lofts?.gps_coordinates || ''
-            msg += `  ${i + 1}. <b>${loftName}</b>`
-            if (address) msg += ` — ${address}`
-            if (r.guest_name) msg += `\n     👤 Départ : ${r.guest_name}`
-            if (gps) msg += `\n     📍 <a href="${gps}">Voir sur Maps</a>`
-            msg += '\n'
+            msg += buildCheckoutBlock(r, i + 1)
           })
           msg += '\n'
         }
 
         if (welcome_tasks.length > 0) {
-          msg += `🤝 <b>ACCUEIL + CONTRAT (${welcome_tasks.length} appart${welcome_tasks.length > 1 ? 's' : ''})</b>\n`
+          msg += `🤝 <b>ACCUEIL + CONTRAT (${welcome_tasks.length} arrivée${welcome_tasks.length > 1 ? 's' : ''})</b>\n`
           welcome_tasks.forEach((r: any, i: number) => {
-            const loftName = r.lofts?.name || r.loft_id
-            const address = r.lofts?.address || ''
-            const gps = r.lofts?.gps_coordinates || ''
-            msg += `  ${i + 1}. <b>${loftName}</b>`
-            if (address) msg += ` — ${address}`
-            if (r.guest_name) msg += `\n     👤 Arrivée : ${r.guest_name}`
-            if (r.guest_phone) msg += ` — 📞 ${r.guest_phone}`
-            if (gps) msg += `\n     📍 <a href="${gps}">Voir sur Maps</a>`
-            msg += '\n'
+            msg += buildCheckinBlock(r, i + 1)
           })
           msg += '\n'
         }

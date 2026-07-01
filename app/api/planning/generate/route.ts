@@ -42,14 +42,25 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Aucun employé confirmé (is_staff = true) dans l\'équipe. Activez le statut staff dans la gestion des utilisateurs.' }, { status: 400 })
     }
 
-    // 2. Who did astreinte yesterday? → they are OFF today
-    const { data: yesterdayAstreinte } = await supabase
-      .from('team_astreinte_log')
-      .select('agent_id')
-      .eq('astreinte_date', yesterdayStr)
-      .single()
+    // 2. Who is OFF today — manual override or auto from yesterday's astreinte
+    const manualOff = searchParams.get('off_agent_id')
+    let offAgentId: string | null = null
 
-    const offAgentId = yesterdayAstreinte?.agent_id || null
+    if (manualOff === 'none') {
+      // Admin chose: nobody is off today
+      offAgentId = null
+    } else if (manualOff && manualOff !== 'auto') {
+      // Admin chose a specific agent
+      offAgentId = manualOff
+    } else {
+      // Auto: who did astreinte yesterday?
+      const { data: yesterdayAstreinte } = await supabase
+        .from('team_astreinte_log')
+        .select('agent_id')
+        .eq('astreinte_date', yesterdayStr)
+        .single()
+      offAgentId = yesterdayAstreinte?.agent_id || null
+    }
 
     // 3. Available agents (not off)
     const available = members.filter(m => m.id !== offAgentId)

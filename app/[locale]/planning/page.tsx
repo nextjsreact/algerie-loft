@@ -19,23 +19,35 @@ export default function PlanningPage() {
   const [loading, setLoading] = useState(false)
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
-  // Editable planning state (separate from generated)
   const [editedMembers, setEditedMembers] = useState<any[]>([])
   const [isEdited, setIsEdited] = useState(false)
+  // Agent en repos choisi manuellement par l'admin (null = auto)
+  const [manualOffAgentId, setManualOffAgentId] = useState<string>('auto')
+  // Liste des membres pour le sélecteur (chargée indépendamment)
+  const [membersList, setMembersList] = useState<any[]>([])
+
+  // Charger la liste des membres pour le sélecteur
+  useEffect(() => {
+    fetch('/api/planning/members')
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setMembersList(data) })
+      .catch(() => {})
+  }, [])
 
   const generatePlanning = useCallback(async () => {
     setLoading(true)
     setSent(false)
     setIsEdited(false)
     try {
-      const res = await fetch(`/api/planning/generate?date=${targetDate}`)
+      const offParam = manualOffAgentId !== 'auto' ? `&off_agent_id=${manualOffAgentId}` : ''
+      const res = await fetch(`/api/planning/generate?date=${targetDate}${offParam}`)
       const data = await res.json()
       if (data.error) { toast.error(data.error); return }
       setPlanning(data)
-      setEditedMembers(JSON.parse(JSON.stringify(data.members))) // deep copy
+      setEditedMembers(JSON.parse(JSON.stringify(data.members)))
     } catch { toast.error('Erreur réseau') }
     setLoading(false)
-  }, [targetDate])
+  }, [targetDate, manualOffAgentId])
 
   useEffect(() => { generatePlanning() }, [generatePlanning])
 
@@ -170,6 +182,24 @@ export default function PlanningPage() {
               <div className="space-y-1">
                 <Label className="text-xs text-gray-500">Date</Label>
                 <Input type="date" value={targetDate} onChange={e => setTargetDate(e.target.value)} className="h-9 w-[150px]" />
+              </div>
+              {/* Sélecteur agent en repos — choix manuel de l'admin */}
+              <div className="space-y-1">
+                <Label className="text-xs text-gray-500">Agent en repos</Label>
+                <Select value={manualOffAgentId} onValueChange={setManualOffAgentId}>
+                  <SelectTrigger className="h-9 w-[180px]">
+                    <SelectValue placeholder="Automatique" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="auto">🔄 Automatique</SelectItem>
+                    <SelectItem value="none">✅ Personne en repos</SelectItem>
+                    {membersList.map((m: any) => (
+                      <SelectItem key={m.id} value={m.id}>
+                        🌴 {m.full_name || m.email}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <Button onClick={generatePlanning} disabled={loading} variant="outline" className="h-9 mt-5">
                 <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -39,10 +39,10 @@ export async function GET(request: NextRequest) {
 
     if (membersError) return NextResponse.json({ error: membersError.message }, { status: 500 })
     if (!members || members.length === 0) {
-      return NextResponse.json({ error: 'Aucun employé confirmé (is_staff = true) dans l\'équipe. Activez le statut staff dans la gestion des utilisateurs.' }, { status: 400 })
+      return NextResponse.json({ error: 'Aucun employ├® confirm├® (is_staff = true) dans l\'├®quipe. Activez le statut staff dans la gestion des utilisateurs.' }, { status: 400 })
     }
 
-    // 2. Who did astreinte yesterday? → they are OFF today
+    // 2. Who did astreinte yesterday? ÔåÆ they are OFF today
     const { data: yesterdayAstreinte } = await supabase
       .from('team_astreinte_log')
       .select('agent_id')
@@ -59,12 +59,21 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Tous les agents sont en repos' }, { status: 400 })
     }
 
-    // 4. Astreinte pour aujourd'hui : rotation automatique DÉSACTIVÉE
-    // L'admin choisit manuellement qui est en repos et qui fait l'astreinte
-    // On propose juste le premier disponible par défaut, mais c'est modifiable
-    const astreinteAgent = available[0]
+    // 4. Determine astreinte for today: next in rotation after yesterday's agent
+    let astreinteAgent = available[0]
+    if (offAgentId) {
+      const offIndex = members.findIndex(m => m.id === offAgentId)
+      // Find next available starting from offIndex+1
+      for (let i = 1; i <= members.length; i++) {
+        const candidate = members[(offIndex + i) % members.length]
+        if (candidate.id !== offAgentId) {
+          astreinteAgent = candidate
+          break
+        }
+      }
+    }
 
-    // 5. Fetch check-outs for target date (cleaning tasks) — include zone + GPS
+    // 5. Fetch check-outs for target date (cleaning tasks) ÔÇö include zone + GPS
     const { data: checkouts } = await supabase
       .from('reservations')
       .select('id, loft_id, check_out_date, check_in_date, guest_name, guest_count, total_amount, base_price, payment_status, paid_amount, source, special_requests, lofts:loft_id(name, address, gps_coordinates, check_in_time, check_out_time, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
@@ -72,7 +81,7 @@ export async function GET(request: NextRequest) {
       .in('status', ['pending', 'confirmed', 'completed'])
       .order('check_out_date')
 
-    // 6. Fetch check-ins for target date (welcome tasks) — include zone + GPS
+    // 6. Fetch check-ins for target date (welcome tasks) ÔÇö include zone + GPS
     const { data: checkins } = await supabase
       .from('reservations')
       .select('id, loft_id, check_in_date, check_out_date, guest_name, guest_phone, guest_count, total_amount, base_price, payment_status, paid_amount, source, special_requests, lofts:loft_id(name, address, gps_coordinates, check_in_time, check_out_time, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
@@ -101,7 +110,7 @@ export async function GET(request: NextRequest) {
             return zoneAgents[idx]
           }
         }
-        // No zone match → global round-robin
+        // No zone match ÔåÆ global round-robin
         const agent = pool[globalRR % pool.length]
         globalRR++
         return agent

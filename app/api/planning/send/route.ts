@@ -37,8 +37,6 @@ function buildCheckinBlock(r: any, index: number): string {
   const isPaid = r.payment_status === 'paid'
   const paidAmount = isPaid ? total : (r.paid_amount || 0)
   const isAirbnb = r.source && String(r.source).toLowerCase().includes('airbnb')
-  const paidAmount = isPaid ? total : (r.paid_amount || 0)
-  const paid = paidAmount
   const remaining = !isPaid && total ? total - (paidAmount || 0) : 0
   const guests = r.guest_count || null
   const checkInTime = r.lofts?.check_in_time || null

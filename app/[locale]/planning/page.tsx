@@ -102,6 +102,20 @@ export default function PlanningPage() {
     })
   }
 
+  // Activate an agent who was on rest day
+  const activateAgent = (agentId: string) => {
+    setEditedMembers(prev => {
+      const updated = JSON.parse(JSON.stringify(prev))
+      const agent = updated.find((m: any) => m.agent.id === agentId)
+      if (!agent) return prev
+      agent.is_off = false
+      agent.is_absent_override = false
+      setIsEdited(true)
+      toast.success(`${agent.agent.full_name} activé — vous pouvez lui réassigner des tâches`)
+      return updated
+    })
+  }
+
   // Reassign a task from one agent to another
   const reassignTask = (fromAgentId: string, taskId: string, taskType: 'cleaning' | 'welcome', toAgentId: string) => {
     setEditedMembers(prev => {
@@ -208,6 +222,7 @@ export default function PlanningPage() {
                   item={item}
                   allAgents={editedMembers}
                   onMarkAbsent={markAbsent}
+                  onActivate={activateAgent}
                   onReassign={reassignTask}
                 />
               ))}
@@ -242,16 +257,16 @@ export default function PlanningPage() {
   )
 }
 
-function AgentCard({ item, allAgents, onMarkAbsent, onReassign }: {
+function AgentCard({ item, allAgents, onMarkAbsent, onActivate, onReassign }: {
   item: any
   allAgents: any[]
   onMarkAbsent: (id: string) => void
+  onActivate: (id: string) => void
   onReassign: (fromId: string, taskId: string, type: 'cleaning' | 'welcome', toId: string) => void
 }) {
   const { agent, is_off, is_astreinte, cleaning_tasks, welcome_tasks, pending_tasks = [], is_absent_override } = item
   const totalTasks = cleaning_tasks.length + welcome_tasks.length
   const otherAgents = allAgents.filter(m => !m.is_off && m.agent.id !== agent.id)
-
   const zoneName = (agent.zone_areas as any)?.name || null
 
   return (
@@ -285,6 +300,19 @@ function AgentCard({ item, allAgents, onMarkAbsent, onReassign }: {
             {!is_off && !is_astreinte && totalTasks === 0 && <Badge variant="outline" className="text-xs">Disponible</Badge>}
           </div>
         </div>
+
+        {/* Bouton activer si agent en repos */}
+        {is_off && !is_absent_override && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-full mt-2 h-7 text-xs text-green-600 border-green-200 hover:bg-green-50"
+            onClick={() => onActivate(agent.id)}
+          >
+            <CheckCircle className="h-3 w-3 mr-1" />
+            Activer (rappeler au travail)
+          </Button>
+        )}
 
         {/* Mark absent button */}
         {!is_off && (
@@ -436,18 +464,21 @@ function TaskItem({ reservation, type, agentId, otherAgents, onReassign, color }
             <p className={subColor}>📅 Départ le {fmtShort(checkOut)}{checkOutTime && ` avant ${checkOutTime}`}</p>
           )}
 
-          {/* Prix détaillé (welcome uniquement) */}
-          {type === 'welcome' && pricePerNight && nights && total && (
+          {/* Prix détaillé (welcome uniquement) — masqué si tout est payé */}
+          {type === 'welcome' && pricePerNight && nights && total && reservation.payment_status !== 'paid' && (
             <p className={subColor}>
               💰 {fmtMoney(pricePerNight)} × {nights} = <span className="font-bold">{fmtMoney(total)}</span>
             </p>
           )}
 
-          {/* Paiement */}
-          {type === 'welcome' && paid !== null && paid > 0 && (
+          {/* Paiement — masqué si tout est payé */}
+          {type === 'welcome' && reservation.payment_status === 'paid' && (
+            <p className="text-green-600 font-semibold">✅ Règlement complet</p>
+          )}
+          {type === 'welcome' && reservation.payment_status !== 'paid' && paid !== null && paid > 0 && (
             <p className="text-blue-600">✅ Payé : {fmtMoney(paid)}</p>
           )}
-          {type === 'welcome' && remaining !== null && remaining > 0 && (
+          {type === 'welcome' && reservation.payment_status !== 'paid' && remaining !== null && remaining > 0 && (
             <p className="text-red-600 font-semibold">⚠️ Reste : {fmtMoney(remaining)} en espèces</p>
           )}
 

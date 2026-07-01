@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   description: "Application complète de gestion des lofts",
   metadataBase: new URL('https://www.loftalgerie.com'),
   manifest: 'https://www.loftalgerie.com/manifest.webmanifest',
+  verification: {
+    google: "0WwFcq_c8nOOwOC9-t6SZbWLdkUkjnhZWAOlJLZmc7g",
+  },
   alternates: {
     canonical: '/',
     languages: {

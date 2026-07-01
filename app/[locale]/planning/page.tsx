@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect, useCallback } from 'react'
 import { format, addDays } from 'date-fns'
@@ -429,14 +429,14 @@ function TaskItem({ reservation, type, agentId, otherAgents, onReassign, color }
     : null
   const total = reservation.total_amount || reservation.base_price || null
   const pricePerNight = nights && total ? Math.round(total / nights) : null
-  const isPaid = isPaid
+  const isPaid = reservation.payment_status === 'paid'
   const paidAmount = isPaid ? (total || 0) : (reservation.paid_amount || 0)
   const remaining = !isPaid && total ? total - paidAmount : 0
   const checkInTime = reservation.lofts?.check_in_time
   const checkOutTime = reservation.lofts?.check_out_time
   const guests = reservation.guest_count
-
   const isAirbnb = reservation.source && String(reservation.source).toLowerCase().includes('airbnb')
+
   const fmtShort = (d: string) => new Date(d + 'T00:00:00').toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })
   const fmtMoney = (n: number) => n.toLocaleString('fr-DZ') + ' DA'
 
@@ -444,7 +444,6 @@ function TaskItem({ reservation, type, agentId, otherAgents, onReassign, color }
     <div className={`rounded-lg px-3 py-2.5 text-xs border ${bg}`}>
       <div className="flex items-start justify-between gap-1">
         <div className="flex-1 min-w-0 space-y-0.5">
-          {/* Nom du loft */}
           {/* Nom du loft + badge Airbnb */}
           <p className={`font-semibold text-sm ${textColor}`}>
             {reservation.lofts?.name || '—'}
@@ -471,7 +470,7 @@ function TaskItem({ reservation, type, agentId, otherAgents, onReassign, color }
           )}
 
           {/* Prix détaillé (welcome uniquement) — masqué si tout est payé */}
-          {type === 'welcome' && pricePerNight && nights && total && reservation.payment_status !== 'paid' && (
+          {type === 'welcome' && !isPaid && pricePerNight && nights && total && (
             <p className={subColor}>
               💰 {fmtMoney(pricePerNight)} × {nights} = <span className="font-bold">{fmtMoney(total)}</span>
             </p>

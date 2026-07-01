@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
     // 6. Fetch check-ins for target date (welcome tasks) — include zone + GPS
     const { data: checkins } = await supabase
       .from('reservations')
-      .select('id, loft_id, check_in_date, check_out_date, guest_name, guest_phone, guest_count, total_amount, base_price, payment_status, special_requests, lofts:loft_id(name, address, gps_coordinates, check_in_time, check_out_time, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
+      .select('id, loft_id, check_in_date, check_out_date, guest_name, guest_phone, guest_count, total_amount, base_price, payment_status, paid_amount, source, special_requests, lofts:loft_id(name, address, gps_coordinates, check_in_time, check_out_time, zone_area_id, zone_areas!lofts_zone_area_id_fkey(id, name))')
       .eq('check_in_date', targetDateStr)
       .in('status', ['confirmed', 'pending'])
       .order('check_in_date')

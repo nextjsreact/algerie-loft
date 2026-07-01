@@ -194,8 +194,8 @@ export default function PartnerDashboardPage({ params }: PartnerDashboardPagePro
       icon: Building2, gradient: 'from-violet-500 to-purple-600', subColor: 'text-purple-200',
     },
     {
-      label: 'Revenus du mois', value: fmt(stats.monthly_earnings),
-      sub: 'Ce mois-ci', icon: DollarSign,
+      label: 'Revenus encaissés', value: fmt(stats.monthly_earnings),
+      sub: 'Réservations ce mois', icon: DollarSign,
       gradient: 'from-emerald-500 to-teal-600', subColor: 'text-emerald-200',
     },
     {

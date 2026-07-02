@@ -283,7 +283,7 @@ export class AirbnbSyncService {
     parsed: AirbnbReservationParsed,
     loftId: string
   ): Promise<{ action: 'create' | 'update' | 'skip'; reservationId: string | null }> {
-    // Vérifier si la réservation existe déjà
+    // 1. Vérifier si la réservation existe déjà par airbnb_confirmation_code
     const { data: existing, error } = await this.supabase
       .from('reservations')
       .select('id, status, total_amount')
@@ -291,12 +291,11 @@ export class AirbnbSyncService {
       .single();
 
     if (error && error.code !== 'PGRST116') {
-      // PGRST116 = no rows returned
       throw new Error(`Failed to check existing reservation: ${error.message}`);
     }
 
     if (existing) {
-      // Réservation existe → UPDATE
+      // Réservation existe par airbnb_id → UPDATE
       const { error: updateError } = await this.supabase
         .from('reservations')
         .update({
@@ -328,7 +327,43 @@ export class AirbnbSyncService {
 
       return { action: 'update', reservationId: existing.id };
     } else {
-      // Réservation n'existe pas → CREATE
+      // 2. Pas de match par airbnb_id → chercher un doublon par dates+loft (saisie manuelle)
+      const { data: dateOverlap } = await this.supabase
+        .from('reservations')
+        .select('id, status, guest_name, source')
+        .eq('loft_id', loftId)
+        .in('status', ['confirmed', 'pending'])
+        .lt('check_in_date', parsed.check_out_date)
+        .gt('check_out_date', parsed.check_in_date)
+        .is('airbnb_confirmation_code', null) // seulement les réservations sans code Airbnb
+
+      if (dateOverlap && dateOverlap.length > 0) {
+        // Doublon détecté : même loft, dates qui se chevauchent, pas encore liée à Airbnb
+        const duplicateId = dateOverlap[0].id
+        console.warn(
+          `[Airbnb Sync] 🔴 DOUBLON DÉTECTÉ — loft ${loftId}, dates ${parsed.check_in_date}→${parsed.check_out_date}` +
+          ` correspond à la réservation manuelle ${duplicateId} (${dateOverlap[0].guest_name})`
+        )
+        this.warnings.push({
+          reservation_id: parsed.airbnb_id,
+          warning: `Doublon détecté avec réservation manuelle ${duplicateId} (${dateOverlap[0].guest_name}) — dates identiques`,
+          details: { manual_reservation_id: duplicateId, loft_id: loftId },
+        })
+
+        // Lier l'airbnb_confirmation_code à la réservation manuelle existante
+        await this.supabase
+          .from('reservations')
+          .update({
+            airbnb_confirmation_code: parsed.airbnb_id,
+            source: 'airbnb_scraper',
+            synced_at: new Date().toISOString(),
+          })
+          .eq('id', duplicateId)
+
+        return { action: 'update', reservationId: duplicateId }
+      }
+
+      // Réservation n'existe pas du tout → CREATE
       const { data: newReservation, error: insertError } = await this.supabase
         .from('reservations')
         .insert({

@@ -36,20 +36,60 @@ export async function GET(request: NextRequest) {
       r => r.check_in_date >= today && r.status !== 'cancelled'
     ).length
 
-    // Monthly earnings
+    // Monthly earnings — RÉEL depuis reservation_payments (paiements confirmés uniquement)
     const currentMonth = new Date()
-    const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).toISOString().split('T')[0]
-    const lastDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).toISOString().split('T')[0]
+    const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).toISOString()
+    const lastDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0, 23, 59, 59).toISOString()
+    const firstDayStr = firstDay.split('T')[0]
+    const lastDayStr = lastDay.split('T')[0]
 
-    const monthlyEarnings = (reservations || [])
-      .filter(r => r.check_in_date >= firstDay && r.check_in_date <= lastDay && r.status !== 'cancelled')
-      .reduce((sum, r) => sum + Number(r.total_amount || 0), 0)
+    let monthlyEarnings = 0
 
-    // Occupancy rate
+    if (propertyIds.length > 0) {
+      // Récupérer les paiements réels depuis reservation_payments
+      const { data: payments } = await supabase
+        .from('reservation_payments')
+        .select('amount, reservation_id, created_at')
+        .gte('created_at', firstDay)
+        .lte('created_at', lastDay)
+        .eq('status', 'completed')
+
+      if (payments && payments.length > 0) {
+        // Vérifier que la réservation appartient bien au partenaire
+        const paymentResIds = payments.map((p: any) => p.reservation_id).filter(Boolean)
+        if (paymentResIds.length > 0) {
+          const { data: partnerRes } = await supabase
+            .from('reservations')
+            .select('id')
+            .in('id', paymentResIds)
+            .in('loft_id', propertyIds)
+
+          const validResIds = new Set((partnerRes || []).map((r: any) => r.id))
+          monthlyEarnings = payments
+            .filter((p: any) => validResIds.has(p.reservation_id))
+            .reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0)
+        }
+      }
+
+      // Fallback : si pas de données reservation_payments, utiliser les réservations complétées/confirmées
+      // avec check_out passé (séjours réellement terminés ce mois)
+      if (monthlyEarnings === 0) {
+        const todayStr = new Date().toISOString().split('T')[0]
+        monthlyEarnings = (reservations || [])
+          .filter(r =>
+            r.check_out_date >= firstDayStr &&
+            r.check_out_date <= todayStr &&  // check_out déjà passé = séjour terminé
+            r.status !== 'cancelled'
+          )
+          .reduce((sum, r) => sum + Number(r.total_amount || 0), 0)
+      }
+    }
+
+    // Occupancy rate — basé sur les séjours confirmés/complétés ce mois
     const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate()
     const totalPossibleNights = totalProperties * daysInMonth
     const totalOccupiedNights = (reservations || [])
-      .filter(r => r.check_in_date >= firstDay && r.check_in_date <= lastDay && r.status !== 'cancelled')
+      .filter(r => r.check_in_date >= firstDayStr && r.check_in_date <= lastDayStr && r.status !== 'cancelled')
       .reduce((sum, r) => {
         const nights = Math.ceil((new Date(r.check_out_date).getTime() - new Date(r.check_in_date).getTime()) / 86400000)
         return sum + Math.max(0, nights)

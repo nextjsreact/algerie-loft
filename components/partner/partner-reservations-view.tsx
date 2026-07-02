@@ -115,7 +115,12 @@ export function PartnerReservationsView({ partnerId, locale }: PartnerReservatio
       const queryParams = new URLSearchParams({
         partnerId,
         ...Object.fromEntries(
-          Object.entries(filters).filter(([_, value]) => value !== undefined && value !== 'all')
+          Object.entries(filters)
+            .filter(([_, value]) => value !== undefined && value !== 'all')
+            .map(([key, value]) => {
+              if (value instanceof Date) return [key, format(value, 'yyyy-MM-dd')]
+              return [key, String(value)]
+            })
         )
       })
 

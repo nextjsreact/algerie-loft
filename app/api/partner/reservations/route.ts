@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient(true)
     const { searchParams } = new URL(request.url)
     const page = Number(searchParams.get('page')) || 1
-    const limit = Math.min(Number(searchParams.get('limit')) || 20, 100)
+    const limit = Math.min(Number(searchParams.get('limit')) || 500, 500)
     const offset = (page - 1) * limit
 
     // Get partner's loft IDs
@@ -46,6 +46,11 @@ export async function GET(request: NextRequest) {
 
     const propertyFilter = searchParams.get('property_id')
     if (propertyFilter) query = query.eq('loft_id', propertyFilter)
+
+    const dateFrom = searchParams.get('date_from')
+    const dateTo = searchParams.get('date_to')
+    if (dateFrom) query = query.gte('check_in_date', dateFrom)
+    if (dateTo) query = query.lte('check_in_date', dateTo)
 
     const { data: reservations, count: totalCount } = await query.range(offset, offset + limit - 1)
 

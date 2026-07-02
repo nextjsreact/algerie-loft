@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,12 +20,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Calendar } from "@/components/ui/calendar"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
 import {
   CalendarIcon,
   Search,
@@ -38,15 +44,17 @@ import {
   Phone,
   Mail,
   Calendar as CalendarDays,
+  X,
 } from "lucide-react"
 import { format } from "date-fns"
+import { fr } from "date-fns/locale"
 import type { ReservationStatus, ReservationPaymentStatus } from "@/lib/types"
 
 interface ReservationFilters {
   search?: string
-  status?: ReservationStatus | 'all'
-  payment_status?: ReservationPaymentStatus | 'all'
-  property_id?: string | 'all'
+  status?: ReservationStatus | "all"
+  payment_status?: ReservationPaymentStatus | "all"
+  property_id?: string | "all"
   date_from?: Date
   date_to?: Date
 }
@@ -78,18 +86,18 @@ interface PartnerReservation {
   updated_at: string
 }
 
-// Helpers to normalize both API and mock data shapes
-const guestName = (r: PartnerReservation) => r.guest?.name || r.guest_name || '—'
-const guestEmail = (r: PartnerReservation) => r.guest?.email || r.guest_email || '—'
-const guestPhone = (r: PartnerReservation) => r.guest?.phone || r.guest_phone || '—'
-const guestCount = (r: PartnerReservation) => r.guest?.total_guests || r.guests || r.guests_count || 1
-const propName = (r: PartnerReservation) => r.property?.name || r.loft_name || '—'
-const propAddress = (r: PartnerReservation) => r.property?.address || null
-const checkIn = (r: PartnerReservation) => r.dates?.check_in || r.check_in || ''
-const checkOut = (r: PartnerReservation) => r.dates?.check_out || r.check_out || ''
-const nightsCount = (r: PartnerReservation) => r.dates?.nights || r.nights || 0
-const totalAmount = (r: PartnerReservation) => r.pricing?.total_amount || r.total_amount || r.total_price || 0
-const currency = (r: PartnerReservation) => r.pricing?.currency || 'DZD'
+// Normalisation des deux structures (API plate vs mock imbriqué)
+const gName  = (r: PartnerReservation) => r.guest?.name  || r.guest_name  || "—"
+const gEmail = (r: PartnerReservation) => r.guest?.email || r.guest_email || "—"
+const gPhone = (r: PartnerReservation) => r.guest?.phone || r.guest_phone || "—"
+const gCount = (r: PartnerReservation) => r.guest?.total_guests || r.guests || r.guests_count || 1
+const pName  = (r: PartnerReservation) => r.property?.name || r.loft_name || "—"
+const pAddr  = (r: PartnerReservation) => r.property?.address || null
+const cIn    = (r: PartnerReservation) => r.dates?.check_in  || r.check_in  || ""
+const cOut   = (r: PartnerReservation) => r.dates?.check_out || r.check_out || ""
+const nNights = (r: PartnerReservation) => r.dates?.nights || r.nights || 0
+const tAmount = (r: PartnerReservation) => r.pricing?.total_amount || r.total_amount || r.total_price || 0
+const tCurrency = (r: PartnerReservation) => r.pricing?.currency || "DZD"
 const refCode = (r: PartnerReservation) => r.confirmation_code || r.booking_reference || r.id
 
 interface PartnerReservationsViewProps {
@@ -102,263 +110,318 @@ export function PartnerReservationsView({ partnerId, locale }: PartnerReservatio
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState<ReservationFilters>({})
   const [showFilters, setShowFilters] = useState(false)
-  const [selectedReservation, setSelectedReservation] = useState<PartnerReservation | null>(null)
+  const [selected, setSelected] = useState<PartnerReservation | null>(null)
   const [calendarOpen, setCalendarOpen] = useState(false)
 
-  useEffect(() => {
-    fetchReservations()
-  }, [partnerId, filters])
+  useEffect(() => { fetchReservations() }, [partnerId, filters])
 
   const fetchReservations = async () => {
     setLoading(true)
     try {
-      const queryParams = new URLSearchParams({
-        partnerId,
-        ...Object.fromEntries(
-          Object.entries(filters)
-            .filter(([_, value]) => value !== undefined && value !== 'all')
-            .map(([key, value]) => {
-              if (value instanceof Date) return [key, format(value, 'yyyy-MM-dd')]
-              return [key, String(value)]
-            })
-        )
-      })
+      const params = new URLSearchParams({ partnerId })
+      if (filters.status && filters.status !== "all") params.set("status", filters.status)
+      if (filters.payment_status && filters.payment_status !== "all") params.set("payment_status", filters.payment_status)
+      if (filters.property_id && filters.property_id !== "all") params.set("property_id", filters.property_id)
+      if (filters.date_from) params.set("date_from", format(filters.date_from, "yyyy-MM-dd"))
+      if (filters.date_to)   params.set("date_to",   format(filters.date_to,   "yyyy-MM-dd"))
 
-      const response = await fetch(`/api/partner/reservations?${queryParams}`)
-      if (response.ok) {
-        const data = await response.json()
+      const res = await fetch(`/api/partner/reservations?${params}`)
+      if (res.ok) {
+        const data = await res.json()
         const list = data?.data?.reservations || data?.data?.bookings || data?.reservations || []
         setReservations(Array.isArray(list) ? list : [])
       } else {
         setReservations([])
       }
-    } catch (error) {
-      console.error('Error fetching reservations:', error)
+    } catch {
       setReservations([])
     } finally {
       setLoading(false)
     }
   }
 
-  const getStatusBadge = (status: ReservationStatus) => {
-    switch (status) {
-      case 'confirmed': return <Badge variant="default" className="bg-green-100 text-green-800">Confirmed</Badge>
-      case 'pending': return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pending</Badge>
-      case 'cancelled': return <Badge variant="destructive">Cancelled</Badge>
-      case 'completed': return <Badge variant="outline" className="bg-blue-100 text-blue-800">Completed</Badge>
-      case 'no_show': return <Badge variant="destructive" className="bg-red-100 text-red-800">No Show</Badge>
-      default: return <Badge variant="outline">Unknown</Badge>
+  // Tri par date check_in décroissante (plus récente en premier)
+  const sorted = useMemo(() =>
+    [...reservations].sort((a, b) => {
+      const da = cIn(a) || a.created_at || ""
+      const db = cIn(b) || b.created_at || ""
+      return db.localeCompare(da)
+    }),
+    [reservations]
+  )
+
+  // Filtre côté client : recherche par nom, email, téléphone, code
+  const filtered = useMemo(() => {
+    if (!filters.search) return sorted
+    const s = filters.search.toLowerCase()
+    return sorted.filter(r =>
+      gName(r).toLowerCase().includes(s)  ||
+      gEmail(r).toLowerCase().includes(s) ||
+      gPhone(r).toLowerCase().includes(s) ||
+      refCode(r).toLowerCase().includes(s)||
+      pName(r).toLowerCase().includes(s)
+    )
+  }, [sorted, filters.search])
+
+  const statusBadge = (status: ReservationStatus) => {
+    const map: Record<string, { label: string; className: string }> = {
+      confirmed: { label: "Confirmée",   className: "bg-green-100 text-green-800" },
+      pending:   { label: "En attente",  className: "bg-yellow-100 text-yellow-800" },
+      cancelled: { label: "Annulée",     className: "bg-red-100 text-red-800" },
+      completed: { label: "Terminée",    className: "bg-blue-100 text-blue-800" },
+      no_show:   { label: "Non présenté",className: "bg-gray-100 text-gray-800" },
     }
+    const s = map[status] || { label: status, className: "" }
+    return <Badge variant="outline" className={s.className}>{s.label}</Badge>
   }
 
-  const getPaymentStatusBadge = (status: ReservationPaymentStatus) => {
-    switch (status) {
-      case 'paid': return <Badge variant="default" className="bg-green-100 text-green-800">Paid</Badge>
-      case 'partial': return <Badge variant="secondary" className="bg-orange-100 text-orange-800">Partial</Badge>
-      case 'pending': return <Badge variant="outline" className="bg-yellow-100 text-yellow-800">Pending</Badge>
-      case 'refunded': return <Badge variant="outline" className="bg-blue-100 text-blue-800">Refunded</Badge>
-      case 'failed': return <Badge variant="destructive">Failed</Badge>
-      default: return <Badge variant="outline">Unknown</Badge>
+  const paymentBadge = (status: ReservationPaymentStatus) => {
+    const map: Record<string, { label: string; className: string }> = {
+      paid:     { label: "Payée",        className: "bg-green-100 text-green-800" },
+      partial:  { label: "Partiel",      className: "bg-orange-100 text-orange-800" },
+      pending:  { label: "En attente",   className: "bg-yellow-100 text-yellow-800" },
+      refunded: { label: "Remboursée",   className: "bg-blue-100 text-blue-800" },
+      failed:   { label: "Échoué",       className: "bg-red-100 text-red-800" },
     }
+    const s = map[status] || { label: status, className: "" }
+    return <Badge variant="outline" className={s.className}>{s.label}</Badge>
   }
 
-  const formatCurrency = (amount: number, curr: string = 'DZD') =>
-    amount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + curr
+  const fmtCurrency = (amount: number, curr = "DZD") =>
+    amount.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " " + curr
 
-  const exportReservations = () => {
-    const csvContent = [
-      ['Reference', 'Guest Name', 'Property', 'Check-in', 'Check-out', 'Guests', 'Total Amount', 'Status', 'Payment Status'],
-      ...reservations.map(r => [
-        refCode(r),
-        guestName(r),
-        propName(r),
-        checkIn(r),
-        checkOut(r),
-        guestCount(r).toString(),
-        totalAmount(r).toString(),
-        r.status,
-        r.payment_status
-      ])
-    ].map(row => row.join(',')).join('\n')
+  const fmtDate = (d: string) => {
+    if (!d) return "—"
+    try { return format(new Date(d), "dd MMM yyyy", { locale: fr }) } catch { return d }
+  }
 
-    const blob = new Blob([csvContent], { type: 'text/csv' })
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement('a')
+  const exportCSV = () => {
+    const rows = [
+      ["Référence", "Voyageur", "Téléphone", "Email", "Propriété", "Arrivée", "Départ", "Nuits", "Voyageurs", "Montant", "Statut", "Paiement"],
+      ...filtered.map(r => [
+        refCode(r), gName(r), gPhone(r), gEmail(r), pName(r),
+        cIn(r), cOut(r), String(nNights(r)), String(gCount(r)),
+        String(tAmount(r)), r.status, r.payment_status,
+      ]),
+    ].map(row => row.map(v => `"${v}"`).join(",")).join("\n")
+
+    const blob = new Blob([rows], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
     a.href = url
-    a.download = `reservations-${format(new Date(), 'yyyy-MM-dd')}.csv`
+    a.download = `reservations-${format(new Date(), "yyyy-MM-dd")}.csv`
     a.click()
-    window.URL.revokeObjectURL(url)
+    URL.revokeObjectURL(url)
   }
 
-  const filteredReservations = (reservations || []).filter(r => {
-    if (filters.search) {
-      const s = filters.search.toLowerCase()
-      if (!refCode(r).toLowerCase().includes(s) &&
-          !guestName(r).toLowerCase().includes(s) &&
-          !propName(r).toLowerCase().includes(s)) return false
-    }
-    if (filters.status && filters.status !== 'all' && r.status !== filters.status) return false
-    if (filters.payment_status && filters.payment_status !== 'all' && r.payment_status !== filters.payment_status) return false
-    if (filters.property_id && filters.property_id !== 'all') {
-      const pid = r.property?.id || r.loft_id
-      if (pid !== filters.property_id) return false
-    }
-    return true
-  })
+  const clearFilters = () => setFilters({})
+  const hasActiveFilters = filters.status || filters.payment_status || filters.date_from || filters.date_to
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-64 mb-4"></div>
-          <div className="h-96 bg-gray-200 rounded-xl"></div>
-        </div>
+      <div className="space-y-4 animate-pulse">
+        <div className="h-8 bg-gray-200 rounded w-64" />
+        <div className="h-96 bg-gray-200 rounded-xl" />
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* En-tête */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Reservations</h1>
-          <p className="text-gray-600">{filteredReservations.length} of {reservations.length} reservations</p>
+          <h1 className="text-2xl font-bold">Réservations</h1>
+          <p className="text-gray-500 text-sm">
+            {filtered.length} sur {reservations.length} réservation{reservations.length > 1 ? "s" : ""}
+          </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={exportReservations}>
-            <Download className="h-4 w-4 mr-2" />Export
+          <Button variant="outline" size="sm" onClick={exportCSV}>
+            <Download className="h-4 w-4 mr-2" />Exporter
           </Button>
           <Button variant="outline" size="sm" onClick={fetchReservations}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />Refresh
+            <RefreshCw className="h-4 w-4 mr-2" />Actualiser
           </Button>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Search by reference, guest name, or property..."
-              value={filters.search || ''}
-              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-              className="pl-10"
-            />
-          </div>
-          <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className="sm:w-auto">
-            <Filter className="h-4 w-4 mr-2" />Filters
-          </Button>
+      {/* Barre de recherche + bouton filtres */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            placeholder="Rechercher par nom, téléphone, email, référence..."
+            value={filters.search || ""}
+            onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
+            className="pl-10"
+          />
         </div>
-
-        {showFilters && (
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg">
-            <Select value={filters.status || 'all'} onValueChange={(v) => setFilters({ ...filters, status: v as ReservationStatus | 'all' })}>
-              <SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="confirmed">Confirmed</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
-                <SelectItem value="no_show">No Show</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={filters.payment_status || 'all'} onValueChange={(v) => setFilters({ ...filters, payment_status: v as ReservationPaymentStatus | 'all' })}>
-              <SelectTrigger><SelectValue placeholder="Payment Status" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Payment Status</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="partial">Partial</SelectItem>
-                <SelectItem value="paid">Paid</SelectItem>
-                <SelectItem value="refunded">Refunded</SelectItem>
-                <SelectItem value="failed">Failed</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="justify-start text-left font-normal">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {filters.date_from && filters.date_to
-                    ? `${format(filters.date_from, 'MMM dd')} - ${format(filters.date_to, 'MMM dd')}`
-                    : 'Date range'}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="range"
-                  selected={{ from: filters.date_from, to: filters.date_to }}
-                  onSelect={(range) => {
-                    setFilters({ ...filters, date_from: range?.from, date_to: range?.to })
-                    if (range?.from && range?.to) setCalendarOpen(false)
-                  }}
-                  numberOfMonths={2}
-                />
-              </PopoverContent>
-            </Popover>
-
-            <Button variant="outline" onClick={() => setFilters({})} className="w-full">Clear Filters</Button>
-          </div>
+        <Button
+          variant={showFilters ? "default" : "outline"}
+          onClick={() => setShowFilters(v => !v)}
+          className="sm:w-auto"
+        >
+          <Filter className="h-4 w-4 mr-2" />
+          Filtres
+          {hasActiveFilters && <span className="ml-1 bg-white text-primary rounded-full px-1.5 text-xs font-bold">!</span>}
+        </Button>
+        {hasActiveFilters && (
+          <Button variant="ghost" size="sm" onClick={clearFilters}>
+            <X className="h-4 w-4 mr-1" />Effacer
+          </Button>
         )}
       </div>
 
-      {/* Table */}
+      {/* Panneau de filtres avancés */}
+      {showFilters && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border">
+          {/* Statut réservation */}
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-gray-600">Statut réservation</label>
+            <Select
+              value={filters.status || "all"}
+              onValueChange={v => setFilters(f => ({ ...f, status: v as ReservationStatus | "all" }))}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les statuts</SelectItem>
+                <SelectItem value="pending">En attente</SelectItem>
+                <SelectItem value="confirmed">Confirmée</SelectItem>
+                <SelectItem value="completed">Terminée</SelectItem>
+                <SelectItem value="cancelled">Annulée</SelectItem>
+                <SelectItem value="no_show">Non présenté</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Statut paiement */}
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-gray-600">Statut paiement</label>
+            <Select
+              value={filters.payment_status || "all"}
+              onValueChange={v => setFilters(f => ({ ...f, payment_status: v as ReservationPaymentStatus | "all" }))}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous</SelectItem>
+                <SelectItem value="pending">En attente</SelectItem>
+                <SelectItem value="partial">Partiel</SelectItem>
+                <SelectItem value="paid">Payée</SelectItem>
+                <SelectItem value="refunded">Remboursée</SelectItem>
+                <SelectItem value="failed">Échoué</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Filtre par dates — calendrier centré via Dialog */}
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-gray-600">Période d&apos;arrivée</label>
+            <Button
+              variant="outline"
+              className="w-full justify-start font-normal"
+              onClick={() => setCalendarOpen(true)}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {filters.date_from && filters.date_to
+                ? `${format(filters.date_from, "dd/MM/yy")} – ${format(filters.date_to, "dd/MM/yy")}`
+                : filters.date_from
+                ? `À partir du ${format(filters.date_from, "dd/MM/yy")}`
+                : "Sélectionner une période"}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Dialog calendrier centré */}
+      <Dialog open={calendarOpen} onOpenChange={setCalendarOpen}>
+        <DialogContent className="max-w-fit">
+          <DialogHeader>
+            <DialogTitle>Sélectionner une période</DialogTitle>
+          </DialogHeader>
+          <Calendar
+            mode="range"
+            selected={{ from: filters.date_from, to: filters.date_to }}
+            onSelect={range => {
+              setFilters(f => ({ ...f, date_from: range?.from, date_to: range?.to }))
+              if (range?.from && range?.to) setCalendarOpen(false)
+            }}
+            numberOfMonths={2}
+            locale={fr}
+          />
+          {(filters.date_from || filters.date_to) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mt-2"
+              onClick={() => {
+                setFilters(f => ({ ...f, date_from: undefined, date_to: undefined }))
+                setCalendarOpen(false)
+              }}
+            >
+              <X className="h-4 w-4 mr-1" />Effacer les dates
+            </Button>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Tableau */}
       <Card>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Reference</TableHead>
-                  <TableHead>Guest</TableHead>
-                  <TableHead>Property</TableHead>
-                  <TableHead>Dates</TableHead>
-                  <TableHead>Guests</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Payment</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>Référence</TableHead>
+                  <TableHead>Voyageur</TableHead>
+                  <TableHead>Propriété</TableHead>
+                  <TableHead>Arrivée ↓</TableHead>
+                  <TableHead>Départ</TableHead>
+                  <TableHead>Nuits</TableHead>
+                  <TableHead>Montant</TableHead>
+                  <TableHead>Statut</TableHead>
+                  <TableHead>Paiement</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredReservations.map((r) => (
-                  <TableRow key={r.id}>
+                {filtered.map(r => (
+                  <TableRow key={r.id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
                     <TableCell>
-                      <p className="font-medium">{refCode(r)}</p>
-                      <p className="text-xs text-gray-500">{r.booking_reference}</p>
+                      <p className="font-medium text-sm">{refCode(r)}</p>
                     </TableCell>
                     <TableCell>
-                      <p className="font-medium">{guestName(r)}</p>
-                      <p className="text-xs text-gray-500 flex items-center"><Mail className="h-3 w-3 mr-1" />{guestEmail(r)}</p>
-                      <p className="text-xs text-gray-500 flex items-center"><Phone className="h-3 w-3 mr-1" />{guestPhone(r)}</p>
+                      <p className="font-medium text-sm">{gName(r)}</p>
+                      {gPhone(r) !== "—" && (
+                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                          <Phone className="h-3 w-3" />{gPhone(r)}
+                        </p>
+                      )}
+                      {gEmail(r) !== "—" && (
+                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                          <Mail className="h-3 w-3" />{gEmail(r)}
+                        </p>
+                      )}
                     </TableCell>
                     <TableCell>
-                      <p className="font-medium">{propName(r)}</p>
-                      {propAddress(r) && <p className="text-xs text-gray-500 flex items-center"><MapPin className="h-3 w-3 mr-1" />{propAddress(r)}</p>}
+                      <p className="text-sm">{pName(r)}</p>
+                      {pAddr(r) && (
+                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />{pAddr(r)}
+                        </p>
+                      )}
                     </TableCell>
-                    <TableCell>
-                      <p className="text-sm">
-                        {checkIn(r) ? format(new Date(checkIn(r)), 'MMM dd') : '—'} - {checkOut(r) ? format(new Date(checkOut(r)), 'MMM dd') : '—'}
-                      </p>
-                      <p className="text-xs text-gray-500">{nightsCount(r)} nights</p>
+                    <TableCell className="text-sm">{fmtDate(cIn(r))}</TableCell>
+                    <TableCell className="text-sm">{fmtDate(cOut(r))}</TableCell>
+                    <TableCell className="text-sm text-center">{nNights(r)}</TableCell>
+                    <TableCell className="text-sm font-medium whitespace-nowrap">
+                      {fmtCurrency(tAmount(r), tCurrency(r))}
                     </TableCell>
+                    <TableCell>{statusBadge(r.status)}</TableCell>
+                    <TableCell>{paymentBadge(r.payment_status)}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Users className="h-3 w-3" />
-                        <span className="text-sm">{guestCount(r)}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <p className="font-medium">{formatCurrency(totalAmount(r), currency(r))}</p>
-                    </TableCell>
-                    <TableCell>{getStatusBadge(r.status)}</TableCell>
-                    <TableCell>{getPaymentStatusBadge(r.payment_status)}</TableCell>
-                    <TableCell>
-                      <Button variant="outline" size="sm" onClick={() => setSelectedReservation(r)}>
-                        <Eye className="h-3 w-3 mr-1" />View
+                      <Button variant="ghost" size="sm" onClick={() => setSelected(r)}>
+                        <Eye className="h-4 w-4" />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -367,91 +430,86 @@ export function PartnerReservationsView({ partnerId, locale }: PartnerReservatio
             </Table>
           </div>
 
-          {filteredReservations.length === 0 && (
-            <div className="p-8 text-center">
-              <CalendarDays className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No reservations found</h3>
-              <p className="text-gray-600">
-                {filters.search || filters.status !== 'all' || filters.payment_status !== 'all'
-                  ? 'Try adjusting your filters to see more reservations.'
-                  : "You don't have any reservations yet."}
+          {filtered.length === 0 && (
+            <div className="p-10 text-center">
+              <CalendarDays className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+              <p className="font-medium text-gray-600">Aucune réservation trouvée</p>
+              <p className="text-sm text-gray-400 mt-1">
+                {filters.search || hasActiveFilters
+                  ? "Essayez d'ajuster vos filtres."
+                  : "Vous n'avez pas encore de réservations."}
               </p>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Detail Modal */}
-      {selectedReservation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Reservation Details</CardTitle>
-                <Button variant="ghost" size="sm" onClick={() => setSelectedReservation(null)}>×</Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="font-semibold mb-3">Booking Information</h3>
-                  <div className="space-y-2 text-sm">
-                    <p><strong>Reference:</strong> {refCode(selectedReservation)}</p>
-                    <p><strong>Status:</strong> {getStatusBadge(selectedReservation.status)}</p>
-                    <p><strong>Payment:</strong> {getPaymentStatusBadge(selectedReservation.payment_status)}</p>
-                    <p><strong>Created:</strong> {format(new Date(selectedReservation.created_at), 'MMM dd, yyyy HH:mm')}</p>
-                  </div>
+      {/* Modal détail réservation */}
+      <Dialog open={!!selected} onOpenChange={open => !open && setSelected(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Détail de la réservation</DialogTitle>
+          </DialogHeader>
+          {selected && (
+            <div className="space-y-6 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {/* Infos réservation */}
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-base">Réservation</h3>
+                  <p><span className="text-gray-500">Référence :</span> {refCode(selected)}</p>
+                  <p className="flex items-center gap-2"><span className="text-gray-500">Statut :</span> {statusBadge(selected.status)}</p>
+                  <p className="flex items-center gap-2"><span className="text-gray-500">Paiement :</span> {paymentBadge(selected.payment_status)}</p>
+                  <p><span className="text-gray-500">Créée le :</span> {fmtDate(selected.created_at)}</p>
                 </div>
-                <div>
-                  <h3 className="font-semibold mb-3">Guest Information</h3>
-                  <div className="space-y-2 text-sm">
-                    <p><strong>Name:</strong> {guestName(selectedReservation)}</p>
-                    <p><strong>Email:</strong> {guestEmail(selectedReservation)}</p>
-                    <p><strong>Phone:</strong> {guestPhone(selectedReservation)}</p>
-                    <p><strong>Guests:</strong> {guestCount(selectedReservation)}</p>
-                  </div>
+
+                {/* Infos voyageur */}
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-base">Voyageur</h3>
+                  <p><span className="text-gray-500">Nom :</span> {gName(selected)}</p>
+                  <p><span className="text-gray-500">Téléphone :</span> {gPhone(selected)}</p>
+                  <p><span className="text-gray-500">Email :</span> {gEmail(selected)}</p>
+                  <p><span className="text-gray-500">Voyageurs :</span> {gCount(selected)}</p>
                 </div>
               </div>
 
-              <div>
-                <h3 className="font-semibold mb-3">Property & Dates</h3>
-                <div className="space-y-2 text-sm">
-                  <p><strong>Property:</strong> {propName(selectedReservation)}</p>
-                  {propAddress(selectedReservation) && <p><strong>Address:</strong> {propAddress(selectedReservation)}</p>}
-                  {checkIn(selectedReservation) && <p><strong>Check-in:</strong> {format(new Date(checkIn(selectedReservation)), 'EEEE, MMM dd, yyyy')}</p>}
-                  {checkOut(selectedReservation) && <p><strong>Check-out:</strong> {format(new Date(checkOut(selectedReservation)), 'EEEE, MMM dd, yyyy')}</p>}
-                  <p><strong>Duration:</strong> {nightsCount(selectedReservation)} nights</p>
-                </div>
+              {/* Propriété & dates */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-base">Propriété & Dates</h3>
+                <p><span className="text-gray-500">Propriété :</span> {pName(selected)}</p>
+                {pAddr(selected) && <p><span className="text-gray-500">Adresse :</span> {pAddr(selected)}</p>}
+                <p><span className="text-gray-500">Arrivée :</span> {fmtDate(cIn(selected))}</p>
+                <p><span className="text-gray-500">Départ :</span> {fmtDate(cOut(selected))}</p>
+                <p><span className="text-gray-500">Durée :</span> {nNights(selected)} nuit{nNights(selected) > 1 ? "s" : ""}</p>
               </div>
 
-              <div>
-                <h3 className="font-semibold mb-3">Pricing</h3>
-                <div className="space-y-2 text-sm">
-                  {selectedReservation.pricing?.breakdown && (
-                    <>
-                      <div className="flex justify-between"><span>Base Price:</span><span>{formatCurrency(selectedReservation.pricing.breakdown.base_price, currency(selectedReservation))}</span></div>
-                      <div className="flex justify-between"><span>Cleaning Fee:</span><span>{formatCurrency(selectedReservation.pricing.breakdown.cleaning_fee, currency(selectedReservation))}</span></div>
-                      <div className="flex justify-between"><span>Service Fee:</span><span>{formatCurrency(selectedReservation.pricing.breakdown.service_fee, currency(selectedReservation))}</span></div>
-                      <div className="flex justify-between"><span>Taxes:</span><span>{formatCurrency(selectedReservation.pricing.breakdown.taxes, currency(selectedReservation))}</span></div>
-                    </>
-                  )}
-                  <div className="flex justify-between font-semibold border-t pt-2">
-                    <span>Total:</span>
-                    <span>{formatCurrency(totalAmount(selectedReservation), currency(selectedReservation))}</span>
+              {/* Prix */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-base">Tarification</h3>
+                {selected.pricing?.breakdown && (
+                  <div className="space-y-1 text-gray-600">
+                    <div className="flex justify-between"><span>Prix de base :</span><span>{fmtCurrency(selected.pricing.breakdown.base_price, tCurrency(selected))}</span></div>
+                    <div className="flex justify-between"><span>Frais de ménage :</span><span>{fmtCurrency(selected.pricing.breakdown.cleaning_fee, tCurrency(selected))}</span></div>
+                    <div className="flex justify-between"><span>Frais de service :</span><span>{fmtCurrency(selected.pricing.breakdown.service_fee, tCurrency(selected))}</span></div>
+                    <div className="flex justify-between"><span>Taxes :</span><span>{fmtCurrency(selected.pricing.breakdown.taxes, tCurrency(selected))}</span></div>
                   </div>
+                )}
+                <div className="flex justify-between font-semibold border-t pt-2">
+                  <span>Total :</span>
+                  <span>{fmtCurrency(tAmount(selected), tCurrency(selected))}</span>
                 </div>
               </div>
 
-              {selectedReservation.special_requests && (
-                <div>
-                  <h3 className="font-semibold mb-3">Special Requests</h3>
-                  <p className="text-sm bg-gray-50 p-3 rounded">{selectedReservation.special_requests}</p>
+              {/* Demandes spéciales */}
+              {selected.special_requests && (
+                <div className="space-y-1">
+                  <h3 className="font-semibold text-base">Demandes spéciales</h3>
+                  <p className="bg-gray-50 dark:bg-gray-900 p-3 rounded text-gray-600">{selected.special_requests}</p>
                 </div>
               )}
-            </CardContent>
-          </Card>
-        </div>
-      )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

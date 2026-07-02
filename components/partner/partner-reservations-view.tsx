@@ -123,7 +123,7 @@ export function PartnerReservationsView({ partnerId, locale }: PartnerReservatio
       const response = await fetch(`/api/partner/reservations?${queryParams}`)
       if (response.ok) {
         const data = await response.json()
-        setReservations(data.reservations)
+        setReservations(data.reservations || data.data || [])
       } else {
         // Fallback to mock data
         setReservations(getMockReservations())
@@ -319,7 +319,7 @@ export function PartnerReservationsView({ partnerId, locale }: PartnerReservatio
     window.URL.revokeObjectURL(url)
   }
 
-  const filteredReservations = reservations.filter(reservation => {
+  const filteredReservations = (reservations || []).filter(reservation => {
     if (filters.search) {
       const searchLower = filters.search.toLowerCase()
       if (!reservation.confirmation_code.toLowerCase().includes(searchLower) &&

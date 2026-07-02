@@ -95,9 +95,10 @@ interface PartnerReservation {
 
 interface PartnerReservationsViewProps {
   partnerId: string
+  locale: string
 }
 
-export function PartnerReservationsView({ partnerId }: PartnerReservationsViewProps) {
+export function PartnerReservationsView({ partnerId, locale }: PartnerReservationsViewProps) {
   const [reservations, setReservations] = useState<PartnerReservation[]>([])
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState<ReservationFilters>({})

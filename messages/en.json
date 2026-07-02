@@ -4317,6 +4317,82 @@
         "message": "Your partnership request has not been approved. {reason, select, other {For more information, please contact our team.}}"
       }
     }
+    ,
+"bookings": {
+  "title": "Reservations",
+  "subtitle": "{filtered} of {total}",
+  "export": "Export",
+  "refresh": "Refresh",
+  "search": "Search by name, phone, email, reference...",
+  "filters": "Filters",
+  "clearFilters": "Clear",
+  "selectPeriod": "Select a period",
+  "arrivalPeriod": "Arrival period",
+  "fromDate": "From",
+  "clearDates": "Clear dates",
+  "allStatuses": "All statuses",
+  "allPayments": "All",
+  "bookingStatus": "Booking status",
+  "paymentStatusLabel": "Payment status",
+  "columns": {
+    "reference": "Reference",
+    "traveler": "Traveler",
+    "property": "Property",
+    "checkIn": "Check-in ↓",
+    "checkOut": "Check-out",
+    "nights": "Nights",
+    "amount": "Amount",
+    "status": "Status",
+    "payment": "Payment"
+  },
+  "status": {
+    "confirmed": "Confirmed",
+    "pending": "Pending",
+    "cancelled": "Cancelled",
+    "completed": "Completed",
+    "no_show": "No show"
+  },
+  "paymentStatuses": {
+    "paid": "Paid",
+    "partial": "Partial",
+    "pending": "Pending",
+    "refunded": "Refunded",
+    "failed": "Failed"
+  },
+  "empty": {
+    "noResults": "No reservations found",
+    "withFilters": "Try adjusting your filters.",
+    "noBookings": "No reservations yet."
+  },
+  "detail": {
+    "title": "Reservation detail",
+    "booking": "Booking",
+    "traveler": "Traveler",
+    "propertyDates": "Property & Dates",
+    "pricing": "Pricing",
+    "specialRequests": "Special requests",
+    "reference": "Reference",
+    "bookingStatus": "Status",
+    "paymentStatus": "Payment",
+    "createdAt": "Created on",
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "travelers": "Travelers",
+    "property": "Property",
+    "address": "Address",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "duration": "Duration",
+    "night": "night",
+    "nights": "nights",
+    "basePrice": "Base price",
+    "cleaningFee": "Cleaning fee",
+    "serviceFee": "Service fee",
+    "taxes": "Taxes",
+    "total": "Total"
+  }
+}
   },
   "privacy": {
     "cookies": {

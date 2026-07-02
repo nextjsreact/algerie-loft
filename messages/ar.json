@@ -4160,6 +4160,82 @@
         "message": "لم تتم الموافقة على طلب الشراكة الخاص بك. {reason, select, other {لمزيد من المعلومات، يرجى الاتصال بفريقنا.}}"
       }
     }
+    ,
+"bookings": {
+  "title": "الحجوزات",
+  "subtitle": "{filtered} من {total}",
+  "export": "تصدير",
+  "refresh": "تحديث",
+  "search": "بحث بالاسم، الهاتف، البريد، المرجع...",
+  "filters": "فلاتر",
+  "clearFilters": "مسح",
+  "selectPeriod": "اختر فترة",
+  "arrivalPeriod": "فترة الوصول",
+  "fromDate": "من",
+  "clearDates": "مسح التواريخ",
+  "allStatuses": "جميع الحالات",
+  "allPayments": "الكل",
+  "bookingStatus": "حالة الحجز",
+  "paymentStatusLabel": "حالة الدفع",
+  "columns": {
+    "reference": "المرجع",
+    "traveler": "المسافر",
+    "property": "العقار",
+    "checkIn": "الوصول ↓",
+    "checkOut": "المغادرة",
+    "nights": "الليالي",
+    "amount": "المبلغ",
+    "status": "الحالة",
+    "payment": "الدفع"
+  },
+  "status": {
+    "confirmed": "مؤكد",
+    "pending": "قيد الانتظار",
+    "cancelled": "ملغى",
+    "completed": "مكتمل",
+    "no_show": "لم يحضر"
+  },
+  "paymentStatuses": {
+    "paid": "مدفوع",
+    "partial": "جزئي",
+    "pending": "قيد الانتظار",
+    "refunded": "مسترد",
+    "failed": "فشل"
+  },
+  "empty": {
+    "noResults": "لا توجد حجوزات",
+    "withFilters": "عدّل الفلاتر.",
+    "noBookings": "لا توجد حجوزات بعد."
+  },
+  "detail": {
+    "title": "تفاصيل الحجز",
+    "booking": "الحجز",
+    "traveler": "المسافر",
+    "propertyDates": "العقار والتواريخ",
+    "pricing": "التسعير",
+    "specialRequests": "طلبات خاصة",
+    "reference": "المرجع",
+    "bookingStatus": "الحالة",
+    "paymentStatus": "الدفع",
+    "createdAt": "تاريخ الإنشاء",
+    "name": "الاسم",
+    "phone": "الهاتف",
+    "email": "البريد",
+    "travelers": "المسافرون",
+    "property": "العقار",
+    "address": "العنوان",
+    "checkIn": "الوصول",
+    "checkOut": "المغادرة",
+    "duration": "المدة",
+    "night": "ليلة",
+    "nights": "ليالي",
+    "basePrice": "السعر الأساسي",
+    "cleaningFee": "رسوم التنظيف",
+    "serviceFee": "رسوم الخدمة",
+    "taxes": "الضرائب",
+    "total": "المجموع"
+  }
+}
   },
   "privacy": {
     "cookies": {

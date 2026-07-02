@@ -4142,6 +4142,82 @@
         "message": "Votre demande de partenariat n'a pas été approuvée. {reason, select, other {Pour plus d'informations, veuillez contacter notre équipe.}}"
       }
     }
+    ,
+"bookings": {
+  "title": "Réservations",
+  "subtitle": "{filtered} sur {total}",
+  "export": "Exporter",
+  "refresh": "Actualiser",
+  "search": "Rechercher par nom, téléphone, email, référence...",
+  "filters": "Filtres",
+  "clearFilters": "Effacer",
+  "selectPeriod": "Sélectionner une période",
+  "arrivalPeriod": "Période d'arrivée",
+  "fromDate": "À partir du",
+  "clearDates": "Effacer les dates",
+  "allStatuses": "Tous les statuts",
+  "allPayments": "Tous",
+  "bookingStatus": "Statut réservation",
+  "paymentStatusLabel": "Statut paiement",
+  "columns": {
+    "reference": "Référence",
+    "traveler": "Voyageur",
+    "property": "Propriété",
+    "checkIn": "Arrivée ↓",
+    "checkOut": "Départ",
+    "nights": "Nuits",
+    "amount": "Montant",
+    "status": "Statut",
+    "payment": "Paiement"
+  },
+  "status": {
+    "confirmed": "Confirmée",
+    "pending": "En attente",
+    "cancelled": "Annulée",
+    "completed": "Terminée",
+    "no_show": "Non présenté"
+  },
+  "paymentStatuses": {
+    "paid": "Payée",
+    "partial": "Partiel",
+    "pending": "En attente",
+    "refunded": "Remboursée",
+    "failed": "Échoué"
+  },
+  "empty": {
+    "noResults": "Aucune réservation trouvée",
+    "withFilters": "Essayez d'ajuster vos filtres.",
+    "noBookings": "Vous n'avez pas encore de réservations."
+  },
+  "detail": {
+    "title": "Détail de la réservation",
+    "booking": "Réservation",
+    "traveler": "Voyageur",
+    "propertyDates": "Propriété & Dates",
+    "pricing": "Tarification",
+    "specialRequests": "Demandes spéciales",
+    "reference": "Référence",
+    "bookingStatus": "Statut",
+    "paymentStatus": "Paiement",
+    "createdAt": "Créée le",
+    "name": "Nom",
+    "phone": "Téléphone",
+    "email": "Email",
+    "travelers": "Voyageurs",
+    "property": "Propriété",
+    "address": "Adresse",
+    "checkIn": "Arrivée",
+    "checkOut": "Départ",
+    "duration": "Durée",
+    "night": "nuit",
+    "nights": "nuits",
+    "basePrice": "Prix de base",
+    "cleaningFee": "Frais de ménage",
+    "serviceFee": "Frais de service",
+    "taxes": "Taxes",
+    "total": "Total"
+  }
+}
   },
   "privacy": {
     "cookies": {
